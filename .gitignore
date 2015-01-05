@@ -39,3 +39,4 @@ build/intermediates/model_data.bin
 
 .idea/misc.xml
 .idea/modules.xml
+build/intermediates/dex-cache/cache.xml
