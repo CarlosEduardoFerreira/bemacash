@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ItemList.ItemLayout"
+    android:layout_width="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:background="@drawable/wireless_item_bg"
+
+
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/unit_serial"
+        style="@style/ItemList.ItemText"
+        android:textColor="@drawable/wireless_text_selector"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <TextView
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/unit_warranty"
+        style="@style/ItemList.ItemText"
+        android:textColor="@drawable/wireless_text_selector"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <TextView
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/unit_status"
+        style="@style/ItemList.ItemText"
+        android:textColor="@drawable/wireless_text_selector"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5" />
+
+
+</LinearLayout>

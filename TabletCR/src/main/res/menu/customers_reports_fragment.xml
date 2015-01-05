@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:icon="@drawable/ic_action_export"
+        android:id="@+id/action_export"
+        android:showAsAction="always"
+        android:title="@string/report_details_menu_export"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:icon="@drawable/ic_action_print"
+        android:id="@+id/action_print"
+        android:showAsAction="always"
+        android:title="@string/report_details_menu_print"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+
+    <item
+        android:icon="@drawable/ic_action_email"
+        android:id="@+id/action_email"
+        android:showAsAction="always"
+        android:title="@string/report_details_menu_email"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+</menu>

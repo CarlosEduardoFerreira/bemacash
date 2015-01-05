@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/SDL.Group">
+    <LinearLayout
+        android:id = "@+id/sdl_titleLinearLayout"
+        style="@style/SDL.TitleLinerLayout">
+        <ImageView
+            android:id="@+id/sdl__titleicon"
+            style="@style/SDL.TitleImageview"/>
+        <TextView
+            android:id="@+id/sdl__title"
+            style="?attr/sdlTitleTextStyle"/>
+    </LinearLayout>
+    <View
+        android:id="@+id/sdl__titleDivider"
+        style="@style/SDL.TitleSeparator"/>
+
+    <LinearLayout
+        android:id="@+id/sdl__content"
+        style="@style/SDL.Group"/>
+</LinearLayout>

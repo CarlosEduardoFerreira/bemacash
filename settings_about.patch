@@ -1,0 +1,85 @@
+Index: java/com/bematech/tcr/activity/SettingsActivity.java
+===================================================================
+--- java/com/bematech/tcr/activity/SettingsActivity.java	(revision 2140)
++++ java/com/bematech/tcr/activity/SettingsActivity.java	(working copy)
+@@ -41,7 +41,9 @@
+                 new NavigationItem(getString(R.string.pref_drawer_header_title), getString(R.string.pref_drawer_header_summary)),
+                 new NavigationItem(getString(R.string.pref_display_header_title), getString(R.string.pref_display_header_summary)),
+                 new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
+-                new NavigationItem(getString(R.string.pref_datausage_header_title), getString(R.string.pref_datausage_header_summary))
++                new NavigationItem(getString(R.string.pref_datausage_header_title), getString(R.string.pref_datausage_header_summary)),
++                new NavigationItem(getString(R.string.pref_dabout_header_title), null)
++
+         )));
+ 
+         navigationList.setOnItemClickListener(new OnItemClickListener() {
+@@ -75,6 +77,8 @@
+                 break;
+             case 5:
+                 fragment = DataUsageStatFragment.instance();
++            case 6:
++                fragment = AboutFragment.instance();
+                 break;
+         }
+         getSupportFragmentManager().beginTransaction().replace(R.id.settings_details, fragment).commit();
+Index: java/com/bematech/tcr/fragment/settings/AboutFragment.java
+===================================================================
+--- java/com/bematech/tcr/fragment/settings/AboutFragment.java	(revision 0)
++++ java/com/bematech/tcr/fragment/settings/AboutFragment.java	(working copy)
+@@ -0,0 +1,30 @@
++package com.bematech.tcr.fragment.settings;
++
++import android.net.TrafficStats;
++import android.os.BatteryManager;
++import android.os.Bundle;
++import android.support.v4.app.Fragment;
++import android.widget.TextView;
++
++import com.bematech.tcr.Logger;
++import com.bematech.tcr.R;
++import com.bematech.tcr.fragment.SuperBaseFragment;
++import com.googlecode.androidannotations.annotations.EFragment;
++import com.googlecode.androidannotations.annotations.ViewById;
++
++/**
++ * Created by gdubina on 28/02/14.
++ */
++@EFragment(R.layout.settings_about_fragment)
++public class AboutFragment extends SuperBaseFragment{
++
++    @Override
++    public void onActivityCreated(Bundle savedInstanceState) {
++        super.onActivityCreated(savedInstanceState);
++
++    }
++
++    public static Fragment instance() {
++        return AboutFragment_.builder().build();
++    }
++}
+Index: res-settings/layout/settings_about_fragment.xml
+===================================================================
+--- res-settings/layout/settings_about_fragment.xml	(revision 0)
++++ res-settings/layout/settings_about_fragment.xml	(working copy)
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++              android:layout_width="match_parent"
++              android:layout_height="match_parent"
++              android:orientation="horizontal">
++
++
++
++</LinearLayout>
+\ No newline at end of file
+Index: res/values/strings.xml
+===================================================================
+--- res/values/strings.xml	(revision 2140)
++++ res/values/strings.xml	(working copy)
+@@ -1098,4 +1098,6 @@
+     <string name="return_order_create_error">Can\'t create return order</string>
+     <string name="return_order_create_success">Return order was created</string>
+     <string name="dlg_completed_tialog">Completed</string>
++
++    <string name="pref_dabout_header_title">Data usage</string>
+ </resources>

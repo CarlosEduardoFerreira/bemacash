@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_gravity="center_horizontal|top"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/printer_print_zreport"/>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingBottom="30dp"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:paddingRight="20dp">
+
+        <CheckBox
+            android:id="@+id/print_box"
+            android:text="@string/xreport_dialog_checkbox_print"
+            style="@style/CheckBox.Dark"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"/>
+
+        <CheckBox
+            android:layout_below="@id/print_box"
+            style="@style/CheckBox.Dark"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/email_box"
+            android:layout_height="wrap_content"
+            android:text="@string/xreport_dialog_checkbox_email"
+            android:layout_width="wrap_content"/>
+
+        <CheckBox
+            android:layout_below="@id/email_box"
+            style="@style/CheckBox.Dark"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/screen_box"
+            android:visibility="visible"
+            android:layout_height="wrap_content"
+            android:text="@string/xreport_dialog_checkbox_screen"
+            android:layout_width="wrap_content"/>
+
+    </RelativeLayout>
+
+</FrameLayout>

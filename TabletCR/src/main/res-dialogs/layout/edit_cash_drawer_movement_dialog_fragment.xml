@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <Switch
+        android:id="@+id/movement_type_switch"
+        android:textOn="@string/switch_payout"
+        android:textOff="@string/switch_drop"
+        android:switchTextAppearance="@style/SwitchTextAppearance2"
+        android:track="@drawable/switch_drops_track"
+        android:thumb="@drawable/btn_toggle_drops"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+    <com.kaching123.tcr.component.CustomEditBox
+        style="@style/CustomEditBox.Decimal.CashdrawerMovements"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/edit_text" />
+
+    <EditText android:id="@+id/comment_box"
+        style="@style/StyledDialog.Content.EditText"
+        android:maxLength="@integer/cash_drawer_movements_comment_length"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/cash_drawer_movement_dialog_comment_label"/>
+
+</LinearLayout>

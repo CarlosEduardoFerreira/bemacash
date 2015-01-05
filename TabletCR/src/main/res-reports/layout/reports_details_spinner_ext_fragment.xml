@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/beige"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_height="48dp"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:paddingTop="8dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp">
+
+        <TextView
+            android:id="@+id/mode_entities_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:minWidth="58dp"/>
+
+        <Spinner
+            android:id="@+id/mode_entities_spinner"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/report_spinner_def_width"/>
+
+        <TextView
+            android:id="@+id/from_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="@string/reports_from_label"/>
+
+        <EditText
+            android:id="@+id/from_edit"
+            style="@style/Reports.DateEdit"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="4dp"/>
+
+        <TextView
+            android:id="@+id/to_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingLeft="11dp"
+            android:text="@string/reports_to_label"/>
+
+        <EditText
+            android:id="@+id/to_edit"
+            style="@style/Reports.DateEdit"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+
+        <TextView
+            android:id="@+id/period_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/reports_period_label"/>
+
+        <Spinner
+            android:id="@+id/period_spinner"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_height="2dp"
+        android:layout_width="match_parent"
+        android:layout_below="@id/from_edit"
+        android:layout_marginTop="8dp"
+        android:background="@color/reports_divider"
+        />
+
+    <FrameLayout
+        android:id="@+id/details_body"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        />
+
+</LinearLayout>

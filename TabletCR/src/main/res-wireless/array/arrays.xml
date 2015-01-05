@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="action_list">
+        <item>All</item>
+        <item>NEW</item>
+        <item>USED</item>
+        <item>BROKEN</item>
+        <item>SOLD</item>
+    </string-array>
+</resources>

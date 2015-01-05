@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/StyledDialog.Layout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/focus_grabber"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+    <Spinner
+        android:id="@+id/type"
+        style="@style/StyledDialog.Content.Spinner"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
+
+
+    <EditText
+        android:id="@+id/title"
+        android:layout_marginTop="8dp"
+        style="@style/StyledDialog.Content.EditText"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="@string/modifiers_edit_dialog_title_hint">
+
+        <requestFocus />
+    </EditText>
+
+
+    <EditText
+        android:layout_marginTop="8dp"
+        android:id="@+id/price"
+        style="@style/StyledDialog.Content.EditText"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:inputType="numberDecimal"
+        android:hint="@string/modifiers_edit_dialog_price_hint" />
+
+    <CheckBox
+
+        android:layout_marginTop="8dp"
+        android:id="@+id/checkbox_default"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/inventory_modifier_use_default"
+        style="@style/CheckBox.Dark"
+        android:checked="false" />
+
+</LinearLayout>

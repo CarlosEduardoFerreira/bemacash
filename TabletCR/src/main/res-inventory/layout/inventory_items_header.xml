@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ItemList.HeaderLayout"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:gravity="left"
+        android:layout_weight="4"
+        android:text="@string/inventory_items_header_description"/>
+
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:text="@string/inventory_items_header_cost"/>
+
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:text="@string/inventory_items_header_price"/>
+
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:text="@string/inventory_items_header_quantity"/>
+
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:text="@string/inventory_items_header_total_cost"/>
+
+    <Space
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"/>
+
+</LinearLayout>

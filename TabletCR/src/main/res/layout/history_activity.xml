@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/cashier_activity_background"
+        android:orientation="horizontal">
+
+        <ViewFlipper
+            android:id="@+id/list_flipper"
+            android:layout_width="960dp"
+            android:layout_height="match_parent">
+
+            <fragment
+                android:name="com.kaching123.tcr.fragment.tendering.history.HistoryOrderListFragment_"
+                android:layout_width="960dp"
+                android:layout_height="match_parent"
+                android:id="@+id/order_list_fragment"/>
+
+            <fragment
+                android:name="com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment_"
+                android:layout_width="960dp"
+                android:layout_height="match_parent"
+                android:id="@+id/order_items_list_fragment"/>
+        </ViewFlipper>
+
+        <ViewFlipper
+            android:id="@+id/flipper"
+            android:layout_width="320dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp">
+
+            <fragment
+                android:id="@+id/history_fragment"
+                android:name="com.kaching123.tcr.fragment.tendering.history.HistoryOrderFragment_"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <fragment
+                android:id="@+id/total_cost_fragment"
+                android:name="com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemFragment_"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </ViewFlipper>
+    </LinearLayout>
+</LinearLayout>

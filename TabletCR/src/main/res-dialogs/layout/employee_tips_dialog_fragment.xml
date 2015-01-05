@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <com.kaching123.tcr.component.CustomEditBox
+        style="@style/CustomEditBox.Decimal"
+        android:id="@+id/tips_editbox"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_holo_dark"
+        android:layout_width="match_parent"
+        android:hint="@string/employee_tips_dialog_amount_hint"/>
+
+    <TextView
+        style="@style/StyledDialog.Content.Label"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="4dp"
+        android:textSize="22sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/employee_tips_dialog_employee_hint"/>
+
+    <Spinner
+        android:id="@+id/employee_spinner"
+        style="@style/StyledDialog.Content.Spinner"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+    <EditText
+        android:id="@+id/notes_editbox"
+        style="@style/ModifiersEditDialog.EditText"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_marginTop="12dp"
+        android:singleLine="false"
+        android:inputType="textMultiLine"
+        android:hint="@string/employee_tips_dialog_notes"/>
+
+</LinearLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="@string/pref_drawer_key"
+
+        android:title="@string/pref_drawer_pin_high"
+        android:summary="@string/pref_drawer_pin_high_summary"
+
+        android:entries="@array/drawer_pin_high_entries"
+        android:defaultValue="@integer/drawer_pin_high_entries_def"
+        android:entryValues="@array/drawer_pin_high_values"
+        android:dialogTitle="@string/pref_drawer_pin_high" />
+
+</PreferenceScreen>

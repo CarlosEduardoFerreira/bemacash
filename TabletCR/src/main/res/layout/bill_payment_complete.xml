@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/prepaid_payment_complete_body_title"
+        style="@style/Receipt.BodyHeader" />
+
+
+    <TextView
+        android:layout_width="400dp"
+        android:layout_gravity="left"
+        android:layout_marginLeft="40dp"
+        android:layout_height="wrap_content"
+        android:text="@string/prepaid_wireless_payment_complete_order_data"
+        style="@style/Receipt.BodyContent"
+        android:layout_marginTop="20dp"/>
+
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_marginLeft="40dp"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="@string/prepaid_wireless_payment_complete_order_num"
+            style="@style/Receipt.BodyContent"/>
+        <TextView
+            android:id="@+id/product_ordernum"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            style="@style/Receipt.BodyContent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_marginLeft="40dp"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="@string/prepaid_wireless_payment_complete_product"
+            style="@style/Receipt.BodyContent"/>
+        <TextView
+            android:id="@+id/product_name_display"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            style="@style/Receipt.BodyContent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_marginLeft="40dp"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="@string/prepaid_bill_pauments_receipt_account_number"
+            style="@style/Receipt.BodyContent"/>
+        <TextView
+            android:id="@+id/account_number_display"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            style="@style/Receipt.BodyContent"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:paddingTop="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_marginLeft="40dp"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="@string/bill_pauments_amount"
+            style="@style/Receipt.BodyContent"/>
+        <TextView
+            android:id="@+id/amount"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            style="@style/Receipt.BodyContent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_marginLeft="40dp"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="@string/bill_pauments_fee"
+            style="@style/Receipt.BodyContent"/>
+        <TextView
+            android:id="@+id/fee"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            style="@style/Receipt.BodyContent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_marginLeft="40dp"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="@string/prepaid_wireless_payment_complete_order_total_price"
+            style="@style/Receipt.BodyContent"/>
+        <TextView
+            android:id="@+id/total"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            style="@style/Receipt.BodyContent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/change_block"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_marginLeft="40dp"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="@string/blackstone_pay_charge"
+            style="@style/Receipt.BodyContent"/>
+        <TextView
+            android:id="@+id/change"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            style="@style/Receipt.BodyContent"/>
+    </LinearLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <CheckBox
+            android:id="@+id/print_box"
+            android:text="@string/chkbx_print"
+            style="@style/CheckBox.Dark"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content" />
+
+        <CheckBox
+            android:layout_below="@id/print_box"
+            style="@style/CheckBox.Dark"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/email_box"
+            android:layout_height="wrap_content"
+            android:text="@string/chkbx_email"
+            android:layout_width="wrap_content" />
+
+        <CheckBox
+            android:layout_below="@id/email_box"
+            style="@style/CheckBox.Dark"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/signature_box"
+            android:visibility="visible"
+            android:layout_height="wrap_content"
+            android:text="@string/chkbx_sign_print"
+            android:layout_width="wrap_content" />
+
+    </RelativeLayout>
+
+</LinearLayout>

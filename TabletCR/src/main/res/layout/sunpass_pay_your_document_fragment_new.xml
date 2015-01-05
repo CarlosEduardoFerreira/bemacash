@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/prepaid_dialog_white">
+
+    <TextView
+        android:id="@+id/product_name"
+        style="@style/Prepaid.body.Text"
+        android:layout_width="450dp"
+        android:layout_marginLeft="20dp"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:text="@string/prepaid_sunpass_pay_your_document" />
+
+
+    <TextView
+        android:paddingTop="0dp"
+        android:layout_marginTop="50dp"
+        android:id="@+id/documnet_id_title"
+        android:layout_marginLeft="20dp"
+        style="@style/Prepaid.body.Text"
+        android:textStyle="bold"
+        android:layout_below="@+id/product_name"
+        android:layout_alignLeft="@+id/product_name"
+        android:text="@string/sunpass_pyd_credential_document_num_title" />
+
+    <EditText
+        style="@style/CustomEditBox.PaymentInputField"
+        android:background="@drawable/prepaid_textview_bg"
+        android:layout_marginTop="10dp"
+        android:id="@+id/document_id"
+        android:textSize="25sp"
+        android:layout_width="450dp"
+        android:layout_height="70dp"
+        android:gravity="center_vertical"
+        android:hint="@string/sunpass_pyd_credential_document_num_hint"
+        android:textColorHint="@color/light_gray"
+        android:layout_below="@+id/documnet_id_title"
+        android:layout_alignLeft="@+id/documnet_id_title" />
+
+
+    <TextView
+        android:layout_toRightOf="@+id/document_id"
+        android:layout_below="@+id/documnet_id_title"
+        android:id="@+id/account_num_explain"
+        style="@style/Prepaid.body.Text"
+        android:paddingTop="15dp"
+        android:layout_width="650dp"
+        android:textSize="25sp"
+        android:gravity="left"
+        android:text="@string/sunpass_pyd_credential_document_num_note" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:paddingTop="0dp"
+        android:id="@+id/license_plate_title"
+        style="@style/Prepaid.body.Text"
+        android:textStyle="bold"
+        android:text="@string/sunpass_pyd_credential_plate_num_title"
+        android:layout_below="@+id/document_id"
+        android:layout_alignLeft="@+id/document_id" />
+
+    <EditText
+        style="@style/CustomEditBox.PaymentInputField"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/prepaid_textview_bg"
+        android:id="@+id/license_plate"
+        android:textSize="25sp"
+        android:layout_width="450dp"
+        android:layout_height="70dp"
+        android:gravity="center_vertical"
+        android:hint="@string/sunpass_pyd_credential_plate_num_hint"
+        android:textColorHint="@color/light_gray"
+        android:layout_below="@+id/license_plate_title"
+        android:layout_alignLeft="@+id/license_plate_title" />
+
+    <TextView
+        android:visibility="gone"
+        android:layout_marginTop="10dp"
+        android:layout_alignLeft="@+id/license_plate"
+        android:layout_alignRight="@+id/license_plate"
+        android:layout_below="@+id/license_plate"
+        android:id="@+id/pay_current_document"
+        style="@style/Prepaid.body.Text"
+        android:layout_width="650dp"
+        android:padding="20dp"
+        android:textSize="25sp"
+        android:gravity="left"
+        android:background="@drawable/prepaid_option_button_bg"
+        android:text="@string/prepaid_sunpass_pay_your_document_only_title" />
+
+    <TextView
+        android:visibility="gone"
+        android:layout_marginTop="10dp"
+        android:layout_alignLeft="@+id/pay_current_document"
+        android:layout_alignRight="@+id/pay_current_document"
+        android:layout_below="@+id/pay_current_document"
+        android:id="@+id/pay_all_document"
+        style="@style/Prepaid.body.Text"
+        android:padding="20dp"
+        android:layout_width="650dp"
+        android:textSize="25sp"
+        android:gravity="left"
+        android:background="@drawable/prepaid_option_button_bg"
+        android:text="@string/prepaid_sunpass_pay_your_document_all_title" />
+
+    <TextView
+        android:layout_toRightOf="@+id/license_plate"
+        android:layout_below="@+id/license_plate_title"
+        android:id="@+id/license_plate_explain"
+        style="@style/Prepaid.body.Text"
+        android:paddingTop="15dp"
+        android:layout_width="650dp"
+        android:textSize="25sp"
+        android:gravity="left"
+        android:text="@string/sunpass_pyd_credential_plate_num_note" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/review_order_detail"
+        style="@style/Prepaid.body.Text"
+        android:layout_width="450dp"
+        android:layout_marginLeft="60dp"
+        android:layout_toRightOf="@+id/document_id"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:text="@string/sunpass_credential_review_order_detail" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/document_id_column"
+        android:layout_below="@+id/review_order_detail"
+        style="@style/Prepaid.body.Text"
+        android:layout_width="300dp"
+        android:layout_marginLeft="60dp"
+        android:layout_toRightOf="@+id/document_id"
+        android:textStyle="bold"
+        android:textSize="35sp"
+        android:text="@string/sunpass_pyd_order_view_item_name" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/amount_due_column"
+        android:layout_below="@+id/review_order_detail"
+        style="@style/Prepaid.body.Text"
+        android:layout_width="300dp"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/document_id_column"
+        android:textStyle="bold"
+        android:textSize="35sp"
+        android:text="@string/sunpass_pyd_order_view_item_content" />
+
+    <ListView
+        android:visibility="gone"
+        android:layout_marginLeft="0dp"
+        android:layout_alignLeft="@+id/review_order_detail"
+        android:layout_below="@+id/document_id_column"
+        android:id="@+id/listview"
+        android:layout_marginTop="10dp"
+        android:layout_width="600dp"
+        android:layout_height="200dp"></ListView>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_below="@+id/listview"
+        android:layout_marginLeft="40dp"
+        android:layout_toRightOf="@+id/document_id"
+        android:id="@+id/cost"
+        android:layout_width="620dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_bg_pressed"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_marginLeft="20dp"
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="0dp"
+                android:id="@+id/total_linear_amount"
+                android:textStyle="bold"
+                android:layout_width="305dp"
+                android:textSize="30sp"
+                android:text="@string/printer_amount" />
+
+            <TextView
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="0dp"
+                android:layout_below="@+id/list"
+                android:layout_toRightOf="@+id/total_linear_amount"
+                android:id="@+id/total_linear_amount_content"
+                android:textSize="30sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_marginLeft="20dp"
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="0dp"
+                android:id="@+id/total_linear_fee"
+                android:layout_width="305dp"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:text="@string/bill_pauments_fee" />
+
+            <TextView
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="0dp"
+                android:layout_below="@+id/total_linear_amount"
+                android:layout_toRightOf="@+id/total_linear_fee"
+                android:id="@+id/total_linear_fee_content"
+                android:textSize="30sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_marginLeft="20dp"
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="0dp"
+                android:id="@+id/total_linear_total"
+                android:layout_below="@+id/total_linear_fee"
+                android:layout_alignLeft="@+id/list"
+                android:layout_width="305dp"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:text="@string/blackstone_pay_total" />
+
+            <TextView
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="0dp"
+                android:layout_below="@+id/total_linear_fee"
+                android:layout_toRightOf="@+id/total_linear_fee"
+                android:id="@+id/total_linear_total_content"
+                android:textSize="30sp"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_above="@+id/submit_instruction"
+        style="@style/Prepaid.body.SubmitButton"
+        android:paddingLeft="40dp"
+        android:paddingTop="8dp"
+        android:layout_marginLeft="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="80dp"
+        android:id="@+id/check"
+        android:text="@string/btn_check" />
+
+</RelativeLayout>

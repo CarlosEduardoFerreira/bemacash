@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        xmlns:swipe="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/item_list_bg"
+        android:orientation="vertical" >
+
+        <include layout="@layout/saleorder_items_list_header" />
+
+        <com.fortysevendeg.swipelistview.SwipeListView
+            android:id="@android:id/list"
+            style="@style/SwipeList.List"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            swipe:swipeFrontView="@+id/item_front"
+            swipe:swipeBackView="@+id/item_back"
+            android:divider="@drawable/list_divider"
+            />
+
+    </LinearLayout>
+
+    <!--<include layout="@layout/item_list_vertical_dividers_full" />-->
+</FrameLayout>

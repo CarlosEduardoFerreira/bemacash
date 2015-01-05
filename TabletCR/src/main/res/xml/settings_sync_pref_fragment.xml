@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="@string/pref_sync_time_key"
+        android:title="@string/pref_sync_list_title"
+        android:summary="@string/pref_sync_summary"
+        android:entries="@array/sync_time_entries"
+        android:defaultValue="@integer/sync_time_entries_def_val"
+        android:entryValues="@array/sync_time_values"
+        android:dialogTitle="@string/pref_sync_summary" />
+
+</PreferenceScreen>

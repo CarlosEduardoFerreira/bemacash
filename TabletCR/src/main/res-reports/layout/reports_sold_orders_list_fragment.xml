@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/total_panel"
+            android:layout_alignParentBottom="true"
+            android:layout_height="48dp"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/item_list_padding_left">
+
+            <View
+                android:layout_height="1px"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/SaleReport.ItemList.Total"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/report_details_total"/>
+
+            <TextView
+                android:id="@+id/subtotal"
+                style="@style/SaleReport.ItemList.Total"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/discount"
+                style="@style/SaleReport.ItemList.Total"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tax"
+                style="@style/SaleReport.ItemList.Total"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+
+            <TextView
+                android:id="@+id/total"
+                style="@style/SaleReport.ItemList.Total"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_above="@id/total_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/item_list_bg"
+        android:orientation="vertical">
+
+        <LinearLayout
+            style="@style/ItemList.HeaderLayout.1280"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_sold_order_header_date"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_sold_order_header_register"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_sold_order_header_price"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_sold_order_header_discount"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_sold_order_header_tax"
+                android:layout_weight="1"/>
+
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reports_sold_order_header_total"/>
+
+        </LinearLayout>
+
+
+        <ListView
+            android:id="@android:id/list"
+            style="@style/SwipeList.List"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/list_divider"/>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/item_list_padding_left">
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
+

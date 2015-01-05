@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/item_list_bg"
+        android:orientation="vertical">
+
+        <LinearLayout
+            style="@style/ItemList.HeaderLayout.1280"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <TextView
+                style="@style/ItemList.HeaderText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="@string/report_inventory_value_header_type"
+                android:layout_weight="5"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/report_inventory_value_header_value"/>
+
+        </LinearLayout>
+
+
+        <ListView
+            android:id="@android:id/list"
+            style="@style/SwipeList.List"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/list_divider"
+            />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/item_list_padding_left">
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="5"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</FrameLayout>

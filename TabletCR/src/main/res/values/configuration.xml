@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="config_value_img_category">file:///android_asset/image/category/</string>
+    <string name="cfg_debug_send_logs_address">TabletCR.dev@dataart.com</string>
+    <string name="debug_send_logs_email_subject">Tablet app log</string>
+
+    <string-array name="category_group_food">
+        <item>category_bakedgood</item>
+        <item>category_bakery</item>
+        <item>category_breakfast</item>
+        <item>category_burger</item>
+        <item>category_dairy</item>
+        <item>category_desserts</item>
+        <item>category_donut</item>
+        <item>category_entree</item>
+        <item>category_fish</item>
+        <item>category_hospitality</item>
+        <item>category_hotdog</item>
+        <item>category_icecream</item>
+        <item>category_meat</item>
+        <item>category_muffin</item>
+        <item>category_pizza</item>
+        <item>category_produce</item>
+        <item>category_restaurant</item>
+        <item>category_salad</item>
+        <item>category_sandwich</item>
+        <item>category_soup</item>
+    </string-array>
+
+    <string-array name="category_group_beverage">
+        <item>category_alcohol_bev</item>
+        <item>category_beer</item>
+        <item>category_beverages</item>
+        <item>category_coffee</item>
+        <item>category_wine</item>
+    </string-array>
+
+    <string-array name="category_group_clothing">
+        <item>category_blouse</item>
+        <item>category_dresses</item>
+        <item>category_hats</item>
+        <item>category_mens_accessories</item>
+        <item>category_mens_clothes</item>
+        <item>category_mens_shirt</item>
+        <item>category_pants</item>
+        <item>category_purse</item>
+        <item>category_retail</item>
+        <item>category_shoes</item>
+        <item>category_womens_clothes</item>
+    </string-array>
+
+    <string-array name="category_group_electronics">
+        <item>category_cellphone</item>
+    </string-array>
+
+    <string-array name="category_group_general">
+        <item>category_book</item>
+        <item>category_grocery</item>
+        <item>category_hair_beauty</item>
+        <item>category_jewelry</item>
+        <item>category_store</item>
+        <item>category_tools</item>
+    </string-array>
+</resources>

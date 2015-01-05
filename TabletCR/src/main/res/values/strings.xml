@@ -1,0 +1,1792 @@
+<resources>
+
+    <string name="app_name">Kashin 123</string>
+
+    <string name="dashboard_activity_label">Kashin 123</string>
+    <string name="settings_activity_label">Settings</string>
+    <string name="inventory_activity_label">Inventory</string>
+    <string name="employees_activity_label">Employees</string>
+    <string name="customers_activity_label">Customers</string>
+    <string name="add_customer_activity_label">Add Customer</string>
+    <string name="employees_edit_activity_label">Edit Employee</string>
+    <string name="employees_add_activity_label">New Employee</string>
+    <string name="permissions_activity_label">Permissions</string>
+    <string name="history_activity_label">History</string>
+    <string name="xreport_activity_label">Close Shift Report</string>
+    <string name="activation_activity_label">Activation Center</string>
+    <string name="signup_activity_label">Sign up</string>
+
+    <string name="printer_alias_label">Printer Alias</string>
+
+    <string name="employees_attendance_activity_label">Employees Attendance</string>
+
+    <string name="items_list_empty">No items in the category</string>
+
+    <string name="order_header_title">Name</string>
+    <string name="order_header_ean">EAN\\UPC Code</string>
+    <string name="order_header_product_code">Product Code</string>
+    <string name="order_header_quantiy">Qty</string>
+    <string name="order_header_unit_price">Unit Price</string>
+    <string name="order_header_discount">Discount</string>
+    <string name="order_header_total">Total</string>
+
+    <string name="refund_header_checkbox">+</string>
+    <string name="refund_header_name">Item description</string>
+    <string name="refund_header_refQty">Return Qty</string>
+    <string name="refund_header_price">Price</string>
+    <string name="refund_header_qty">Qty</string>
+    <string name="refund_header_total">Total</string>
+    <string name="refund_header_max_refund">Refundable Qty</string>
+    <string name="refund_confirm_title">Return complete</string>
+    <string name="void_confirm_title">Void complete</string>
+    <string name="refund_confirm_title_failed">Refund failed</string>
+
+    <string name="wireless_header_oper">Operations</string>
+    <string name="wireless_header_status">Status</string>
+    <string name="wireless_header_serial">Serial</string>
+    <string name="wireless_header_warranty">Warranty</string>
+    <string name="wireless_body_warranty">Warranty (days) : </string>
+    <string name="warranty_dialog_clarification">Will affect only NEW items</string>
+
+
+    <!--<string name="prepaid_dialog_type_title">Please, choose service</string>-->
+    <string name="prepaid_dialog_category_title">Select Product</string>
+    <string name="prepaid_dialog_credentials_title">Specify credentials</string>
+    <string name="prepaid_dialog_conditions_title">Choose conditions</string>
+    <string name="prepaid_dialog_number_title">Enter phone number</string>
+    <string name="prepaid_dialog_progress_title">Billing in progress</string>
+    <string name="prepaid_dialog_notification_title">Successfully completed</string>
+    <string name="prepaid_dialog_or">- or -</string>
+    <string formatted="false" name="prepaid_dialog_phone">You chose %s. Please enter the phone number below:</string>
+    <string name="prepaid_dialog_custom_amount_hint">Enter custom amount</string>
+    <string name="prepaid_dialog_static_amount_hint">Choose Amount</string>
+    <string name="prepaid_dialog_amount_no_limitation">No payment amount limitation</string>
+    <string formatted="false" name="prepaid_dialog_amount_limitations">Payment min : %s max : %s</string>
+
+    <!--<string name="sunpass_prepaid_dialog_credentials_title">Reload Transponder</string>-->
+    <string name="sunpass_prepaid_dialog_custom_amount_hint">Enter amount</string>
+
+    <string name="prepaid_topup_description">Top Up Items</string>
+    <string name="prepaid_pin_description">Pin Items</string>
+
+    <string name="prepaid_dialog_credentials_1">The customer\’s account number with the biller/vendor</string>
+    <string name="prepaid_dialog_credentials_1_valiadte">Type the account number again</string>
+    <string name="prepaid_dialog_wireless_validate">Retype Telephone number</string>
+    <string name="prepaid_dialog_credentials_2">Alternate account number</string>
+    <string name="prepaid_dialog_credentials_3">Vendor specific account number</string>
+    <string name="prepaid_dialog_credentials_4">Vendor specific profile data</string>
+    <string name="prepaid_dialog_credentials_5">Beneficiary first name</string>
+    <string name="prepaid_dialog_credentials_6">Beneficiary last name</string>
+    <string name="prepaid_dialog_credentials_7">Sender first name</string>
+    <string name="prepaid_dialog_credentials_8">Sender last name</string>
+
+    <string name="sunpass_prepaid_dialog_credentials">SunPass Transponder Number</string>
+    <string name="sunpass_prepaid_dialog_credentials_validate">Re-enter SunPass Transponder Number</string>
+    <string name="sunpass_prepaid_dialog_amount_title">Sunpass amount</string>
+    <string formatted="false" name="sunpass_amount_limitation">Min: %s, Max: %s</string>
+
+    <string name="wireless_dialog_cc">Specify country code</string>
+    <string name="wireless_dialog_credentials">Telephone number</string>
+
+    <string name="orders_header_num">#</string>
+    <string name="orders_header_total">Total</string>
+    <string name="orders_header_date">Date</string>
+    <string name="orders_header_merchant">Cashier</string>
+    <string name="orders_header_gratuity">Gratuity</string>
+    <string name="orders_header_status">Status</string>
+    <string name="orders_header_tender_type">Tender Type</string>
+    <string name="orders_header_prepaid">Pre-paid</string>
+
+    <string name="orders_history_total">Orders found</string>
+    <string name="orders_history_from">from</string>
+    <string name="orders_history_to">to</string>
+    <string name="orders_history_from_to_header">Amount range</string>
+    <string name="orders_history_merchant">Cashier:</string>
+    <string name="orders_history_order_num">Order#:</string>
+    <string name="orders_history_transactions_status">Status:</string>
+
+    <string name="printers_searching">Printers searching...</string>
+    <string name="pref_current_pax_msg">You can setup PAX pinpad here</string>
+
+    <string name="btn_exact">Exact</string>
+
+    <string name="pref_current_pax">Configured PAX pinpads</string>
+
+    <string name="pref_current_printer">Configured printers</string>
+    <string name="pref_current_printer_msg">You can setup printers here</string>
+    <string name="pref_current_printer_empty">Printer is not configured</string>
+    <string name="pref_printer_ip_tmpl">IP: %s</string>
+    <string name="pref_printer_mac_tmpl">Mask: %s</string>
+    <string name="pref_printers_list">Please choose printer</string>
+    <string name="pref_printer_status">Printer status</string>
+    <string name="pref_printer_print_logo">Print Logo</string>
+
+    <string name="pref_display_title">Configured display</string>
+    <string name="pref_display_subtitle">You can setup display here</string>
+    <string name="pref_display_empty">Display is not configured</string>
+    <string name="pref_display_search">Search</string>
+
+    <string name="pref_scanner_title">Configured scanner</string>
+    <string name="pref_scanner_subtitle">You can setup scanner here</string>
+    <string name="pref_scanner_empty">Scanner is not configured</string>
+    <string name="pref_scanner_search">Search</string>
+
+    <string name="sync_notify_title">Syncing...</string>
+    <string name="sync_notify_message">Syncing database</string>
+    <string name="sync_notify_new_items">New data was downloaded: %d entity(s)</string>
+
+    <string name="sync_err_unknown">Synchronization data error</string>
+    <string name="sync_err_items">Can\'t synchronize items</string>
+    <string name="sync_err_sale_orders">Can\'t synchronize sale orders</string>
+    <string name="sync_err_sale_order_items">Can\'t synchronize orders items</string>
+
+    <string name="upload_notify_title">Uploading...</string>
+    <string name="upload_notify_message">Uploading local changes</string>
+    <string name="upload_notify_message_success">Data was uploaded</string>
+    <string name="upload_notify_message_error">Upload data error</string>
+
+    <string name="upload_notify_message_error_db_version_invalid">There\'s a newer version of Kashin available. Please update to be eligible for upload!</string>
+    <string name="upload_notify_message_error_db_version_failed">Failed to check Kashin version. Please try again later</string>
+
+
+    <string name="sync_success_title">Database syncing</string>
+    <string name="sync_success_message">Data was synchronized</string>
+    <string name="sync_error_title">Database syncing</string>
+    <string name="sync_error_message">Synchronization data error</string>
+
+
+    <string name="pref_sync_title">Database syncing</string>
+    <string name="pref_sync_summary">Setup sync time</string>
+    <string name="pref_sync_list_title">Database synchronization time</string>
+    <string name="pref_sync_now">Sync now</string>
+    <string name="pref_sync_wait">Synchronizing...</string>
+
+    <string name="pref_pax_title">PAX pinpad settings</string>
+    <string name="pref_pax_summary">Setup PAX pinpad</string>
+
+    <string name="pref_printer_title">Printer settings</string>
+    <string name="pref_printer_summary">Setup cash drawer and printer</string>
+    <string name="pref_printer_cancel">Cancel</string>
+    <string name="pref_printer_refresh">Refresh</string>
+
+    <string name="pref_drawer_header_title">Drawer settings</string>
+    <string name="pref_drawer_header_summary">Cash drawer settings</string>
+
+    <string name="pref_drawer_pin_high">Pin High</string>
+    <string name="pref_drawer_pin_high_summary">Setup drawer pin high</string>
+
+    <string name="pref_swiper_title">Credit Card Swiper</string>
+    <string name="pref_swiper_title_summary">Setup Credit Card Swiper hardware</string>
+
+    <string name="pref_display_header_title">Display settings</string>
+    <string name="pref_display_header_summary">Customer display settings</string>
+
+    <string name="pref_scanner_header_title">Scanner settings</string>
+    <string name="pref_scanner_header_summary">Barcode scanner settings</string>
+    <string name="pref_swiper_header_title">Credit Card Swiper</string>
+    <string name="pref_swiper_header_summary">Credit Card Swiper settings</string>
+
+    <string name="total_cost_subtotal_label">Subtotal:</string>
+    <string name="total_cost_discount_label">Discount:</string>
+    <string name="total_cost_tax_label">Tax total:</string>
+    <string name="total_cost_order_discount_hint">Order discount</string>
+    <string name="cashier_action_settings">Settings</string>
+    <string name="cashier_action_order_list">Order list</string>
+    <string name="cashier_action_prapaid">Prepaid</string>
+    <string name="cashier_action_balance">EBT Balance</string>
+    <string name="cashier_action_commission">Sales Person</string>
+    <string name="cashier_action_search">Search</string>
+    <string name="cashier_action_delete">Delete</string>
+    <string name="cashier_action_add">Add</string>
+    <string name="cashier_action_unit">Search serial</string>
+    <string name="cashier_action_add_several">Add several</string>
+    <string name="cashier_action_set_warranty">Set Warranty</string>
+    <string name="btn_login">Login</string>
+
+    <string name="cashier_action_serial">Serial management</string>
+    <string name="cashier_action_serial_disabled">This item is not serial.</string>
+
+    <string name="cashier_msg_error_changing_price">Discount per item has already applied, to change open price you need to reset discount per item</string>
+    <string name="cashier_msg_error_changing_discount">Order discount was already applied, to apply discount per item you need to reset order discount firstly</string>
+    <string name="cashier_msg_error_changing_qty">This item is serializable, to add new items please use the scanner or choose it manually</string>
+
+    <string name="login_wait">Sign in to the system</string>
+
+    <string name="pax_instructions">Please follow the instructions on the PAX pinpad device. Should you want to abort press \"Cancel\" button."</string>
+    <string name="pax_balance_instructions">Only EBT cards are eligible for balance review. Please follow the instructions on the PAX pinpad device. Should you want to abort press \"Cancel\" button."</string>
+    <string formatted="false" name="pax_balance_response">The balance for ************%s card is %s</string>
+    <string formatted="false" name="pax_refund_instructions">Current transaction number is %s. Please follow the instructions on the PAX pinpad device. Should you want to abort press \"Cancel\" button."</string>
+    <string formatted="false" name="pax_close_instructions">Current transaction number is %s. Please follow the instructions on the PAX pinpad device. If you want to abort, press \"Cancel\" button."</string>
+    <string formatted="false" name="pax_add_tips_instructions">Current transaction number is %s. Selected tips amount is %s. Please follow the instructions on the PAX pinpad device. If you want to abort, press \"Cancel\" button."</string>
+
+    <string name="items_actions_title">Item actions</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="btn_pay">Pay</string>
+    <string name="btn_void">Void</string>
+    <string name="btn_hold">Hold</string>
+    <string name="drawer_open">Open drawer</string>
+    <string name="drawer_close">Close drawer</string>
+    <string name="pick_item_title">Pick item</string>
+    <string name="cashier_title_new_order">New order</string>
+    <string name="cashier_title_return_items">Return items</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_simulate">Simulate</string>
+    <string name="btn_manual">Manual</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_retry">Retry</string>
+    <string name="btn_abort">Abort</string>
+    <string name="btn_continue">Continue</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_next">Next</string>
+    <string name="btn_accept">Accept</string>
+    <string name="btn_proceed">Proceed</string>
+    <string name="btn_finish">Finish</string>
+    <string name="btn_try_again">Try again</string>
+    <string name="btn_skip">Skip</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_select">Select</string>
+    <string name="btn_update">Update</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_print">Print</string>
+    <string name="btn_remove">Remove</string>
+    <string name="btn_submit">Submit</string>
+    <string name="btn_swipe">Swipe</string>
+    <string name="btn_send_logs">Send Logs</string>
+
+    <string name="chkbx_print">Print receipt</string>
+    <string name="chkbx_payment_easy">Single tender</string>
+    <string name="chkbx_email">Email receipt</string>
+    <string name="chkbx_sign_print">Signature receipt</string>
+
+    <string name="receipt_message">Please choose options:</string>
+
+    <string name="void_process_message">Please wait while the transactions are being voided</string>
+
+    <string name="void_result_ok">Void successfull</string>
+    <string name="void_result_fail">Void failed</string>
+    <string name="void_result_partially">Void was only partially complete</string>
+    <string name="void_process_title">Voiding...</string>
+
+    <string name="refund_result_ok">Return successfull</string>
+    <string name="refund_process_title">Returning...</string>
+
+    <string name="dlg_process_refund_msg">Would you like to proceed refund with a different tender method?</string>
+    <string name="dlg_process_refund_title">Refund</string>
+
+    <string name="dlg_void_title">Void order</string>
+    <string name="dlg_void_msg">Are you sure you want to void order?</string>
+    <string name="btn_item_remove">Remove</string>
+    <string name="btn_item_cancel">Cancel</string>
+    <string name="cashier_order_title_tmpl">Order: %s</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="btn_configure">Configure</string>
+    <string name="btn_email">Email</string>
+
+    <string name="wireless_remove_item_title">Remove Item</string>
+    <string name="wireless_already_item_title">Item status</string>
+    <string name="wireless_item_not_found_label">Serial number wasn\'t found</string>
+    <string name="wireless_item_used_label">Serial number already under sales.</string>
+    <string name="wireless_item_not_returned_label">Serial number can\'t be returned</string>
+    <string name="wireless_remove_items_title">Remove all serials</string>
+    <string name="wireless_counter_label">Quantity : </string>
+    <string name="wireless_remove_item_body">Please confirm item removal.</string>
+    <string name="wireless_remove_items_body">All serial items will be erased permanently. Please confirm.</string>
+    <string name="wireless_already_in_label">This item is already under sales.</string>
+    <string name="wireless_free_edit">Update Serial number\nand warranty period.</string>
+    <string name="wireless_recursive_edit">You can bulk-add items here. \nUse your scanner or input manually. \nCounter will finish the adding if \nset and reached zero.</string>
+
+    <string name="dlg_unit_search">Search order by serial</string>
+    <string name="dlg_unit_history_search">Enter item serial number</string>
+    <string name="unit_history_serial_not_found">Serial number not found.</string>
+    <string name="unit_history_serial_wrong">Wrong item scanned.</string>
+
+    <string name="dlg_unit_edit">Serial code: S/N</string>
+    <string name="dlg_unit_sn_edit">Serial code: S/N</string>
+    <string name="dlg_unit_iccid_edit">Serial code: ICCID</string>
+    <string name="dlg_unit_imei_edit">Serial code: IMEI</string>
+
+    <string name="dlg_unit_add">Bulk add: S/N</string>
+    <string name="dlg_unit_sn_add">Bulk add: S/N</string>
+    <string name="dlg_unit_iccid_add">Bulk add: ICCID</string>
+    <string name="dlg_unit_imei_add">Bulk add: IMEI</string>
+
+    <string name="dlg_unit_warranty_title">Set Warranty</string>
+
+    <string name="dlg_edit_qty">Please enter the quantity</string>
+    <string name="dlg_edit_price">Please enter the price</string>
+    <string name="dlg_si_discount_qty">Please enter the discount</string>
+    <string name="dlg_so_discount_qty">Please enter the discount</string>
+    <string formatted="false" name="dlg_sn_descr">There are currently %s items in stock.\nTo add or remove one, use %s formatted code.</string>
+    <string formatted="false" name="dlg_sn_add_descr">There are currently %s items in stock.\nPlease use the scanner to add an item or enter %s formatted code.</string>
+    <string formatted="false" name="dlg_sn_remove_descr">These items are serialized. Please use the scanner to remove an item or enter %s formatted code.</string>
+
+    <string name="dlg_edit_tax">Apply tax</string>
+    <string name="dlg_edit_order_discount">Order discount</string>
+    <string name="dlg_hold_title">Hold On list</string>
+    <string name="dlg_hold_print_checkbox">Kitchen print</string>
+    <string name="btn_new_order">Confirm</string>
+
+    <string name="order_footer_total">TOTAL</string>
+    <string name="modify_dialog_title">Modification</string>
+
+    <string name="blackstone_pay">Achieving goals...</string>
+    <string name="blackstone_pay_title">Payment result</string>
+    <string name="blackstone_pay_failed">Unfortunately your payment request has failed. %sWould you like to try again?</string>
+    <string name="blackstone_pay_succeded">Congratulations! Your payment request was successful! Would you like to proceed to the next?</string>
+
+    <string name="blackstone_pay_tender_title">Please choose:</string>
+
+    <string name="blackstone_pay_charge_title">Enter the charge amount</string>
+
+    <string name="blackstone_pay_swipe_title">Swipe the card</string>
+
+    <string name="blackstone_pay_wait_title">Please wait</string>
+
+    <string name="blackstone_pay_confirm_title">Transaction complete</string>
+
+    <string name="blackstone_pay_reload_btn">Reload</string>
+
+    <string name="blackstone_pay_confirm_title_failed">Transaction failed</string>
+
+    <string name="blackstone_pay_swipe_body">Please swipe the card to proceed.</string>
+    <string name="blackstone_pay_success_body">Transaction has been completed successfully.</string>
+    <string name="blackstone_pay_failure_body_1st">Transaction has failed.</string>
+    <string name="blackstone_pay_failure_body_2nd">The server has replied: </string>
+    <string name="blackstone_pay_failure_body_constructor" formatted="false">%s %s %s</string>
+    <string name="blackstone_pay_failure_body_3nd">There was a non-banking related issue: </string>
+    <string name="blackstone_pay_progress_body">Verification...</string>
+    <string name="blackstone_pay_total">Total:</string>
+    <string name="blackstone_pay_pending_amount">Pending amount:</string>
+    <string name="blackstone_pay_charge">Change:</string>
+    <string name="blackstone_pay_charge_finish">Change: %s</string>
+    <string name="blackstone_pay_required_amount">Required amount:</string>
+    <string name="blackstone_pay_received_cash">Received cash:</string>
+    <string name="blackstone_pay_transaction_constructor" formatted="false">%s payment</string>
+
+    <string name="refund_CC_transactions_title">Transactions by credit card</string>
+    <string name="refund_CC_transactions_amount">Amount to return</string>
+
+    <string name="refund_nothing_selected_title">Refund impossible</string>
+    <string name="refund_nothing_selected_body">Please select one more items you would like to have refunded.</string>
+
+
+    <string name="dlg_section_modifier">Modifier</string>
+    <string name="dlg_section_addon">Add-on</string>
+    <string name="dlg_section_optional">No-Option</string>
+
+    <string name="dlg_barcode_title">Input code</string>
+    <string name="cashier_action_search_by_code">Search by code</string>
+
+    <string name="search_barcode_wait_msg">Scanning...</string>
+    <string name="dlg_search_barcode_err_title">No item</string>
+    <string name="dlg_search_barcode_err_msg">Can\'t find item in database. Do you want to add it?\nProduct code: %s</string>
+    <string name="dlg_search_barcode_err_not_active_title">Deactivated Item</string>
+    <string name="dlg_search_barcode_err_not_active_msg">Item is not active. Do you want to edit it?\nProduct code: %s</string>
+    <string name="btn_add">Add</string>
+    <string name="btn_edit">Edit</string>
+    <string name="pay_toast_zero">The charge can not be of zero value!</string>
+    <string name="lots_o_dots">...........................................................................................................................................</string>
+    <string name="total_cost_order_discount_label">Order discount:</string>
+
+    <string name="qs_info_panel_label_tmpl">%s:</string>
+    <string name="qs_info_panel_addons_label">Add-ons:</string>
+    <string name="qs_info_panel_total_label">Total:</string>
+
+    <string name="inventory_action_add_item">Add Item</string>
+    <string name="inventory_action_sort">Sorting Mode</string>
+    <string name="inventory_action_manage_categories">Manage Categories</string>
+    <string name="inventory_action_manage_departments">Manage Departments</string>
+    <string name="inventory_action_manage_tax_groups">Manage Tax Groups</string>
+    <string name="inventory_action_manage_printer_alias">Manage Printer Alias</string>
+    <string name="inventory_action_export">Export</string>
+    <string name="inventory_action_quickbooks_export">Export to Quickbooks</string>
+    <string name="inventory_action_import">Import</string>
+    <string name="inventory_categories_all_categories">All</string>
+    <string name="inventory_categories_item_count">(%d)</string>
+    <string name="inventory_items_header_description">Description</string>
+    <string name="inventory_items_header_cost">Cost</string>
+    <string name="inventory_items_header_price">Price</string>
+    <string name="inventory_items_header_quantity">Quantity</string>
+    <string name="inventory_items_header_total_cost">Total Cost</string>
+
+    <string name="item_activity_name">Name:</string>
+    <string name="item_activity_department">Department:</string>
+    <string name="item_activity_category">Category:</string>
+    <string name="item_activity_tax_group">Tax group:</string>
+    <string name="item_activity_ean_upc_code">UPC\\EAN:</string>
+    <string name="item_activity_product_code">Product code:</string>
+    <string name="item_activity_code">Code:</string>
+    <string name="item_activity_units_label">Units label:</string>
+    <string name="item_activity_price_type">Price type:</string>
+    <string name="item_activity_unit_type">Stock type:</string>
+    <string name="item_activity_active">Active:</string>
+    <string name="item_activity_notes">Notes:</string>
+    <string name="item_activity_kitchen">Kitchen:</string>
+    <string name="item_activity_supplier">Supplier:</string>
+    <string name="item_activity_modifiers">Modifiers (%d):</string>
+    <string name="item_activity_optionals">No-Options (%d):</string>
+    <string name="item_activity_addons">Add-ons (%d):</string>
+    <string name="item_activity_minimum_qty">Minimum quantity:</string>
+    <string name="item_activity_recommended_qty">Recommended quantity:</string>
+    <string name="item_activity_available_quantity">Available quantity:</string>
+    <string name="item_activity_stock_tracking">Stock tracking:</string>
+    <string name="item_activity_sales_price">Sales Price:</string>
+    <string name="item_activity_discountable">Discountable:</string>
+    <string name="item_activity_discount_type">Discount type:</string>
+    <string name="item_activity_discount_amount">Discount:</string>
+    <string name="item_activity_taxable">Taxable:</string>
+    <string name="item_activity_cost">Cost:</string>
+    <string name="item_activity_button_view">Button view:</string>
+    <string name="item_activity_hide_item_dialog_title">Delete item</string>
+    <string name="item_activity_hide_item_dialog_message">Are you sure you want to delete item?</string>
+
+    <string name="item_activity_alert_description_msg">Name is empty!</string>
+    <string name="item_activity_alert_category_msg">Category is empty!</string>
+    <string name="item_activity_alert_ean_msg" formatted="false">Ean should be %d to %d symbols!</string>
+    <string name="item_activity_alert_ean_error" formatted="false">EAN\\UPC Code should be numeric and can\'t be more than %d digits</string>
+    <string name="item_activity_alert_product_code_error" formatted="false">Product Code can\'t be more than %d symbols</string>
+    <string name="item_activity_alert_product_code_msg" formatted="false">Product code should be %d to %d symbols!</string>
+    <string name="item_activity_alert_ean_duplicate_msg">Item with such ean is already exists!</string>
+    <string name="item_activity_alert_product_code_duplicate_msg">Item with such product code is already exists!</string>
+    <string name="item_activity_alert_units_label_msg">Units label is empty!</string>
+    <string name="item_activity_alert_price_empty_msg">Price is empty!</string>
+    <string name="item_activity_alert_price_positive_msg">Price should be positive!</string>
+    <string name="item_activity_alert_discount_less_100_msg">Discount should be less then 100%</string>
+    <string name="item_activity_alert_discount_less_price_msg">Discount should be less then sale price</string>
+    <string name="item_activity_alert_code_type_title">Code type</string>
+    <string name="item_activity_alert_code_type_ean">UPC\\EAN</string>
+    <string name="item_activity_alert_code_type_product_code">Product Code</string>
+
+
+    <string name="commission_validation_alert_msg">Commission should be less then 100%</string>
+
+    <string name="edit_item_common_information">Common information</string>
+    <string name="edit_item_modification">Modification</string>
+    <string name="edit_item_monitoring">Monitoring</string>
+    <string name="edit_item_price">Price</string>
+
+    <string name="button_view_select_dialog_title">Select item button view</string>
+
+    <string name="modifiers_activity_title">%s modifications</string>
+    <string name="modifiers_activity_new_item_title">New Item</string>
+
+    <string name="printer_discount">Discount</string>
+    <string name="printer_cash_back">CashBack</string>
+    <string name="printer_subtotal">Subtotal</string>
+    <string name="printer_tax">Tax</string>
+    <string name="printer_total">Total</string>
+    <string name="printer_tips">Tips</string>
+    <string name="printer_balance">Balance</string>
+    <string name="printer_order_num">Order</string>
+    <string name="printer_guest">Guest</string>
+    <string name="printer_refund_total">Total (tax included)</string>
+    <string name="printer_refund_tips">     Tips</string>
+
+    <string name="printer_signature_subtitle">Signature Receipt</string>
+    <string name="printer_date">Date:</string>
+    <string name="printer_card_name">Card name:</string>
+    <string name="printer_auth_number">Authorization:</string>
+    <string name="printer_shifted_number">Shifted number:</string>
+    <string name="printer_amount">Amount:</string>
+    <string name="printer_signature_line">Customer sign: _______________________________</string>
+    <string name="printer_manual_input_line">___________</string>
+    <string name="printer_gratuity_colon">Gratuity:</string>
+    <string name="printer_total_colon">Total:</string>
+    <string name="printer_signature_customer_copy">CUSTOMER COPY</string>
+    <string name="printer_signature_merchant_copy">MERCHANT COPY</string>
+    <string name="printer_terminal_id">Terminal ID:</string>
+    <string name="printer_merchant_id">Merchant ID:</string>
+    <string name="printer_signature_merchant_copy_phrase1">I agree to pay above total amount</string>
+    <string name="printer_signature_merchant_copy_phrase2">according to card issuer Agreement</string>
+    <string name="printer_check">Check</string>
+
+    <string name="pax_not_configured">Wrong IP address, PAX pinpad wasn\'t configured</string>
+    <string name="pax_configuring">Please wait for the device to be checked</string>
+    <string name="pax_configured">Device ready!</string>
+
+    <string name="pax_timeout">Connection has timed out. This may be caused by device malfunction or bad configuration. Do not swipe the card and press Cancel if the device is still waiting for it.</string>
+
+    <string name="pax_reload_timeout">The last transaction was cancelled manually or network issue.</string>
+    <string name="pax_reload_after_relaod"> After Reload: </string>
+    <string name="pax_reload_after_cannot_reload">The PAX device can not reload current transaction.</string>
+
+    <string formatted="false" name="pax_reload_disable_further">%s It is not reasonable to reload again as the result will be the same.</string>
+
+    <string name="back_twice_hint">Please click BACK again to exit</string>
+
+    <string name="back_twice_hint_data_not_saved">Changes are not saved. Click BACK again to exit</string>
+
+    <string name="price_type_open">Open</string>
+    <string name="price_type_fixed">Fixed</string>
+    <string name="price_type_unit_price">Unit price</string>
+    <string name="discovery_scanner_msg">Please choose device</string>
+    <string name="discovery_scanner_error_msg">Can\'t connect to bluetooth. Please check bluetooth state!</string>
+    <string name="discovery_scanner_error_title">Bluetooth error</string>
+
+    <string name="device_error">Device error</string>
+    <string name="printer_not_configured">Printer is not configured</string>
+    <string name="scanner_not_configured">Scanner is not configured</string>
+
+    <string name="swipe_card_error_not_ready_msg">Card reader is not ready yet.\nPlease try again!</string>
+    <string name="swipe_card_error_msg">Can\'t read data from card.\nPlease try again!</string>
+
+    <string name="modifiers_action_copy">Copy from existing item</string>
+    <string name="modifiers_action_create_new">Create new</string>
+    <string name="dashboard_activity_cash_in_drawer_label">CASH IN DRAWER</string>
+    <string name="dashboard_activity_opening_amount">OPENING AMOUNT</string>
+    <string name="dashboard_activity_actual_cash_in_drawer_label">ACTUAL DRAWER</string>
+    <string name="dashboard_activity_drawer_difference">DRAWER DIFFERENCE</string>
+    <string name="dashboard_activity_operator_name_label">Welcome,\u0020</string>
+    <string name="dashboard_activity_total_sales_label">TOTAL SALES</string>
+    <string name="dashboard_activity_total_sales_cash_label">CASH:</string>
+    <string name="dashboard_activity_total_sales_credit_label">CREDIT:</string>
+    <string name="dashboard_activity_total_sales_debit_label">DEBIT:</string>
+    <string name="dashboard_activity_total_sales_ebt_label">EBT:</string>
+    <string name="dashboard_activity_total_sales_other_label">OTHER:</string>
+    <string name="dashboard_activity_register_button_label">Register</string>
+    <string name="dashboard_activity_inventory_button_label">Inventory</string>
+    <string name="dashboard_activity_reports_button_label">Reports</string>
+    <string name="dashboard_activity_no_sale_button_label">No-Sale</string>
+    <string name="dashboard_activity_employees_button_label">Employees</string>
+    <string name="dashboard_activity_customers_button_label">Customers</string>
+    <string name="dashboard_activity_drops_and_payouts_button_label">Drops and Payouts</string>
+    <string name="dashboard_activity_xreport_button_label">X Report</string>
+
+    <string name="dashboard_activity_opened_transactions_warning_title">Open credit card transactions</string>
+    <string name="dashboard_activity_opened_transactions_warning_message">There are still some open credit card transactions in the shop. Do you want to close them?</string>
+
+    <string name="dashboard_action_activation">Activation Center</string>
+    <string name="dashboard_action_options">Settings</string>
+    <string name="dashboard_action_logout">Logout</string>
+    <string name="dashboard_action_send_logs">Send dev log</string>
+    <string name="dashboard_action_export_database">Export database</string>
+
+    <string name="dashboard_register_serial">Register Serial:\u0020%s</string>
+
+    <string name="dlg_open_amount">Enter opening amount:</string>
+    <string name="dlg_close_amount">Enter amount:</string>
+    <string name="dlg_close_drawer">Close Cash Drawer</string>
+    <string name="dlg_print_zreport">Close Shift Report</string>
+    <string name="dlg_put_cash">Insert Cash</string>
+    <string name="dlg_remove_cash">Remove Cash</string>
+    <string name="dlg_cash_drawer_movements">Enter amount</string>
+
+    <string name="dlg_close_amount_label">Cash in drawer:</string>
+    <string name="dlg_open_amount_label">Opening amount:</string>
+    <string name="dlg_multiple_serial_codes_msg">There are several items with such serial code. Please scan product code or choose from the list manually</string>
+    <string name="dlg_multiple_serial_codes_title">Multiple serial codes</string>
+
+    <string name="btn_done">Done</string>
+    <string name="print_order_power_by">Power by %s</string>
+
+    <string name="print_order_power_by_backstone">Blackstone</string>
+    <string name="print_order_power_by_paypal">Paypal</string>
+
+    <string name="wait_dialog_title">Please wait...</string>
+
+    <string name="wait_message_open_drawer">Opening drawer</string>
+    <string name="wait_message_start_shift">Opening shift</string>
+    <string name="wait_message_stop_shift">Closing shift</string>
+    <string name="wait_message_print_zreport">Please wait...</string>
+    <string name="wait_message_clock_in">Clock-In</string>
+    <string name="wait_message_clock_out">Clock-Out</string>
+
+    <string name="error_dialog_title">Error</string>
+    <string name="warning_dialog_title">Warning</string>
+
+    <string name="error_message_printer_unknown">Printer Error</string>
+    <string name="error_message_printer_disconnected">Printer is disconnected.</string>
+    <string name="error_message_printer_ip_not_found">Printer was not found by IP\nPerform searching by MAC-address?</string>
+    <string name="error_message_drawer_ip_not_found">Drawer was not found by IP\nPerform searching by MAC-address?</string>
+    <string name="error_message_printer_busy">Printer is busy.</string>
+    <string name="error_message_printer_offline">Printer is offline.</string>
+    <string name="error_message_printer_no_paper">Printer has no paper.</string>
+    <string name="error_message_printer_paper_is_near_end">Paper is near the end in the printer!</string>
+    <string name="error_message_printer_head_overheated">Printer\'s head is over heated!\nPlease wait and try again later</string>
+    <string name="error_message_printer_cutter_error">Printer has cutter error!</string>
+    <string name="error_message_printer_cover_is_opened">Printer cover is opened!</string>
+
+    <string name="error_message_printer_unknown_with_name">Unclassified printer unrelated error occurred (\'%s\').</string>
+    <string name="error_message_printer_disconnected_with_name">Printer \'%s\' is disconnected.</string>
+    <string name="error_message_printer_ip_not_found_with_name">Printer \'%s\' was not found by IP\nPerform searching by MAC-address?</string>
+    <string name="error_message_printer_busy_with_name">Printer \'%s\' is busy.</string>
+    <string name="error_message_printer_offline_with_name">Printer \'%s\' is offline.</string>
+    <string name="error_message_printer_no_paper_with_name">Printer \'%s\' has no paper.</string>
+    <string name="error_message_printer_paper_is_near_end_with_name">Paper \'%s\' is near the end in the printer!</string>
+    <string name="error_message_printer_head_overheated_with_name">Printer\'s \'%s\' head is over heated!\nPlease wait and try again later</string>
+    <string name="printer_not_configured_with_name">Printer \'%s\' is not configured</string>
+    <string name="error_message_printer_cutter_error_with_name">Printer \'%s\' has cutter error!</string>
+    <string name="error_message_printer_cover_is_opened_with_name">Printer\'s \'%s\' cover is opened!</string>
+
+    <string name="error_message_shift">Can not change shift state</string>
+    <string name="error_message_timesheet">Can not change timesheet state</string>
+
+    <string name="error_message_employee_does_not_exist">Employee doesn\'t exist in the system. Plese check your credentials</string>
+    <string name="error_message_already_clocked_in">Clock In has been already performed</string>
+    <string name="error_message_already_clocked_out">Clock Out has been already performed</string>
+
+    <string name="error_message_no_payments">Cannot refund - order has no payments</string>
+    <string name="error_message_has_payments">Cannot void - order has payments</string>
+
+    <string name="modifiers_copy_header_name">Name</string>
+
+    <string name="modifiers_copy_header_modifiers">Modifiers</string>
+    <string name="modifiers_copy_header_addons">Add-ons</string>
+    <string name="modifiers_copy_header_optionals">No-Options</string>
+
+    <string name="modifiers_edit_dialog_price_hint">Extra cost</string>
+    <string name="modifiers_edit_dialog_title_hint">Name</string>
+
+    <string name="modifiers_delete_modifier_dialog_title">Delete modifier</string>
+    <string name="modifiers_delete_addon_dialog_title">Delete add-on</string>
+    <string name="modifiers_delete_option_dialog_title">Delete no-option</string>
+
+    <string name="modifiers_delete_modifier_dialog_message">Are you sure you want to delete modifier \'%s\'?</string>
+    <string name="modifiers_delete_addon_dialog_message">Are you sure you want to delete add-on \'%s\'?</string>
+    <string name="modifiers_delete_option_dialog_message">Are you sure you want to delete no-option \'%s\'?</string>
+
+    <string name="modifiers_list_title">Modifiers (%d)</string>
+    <string name="addons_list_title">Add-ons (%d)</string>
+    <string name="options_list_title">No-Options (%d)</string>
+
+    <string name="modifiers_copy_dialog_modifiers">Modifiers</string>
+    <string name="modifiers_copy_dialog_addons">Add-ons</string>
+    <string name="modifiers_copy_dialog_options">No-Options</string>
+
+    <string name="no_option_prefix">NO-</string>
+    <string name="btn_copy">Copy</string>
+
+    <string name="open_drawer_error_title">Can\'t open drawer!</string>
+
+    <string name="close_drawer_error_title">Drawer isn\'t closed!</string>
+    <string name="close_drawer_error_msg_close_id">Please close cash drawer.</string>
+
+    <string name="printer_status_yes_value">Yes</string>
+    <string name="printer_status_no_value">No</string>
+
+    <string name="printer_status_online_label">Printer On-Line</string>
+    <string name="printer_status_paper_present_label">Paper present</string>
+    <string name="printer_status_cover_closed_label">Cover closed</string>
+    <string name="printer_status_temperature_normal_label">Temperature is normal</string>
+    <string name="printer_status_cutter_ok_label">Cutter is normal</string>
+    <string name="printer_status_drawer_is_closed_label">Drawer is closed</string>
+    <string name="printer_status_paper_full_label">Enough paper</string>
+
+    <string name="department_action_create_department">Create department</string>
+    <string name="department_dialog_title_edit">Edit department</string>
+    <string name="department_dialog_title_create">Create department</string>
+    <string name="modify_dialog_title_add">Create modification</string>
+    <string name="modify_dialog_title_edit">Edit modification</string>
+    <string name="department_action_create_category">Create category</string>
+    <string name="categories_dialog_name_hint">Name</string>
+    <string name="categories_dialog_title_edit">Edit category</string>
+    <string name="categories_dialog_title_create">Create category</string>
+    <string name="categories_confirm_dialog_title">Delete category</string>
+    <string name="categories_commissions_eligible_label">Commission eligible</string>
+    <string name="categories_commissions_label">Commission:</string>
+
+    <string name="categories_dialog_title_empty_msg">Name is empty</string>
+    <string name="categories_dialog_title_exists_msg">Category already exists in department</string>
+
+    <string name="categories_delete_dialog_title">Delete category</string>
+    <string name="categories_delete_dialog_message">Are you sure you want to delete category \'%s\'?</string>
+    <string name="categories_toast_success_message">Category \'%s\' was successfully deleted</string>
+    <string name="categories_toast_failed_message" formatted="false">Failed to delete category \'%s\'. It has %d items</string>
+
+    <string name="departments_delete_dialog_title">Delete department</string>
+    <string name="departments_delete_dialog_message">Are you sure you want to delete department \'%s\'?</string>
+    <string name="departments_toast_success_message">Department \'%s\' was successfully deleted</string>
+    <string name="departments_toast_failed_message" formatted="false">Failed to delete department \'%s\'. It has %d items</string>
+
+    <string name="categories_departments_wait_dialog_message">Searching for items...</string>
+
+    <string name="department_dialog_name_hint">Name</string>
+
+    <string name="login_login_hint">Login</string>
+    <string name="login_password_hint">Password</string>
+
+    <string name="permission_dialog_message">You do not have the required permission.\nPlease contact manager.</string>
+
+    <string name="btn_back_to_dashboard">Back to Dashboard</string>
+
+    <string name="temp_login_item_login_label">Temporarily logged in as:\u0020</string>
+
+    <string name="error_message_login">Invalid user or password.\nPlease verify your credentials</string>
+    <string name="error_message_login_empty">Please fill all fields!</string>
+    <string name="error_message_login_db">Can\'t update database, please try again</string>
+    <string name="error_message_login_title">Login error</string>
+    <string name="error_message_login_duplicate">You have already logged by this user</string>
+    <string name="error_message_login_no_permission">You do not have the required permission</string>
+    <string name="error_message_register_check">Can\'t find register.\nPlease contact your admin!</string>
+    <string name="error_message_employee_not_active">Employee status should be \'Active\'</string>
+    <string name="error_message_outdated">There has been a newer version of Kashin released recently. Please update in order to be eligible for sync. Your local data will not be lost.</string>
+    <string name="error_message_offline">You are offline, please check your Internet connection and try again</string>
+    <string name="error_message_sync_inconsistent">Couldn\'t finalize synchronization, please try again later</string>
+    <string name="error_message_login_offline_failed">Unable to log in. Please, connect your tablet to the Internet and try again</string>
+
+    <string name="btn_logout">Logout</string>
+
+    <string name="inventory_navigation_filter_all">All</string>
+    <string name="inventory_navigation_filter_near_the_end">Low inventory items</string>
+
+    <string name="cash_drawer_movement_dialog_comment_label">Comment</string>
+    <string name="action_employee_add">Add employee</string>
+    <string name="action_employee_tips_add">Add tips</string>
+
+    <string name="action_customer_add">Add customer</string>
+    <string name="action_customer_quickbooks_export">Export to Quickbooks</string>
+
+
+    <string name="order_email_subject">Order #%s</string>
+    <string name="refund_email_subject">Refund #%s</string>
+
+    <string name="error_print_digital_order">Couldn\'t create digital receipt</string>
+
+    <string name="print_order_change_label">Change</string>
+    <string name="print_order_refund_subtitle">Return Receipt</string>
+    <string name="print_order_void_subtitle">Void Receipt</string>
+    <string name="print_order_item_discount">Discount</string>
+    <string name="print_order_signature_subtitle">Signature</string>
+    <string name="print_order_merchant_id_label">Merchant ID</string>
+
+    <string name="employee_personal_information">Personal information</string>
+    <string name="employee_salary_info">Salary info</string>
+    <string name="employee_contacts">Contacts</string>
+    <string name="employee_permission">Permission</string>
+
+    <string name="employee_first_name_label">Firts name:</string>
+    <string name="employee_last_name_label">Last name:</string>
+    <string name="employee_street_label">Street:</string>
+    <string name="employee_complementary_label">Complementary:</string>
+    <string name="employee_city_label">City:</string>
+    <string name="employee_state_label">State:</string>
+    <string name="employee_country_label">Country:</string>
+    <string name="employee_zip_label">Zip:</string>
+    <string name="employee_email_label">E-mail:</string>
+    <string name="employee_phone_label">Phone:</string>
+    <string name="employee_profile_label">Profile:</string>
+    <string name="employee_login_label">Login:</string>
+    <string name="employee_password_label">Password:</string>
+    <string name="employee_confirm_password_label">Confirm\npassword:</string>
+    <string name="employee_hourly_rate_label">Hourly rate:</string>
+    <string name="employee_tips_eligible_label">Tips eligible</string>
+    <string name="employee_commissions_eligible_label">Commission eligible</string>
+    <string name="employee_commissions_label">Commission:</string>
+    <string name="employee_preset_label">Preset:</string>
+    <string name="employee_status_label">Status:</string>
+
+    <string name="employee_status_label_active">Active</string>
+    <string name="employee_status_label_blocked">Blocked</string>
+
+    <string name="employee_tips_add_success_msg">Tips added</string>
+    <string name="employee_tips_split_success_msg">Tips splitted among %d employees</string>
+    <string name="employee_tips_add_failed_msg">Failed to add tips</string>
+
+    <string name="item_commissions_eligible_label">Commission\neligible:</string>
+    <string name="item_commissions_label">Commission:</string>
+
+    <string name="sync_wait_msg_tmpl" formatted="false">Sync %s data: %d/%d</string>
+    <string name="sync_wait_upload_started">Uploading data...</string>
+    <string name="sync_wait_msg_tmpl2" formatted="false">Sync %s data</string>
+    <string name="sync_category">categories</string>
+    <string name="sync_department">departments</string>
+    <string name="sync_item">items part#1 </string>
+    <string name="sync_modifier">items part#2</string>
+    <string name="sync_item_movement">items part#3</string>
+
+    <string name="sync_sale_order">sale orders part#1</string>
+    <string name="sync_sale_order_item">sale orders part#2</string>
+    <string name="sync_sale_order_item_addons">sale orders part#3</string>
+    <string name="sync_sale_order_payments">sale orders part#4</string>
+    <string name="sync_units">units</string>
+
+    <string name="sync_employee">employees part#1</string>
+    <string name="sync_employee_permission">employees part#2</string>
+    <string name="sync_employee_timesheet">employees part#3</string>
+    <string name="sync_employee_tips">employees part#4</string>
+    <string name="sync_employee_commissions">employees part#5</string>
+
+    <string name="sync_shift">dashboard part#1</string>
+    <string name="sync_cashdrawer_movemennt">dashboard part#2</string>
+    <string name="tax_group">tax groups</string>
+    <string name="register">registers</string>
+    <string name="customer">customers</string>
+    <string name="printer_alias">printer alias</string>
+    <string name="printer">printers</string>
+    <string name="bill_description">bills</string>
+    <string name="credit_receipts_description">credit receipts</string>
+    <string name="prepaid_wireless_description">Wireless Products</string>
+
+    <string name="sync_auto_settlement">auto settlement</string>
+    <string name="sync_pax_merchant_info">merchant info</string>
+
+    <string name="sync_diff">App outdated</string>
+
+    <string name="taxgroup_action_create_taxgroup">Create Tax Group</string>
+    <string name="tax_group_dialog_title_hint">Title</string>
+    <string name="tax_group_dialog_tax_hint">Tax</string>
+    <string name="tax_group_dialog_title_edit">Edit Tax Group</string>
+    <string name="tax_group_dialog_title_create">Create Tax Group</string>
+    <string name="tax_group_title">Title</string>
+    <string name="tax_group_tax">Tax</string>
+    <string name="tax_group_delete_warning_dialog_title">Delete Tax Group</string>
+    <string name="tax_group_delete_warning_dialog_message">You are about to delete tax group \'%s\', this will affect all items that linked to it. Do you want to proceed?</string>
+    <string name="tax_group_delete_succeded_message">Tax group \'%s\' successfully deleted</string>
+    <string name="tax_group_delete_failed_message">Failed to delete tax group \'%s\'.\nTry again later</string>
+
+    <string name="item_tax_group_default">Store tax</string>
+
+    <string name="permission_sales_transaction">Sales Transaction</string>
+    <string name="permission_sales_discount">Sales Discount</string>
+    <string name="permission_void_items">Void Items</string>
+    <string name="permission_void_sales">Void After Tender</string>
+    <string name="permission_sales_return">Sales Return</string>
+    <string name="permission_table_ordering">Table Ordering</string>
+    <string name="permission_transfer_quests">Transfer Guests</string>
+    <string name="permission_split_check">Split Check</string>
+    <string name="permission_join_table">Join Table</string>
+    <string name="permission_guest_table_ordering">Guest Table Ordering</string>
+    <string name="permission_inventory_module">Inventory Management</string>
+    <string name="permission_employee_management">Employee Management</string>
+    <string name="permission_customer_management">Customer Management</string>
+    <string name="permission_backups">Backups</string>
+    <string name="permission_software_updates">Software Updates</string>
+    <string name="permission_reports">Reports</string>
+    <string name="permission_drops_and_payout">Drops and Payouts</string>
+    <string name="permission_admin">Settings</string>
+    <string name="permission_open_close_shift">Open/Close Shift</string>
+    <string name="permission_sales_tax">Sales Tax</string>
+    <string name="permission_no_sales">No Sale</string>
+    <string name="permission_tips">Tip Settlement</string>
+    <string name="permission_training_mode">Training Mode</string>
+    <string name="permission_warranty_expiration_override">Warranty Expiration Override</string>
+
+    <string name="permission_group_sales_module">Sales Module</string>
+    <string name="permission_group_table_management">Table Management</string>
+    <string name="permission_group_dashboard">Dashboard</string>
+    <string name="permission_group_system_configuration">System Configuration</string>
+
+    <string name="permission_preset_cashier">Cashier</string>
+    <string name="permission_preset_manager">Manager</string>
+    <string name="permission_preset_host">Host</string>
+    <string name="permission_preset_waiter">Waiter</string>
+    <string name="permission_preset_cook">Cook</string>
+    <string name="permission_custom">Custom</string>
+
+    <string name="wait_printing">Printing...</string>
+    <string name="tendering_history_total_order_num">Order num:</string>
+    <string name="tendering_history_total_total">Total:</string>
+    <string name="tendering_history_total_date">Date:</string>
+    <string name="tendering_history_total_cashier">Cashier:</string>
+    <string name="tendering_history_total_refund">Refund:</string>
+    <string name="tendering_history_total_tips">Tips:</string>
+    <string name="tendering_history_total_subtotal">Subtotal:</string>
+
+    <string name="employee_edit_first_name_error">First name is empty</string>
+    <string name="employee_edit_last_name_error">Last name is empty</string>
+    <string name="employee_edit_login_error">Login is empty</string>
+    <string name="employee_edit_password_error">Password is empty</string>
+    <string name="employee_edit_password_confirm_error">The password and confirmation do not match</string>
+    <string name="employee_edit_login_min_error">Login minimal length is 3</string>
+    <string name="employee_edit_password_min_error">Password minimal length is 4</string>
+    <string name="employee_edit_email_not_valid_error">Email is not valid</string>
+    <string name="employee_edit_wait_msg">Saving...</string>
+    <string name="employee_edit_error_msg">Can\'t save employee. Please try again!</string>
+    <string name="employee_edit_error_already_exists_msg">Employee with %s login already exists.\nPlease change login!</string>
+    <string name="employee_edit_error_email_already_exists_msg">Employee with %s email already exists.\nPlease change email!</string>
+
+    <string name="employee_delete_dialog_title">Delete employee</string>
+    <string name="employee_delete_dialog_message">Are you sure you want to delete this employee?</string>
+
+    <string name="employee_tips_dialog_title">Add Tips</string>
+    <string name="employee_tips_dialog_notes">Notes</string>
+    <string name="employee_tips_dialog_employee_hint">Assign tip to:</string>
+    <string name="employee_tips_dialog_amount_hint">Amount</string>
+
+    <string name="apply_tips_dialog_title">Add Gratuity</string>
+    <string name="apply_tips_dialog_subtotal_label">Subtotal</string>
+    <string name="apply_tips_dialog_tax_label">Tax</string>
+    <string name="apply_tips_dialog_total_label">Total due</string>
+    <string name="apply_tips_dialog_radi_label" formatted="false">%s ................................................... %s</string>
+    <string name="apply_tips_dialog_wait_message">Applying tips...</string>
+    <string name="apply_tips_dialog_warn_message">Tip entered is higher than (%s) of total ticket</string>
+
+    <string name="timesheet_dialog_title">Employee Timesheet</string>
+    <string name="timesheet_dialog_message">Please enter credentials:</string>
+    <string name="timesheet_dialog_clarify_message">You should Clock In to work with orders</string>
+    <string name="btn_clock_in">Clock In</string>
+    <string name="btn_clock_out">Clock Out</string>
+
+    <string name="reports_activity_label">Reports</string>
+
+    <string name="report_type_xreport">Close Shift Report</string>
+    <string name="report_type_sales_summary">Sales Summary Report</string>
+    <string name="report_type_sales_by_items">Sales by Items</string>
+    <string name="report_type_sales_by_deps">Sales by Departments</string>
+    <string name="report_type_sales_top10_revenues">Top 10 Revenues</string>
+    <string name="report_type_sales_top10_qty">Top 10 Sold Items (quantity)</string>
+    <string name="report_type_sales_by_tender_types">Sales by Tender Type</string>
+    <string name="report_type_employee_attendance">Employee Attendance</string>
+    <string name="report_type_employee_payroll">Employee Payroll</string>
+    <string name="report_type_inventory_qty_log">Items Quantity Log</string>
+    <string name="report_type_inventory_status">Inventory Status</string>
+    <string name="report_type_reorder_inventory">Re-Stock Report</string>
+    <string name="report_type_returned_items">Returned Items</string>
+    <string name="report_type_returned_orders">Returns</string>
+    <string name="report_type_sold_orders">Sales</string>
+    <string name="report_type_inventory_value">Inventory Value</string>
+    <string name="report_type_by_customers">Sales by Customers</string>
+    <string name="report_type_shifts_report">Shifts Report</string>
+    <string name="report_type_x_report">X-Report</string>
+    <string name="report_type_tips_report">Shift Gratuity</string>
+    <string name="report_type_prepaid_sales_by_items">Pre-paid Item Sales</string>
+    <string name="report_type_prepaid_sales_top10_revenues">Top 10 Pre-paid Revenues</string>
+
+    <string name="report_category_sales">Sales</string>
+    <string name="report_category_inventory">Inventory</string>
+    <string name="report_category_employee">Employee</string>
+    <string name="report_category_shift">Shifts</string>
+
+    <string name="report_print_time_label">Print time:</string>
+    <string name="report_date_range_label">Period:</string>
+
+    <string name="report_per_shift">Per Shift</string>
+    <string name="report_per_period">Per Period</string>
+    <string name="report_per_register">Per Register</string>
+
+    <string name="report_switchtext_value">AMOUNT</string>
+    <string name="report_switchtext_qty">TRANSACTIONS</string>
+
+    <string name="reports_from_label">From</string>
+    <string name="reports_to_label">To</string>
+    <string name="reports_period_label">Period</string>
+    <string name="reports_total_label">Total net Sales</string>
+    <string name="reports_average_label">Avg. Ticket</string>
+    <string name="reports_transactions_label">Transactions</string>
+    <string name="reports_top_items_label">Top Items:</string>
+    <string name="reports_view_label">(view)</string>
+    <string name="reports_top_items_empty">none</string>
+    <string name="reports_mode_entity_shift">Shift:\u0020</string>
+    <string name="reports_mode_entity_register">Register\u0020</string>
+    <string name="reports_mode_entity_employee">Employee\u0020</string>
+    <string name="reports_mode_entity_department">Department\u0020</string>
+
+    <string name="reports_error_from_to_dates">From date should be less then To date!</string>
+    <string name="reports_error_period_too_large_days">Period is too large and will be cropped! (should be %d days or less)</string>
+    <string name="reports_error_period_too_large_hrs">Period is too large and will be cropped! (should be %d hours or less)</string>
+    <string name="reports_error_open_shift">There isn\'t open shift</string>
+
+    <string name="file_chooser_open">Open file</string>
+    <string name="inventory_import_wait">Importing...</string>
+    <string name="inventory_import_success_title">Import succeeded</string>
+    <string name="inventory_import_success_msg">%d items were imported</string>
+    <string name="inventory_import_failed_msg">Can\'t import data from file.</string>
+    <string name="inventory_import_failed_msg_list">Can\'t import the following item(s).</string>
+    <string name="inventory_import_failed_items_max_count_msg_list">%d items were imported.\nCan\'t import the following item(s).</string>
+    <string name="inventory_import_delete_success_msg">%d items were deleted</string>
+
+    <string name="inventory_import_type_title">Choose action</string>
+    <string name="inventory_import_type_full">Import all</string>
+    <string name="inventory_import_type_qty">Update qty</string>
+    <string name="inventory_import_type_price">Update price</string>
+    <string name="inventory_import_type_delete">Batch delete</string>
+
+    <string name="dashboard_clock_in_msg" formatted="false">%s clocked-in\n%s</string>
+    <string name="dashboard_clock_out_msg" formatted="false">%s clocked-out\n%s</string>
+
+    <string name="inventory_modifier_use_default">Use as default</string>
+    <string name="inventory_modifiers_list_default_tpl">%s (Default)</string>
+
+    <string name="inventory_export_wait_msg">Export inventory items...</string>
+    <string name="employee_export_wait_msg">Export employee...</string>
+
+    <string name="inventory_export_error_title">Export failed</string>
+    <string name="inventory_export_error_msg">Can\'t export inventory items to file.</string>
+
+    <string name="inventory_export_success_title">Export succeeded</string>
+    <string name="inventory_export_success_msg">%d items were exported</string>
+
+    <string name="customers_export_wait_msg">Export customers...</string>
+
+    <string name="customers_export_error_title">Export failed</string>
+    <string name="customers_export_error_msg">Can\'t export customers to file.</string>
+
+    <string name="customers_export_success_title">Export succeeded</string>
+    <string name="customers_export_success_msg">%d customers were exported</string>
+
+    <string name="xreport_chooser_current_shift_sales">Current shift sales</string>
+    <string name="xreport_chooser_sale_for_a_day">Sales for а day</string>
+    <string name="xreport_chooser_dialog_title">X-Report type</string>
+    <string name="xreport">X-Report</string>
+
+    <string name="xreport_subtitle">Close Shift Report</string>
+    <string name="xreport_current_shift_subtitle">X-report - Current shift</string>
+    <string name="xreport_daily_subtitle">X-report - Daily Sales</string>
+    <string name="xreport_print_time">Print date/time:</string>
+    <string name="xreport_start_time">Start date/time:</string>
+    <string name="xreport_end_time">End date/time:</string>
+    <string name="xreport_gross_sales">Gross Sales:</string>
+    <string name="xreport_discounts">Discounts:</string>
+    <string name="xreport_returns">Returns:</string>
+    <string name="xreport_net_sales">Net Sales:</string>
+    <string name="xreport_gratuity">Gratuity:</string>
+    <string name="xreport_tax">Tax:</string>
+    <string name="xreport_transaction_fee">Transaction Fee:</string>
+    <string name="xreport_total_tender">Total Tender:</string>
+    <string name="xreport_cogs">COGS:</string>
+    <string name="xreport_gross_margin">Gross Margin:</string>
+    <string name="xreport_tender_summary">Tender Summary</string>
+    <string name="xreport_credit_card">Credit Card:</string>
+    <string name="xreport_cash">Cash:</string>
+    <string name="xreport_gift_card">Gift Card:</string>
+    <string name="xreport_credit_receipt">Credit Receipt:</string>
+    <string name="xreport_offline_credit">Offline Credit:</string>
+    <string name="xreport_check">Check:</string>
+    <string name="xreport_ebt_cash">EBT Cash:</string>
+    <string name="xreport_ebt_foodstamp">EBT Foodstamp:</string>
+    <string name="xreport_debit">Debit:</string>
+    <string name="xreport_drawer_difference">Drawer Difference:</string>
+
+    <string name="xreport_credit_card_details">Credit Card Details</string>
+    <string name="xreport_amex">Amex:</string>
+    <string name="xreport_visa">Visa:</string>
+    <string name="xreport_master_card">Master Card:</string>
+
+    <string name="xreport_dialog_checkbox_print">Print</string>
+    <string name="xreport_dialog_checkbox_email">Send by email</string>
+    <string name="xreport_dialog_checkbox_screen">Show on screen</string>
+
+    <string name="register_label_all">All</string>
+    <string name="datetime_picker_title">Date and Time</string>
+
+    <string name="clockin_datetime_picker_title">Clock In</string>
+    <string name="clockout_datetime_picker_title">Clock Out</string>
+    <string name="clockout_datetime_picker_skip_btn_title">Leave it open</string>
+
+    <string name="report_sale_by_items_subheader_item">Item</string>
+    <string name="report_sale_by_items_subheader_qty">Qty</string>
+    <string name="report_sale_by_items_subheader_ean">EAN\\UPC Code</string>
+    <string name="report_sale_by_items_subheader_product_code">Product Code</string>
+    <string name="report_sale_by_items_subheader_revenue">Revenue</string>
+    <string name="report_sale_by_items_total">TOTAL:</string>
+    <string name="report_sale_by_items_total_qty">TOTAL QTY:</string>
+
+    <string name="employees_header_status">Status</string>
+    <string-array name="employee_status_labels">
+        <item>Active</item>
+        <item>Blocked</item>
+    </string-array>
+
+    <string name="report_details_menu_email">Send by email</string>
+    <string name="report_details_menu_print">Print</string>
+    <string name="report_details_menu_export">Export</string>
+
+    <string name="report_details_error_generate_report">Can\'t generate report!</string>
+    <string name="report_details_printing_completed">Printing completed</string>
+
+    <string name="report_details_total">Total:</string>
+    <string name="report_details_list_header_revenue">Revenue</string>
+
+    <string name="report_sales_by_tender_types_cash">CASH</string>
+    <!--<string name="report_sales_by_tender_types_gift">GIFT CARD</string>-->
+    <string name="report_sales_by_tender_types_check">CHECK</string>
+    <string name="report_sales_by_tender_types_credit_receipt">CREDIT RECEIPT</string>-->
+    <string name="report_sales_by_tender_types_credit">CREDIT CARD</string>
+    <string name="report_sales_by_tender_types_offline_credit">OFFLINE CREDIT</string>
+    <string name="report_sales_by_tender_types_ebt_cash">EBT CASH</string>
+    <string name="report_sales_by_tender_types_ebt_foodstamp">EBT FOODSTAMP</string>
+    <string name="report_sales_by_tender_types_debit">DEBIT</string>
+
+    <string name="report_sales_by_deps_header_title">Title</string>
+    <string name="report_sales_by_tender_types_header_type">Type</string>
+    <string name="report_sales_by_tender_types_header_amount">Amount</string>
+
+    <string name="report_employee_attendance_header_clockin">Clock in</string>
+    <string name="report_employee_attendance_header_clockout">Clock out</string>
+    <string name="report_employee_attendance_header_shift">Shift</string>
+    <string name="report_employee_attendance_list_total_hours">Total hours:</string>
+
+    <string name="report_payroll_header_employee">Employee</string>
+    <string name="report_payroll_header_total_hours">Total Hours</string>
+    <string name="report_payroll_header_hour_rate">Hour Rate</string>
+    <string name="report_payroll_header_commission">Commissions</string>
+    <string name="report_payroll_header_total_due">Total Due</string>
+
+    <string name="report_item_manual_movement_header_date">Date</string>
+    <string name="report_item_manual_movement_header_item">Item</string>
+    <string name="report_item_manual_movement_header_qty">Trans. Qty.</string>
+    <string name="report_item_manual_movement_header_qty_short">Qty</string>
+
+    <string name="report_reorder_inventory_header_item">Item</string>
+    <string name="report_reorder_inventory_header_qty">On-Hand</string>
+    <string name="report_reorder_inventory_header_rec_qty">Recommended</string>
+    <string name="report_reorder_inventory_header_rec_qty_short">Recom.</string>
+    <string name="report_reorder_inventory_header_to_order_qty">To Order</string>
+    <string name="report_reorder_inventory_header_to_order_qty_short">2Order</string>
+
+    <string name="report_returned_items_header_item">Item</string>
+    <string name="report_returned_items_header_qty">Quantity</string>
+    <string name="report_returned_items_header_total">Total</string>
+
+    <string name="reports_sold_order_header_date">Sale Date</string>
+    <string name="reports_sold_order_header_register">Register Number</string>
+    <string name="reports_sold_order_header_price">Total Price</string>
+    <string name="reports_sold_order_header_discount">Discount</string>
+    <string name="reports_sold_order_header_tax">Tax</string>
+    <string name="reports_sold_order_header_total">Total</string>
+
+    <string name="reports_sales_by_customers_header_name">Name</string>
+    <string name="reports_sales_by_customers_header_phone">Phone</string>
+    <string name="reports_sales_by_customers_header_email">Email</string>
+    <string name="reports_sales_by_customers_header_total">Total</string>
+
+    <string name="reports_shifts_report_header_date">Date</string>
+    <string name="reports_shifts_report_header_employee_name">Manager</string>
+    <string name="reports_shifts_report_header_register_number">Register</string>
+    <string name="reports_shifts_report_header_start_time">Start Time</string>
+    <string name="reports_shifts_report_header_end_time">End Time</string>
+    <string name="reports_shifts_report_header_time_spent">Time Spent</string>
+
+    <string name="reports_inventory_status_header_title">Title</string>
+    <string name="reports_inventory_status_header_on_hand">On-hand</string>
+    <string name="reports_inventory_status_ean_upc_code">UPC\\EAN Code</string>
+    <string name="reports_inventory_status_ean_product_code">Product Code</string>
+    <string name="reports_inventory_status_header_unit_cost">Unit cost</string>
+    <string name="reports_inventory_status_header_unit_cost_short">Unit c.</string>
+    <string name="reports_inventory_status_header_total_cost">Total cost</string>
+    <string name="reports_inventory_status_header_total_cost_short">Total c.</string>
+    <string name="reports_inventory_status_header_active">Active</string>
+    <string name="reports_inventory_status_total_cost">TOTAL COST</string>
+
+    <string name="reports_employee_tips_header_name">Name</string>
+    <string name="reports_employee_tips_header_cash">Cash</string>
+    <string name="reports_employee_tips_header_credit">Credit</string>
+    <string name="reports_employee_tips_header_total">Total</string>
+
+    <string name="reports_employee_tips_print_cash">Cash</string>
+    <string name="reports_employee_tips_print_credit">Credit</string>
+    <string name="reports_employee_tips_print_total">TOTAL</string>
+    <string name="reports_employee_tips_print_total_cash">Cash</string>
+    <string name="reports_employee_tips_print_total_credit">Credit</string>
+
+    <string name="btn_replace">Replace</string>
+    <string name="btn_adjust">Adjust</string>
+
+    <string name="report_inventory_value_header_type">Type</string>
+    <string name="report_inventory_value_header_value">Value</string>
+
+    <string name="report_customer_header_name">Name</string>
+    <string name="report_customer_header_total">Total</string>
+
+    <string name="report_inventory_value_count">ITEMS COUNT</string>
+    <string name="report_inventory_value_qty">TOTAL QUANTITY</string>
+    <string name="report_inventory_value_value">TOTAL COST</string>
+
+    <string name="employee_action_time">Attendance Time</string>
+    <string name="employee_attendence_header_hrs">Hours</string>
+    <string name="employee_attendence_action_add">Add Attendance</string>
+
+    <string name="sex_male">Male</string>
+    <string name="sex_female">Female</string>
+
+    <string name="customers_header_name">Name</string>
+    <string name="customers_header_address">Address</string>
+    <string name="customers_header_email">E-mail</string>
+    <string name="customers_header_phone">Phone</string>
+    <string name="customers_header_sex">Sex</string>
+    <string name="customers_header_create_date">Created</string>
+    <string name="customers_header_consent_promotions">Promotions</string>
+
+    <string name="customer_save_wait_message">Saving...</string>
+    <string name="customer_delete_wait_message">Deleting...</string>
+
+    <string name="customer_label_personal_info">Personal information</string>
+    <string name="customer_label_contacts">Contacts</string>
+    <string name="customer_label_first_name">First name</string>
+    <string name="customer_label_last_name">Last name</string>
+    <string name="customer_label_sex">Sex</string>
+    <string name="customer_label_email">Email</string>
+    <string name="customer_label_phone">Phone</string>
+    <string name="customer_label_street">Street</string>
+    <string name="customer_label_complementary">Complementary</string>
+    <string name="customer_label_city">City</string>
+    <string name="customer_label_state">State</string>
+    <string name="customer_label_country">Country</string>
+    <string name="customer_label_zip">Zip</string>
+    <string name="customer_label_address">Address</string>
+    <string name="customer_label_consent_promotions">Agree to receive\npromotions</string>
+
+    <string name="customer_edit_first_name_error">First name is empty</string>
+    <string name="customer_edit_last_name_error">Last name is empty</string>
+    <string name="customer_edit_email_not_valid_error">Email invalid</string>
+    <string name="customer_edit_phone_not_valid_error">Phone invalid</string>
+    <string name="customer_edit_email_phone_empty">Please, fill Phone or Email</string>
+    <string name="customer_edit_error_msg">Can\'t save customer. Please try again!</string>
+    <string name="customer_edit_email_exists_error_msg">Can\'t save customer. Customer with such email already exists</string>
+
+    <string name="customer_delete_dialog_title">Delete customer</string>
+    <string name="customer_delete_dialog_message">Are you sure you want to delete this customer?</string>
+    <string name="customer_delete_dialog_error_message">Can\'t delete customer. Please try again!</string>
+
+    <string name="email_order_customer_label">Apply customer:</string>
+    <string name="email_order_customer_hint">Name or email</string>
+
+    <string name="settings_no_printers">No printers configured!</string>
+    <string name="settings_no_pax">No PAX pinpad configured!</string>
+    <string name="edit_printer_default">Receipt Printer</string>
+    <string name="edit_pax_default">PAX pinpad</string>
+    <string name="edit_printer_unknown">&lt;Unknown&gt;</string>
+    <string name="printer_edit_dialog_title">Edit printer</string>
+    <string name="pax_edit_dialog_title">Edit PAX pinpad</string>
+    <string name="printer_delete_dialog_title">Delete printer</string>
+    <string name="printer_delete_dialog_msg">Are you sure you want to delete printer?</string>
+
+    <string name="pax_delete_dialog_title">Delete Pax pinpad</string>
+    <string name="pax_delete_dialog_msg">Are you sure you want to delete Pax pinpad?</string>
+
+    <string name="printer_alias_dialog_title_create">Create alias</string>
+    <string name="printer_alias_dialog_title_edit">Edit alias</string>
+    <string name="printer_alias_dialog_alias_hint">Alias</string>
+    <string name="printer_alias_dialog_title_delete">Delete alias</string>
+    <string name="printer_alias_dialog_delete_msg">Are you sure you want to delete printer alias \'%s\'?</string>
+
+    <string name="printer_status_title">Printer status</string>
+    <string name="printer_status_wait">Printer status collecting...</string>
+
+    <string name="wait_message_email">Sending email...</string>
+    <string name="error_message_email">Can\'t send email. Please try again!</string>
+    <string name="success_message_email">Email sent successfully</string>
+
+    <string name="success_message_export_db">Database exported successfully</string>
+    <string name="error_message_export_db">Can\'t export database. Please try again!</string>
+
+    <string name="email_order_title">Email</string>
+    <string name="email_order_send_label">Send</string>
+
+    <string name="print_order_copy_header">COPY</string>
+    <string name="printers_action_add">Add</string>
+
+    <string name="login_login_label">You are logged in as</string>
+    <string name="login_switch_user_label"><u>Switch User</u></string>
+
+    <string name="action_lock_label">Switch User</string>
+    <string name="action_print_label">Print Order</string>
+    <string name="printer_config_dialog_title">Configuration</string>
+
+    <string name="printer_config_ip_hint">IP address</string>
+    <string name="printer_config_port_hint">Port</string>
+    <string name="printer_config_subnet_hint">Network mask</string>
+    <string name="printer_config_gateway_hint">Gateway</string>
+    <string name="printer_edit_mac_hint">MAC address</string>
+
+    <string name="kitchen_receipt_order_label">Order:</string>
+    <string name="kitchen_receipt_operator_label">Cashier:</string>
+    <string name="kitchen_receipt_station_label">Station:</string>
+    <string name="kitchen_receipt_holder_label">Guest:</string>
+    <string name="kitchen_receipt_date_label">Order time:</string>
+    <string name="kitchen_receipt_no_option_prefix">NO-</string>
+
+    <string name="printer_config_mac_error">Mac address is not configured for the printer.\nPlease edit printer information</string>
+    <string name="printer_config_update_error">Can\'t send command to printer</string>
+    <string name="printer_config_update_ok">Completed</string>
+    <string name="printer_config_update_wait">Updating...</string>
+
+    <string name="orders_history_default_item_description">Display all</string>
+
+    <string name="notes_edit_fragment_title">Notes</string>
+    <string name="notes_edit_fragment_hint">Type notes here</string>
+    <string name="credit_receipt_dlg_title">Credit Receipt</string>
+    <string name="credit_receipt_proceed_error">Balance is too small or credit receipt is already used</string>
+
+    <string name="credit_receipt_printing">Printing credit receipt...</string>
+    <string name="credit_receipt_print_completed">Credit receipt was printed</string>
+    <string name="credit_receipt_proceed_finish_error">Can\'t finish return</string>
+    <string name="credit_receipt_proceed_not_printed">Receipt was not printed.</string>
+
+    <string name="display_total_title">Total:</string>
+    <string name="display_discount_title">Discounts:</string>
+    <string name="display_tender_title">Tender:</string>
+    <string name="display_change_title">Change:</string>
+    <string name="display_pending_title">Pending:</string>
+
+    <string name="payment_charge_amount">Charge amount:</string>
+
+    <string name="credit_receipt_num">Receipt #:</string>
+    <string name="credit_receipt_date">Date:</string>
+    <string name="credit_receipt_expire">Valid through:</string>
+    <string name="credit_receipt_received_cash">Receipt amount:</string>
+    <string name="credit_receipt_not_found">Can\'t find receipt!</string>
+    <string name="credit_receipt_activity">Credit Receipts</string>
+
+    <string name="credit_receipt_header_date">Date</string>
+    <string name="credit_receipt_header_number">Number</string>
+    <string name="credit_receipt_header_cashier">Cashier</string>
+    <string name="credit_receipt_header_amount">Amount</string>
+    <string name="credit_receipt_header_used_date">Used Date</string>
+    <string name="credit_receipt_header_used_amount">Used Amount</string>
+    <string name="credit_receipt_header_expire">Expire Date</string>
+    <string name="credit_receipt_header_total_amount">Total:</string>
+    <string name="credit_receipt_header_total_used_amount">Total:</string>
+
+    <string name="credit_receipt_filter_num">Receipt:</string>
+    <string name="credit_receipt_filter_total">Receipts found</string>
+
+    <string name="credit_receipt_print_register_id">Register ID:</string>
+    <string name="credit_receipt_print_date">Date:</string>
+    <string name="credit_receipt_print_subtitle">Store Credit</string>
+    <string name="credit_receipt_print_amount">Amount:</string>
+    <string name="credit_receipt_print_signature">Merchant signature: ________________________________</string>
+    <string name="credit_receipt_print_valid_through">Valid through:</string>
+
+    <string name="dashboard_action_credit_receipts">Credit Receipts</string>
+    <string name="error_message_display_disconnected">Display disconnected!</string>
+    <string name="error_message_display_command_error">Error executing display command!</string>
+
+    <string name="error_message_scanner_disconnected">Scanner disconnected!</string>
+
+    <string name="pref_datausage_header_title">Data usage</string>
+    <string name="pref_datausage_header_summary">Traffic since device boot</string>
+
+    <string name="pref_about_header_title">About</string>
+    <string name="pref_about_header_summary">Application summary</string>
+
+    <string name="pref_training_mode_header_title">Training mode</string>
+    <string name="pref_training_mode_header_summary">Training mode activation</string>
+
+    <string name="find_display_title">Please choose display</string>
+    <string name="find_display_progress">Displays searching...</string>
+    <string name="find_display_empty">Can\'t find display. Please check your settings!</string>
+
+    <string name="new_item_warning_dialog_title">New Item</string>
+    <string name="display_delete_warning_dialog_title">Delete Display</string>
+    <string name="display_delete_warning_dialog_message">Are you sure you want to delete display?</string>
+
+    <string name="find_scanner_title">Please choose scanner</string>
+    <string name="find_scanner_progress">Scanners searching...</string>
+    <string name="find_scanner_empty">Can\'t find scanner. Please check your settings!</string>
+
+    <string name="scanner_delete_warning_dialog_title">Delete Scanner</string>
+    <string name="scanner_delete_warning_dialog_message">Are you sure you want to delete scanner?</string>
+
+    <string name="tendering_choose_customer_dialog_title">Choose customer</string>
+    <string name="printer_edit_alias_dialog_title">Printer Alias</string>
+
+    <string name="report_printing_confirmation_dlg_title">Printing</string>
+    <string name="report_printing_confirmation_dlg_msg">Are you sure you want to print report?</string>
+
+    <string name="check_drawer_state_wait_dialog_message">Checking drawer state...</string>
+    <string name="check_drawer_state_error_dialog_message">Please, close cash drawer</string>
+    <string name="check_drawer_state_error_dialog_error_message">Error getting drawer state</string>
+
+    <string name="check_drawer_state_error_dialog_title">Error getting drawer state</string>
+
+    <string name="employee_attendance_error_clock_in">Clock in should be less then Clock out</string>
+    <string name="employee_add_attendance_error_overlaps">Can\'t add attendance.\nOverlaps error</string>
+    <string name="employee_edit_attendance_error_overlaps">Can\'t edit attendance.\nOverlaps error</string>
+    <string name="credit_receipt_number_hint">Receipt number</string>
+
+    <string name="category_group_food">Food</string>
+    <string name="category_group_beverage">Beverage</string>
+    <string name="category_group_clothing">Clothing</string>
+    <string name="category_group_electronics">Electronics</string>
+    <string name="category_group_general">General</string>
+
+    <string name="credit_receipt_print_dialog_title">Print receipt</string>
+
+    <string name="error_something_wrong">Unexpected error is occurred</string>
+    <string name="return_order_create_error">Can\'t create return order</string>
+    <string name="return_order_create_success">Return order was created</string>
+    <string name="dlg_completed_tialog">Completed</string>
+
+    <string name="wireless_prepaid_print_processor_step_one">1.- Dial / Marque</string>
+    <string name="wireless_prepaid_print_processor_step_two">2.- Enter PIN</string>
+    <string name="wireless_prepaid_print_processor_instructions">FOR DOMESTIC CALLS DIAL:\nl + Area Code + Phone #\nFOR INTERNATIONAL CALLS DIAL:\n011 + Country Code +\nArea Code + Phone #</string>
+    <string name="wireless_prepaid_print_processor_pin_number">PIN #:\u0020</string>
+    <string name="wireless_prepaid_print_processor_product_name">Product Name:\u0020</string>
+    <string name="wireless_prepaid_print_processor_control_number">Control No:\u0020</string>
+    <string name="wireless_prepaid_print_processor_expiration_date">Expires on:\u0020</string>
+    <string name="wireless_prepaid_print_processor_customer_and_service">Cust. Service:\u0020</string>
+    <string name="wireless_prepaid_print_processor_phone">Phone:\u0020</string>
+    <string name="wireless_prepaid_print_processor_transaction_id">Transaction ID:\u0020</string>
+    <string name="wireless_prepaid_print_processor_reference">Ref Number:\u0020</string>
+    <string name="wireless_prepaid_print_processor_authorization_code">Auth Code:\u0020</string>
+    <string name="wireless_prepaid_print_processor_account_number">Telephone number:\u0020</string>
+
+    <string name="sunpass_prepaid_print_processor_transponder_id">Transponder ID:\u0020</string>
+    <string name="sunpass_prepaid_print_processor_purchase_id">SunPass Purchase ID:\u0020</string>
+    <string name="sunpass_prepaid_print_processor_reference_id">RSP Reference ID:\u0020</string>
+
+    <string name="sunpass_prepaid_item_description">Sunpass recharge</string>
+
+    <string name="bill_payment_edit_min_hint">min:\u0020%d</string>
+
+    <string name="loading_message">Loading...</string>
+
+    <string name="bill_payment_get_category_error">Failed to collect Categories information</string>
+    <string name="bill_payment_get_master_error">Failed to collect Billers information</string>
+    <string name="bill_payment_get_option_error">Failed to collect Payment Option information</string>
+
+    <string name="bill_payment_category_dialog_category_placeholder">Choose Category</string>
+    <string name="bill_payment_category_dialog_biller_placeholder">Choose Biller</string>
+    <string name="bill_payment_category_dialog_payment_option_placeholder">Choose Payment Option</string>
+
+    <string name="swipe_manual_cardnumber_hint">Card number</string>
+    <string name="swipe_manual_expdate_hint">Expire date</string>
+    <string name="swipe_manual_cvn_hint">CVN</string>
+    <string name="swipe_manual_zip_hint">Zip</string>
+
+    <string name="swipe_manual_alert_title">Invalid data</string>
+    <string name="swipe_manual_card_number_invalid_msg">Please, enter correct card number</string>
+    <string name="swipe_manual_card_number_emty_msg">Please, enter card number</string>
+    <string name="swipe_manual_card_cvn_invalid_msg">Please, enter correct CVN</string>
+    <string name="swipe_manual_card_cvn_empty_msg">Please, enter CVN</string>
+    <string name="swipe_manual_card_expdate_invalid_msg">Please, enter correct expire date</string>
+    <string name="swipe_manual_card_expdate_empty_msg">Please, enter expire date</string>
+    <string name="swipe_manual_card_zip_invalid_msg">Please, enter correct zip code</string>
+    <string name="swipe_manual_card_zip_empty_msg">Please, enter zip code</string>
+
+    <string name="wait_message_export_db">Exporting database...</string>
+
+    <string name="reprint_order_receipt_dialog_name">Print Receipt</string>
+    <string name="resend_order_receipt_dialog_name">Send Receipt</string>
+    <string name="peprint_order_receipt_print_order_receipt_chkbx">Order receipt</string>
+    <string name="peprint_order_receipt_print_refund_receipt_chkbx">Return receipt</string>
+    <string name="peprint_order_receipt_success_message">Order receipt printed successfully</string>
+    <string name="peprint_refund_receipt_success_message">Return receipt(s) printed successfully</string>
+
+    <string name="about_version_label">Version:</string>
+    <string name="about_version_value">v%1$s (%2$d)</string>
+
+    <string name="blackstone_settlement_confirm_title">Operation complete</string>
+    <string name="blackstone_settlement_confirm_title_failed">Operation failed</string>
+
+    <string name="blackstone_settlement_failure_body_1st">Operation has failed.</string>
+    <string name="blackstone_settlement_failure_body_2nd">The server has replied: </string>
+    <string name="blackstone_settlement_failure_body_constructor" formatted="false">%s %s %s</string>
+    <string name="blackstone_settlement_failure_body_3nd">There was a non-banking related issue: </string>
+
+    <string name="blackstone_settlement_failure_reason_db_update">Settlement was executed but database wasn\'t updated</string>
+    <string name="blackstone_settlement_failure">One or more credit card transactions failed to settle. Please contact Blackstone Merchant Services for more details.</string>
+
+    <string name="blackstone_settlement_alert_title">Credit Card Settlement</string>
+    <string name="blackstone_settlement_alert_message">This operation will settle all open credit card transactions. After completion, tips cannot be added to these transactions. Do you want to proceed?</string>
+
+    <string name="blackstone_pax_failure_reason_pax">Payment cancelled or connection problem.</string>
+    <string name="blackstone_pax_failure_reason_wrong_gateway">Selected transaction was not created with PAX and can not be processed with it.</string>
+    <string name="blackstone_pax_failure_reason_tips_disabled">Contact Blackstone representative to enable tips in your pin pad.</string>
+
+    <string name="blackstone_pax_reload_failure_reason_service">The response is empty or related to another transaction, so the actual data is not going to be gathered.</string>
+
+    <string name="blackstone_failure_reason_wrong_gateway">Selected transaction was not created with MSR and can not be processed with it.</string>
+
+    <string name="close_transactions_list_fragment_title">Opened transactions</string>
+
+    <string name="order_transactions_status_open">Open</string>
+    <string name="order_transactions_status_closed">Closed</string>
+    <string name="order_transactions_status_na">N/A</string>
+
+    <string name="order_status_prepaid_yes">Yes</string>
+    <string name="order_status_prepaid_no">No</string>
+
+    <string name="history_action_settlement">Credit Card Settlement</string>
+    <string name="history_action_refund_tips">Refund Tips</string>
+
+    <string name="order_transactions_status_filter_open">Open</string>
+    <string name="order_transactions_status_filter_closed">Closed</string>
+    <string name="order_transactions_status_filter_all">All</string>
+
+    <!--newly added for prepaid-->
+    <string name="prepaid_dialog_telephone_number_hint">Enter Telephone Number</string>
+    <string name="prepaid_dialog_telephone_number_confirm_hint">Confirm Telephone Number</string>
+    <string name="prepaid_dialog_long_distance_title">Long Distance</string>
+    <string name="prepaid_dialog_pinless_recharge_title">Pinless Recharge</string>
+    <string name="prepaid_dialog_wireless_recharge_title">Wireless Recharge</string>
+    <string name="prepaid_dialog_wireless_recharge_international_title">International Topup</string>
+    <string name="prepaid_dialog_wireless_bill_payment_title">Bill Payment</string>
+    <string name="prepaid_dialog_activation_center_title">Select Carrier</string>
+    <string name="prepaid_dialog_type_title">Select Product</string>
+
+    <string name="sunpass_prepaid_dialog_credentials_title">Sun Pass</string>
+    <string name="prepaid_dialog_sunpass_transponder_title">SunPass    Activate or Replenish® Sunpass Transponder</string>
+    <string name="prepaid_dialog_sunpass_pay_your_document_title">SunPass    Pay your Document</string>
+    <string name="prepaid_payment_complete_body_title">Your order has been successfully</string>
+    <string name="prepaid_wireless_payment_complete_order_data">Your order data</string>
+    <string name="prepaid_wireless_payment_complete_order_num">Order Number:</string>
+    <string name="prepaid_wireless_payment_complete_product">Product:</string>
+    <string name="prepaid_wireless_payment_complete_order_total_price">Total:</string>
+    <string name="prepaid_sunpass_credencial_account_hint">Enter your transponder Number</string>
+    <string name="prepaid_sunpass_credencial_account_validate_hint">Confirm your transponder Number</string>
+    <string name="btn_check">Check</string>
+    <string name="btn_send">Send</string>
+    <string name="btn_sumbit">Submit</string>
+    <string name="sunpass_credential_your_balance">Your Current balance is:</string>
+    <string name="sunpass_credential_error">Error !!!</string>
+    <string name="sunpass_credential_error_content">Your Current balance is less than 0.</string>
+    <string name="sunpass_credential_transponder_numer">Transponder Number</string>
+    <string name="sunpass_credential_last_known_balance">Last Known Balance</string>
+    <string name="sunpass_credential_minimum_recharge_amount">Minimum recharge amount</string>
+    <string name="sunpass_credential_review_order_detail">Review Order Details</string>
+    <string name="sunpass_credential_amount">Amount:</string>
+    <string name="sunpass_credential_fees">Fee:</string>
+    <string name="sunpass_credential_tatal">Total:</string>
+    <string name="sunpass_pyd_credential_document_num_note">Violation document sent by Florida Department of transportation(FDOT), include letters</string>
+    <string name="sunpass_pyd_credential_document_num_hint">Enter Document ID Number</string>
+    <string name="sunpass_pyd_credential_document_num_title">Document ID Number</string>
+    <string name="sunpass_pyd_credential_plate_num_note">As Shown on invoice violation or citacion (exclude hyphens or dashes)</string>
+    <string name="sunpass_pyd_credential_plate_num_hint">Enter your License Plate Number</string>
+    <string name="sunpass_pyd_credential_plate_num_title">License Plate Number</string>
+    <string name="sunpass_pyd_order_view_item_name">Document ID: </string>
+    <string name="sunpass_pyd_order_view_item_content">Amount Due</string>
+    <string name="bill_pauments_fee">Fee:</string>
+    <string name="bill_pauments_amount">Amount:</string>
+    <string name="bill_pauments_type">Type</string>
+    <string name="bill_pauments_description">Description</string>
+    <string name="prepaid_bill_pauments_receipt_account_number">Account Number</string>
+    <string name="prepaid_long_distance_access_number">Access Numbers</string>
+    <string name="prepaid_long_distance_rates">Rates</string>
+    <string name="prepaid_long_distance_terms_and_conditions">Terms and Conditions</string>
+
+    <string name="houde_tips_label">House</string>
+
+    <string name="drawer_swiper_entries_def">Swiper Kit</string>
+    <string name="pref_swiper">Setup swiper hardware</string>
+
+    <string name="order_tender_type_cash">Cash</string>
+    <string name="order_tender_type_credit_card">Credit Card</string>
+    <string name="order_tender_type_debit_card">Debit Card</string>
+    <string name="order_tender_type_ebt">EBT</string>
+    <string name="order_tender_type_other">Other</string>
+    <string name="order_tender_type_multiple">Multiple</string>
+
+    <string name="unit_drop_failed">The data will not be updated, error appeared.</string>
+    <string name="unit_drop_partially_faield">Units were not deleted properly.</string>
+    <string name="unit_drop_ok">All related serials were dropped.</string>
+    <string name="unit_completed">Operation completed successfully.</string>
+    <string name="unit_edit_completed">Item updated successfully.</string>
+
+    <string-array name="unit_action_list">
+        <item>Show All items</item>
+        <item>Show New items </item>
+        <item>Show Used items</item>
+        <item>Show Broken items</item>
+        <item>Show Sold items</item>
+    </string-array>
+
+    <string name="action_activation_complete">Complete</string>
+    <string name="print_receipt">Print</string>
+    <string name="training_mode_confirm_title">Complete</string>
+    <string name="training_mode_confirm_message">Mode was successfully changed</string>
+
+    <string name="training_mode_error_title">Error</string>
+    <string name="training_mode_error_message">Failed to change mode</string>
+
+    <string name="action_training_mode">Set mode</string>
+
+    <string name="training_mode_settings_fragment_current_value_label">Training mode is:\u0020</string>
+
+    <string name="training_mode_off_label">Off</string>
+    <string name="training_mode_on_label">On</string>
+
+    <string name="training_mode_selection_fragment_warning_title">Activate training mode</string>
+    <string name="training_mode_selection_fragment_warning_message">Are you sure you want to activate training mode?</string>
+
+    <string name="training_mode_options_fragment_message">Do you want to start with current database or create new one?</string>
+    <string name="training_mode_options_fragment_button_current">Current</string>
+    <string name="training_mode_options_fragment_button_new">New</string>
+
+    <string name="training_mode_title_tmpl">%s TRAINING MODE</string>
+
+    <string formatted="false" name="dashboard_activity_title_tmpl">%s - %s</string>
+
+    <string name="training_mode_receipt_title">TRAINING MODE</string>
+
+    <string name="commission_dialog_title">Choose Sales Person</string>
+
+    <string name="offline_mode_error_dialog_title">Offline Mode</string>
+    <string name="offline_mode_error_dialog_message">Offline mode exceeded maximum allowed period, please connect to the Internet</string>
+
+    <string name="offline_mode_error_toast_message">Offline mode exceeded maximum allowed period, offline login disabled</string>
+    <string name="offline_mode_error_toast_message_logout">Offline mode exceeded maximum allowed period, logging out</string>
+
+    <string name="offline_mode_warning_dialog_title">Offline Mode</string>
+    <string name="offline_mode_warning_dialog_message">Offline mode will expire in less than 24 hours. Please connect to the Internet</string>
+
+    <string name="app_version_format">v%1$s (%2$d)</string>
+    <string name="prepaid_confirmation_purchase_summary">Purchase Summary</string>
+    <string name="prepaid_wireless_payment_complete_telephone">Telephone:</string>
+
+    <string name="database_error_message_constraint_violation">Database was corrupted after upgrade. Please fetch data from the server. Your local changes are saved</string>
+    <string name="safe_drop">SAFE DROP</string>
+    <string name="payout">PAYOUT</string>
+    <string name="amount">Amount</string>
+
+    <string name="sync_shop_info">shop</string>
+    <string name="sync_recalc_data">local</string>
+
+    <string name="kitchen_print_qty_update_failed">Items printed quantity not updated for printer \'%s\'</string>
+
+    <string name="warning_message_incomplete_order">There was an incomplete order, it will be uploaded to the server as it is</string>
+    <string name="warning_message_incomplete_order_try_to_complete">There was an incomplete order, it will be uploaded to the server as it is. Do you want to complete it?</string>
+
+    <string name="inventory_status_report_print_warning_msg">Printing inventory list may take several minutes to complete</string>
+
+    <string name="customer_email_invalid_msg">Email is empty or invalid</string>
+
+    <string name="button_login">Sign in</string>
+    <string name="button_signup">Sign up</string>
+    <string name="button_return">Return</string>
+    <string name="button_pay">Pay</string>
+    <string name="button_void">Void</string>
+    <string name="button_hold">Hold On</string>
+    <string name="button_send_receipt">Send Receipt</string>
+    <string name="button_print_receipt">Print Receipt</string>
+    <string name="button_kitchen_receipt">Kitchen Receipt</string>
+    <string name="button_add_tips">Add Tips</string>
+    <string name="button_save">Save</string>
+    <string name="button_exact">Exact</string>
+    <string name="button_add_to_order">Add to Order</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_search">Search</string>
+    <string name="button_cash">Cash</string>
+    <string name="button_check">Check</string>
+    <string name="button_credit">Credit</string>
+    <string name="button_debit">Debit Card</string>
+    <string name="button_ebt_cash">EBT Cash</string>
+    <string name="button_ebt_foodstamp">EBT Food Stamp</string>
+    <string name="button_offline_credit">Offline Credit</string>
+    <string name="button_receipt">Receipt</string>
+    <string name="button_store_credit">Store Credit</string>
+    <string name="button_clockin">CLOCK IN</string>
+    <string name="button_clockout">CLOCK OUT</string>
+    <string name="button_close_shift">CLOSE SHIFT</string>
+    <string name="button_open_shift">OPEN SHIFT</string>
+    <string name="switch_drop">safe drop</string>
+    <string name="switch_payout">payout</string>
+
+    <string name="dashboard_sync_dialog_title">Synchronization</string>
+    <string name="dashboard_sync_dialog_msg">Your local changes will be fetched as soon as synchronization passes successfully</string>
+
+    <string name="warning_message_tips_enabled">Tips feature was enabled</string>
+    <string name="warning_message_tips_disabled">Tips feature was disabled</string>
+
+    <string name="wait_message_manual_return">Please wait...</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="Dollar_Ampersand">$</string>
+    <string name="SAME_DAY">SAMEDAY</string>
+    <string name="SAME_DAY_IN_CUTOFFTIME_HOURS">(24-48 hours)</string>
+    <string name="SAME_DAY_OVER_CUTOFFTIME_HOURS">(48-72 hours)</string>
+    <string name="NEXT_DAY">NEXTDAY</string>
+    <string name="NEXT_DAY_IN_CUTOFFTIME_HOURS">(48-72 hours)</string>
+    <string name="NEXT_DAY_OVER_CUTOFFTIME_HOURS">(72-96 hours)</string>
+    <string name="STANDARD">STANDARD</string>
+    <string name="STANDARD_IN_CUTOFFTIME_HOURS">(72-96 hours)</string>
+    <string name="STANDARD_OVER_CUTOFFTIME_HOURS">(96-120 hours)</string>
+
+
+    <string name="CERTFILE_PASSWORD">ts;wHi[)zAjJM!{</string>
+    <string name="KEY_STORE_TYPE">PKCS12</string>
+    <string name="KEY_STORE_PROVIDER">BC</string>
+
+    <string name="warning_message_warranty_ends_today">Warranty ends today.</string>
+    <plurals name="warning_message_warranty_outdated">
+        <item quantity="one">Warranty outdated for one day</item>
+        <item quantity="other">Warranty outdated for %d days</item>
+    </plurals>
+
+    <string name="error_message_max_items_count">You have reached the maximum number of inventory items supported in your monthly plan. Please, Contact Kashin 123 support to learn how to increase this limit.</string>
+    <string name="prepaid_head_home_button">Home</string>
+    <string name="prepaid_head_long_distance_text">Long Distance</string>
+    <string name="prepaid_head_wireless_text">Wireless</string>
+    <string name="prepaid_head_sunpass_text">SunPass</string>
+    <string name="prepaid_head_pinless_text">Pinless</string>
+    <string name="prepaid_head_international_text">International</string>
+    <string name="prepaid_head_bill_payment_text">Bill Payment</string>
+    <string name="prepaid_head_select_your_category">Select your Category</string>
+    <string name="prepaid_head_select_the_products">Select the Products</string>
+    <string name="prepaid_head_back_button">Back</string>
+    <string name="country_search">Country Search</string>
+    <string name="category_search">Category Search</string>
+    <string name="carrier_search">Carrier Search</string>
+    <string name="view_all">View All</string>
+    <string name="most_popular">Most Popular</string>
+
+    <string name="select_amount">Select Amount</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="product_name">product Number</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="view_rates">View Rates</string>
+    <string name="terms_of_use">Terms of use</string>
+    <string name="access_numbers">Access Numbers</string>
+    <string name="bill_payment_product_enter_account_number">Enter Account Number</string>
+    <string name="bill_payment_product_confirm_account_number">Confirm Account Number</string>
+    <string name="bill_payment_product_enter_amount">Amount</string>
+    <string name="sunpass_select_category">Select SunPass Category</string>
+
+    <string name="bill_payment_data_name">Name</string>
+    <string name="bill_payment_data_address">Adress</string>
+    <string name="bill_payment_data_email">Email</string>
+    <string name="bill_payment_data_zip_code">Zip Code</string>
+    <string name="bill_payment_data_business_name">Business</string>
+
+    <string name="prepaid_dialog_credentials_data_2">Enter Alternate account number</string>
+    <string name="prepaid_dialog_credentials_data_3">Enter Vendor specific account number</string>
+    <string name="prepaid_dialog_credentials_data_4">Enter Vendor specific profile data</string>
+    <string name="prepaid_dialog_credentials_data_5">Enter Beneficiary first name</string>
+    <string name="prepaid_dialog_credentials_data_6">Enter Beneficiary last name</string>
+    <string name="prepaid_dialog_credentials_data_7">Enter Sender first name</string>
+    <string name="prepaid_dialog_credentials_data_8">Enter Sender last name</string>
+
+    <string name="prepaid_home_page_already">This is Prepaid home page already!</string>
+
+    <string name="prepaid_access_numbers">Access Numbers</string>
+    <string name="prepaid_state">State</string>
+    <string name="prepaid_city">City</string>
+
+    <string name="prepaid_country">Country</string>
+    <string name="prepaid_view_rates_title_3">3</string>
+    <string name="prepaid_view_rates_title_5">5</string>
+    <string name="prepaid_view_rates_title_10">10</string>
+    <string name="prepaid_view_rates_title_20">20</string>
+    <string name="prepaid_view_rates_toll_free">Toll Free</string>
+    <string name="prepaid_view_rates_local">Local</string>
+    <string name="prepaid_view_rates_toll_rate">Rate</string>
+    <string name="prepaid_view_rates_dollar_min">(dollars/min)</string>
+    <string name="prepaid_amount_error">Amount cannot be 0, please select amount</string>
+
+    <string name="prepaid_wireless_amount_submit_instruction">This is a real time replanishment also known as RTR in the industry</string>
+    <string name="prepaid_wireless_amount_and_phone_number_hint">Enter Phone Number</string>
+    <string name="prepaid_wireless_amount_hint">Enter Amount</string>
+    <string name="prepaid_wireless_phone_number_hint">Enter Phone Number</string>
+
+    <string name="prepaid_head_select_category_or_most_popular_biller">Select Category or most Popular Biller</string>
+    <string name="enter_additional_data">Enter Additional Data</string>
+    <string name="prepaid_select_country">Select Country</string>
+    <string name="prepaid_select_biller">Select Biller</string>
+    <string name="prepaid_select_category">Select Category</string>
+    <string name="prepaid_head_purchase_saummary">Purchase Summary</string>
+    <string name="prepaid_sunpass_select_transponder_number">Enter Transponder Number</string>
+    <string name="prepaid_head_enter_account_and_amount">Enter Account Number And Amount</string>
+    <string name="prepaid_head_enter_additional_info">Enter Additional Data</string>
+    <string name="prepaid_head_amount_zero_error">Error: amount 0</string>
+    <string name="prepaid_head_fee_null_error">Error: fee null</string>
+    <string name="invalid_fields">Please fill the lines which has Red star</string>
+    <string name="amount_minimum_error">Amount must be bigger than minimun</string>
+    <string name="prepaid_head_phone_number_null_error">Error: phone number null</string>
+    <string name="prepaid_head_account_number_null_error">Error: account number null</string>
+    <string name="prepaid_head_confirma_account_number_null_error">Error: confirm account number null</string>
+    <string name="prepaid_head_account_number_not_equal_error">Error: the account numbers are not match</string>
+    <string name="prepaid_head_phone_number_null_and_amount_zero_error">Error: phone number null and amount 0</string>
+
+    <string name="prepaid_sunpass_pay_your_document">SunPass Pay your Document</string>
+    <string name="prepaid_sunpass_pay_your_document_only_title">Pay only the document entered</string>
+    <string name="prepaid_sunpass_pay_your_document_all_title">Pay all outstanding Documents</string>
+    <string name="sunopass_enter_document_id_and_license_plate_number">Enter Document ID and license Plate Number</string>
+    <string name="sunopass_select_your_payment_method">Select your Payment Method</string>
+    <string name="sunopass_document_id_null">Document ID cannot be null</string>
+    <string name="sunopass_license_plate_number_null">License Plate Number cannot be null</string>
+    <string name="sunopass_choose_document_payment_method">Choose Document Payment Method</string>
+
+    <string name="custom_service">CUSTOMER SERVICE</string>
+</resources>

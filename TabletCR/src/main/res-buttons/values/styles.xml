@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LocalizableButton">
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="LocalizableButton.Green">
+        <item name="android:textColor">@color/text_green</item>
+    </style>
+
+    <style name="LocalizableButton.Green2">
+        <item name="android:textColor">@color/text_green2</item>
+    </style>
+
+    <style name="LocalizableButton.Grey">
+        <item name="android:textColor">@color/text_grey</item>
+    </style>
+
+    <style name="LocalizableButton.DarkGrey">
+        <item name="android:textColor">@color/text_darkgrey</item>
+    </style>
+
+    <style name="LocalizableButton.LightGrey">
+        <item name="android:textColor">@color/text_lightgrey</item>
+    </style>
+
+    <style name="LocalizableButton.Red">
+        <item name="android:textColor">@color/text_red</item>
+    </style>
+
+    <style name="LocalizableButton.Red2">
+        <item name="android:textColor">@color/text_red2</item>
+    </style>
+
+    <style name="LocalizableButton.LightRed">
+        <item name="android:textColor">@color/text_lightred</item>
+    </style>
+
+    <style name="LocalizableButton.Blue">
+        <item name="android:textColor">@color/text_blue</item>
+    </style>
+
+    <style name="LocalizableButton.Blue2">
+        <item name="android:textColor">@color/text_blue2</item>
+    </style>
+
+    <style name="LocalizableButton.Gold">
+        <item name="android:textColor">@color/text_gold</item>
+    </style>
+
+    <style name="LocalizableButton.Gold.28">
+        <item name="android:textSize">26sp</item>
+        <item name="android:paddingLeft">42dp</item>
+    </style>
+
+    <style name="LocalizableButton.Yellow">
+        <item name="android:textColor">@color/text_yellow</item>
+    </style>
+
+</resources>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingLeft="80dp"
+              android:paddingRight="80dp"
+              android:paddingTop="40dp"
+              android:paddingBottom="40dp"
+              android:background="@color/beige">
+
+    <LinearLayout
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_weight="2"
+        android:weightSum="3">
+
+        <FrameLayout
+            android:id="@+id/sales"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <FrameLayout
+            android:id="@+id/dashboard"
+            android:layout_marginLeft="@dimen/edit_item_table_margin_left"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <FrameLayout
+            android:id="@+id/system"
+            android:layout_marginLeft="@dimen/edit_item_table_margin_left"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="50dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:weightSum="3">
+
+        <Space
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <Space
+            android:layout_marginLeft="@dimen/edit_item_table_margin_left"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <FrameLayout
+            android:layout_marginLeft="@dimen/edit_item_table_margin_left"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1">
+
+            <Button
+                style="@style/LocalizableButton.Green"
+                android:text="@string/button_save"
+                android:textSize="26sp"
+                android:paddingBottom="6dp"
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:background="@drawable/save_btn_bg"
+                android:layout_marginTop="10dp"
+                />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

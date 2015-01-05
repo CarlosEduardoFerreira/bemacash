@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="com.kaching123.tcr.fragment.settings.SyncSettingsFragment_"
+        android:title="@string/pref_sync_title"
+        android:summary="@string/pref_sync_summary" />
+
+    <header
+        android:fragment="com.kaching123.tcr.fragment.settings.PrinterListFragment_"
+        android:title="@string/pref_printer_title"
+        android:summary="@string/pref_printer_summary"/>
+
+    <header
+        android:fragment="com.kaching123.tcr.fragment.settings.DrawerSettingsFragment"
+        android:title="@string/pref_drawer_header_title"
+        android:summary="@string/pref_drawer_header_summary"/>
+
+</preference-headers>

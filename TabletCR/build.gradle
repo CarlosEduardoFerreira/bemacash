@@ -1,0 +1,163 @@
+def findResDirs = {
+    return file(it).listFiles().findAll {it.name.startsWith('res')}.collect()
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.hamsterksu:android-aptlibs-gradle-plugin:1.1.0'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'aptlibs'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://github.com/Goddchen/mvn-repo/raw/master/'
+    }
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "20"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 19
+    }
+
+    sourceSets {
+        main {
+			res.srcDirs = findResDirs('src/main')
+            java.srcDirs = ['src/main/java', 'build/source/apt/${variant.dirName}']
+        }
+    }
+	
+	signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+        }
+
+        release {
+            storeFile file("bema.keystore")
+            storePassword "bemapass"
+            keyAlias "bema"
+            keyPassword "bemapass"
+        }
+    }
+	
+	buildTypes {
+        debug{
+            buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
+        }
+
+        release {
+            buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
+
+            debuggable false
+            jniDebugBuild false
+            signingConfig signingConfigs.release
+        }
+
+        debugPrinter.initWith(buildTypes.debug)
+		//debugPrinter.setBuildConfigFields()
+        debugPrinter{
+			buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
+        }
+
+        releasePrinter.initWith(buildTypes.release)
+		//releasePrinter.setBuildConfigFields()
+        releasePrinter{
+            buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
+        }
+    }
+
+    lintOptions {
+        warning 'MissingTranslation'
+    }
+
+    productFlavors {
+
+        prod {
+
+        }
+
+        dev {
+
+        }
+
+        stage {
+
+        }
+
+        preprod {
+
+        }
+    }
+}
+
+ext.asVersion = '1.9.0'
+ext.aaVersion = '2.7.1'
+ext.groundyVersion = '1.5'
+
+configurations {
+    apt
+}
+
+dependencies {
+    compile project(':BemaPos')
+    compile project(':BemaDisplay')
+    compile project(':android-support-v4-preferencefragment')
+    compile project(':SwipeListViewLib')
+    compile project(':AndroidStyledDialogs')
+    compile project(':TwoWayGridView')
+    compile project(':ViewPagerIndicator')
+    compile project(':WebService')
+    compile project(':PluginLoader')
+
+	compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'com.android.support:support-v4:19.0.0'
+
+    compile 'com.squareup.picasso:picasso:2.1.1'
+
+    compile 'com.google.guava:guava:13.0.1'
+
+    compile "com.github.hamsterksu:android-annotatedsql-api:${asVersion}"
+    compile "com.telly:groundy:${groundyVersion}"
+    compile "com.googlecode.androidannotations:androidannotations-api:${aaVersion}"
+
+    compile 'com.google.code.gson:gson:2.2.+'
+
+    compile 'se.emilsjolander:stickylistheaders:2.1.2@aar'
+
+    compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1'
+
+    compile 'net.sf.supercsv:super-csv:2.1.0'
+
+    compile 'com.squareup.retrofit:retrofit:1.5.1'
+    compile 'com.squareup.okhttp:okhttp:1.5.2'
+
+    compile 'com.koushikdutta.urlimageviewhelper:urlimageviewhelper:1.0.4'
+
+    compile 'com.tonicartos:stickygridheaders:1.0.1'
+
+    compile 'org.jsoup:jsoup:1.8.1'
+}
+
+aptlibs {
+    annotatedSql {
+        version "${asVersion}"
+    }
+
+    groundy {
+        version "${groundyVersion}"
+    }
+
+    androidAnnotations {
+        version "${aaVersion}"
+    }
+}

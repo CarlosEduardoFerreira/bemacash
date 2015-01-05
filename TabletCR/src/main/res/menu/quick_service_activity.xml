@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:icon="@drawable/ic_action_action_search"
+        android:id="@+id/action_search"
+        android:title="@string/cashier_action_search"
+        android:showAsAction="collapseActionView|always"
+        android:actionViewClass="android.widget.SearchView"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:icon="@drawable/action_bar_orders"
+        android:actionLayout="@layout/actionbar_hold_counter"
+        android:id="@+id/action_hold_counter"
+        android:showAsAction="always"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:icon="@drawable/ic_action_add"
+        android:id="@+id/action_barcode"
+        android:showAsAction="always"
+        android:title="@string/cashier_action_search_by_code"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:icon="@drawable/order_history"
+        android:id="@+id/action_order_items"
+        android:showAsAction="always"
+        android:title="@string/cashier_action_order_list"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:icon="@drawable/btn_prepaid"
+        android:id="@+id/action_prepaid"
+        android:showAsAction="always|withText"
+        android:title="@string/cashier_action_prapaid"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:icon="@drawable/btn_balance"
+        android:id="@+id/action_balance"
+        android:showAsAction="never"
+        android:title="@string/cashier_action_balance"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:id="@+id/action_commission"
+        android:showAsAction="never"
+        android:title="@string/cashier_action_commission"
+        android:orderInCategory="@integer/menu_order_default"/>
+</menu>

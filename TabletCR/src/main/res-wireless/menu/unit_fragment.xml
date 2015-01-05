@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:icon="@drawable/plus_normal"
+        android:id="@+id/action_add"
+        android:title="@string/cashier_action_add"
+        android:showAsAction="always"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:id="@+id/action_warranty"
+        android:title="@string/cashier_action_set_warranty"
+        android:showAsAction="never"
+        android:orderInCategory="@integer/menu_order_default"/>
+</menu>

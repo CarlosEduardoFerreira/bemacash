@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:paddingTop="0dp"
+              android:paddingBottom="0dp"
+              style="@style/ItemList.ItemLayout"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:paddingLeft="40dp"
+        android:ellipsize="end"
+        android:layout_width="0dp"
+        android:gravity="center_vertical"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"/>
+
+    <TextView
+        android:id="@+id/ean_code"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/product_code"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/on_hand"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/unit_cost"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/total_cost"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5">
+
+        <ImageView
+            android:id="@+id/active"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/alert_check_green_small"/>
+
+    </FrameLayout>
+
+</LinearLayout>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:imeOptions="actionDone"
+        android:id="@+id/scanner_fake_input"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:padding="16dp"
+                  android:gravity="center"
+                  android:orientation="horizontal">
+
+        <ProgressBar
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="8dp"/>
+
+        <TextView
+            android:id="@+id/progress_msg"
+            style="@style/WaitDialogText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:singleLine="false"
+            android:gravity="left"
+            android:text="@string/search_barcode_wait_msg"
+            />
+
+    </LinearLayout>
+</FrameLayout>

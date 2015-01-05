@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_height="match_parent"
+             android:layout_width="match_parent">
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:paddingLeft="76dp"
+        android:paddingRight="76dp"
+        android:background="@color/beige">
+
+        <fragment
+            android:id="@+id/modifiers"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:name="com.kaching123.tcr.fragment.editmodifiers.EditModifiersFragment_" />
+
+        <fragment
+            android:id="@+id/addons"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="72dp"
+            android:name="com.kaching123.tcr.fragment.editmodifiers.EditModifiersFragment_" />
+
+        <fragment
+            android:id="@+id/optionals"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="72dp"
+            android:name="com.kaching123.tcr.fragment.editmodifiers.EditModifiersFragment_" />
+
+    </LinearLayout>
+
+    <fragment
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:id="@+id/search_fragment"
+        android:name="com.kaching123.tcr.fragment.editmodifiers.SearchFragment_" />
+
+</FrameLayout>

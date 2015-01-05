@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/item_list_bg">
+
+    <LinearLayout
+        style="@style/ItemList.HeaderLayout.1280"
+        android:id="@+id/header"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <TextView
+            style="@style/ItemList.HeaderText"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_gravity="center_vertical"
+            android:text="@string/report_payroll_header_employee"
+            android:layout_weight="4"/>
+
+        <TextView
+            style="@style/ItemList.HeaderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/report_payroll_header_total_hours"
+            android:layout_weight="1"/>
+
+        <TextView
+            style="@style/ItemList.HeaderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/report_payroll_header_hour_rate"/>
+
+        <TextView
+            android:id="@+id/commission_header"
+            style="@style/ItemList.HeaderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/report_payroll_header_commission"/>
+
+        <TextView
+            style="@style/ItemList.HeaderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/report_payroll_header_total_due"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@android:id/list"
+        style="@style/SwipeList.List"
+        android:layout_below="@id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/list_divider" />
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/item_list_padding_left">
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="4"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            android:id="@+id/commission_column"
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

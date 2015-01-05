@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                style="@style/StyledDialog.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="32dp">
+
+    <TextView
+        style="@style/StyledDialog.Content.Label"
+        android:layout_alignTop="@+id/port_text"
+        android:layout_alignBottom="@+id/port_text"
+        android:gravity="bottom"
+        android:id="@+id/port_label"
+        android:text="Printer port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@id/port_label"
+        style="@style/StyledDialog.Content.EditText"
+        android:layout_alignParentRight="true"
+        android:id="@+id/port_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/printer_config_port_hint"
+        android:inputType="number|textVisiblePassword"
+        />
+
+    <CheckBox
+        android:layout_marginTop="16dp"
+        style="@style/CheckBox.Dark"
+        android:layout_below="@id/port_text"
+        android:id="@+id/dhcp_checkbox"
+        android:text="Use DHCP server"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/dhcp_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dark_rounded_bg"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+
+        <EditText
+            style="@style/StyledDialog.Content.EditText"
+            android:layout_marginRight="8dp"
+            android:id="@+id/ip_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textVisiblePassword"
+            android:hint="@string/printer_config_ip_hint"/>
+
+        <EditText
+            style="@style/StyledDialog.Content.EditText"
+            android:layout_below="@+id/ip_text"
+            android:id="@+id/subnet_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/printer_config_subnet_hint"
+            android:layout_marginTop="8dp"
+            android:nextFocusDown="@+id/gateway_text"/>
+
+        <EditText
+            style="@style/StyledDialog.Content.EditText"
+            android:layout_below="@+id/subnet_text"
+            android:id="@+id/gateway_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/printer_config_gateway_hint"
+            android:inputType="textVisiblePassword"
+            android:layout_marginTop="8dp"
+            />
+
+    </RelativeLayout>
+</RelativeLayout>

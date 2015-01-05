@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="20dp"
+    android:orientation="vertical"
+    android:paddingRight="20dp">
+
+    <ProgressBar
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/swirl"
+        android:layout_gravity="center_horizontal"
+        android:visibility="invisible"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"/>
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:singleLine="false"
+        style="@style/PaymentItem"
+        android:layout_gravity="center"
+        />
+
+
+</LinearLayout>

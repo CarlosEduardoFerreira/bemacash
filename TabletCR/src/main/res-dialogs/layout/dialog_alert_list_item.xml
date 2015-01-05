@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/listPreferredItemHeight"
+              android:minHeight="@dimen/listPreferredItemHeight"
+              android:orientation="vertical"
+              android:gravity="center_vertical"
+              android:padding="8dp">
+
+    <TextView
+        android:id="@android:id/text1"
+        style="@style/AlertDialog.List.Item"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Description here"/>
+
+    <TextView
+        android:id="@android:id/text2"
+        android:layout_marginTop="2dp"
+        style="@style/AlertDialog.List.Item.Sub"
+        android:textStyle="italic"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="ean here"/>
+</LinearLayout>

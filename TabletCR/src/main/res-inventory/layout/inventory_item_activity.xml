@@ -1,0 +1,879 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="80dp"
+    android:paddingRight="80dp"
+    android:paddingTop="25dp"
+    android:paddingBottom="30dp"
+    android:background="@color/beige">
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@drawable/inventory_title_line"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/edit_item_information"/>
+
+            <TextView
+                style="@style/EditItem.Table.Header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_item_common_information"/>
+
+        </LinearLayout>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+
+            <TableRow
+                android:layout_marginTop="@dimen/edit_item_row_margin_top"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/item_activity_name"/>
+                </FrameLayout>
+
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/description"
+                    android:layout_width="0dp"
+                    android:inputType="textImeMultiLine"
+                    android:maxLines="3"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/item_activity_department"/>
+                </FrameLayout>
+
+
+                <Spinner
+                    android:id="@+id/department"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/item_activity_category"/>
+                </FrameLayout>
+
+
+                <Spinner
+                    android:id="@+id/category"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_ean_upc_code"/>
+                </FrameLayout>
+
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/ean"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLength="13"
+                    android:inputType="number"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+
+                        android:text="@string/item_activity_product_code"/>
+                </FrameLayout>
+
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/product_code"
+                    android:layout_width="0dp"
+                    android:textSize="15sp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLength="20"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/item_activity_units_label"/>
+                </FrameLayout>
+
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:inputType="textImeMultiLine"
+                    android:id="@+id/units_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="pcs"/>
+
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/item_activity_price_type"/>
+                </FrameLayout>
+
+
+                <Spinner
+                    android:id="@+id/price_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/serialization_holder"
+                android:gravity="center_vertical" >
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/item_activity_unit_type"/>
+                </FrameLayout>
+
+
+                <Spinner
+                    android:id="@+id/serialization_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_active"/>
+
+                </FrameLayout>
+
+
+                <CheckBox
+                    android:id="@+id/active"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_kitchen"/>
+                </FrameLayout>
+
+
+                <Spinner
+                    android:id="@+id/printer_alias"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_notes"/>
+
+                </FrameLayout>
+
+
+                <CheckBox
+                    android:id="@+id/has_notes"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </TableRow>
+
+
+        </TableLayout>
+
+        <RelativeLayout
+            android:layout_marginTop="18dp"
+            android:id="@+id/button_view_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/button_view"
+                android:layout_alignParentRight="true"
+                android:clickable="true"
+                android:layout_width="@dimen/quick_item_view_width"
+                android:layout_height="@dimen/quick_item_view_height"
+                android:background="@drawable/quick_item_bg"/>
+
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:layout_centerVertical="true"
+                android:text="@string/item_activity_button_view"/>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/edit_item_table_margin_left">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@drawable/inventory_title_line"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/edit_item_price"/>
+
+            <TextView
+                style="@style/EditItem.Table.Header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_item_price"/>
+
+        </LinearLayout>
+
+        <TableLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+
+            >
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="@dimen/edit_item_row_margin_top"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/item_activity_sales_price"/>
+                </FrameLayout>
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/sales_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_discountable"/>
+                </FrameLayout>
+
+                <CheckBox
+                    android:id="@+id/discountable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_discount_type"/>
+                </FrameLayout>
+
+                <Spinner
+                    android:id="@+id/discount_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_discount_amount"/>
+                </FrameLayout>
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/discount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_taxable"/>
+                </FrameLayout>
+
+                <CheckBox
+                    android:id="@+id/taxable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_tax_group"/>
+                </FrameLayout>
+
+
+                <Spinner
+                    android:id="@+id/taxGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_cost"/>
+                </FrameLayout>
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/cost"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"/>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/commissions_eligible_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_commissions_eligible_label"/>
+                </FrameLayout>
+
+                <CheckBox
+                    android:id="@+id/commissions_eligible"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"/>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/commissions_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_commissions_label"/>
+                </FrameLayout>
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/commissions"
+                    android:inputType="numberDecimal"
+                    android:layout_width="0dp"
+                    android:singleLine="true"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/edit_item_table_margin_left">
+
+        <Button
+            style="@style/LocalizableButton.Green"
+            android:text="@string/button_save"
+            android:textSize="26sp"
+            android:paddingBottom="6dp"
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:background="@drawable/save_btn_bg"
+            android:layout_marginTop="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"/>
+
+
+        <LinearLayout
+            android:id="@+id/monitoring_label"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@drawable/inventory_title_line"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/edit_item_monitoring"/>
+
+            <TextView
+                style="@style/EditItem.Table.Header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/edit_item_monitoring"/>
+
+            <CheckBox
+                android:id="@+id/stock_tracking_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+
+        <TableLayout
+            android:id="@+id/monitoring_table"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_below="@id/monitoring_label">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/edit_item_row_margin_top">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Monitoring">
+
+                    <TextView
+                        style="@style/EditItem.Table.MonitoringLabel"
+                        android:text="@string/item_activity_available_quantity"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/available_qty_block"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <EditText
+                        style="@style/EditItem.Table.Edittext"
+                        android:id="@+id/available_qty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberSigned"/>
+
+                    <!--android:drawableRight="@drawable/pencil"-->
+                    <TextView
+                        android:id="@+id/available_qty_pencil"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:textSize="18sp"
+                        android:textColor="#6a6963"
+                        style="@android:style/Widget.Holo.EditText"
+                        android:visibility="gone"/>
+
+                </FrameLayout>
+            </TableRow>
+
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Monitoring">
+
+                    <TextView
+                        style="@style/EditItem.Table.MonitoringLabel"
+                        android:text="@string/item_activity_minimum_qty"/>
+                </FrameLayout>
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/minimum_qty"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Monitoring">
+
+                    <TextView
+                        style="@style/EditItem.Table.MonitoringLabel"
+                        android:text="@string/item_activity_recommended_qty"/>
+                </FrameLayout>
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/recommended_qty"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"/>
+            </TableRow>
+
+
+            <!--<TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Monitoring">
+                    <TextView
+                        style="@style/EditItem.Table.MonitoringLabel"
+                        android:text="@string/item_activity_stock_tracking"/>
+                </FrameLayout>
+
+                <CheckBox
+                    android:id="@+id/stock_tracking_flag"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </TableRow>-->
+
+        </TableLayout>
+
+        <LinearLayout
+            android:id="@+id/modification_label"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@drawable/inventory_title_line"
+            android:layout_below="@id/monitoring_table"
+            android:layout_marginTop="@dimen/edit_item_table_margin_top"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/edit_item_modifications"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/EditItem.Table.Header"
+                android:text="@string/edit_item_modification"/>
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="none"
+            android:layout_below="@id/modification_label"
+            android:layout_above="@id/button">
+            <TableLayout
+                android:id="@+id/modifiers_table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="?android:attr/dividerHorizontal"
+                android:showDividers="middle|end">
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/edit_item_row_margin_top">
+
+                    <FrameLayout
+                        style="@style/EditItem.Table.LabelLayout.Modification">
+
+                        <TextView
+                            style="@style/EditItem.Table.Label"
+                            android:id="@+id/modifiers_label"
+                            android:text="@string/item_activity_modifiers"/>
+                    </FrameLayout>
+
+                    <TextView
+                        style="@style/EditItem.Table.Textview"
+                        android:id="@+id/modifiers"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:id="@+id/modifiers_add"
+                        android:padding="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/btn_add"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center_vertical">
+
+                    <FrameLayout
+                        style="@style/EditItem.Table.LabelLayout.Modification">
+
+                        <TextView
+                            style="@style/EditItem.Table.Label"
+                            android:id="@+id/addons_label"
+                            android:text="@string/item_activity_addons"/>
+                    </FrameLayout>
+
+                    <TextView
+                        style="@style/EditItem.Table.Textview"
+                        android:id="@+id/addons"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:id="@+id/addons_add"
+                        android:padding="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/btn_add"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center_vertical">
+
+                    <FrameLayout
+                        style="@style/EditItem.Table.LabelLayout.Modification">
+
+                        <TextView
+                            style="@style/EditItem.Table.Label"
+                            android:id="@+id/optionals_label"
+                            android:text="@string/item_activity_optionals"/>
+                    </FrameLayout>
+
+                    <TextView
+                        style="@style/EditItem.Table.Textview"
+                        android:id="@+id/optionals"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:id="@+id/options_add"
+                        android:padding="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/btn_add"/>
+                </TableRow>
+
+
+            </TableLayout>
+
+        </ScrollView>
+
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

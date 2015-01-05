@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:paddingLeft="9dp"
+        android:paddingRight="9dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="6dp"
+        android:background="@drawable/addon_background">
+
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/apply_tips_dialog_subtotal_label"
+            android:id="@+id/subtotal_label"
+            style="@style/PaymentItem.20"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <TextView
+            android:id="@+id/subtotal"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            style="@style/PaymentItem.20"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/subtotal_label"
+            android:text="@string/apply_tips_dialog_tax_label"
+            android:id="@+id/tax_label"
+            style="@style/PaymentItem.20"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tax"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/subtotal"
+            style="@style/PaymentItem.20"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:layout_below="@id/tax"
+            android:background="@drawable/qs_horizontal_divider" />
+
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/divider"
+            android:text="@string/apply_tips_dialog_total_label"
+            android:id="@+id/total_label"
+            style="@style/PaymentItem.20"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <TextView
+            android:id="@+id/total"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/divider"
+            style="@style/PaymentItem.20"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+    </RelativeLayout>
+
+    <RadioGroup
+        android:id="@+id/tips_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            style="@style/RadioButton.Dark"
+            android:id="@+id/tip0"
+            android:checked="true"
+            android:layout_marginBottom="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:singleLine="true"/>
+
+        <RadioButton
+            style="@style/RadioButton.Dark"
+            android:id="@+id/tip1"
+            android:layout_marginBottom="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:singleLine="true"/>
+
+        <RadioButton
+            style="@style/RadioButton.Dark"
+            android:id="@+id/tip2"
+            android:layout_marginBottom="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:singleLine="true"/>
+
+
+    </RadioGroup>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            style="@style/RadioButton.Dark"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/tip_custom"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.kaching123.tcr.component.CustomEditBox
+            style="@style/CustomEditBox.Decimal"
+            android:id="@+id/tips_editbox"
+            android:layout_toRightOf="@id/tip_custom"
+            android:layout_toLeftOf="@+id/percent_value_switch"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_holo_dark"
+            android:layout_width="match_parent"/>
+
+        <Switch
+            style="@style/ImageSwitch.Discount"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="8dp"
+            android:checked="true"
+            android:id="@+id/percent_value_switch"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+
+    </RelativeLayout>
+
+    <TextView
+        style="@style/StyledDialog.Content.Label"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="4dp"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/employee_tips_dialog_employee_hint"/>
+
+    <Spinner
+        android:id="@+id/employee_spinner"
+        style="@style/StyledDialog.Content.Spinner"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+</LinearLayout>

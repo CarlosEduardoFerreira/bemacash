@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingLeft="80dp"
+    android:paddingRight="80dp"
+    android:paddingTop="40dp"
+    android:paddingBottom="40dp"
+    android:background="@color/beige"
+    android:orientation="horizontal"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:weightSum="3">
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/Reports.Groups.Title"
+            android:id="@+id/sales_label"
+            android:text="@string/report_category_sales"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ListView
+            style="@style/Reports.Groups.List"
+            android:id="@+id/sales_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="@dimen/reports_list_fragment_block_margin"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/Reports.Groups.Title"
+            android:text="@string/report_category_inventory"
+            android:id="@+id/inventory_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ListView
+            style="@style/Reports.Groups.List"
+            android:id="@+id/inventory_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="@dimen/reports_list_fragment_block_margin"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_marginLeft="@dimen/reports_list_fragment_block_margin"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Reports.Groups.Title"
+                android:text="@string/report_category_employee"
+                android:id="@+id/employee_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ListView
+                style="@style/Reports.Groups.List"
+                android:id="@+id/employee_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginLeft="@dimen/reports_list_fragment_block_margin"
+            android:layout_marginTop="@dimen/reports_list_fragment_block_margin"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Reports.Groups.Title"
+                android:text="@string/report_category_shift"
+                android:id="@+id/shift_report_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ListView
+                style="@style/Reports.Groups.List"
+                android:id="@+id/shift_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--    <LinearLayout
+            android:layout_marginLeft="@dimen/reports_list_fragment_block_margin"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="@string/report_category_customer"
+                android:id="@+id/customer_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <ListView
+                android:id="@+id/customer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>-->
+
+</LinearLayout>

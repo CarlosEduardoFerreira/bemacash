@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingTop="15dp"
+              android:paddingBottom="25dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:gravity="center">
+
+    <TextView
+        android:id="@+id/msg"
+        style="@style/WaitDialogText"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="center_horizontal"
+        android:singleLine="false"
+        android:text="@string/warranty_dialog_clarification"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/WaitDialogText"
+            android:textSize="18dp"
+            android:text="@string/wireless_body_warranty" />
+
+        <EditText
+            style="@style/CustomEditBox.Decimal"
+            android:id="@+id/warranty"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_holo_dark"
+            android:layout_width="wrap_content"
+            android:inputType="numberDecimal"/>
+    </LinearLayout>
+
+</LinearLayout>

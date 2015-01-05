@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+        android:src="@drawable/total_stroke_line"
+        android:tileMode="repeat" />
+<!--
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="line">
+
+    <stroke
+        android:color="@color/total_cost_order_discount_divider"
+        android:width="1dp"
+        android:dashGap="2dp"
+        android:dashWidth="6dp"
+        />
+    <size
+        android:height="1px"
+        />
+</shape>
+-->

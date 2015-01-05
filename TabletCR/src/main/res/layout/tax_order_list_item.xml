@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/item_back"
+        style="@style/ItemList.ItemLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="0dp"
+        android:paddingTop="0dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="left|center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_hidden"
+                style="@style/ItemList.ItemText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_item_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="@dimen/list_item_padding_right"
+            android:background="@drawable/item_remove_cancel_btn"
+            android:text="@string/btn_item_cancel"
+            android:textSize="18sp"
+            style="@style/LocalizableButton.Grey"/>
+
+        <Button
+            android:id="@+id/btn_item_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="@dimen/list_item_padding_right"
+            android:background="@drawable/item_remove_btn"
+            android:text="@string/btn_item_remove"
+            android:textSize="18sp"
+            style="@style/LocalizableButton.Red"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/item_front"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@drawable/item_list_bg">
+            <LinearLayout
+                android:id="@+id/clickable_container"
+                style="@style/ItemList.ItemLayout.Block"
+                android:paddingBottom="0dp"
+                android:paddingTop="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/ItemList.ItemText.Border"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:gravity="center_vertical" />
+
+                <TextView
+                    android:id="@+id/tax"
+                    style="@style/ItemList.ItemText.Border"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center" />
+
+            </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>
+

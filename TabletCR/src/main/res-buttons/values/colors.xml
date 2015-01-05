@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="text_green_normal">#3b5e15</color>
+    <color name="text_green_pressed">#27410b</color>
+    <color name="text_green_disabled">#663b5e15</color>
+
+    <color name="text_green2_normal">#5bbd6e</color>
+    <color name="text_green2_pressed">#0e3b16</color>
+    <color name="text_green2_disabled">#665bbd6e</color>
+
+    <color name="text_grey_normal">#666666</color>
+    <color name="text_grey_pressed">#494949</color>
+    <color name="text_grey_disabled">#66666666</color>
+
+    <color name="text_lightgrey_normal">#eeece4</color>
+    <color name="text_lightgrey_pressed">#747474</color>
+    <color name="text_lightgrey_disabled">#66eeece4</color>
+
+    <color name="text_darkgrey_normal">#252525</color>
+    <color name="text_darkgrey_pressed">#1d1d1d</color>
+    <color name="text_darkgrey_disabled">#66252525</color>
+
+    <color name="text_red_normal">#71201c</color>
+    <color name="text_red_pressed">#521816</color>
+    <color name="text_red_disabled">#6671201c</color>
+
+    <color name="text_red2_normal">#ef4a37</color>
+    <color name="text_red2_pressed">#421914</color>
+    <color name="text_red2_disabled">#66ef4a37</color>
+
+    <color name="text_lightred_normal">#932427</color>
+    <color name="text_lightred_pressed">#521816</color>
+    <color name="text_lightred_disabled">#66932427</color>
+
+    <color name="text_blue_normal">#2c596d</color>
+    <color name="text_blue_pressed">#1a4152</color>
+    <color name="text_blue_disabled">#662c596d</color>
+
+    <color name="text_blue2_normal">#00ccff</color>
+    <color name="text_blue2_pressed">#056881</color>
+    <color name="text_blue2_disabled">#6600ccff</color>
+
+    <color name="text_gold_normal">#8e4f11</color>
+    <color name="text_gold_pressed">#623508</color>
+    <color name="text_gold_disabled">#668e4f11</color>
+
+    <color name="text_yellow_normal">#ffd800</color>
+    <color name="text_yellow_pressed">#584b00</color>
+    <color name="text_yellow_disabled">#66ffd800</color>
+
+</resources>

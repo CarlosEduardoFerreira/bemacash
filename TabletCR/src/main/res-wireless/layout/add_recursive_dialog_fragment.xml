@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:id="@+id/unit_edit_dialog"
+    android:layout_marginBottom="5dp"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/msg"
+        style="@style/WaitDialogText"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:singleLine="false" />
+
+    <Switch
+        style="@style/TaxtSwitcherBema"
+        android:id="@+id/purpose_switch"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <TextView
+            android:id="@+id/tv_serial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:layout_marginTop="5dp"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/et_serial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/transparent"
+            android:singleLine="true"
+            android:cursorVisible="false"
+            android:background="@drawable/edit_text_holo_dark"/>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/WaitDialogText"
+            android:textSize="18dp"
+            android:text="@string/wireless_body_warranty" />
+
+        <EditText
+            style="@style/CustomEditBox.Decimal"
+            android:id="@+id/warr_editbox"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_holo_dark"
+            android:layout_width="wrap_content"
+            android:inputType="number"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/WaitDialogText"
+            android:textSize="18dp"
+            android:text="@string/wireless_counter_label" />
+
+        <EditText
+            style="@style/CustomEditBox.Decimal"
+            android:id="@+id/counter_editbox"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_holo_dark"
+            android:layout_width="wrap_content"
+            android:inputType="number"/>
+    </LinearLayout>
+
+
+    <ProgressBar
+        android:visibility="invisible"
+        android:id="@+id/progress_bar"
+        style="@android:style/Widget.Holo.Light.ProgressBar.Small"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+</LinearLayout>

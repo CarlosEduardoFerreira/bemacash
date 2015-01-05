@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:icon="@drawable/action_bar_orders"
+        android:actionLayout="@layout/actionbar_warning_counter"
+        android:id="@+id/action_alerts"
+        android:showAsAction="always"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:icon="@drawable/order_history"
+        android:id="@+id/action_order_items"
+        android:showAsAction="always"
+        android:title="@string/cashier_action_order_list"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:icon="@drawable/action_credit_receipt"
+        android:id="@+id/action_credit_receipts"
+        android:showAsAction="always"
+        android:title="@string/dashboard_action_credit_receipts"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:id="@+id/action_options"
+        android:title="@string/dashboard_action_options"
+        android:showAsAction="never"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:id="@+id/action_activation"
+        android:title="@string/dashboard_action_activation"
+        android:showAsAction="never"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:id="@+id/action_send_log"
+        android:title="@string/dashboard_action_send_logs"
+        android:showAsAction="never"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:id="@+id/action_export_db"
+        android:title="@string/dashboard_action_export_database"
+        android:showAsAction="never"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:id="@+id/action_logout"
+        android:title="@string/dashboard_action_logout"
+        android:showAsAction="never"
+        android:menuCategory="alternative"
+        android:orderInCategory="@integer/menu_order_last"/>
+
+</menu>

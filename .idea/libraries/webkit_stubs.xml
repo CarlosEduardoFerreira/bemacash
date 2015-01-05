@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="webkit-stubs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/TabletCR/libs/webkit-stubs.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

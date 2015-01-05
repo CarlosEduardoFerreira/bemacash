@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/beige"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_height="48dp"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:paddingTop="8dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp">
+
+        <TextView
+            android:id="@+id/from_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="@string/reports_from_label"/>
+
+        <EditText
+            android:id="@+id/from_edit"
+            style="@style/Reports.DateEdit"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/from_label"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="4dp"/>
+
+        <TextView
+            android:id="@+id/to_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_toRightOf="@id/from_edit"
+            android:paddingLeft="11dp"
+            android:text="@string/reports_to_label"/>
+
+        <EditText
+            android:id="@+id/to_edit"
+            style="@style/Reports.DateEdit"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/to_label"
+            android:layout_alignLeft="@id/to_label"
+            android:layout_marginRight="86dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_height="2dp"
+        android:layout_width="match_parent"
+        android:layout_below="@id/from_edit"
+        android:layout_marginTop="8dp"
+        android:background="@color/reports_divider"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/item_list_bg">
+
+        <LinearLayout
+            style="@style/ItemList.HeaderLayout.1280"
+            android:id="@+id/header"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <TextView
+                style="@style/ItemList.HeaderText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/report_employee_attendance_header_clockin"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/report_employee_attendance_header_clockout"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/employee_attendence_header_hrs"/>
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@android:id/list"
+            style="@style/SwipeList.List"
+            android:layout_below="@id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/list_divider"/>
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/item_list_padding_left">
+
+            <View
+                style="@style/ItemList.HeaderSpace"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <View
+                style="@style/ItemList.HeaderSpace"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <View
+                style="@style/ItemList.HeaderSpace"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

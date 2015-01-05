@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/beige"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/fragment_header"
+        android:layout_height="48dp"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:paddingTop="8dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp">
+
+        <TextView
+            android:id="@+id/from_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="@string/reports_mode_entity_department"/>
+
+        <Spinner
+            android:id="@+id/department_spinner"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:minWidth="160dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_below="@id/fragment_header"
+        android:layout_height="2dp"
+        android:layout_width="match_parent"
+        android:layout_marginTop="8dp"
+        android:background="@color/reports_divider"
+        />
+
+    <LinearLayout
+        android:layout_below="@id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/item_list_bg"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/list_header"
+            style="@style/ItemList.HeaderLayout.1280"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_inventory_status_header_title"
+                android:layout_weight="1.5"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_inventory_status_ean_upc_code"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_inventory_status_ean_product_code"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_inventory_status_header_on_hand"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reports_inventory_status_header_unit_cost"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reports_inventory_status_header_total_cost"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="@string/reports_inventory_status_header_active"/>
+
+        </LinearLayout>
+
+        <ListView
+            android:layout_below="@id/list_header"
+            android:id="@android:id/list"
+            style="@style/SwipeList.List"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/list_divider"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_below="@id/divider"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/item_list_padding_left">
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

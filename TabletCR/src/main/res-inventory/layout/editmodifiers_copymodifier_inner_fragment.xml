@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        style="@style/CopyModifierGrid.Title"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/type_title"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dark_rounded_bg">
+
+        <LinearLayout
+            style="@style/CopyModifierGrid.HeaderContainer"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/checkbox_all"
+                android:src="@drawable/img_checkbox"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+            <TextView
+                style="@style/CopyModifierGrid.Header"
+                android:text="Name"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/CopyModifierGrid.Header.Price"
+                android:text="Price"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"/>
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/list"
+            style="@style/CopyModifierGrid.List"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+
+    </LinearLayout>
+</LinearLayout>

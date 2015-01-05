@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="modify_container_row_count">3</integer>
+    <integer name="quick_categories_columns">2</integer>
+    <integer name="quick_grid_columns">9</integer>
+    <integer name="quick_grid_rows">3</integer>
+    <integer name="quick_buttons_view_count">22</integer>
+    <integer name="card_flip_time_full">300</integer>
+    <integer name="card_flip_time_half">150</integer>
+    <integer name="menu_order_first">0</integer>
+    <integer name="menu_order_default">1</integer>
+    <integer name="menu_order_last">2</integer>
+    <integer name="cash_drawer_movements_comment_length">45</integer>
+    <integer name="login_length">3</integer>
+    <integer name="password_length">4</integer>
+    <integer name="name_max_length">128</integer>
+    <integer name="email_max_length">128</integer>
+    <integer name="address_max_length">255</integer>
+    <integer name="full_address_max_length">512</integer>
+    <integer name="phone_max_length">14</integer>
+    <integer name="category_icon_columns_count">3</integer>
+    <integer name="product_grid_columns">5</integer>
+    <integer name="product_wireless_amout_columns">3</integer>
+    <integer name="product_country_grid_columns">26</integer>
+    <integer name="product_flag_grid_columns">3</integer>
+    <integer name="product_carrier_grid_columns">4</integer>
+    <integer name="product_grid_rows">3</integer>
+    <integer-array name="tips_predefine">
+        <item name="tip1">15</item>
+        <item name="tip2">18</item>
+        <item name="tip3">20</item>
+    </integer-array>
+</resources>

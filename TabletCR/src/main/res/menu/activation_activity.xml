@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/print_receipt"
+        android:title="@string/print_receipt" />
+    <item
+        android:icon="@drawable/ic_action_navigation_accept"
+        android:id="@+id/action_complete"
+        android:showAsAction="always"
+        android:title="@string/action_activation_complete"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+
+</menu>

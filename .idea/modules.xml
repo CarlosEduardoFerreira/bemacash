@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidStyledDialogs/AndroidStyledDialogs.iml" filepath="$PROJECT_DIR$/AndroidStyledDialogs/AndroidStyledDialogs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BemaDisplay/BemaDisplay.iml" filepath="$PROJECT_DIR$/BemaDisplay/BemaDisplay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BemaPos/BemaPos.iml" filepath="$PROJECT_DIR$/BemaPos/BemaPos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Chetu_Restaurant.iml" filepath="$PROJECT_DIR$/Chetu_Restaurant.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PluginLoader/PluginLoader.iml" filepath="$PROJECT_DIR$/PluginLoader/PluginLoader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SwipeListViewLib/SwipeListViewLib.iml" filepath="$PROJECT_DIR$/SwipeListViewLib/SwipeListViewLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TabletCR/TabletCR.iml" filepath="$PROJECT_DIR$/TabletCR/TabletCR.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TwoWayGridView/TwoWayGridView.iml" filepath="$PROJECT_DIR$/TwoWayGridView/TwoWayGridView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ViewPagerIndicator/ViewPagerIndicator.iml" filepath="$PROJECT_DIR$/ViewPagerIndicator/ViewPagerIndicator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WebService/WebService.iml" filepath="$PROJECT_DIR$/WebService/WebService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-support-v4-preferencefragment/android-support-v4-preferencefragment.iml" filepath="$PROJECT_DIR$/android-support-v4-preferencefragment/android-support-v4-preferencefragment.iml" />
+    </modules>
+  </component>
+</project>
+

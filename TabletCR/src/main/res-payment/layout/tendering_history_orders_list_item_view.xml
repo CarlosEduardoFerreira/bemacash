@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ItemList.ItemLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/order_num"
+        style="@style/ItemList.ItemText"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7"/>
+
+    <TextView
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/cashier"
+        style="@style/ItemList.ItemText"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.3"/>
+
+    <TextView
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/date"
+        style="@style/ItemList.ItemText"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.2"/>
+
+    <TextView
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/amount"
+        style="@style/ItemList.ItemText"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="right|center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/tender_type"
+        style="@style/ItemList.ItemText"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7"/>
+
+    <TextView
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/prepaid"
+        style="@style/ItemList.ItemText"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"/>
+
+    <TextView
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/tips_amount"
+        style="@style/ItemList.ItemText"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="right|center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7"/>
+
+    <TextView
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:id="@+id/transactions_state"
+        style="@style/ItemList.ItemText"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"/>
+
+</LinearLayout>

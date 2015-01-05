@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <TextView
+        style="@style/DrawerPicker.HeaderText"
+        android:id="@+id/header"
+        android:paddingLeft="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/report_type_list_header_height"
+        android:gravity="center_vertical"
+        />
+
+    <TextView
+        android:paddingLeft="18dp"
+        style="@style/DrawerPicker.ItemText.ReportType"
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/report_type_list_item_height"
+        android:gravity="center_vertical"
+        />
+
+</LinearLayout>

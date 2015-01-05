@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_height="match_parent"
+              android:layout_width="match_parent"
+              android:orientation="horizontal"
+              android:paddingLeft="@dimen/item_list_padding_left">
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.7"/>
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1.3"/>
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1.2"/>
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"/>
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.7"/>
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"/>
+
+    <View
+        android:id="@+id/gratuity_divider"
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.7"/>
+
+    <View
+        android:id="@+id/transactions_status_divider"
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"/>
+
+</LinearLayout>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ItemList.HeaderLayout"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+
+    <CheckBox
+        style="@style/ItemList.HeaderCheckbox"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="bottom"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:id="@+id/checkbox"
+        android:button="@drawable/checkbox_light"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"/>
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/refund_header_refQty"
+        android:layout_weight="2"
+        />
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:gravity="center"
+        android:text="@string/refund_header_name"
+        />
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:text="@string/refund_header_max_refund"/>
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:text="@string/refund_header_price"/>
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:text="@string/refund_header_qty"/>
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:text="@string/refund_header_total"/>
+
+</LinearLayout>

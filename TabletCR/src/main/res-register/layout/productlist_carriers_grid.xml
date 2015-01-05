@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginLeft="50dp"
+    android:layout_marginTop="20dp"
+    android:layout_below="@+id/text"
+    android:layout_alignLeft="@+id/text"
+    android:id="@+id/country_flag_grid"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:listSelector="@android:color/transparent"
+    android:numColumns="@integer/product_carrier_grid_columns"
+    android:stretchMode="spacingWidth"
+    android:verticalSpacing="@dimen/product_items_grid_spacing"
+    android:horizontalSpacing="@dimen/product_items_grid_spacing"
+    android:columnWidth="@dimen/product_carrier_width"
+    android:rowHeight="@dimen/product_carrier_height" />
