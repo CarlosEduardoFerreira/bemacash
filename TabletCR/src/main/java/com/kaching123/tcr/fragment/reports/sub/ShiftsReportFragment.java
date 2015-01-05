@@ -118,7 +118,7 @@ public class ShiftsReportFragment extends SuperBaseFragment implements IDetailsF
                         concatFullname(cursor.getString(indexHolder.get(OpenManagerTable.FIRST_NAME)), cursor.getString(indexHolder.get(OpenManagerTable.LAST_NAME))),
                         concatFullname(cursor.getString(indexHolder.get(CloseManagerTable.FIRST_NAME)), cursor.getString(indexHolder.get(CloseManagerTable.LAST_NAME))),
                         cursor.getString(indexHolder.get(RegisterTable.TITLE))
-                        );
+                );
             }
         }).build(getActivity());
     }
@@ -158,9 +158,9 @@ public class ShiftsReportFragment extends SuperBaseFragment implements IDetailsF
             UiHolder holder = (UiHolder) view.getTag();
 
             holder.date.setText(DateUtils.dateOnlyFormat(item.startTime));
-            if(item.closeManagerId != null && !item.openManagerId.equals(item.closeManagerId)){
+            if (item.closeManagerId != null && !item.openManagerId.equals(item.closeManagerId)) {
                 holder.employeeName.setText(item.openEmployeeFullName + " - " + item.closeEmployeeFullName);
-            }else{
+            } else {
                 holder.employeeName.setText(item.openEmployeeFullName);
             }
             holder.registerNumber.setText(item.registerTitle);

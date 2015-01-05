@@ -119,6 +119,7 @@ public class DashboardActivity extends SuperBaseActivity {
     private static final Uri SHIFT_URI = ShopProvider.getContentWithLimitUri(ShiftTable.URI_CONTENT, 1);
     private static final Uri TOTAL_SALES_URI = ShopProvider.getContentUri(TotalSalesQuery.CONTENT_PATH);
     private static final Uri TIPS_URI = ShopProvider.getContentUri(EmployeeTipsTable.URI_CONTENT);
+    private static final Uri CASHBACK_URI = ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT);
     private static final Uri OPENED_TRANSACTIONS_URI = ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT);
     private static final Uri TIMESHEET_URI = ShopProvider.getContentWithLimitUri(EmployeeTimesheetTable.URI_CONTENT, 1);
     private static final Uri SQL_COMMAND_URI = ShopProvider.contentUriWithLimit(SqlCommandTable.URI_CONTENT, 1);
@@ -996,6 +997,11 @@ public class DashboardActivity extends SuperBaseActivity {
                     gatherTipsStaticstics(cursor, salesStatisticsModel);
                 }
 
+                cursor = loadCashBackStatisctics(shiftModel);
+                while (cursor.moveToNext()) {
+                    gatherCashBackStaticstics(cursor, salesStatisticsModel);
+                }
+
                 cursor.close();
             }
             return Optional.fromNullable(salesStatisticsModel);
@@ -1074,6 +1080,19 @@ public class DashboardActivity extends SuperBaseActivity {
             }
         }
 
+        private FluentCursor loadCashBackStatisctics(ShiftModel shiftModel) {
+            return ProviderAction.query(CASHBACK_URI)
+                    .projection(PaymentTransactionTable.CASH_BACK)
+                    .where(PaymentTransactionTable.SHIFT_GUID + " = ?", shiftModel.guid)
+                    .perform(context);
+        }
+
+        private void gatherCashBackStaticstics(Cursor c, SalesStatisticsModel salesStatisticsModel) {
+            BigDecimal cashBackAmount = _decimal(c, 0);
+            salesStatisticsModel.cashBack = salesStatisticsModel.cashBack.add(cashBackAmount);
+
+        }
+
     }
 
     public static class SalesStatisticsModel {
@@ -1088,6 +1107,7 @@ public class DashboardActivity extends SuperBaseActivity {
         public BigDecimal movements = BigDecimal.ZERO;
         public BigDecimal cashTips = BigDecimal.ZERO;
         public BigDecimal creditTips = BigDecimal.ZERO;
+        public BigDecimal cashBack = BigDecimal.ZERO;
 
         public SalesStatisticsModel(ShiftModel shiftModel) {
             this.shiftModel = shiftModel;
@@ -1098,7 +1118,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         public BigDecimal getCashOnDrawer() {
-            return cash.add(movements).add(shiftModel.openAmount).add(cashTips);
+            return cash.add(movements).add(shiftModel.openAmount).add(cashTips).subtract(cashBack);
         }
 
         public BigDecimal getDrawerDifference() {

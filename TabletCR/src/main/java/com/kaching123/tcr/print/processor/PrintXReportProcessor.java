@@ -132,11 +132,11 @@ public class PrintXReportProcessor {
         printer.pair(context.getString(R.string.xreport_offline_credit), report.tenderOfflineCredit);
         printer.pair(context.getString(R.string.xreport_check), report.tenderCheck);
 
-        if (app.getShopInfo().acceptEbtCards){
+        if (app.getShopInfo().acceptEbtCards) {
             printer.pair(context.getString(R.string.xreport_ebt_cash), report.tenderEbtCash);
             printer.pair(context.getString(R.string.xreport_ebt_foodstamp), report.tenderEbtFoodstamp);
         }
-        if (app.getShopInfo().acceptDebitCards){
+        if (app.getShopInfo().acceptDebitCards) {
             printer.pair(context.getString(R.string.xreport_debit), report.tenderDebit);
         }
 
@@ -159,7 +159,13 @@ public class PrintXReportProcessor {
                 printer.pair(cardName, report.cards.get(cardName));
             }
         }
-
+        printer.subtitle(context.getString(R.string.xreport_drawer_details), true);
+        printer.pair(context.getString(R.string.xreport_drawer_open_amount), report.openAmount);
+        printer.pair(context.getString(R.string.xreport_drawer_cash_sale), report.cashSale);
+        printer.pair(context.getString(R.string.xreport_drawer_safe_drops), report.safeDrops);
+        printer.pair(context.getString(R.string.xreport_drawer_payouts), report.payOuts);
+        printer.pair(context.getString(R.string.xreport_drawer_cash_back), report.cashBack);
+        printer.pair(context.getString(R.string.xreport_drawer_difference), report.drawerDifference);
         printer.drawLine();
 
     }

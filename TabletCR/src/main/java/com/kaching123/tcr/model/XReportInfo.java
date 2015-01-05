@@ -31,6 +31,11 @@ public class XReportInfo {
     public BigDecimal tenderDebit;
     public BigDecimal drawerDifference;
     public BigDecimal transactionFee;
+    public BigDecimal openAmount = BigDecimal.ZERO;
+    public BigDecimal cashSale = BigDecimal.ZERO;
+    public BigDecimal safeDrops = BigDecimal.ZERO;
+    public BigDecimal payOuts = BigDecimal.ZERO;
+    public BigDecimal cashBack = BigDecimal.ZERO;
     /*public BigDecimal ccAmex;
     public BigDecimal ccVisa;
     public BigDecimal ccMasterCard;*/
@@ -44,7 +49,11 @@ public class XReportInfo {
         this.end = end;
     }
 
-    public XReportInfo(Date begin, Date end, BigDecimal grossSales, BigDecimal discounts, BigDecimal returns, BigDecimal netSales, BigDecimal gratuity, BigDecimal tax, BigDecimal totalTender, BigDecimal cogs, BigDecimal grossMargin, BigDecimal grossMarginPercent, BigDecimal tenderCreditCard, BigDecimal tenderCash, BigDecimal tenderCreditReceipt, BigDecimal tenderOfflineCredit, BigDecimal tenderCheck, BigDecimal tenderEbtCash, BigDecimal tenderEbtFoodstamp, BigDecimal tenderDebit, HashMap<String, BigDecimal> cards, BigDecimal drawerDifference, BigDecimal transactionFee) {
+    public XReportInfo(Date begin, Date end, BigDecimal grossSales, BigDecimal discounts, BigDecimal returns, BigDecimal netSales, BigDecimal gratuity, BigDecimal tax, BigDecimal totalTender, BigDecimal cogs, BigDecimal grossMargin, BigDecimal grossMarginPercent, BigDecimal tenderCreditCard, BigDecimal tenderCash, BigDecimal tenderCreditReceipt, BigDecimal tenderOfflineCredit, BigDecimal tenderCheck, BigDecimal tenderEbtCash, BigDecimal tenderEbtFoodstamp, BigDecimal tenderDebit, HashMap<String, BigDecimal> cards, BigDecimal drawerDifference, BigDecimal transactionFee, BigDecimal openAmount,
+                       BigDecimal cashSale,
+                       BigDecimal safeDrops,
+                       BigDecimal payOuts,
+                       BigDecimal cashBack) {
         this.begin = begin;
         this.end = end;
         this.grossSales = grossSales;
@@ -68,5 +77,10 @@ public class XReportInfo {
         this.grossMarginPercent = grossMarginPercent;
         this.drawerDifference = drawerDifference;
         this.transactionFee = transactionFee;
+        this.openAmount = openAmount;
+        this.cashSale = cashSale;
+        this.safeDrops = safeDrops;
+        this.payOuts = payOuts;
+        this.cashBack = cashBack;
     }
 }

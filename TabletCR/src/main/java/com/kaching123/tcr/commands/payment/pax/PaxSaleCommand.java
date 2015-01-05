@@ -135,7 +135,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
                 if (response.getDetails().getDigits() != null)
                     transaction.lastFour = response.getDetails().getDigits();
                 if (response.getDetails().getCashBackAmount() != null)
-                    transaction.cashBack = new BigDecimal(response.getDetails().getCashBackAmount());
+                    transaction.cashBack = new BigDecimal(response.getDetails().getCashBackAmount()).negate();
                 if (response.getDetails().getTransactionNumber() != null)
                     transaction.authorizationNumber = response.getDetails().getTransactionNumber();
                 PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);

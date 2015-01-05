@@ -114,7 +114,7 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
 
                 @Override
-                public void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee, BigDecimal cashBackAmount) {
+                public void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee) {
                     printerWrapper.drawLine();
                     printerWrapper.orderFooter(context.getString(R.string.printer_refund_total), negative(total));
                 }

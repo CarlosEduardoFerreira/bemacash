@@ -1052,6 +1052,13 @@
     <string name="xreport_visa">Visa:</string>
     <string name="xreport_master_card">Master Card:</string>
 
+    <string name="xreport_drawer_details">Drawer Details</string>
+    <string name="xreport_drawer_open_amount">Open Amount:</string>
+    <string name="xreport_drawer_cash_sale">Cash Sale:</string>
+    <string name="xreport_drawer_safe_drops">Safe Drops:</string>
+    <string name="xreport_drawer_payouts">Payouts:</string>
+    <string name="xreport_drawer_cash_back">Cash Back:</string>
+
     <string name="xreport_dialog_checkbox_print">Print</string>
     <string name="xreport_dialog_checkbox_email">Send by email</string>
     <string name="xreport_dialog_checkbox_screen">Show on screen</string>

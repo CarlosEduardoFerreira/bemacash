@@ -63,6 +63,7 @@ public final class XReportQuery {
     private static final Uri URI_SHIFT = ShopProvider.getContentUri(ShiftTable.URI_CONTENT);
     private static final Uri URI_SHIFT_LIMITED = ShopProvider.getContentWithLimitUri(ShiftTable.URI_CONTENT, 1);
     private static final Uri URI_TIPS = ShopProvider.getContentUri(EmployeeTipsTable.URI_CONTENT);
+    private static final Uri URI_DRAWER_CASH_MOVEMENT = ShopProvider.getContentUri(ShopStore.CashDrawerMovementTable.URI_CONTENT);
 
     private XReportQuery() {
     }
@@ -72,6 +73,12 @@ public final class XReportQuery {
         Date startDate = null;
         Date endDate = null;
 
+        BigDecimal openAmount = BigDecimal.ZERO;
+        BigDecimal cashSale = BigDecimal.ZERO;
+        BigDecimal safeDrops = BigDecimal.ZERO;
+        BigDecimal payOuts = BigDecimal.ZERO;
+        BigDecimal cashBack = BigDecimal.ZERO;
+
         Cursor c = ProviderAction.query(URI_SHIFT)
                 .where(ShiftTable.GUID + " = ?", shiftGuid)
                 .perform(context);
@@ -79,6 +86,7 @@ public final class XReportQuery {
         if (c.moveToNext()) {
             startDate = new Date(c.getLong(c.getColumnIndex(ShiftTable.START_TIME)));
             endDate = new Date(c.getLong(c.getColumnIndex(ShiftTable.END_TIME)));
+            openAmount = _decimal(c.getString(c.getColumnIndex(ShiftTable.OPEN_AMOUNT)));
         }
         c.close();
 
@@ -106,7 +114,7 @@ public final class XReportQuery {
         BigDecimal netSale = grossSale.subtract(discount).subtract(returned);
 
         c = ProviderAction.query(URI_PAYMENTS)
-                .projection(PaymentTransactionTable.AMOUNT, PaymentTransactionTable.GATEWAY, PaymentTransactionTable.CARD_NAME, PaymentTransactionView2.EmployeeTipsTable.AMOUNT)
+                .projection(PaymentTransactionTable.AMOUNT, PaymentTransactionTable.GATEWAY, PaymentTransactionTable.CARD_NAME, PaymentTransactionView2.EmployeeTipsTable.AMOUNT, PaymentTransactionTable.CASH_BACK)
                 .where(PaymentTransactionTable.SHIFT_GUID + " = ?", shiftGuid)
                 .where("(" + PaymentTransactionTable.STATUS + " = ? OR " + PaymentTransactionTable.STATUS + " = ?)", PaymentStatus.PRE_AUTHORIZED.ordinal(), PaymentStatus.SUCCESS.ordinal())
                 .perform(context);
@@ -125,6 +133,8 @@ public final class XReportQuery {
             BigDecimal transactionAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.AMOUNT)));
             BigDecimal transactionTip = _decimal(c.getString(c.getColumnIndex(PaymentTransactionView2.EmployeeTipsTable.AMOUNT)));
             BigDecimal amount = transactionAmount.subtract(transactionTip);
+            BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.CASH_BACK)));
+            cashBack = cashBackAmount;
             PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(PaymentTransactionTable.GATEWAY));
             if (gateway.isTrueCreditCard()) {
                 creditCard = creditCard.add(amount);
@@ -212,8 +222,19 @@ public final class XReportQuery {
         }
 
         final BigDecimal drawerDifference = getDrawerDifference(context, shiftGuid);
+        cashSale = cash;
+        Cursor cur = ProviderAction.query(URI_DRAWER_CASH_MOVEMENT)
+                .where(ShopStore.CashDrawerMovementTable.SHIFT_GUID + " = ?", shiftGuid)
+                .perform(context);
 
-        return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee);
+        while (cur.moveToNext()) {
+            if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == 1)
+                safeDrops = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+            else if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == 0)
+                payOuts = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+        }
+        cur.close();
+        return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack);
     }
 
     private static Date getStartOfDay() {
@@ -268,9 +289,16 @@ public final class XReportQuery {
         BigDecimal grossMargin = BigDecimal.ZERO;
         BigDecimal grossMarginInPercent = BigDecimal.ZERO;
         BigDecimal drawerDifference = BigDecimal.ZERO;
+        BigDecimal openAmount = BigDecimal.ZERO;
+        BigDecimal cashSale = BigDecimal.ZERO;
+        BigDecimal safeDrops = BigDecimal.ZERO;
+        BigDecimal payOuts = BigDecimal.ZERO;
+        BigDecimal cashBack = BigDecimal.ZERO;
 
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
 
+        String lastShiftGuid = getLastShiftGuidDaily(context, registerId);
+        openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
         transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerId));//returnInfo is negative
 
         for (String guid : guidList) {
@@ -292,7 +320,7 @@ public final class XReportQuery {
             cogs = cogs.add(saleInfo.cogs.add(returnInfo.cogs));//returnInfo is negative
 
             Cursor c = ProviderAction.query(URI_PAYMENTS)
-                    .projection(PaymentTransactionTable.AMOUNT, PaymentTransactionTable.GATEWAY, PaymentTransactionTable.CARD_NAME, PaymentTransactionView2.EmployeeTipsTable.AMOUNT)
+                    .projection(PaymentTransactionTable.AMOUNT, PaymentTransactionTable.GATEWAY, PaymentTransactionTable.CARD_NAME, PaymentTransactionView2.EmployeeTipsTable.AMOUNT, PaymentTransactionTable.CASH_BACK)
                     .where(PaymentTransactionTable.SHIFT_GUID + " = ?", guid)
                     .where(PaymentTransactionTable.CREATE_TIME + " > ?", startDate.getTime())
                     .where("(" + PaymentTransactionTable.STATUS + " = ? OR " + PaymentTransactionTable.STATUS + " = ?)", PaymentStatus.PRE_AUTHORIZED.ordinal(), PaymentStatus.SUCCESS.ordinal())
@@ -302,6 +330,8 @@ public final class XReportQuery {
                 BigDecimal transactionAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.AMOUNT)));
                 BigDecimal transactionTip = _decimal(c.getString(c.getColumnIndex(PaymentTransactionView2.EmployeeTipsTable.AMOUNT)));
                 BigDecimal amount = transactionAmount.subtract(transactionTip);
+                BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.CASH_BACK)));
+                cashBack = cashBack.add(cashBackAmount);
                 PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(PaymentTransactionTable.GATEWAY));
                 if (gateway.isTrueCreditCard()) {
                     creditCard = creditCard.add(amount);
@@ -334,10 +364,10 @@ public final class XReportQuery {
                     cards.put(card, value);
                 }
             }
-
+            cashSale = cash;
             c = ProviderAction.query(URI_TIPS)
                     .projection(EmployeeTipsTable.AMOUNT, EmployeeTipsTable.PAYMENT_TYPE)
-                    .where(EmployeeTipsTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
+                    .where(EmployeeTipsTable.CREATE_TIME + " = ?", getStartOfDay().getTime())
                     .where(EmployeeTipsTable.SHIFT_ID + " = ?", guid)
                     .perform(context);
 
@@ -371,9 +401,21 @@ public final class XReportQuery {
         grossMarginInPercent = CalculationUtil.value(CalculationUtil
                 .getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
 
+        Cursor cur = ProviderAction.query(URI_DRAWER_CASH_MOVEMENT)
+                .where(ShopStore.CashDrawerMovementTable.SHIFT_GUID + " = ?", lastShiftGuid)
+                .perform(context);
+
+        while (cur.moveToNext()) {
+            if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == 1)
+                safeDrops = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+            else if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == 0)
+                payOuts = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+        }
+        cur.close();
+
         return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity,
                 tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash,
-                tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee);
+                tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack);
     }
 
     private static BigDecimal getDailyOrdersTransactionFee(Context context, OrderStatus type, long registerId) {
@@ -387,11 +429,40 @@ public final class XReportQuery {
         BigDecimal totalTransactionFee = BigDecimal.ZERO;
         while (c.moveToNext()) {
             totalTransactionFee = _decimal(c, 0);
-            Logger.d("trace Transaction fee:" + totalTransactionFee);
         }
         c.close();
 
         return totalTransactionFee;
+    }
+
+    private static BigDecimal getLastShiftDailyOpenAmount(Context context, String shiftGuid) {
+        BigDecimal openAmount = BigDecimal.ZERO;
+        Cursor c = ProviderAction.query(URI_SHIFT)
+                .where(ShiftTable.GUID + " = ?", shiftGuid)
+                .perform(context);
+
+        if (c.moveToNext()) {
+            openAmount = _decimal(c.getString(c.getColumnIndex(ShiftTable.OPEN_AMOUNT)));
+        }
+        c.close();
+
+        return openAmount;
+    }
+
+    private static String getLastShiftGuidDaily(Context context, long registerId) {
+        String lastShiftGuid = null;
+        Cursor c = ProviderAction.query(URI_SHIFT)
+                .projection(ShiftTable.GUID)
+                .where(ShiftTable.REGISTER_ID + " = ?", registerId)
+                .orderBy(ShiftTable.START_TIME + " DESC")
+                .perform(context);
+
+        if (c.moveToFirst()) {
+            lastShiftGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));
+        }
+        c.close();
+
+        return lastShiftGuid;
     }
 
     private static BigDecimal getShiftOrdersTransactionFee(Context context, String shiftGuid, OrderStatus type) {
