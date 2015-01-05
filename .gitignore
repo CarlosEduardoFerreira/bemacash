@@ -36,5 +36,6 @@ WebService/WebService.iml
 build/intermediates/model_data.bin
 *.iml
 *.bin
-*.iml
-*.iml
+
+.idea/misc.xml
+.idea/modules.xml
