@@ -483,15 +483,21 @@
     <string name="printer_refund_tips">     Tips</string>
 
     <string name="printer_signature_subtitle">Signature Receipt</string>
+    <string name="printer_debit_subtitle">Debit Details Receipt</string>
+    <string name="printer_ebt_cash_subtitle">EBT Details Receipt</string>
     <string name="printer_date">Date:</string>
     <string name="printer_card_name">Card name:</string>
     <string name="printer_auth_number">Authorization:</string>
     <string name="printer_shifted_number">Shifted number:</string>
     <string name="printer_amount">Amount:</string>
+    <string name="printer_cashback">CashBack:</string>
+    <string name="printer_ebt_cash">EBT CASH:</string>
     <string name="printer_signature_line">Customer sign: _______________________________</string>
     <string name="printer_manual_input_line">___________</string>
     <string name="printer_gratuity_colon">Gratuity:</string>
     <string name="printer_total_colon">Total:</string>
+    <string name="printer_customer_ebt_cash_copy">CUSTOMER EBT CASH COPY</string>
+    <string name="printer_customer_debit_copy">CUSTOMER DEBIT COPY</string>
     <string name="printer_signature_customer_copy">CUSTOMER COPY</string>
     <string name="printer_signature_merchant_copy">MERCHANT COPY</string>
     <string name="printer_terminal_id">Terminal ID:</string>
@@ -1058,6 +1064,7 @@
     <string name="xreport_drawer_safe_drops">Safe Drops:</string>
     <string name="xreport_drawer_payouts">Payouts:</string>
     <string name="xreport_drawer_cash_back">Cash Back:</string>
+    <string name="xreport_drawer_balance">Balance:</string>
 
     <string name="xreport_dialog_checkbox_print">Print</string>
     <string name="xreport_dialog_checkbox_email">Send by email</string>

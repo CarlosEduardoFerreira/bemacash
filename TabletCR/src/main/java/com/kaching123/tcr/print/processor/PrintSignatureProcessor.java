@@ -47,17 +47,24 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
 
     protected void printBody(Context context, TcrApplication app, ISignaturePrinter printerWrapper) {
 
-        printerWrapper.subTitle(context.getString(R.string.printer_signature_subtitle));
+        if (type == ReceiptType.DEBIT)
+            printerWrapper.subTitle(context.getString(R.string.printer_debit_subtitle));
+        else if (type == ReceiptType.EBT_CASH)
+            printerWrapper.subTitle(context.getString(R.string.printer_ebt_cash_subtitle));
+        else
+            printerWrapper.subTitle(context.getString(R.string.printer_signature_subtitle));
 
         boolean printGratuityLine = app.isTipsEnabled();
         String tippedTransactionGuid = null;
         BigDecimal tipAmount = null;
         boolean tippedOrder = false;
+        BigDecimal cashBackTotal = BigDecimal.ZERO;
+        BigDecimal amount = BigDecimal.ZERO;
         Cursor c = ProviderAction.query(ShopProvider.getContentWithLimitUri(EmployeeTipsTable.URI_CONTENT, 1))
                 .projection(EmployeeTipsTable.PAYMENT_TRANSACTION_ID, EmployeeTipsTable.AMOUNT)
                 .where(EmployeeTipsTable.ORDER_ID + " = ?", orderGuid)
                 .perform(context);
-        if (c.moveToFirst()){
+        if (c.moveToFirst()) {
             tippedTransactionGuid = c.getString(0);
             tipAmount = _decimal(c, 1);
             tippedOrder = true;
@@ -75,23 +82,37 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
             if (!TextUtils.isEmpty(payment.authorizationNumber))
                 printerWrapper.authNumber(payment.authorizationNumber);
             printerWrapper.amount(payment.amount);
-            if (app.isTipsEnabled()){
-                if (tippedOrder && tippedTransactionGuid.equals(payment.guid)){
-                    printerWrapper.addWithTab(context.getString(R.string.printer_gratuity_colon), priceFormat(tipAmount));
-                    printerWrapper.addWithTab(context.getString(R.string.printer_total_colon), priceFormat(payment.amount.add(tipAmount)));
-                } else if (!tippedOrder){
-                    printerWrapper.emptyLine();
-                    printerWrapper.addWithTab(context.getString(R.string.printer_gratuity_colon), context.getString(R.string.printer_manual_input_line));
-                    printerWrapper.emptyLine();
-                    printerWrapper.addWithTab(context.getString(R.string.printer_total_colon), context.getString(R.string.printer_manual_input_line));
+            cashBackTotal = cashBackTotal.add(payment.cashBack.negate());
+            amount = amount.add(payment.amount);
+
+
+            if (type != ReceiptType.DEBIT && type != ReceiptType.EBT_CASH) {
+                if (app.isTipsEnabled()) {
+                    if (tippedOrder && tippedTransactionGuid.equals(payment.guid)) {
+                        printerWrapper.addWithTab(context.getString(R.string.printer_gratuity_colon), priceFormat(tipAmount));
+                        printerWrapper.addWithTab(context.getString(R.string.printer_total_colon), priceFormat(payment.amount.add(tipAmount)));
+                    } else if (!tippedOrder) {
+                        printerWrapper.emptyLine();
+                        printerWrapper.addWithTab(context.getString(R.string.printer_gratuity_colon), context.getString(R.string.printer_manual_input_line));
+                        printerWrapper.emptyLine();
+                        printerWrapper.addWithTab(context.getString(R.string.printer_total_colon), context.getString(R.string.printer_manual_input_line));
+                    }
                 }
+                printerWrapper.emptyLine();
+                printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
+                printerWrapper.emptyLine();
             }
-            printerWrapper.emptyLine();
-            printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
-            printerWrapper.emptyLine();
+        }
+        if ((type == ReceiptType.DEBIT || type == ReceiptType.EBT_CASH) && cashBackTotal.compareTo(BigDecimal.ZERO) > 0) {
+            printerWrapper.cashBack(cashBackTotal);
+        }
+        if ((type == ReceiptType.DEBIT || type == ReceiptType.EBT_CASH)) {
+            printerWrapper.total(amount.add(cashBackTotal));
         }
 
-        switch (type){
+        switch (type) {
+            case EBT_CASH:
+            case DEBIT:
             case CUSTOMER:
                 printerWrapper.footer(context.getString(R.string.printer_signature_customer_copy));
                 break;
@@ -101,6 +122,12 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 printerWrapper.emptyLine();
                 printerWrapper.footer(context.getString(R.string.printer_signature_merchant_copy));
                 break;
+//            case DEBIT:
+//                printerWrapper.footer(context.getString(R.string.printer_customer_debit_copy));
+//                break;
+//            case EBT_CASH:
+//                printerWrapper.footer(context.getString(R.string.printer_customer_ebt_cash_copy));
+//                break;
         }
 
         printerWrapper.drawLine();
@@ -109,10 +136,10 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
     @Override
     protected void printFooter(TcrApplication app, ISignaturePrinter printerWrapper) {
         ShopInfo shopInfo = app.getShopInfo();
-        if (!TextUtils.isEmpty(shopInfo.footerMsg1)){
+        if (!TextUtils.isEmpty(shopInfo.footerMsg1)) {
             printerWrapper.subTitle(shopInfo.footerMsg1);
         }
-        if (!TextUtils.isEmpty(shopInfo.footerMsg2)){
+        if (!TextUtils.isEmpty(shopInfo.footerMsg2)) {
             printerWrapper.subTitle(shopInfo.footerMsg2);
         }
         if (!TextUtils.isEmpty(shopInfo.email)) {

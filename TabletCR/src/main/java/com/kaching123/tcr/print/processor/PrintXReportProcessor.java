@@ -159,15 +159,25 @@ public class PrintXReportProcessor {
                 printer.pair(cardName, report.cards.get(cardName));
             }
         }
-        printer.subtitle(context.getString(R.string.xreport_drawer_details), true);
-        printer.pair(context.getString(R.string.xreport_drawer_open_amount), report.openAmount);
-        printer.pair(context.getString(R.string.xreport_drawer_cash_sale), report.cashSale);
-        printer.pair(context.getString(R.string.xreport_drawer_safe_drops), report.safeDrops);
-        printer.pair(context.getString(R.string.xreport_drawer_payouts), report.payOuts);
-        printer.pair(context.getString(R.string.xreport_drawer_cash_back), report.cashBack);
-        printer.pair(context.getString(R.string.xreport_drawer_difference), report.drawerDifference);
-        printer.drawLine();
+        if (xReportType != ReportType.X_REPORT_DAILY_SALES) {
 
+            printer.emptyLine();
+
+            printer.subtitle(context.getString(R.string.xreport_drawer_details), true);
+            printer.pair(context.getString(R.string.xreport_drawer_open_amount), report.openAmount);
+            printer.pair(context.getString(R.string.xreport_drawer_cash_sale), report.cashSale);
+            printer.pair(context.getString(R.string.xreport_drawer_safe_drops), report.safeDrops);
+            printer.pair(context.getString(R.string.xreport_drawer_payouts), report.payOuts);
+            printer.pair(context.getString(R.string.xreport_drawer_cash_back), report.cashBack);
+            printer.pair(context.getString(R.string.xreport_drawer_balance), report.openAmount.add(report.cashSale).add(report.safeDrops).add(report.payOuts).add(report.cashBack));
+
+            printer.emptyLine();
+
+        }
+
+        if (report.end.compareTo(report.begin) > 0)
+            printer.pair(context.getString(R.string.xreport_drawer_difference), report.drawerDifference);
+        printer.drawLine();
     }
 
     private void printFooter(TcrApplication app, IXReportPrinter printer) {

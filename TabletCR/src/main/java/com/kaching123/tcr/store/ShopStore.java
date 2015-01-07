@@ -29,7 +29,7 @@ import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 294)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 295)
 @Provider(name = "ShopProvider", authority = "com.kaching123.tcr.store.AUTHORITY", schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 

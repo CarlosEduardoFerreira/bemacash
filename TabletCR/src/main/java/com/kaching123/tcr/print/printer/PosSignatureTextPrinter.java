@@ -58,6 +58,16 @@ public class PosSignatureTextPrinter extends BasePosTextPrinter implements ISign
     }
 
     @Override
+    public void cashBack(BigDecimal amount) {
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, getContext().getString(R.string.printer_cashback), priceFormat.format(amount))));
+    }
+
+    @Override
+    public void total(BigDecimal amount) {
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, getContext().getString(R.string.printer_total_colon), priceFormat.format(amount))));
+    }
+
+    @Override
     public void cropLine(String line) {
         add(new PrintLineAction(crop(PRINTER_MAX_TEXT_LEN, line)));
     }

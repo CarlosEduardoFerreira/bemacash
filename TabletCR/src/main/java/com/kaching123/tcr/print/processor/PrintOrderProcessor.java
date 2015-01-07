@@ -125,7 +125,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
                 printerWrapper.drawLine();
                 for (PaymentTransactionModel p : payments) {
-                    totalCashBack = totalCashBack.add(p.cashBack);
+                    totalCashBack = totalCashBack.add(p.cashBack.negate());
                 }
                 if (totalCashBack.compareTo(BigDecimal.ZERO) > 0)
                     printerWrapper.orderFooter(context.getString(R.string.printer_cash_back), totalCashBack);
@@ -160,13 +160,13 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
             boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
-            printerWrapper.payment(p.cardName == null ? p.gateway.name() : p.cardName, isChanged ? p.amount.add(p.changeAmount).add(p.cashBack) : p.amount.add(p.cashBack));
-            if (p.gateway.name().equalsIgnoreCase(PaymentGateway.PAX_DEBIT.name())) {
-                if (p.lastFour != null)
-                    printerWrapper.add(UiHelper.formatLastFour(p.lastFour));
-                if (p.authorizationNumber != null)
-                    printerWrapper.addWithTab2(context.getString(R.string.printer_auth_number), p.authorizationNumber, true, false);
-            }
+            printerWrapper.payment(p.cardName == null ? p.gateway.name() : p.cardName, isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
+//            if (p.gateway.name().equalsIgnoreCase(PaymentGateway.PAX_DEBIT.name())) {
+//                if (p.lastFour != null)
+//                    printerWrapper.add(UiHelper.formatLastFour(p.lastFour));
+//                if (p.authorizationNumber != null)
+//                    printerWrapper.addWithTab2(context.getString(R.string.printer_auth_number), p.authorizationNumber, true, false);
+//            }
 
             if (isChanged) {
                 printerWrapper.change(changeText, p.changeAmount);

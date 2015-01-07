@@ -18,6 +18,7 @@ public interface IUpdateContainer {
     int VERSION5_2 = 292;
     int VERSION5_3 = 293;
     int VERSION5_4 = 294;
+    int VERSION5_5 = 295;
     void onUpdate(final SQLiteDatabase db);
     int getSqlOldVersion();
     int getSqlNewVersion();

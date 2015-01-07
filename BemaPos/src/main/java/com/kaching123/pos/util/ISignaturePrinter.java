@@ -14,6 +14,8 @@ public interface ISignaturePrinter extends IHeaderFooterPrinter {
     public void shiftedNumber(String shiftedNumber);
     public void addWithTab(String left, String right);
     public void amount(BigDecimal amount);
+    public void cashBack(BigDecimal amount);
+    public void total(BigDecimal amount);
     public void cropLine(String line);
 
 }

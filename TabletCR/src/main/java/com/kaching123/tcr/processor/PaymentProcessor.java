@@ -20,6 +20,7 @@ import com.kaching123.tcr.commands.payment.blackstone.payment.BlackGateway;
 import com.kaching123.tcr.commands.payment.pax.PaxBaseCommand;
 import com.kaching123.tcr.commands.payment.pax.PaxBaseCommand.Error;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.commands.print.pos.PrintSignatureOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -104,7 +105,7 @@ public class PaymentProcessor {
 
     private static final Handler handler = new Handler();
 
-    private boolean debitGateway;
+    private PrintSignatureOrderCommand.ReceiptType gateWay;
 
     // we will use the list of successed credit card transaction to print signature receipt.
     // This artifact is created in sake of saving the last four CC number digits, as it is againts the law and RO wish to save them anyway
@@ -713,7 +714,7 @@ public class PaymentProcessor {
             case PAX_DEBIT: {
                 transaction = PaymentGateway.PAX_DEBIT.gateway().createTransaction(context, amount, orderGuid);
                 transaction.cashBack = BigDecimal.ZERO;
-                debitGateway = true;
+                gateWay = PrintSignatureOrderCommand.ReceiptType.DEBIT;
                 transaction.setType(TransactionType.PAX_DEBIT);
                 proceedToPAXPayment(context, transaction);
                 break;
@@ -726,6 +727,7 @@ public class PaymentProcessor {
                 break;
             }
             case PAX_EBT_CASH: {
+                gateWay = PrintSignatureOrderCommand.ReceiptType.EBT_CASH;
                 transaction = PaymentGateway.PAX_EBT_CASH.gateway().createTransaction(context, amount, orderGuid);
                 transaction.cashBack = BigDecimal.ZERO;
                 transaction.setType(TransactionType.PAX_EBT_CASH);
@@ -1180,7 +1182,7 @@ public class PaymentProcessor {
                 public void onConfirmed() {
                     finish();
                 }
-            }, transactions, kitchenPrintStatus, orderChange, debitGateway, isPrinterTwoCopiesReceipt());
+            }, transactions, kitchenPrintStatus, orderChange, gateWay, isPrinterTwoCopiesReceipt());
         } else {
             if (transactions != null && !transactions.isEmpty()) {
                 callback.onPrintValues(orderGuid, transactions, orderChange);

@@ -130,14 +130,14 @@ public class PaxSaleCommand extends PaxBaseCommand {
                 response = (SaleActionResponse) possibleData;
             }
             Logger.d("PaxSaleCommand response:" + response);
-            if (200 == response.getResponse() && response.getDetails().getSale().getAuthNumber() != null) {
+            if (200 == response.getResponse()) {
                 transaction.updateWith(response);
                 if (response.getDetails().getDigits() != null)
                     transaction.lastFour = response.getDetails().getDigits();
                 if (response.getDetails().getCashBackAmount() != null)
                     transaction.cashBack = new BigDecimal(response.getDetails().getCashBackAmount()).negate();
                 if (response.getDetails().getTransactionNumber() != null)
-                    transaction.authorizationNumber = response.getDetails().getTransactionNumber();
+                    transaction.authorizationNumber = response.getDetails().getSale().getAuthNumber();
                 PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                 operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
                         .withValues(transactionModel.toValues())

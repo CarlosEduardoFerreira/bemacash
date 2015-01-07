@@ -44,7 +44,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     @FragmentArg
     protected BigDecimal changeAmount;
     @FragmentArg
-    protected boolean debitGateway;
+    protected ReceiptType gateWay;
     @FragmentArg
     protected boolean isPrinterTwoCopiesReceipt;
 
@@ -87,6 +87,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     protected PrintOrderCallback printOrderCallback = new PrintOrderCallback();
 
+    protected PrintDebitorEBTCallback printDebitorEBTCallback = new PrintDebitorEBTCallback();
     protected PrintSignatureOrderCallback printSignatureCallback = new PrintSignatureOrderCallback();
     protected PrintSignatureOrderCallback2 printSignatureCallback2 = new PrintSignatureOrderCallback2();
 
@@ -94,6 +95,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     protected boolean kitchenPrinted;
     protected boolean orderPrinted;
+    protected boolean debitOrEBTDetailsPrinted;
     protected boolean signatureOrderPrinted;
 
     @Override
@@ -146,11 +148,16 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         printSignatureOrder(skipPaperWarning, searchByMac, ReceiptType.CUSTOMER, printSignatureCallback);
     }
 
+    private void printDebitorEBTDetails(boolean skipPaperWarning, boolean searchByMac) {
+        printSignatureOrder(skipPaperWarning, searchByMac, gateWay, printDebitorEBTCallback);
+    }
+
     private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac, ReceiptType receiptType, PrintSignatureOrderCallback printSignatureCallback) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        if (!printBox.isChecked()) {
-            receiptType = ReceiptType.MERCHANT;
-        }
+        if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH)
+            if (!printBox.isChecked()) {
+                receiptType = ReceiptType.MERCHANT;
+            }
         PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
     }
 
@@ -166,9 +173,11 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             printOrder(false, false);
         } else if (signatureBox.isChecked() && !signatureOrderPrinted) {
             printSignatureOrder(false, false);
-        } else if (debitGateway && isPrinterTwoCopiesReceipt) {
+        } else if (printBox.isChecked()&&(gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT_CASH )&& isPrinterTwoCopiesReceipt) {
             printOrder(false, false);
             isPrinterTwoCopiesReceipt = false;
+        } else if (printBox.isChecked()&&(gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT_CASH ) && !debitOrEBTDetailsPrinted) {
+            printDebitorEBTDetails(false, false);
         } else {
             completeProcess();
         }
@@ -193,8 +202,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, null);
     }
 
-    public static void show(FragmentActivity context, String orderGuid, IFinishConfirmListener listener, ArrayList<PaymentTransactionModel> transactions, KitchenPrintStatus kitchenPrintStatus, BigDecimal changeAmount, boolean debitGateway, boolean isPrinterTwoCopiesReceipt) {
-        DialogUtil.show(context, DIALOG_NAME, PayPrintAndFinishFragmentDialog_.builder().transactions(transactions).orderGuid(orderGuid).kitchenPrintStatus(kitchenPrintStatus).changeAmount(changeAmount).debitGateway(debitGateway).isPrinterTwoCopiesReceipt(isPrinterTwoCopiesReceipt).build()).setListener(listener);
+    public static void show(FragmentActivity context, String orderGuid, IFinishConfirmListener listener, ArrayList<PaymentTransactionModel> transactions, KitchenPrintStatus kitchenPrintStatus, BigDecimal changeAmount, ReceiptType debitGateway, boolean isPrinterTwoCopiesReceipt) {
+        DialogUtil.show(context, DIALOG_NAME, PayPrintAndFinishFragmentDialog_.builder().transactions(transactions).orderGuid(orderGuid).kitchenPrintStatus(kitchenPrintStatus).changeAmount(changeAmount).gateWay(debitGateway).isPrinterTwoCopiesReceipt(isPrinterTwoCopiesReceipt).build()).setListener(listener);
     }
 
 
@@ -245,6 +254,21 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         @Override
         public void onPrinterPaperNearTheEnd() {
             PrintCallbackHelper2.onPrinterPaperNearTheEnd(getActivity(), callback);
+        }
+
+    }
+
+    public class PrintDebitorEBTCallback extends PrintSignatureOrderCallback {
+
+        @Override
+        protected ReceiptType getType() {
+            return gateWay;
+        }
+
+        @Override
+        public void onPrintSuccess() {
+            debitOrEBTDetailsPrinted = true;
+            PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
         }
 
     }
