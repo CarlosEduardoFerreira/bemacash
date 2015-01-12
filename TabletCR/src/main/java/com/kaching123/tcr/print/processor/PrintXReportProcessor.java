@@ -143,14 +143,6 @@ public class PrintXReportProcessor {
 
         printer.emptyLine();
 
-        if (ReportType.X_REPORT_CURRENT_SHIFT != xReportType && ReportType.X_REPORT_DAILY_SALES != xReportType) {
-            BigDecimal drawerDiffence = report.drawerDifference;
-            if (drawerDiffence != null && drawerDiffence.compareTo(BigDecimal.ZERO) != 0) {
-                printer.pair(context.getString(R.string.xreport_drawer_difference), drawerDiffence);
-                printer.emptyLine();
-            }
-        }
-
         if (report.cards != null && !report.cards.isEmpty()) {
             printer.subtitle(context.getString(R.string.xreport_credit_card_details), true);
             ArrayList<String> cardNames = new ArrayList<String>(report.cards.keySet());
@@ -174,9 +166,15 @@ public class PrintXReportProcessor {
             printer.emptyLine();
 
         }
-
-        if (report.end.compareTo(report.begin) > 0)
-            printer.pair(context.getString(R.string.xreport_drawer_difference), report.drawerDifference);
+        if (ReportType.X_REPORT_CURRENT_SHIFT != xReportType && ReportType.X_REPORT_DAILY_SALES != xReportType) {
+            BigDecimal drawerDiffence = report.drawerDifference;
+            if (drawerDiffence != null && drawerDiffence.compareTo(BigDecimal.ZERO) != 0) {
+                printer.pair(context.getString(R.string.xreport_drawer_difference), drawerDiffence);
+                printer.emptyLine();
+            }
+        }
+//        if (report.end.compareTo(report.begin) > 0)
+//            printer.pair(context.getString(R.string.xreport_drawer_difference), report.drawerDifference);
         printer.drawLine();
     }
 
