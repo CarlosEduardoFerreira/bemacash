@@ -92,7 +92,7 @@ public class PrepaidLongDistancePopularGridViewFragment extends PrepaidLongDista
             CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_BILLPAYMENT_ITEMS);
             final ArrayList<BillPaymentItem> billPaymentItems = new ArrayList<BillPaymentItem>();
 
-            return loader.orderBy(ShopStore.BillPayment.CATEGORYID)
+            return loader.orderBy(ShopStore.BillPayment.CATEGORYDESCRIPTION)
                     .wrap(new Function<Cursor, List<BillPaymentItem>>() {
                         @Override
                         public List<BillPaymentItem> apply(Cursor c) {

@@ -19,7 +19,6 @@ import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CustomEditBox;
-import com.kaching123.tcr.component.KeyboardView;
 import com.kaching123.tcr.component.PrepaidKeyboardView;
 import com.kaching123.tcr.component.TelephoneEditNumberCurrencyFormatInputFilter;
 import com.kaching123.tcr.fragment.UiHelper;
@@ -98,7 +97,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     }
 
     private void updateUI() {
-        if (chosenCategory.denominations.length == 1) {
+        if (chosenCategory.denominations.length == 1 && (chosenCategory.denominations[0] == BigDecimal.ZERO)) {
             amountEditView.setVisibility(View.VISIBLE);
             amountZone.setVisibility(View.VISIBLE);
             setAmountZone();

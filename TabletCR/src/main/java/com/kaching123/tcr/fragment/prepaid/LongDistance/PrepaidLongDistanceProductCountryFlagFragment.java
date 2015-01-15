@@ -97,7 +97,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
     private void setCarrierSearchWords() {
 
         for (BillPaymentItem item : items) {
-            carrierNames.add(item.categoryId.substring(0, 1));
+            carrierNames.add(item.categoryDescription.substring(0, 1));
         }
 
         countryFlagFragmentCallbak.refreshCountryCharacter(carrierNames.toArray(new String[carrierNames.size()]));
@@ -118,20 +118,20 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             show();
             CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_BILLPAYMENT_ITEMS);
             final LinkedList<BillPaymentItem> billPaymentItems = new LinkedList<BillPaymentItem>();
-            return loader.orderBy(ShopStore.BillPayment.CATEGORYID)
+            return loader.orderBy(ShopStore.BillPayment.CATEGORYDESCRIPTION)
                     .wrap(new Function<Cursor, List<BillPaymentItem>>() {
                         @Override
                         public List<BillPaymentItem> apply(Cursor c) {
                             String currentCategory = null;
                             while (c.moveToNext()) {
                                 BillPaymentItem item = new BillPaymentItem(c);
-                                if (!item.categoryId.equalsIgnoreCase(currentCategory))
+                                if (!item.categoryDescription.equalsIgnoreCase(currentCategory))
                                     if (selectedCountryInit == null)
                                         billPaymentItems.add(item);
-                                    else if (item.categoryId.substring(0, 1).equalsIgnoreCase(selectedCountryInit))
+                                    else if (item.categoryDescription.substring(0, 1).equalsIgnoreCase(selectedCountryInit))
                                         billPaymentItems.add(item);
 
-                                currentCategory = item.categoryId;
+                                currentCategory = item.categoryDescription;
                             }
                             return billPaymentItems;
                         }
@@ -166,14 +166,14 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_BILLPAYMENT_ITEMS);
             final LinkedList<BillPaymentItem> billPaymentItems = new LinkedList<BillPaymentItem>();
 
-            return loader.orderBy(ShopStore.BillPayment.CATEGORYID)
+            return loader.orderBy(ShopStore.BillPayment.CATEGORYDESCRIPTION)
                     .wrap(new Function<Cursor, List<BillPaymentItem>>() {
                         @Override
                         public List<BillPaymentItem> apply(Cursor c) {
 
                             while (c.moveToNext()) {
                                 BillPaymentItem item = new BillPaymentItem(c);
-                                if (item.categoryId.substring(0, 1).equalsIgnoreCase(chosenCategory))
+                                if (item.categoryDescription.substring(0, 1).equalsIgnoreCase(chosenCategory))
                                     billPaymentItems.add(item);
                             }
                             return billPaymentItems;

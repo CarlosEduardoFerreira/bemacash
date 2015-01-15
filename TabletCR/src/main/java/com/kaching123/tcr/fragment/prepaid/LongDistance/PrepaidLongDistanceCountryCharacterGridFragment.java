@@ -14,12 +14,8 @@ import android.widget.TextView;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.FragmentArg;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.websvc.api.prepaid.Category;
-import com.kaching123.tcr.websvc.api.prepaid.MasterBiller;
-import com.kaching123.tcr.websvc.api.prepaid.VectorMasterBiller;
 
 import java.util.ArrayList;
 
@@ -40,9 +36,6 @@ public class PrepaidLongDistanceCountryCharacterGridFragment extends PrepaidLong
     private ArrayList<String> inisAvailable;
 
     private GridAdapter adapter;
-
-    private boolean clean;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -110,7 +103,7 @@ public class PrepaidLongDistanceCountryCharacterGridFragment extends PrepaidLong
             }
 
             mViewHolder.countryCharacter.setText(country_characters.get(position));
-            if (selectCharacterPosition != 0 && selectCharacterPosition == position + 1 && !clean) {
+            if (selectCharacterPosition != 0 && selectCharacterPosition == position + 1) {
                 selectedCharacterText(mViewHolder);
             } else {
                 initCharacterText(mViewHolder);
@@ -136,15 +129,13 @@ public class PrepaidLongDistanceCountryCharacterGridFragment extends PrepaidLong
         }
     }
 
-    private void initCharacterText(MyViewHolder mViewHolder)
-    {
+    private void initCharacterText(MyViewHolder mViewHolder) {
         mViewHolder.countryCharacter.setBackgroundResource(Color.TRANSPARENT);
         mViewHolder.countryCharacter.setTextColor(getResources().getColor(R.color.text_grey));
         mViewHolder.countryCharacter.setTextSize(TypedValue.COMPLEX_UNIT_SP, 35);
     }
 
-    private void selectedCharacterText(MyViewHolder mViewHolder)
-    {
+    private void selectedCharacterText(MyViewHolder mViewHolder) {
         mViewHolder.countryCharacter.setBackgroundResource(R.drawable.country_character);
         mViewHolder.countryCharacter.setTextColor(getResources().getColor(R.color.prepaid_dialog_white));
         mViewHolder.countryCharacter.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40);
@@ -177,9 +168,8 @@ public class PrepaidLongDistanceCountryCharacterGridFragment extends PrepaidLong
         void selectCountryInit(String countryIni);
     }
 
-    public void clearSelectedCharacter()
-    {
-        clean = true;
+    public void clearSelectedCharacter() {
+        selectCharacterPosition = 0;
         adapter.notifyDataSetChanged();
     }
 }

@@ -56,7 +56,7 @@ public class ProductItemsBillPaymentCategoriesAdapter extends BaseAdapter {
         }
 
         BillPaymentItem item = getItem(position);
-        holder.text.setText(item.categoryId);
+        holder.text.setText(item.categoryDescription);
         return convertView;
     }
 

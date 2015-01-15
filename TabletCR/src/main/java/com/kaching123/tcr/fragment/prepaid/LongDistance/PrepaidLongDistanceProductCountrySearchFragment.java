@@ -254,6 +254,7 @@ public class PrepaidLongDistanceProductCountrySearchFragment extends PrepaidLong
             startSearchByCountryName(keyWord = null);
             if (prepaidMode != PrepaidHomeFragment.BILLPAYMENT)
                 searchCallback.headMessage(PrepaidLongDistanceHeadFragment.SELECT_COUNTRY);
+            countryCharacterFragment.clearSelectedCharacter();
         } else {
             searchCallback.popUpFragment();
         }
