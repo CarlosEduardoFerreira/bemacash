@@ -1,8 +1,8 @@
 <resources>
 
-    <string name="app_name">Kashin 123</string>
+    <string name="app_name">MintPos</string>
 
-    <string name="dashboard_activity_label">Kashin 123</string>
+    <string name="dashboard_activity_label">MintPos</string>
     <string name="settings_activity_label">Settings</string>
     <string name="inventory_activity_label">Inventory</string>
     <string name="employees_activity_label">Employees</string>
@@ -461,6 +461,7 @@
     <string name="commission_validation_alert_msg">Commission should be less then 100%</string>
 
     <string name="edit_item_common_information">Common information</string>
+    <string name="edit_item_information">Common Info</string>
     <string name="edit_item_modification">Modification</string>
     <string name="edit_item_monitoring">Monitoring</string>
     <string name="edit_item_price">Price</string>
@@ -556,6 +557,7 @@
     <string name="dashboard_activity_employees_button_label">Employees</string>
     <string name="dashboard_activity_customers_button_label">Customers</string>
     <string name="dashboard_activity_drops_and_payouts_button_label">Drops and Payouts</string>
+    <string name="dashboard_activity_drops_and_payouts_button_label_short">Drops/Payouts</string>
     <string name="dashboard_activity_xreport_button_label">X Report</string>
 
     <string name="dashboard_activity_opened_transactions_warning_title">Open credit card transactions</string>
@@ -631,10 +633,10 @@
     <string name="error_message_already_clocked_in">Clock In has been already performed</string>
     <string name="error_message_already_clocked_out">Clock Out has been already performed</string>
 
+    <string name="modifiers_copy_header_name">Name</string>
+
     <string name="error_message_no_payments">Cannot refund - order has no payments</string>
     <string name="error_message_has_payments">Cannot void - order has payments</string>
-
-    <string name="modifiers_copy_header_name">Name</string>
 
     <string name="modifiers_copy_header_modifiers">Modifiers</string>
     <string name="modifiers_copy_header_addons">Add-ons</string>
@@ -725,7 +727,7 @@
     <string name="error_message_login_no_permission">You do not have the required permission</string>
     <string name="error_message_register_check">Can\'t find register.\nPlease contact your admin!</string>
     <string name="error_message_employee_not_active">Employee status should be \'Active\'</string>
-    <string name="error_message_outdated">There has been a newer version of Kashin released recently. Please update in order to be eligible for sync. Your local data will not be lost.</string>
+    <string name="error_message_outdated">There has been a newer version of MyMintPos released recently. Please update in order to be eligible for sync. Your local data will not be lost.</string>
     <string name="error_message_offline">You are offline, please check your Internet connection and try again</string>
     <string name="error_message_sync_inconsistent">Couldn\'t finalize synchronization, please try again later</string>
     <string name="error_message_login_offline_failed">Unable to log in. Please, connect your tablet to the Internet and try again</string>
@@ -756,6 +758,7 @@
     <string name="print_order_merchant_id_label">Merchant ID</string>
 
     <string name="employee_personal_information">Personal information</string>
+    <string name="employee_1024_768_personal_information">Personal infor</string>
     <string name="employee_salary_info">Salary info</string>
     <string name="employee_contacts">Contacts</string>
     <string name="employee_permission">Permission</string>
@@ -1215,6 +1218,7 @@
     <string name="customer_delete_wait_message">Deleting...</string>
 
     <string name="customer_label_personal_info">Personal information</string>
+    <string name="customer_label_1024_768_personal_info">Personal info</string>
     <string name="customer_label_contacts">Contacts</string>
     <string name="customer_label_first_name">First name</string>
     <string name="customer_label_last_name">Last name</string>
@@ -1703,12 +1707,19 @@
     <string name="KEY_STORE_TYPE">PKCS12</string>
     <string name="KEY_STORE_PROVIDER">BC</string>
 
+    <!--changed for MintPos-->
+    <string name="dashboard_activity_checkin_and_out_button_label">Clock In/Out</string>
     <string name="warning_message_warranty_ends_today">Warranty ends today.</string>
     <plurals name="warning_message_warranty_outdated">
         <item quantity="one">Warranty outdated for one day</item>
         <item quantity="other">Warranty outdated for %d days</item>
     </plurals>
 
+
+    <string name="timesheet_new_dialog_title">Time Sheet</string>
+    <string name="btn_checkin">Clock In</string>
+    <string name="btn_checkout">Clock Out</string>
+    <string name="cashier_action_search_disable">Search disable</string>
     <string name="error_message_max_items_count">You have reached the maximum number of inventory items supported in your monthly plan. Please, Contact Kashin 123 support to learn how to increase this limit.</string>
     <string name="prepaid_head_home_button">Home</string>
     <string name="prepaid_head_long_distance_text">Long Distance</string>

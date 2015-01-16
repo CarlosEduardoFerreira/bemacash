@@ -8,49 +8,49 @@
     </facet>
     <facet type="android" name="Android">
       <configuration>
-        <option name="SELECTED_BUILD_VARIANT" value="stageDebugPrinter" />
-        <option name="ASSEMBLE_TASK_NAME" value="assembleStageDebugPrinter" />
-        <option name="COMPILE_JAVA_TASK_NAME" value="compileStageDebugPrinterJava" />
-        <option name="SOURCE_GEN_TASK_NAME" value="generateStageDebugPrinterSources" />
+        <option name="SELECTED_BUILD_VARIANT" value="prodDebugPrinter" />
+        <option name="ASSEMBLE_TASK_NAME" value="assembleProdDebugPrinter" />
+        <option name="COMPILE_JAVA_TASK_NAME" value="compileProdDebugPrinterJava" />
+        <option name="SOURCE_GEN_TASK_NAME" value="generateProdDebugPrinterSources" />
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
-        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res;file://$MODULE_DIR$/src/main/res-apptheme;file://$MODULE_DIR$/src/main/res-dialogs;file://$MODULE_DIR$/src/main/res-reports;file://$MODULE_DIR$/src/main/res-wireless;file://$MODULE_DIR$/src/main/res-register;file://$MODULE_DIR$/src/main/res-payment;file://$MODULE_DIR$/src/main/res-category-assets;file://$MODULE_DIR$/src/main/res-copy;file://$MODULE_DIR$/src/main/res-settings;file://$MODULE_DIR$/src/main/res-inventory;file://$MODULE_DIR$/src/main/res-buttons;file://$MODULE_DIR$/src/dev/res" />
+        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res;file://$MODULE_DIR$/src/main/res-apptheme;file://$MODULE_DIR$/src/main/res-dialogs;file://$MODULE_DIR$/src/main/res-reports;file://$MODULE_DIR$/src/main/res-wireless;file://$MODULE_DIR$/src/main/res-register;file://$MODULE_DIR$/src/main/res-payment;file://$MODULE_DIR$/src/main/res-category-assets;file://$MODULE_DIR$/src/main/res-copy;file://$MODULE_DIR$/src/main/res-settings;file://$MODULE_DIR$/src/main/res-inventory;file://$MODULE_DIR$/src/main/res-buttons;file://$MODULE_DIR$/src/prod/res" />
         <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
       </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/build/intermediates/classes/stage/debugPrinter" />
+    <output url="file://$MODULE_DIR$/build/intermediates/classes/prod/debugPrinter" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/stage/debugPrinter" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/stage/debugPrinter" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/stage/debugPrinter" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/stage/debugPrinter" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/stage/debugPrinter" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/stage/debugPrinter" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stageDebugPrinter/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stageDebugPrinter/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stageDebugPrinter/assets" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stageDebugPrinter/aidl" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stageDebugPrinter/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stageDebugPrinter/jni" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stageDebugPrinter/rs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stage/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stage/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stage/assets" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stage/aidl" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stage/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stage/jni" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/stage/rs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStage/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStage/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStage/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStage/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStage/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStage/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStage/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/prod/debugPrinter" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/prod/debugPrinter" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/prod/debugPrinter" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/prod/debugPrinter" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/prod/debugPrinter" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/prod/debugPrinter" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prodDebugPrinter/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prodDebugPrinter/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prodDebugPrinter/assets" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prodDebugPrinter/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prodDebugPrinter/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prodDebugPrinter/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prodDebugPrinter/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prod/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prod/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prod/assets" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prod/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prod/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prod/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/prod/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestProd/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestProd/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestProd/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestProd/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestProd/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestProd/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestProd/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/debugPrinter/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debugPrinter/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debugPrinter/assets" type="java-resource" />
