@@ -1,5 +1,5 @@
 <resources>
-    <string name="api_server_url">https://bematech:1q2w3e@bematech.kaching123.com</string>
-    <string name="api_basic_cred">bematech:1q2w3e</string>
-    <string name="merchant_register_url">http://Backoffice.kashin123.com/#merchant_signup</string>
+    <string name="api_server_url">http://bematech.mymintpos.com</string>
+    <string name="api_basic_cred"></string>
+    <string name="merchant_register_url">http://bematech:1q2w3e@bematech.mymintpos.com/#merchant_signup</string>
 </resources>
