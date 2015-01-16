@@ -6,8 +6,8 @@
 
             <gradient
                 android:angle="270"
-                android:startColor="#CC076584"
-                android:endColor="#CC06516a" />
+                android:startColor="@color/mint_color"
+                android:endColor="@color/mint_color" />
         </shape>
     </item>
     <item android:drawable="@android:color/transparent"/>
