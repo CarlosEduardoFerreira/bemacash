@@ -1,21 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.kaching123.tcr"
-          android:versionCode="122"
-          android:versionName="2.13">
+    package="com.kaching123.tcr"
+    android:versionCode="3"
+    android:versionName="1.01">
 
     <uses-sdk
         android:minSdkVersion="15"
-        android:targetSdkVersion="19"/>
+        android:targetSdkVersion="19" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
         android:name=".TcrApplication_"
@@ -23,7 +23,6 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".activity.DashboardActivity_"
             android:label="@string/dashboard_activity_label"
@@ -33,127 +32,127 @@
             android:stateNotNeeded="true"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.HOME"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.CashierActivity_"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.QuickServiceActivity_"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.SettingsActivity_"
             android:label="@string/settings_activity_label"
             android:theme="@style/AppTheme.Settings"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.InventoryActivity_"
             android:label="@string/inventory_activity_label"
             android:theme="@style/AppTheme.DarkSpinner"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.EditItemActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.AddItemActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.ModifiersActivity_"
             android:label="@string/inventory_activity_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.HistoryActivity_"
             android:label="@string/history_activity_label"
             android:theme="@style/AppTheme.Holo.NoCapsTabText"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.CategoriesActivity_"
             android:label="@string/inventory_activity_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.UnitActivity_"
             android:label="@string/inventory_activity_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.DepartmentActivity_"
             android:label="@string/inventory_activity_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.EmployeesActivity_"
             android:label="@string/employees_activity_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.CustomersActivity_"
             android:label="@string/customers_activity_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.EditCustomerActivity_"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
 
 
         <activity
             android:name=".activity.EditEmployeeActivity_"
             android:label="@string/employees_edit_activity_label"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".activity.EmployeeTimeAttendanceActivity_"
             android:label="@string/employees_attendance_activity_label"
             android:theme="@style/AppTheme.Holo.NoCapsTabText"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".activity.AddEmployeeActivity_"
             android:label="@string/employees_add_activity_label"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".activity.PermissionActivity_"
             android:label="@string/permissions_activity_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.TaxGroupsActivity_"
             android:label="@string/inventory_activity_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.ReportsActivity_"
             android:label="@string/reports_activity_label"
             android:theme="@style/AppTheme.Holo.NoCapsTabText"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.XReportActivity_"
-            android:label="@string/xreport_activity_label"/>
+            android:label="@string/xreport_activity_label" />
 
         <activity
             android:name=".activity.PrinterAliasActivity_"
             android:label="@string/printer_alias_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.CreditReceiptsActivity_"
             android:label="@string/credit_receipt_activity"
             android:theme="@style/AppTheme.Holo.NoCapsTabText"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.ActivationActivity_"
@@ -168,39 +167,39 @@
         <activity
             android:name=".activity.SignupActivity_"
             android:label="@string/signup_activity_label"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.PrepaidActivity.PrepaidProcessorActivity_"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.PrepaidActivity.PrepaidLongDistanceActivity_"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <activity
             android:name=".activity.PrepaidActivity.PrepaidSunPassActivity_"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
 
         <service
             android:name="com.telly.groundy.GroundyService"
-            android:exported="false"/>
+            android:exported="false" />
         <service
             android:name=".service.OfflineCommandsService"
-            android:exported="true"/>
+            android:exported="true" />
         <service
             android:name=".service.DisplayService"
-            android:exported="false"/>
+            android:exported="false" />
         <service
             android:name=".service.ScannerService"
-            android:exported="false"/>
+            android:exported="false" />
 
         <provider
             android:name=".store.ShopProviderExt"
             android:authorities="com.kaching123.tcr.store.AUTHORITY"
-            android:exported="false"/>
+            android:exported="false" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -210,10 +209,10 @@
 
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".receiver.NetworkStateListener" >
+        <receiver android:name=".receiver.NetworkStateListener">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>

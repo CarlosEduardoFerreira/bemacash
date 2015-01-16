@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/nav_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"/>
+
+    <RelativeLayout
+        android:id="@+id/h1"
+        android:layout_marginTop="20dp"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:background="@drawable/addon_background"
+        android:layout_above="@+id/checkbox_container"
+        android:layout_below="@+id/nav_bar"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_marginLeft="4dp"
+            android:padding="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:text="@string/blackstone_pay_total"
+            android:id="@+id/a1"
+            style="@style/PaymentItem"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <TextView
+            android:layout_toLeftOf="@+id/total"
+            android:layout_toRightOf="@+id/a1"
+            android:text="@string/lots_o_dots"
+            android:lines="1"
+            android:paddingTop="5dp"
+            android:layout_gravity="center"
+            style="@style/PaymentItem"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"/>
+
+        <TextView
+            android:id="@+id/total"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="4dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:text="Total"
+            style="@style/PaymentItem.Total"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_above="@+id/a2"
+            android:id="@+id/list_view_holder"
+            android:layout_below="@+id/a1"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"/>
+
+        <TextView
+            android:layout_marginLeft="4dp"
+            android:padding="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:text="@string/blackstone_pay_pending_amount"
+            android:id="@+id/a2"
+            style="@style/PaymentItem.Grayed"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <TextView
+            android:layout_alignBaseline="@+id/a2"
+            android:layout_toLeftOf="@+id/difference"
+            android:layout_toRightOf="@+id/a2"
+            android:id="@+id/dots"
+            android:text="@string/lots_o_dots"
+            android:lines="1"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            style="@style/PaymentItem.Grayed"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"/>
+
+        <TextView
+            android:layout_alignBaseline="@+id/a2"
+            android:id="@+id/difference"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="4dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:text="Total"
+            style="@style/PaymentItem.Diff"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/checkbox_container"
+        android:layout_above="@+id/buttons"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <CheckBox
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:checked="true"
+            android:id="@+id/checkbox_single"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/chkbx_payment_easy"
+            style="@style/CheckBox.Light"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:gravity="top"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+
+        <Button
+            style="@style/LocalizableButton.Gold.28"
+            android:text="@string/button_cash"
+            android:id="@+id/btn_cash"
+            android:background="@drawable/sale_tender_cash_btn"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            style="@style/LocalizableButton.Gold.28"
+            android:text="@string/button_debit"
+            android:id="@+id/btn_pax_debit"
+            android:background="@drawable/sale_debit_btn"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            style="@style/LocalizableButton.Gold.28"
+            android:text="@string/button_ebt_foodstamp"
+            android:id="@+id/btn_pax_ebt_foodstamp"
+            android:background="@drawable/sale_ebt_foodstamp_btn"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            style="@style/LocalizableButton.Gold.28"
+            android:text="@string/button_credit"
+            android:id="@+id/btn_card"
+            android:background="@drawable/sale_tender_credit_btn"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8dp"
+            />
+
+        <Button
+            style="@style/LocalizableButton.Gold.28"
+            android:text="@string/button_store_credit"
+            android:id="@+id/btn_credit_receipt"
+            android:background="@drawable/sale_tender_credit_receipt_btn"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            style="@style/LocalizableButton.Gold.28"
+            android:text="@string/button_offline_credit"
+            android:id="@+id/btn_offline_credit"
+            android:background="@drawable/sale_tender_offline_credit_btn"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/StyledDialog.Layout"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <Spinner
+        android:id="@+id/department_spinner"
+        style="@style/StyledDialog.Content.Spinner"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+    <EditText
+        android:id="@+id/title"
+        style="@style/ModifiersEditDialog.EditText"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="8dp"
+        android:hint="@string/categories_dialog_name_hint"/>
+
+    <CheckedTextView
+        android:id="@+id/commissions_eligible"
+        style="@style/ModifiersEditDialog.Label"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="8dp"
+        android:checkMark="@drawable/checkbox_light"
+        android:text="@string/categories_commissions_eligible_label"
+        android:checked="true"/>
+
+    <LinearLayout
+        android:id="@+id/commissions_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            style="@style/ModifiersEditDialog.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/categories_commissions_label"/>
+
+        <EditText
+            style="@style/ModifiersEditDialog.EditText"
+            android:id="@+id/commissions"
+            android:inputType="numberDecimal"
+            android:layout_width="0dp"
+            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/image_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:padding="6dp"
+        android:background="@drawable/addon_background">
+
+        <com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView
+            android:id="@+id/image_grid"
+            android:clipToPadding="false"
+            android:layout_height="253dp"
+            android:layout_width="match_parent"
+            android:choiceMode="singleChoice"
+            android:numColumns="@integer/category_icon_columns_count"
+            android:stretchMode="none"
+            android:columnWidth="@dimen/quick_category_item_width"
+            android:listSelector="@android:color/transparent"
+            android:scrollbarThumbVertical="@drawable/scrollbar_horizontal_thumb"
+            android:scrollbarTrackVertical="@drawable/scrollbar_horizontal_track"
+            android:fadeScrollbars="false"
+            />
+
+    </FrameLayout>
+
+</LinearLayout>

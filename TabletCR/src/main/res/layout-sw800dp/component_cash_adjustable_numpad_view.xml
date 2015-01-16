@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_height="wrap_content"
+                android:id="@+id/container_holder"
+                android:layout_width="fill_parent">
+
+    <com.kaching123.tcr.component.KeyboardView_
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/keyboard"
+        android:layout_height="wrap_content"
+        android:layout_width="@dimen/keyboard_width"/>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/addon_background"
+        android:layout_marginLeft="10dp"
+        android:layout_alignTop="@id/keyboard"
+        android:layout_alignBottom="@id/keyboard"
+        android:layout_toRightOf="@id/keyboard"
+        android:padding="8dp">
+
+        <Button
+            style="@style/LocalizableButton.LightGrey"
+            android:id="@+id/btn_exact"
+            android:background="@drawable/exact_btn_bg"
+            android:text="@string/button_exact"
+            android:textSize="22sp"
+            android:paddingBottom="4dp"
+            android:focusable="false"
+            android:clickable="false"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <GridView
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="3dp"
+            android:fadingEdgeLength="0px"
+            android:id="@+id/bonds"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:numColumns="2"
+            android:columnWidth="96dp"
+            android:listSelector="@android:color/transparent"
+            android:verticalSpacing="8dp"
+            android:horizontalSpacing="8dp"
+            android:stretchMode="none">
+        </GridView>
+    </LinearLayout>
+
+</RelativeLayout>

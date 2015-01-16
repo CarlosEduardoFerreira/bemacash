@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/bg_grey_color">
+
+    <fragment
+        android:name="com.kaching123.tcr.fragment.creditreceipt.CreditReceiptListFragment_"
+        android:layout_width="960dp"
+        android:layout_height="match_parent"
+        android:id="@+id/creditreceipt_list_fragment"/>
+
+    <fragment
+        android:name="com.kaching123.tcr.fragment.creditreceipt.CreditReceiptFilterFragment_"
+        android:id="@+id/creditreceipt_filter_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        />
+
+</LinearLayout>

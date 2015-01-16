@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:background="@color/prepaid_dialog_buttons_background_color"
+    android:padding="16dp">
+
+    <Spinner
+        style="@style/StyledDialog.Content.Spinner"
+        android:id="@+id/category"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="13dp"
+        android:paddingBottom="10dp"
+        android:scrollbarSize="5dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:layout_toLeftOf="@id/keyboard"/>
+
+    <Spinner
+        style="@style/StyledDialog.Content.Spinner"
+        android:id="@+id/biller"
+        android:layout_below="@id/category"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="5dp"
+        android:paddingBottom="10dp"
+        android:layout_toLeftOf="@id/keyboard"/>
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/linearlayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/biller"
+        android:layout_alignLeft="@+id/biller"
+        android:orientation="vertical"
+        android:layout_toLeftOf="@id/keyboard">
+
+        <LinearLayout
+            android:layout_marginLeft="5dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="1dp"
+                android:textSize="@dimen/prepaid_label_text_size"
+                android:layout_height="wrap_content"
+                android:textColor="@color/prepaid_dialog_white"
+                android:text="@string/bill_pauments_fee"/>
+
+            <TextView
+                android:layout_weight="2"
+                android:layout_width="1dp"
+                android:textColor="@color/prepaid_dialog_white"
+                android:textSize="@dimen/prepaid_label_text_size"
+                android:layout_height="wrap_content"
+                android:text="@string/bill_pauments_type"/>
+
+            <TextView
+                android:layout_weight="3"
+                android:layout_width="1dp"
+                android:textColor="@color/prepaid_dialog_white"
+                android:textSize="@dimen/prepaid_label_text_size"
+                android:layout_height="wrap_content"
+                android:text="@string/bill_pauments_description"/>
+            </LinearLayout>
+    <LinearLayout
+        android:padding="4dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/prepaid_dialog_white">
+        <ListView
+            android:id="@+id/listview"
+            android:dividerHeight="1dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/prepaid_dialog_buttons_background_color">
+            </ListView>
+        </LinearLayout>
+
+        <TableLayout
+            android:id="@+id/tableview"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent">
+
+
+            <TableRow
+                android:layout_marginTop="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <com.kaching123.tcr.component.CustomEditBox
+                    style="@style/CustomEditBox.PaymentInputField"
+                    android:hint="@string/prepaid_dialog_credentials_1"
+                    android:id="@+id/account_number"
+                    android:textColor="@color/prepaid_dialog_white"
+                    android:layout_width="0dp"
+                    android:singleLine="true"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:textSize="@dimen/prepaid_label_text_size"
+                    />
+
+            </TableRow>
+
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical">
+
+                <com.kaching123.tcr.component.CustomEditBox
+                    style="@style/CustomEditBox.PaymentInputField"
+                    android:hint="@string/prepaid_dialog_credentials_1_valiadte"
+                    android:id="@+id/account_number_validate"
+                    android:layout_width="0dp"
+                    android:singleLine="true"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/prepaid_dialog_white"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:textSize="@dimen/prepaid_label_text_size"
+                     />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical">
+
+                <com.kaching123.tcr.component.CustomEditBox
+                    style="@style/CustomEditBox.PaymentInputField"
+                    android:id="@+id/charge"
+                    android:layout_width="0dp"
+                    android:singleLine="true"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/prepaid_dialog_white"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:textSize="@dimen/prepaid_label_text_size"
+                    />
+
+            </TableRow>
+
+        </TableLayout>
+
+        </LinearLayout>
+
+
+    <!--<Spinner-->
+        <!--style="@style/StyledDialog.Content.Spinner"-->
+        <!--android:id="@+id/options"-->
+        <!--android:layout_below="@id/biller"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:paddingBottom="10dp"-->
+        <!--android:layout_toLeftOf="@id/keyboard"/>-->
+
+
+
+    <!--<TextView-->
+        <!--style="@style/PaymentItem.Grayed"-->
+        <!--android:id="@+id/limitation"-->
+        <!--android:gravity="left"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_alignLeft="@id/keyboard"-->
+        <!--android:layout_alignRight="@id/keyboard"-->
+        <!--android:paddingLeft="12dp"/>-->
+
+    <!--<com.kaching123.tcr.component.CustomEditBox-->
+        <!--android:id="@+id/charge"-->
+        <!--style="@style/CustomEditBox.PaymentInputField"-->
+        <!--android:layout_alignLeft="@id/keyboard"-->
+        <!--android:layout_alignRight="@id/keyboard"-->
+        <!--android:layout_marginTop="-8dp"-->
+        <!--android:layout_below="@id/limitation"-->
+        <!--android:gravity="left"-->
+        <!--android:hint="@string/prepaid_dialog_custom_amount_hint"-->s
+        <!--android:textSize="@dimen/prepaid_label_text_size"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="fill_parent"/>-->
+
+    <com.kaching123.tcr.component.KeyboardView_
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:id="@+id/keyboard"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"/>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/linearlayout2"
+        android:layout_below="@+id/keyboard"
+        android:layout_alignLeft="@+id/keyboard"
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/linearlayout4"
+            android:layout_marginTop="20dp"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="20sp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="@string/sunpass_credential_amount"
+                android:textColor="@color/prepaid_dialog_white" />
+
+            <TextView
+                android:textSize="20sp"
+                android:id="@+id/amount_textview"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/prepaid_dialog_white" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/linearlayout5"
+            android:layout_marginTop="5dp"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="20sp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="@string/sunpass_credential_fees"
+                android:textColor="@color/prepaid_dialog_white" />
+
+            <TextView
+                android:textSize="20sp"
+                android:id="@+id/fee_textview"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/prepaid_dialog_white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearlayout6"
+            android:layout_marginTop="5dp"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="20sp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="@string/sunpass_credential_tatal"
+                android:textColor="@color/prepaid_dialog_white" />
+
+            <TextView
+                android:textSize="20sp"
+                android:id="@+id/total_textview"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/prepaid_dialog_white" />
+
+        </LinearLayout>
+
+
+        </LinearLayout>
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/error"
+        android:layout_marginTop="20dp"
+        style="@style/Sunpass.CredentialErrorText"
+        android:layout_below="@+id/linearlayout2"
+        android:layout_alignLeft="@+id/linearlayout2"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/prepaid_label_text_size"
+        android:text="@string/sunpass_credential_error" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/error_content"
+        style="@style/Sunpass.CredentialErrorText"
+        android:layout_below="@+id/error"
+        android:layout_alignLeft="@+id/linearlayout2"
+        android:textSize="15sp"
+        android:textColor="@color/prepaid_dialog_buttons_background_color"
+        android:text="@string/sunpass_credential_error_content" />
+
+
+</RelativeLayout>

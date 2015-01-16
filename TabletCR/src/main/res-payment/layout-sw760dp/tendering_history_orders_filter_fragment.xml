@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/above_holder"
+        style="@style/TotalCostTable.Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/filter_panel_bg"
+        android:orientation="vertical">
+
+
+        <TableLayout
+            style="@style/FilterPanel.Table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TotalCostTable.Text.Main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/orders_history_order_num" />
+
+                <com.kaching123.tcr.component.CustomEditBox
+                    android:id="@+id/order_number"
+                    style="@style/FilterPanel.CustomEditBox"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:enabled="false"
+                    android:focusable="false"
+                    style="@style/TotalCostTable.Text.Main"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/merchant_sublabel"
+                    android:layout_height="wrap_content"
+                    android:text="@string/orders_history_merchant" />
+
+                <Spinner
+                    android:id="@+id/merchant"
+                    style="@style/FilterPanel.Spinner"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:enabled="false"
+                    android:focusable="false"
+                    style="@style/TotalCostTable.Text.Main"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/customer_label"
+                    android:layout_height="wrap_content"
+                    android:text="Customer: " />
+
+                <AutoCompleteTextView
+                    android:id="@+id/customer"
+                    style="@style/FilterPanel.EditBox"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:inputType="textVisiblePassword"
+                    android:imeOptions="actionDone"
+                    android:hint="@string/orders_history_default_item_description" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/transactions_status_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:enabled="false"
+                    android:focusable="false"
+                    style="@style/TotalCostTable.Text.Main"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/transactions_status_label"
+                    android:layout_height="wrap_content"
+                    android:text="@string/orders_history_transactions_status" />
+
+                <Spinner
+                    android:id="@+id/transactions_status"
+                    style="@style/FilterPanel.Spinner"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+        </TableLayout>
+
+        <View
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/total_cost_order_discount_border" />
+
+        <TableLayout
+            style="@style/FilterPanel.Table"
+            android:paddingBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:enabled="false"
+                    android:focusable="false"
+                    style="@style/TotalCostTable.Text.Main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="From:" />
+
+                <EditText
+                    style="@style/FilterPanel.Date"
+                    android:id="@+id/from_edit"
+                    android:layout_marginLeft="42dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:enabled="false"
+                    android:focusable="false"
+                    style="@style/TotalCostTable.Text.Main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="To:" />
+
+                <EditText
+                    style="@style/FilterPanel.Date"
+                    android:id="@+id/to_edit"
+                    android:layout_marginLeft="42dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1" />
+
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+    <Button
+        style="@style/LocalizableButton.Blue"
+        android:id="@+id/filter"
+        android:layout_marginTop="6dp"
+        android:layout_below="@+id/above_holder"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:background="@drawable/filter_btn" />
+
+    <LinearLayout
+        android:id="@+id/below_holder"
+        android:layout_below="@id/filter"
+        android:layout_marginTop="2dp"
+        android:layout_alignParentLeft="true"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+
+        <com.kaching123.tcr.component.KeyboardView_
+            android:layout_gravity="bottom"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:id="@+id/keyboard" />
+
+    </LinearLayout>
+
+</RelativeLayout>

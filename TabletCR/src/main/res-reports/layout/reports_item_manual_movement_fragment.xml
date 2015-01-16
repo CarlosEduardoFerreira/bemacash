@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@drawable/item_list_bg">
+              android:background="@color/bg_grey_color">
 
     <LinearLayout
         android:id="@+id/header"
@@ -45,7 +45,7 @@
         android:layout_below="@id/header"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:divider="@drawable/list_divider"/>
+        android:divider="?android:attr/listDivider"/>
 
     <LinearLayout
         android:layout_height="match_parent"

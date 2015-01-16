@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:orientation="vertical"
+              android:gravity="center"
+              android:layout_height="match_parent">
+
+    <ImageView
+        android:src="@drawable/check_green"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"/>
+
+    <TextView
+        android:layout_row="0"
+        android:paddingTop="20dp"
+        android:id="@+id/message"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:text="@string/receipt_message"
+        android:layout_marginBottom="50dp"
+        style="@style/PaymentItem"
+        android:layout_gravity="center"/>
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingRight="20dp">
+
+        <CheckBox
+            android:id="@+id/print_box"
+            android:text="@string/chkbx_print"
+            style="@style/CheckBox.Dark"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"/>
+
+        <CheckBox
+            android:layout_below="@id/print_box"
+            style="@style/CheckBox.Dark"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/email_box"
+            android:layout_height="wrap_content"
+            android:text="@string/chkbx_email"
+            android:layout_width="wrap_content"/>
+
+        <CheckBox
+            android:layout_below="@id/email_box"
+            style="@style/CheckBox.Dark"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/signature_box"
+            android:visibility="visible"
+            android:layout_height="wrap_content"
+            android:text="@string/chkbx_sign_print"
+            android:layout_width="wrap_content"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/change"
+        android:layout_marginTop="46dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/dlg_text_green"
+        android:textSize="32sp"
+        android:visibility="gone"/>
+
+</LinearLayout>

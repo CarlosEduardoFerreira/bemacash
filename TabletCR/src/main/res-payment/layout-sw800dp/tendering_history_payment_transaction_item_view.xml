@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/h1"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:id="@+id/h_layout"
+        android:layout_marginLeft="6dp"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content">
+
+        <ImageView
+
+            android:src="@drawable/transaction_active"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:id="@+id/status"
+            android:layout_width="wrap_content"/>
+
+        <ImageView
+
+            android:src="@drawable/credit_card_for_history"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"/>
+
+        <TextView
+            android:id="@+id/message"
+            android:text="transaction 1"
+            android:padding="4dp"
+            style="@style/PaymentItem.Grayed.Smaller"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:padding="4dp"
+        android:layout_toLeftOf="@+id/total"
+        android:layout_toRightOf="@+id/h_layout"
+        android:text="@string/lots_o_dots"
+        android:lines="1"
+        style="@style/PaymentItem.Grayed.Smaller"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"/>
+
+    <TextView
+        android:padding="4dp"
+        android:text="100.00"
+        android:id="@+id/total"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="4dp"
+        style="@style/PaymentItem.Grayed.Smaller.Val"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"/>
+
+</RelativeLayout>

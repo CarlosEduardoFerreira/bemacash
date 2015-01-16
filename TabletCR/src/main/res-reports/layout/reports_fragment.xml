@@ -4,7 +4,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/beige">
+              android:background="@color/bg_grey_color">
 
     <GridLayout
         android:layout_height="@dimen/reports_details_header_height"
@@ -146,7 +146,7 @@
     <LinearLayout
         android:layout_height="32dp"
         android:layout_width="match_parent"
-        android:background="@color/bar_chart_bar_bg"
+        android:background="@color/report_view_grey"
         android:orientation="horizontal"
         android:gravity="center">
 
