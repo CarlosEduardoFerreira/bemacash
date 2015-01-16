@@ -256,7 +256,7 @@ public class SyncCommand implements Runnable {
     private int syncNowInner(final EmployeeModel employee, final long shopId) throws SyncException, DBVersionCheckException, SyncInconsistentException {
         if (getApp().isTrainingMode()) {
             syncPAXMerchantInfo();
-            syncWireless(service);
+//            syncWireless(service);
             return 0;
         }
 
@@ -350,7 +350,7 @@ public class SyncCommand implements Runnable {
         // download date from our amazon web server - end
 
         //go to the blackstone api to refresh cache
-        syncWireless(service);
+//        syncWireless(service);
 
         sendSyncSuccessful(api, employee);
 

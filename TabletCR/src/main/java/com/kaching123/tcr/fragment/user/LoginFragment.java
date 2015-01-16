@@ -11,8 +11,11 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.method.SingleLineTransformationMethod;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -139,6 +142,17 @@ public class LoginFragment extends SuperBaseDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = new Dialog(getActivity(), R.style.AppTheme_Transparent);
+        //changed for mintpos
+        Window window = dialog.getWindow();
+
+        // set "origin" to top left corner, so to speak
+        window.setGravity(Gravity.TOP|Gravity.LEFT);
+
+        // after that, setting values for x and y works "naturally"
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.x = 630;
+        params.y = 150;
+        window.setAttributes(params);
         return dialog;
     }
 

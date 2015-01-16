@@ -40,7 +40,6 @@ import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.PrepaidActivity.PrepaidProcessorActivity;
 import com.kaching123.tcr.commands.device.GetPrinterStatusCommand;
 import com.kaching123.tcr.commands.device.GetPrinterStatusCommand.BasePrinterStatusCallback;
 import com.kaching123.tcr.commands.device.PrinterCommand;
@@ -122,7 +121,6 @@ import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.processor.PaxBalanceProcessor;
 import com.kaching123.tcr.processor.PaymentProcessor;
 import com.kaching123.tcr.processor.PaymentProcessor.IPaymentProcessor;
-import com.kaching123.tcr.processor.PrepaidProcessor;
 import com.kaching123.tcr.service.DisplayService;
 import com.kaching123.tcr.service.DisplayService.Command;
 import com.kaching123.tcr.service.DisplayService.DisplayBinder;
@@ -720,6 +718,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         boolean b = super.onCreateOptionsMenu(menu);
         searchItem = menu.findItem(R.id.action_search);
         assert searchItem != null;
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+        // Getting the 'search_plate' LinearLayout.
+        View searchPlate = searchView.findViewById(searchPlateId);
+        // Setting background of 'search_plate' to earlier defined drawable.
+        searchPlate.setBackgroundResource(R.drawable.textfield_searchview_holo_light);
+
         initSearchView();
 
         holdCounterItem = menu.findItem(R.id.action_hold_counter);
@@ -743,9 +749,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         checkHoldInfo();
-        menu.findItem(R.id.action_prepaid).setEnabled(getApp().isPrepaidUserValid());
         menu.findItem(R.id.action_order_items).setVisible(!isCreateReturnOrder);
-        menu.findItem(R.id.action_prepaid).setVisible(!isCreateReturnOrder);
         PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX_EBT_CASH.gateway();
         menu.findItem(R.id.action_balance).setVisible(getApp().isPaxConfigured() && paxGateway.acceptPaxEbtEnabled());
         menu.findItem(R.id.action_commission).setVisible(getApp().isCommissionsEnabled() && !isCreateReturnOrder);
@@ -985,18 +989,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     @OptionsItem
-    protected void actionPrepaidSelected() {
-        if (!getApp().isOperatorClockedIn() && getApp().getShopInfo().clockinRequired4Sales) {
-            try2ClockIn();
-            return;
-        }
-        actionBarItemClicked();
-//        PrepaidProcessor.create().init(this);
-        PrepaidProcessorActivity.start(this);
-    }
-
-
-    @OptionsItem
     protected void actionBarcodeSelected() {
         actionBarItemClicked();
         SearchBarcodeFragment.show(this, new SearchBarcodeFragment.OnSearchListener() {
@@ -1064,51 +1056,51 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         UnitsSaleFragment.show(BaseCashierActivity.this, model, null, UnitsSaleFragment.UnitActionType.ADD_TO_ORDER,
                 model.codeType, new UnitsSaleFragment.UnitSaleCallback() {
 
-            @Override
-            public void handleSuccess(final Unit unit) {
-                Toast.makeText(BaseCashierActivity.this, getString(R.string.unit_edit_completed), Toast.LENGTH_SHORT).show();
-                runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {
-                        addItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState, unit);
+                    public void handleSuccess(final Unit unit) {
+                        Toast.makeText(BaseCashierActivity.this, getString(R.string.unit_edit_completed), Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                addItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState, unit);
+                            }
+                        });
+                        hide();
                     }
+
+                    @Override
+                    public void handleError(String message) {
+                        disconnectScanner();
+                        AlertDialogWithCancelFragment.show(BaseCashierActivity.this,
+                                R.string.wireless_already_item_title,
+                                message,
+                                R.string.btn_ok,
+                                new AlertDialogWithCancelFragment.OnDialogListener() {
+                                    @Override
+                                    public boolean onClick() {
+                                        tryReconnectScanner();
+                                        return true;
+                                    }
+
+                                    @Override
+                                    public boolean onCancel() {
+                                        tryReconnectScanner();
+                                        return true;
+                                    }
+                                }
+                        );
+                        hide();
+                    }
+
+                    @Override
+                    public void handleCancelling() {
+                    }
+
+                    private void hide() {
+                        UnitsSaleFragment.hide(BaseCashierActivity.this);
+                    }
+
                 });
-                hide();
-            }
-
-            @Override
-            public void handleError(String message) {
-                disconnectScanner();
-                AlertDialogWithCancelFragment.show(BaseCashierActivity.this,
-                        R.string.wireless_already_item_title,
-                        message,
-                        R.string.btn_ok,
-                        new AlertDialogWithCancelFragment.OnDialogListener() {
-                            @Override
-                            public boolean onClick() {
-                                tryReconnectScanner();
-                                return true;
-                            }
-
-                            @Override
-                            public boolean onCancel() {
-                                tryReconnectScanner();
-                                return true;
-                            }
-                        }
-                );
-                hide();
-            }
-
-            @Override
-            public void handleCancelling() {
-            }
-
-            private void hide() {
-                UnitsSaleFragment.hide(BaseCashierActivity.this);
-            }
-
-        });
     }
 
     private void addItemModel(final ItemExModel model, final String modifierGiud, final ArrayList<String> addonsGuids,
@@ -1186,7 +1178,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         return true;
     }
 
-    private void checkDrawerState(boolean searchByMac){
+    private void checkDrawerState(boolean searchByMac) {
         GetPrinterStatusCommand.start(this, searchByMac, printerStatusCallback);
     }
 

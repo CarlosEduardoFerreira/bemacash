@@ -1,6 +1,7 @@
 package com.kaching123.tcr.activity;
 
 import android.content.Context;
+import android.widget.ArrayAdapter;
 
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.FragmentById;

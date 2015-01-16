@@ -32,7 +32,6 @@ import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.activity.PrepaidActivity.PrepaidProcessorActivity;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand.BaseOpenDrawerCallback;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
@@ -72,6 +71,7 @@ import com.kaching123.tcr.fragment.user.LoginFragment.OnLoginCompleteListener;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
+import com.kaching123.tcr.fragment.user.TimesheetNewFragment;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.ActivationCarrierModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -185,7 +185,7 @@ public class DashboardActivity extends SuperBaseActivity {
     @ViewById
     protected ViewGroup reportsButton;
     @ViewById
-    protected ViewGroup prepaidButton;
+    protected ViewGroup checkinAndOutButton;
 
     private MenuItem alertCounterItem;
     private TextView alertCounterView;
@@ -244,6 +244,46 @@ public class DashboardActivity extends SuperBaseActivity {
             logout(false);
             Toast.makeText(this, R.string.offline_mode_error_toast_message_logout, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Click
+    protected void checkinAndOutButtonClicked() {
+        showCheckInOrOutDialog();
+    }
+
+    protected void showCheckInOrOutDialog() {
+        TimesheetNewFragment.show(this, new TimesheetNewFragment.OnTimesheetListener() {
+            @Override
+            public void onCheckInSelected() {
+
+                TimesheetFragment.show(DashboardActivity.this, TimesheetFragment.Type.CLOCK_IN, null, new TimesheetFragment.OnTimesheetListener() {
+                    @Override
+                    public void onCredentialsEntered(String login/*, String password*/) {
+                        TimesheetFragment.hide(DashboardActivity.this);
+                        WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_in));
+                        ClockInCommand.start(DashboardActivity.this, login/*, password*/, clockInCallback);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelSelected() {
+
+            }
+
+            @Override
+            public void onCheckOutSelected() {
+                TimesheetFragment.show(DashboardActivity.this, TimesheetFragment.Type.CLOCK_OUT, null, new TimesheetFragment.OnTimesheetListener() {
+                    @Override
+                    public void onCredentialsEntered(String login/*, String password*/) {
+                        TimesheetFragment.hide(DashboardActivity.this);
+                        WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_out));
+                        ClockOutCommand.start(DashboardActivity.this, login/*, password*/, clockOutCallback);
+                    }
+                });
+            }
+        });
+
     }
 
     @Override
@@ -544,11 +584,6 @@ public class DashboardActivity extends SuperBaseActivity {
     }
 
     @Click
-    protected void prepaidButtonClicked() {
-        PrepaidProcessorActivity.start(this);
-    }
-
-    @Click
     protected void registerButtonClicked() {
         if (getApp().getStartView() == ShopInfoViewJdbcConverter.ShopInfo.ViewType.QUICK_SERVICE) {
             QuickServiceActivity.start(this);
@@ -647,29 +682,29 @@ public class DashboardActivity extends SuperBaseActivity {
         OpenDrawerCommand.start(DashboardActivity.this, searchByMac, callback);
     }
 
-    @Click
-    protected void clockInButtonContainerClicked() {
-        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_IN, null, new TimesheetFragment.OnTimesheetListener() {
-            @Override
-            public void onCredentialsEntered(String login/*, String password*/) {
-                TimesheetFragment.hide(DashboardActivity.this);
-                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_in));
-                ClockInCommand.start(DashboardActivity.this, login/*, password*/, clockInCallback);
-            }
-        });
-    }
-
-    @Click
-    protected void clockOutButtonContainerClicked() {
-        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_OUT, null, new TimesheetFragment.OnTimesheetListener() {
-            @Override
-            public void onCredentialsEntered(String login/*, String password*/) {
-                TimesheetFragment.hide(DashboardActivity.this);
-                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_out));
-                ClockOutCommand.start(DashboardActivity.this, login/*, password*/, clockOutCallback);
-            }
-        });
-    }
+//    @Click
+//    protected void clockInButtonContainerClicked() {
+//        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_IN, null, new TimesheetFragment.OnTimesheetListener() {
+//            @Override
+//            public void onCredentialsEntered(String login/*, String password*/) {
+//                TimesheetFragment.hide(DashboardActivity.this);
+//                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_in));
+//                ClockInCommand.start(DashboardActivity.this, login/*, password*/, clockInCallback);
+//            }
+//        });
+//    }
+//
+//    @Click
+//    protected void clockOutButtonContainerClicked() {
+//        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_OUT, null, new TimesheetFragment.OnTimesheetListener() {
+//            @Override
+//            public void onCredentialsEntered(String login/*, String password*/) {
+//                TimesheetFragment.hide(DashboardActivity.this);
+//                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_out));
+//                ClockOutCommand.start(DashboardActivity.this, login/*, password*/, clockOutCallback);
+//            }
+//        });
+//    }
 
     @Click
     protected void employeesButtonClicked() {
@@ -812,7 +847,6 @@ public class DashboardActivity extends SuperBaseActivity {
         setModuleEnabled(employeesButton, getApp().hasPermission(Permission.EMPLOYEE_MANAGEMENT));
         setModuleEnabled(customersButton, getApp().hasPermission(Permission.CUSTOMER_MANAGEMENT));
         setModuleEnabled(reportsButton, getApp().hasPermission(Permission.REPORTS));
-        setModuleEnabled(prepaidButton, isShiftOpened && getApp().isPrepaidUserValid());
 
         setShiftActionLabel(isShiftOpened);
         if (isShiftOpened) {
