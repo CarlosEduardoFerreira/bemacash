@@ -66,6 +66,7 @@ import com.mayer.sql.update.version.Update5to5_1;
 import com.mayer.sql.update.version.Update5to5_2;
 import com.mayer.sql.update.version.Update5to5_3;
 import com.mayer.sql.update.version.Update5to5_4;
+import com.mayer.sql.update.version.Update5to5_5;
 
 public class SqlUpdateVersionMatcher {
 
@@ -145,6 +146,7 @@ public class SqlUpdateVersionMatcher {
         UPDATE5TO5_2(new Update5to5_2()),
         UPDATE5TO5_3(new Update5to5_3()),
         UPDATE5TO5_4(new Update5to5_4()),
+        UPDATE5TO5_5(new Update5to5_5()),
         UPDATE5_1TO5_2(new Update5_1to5_2()),
         UPDATE5_1TO5_3(new Update5_1to5_3()),
         UPDATE5_1TO5_4(new Update5_1to5_4()),
