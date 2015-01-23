@@ -67,6 +67,81 @@ public class Broker {
         this.url = url + "/TransactionBroker/Broker.asmx";
         return this;
     }
+
+    public void GetMerchantFlagsAsync(String mID,String tID,String password,long transactionId,String signatureValue) throws Exception{
+        if (this.eventHandler == null)
+            throw new Exception("Async Methods Requires IWsdl2CodeEvents");
+        GetMerchantFlagsAsync(mID, tID, password, transactionId, signatureValue, null);
+    }
+
+    public void GetMerchantFlagsAsync(final String mID,final String tID,final String password,final long transactionId,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
+
+        new AsyncTask<Void, Void, MerchantFlagsResponse>(){
+            @Override
+            protected void onPreExecute() {
+                eventHandler.Wsdl2CodeStartedRequest();
+            };
+            @Override
+            protected MerchantFlagsResponse doInBackground(Void... params) {
+                return GetMerchantFlags(mID, tID, password, transactionId, signatureValue, headers);
+            }
+            @Override
+            protected void onPostExecute(MerchantFlagsResponse result)
+            {
+                eventHandler.Wsdl2CodeEndedRequest();
+                if (result != null){
+                    eventHandler.Wsdl2CodeFinished("GetMerchantFlags", result);
+                }
+            }
+        }.execute();
+    }
+
+    public MerchantFlagsResponse GetMerchantFlags(String mID,String tID,String password,long transactionId,String signatureValue){
+        return GetMerchantFlags(mID, tID, password, transactionId, signatureValue, null);
+    }
+
+    public MerchantFlagsResponse GetMerchantFlags(String mID,String tID,String password,long transactionId,String signatureValue,List<HeaderProperty> headers){
+        SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        soapEnvelope.implicitTypes = true;
+        soapEnvelope.dotNet = true;
+        SoapObject soapReq = new SoapObject("http://services.bstonecorp.com/TransactionBroker/Broker","GetMerchantFlags");
+        soapReq.addProperty("MID",mID);
+        soapReq.addProperty("TID",tID);
+        soapReq.addProperty("Password",password);
+        soapReq.addProperty("TransactionId",transactionId);
+        soapReq.addProperty("SignatureValue",signatureValue);
+        soapEnvelope.setOutputSoapObject(soapReq);
+        HttpTransportSE httpTransport = new HttpTransportSE(url,timeOut);
+        try{
+            if (headers!=null){
+                httpTransport.call("http://services.bstonecorp.com/TransactionBroker/Broker/GetMerchantFlags", soapEnvelope,headers);
+            }else{
+                httpTransport.call("http://services.bstonecorp.com/TransactionBroker/Broker/GetMerchantFlags", soapEnvelope);
+            }
+            Object retObj = soapEnvelope.bodyIn;
+            if (retObj instanceof SoapFault){
+                SoapFault fault = (SoapFault)retObj;
+                Exception ex = new Exception(fault.faultstring);
+                if (eventHandler != null)
+                    eventHandler.Wsdl2CodeFinishedWithException(ex);
+            }else{
+                SoapObject result=(SoapObject)retObj;
+                if (result.getPropertyCount() > 0){
+                    Object obj = result.getProperty(0);
+                    SoapObject j = (SoapObject)obj;
+                    MerchantFlagsResponse resultVariable =  new MerchantFlagsResponse (j);
+                    return resultVariable;
+
+                }
+            }
+        }catch (Exception e) {
+            if (eventHandler != null)
+                eventHandler.Wsdl2CodeFinishedWithException(e);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void GetSinglePINAsync(String mID,String tID,String password,String cashier,String productMaincode,double productDenomination,long orderID,int profileID,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");

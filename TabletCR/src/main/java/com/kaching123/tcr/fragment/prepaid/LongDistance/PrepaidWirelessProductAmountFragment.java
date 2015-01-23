@@ -43,7 +43,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     @ViewById
     protected ImageView icon;
     @ViewById
-    protected TextView productName, amountZone;
+    protected TextView productName, amountZone, phoneNumber;
 
     @ViewById
     protected TextView submit;
@@ -59,7 +59,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     @ViewById
     protected LinePageIndicator viewPagerIndicator;
     private BigDecimal amount;
-    private String phoneNumber;
+    private String phoneNumberStr;
     private ProductWirelessAmountItemsPageAdapter wirelessAmountItemsPageAdapter;
     private AmountSelectedCallback listener = new AmountSelectedCallback();
     private List list;
@@ -81,10 +81,18 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     @AfterViews
     public void init() {
         keyboard.attachEditView(phoneEditView);
+        updatePhoneViews();
         setPhoneEditView();
         setAmountEditView();
         initFragment();
         updateUI();
+    }
+
+    private void updatePhoneViews() {
+        if (chosenCategory.isPinBased()) {
+            phoneNumber.setVisibility(View.GONE);
+            phoneEditView.setVisibility(View.GONE);
+        }
     }
 
     private void initFragment() {
@@ -117,16 +125,16 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     }
 
     private boolean enableFinish() {
-        return ((phoneNumber != null && !phoneNumber.equalsIgnoreCase("")) && (amount != null && amount != BigDecimal.ZERO));
+        return ((phoneNumber != null && !phoneNumberStr.equalsIgnoreCase("")) && (amount != null && amount != BigDecimal.ZERO));
     }
 
     @AfterTextChange
     protected void phoneEditViewAfterTextChanged(Editable s) {
         longDistanceProductAmount.headMessage(PrepaidLongDistanceProductInfoMenuFragment.SELECT_AMOUNT);
         if (s.toString().length() > 0)
-            phoneNumber = s.toString();
+            phoneNumberStr = s.toString();
         else
-            phoneNumber = "";
+            phoneNumberStr = "";
 
     }
 
@@ -194,7 +202,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     private void error() {
         if (phoneNumber == null && ((amount == BigDecimal.ZERO) || amount == null))
             longDistanceProductAmount.headMessage(PrepaidLongDistanceHeadFragment.PHONE_NUMBER_NULL_AND_AMOUNT_ZERO_ERROR);
-        else if (phoneNumber == null || phoneNumber.equalsIgnoreCase(""))
+        else if (phoneNumber == null || phoneNumberStr.equalsIgnoreCase(""))
             longDistanceProductAmount.headMessage(PrepaidLongDistanceHeadFragment.PHONE_NUMBER_NULL_ERROR);
         else if (amount == null || amount == BigDecimal.ZERO)
             longDistanceProductAmount.headMessage(PrepaidLongDistanceHeadFragment.AMOUNT_ZERO_ERROR);
@@ -239,7 +247,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     }
 
     private void complete() {
-        longDistanceProductAmount.conditionSelected(amount, phoneNumber);
+        longDistanceProductAmount.conditionSelected(amount, phoneNumberStr);
         longDistanceProductAmount.headMessage(PrepaidLongDistanceHeadFragment.PURCHASE_SUMMARY);
     }
 

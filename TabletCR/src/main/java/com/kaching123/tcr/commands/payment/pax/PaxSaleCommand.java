@@ -130,7 +130,8 @@ public class PaxSaleCommand extends PaxBaseCommand {
                 response = (SaleActionResponse) possibleData;
             }
             Logger.d("PaxSaleCommand response:" + response);
-            if (200 == response.getResponse()) {
+            if (200 == response.getDetails().getSale().getResponseCode())
+            {
                 transaction.updateWith(response);
                 if (response.getDetails().getDigits() != null)
                     transaction.lastFour = response.getDetails().getDigits();
@@ -143,7 +144,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
                         .withValues(transactionModel.toValues())
                         .build());
                 sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
-            } else {
+            }else{
                 errorReason = "";
                 for (String msg : response.getDetails().getSale().getMessage()) {
                     if (errorReason.length() > 0) {
