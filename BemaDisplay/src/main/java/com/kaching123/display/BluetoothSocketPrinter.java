@@ -1,46 +1,34 @@
 package com.kaching123.display;
 
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.InvalidParameterException;
+import java.util.UUID;
 
 public class BluetoothSocketPrinter implements DisplayPrinter {
 
-    private SerialPort mSerialPort = null;
+    private static final UUID SPP_SLAVE_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
-    protected OutputStream mOutputStream;
+	private BluetoothSocket socket;
 
-    public BluetoothSocketPrinter(String path, int baudrate, int databits, int parity, int stopbits, int flowctl) throws IOException {
-        try {
-            System.out.println("trace--BluetoothSocketPrinter: 1");
-            mSerialPort = new SerialPort(new File(path), baudrate, databits, parity, stopbits, flowctl);
-            mOutputStream = mSerialPort.getOutputStream();
-        } catch (SecurityException e) {
-            System.out.println("trace--BluetoothSocketPrinter: 2" + e.toString());
-        } catch (InvalidParameterException e) {
-            System.out.println("trace--BluetoothSocketPrinter: 3" + e.toString());
-        }
-        catch (IOException e) {
-            System.out.println("trace--BluetoothSocketPrinter: 4" + e.toString());
-        }
+	private OutputStream out;
 
+	public BluetoothSocketPrinter(BluetoothDevice device) throws IOException {
+        socket = device.createRfcommSocketToServiceRecord(SPP_SLAVE_UUID);
+        socket.connect();
+        out = socket.getOutputStream();
+	}
+	
+	@Override
+	public void write(byte[] bytes) throws IOException {
+		out.write(bytes);
+	}
 
-    }
-
-    @Override
-    public void write(byte[] bytes) throws IOException {
-        if (mOutputStream != null)
-            mOutputStream.write(bytes);
-    }
-
-    @Override
-    public void close() throws IOException {
-        if (mSerialPort != null) {
-            mSerialPort.close();
-            mSerialPort = null;
-        }
-    }
+	@Override
+	public void close() throws IOException {
+		socket.close();
+	}
 
 }
