@@ -5,11 +5,13 @@ import android.support.v4.app.FragmentActivity;
 
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.blackstone.prepaid.update.CheckForUpdatesCommand;
+import com.kaching123.tcr.commands.payment.blackstone.prepaid.update.UpdateMerchantFlagCommand;
 import com.kaching123.tcr.commands.payment.blackstone.prepaid.update.UpdateWirelessCommand;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.CheckForUpdateRequest;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.GetProductListRequest;
+import com.kaching123.tcr.websvc.api.prepaid.MerchantFlagsResponse;
 import com.kaching123.tcr.websvc.api.prepaid.ProductListResponse;
 import com.kaching123.tcr.websvc.api.prepaid.ProductListVersionResponse;
 import com.telly.groundy.annotations.OnFailure;
@@ -53,12 +55,20 @@ public class PrepaidUpdateProcessor {
                 TcrApplication.get().setNeedBillPaymentUpdated(true);
                 TcrApplication.get().getShopPref().prepaidVersionId().put(responseUpdate.productListVersion);
             }
+
+        }
+        MerchantFlagsResponse merchantFlagsResponse = new UpdateMerchantFlagCommand().sync(context, composeCheckUpdateRequest());
+        if(merchantFlagsResponse != null)
+        {
+            TcrApplication.get().setBillPaymentActivated(merchantFlagsResponse.flags.billPaymentActivated);
+            TcrApplication.get().setSunpassActivated(merchantFlagsResponse.flags.sunpassActivated);
         }
     }
 
     private CheckForUpdateRequest composeCheckUpdateRequest() {
         CheckForUpdateRequest request = new CheckForUpdateRequest();
         request.mID = String.valueOf(this.user.getMid());
+
         request.tID = String.valueOf(this.user.getTid());
         request.password = this.user.getPassword();
         request.transactionId = this.transactionId;

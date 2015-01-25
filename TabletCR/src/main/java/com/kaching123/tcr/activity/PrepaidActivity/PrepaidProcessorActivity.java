@@ -7,11 +7,16 @@ import android.widget.Toast;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
+import com.googlecode.androidannotations.annotations.Extra;
+import com.googlecode.androidannotations.annotations.FragmentById;
 import com.googlecode.androidannotations.annotations.OnActivityResult;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment;
 import com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment.prepaidType;
+import com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment_;
+import com.kaching123.tcr.fragment.prepaid.PrepaidHomeHeadFragment;
+import com.kaching123.tcr.fragment.prepaid.PrepaidHomeHeadFragment_;
 
 /**
  * Created by teli.yin on 10/28/2014.
@@ -21,18 +26,28 @@ public class PrepaidProcessorActivity extends SuperBaseActivity implements prepa
 
     public static final int REQUEST_CODE = 1;
     public static String TRANSACTION_COMPLETE = "TRANSACTION_COMPLETE";
+    @Extra
+    protected boolean billPaymentActivated;
+    @Extra
+    protected boolean sunpassActivated;
+    protected PrepaidHomeFragment prepaidHomeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
-    public static void start(Context context) {
-        PrepaidProcessorActivity_.intent(context).start();
+    public static void start(Context context, boolean billPaymentActivated, boolean sunpassActivated) {
+        PrepaidProcessorActivity_.intent(context).billPaymentActivated(billPaymentActivated).sunpassActivated(sunpassActivated).start();
     }
 
     @AfterViews
     public void init() {
+        prepaidHomeFragment = PrepaidHomeFragment_.builder().billPaymentActivated(billPaymentActivated).sunpassActivated(sunpassActivated).build();
+        getSupportFragmentManager().beginTransaction().
+                add(R.id.prepaid_body, prepaidHomeFragment).
+                commit();
     }
 
 
@@ -40,7 +55,6 @@ public class PrepaidProcessorActivity extends SuperBaseActivity implements prepa
     public void typeSelected(int type) {
         switch (type) {
             case PrepaidHomeFragment.ACTIVATIONCENTER:
-
                 break;
             case PrepaidHomeFragment.LONGDISTANCE:
                 switch2LongDistance();

@@ -15,6 +15,7 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EFragment;
+import com.googlecode.androidannotations.annotations.FragmentArg;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ActivationActivity;
@@ -52,6 +53,11 @@ public class PrepaidHomeFragment extends Fragment {
     protected ImageButton btnPinless;
     @ViewById
     protected ImageButton activationCenter;
+    @FragmentArg
+    protected boolean billPaymentActivated;
+    @FragmentArg
+    protected boolean sunpassActivated;
+
     private List<ActivationCarrierModel> activationCarriers;
 
     @Override
@@ -73,7 +79,13 @@ public class PrepaidHomeFragment extends Fragment {
 
     @AfterViews
     public void init() {
+        updateSunAndBillButton();
         getLoaderManager().initLoader(0, null, new ActivationLoader());
+    }
+
+    protected void updateSunAndBillButton() {
+        btnSunpass.setEnabled(sunpassActivated);
+        btnBill.setEnabled(billPaymentActivated);
     }
 
     private class ActivationLoader implements LoaderManager.LoaderCallbacks<List<ActivationCarrierModel>> {

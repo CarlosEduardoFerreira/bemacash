@@ -573,6 +573,24 @@ public class TcrApplication extends Application {
         return shopInfo.printerTwoCopiesReceipt;
     }
 
+    public void setSunpassActivated(boolean activated){
+        shopPref.SunpassActivated().put(activated);
+    }
+
+    public boolean getSunpassActivated()
+    {
+        return shopPref.SunpassActivated().get();
+    }
+
+    public void setBillPaymentActivated(boolean activated){
+        shopPref.BillPaymentActivated().put(activated);
+    }
+
+    public boolean getBillPaymentActivated()
+    {
+        return shopPref.BillPaymentActivated().get();
+    }
+
     public boolean isPaxConfigured() {
         return !TextUtils.isEmpty(shopPref.paxUrl().get());
     }

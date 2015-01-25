@@ -992,9 +992,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
         actionBarItemClicked();
 //        PrepaidProcessor.create().init(this);
-        PrepaidProcessorActivity.start(this);
+        PrepaidProcessorActivity.start(this, getBillpaymentActivate(), getSunpassActivate());
     }
 
+    private boolean getBillpaymentActivate()
+    {
+        return TcrApplication.get().getBillPaymentActivated();
+    }
+
+    private boolean getSunpassActivate()
+    {
+        return TcrApplication.get().getSunpassActivated();
+    }
 
     @OptionsItem
     protected void actionBarcodeSelected() {

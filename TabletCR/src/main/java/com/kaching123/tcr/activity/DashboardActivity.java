@@ -32,6 +32,7 @@ import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidProcessorActivity;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand.BaseOpenDrawerCallback;
@@ -545,7 +546,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
     @Click
     protected void prepaidButtonClicked() {
-        PrepaidProcessorActivity.start(this);
+        PrepaidProcessorActivity.start(this, getBillpaymentActivate(), getSunpassActivate());
     }
 
     @Click
@@ -556,7 +557,15 @@ public class DashboardActivity extends SuperBaseActivity {
             CashierActivity.start(this);
         }
     }
+    private boolean getBillpaymentActivate()
+    {
+        return TcrApplication.get().getBillPaymentActivated();
+    }
 
+    private boolean getSunpassActivate()
+    {
+        return TcrApplication.get().getSunpassActivated();
+    }
     @Click
     protected void inventoryButtonClicked() {
         runInventory(false);

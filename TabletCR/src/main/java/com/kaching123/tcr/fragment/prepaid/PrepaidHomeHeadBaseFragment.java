@@ -7,6 +7,7 @@ import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidProcessorActivity;
 
 /**
@@ -26,9 +27,17 @@ public class PrepaidHomeHeadBaseFragment extends Fragment {
     @Click
     void homeButton()
     {
-        PrepaidProcessorActivity.start(getActivity());
+        PrepaidProcessorActivity.start(getActivity(),getBillpaymentActivate(), getSunpassActivate());
         Logger.d("Trace homeButton click");
     }
 
+    private boolean getBillpaymentActivate()
+    {
+        return TcrApplication.get().getBillPaymentActivated();
+    }
 
+    private boolean getSunpassActivate()
+    {
+        return TcrApplication.get().getSunpassActivated();
+    }
 }

@@ -223,4 +223,8 @@ public interface ShopPref {
     boolean printerTwoCopiesReceipt();
 
     boolean NeedBillpaymentUpdated();
+
+    boolean SunpassActivated();
+
+    boolean BillPaymentActivated();
 }
