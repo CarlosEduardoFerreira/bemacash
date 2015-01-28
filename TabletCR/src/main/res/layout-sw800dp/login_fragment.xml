@@ -2,23 +2,22 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/content_container"
-    android:layout_width="wrap_content"
+    android:layout_width="@dimen/login_form_width"
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/login_form_padding_top"
-    android:layout_marginTop="80dp"
     android:paddingBottom="@dimen/login_form_padding_bottom"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:background="@android:color/transparent"
+    android:background="@color/prepaid_transparent_bg"
     android:layout_centerVertical="true"
     android:layout_centerHorizontal="true">
 
     <ImageView
         android:layout_height="wrap_content"
-        android:layout_width="572dp"
+        android:layout_width="wrap_content"
         android:layout_marginBottom="16dp"
         android:src="@drawable/login_logo"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent" />
 
     <TextView
         android:layout_marginTop="8dp"
@@ -28,8 +27,7 @@
         android:textSize="16sp"
         android:textColor="@color/list_header_text"
         android:text="@string/login_login_label"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/user_container"
@@ -44,43 +42,41 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/dashboard_module_disabled_text"
-            android:layout_marginBottom="13dp"
-            />
+            android:layout_marginBottom="13dp" />
 
-        <TextView android:id="@+id/user_label"
+        <TextView
+            android:id="@+id/user_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/top_divider"
             android:layout_marginBottom="13dp"
             android:textSize="16sp"
             android:textColor="@color/dashboard_total_sales_text"
-            android:layout_centerInParent="true"
-            />
+            android:layout_centerInParent="true" />
 
-        <ImageButton android:id="@+id/switch_user"
+        <ImageButton
+            android:id="@+id/switch_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="16dp"
-            android:background="@drawable/btn_switch_user"
-            />
+            android:background="@drawable/btn_switch_user" />
 
         <View
             android:id="@+id/bottom_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/user_label"
-            android:background="@color/dashboard_module_disabled_text"
-            />
+            android:background="@color/dashboard_module_disabled_text" />
 
     </RelativeLayout>
 
     <EditText
-        style="@style/defaultEditView"
         android:text=""
         android:id="@+id/login"
         android:singleLine="true"
+        android:background="@drawable/edit_text_holo_dark"
         android:textSize="16sp"
         android:textColor="#505252"
         android:hint="@string/login_login_hint"
@@ -93,13 +89,13 @@
         android:layout_marginTop="29dp"
         android:inputType="numberPassword"
         android:maxLength="@integer/login_length"
-        android:gravity="center_horizontal"/>
+        android:gravity="center_horizontal" />
 
     <EditText
-        style="@style/defaultEditView"
         android:text=""
         android:id="@+id/password"
         android:singleLine="true"
+        android:background="@drawable/edit_text_holo_dark"
         android:imeOptions="actionDone"
         android:textSize="16sp"
         android:textColor="#505252"
@@ -111,14 +107,16 @@
         android:layout_marginRight="@dimen/login_form_padding_right"
         android:inputType="numberPassword"
         android:maxLength="@integer/password_length"
-        android:gravity="center_horizontal"/>
+        android:gravity="center_horizontal" />
 
-    <ImageView
+    <Button
+        style="@style/LocalizableButton.Green"
         android:id="@+id/btn_login"
         android:layout_marginTop="22dp"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/login_btn_bg"
+        android:textSize="24sp"
         android:paddingBottom="6dp" />
 
     <TextView
