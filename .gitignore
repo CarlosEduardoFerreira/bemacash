@@ -28,3 +28,5 @@ build
 .gradle
 *.iml
 *.bin
+local.properties
+

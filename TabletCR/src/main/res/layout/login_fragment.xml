@@ -8,7 +8,7 @@
     android:paddingBottom="@dimen/login_form_padding_bottom"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:background="@android:color/transparent"
+    android:background="@color/prepaid_transparent_bg"
     android:layout_centerVertical="true"
     android:layout_centerHorizontal="true">
 
@@ -80,7 +80,7 @@
         android:textColor="#505252"
         android:hint="@string/login_login_hint"
         android:textColorHint="#66505252"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/login_form_padding_left"
         android:layout_marginRight="@dimen/login_form_padding_right"
@@ -99,7 +99,7 @@
         android:textColor="#505252"
         android:hint="@string/login_password_hint"
         android:textColorHint="#66505252"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/login_form_padding_left"
         android:layout_marginRight="@dimen/login_form_padding_right"
