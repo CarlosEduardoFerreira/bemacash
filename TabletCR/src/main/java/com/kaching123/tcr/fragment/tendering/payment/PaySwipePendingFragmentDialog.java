@@ -2,6 +2,7 @@ package com.kaching123.tcr.fragment.tendering.payment;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -10,12 +11,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.googlecode.androidannotations.annotations.AfterTextChange;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.FragmentArg;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.BuildConfig;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.data.CardData;
 import com.kaching123.tcr.fragment.data.MsrDataFragment;
@@ -67,6 +70,9 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
     @ViewById
     protected EditText cardZip;
 
+    @ViewById
+    protected EditText msrUsbInput;
+
     @FragmentArg
     protected boolean isManualAvailable;
 
@@ -78,7 +84,7 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
                 getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
 //        getDialog().getWindow().setWindowAnimations(R.style.DialogAnimation);
         hideError();
-        trySwipe();
+//        trySwipe();
         setCancelable(false);
 
         cardZip.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -94,36 +100,51 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
         });
     }
 
-    private void showError(int err){
+    @AfterTextChange
+    protected void msrUsbInputAfterTextChanged(Editable s) {
+        Logger.d("trace msr: " + s.toString());
+
+        String[] strs = s.toString().split(";");
+        if(strs.length == 2 && strs[1].endsWith("?"))
+        {
+            CardData data = new CardData(s.toString().getBytes());
+            if (listener != null) {
+                Logger.d("trace msr T2: " + data.getT2DataAscii());
+                listener.onSwiped(data.getT2DataAscii());
+            }
+        }
+    }
+
+    private void showError(int err) {
         msg.setText(err);
         errorIcon.setVisibility(View.VISIBLE);
         btnTryAgain.setVisibility(View.VISIBLE);
     }
 
-    private void hideError(){
+    private void hideError() {
         msg.setText(R.string.blackstone_pay_swipe_body);
         errorIcon.setVisibility(View.GONE);
         btnTryAgain.setVisibility(View.GONE);
     }
 
     @Click
-    protected void btnTryAgainClicked(){
+    protected void btnTryAgainClicked() {
         hideError();
         trySwipe();
     }
 
     @AfterViews
     protected void init() {
-
+        msrUsbInput.setInputType(0);
     }
 
-    private void trySwipe(){
+    private void trySwipe() {
         if (getMsr() == null) {
             showError(R.string.swipe_card_error_not_ready_msg);
             return;
         }
         boolean isOk = getMsr().swipeCard(msrSwipeCallback);
-        if(!isOk){
+        if (!isOk) {
             showError(R.string.swipe_card_error_not_ready_msg);
         }
     }
@@ -206,7 +227,7 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
     }
 
     @Click
-    protected void btnManualSubmitClicked(){
+    protected void btnManualSubmitClicked() {
         String sCardNum = cardNumber.getText().toString();
         String sExpDate = cardExpDate.getText().toString();
         String sCvn = cardCvn.getText().toString();
@@ -215,48 +236,48 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
         if (!validateForm(sCardNum, sExpDate, sCvn, sZip)) {
             return;
         }
-        if(listener != null){
+        if (listener != null) {
             listener.onCardInfo(sCardNum, sExpDate, sCvn, sZip);
         }
     }
 
-    private boolean validateForm(String cardNum, String expDate, String cvn, String zip){
-        if(TextUtils.isEmpty(cardNum)){
+    private boolean validateForm(String cardNum, String expDate, String cvn, String zip) {
+        if (TextUtils.isEmpty(cardNum)) {
             showAlert(R.string.swipe_manual_card_number_emty_msg);
             return false;
         }
 
-        if(cardNum.length() < CARD_NUMBER_MIN_LEN){
+        if (cardNum.length() < CARD_NUMBER_MIN_LEN) {
             showAlert(R.string.swipe_manual_card_number_invalid_msg);
             return false;
         }
 
-        if(TextUtils.isEmpty(expDate)){
+        if (TextUtils.isEmpty(expDate)) {
             showAlert(R.string.swipe_manual_card_expdate_empty_msg);
             return false;
         }
 
-        if(expDate.length() < CARD_EXPDATE_MIN_LEN){
+        if (expDate.length() < CARD_EXPDATE_MIN_LEN) {
             showAlert(R.string.swipe_manual_card_expdate_invalid_msg);
             return false;
         }
 
-        if(TextUtils.isEmpty(cvn) && getApp().getShopInfo().cvnMandatory){
+        if (TextUtils.isEmpty(cvn) && getApp().getShopInfo().cvnMandatory) {
             showAlert(R.string.swipe_manual_card_cvn_empty_msg);
             return false;
         }
 
-        if(!TextUtils.isEmpty(cvn) && cvn.length() < CARD_CVN_MIN_LEN){
+        if (!TextUtils.isEmpty(cvn) && cvn.length() < CARD_CVN_MIN_LEN) {
             showAlert(R.string.swipe_manual_card_cvn_invalid_msg);
             return false;
         }
 
-        if (TextUtils.isEmpty(zip) && getApp().getShopInfo().zipMandatory){
+        if (TextUtils.isEmpty(zip) && getApp().getShopInfo().zipMandatory) {
             showAlert(R.string.swipe_manual_card_zip_empty_msg);
             return false;
         }
 
-        if(!TextUtils.isEmpty(zip) && zip.length() < CARD_ZIP_MIN_LEN){
+        if (!TextUtils.isEmpty(zip) && zip.length() < CARD_ZIP_MIN_LEN) {
             showAlert(R.string.swipe_manual_card_zip_invalid_msg);
             return false;
         }
@@ -264,7 +285,7 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
         return true;
     }
 
-    private void showAlert(int msg){
+    private void showAlert(int msg) {
         AlertDialogFragment.showAlert(getActivity(), R.string.swipe_manual_alert_title, getString(msg));
     }
 
@@ -282,12 +303,12 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
         return false;
     }
 
-    protected void switchLayers(boolean showManual){
+    protected void switchLayers(boolean showManual) {
         swipeLayer.setVisibility(showManual ? View.GONE : View.VISIBLE);
         manualLayer.setVisibility(showManual ? View.VISIBLE : View.GONE);
         if (hasPositiveButton())
             getPositiveButton().setText(showManual ? R.string.btn_swipe : R.string.btn_manual);
-        if (showManual){
+        if (showManual) {
             cardNumber.requestFocus();
             KeyboardUtils.showKeyboard(getActivity(), cardNumber);
         }
