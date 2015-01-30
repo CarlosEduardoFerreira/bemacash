@@ -1,11 +1,10 @@
 package com.kaching123.tcr.service;
 
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -13,11 +12,14 @@ import android.os.Message;
 
 import com.kaching123.display.BluetoothSocketPrinter;
 import com.kaching123.display.DisplayPrinter;
+import com.kaching123.display.USBDiplayPrinter;
 import com.kaching123.display.actions.InitDisplayAction;
 import com.kaching123.tcr.BuildConfig;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,7 +36,7 @@ public class DisplayService extends Service {
 
     private ExecutorService executor;
 
-    private BluetoothSocketPrinter displayPrinter;
+    protected DisplayPrinter displayPrinter;
 
     private DisplayListener displayListener;
 
@@ -94,26 +96,49 @@ public class DisplayService extends Service {
     }
 
     private boolean openDisplayPrinter() {
-        BluetoothSocketPrinter displayPrinter = null;
+        USBDiplayPrinter displayPrinter = null;
         try {
-            BluetoothDevice display = getDisplay();
-            if (display == null)
-                return false;
+//            BluetoothDevice display = getDisplay();
+//            if (display == null)
+//                return false;
 
             if (this.displayPrinter != null) {
                 try {
                     this.displayPrinter.close();
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                }
                 this.displayPrinter = null;
             }
+            SharedPreferences sp = getSharedPreferences("android.serialport.sample_preferences", MODE_PRIVATE);
+            String path = sp.getString("DEVICE", "/dev/ttymxc4");
+            int baudrate = Integer.decode(sp.getString("BAUDRATE", "9600"));
+            int databits = Integer.decode(sp.getString("DATA", "8"));
+            int parity = Integer.decode(sp.getString("PARITY", "0"));
+            int stopbits = Integer.decode(sp.getString("STOP", "1"));
+            int flowctl = Integer.decode(sp.getString("FLOWCTL", "0"));
+            try {
+                Logger.d("trace--openDisplayPrinter: 0");
+                if ((path.length() == 0) || (baudrate == -1)) {
+                    Logger.d("trace--openDisplayPrinter: -1");
+                    throw new InvalidParameterException();
+                }
+                displayPrinter = new USBDiplayPrinter(path, baudrate, databits, parity, stopbits, flowctl);
+                Logger.d("trace--openDisplayPrinter: 1");
+                //            initDisplayPrinter(displayPrinter);
 
-            displayPrinter = new BluetoothSocketPrinter(display);
-            initDisplayPrinter(displayPrinter);
+            } catch (SecurityException e) {
+                onError();
+                Logger.d("trace--openDisplayPrinter: 2");
+            } catch (InvalidParameterException e) {
+                onError();
+                Logger.d("trace--openDisplayPrinter: 3");
+            }
         } catch (IOException e) {
             try {
                 if (displayPrinter != null)
                     displayPrinter.close();
-            } catch (IOException ignore) {}
+            } catch (IOException ignore) {
+            }
             return false;
         }
 
@@ -121,7 +146,7 @@ public class DisplayService extends Service {
         return true;
     }
 
-    private void initDisplayPrinter(BluetoothSocketPrinter displayPrinter) throws IOException{
+    private void initDisplayPrinter(BluetoothSocketPrinter displayPrinter) throws IOException {
         new InitDisplayAction().execute(displayPrinter);
     }
 
@@ -131,23 +156,24 @@ public class DisplayService extends Service {
 
         try {
             displayPrinter.close();
-        } catch (IOException ignore) {}
+        } catch (IOException ignore) {
+        }
     }
 
-    private BluetoothDevice getDisplay() {
-        String displayAddress = getApp().getShopPref().displayAddress().get();
+//    private BluetoothDevice getDisplay() {
+//        String displayAddress = getApp().getShopPref().displayAddress().get();
+//
+//        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+//        if (adapter == null || !adapter.isEnabled())
+//            return null;
+//
+//        BluetoothDevice device = adapter.getRemoteDevice(displayAddress);
+//
+//        return device;
+//    }
 
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        if (adapter == null || !adapter.isEnabled())
-            return null;
-
-        BluetoothDevice device = adapter.getRemoteDevice(displayAddress);
-
-        return device;
-    }
-
-    private TcrApplication getApp(){
-        return (TcrApplication)getApplicationContext();
+    private TcrApplication getApp() {
+        return (TcrApplication) getApplicationContext();
     }
 
     private void sendOnDisconnected() {
@@ -237,6 +263,7 @@ public class DisplayService extends Service {
     public interface DisplayListener {
 
         public void onDisconnected();
+
         public void onError();
 
     }

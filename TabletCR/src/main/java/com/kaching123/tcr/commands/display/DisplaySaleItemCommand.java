@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.display.printers.DisplayPrinterWrapper;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.store.ShopProvider;
@@ -38,9 +39,11 @@ public class DisplaySaleItemCommand extends BaseDisplayCommand<DisplayPrinterWra
     @Override
     protected void printBody(Context context, DisplayPrinterWrapper printerWrapper) {
 
+        Logger.d("trace--DisplaySaleItemCommand: 0");
         SaleOrderItemViewModel saleItem = getSaleItem(context, saleItemGuid);
-
+        Logger.d("trace--DisplaySaleItemCommand: 1");
         printerWrapper.add(saleItem.itemModel.qty, saleItem.description, CalculationUtil.getSubTotal(saleItem.itemModel.qty, saleItem.fullPrice, saleItem.itemModel.discount, saleItem.itemModel.discountType));
+        Logger.d("trace--DisplaySaleItemCommand: 2");
     }
 
     private SaleOrderItemViewModel getSaleItem(Context context, String saleItemGuid) {

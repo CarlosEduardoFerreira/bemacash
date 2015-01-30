@@ -253,9 +253,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void bindToDisplayService() {
         boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().displayAddress().get());
-
-        if (displayConfigured)
-            DisplayService.bind(this, displayServiceConnection);
+        Logger.d("trace--displayConfigured: " + displayConfigured);
+//        if (displayConfigured)
+        DisplayService.bind(this, displayServiceConnection);
     }
 
     private void unbindFromDisplayService() {
@@ -322,8 +322,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             @Override
             public void onOrderLoaded(SaleOrderItemViewModel lastItem) {
                 if (lastItem == null) {
+                    Logger.d("trace--init: 0");
                     startCommand(new DisplayWelcomeMessageCommand());
                 } else {
+                    Logger.d("trace--init: 1");
                     startCommand(new DisplaySaleItemCommand(lastItem.getSaleItemGuid()));
                 }
             }
