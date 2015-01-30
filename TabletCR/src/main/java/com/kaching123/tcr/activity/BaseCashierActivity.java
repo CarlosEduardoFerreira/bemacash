@@ -95,6 +95,7 @@ import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHan
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment.IOrderActionListener;
 import com.kaching123.tcr.fragment.search.SearchItemsListFragment;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment.RefundAmount;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
@@ -253,9 +254,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void bindToDisplayService() {
         boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().displayAddress().get());
-        Logger.d("trace--displayConfigured: " + displayConfigured);
-//        if (displayConfigured)
-        DisplayService.bind(this, displayServiceConnection);
+        if (displayConfigured)
+            DisplayService.bind(this, displayServiceConnection);
     }
 
     private void unbindFromDisplayService() {

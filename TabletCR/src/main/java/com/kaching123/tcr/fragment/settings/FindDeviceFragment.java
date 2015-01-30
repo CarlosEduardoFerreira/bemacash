@@ -51,7 +51,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
     private DeviceAdapter adapter;
 
     protected FindDeviceListener findDeviceListener;
-
+    public static final String INTEGRATED_DISPLAYER = "Integrated Displayer";
+    public static final String SERIAL_PORT = "Serial Port";
     @FragmentArg
     protected Mode mode;
 
@@ -115,7 +116,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
     }
 
     @ItemClick
-    protected void listViewItemClicked(DeviceModel device){
+    protected void listViewItemClicked(DeviceModel device) {
         if (mode == Mode.DISPLAY) {
             storeDisplay(device);
         } else {
@@ -146,6 +147,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
         private static final String EMULATED_SCANNER_NAME = "Barcode Scanner EMULATED";
         private static final String EMULATED_SCANNER_ADDRESS = "EMULATED_SCANNER_ADDRESS";
 
+
+
         private boolean isEmulate() {
             return !BuildConfig.SUPPORT_PRINTER;
         }
@@ -171,7 +174,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
         private Collection<DeviceModel> getEmulatedDevice() {
             DeviceModel emulatedDevice;
-            if (mode == Mode.DISPLAY ) {
+            if (mode == Mode.DISPLAY) {
                 emulatedDevice = new DeviceModel(EMULATED_DISPLAY_NAME, EMULATED_DISPLAY_ADDRESS);
             } else {
                 emulatedDevice = new DeviceModel(EMULATED_SCANNER_NAME, EMULATED_SCANNER_ADDRESS);
@@ -181,8 +184,9 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
         private Set<DeviceModel> getDevices(Set<BluetoothDevice> bluetoothDevices) {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
+            devices.add(new DeviceModel(INTEGRATED_DISPLAYER, SERIAL_PORT));
             boolean useConstraint = mode == Mode.DISPLAY;
-            for(BluetoothDevice device: bluetoothDevices) {
+            for (BluetoothDevice device : bluetoothDevices) {
                 if (useConstraint && !checkConstraint(device))
                     continue;
 
@@ -207,7 +211,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
             listView.setEmptyView(emptyView);
 
             adapter.clear();
-            if(devices != null && !devices.isEmpty()){
+            if (devices != null && !devices.isEmpty()) {
                 adapter.addAll(devices);
             }
         }
@@ -221,7 +225,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TextView textView = (TextView)super.getView(position, convertView, parent);
+            TextView textView = (TextView) super.getView(position, convertView, parent);
             String name = getItem(position).getName();
             textView.setText(TextUtils.isEmpty(name) ? getItem(position).getAddress() : name);
             return textView;

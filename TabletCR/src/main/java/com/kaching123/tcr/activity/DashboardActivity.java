@@ -217,7 +217,7 @@ public class DashboardActivity extends SuperBaseActivity {
     private MovementWaitForCloseDrawerCallback movementWaitForCloseDrawerCallback = new MovementWaitForCloseDrawerCallback();
     private PrintDropPayoutCallback printDropPayoutCallback = new PrintDropPayoutCallback();
 
-    private MenuItem activationMenuItem;
+//    private MenuItem activationMenuItem;
 
     private List<ActivationCarrierModel> activationCarriers;
     private int openedTrnsactionsCount;
@@ -528,17 +528,17 @@ public class DashboardActivity extends SuperBaseActivity {
         HistoryActivity.start(DashboardActivity.this);
     }
 
-    @OptionsItem
-    protected void actionActivationSelected() {
-        if (activationCarriers == null || activationCarriers.isEmpty())
-            return;
-
-        if (activationCarriers.size() == 1) {
-            ActivationActivity.start(this, activationCarriers.get(0).url);
-        } else {
-            ActivationTypeChoosingFragmentDialog.show(this, activationCarriers, false);
-        }
-    }
+//    @OptionsItem
+//    protected void actionActivationSelected() {
+//        if (activationCarriers == null || activationCarriers.isEmpty())
+//            return;
+//
+//        if (activationCarriers.size() == 1) {
+//            ActivationActivity.start(this, activationCarriers.get(0).url);
+//        } else {
+//            ActivationTypeChoosingFragmentDialog.show(this, activationCarriers, false);
+//        }
+//    }
 
     @OptionsItem
     protected void actionLogoutSelected() {
@@ -933,8 +933,8 @@ public class DashboardActivity extends SuperBaseActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.action_credit_receipts).setVisible(getApp().getShopInfo().useCreditReceipt);
-        activationMenuItem = menu.findItem(R.id.action_activation);
-        activationMenuItem.setEnabled(activationCarriers != null && !activationCarriers.isEmpty());
+//        activationMenuItem = menu.findItem(R.id.action_activation);
+//        activationMenuItem.setEnabled(activationCarriers != null && !activationCarriers.isEmpty());
         updateAlertCounter(alertCounter);
         return true;
     }
@@ -994,9 +994,9 @@ public class DashboardActivity extends SuperBaseActivity {
         @Override
         public void onLoadFinished(Loader<List<ActivationCarrierModel>> loader, List<ActivationCarrierModel> data) {
             activationCarriers = data;
-            if (activationMenuItem != null) {
-                activationMenuItem.setEnabled(data != null && !data.isEmpty());
-            }
+//            if (activationMenuItem != null) {
+//                activationMenuItem.setEnabled(data != null && !data.isEmpty());
+//            }
         }
 
         @Override

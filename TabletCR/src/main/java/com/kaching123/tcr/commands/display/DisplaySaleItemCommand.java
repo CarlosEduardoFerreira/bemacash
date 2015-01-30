@@ -39,11 +39,8 @@ public class DisplaySaleItemCommand extends BaseDisplayCommand<DisplayPrinterWra
     @Override
     protected void printBody(Context context, DisplayPrinterWrapper printerWrapper) {
 
-        Logger.d("trace--DisplaySaleItemCommand: 0");
         SaleOrderItemViewModel saleItem = getSaleItem(context, saleItemGuid);
-        Logger.d("trace--DisplaySaleItemCommand: 1");
         printerWrapper.add(saleItem.itemModel.qty, saleItem.description, CalculationUtil.getSubTotal(saleItem.itemModel.qty, saleItem.fullPrice, saleItem.itemModel.discount, saleItem.itemModel.discountType));
-        Logger.d("trace--DisplaySaleItemCommand: 2");
     }
 
     private SaleOrderItemViewModel getSaleItem(Context context, String saleItemGuid) {

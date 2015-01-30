@@ -28,11 +28,11 @@
         android:showAsAction="never"
         android:orderInCategory="@integer/menu_order_default"/>
 
-    <item
-        android:id="@+id/action_activation"
-        android:title="@string/dashboard_action_activation"
-        android:showAsAction="never"
-        android:orderInCategory="@integer/menu_order_default"/>
+    <!--<item-->
+        <!--android:id="@+id/action_activation"-->
+        <!--android:title="@string/dashboard_action_activation"-->
+        <!--android:showAsAction="never"-->
+        <!--android:orderInCategory="@integer/menu_order_default"/>-->
 
     <item
         android:id="@+id/action_send_log"

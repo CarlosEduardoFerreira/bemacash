@@ -9,10 +9,15 @@ public class USBDiplayPrinter implements DisplayPrinter {
 
     private SerialPort mSerialPort = null;
     protected OutputStream mOutputStream;
+    private final String path = "/dev/ttymxc4";
+    private final int baudrate = 9600;
+    private final int databits = 8;
+    private final int parity = 0;
+    private final int stopbits = 1;
+    private final int flowctl = 0;
 
-    public USBDiplayPrinter(String path, int baudrate, int databits, int parity, int stopbits, int flowctl) throws IOException {
+    public USBDiplayPrinter(){
         if (mSerialPort == null) {
-            /* Read serial port parameters */
             /* Open the serial port */
             try {
                 mSerialPort = new SerialPort(new File(path), baudrate, databits, parity, stopbits, flowctl);
@@ -32,6 +37,11 @@ public class USBDiplayPrinter implements DisplayPrinter {
     @Override
     public void close() throws IOException {
         mOutputStream.close();
+    }
+
+    @Override
+    public boolean isUSBDisplayer() {
+        return true;
     }
 
 }

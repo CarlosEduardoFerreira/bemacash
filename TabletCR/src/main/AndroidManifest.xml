@@ -2,7 +2,7 @@
     package="com.kaching123.tcr"
     android:versionCode="3"
     android:versionName="1.01">
-
+    <uses-feature android:name="android.hardware.usb.host" android:required="true"/>
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="19" />
@@ -16,6 +16,11 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <permission android:name="android.permission.HARDWARE_TEST"
+        android:permissionGroup="android.permission-group.HARDWARE_CONTROLS"
+        android:protectionLevel="signature"
+        android:label="hardware/permlab_hardware_test"
+        />
 
     <application
         android:name=".TcrApplication_"

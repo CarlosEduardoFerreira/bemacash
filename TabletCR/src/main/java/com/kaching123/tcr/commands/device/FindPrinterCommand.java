@@ -1,8 +1,13 @@
 package com.kaching123.tcr.commands.device;
 
 import android.content.Context;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.app.PendingIntent;
+import android.content.Intent;
 
+
+import com.kaching123.pos.USBPrinter;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
 import com.telly.groundy.PublicGroundyTask;
@@ -11,6 +16,7 @@ import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnCallback;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
+
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -38,6 +44,30 @@ public class FindPrinterCommand extends PublicGroundyTask {
 
     private DatagramSocket clientSocket;
 
+    private void searchForUsbPrinters()
+    {
+        UsbManager manager = (UsbManager) getContext().getSystemService(Context.USB_SERVICE);
+        try
+        {
+
+            PendingIntent mPermissionIntent;
+
+            mPermissionIntent = PendingIntent.getBroadcast(getContext(), 0, new Intent(PrinterCommand.ACTION_USB_PERMISSION), 0);
+
+            USBPrinter printer = new USBPrinter(USBPrinter.LR2000_PID,USBPrinter.LR2000_VID,manager,null);
+            if ( printer.findPrinter(true)) {
+                Logger.d("Printer USB found");
+                firePrinterInfo(packPrinterData(new PrinterInfo(USBPrinter.USB_DESC, 0, "" , "", "", false)));
+            }
+            else
+                Logger.d("Printer USB not found");
+
+        }
+        catch (Exception e) {
+            Logger.e("Discovery USB printers ", e);
+        }
+
+    }
     @Override
     protected TaskResult doInBackground() {
         long time = System.currentTimeMillis();
@@ -45,6 +75,8 @@ public class FindPrinterCommand extends PublicGroundyTask {
         if(isEmulate()){
             return emulateCommand();
         }
+
+        searchForUsbPrinters();
         try {
             clientSocket = new DatagramSocket(PC_PORT);
             clientSocket.setSoTimeout((int) FIND_TIMEOUT);
