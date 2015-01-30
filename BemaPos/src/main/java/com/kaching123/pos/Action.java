@@ -1,7 +1,7 @@
 package com.kaching123.pos;
 
 import java.io.IOException;
-//testing
+
 
 public abstract class Action extends BaseAction<Void>{
 
