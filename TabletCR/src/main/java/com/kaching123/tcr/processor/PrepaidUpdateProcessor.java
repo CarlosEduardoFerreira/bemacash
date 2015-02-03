@@ -63,6 +63,11 @@ public class PrepaidUpdateProcessor {
             TcrApplication.get().setBillPaymentActivated(merchantFlagsResponse.flags.billPaymentActivated);
             TcrApplication.get().setSunpassActivated(merchantFlagsResponse.flags.sunpassActivated);
         }
+        else
+        {
+            TcrApplication.get().setBillPaymentActivated(false);
+            TcrApplication.get().setSunpassActivated(false);
+        }
     }
 
     private CheckForUpdateRequest composeCheckUpdateRequest() {
