@@ -52,7 +52,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
     protected FindDeviceListener findDeviceListener;
     public static final String INTEGRATED_DISPLAYER = "Integrated Displayer";
-    public static final String SERIAL_PORT = "Serial Port";
+    public static final String SERIAL_PORT = "Serial Port Displayer";
     @FragmentArg
     protected Mode mode;
 
@@ -148,7 +148,6 @@ public class FindDeviceFragment extends StyledDialogFragment {
         private static final String EMULATED_SCANNER_ADDRESS = "EMULATED_SCANNER_ADDRESS";
 
 
-
         private boolean isEmulate() {
             return !BuildConfig.SUPPORT_PRINTER;
         }
@@ -165,9 +164,9 @@ public class FindDeviceFragment extends StyledDialogFragment {
             }
 
             BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-            if (adapter == null || !adapter.isEnabled()) {
-                return null;
-            }
+//            if (adapter == null || !adapter.isEnabled()) {
+//                return null;
+//            }
             Set<BluetoothDevice> bluetoothDevices = adapter.getBondedDevices();
             return getDevices(bluetoothDevices);
         }
@@ -184,7 +183,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
         private Set<DeviceModel> getDevices(Set<BluetoothDevice> bluetoothDevices) {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
-            devices.add(new DeviceModel(INTEGRATED_DISPLAYER, SERIAL_PORT));
+            if (!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(SERIAL_PORT))
+                devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
             boolean useConstraint = mode == Mode.DISPLAY;
             for (BluetoothDevice device : bluetoothDevices) {
                 if (useConstraint && !checkConstraint(device))

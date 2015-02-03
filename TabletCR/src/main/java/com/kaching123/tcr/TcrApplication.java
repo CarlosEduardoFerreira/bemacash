@@ -23,6 +23,7 @@ import com.kaching123.tcr.commands.rest.sync.GetPagedArrayResponse;
 import com.kaching123.tcr.commands.rest.sync.GetPrepaidOrderIdResponse;
 import com.kaching123.tcr.commands.rest.sync.GetResponse;
 import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter.BarcodePrefixes;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
@@ -241,8 +242,19 @@ public class TcrApplication extends Application {
         registerSerial = formatByBlocksString(registerSerial);
 
         setUsers();
+
+        setMintPos();
     }
 
+    private void setMintPos()
+    {
+        if(!shopPref.notFirstTimeLoaded().get()) {
+            shopPref.displayAddress().put(FindDeviceFragment.INTEGRATED_DISPLAYER);
+            shopPref.displayName().put(FindDeviceFragment.SERIAL_PORT);
+            shopPref.usbMSRName().put(FindDeviceFragment.SERIAL_PORT);
+            shopPref.notFirstTimeLoaded().put(true);
+        }
+    }
     private synchronized void lazyInstantiateShopPref() {
         if (shopPref == null)
             shopPref = new ShopPref_(TcrApplication.this);
