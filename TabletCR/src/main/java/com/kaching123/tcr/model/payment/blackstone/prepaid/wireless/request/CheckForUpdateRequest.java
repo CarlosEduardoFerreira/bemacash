@@ -18,7 +18,7 @@ public class CheckForUpdateRequest extends RequestBase {
         return "CheckForUpdateRequest{" +
                 "mID='" + mID + '\'' +
                 ", tID='" + tID + '\'' +
-                ", password" +
+                ", password" + password + '\'' +
                 ", transactionId=" + transactionId +
                 '}';
     }
