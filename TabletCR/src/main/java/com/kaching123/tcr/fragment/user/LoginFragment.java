@@ -151,7 +151,7 @@ public class LoginFragment extends SuperBaseDialogFragment {
         // after that, setting values for x and y works "naturally"
         WindowManager.LayoutParams params = window.getAttributes();
         params.x = 630;
-        params.y = 150;
+        params.y = 0;
         window.setAttributes(params);
         return dialog;
     }
