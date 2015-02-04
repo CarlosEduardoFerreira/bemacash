@@ -1,11 +1,11 @@
 package com.kaching123.tcr.commands.device;
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
+import android.content.Context;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.PosPrinter;
@@ -13,8 +13,8 @@ import com.kaching123.pos.SocketPrinter;
 import com.kaching123.pos.USBPrinter;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.pos.drawer.ConfigurePaperSensorAction;
-import com.kaching123.pos.printer.GetPrinterBasicStatusAction;
 import com.kaching123.pos.printer.GetPrinterStatusExAction;
+import com.kaching123.pos.printer.GetPrinterBasicStatusAction;
 import com.kaching123.pos.printer.SelectPOSAction;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
@@ -55,7 +55,7 @@ public abstract class PrinterCommand extends PublicGroundyTask {
                 .where(PrinterTable.ALIAS_GUID + " IS NULL")
                 .perform(getContext());
         PrinterInfo printerInfo = null;
-        if (c.moveToFirst()) {
+        if(c.moveToFirst()){
             printerInfo = new PrinterInfo(
                     c.getString(0),
                     c.getInt(1),
@@ -69,23 +69,24 @@ public abstract class PrinterCommand extends PublicGroundyTask {
         return printerInfo;
     }
 
-    private PosPrinter createPrinter(PrinterInfo info) throws IOException {
+    private PosPrinter createPrinter( PrinterInfo info) throws IOException
+    {
 
         PosPrinter printer = null;
-        if (info.ip.compareTo(USBPrinter.USB_DESC) == 0) {
+        if ( info.ip.compareTo(USBPrinter.USB_DESC) == 0) {
             UsbManager manager = (UsbManager) getContext().getSystemService(Context.USB_SERVICE);
             PendingIntent mPermissionIntent;
 
             mPermissionIntent = PendingIntent.getBroadcast(getContext(), 0, new Intent(ACTION_USB_PERMISSION), 0);
 
             // IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-            printer = (PosPrinter) new USBPrinter(USBPrinter.LR2000_PID, USBPrinter.LR2000_VID, manager, mPermissionIntent);
-        } else
+            printer = (PosPrinter) new USBPrinter(USBPrinter.LR2000_PID, USBPrinter.LR2000_VID, manager,mPermissionIntent);
+        }
+        else
             printer = (PosPrinter) new SocketPrinter(info.ip, info.port);
 
         return printer;
     }
-
     @Override
     protected TaskResult doInBackground() {
         if (isEmulate()) {
@@ -107,7 +108,7 @@ public abstract class PrinterCommand extends PublicGroundyTask {
         }
 
         PosPrinter printer = null;
-        if (searchByMac) {
+        if (searchByMac){
             info = FindPrinterByMacCommand.find(getContext(), info.macAddress, getAppCommandContext());
             if (info == null)
                 return failed().add(EXTRA_ERROR_PRINTER, PrinterError.DISCONNECTED);
@@ -117,10 +118,7 @@ public abstract class PrinterCommand extends PublicGroundyTask {
 
         try {
             Logger.d("PrinterCommand: before connect to printer");
-            if (!printer.supportExtendedStatus()) {
-                printer = createPrinter(info); // USB printer
-            } else
-                printer = new SocketPrinter(info.ip, info.port); // Ethernet Printer
+            printer = createPrinter(info);
             Logger.d("PrinterCommand: connection is opened");
 
         } catch (IOException e) {
@@ -170,7 +168,8 @@ public abstract class PrinterCommand extends PublicGroundyTask {
             new ConfigurePaperSensorAction().execute(printer);
             if (printer.supportExtendedStatus()) {
                 status = new GetPrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer);
-            } else {
+            }
+            else {
                 status = new GetPrinterBasicStatusAction().execute(printer);
             }
 
