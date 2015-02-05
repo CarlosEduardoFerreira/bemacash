@@ -152,9 +152,11 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
-        if (frm == null) {
-            getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
+        if(!getApp().getShopPref().disableBSMSR().get()) {
+            Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
+            if (frm == null) {
+                getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
+            }
         }
     }
 

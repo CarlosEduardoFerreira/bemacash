@@ -53,11 +53,12 @@ public class FindDeviceFragment extends StyledDialogFragment {
     protected FindDeviceListener findDeviceListener;
     public static final String INTEGRATED_DISPLAYER = "Integrated Displayer";
     public static final String SERIAL_PORT = "Serial Port Displayer";
+    public static String USB_MSR_NAME = "Integrated USB MSR";
     @FragmentArg
     protected Mode mode;
 
     public enum Mode {
-        DISPLAY, SCANNER
+        DISPLAY, SCANNER, USBMSR
     }
 
     public static void show(FragmentActivity activity, FindDeviceListener findDeviceListener, Mode mode) {
@@ -119,8 +120,10 @@ public class FindDeviceFragment extends StyledDialogFragment {
     protected void listViewItemClicked(DeviceModel device) {
         if (mode == Mode.DISPLAY) {
             storeDisplay(device);
-        } else {
+        } else if (mode == Mode.SCANNER) {
             storeScanner(device);
+        } else if (mode == Mode.USBMSR) {
+            storeUsbMsr(device);
         }
 
         if (findDeviceListener != null)
@@ -136,6 +139,10 @@ public class FindDeviceFragment extends StyledDialogFragment {
     private void storeScanner(DeviceModel scanner) {
         getApp().getShopPref().scannerAddress().put(scanner.getAddress());
         getApp().getShopPref().scannerName().put(scanner.getName());
+    }
+
+    private void storeUsbMsr(DeviceModel usbMsr) {
+        getApp().getShopPref().usbMSRName().put(usbMsr.getAddress());
     }
 
     private class GetDevicesTask extends AsyncTask<Void, Void, Collection<DeviceModel>> {
@@ -167,8 +174,22 @@ public class FindDeviceFragment extends StyledDialogFragment {
 //            if (adapter == null || !adapter.isEnabled()) {
 //                return null;
 //            }
+
             Set<BluetoothDevice> bluetoothDevices = adapter.getBondedDevices();
-            return getDevices(bluetoothDevices);
+            Set<DeviceModel> devices = null;
+            switch (mode) {
+                case DISPLAY:
+                case SCANNER:
+                    devices = getDevices(bluetoothDevices);
+                    break;
+                case USBMSR:
+                    devices = getUsbMsrDevices();
+                    break;
+                default:
+                    break;
+            }
+
+            return devices;
         }
 
         private Collection<DeviceModel> getEmulatedDevice() {
@@ -183,15 +204,26 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
         private Set<DeviceModel> getDevices(Set<BluetoothDevice> bluetoothDevices) {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
-            if (!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(SERIAL_PORT))
-                devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
             boolean useConstraint = mode == Mode.DISPLAY;
+            devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
             for (BluetoothDevice device : bluetoothDevices) {
                 if (useConstraint && !checkConstraint(device))
                     continue;
 
                 devices.add(new DeviceModel(device.getName(), device.getAddress()));
             }
+            return devices;
+        }
+
+        private Set<DeviceModel> getSerialPortDevices() {
+            Set<DeviceModel> devices = new HashSet<DeviceModel>();
+            devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
+            return devices;
+        }
+
+        private Set<DeviceModel> getUsbMsrDevices() {
+            Set<DeviceModel> devices = new HashSet<DeviceModel>();
+            devices.add(new DeviceModel(USB_MSR_NAME, USB_MSR_NAME));
             return devices;
         }
 

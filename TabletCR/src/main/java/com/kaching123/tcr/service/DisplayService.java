@@ -97,11 +97,10 @@ public class DisplayService extends Service {
 
     private boolean openDisplayPrinter() {
         DisplayPrinter displayPrinter = null;
-        boolean firstUsb = getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER);
-        if (displayPrinter.isUSBDisplayer() && firstUsb) {
+        boolean usbDisplayerConf = getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER);
+        if (usbDisplayerConf) {
             displayPrinter = new USBDiplayPrinter();
         } else
-
         {
             try
 

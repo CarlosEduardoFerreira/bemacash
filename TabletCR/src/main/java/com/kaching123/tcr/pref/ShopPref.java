@@ -226,5 +226,7 @@ public interface ShopPref {
 
     boolean notFirstTimeLoaded();
 
+    boolean disableBSMSR();
+
     String usbMSRName();
 }

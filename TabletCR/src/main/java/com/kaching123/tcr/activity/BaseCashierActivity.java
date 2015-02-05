@@ -253,7 +253,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     private void bindToDisplayService() {
-        boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().displayAddress().get());
+        boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().displayAddress().get()); //Serial Port?
         if (displayConfigured)
             DisplayService.bind(this, displayServiceConnection);
     }
@@ -371,9 +371,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         alarmRingtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
 
-        Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
-        if (frm == null) {
-            getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
+        if(!getApp().getShopPref().disableBSMSR().get()) {
+            Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
+            if (frm == null) {
+                getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
+            }
         }
     }
 
@@ -1017,9 +1019,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             return;
         }
         Logger.d("Lets show some history");
-        MsrDataFragment msr = getMsr();
-        if (msr != null) {
-            msr.releaseNow();
+        if(!getApp().getShopPref().disableBSMSR().get()) {
+            MsrDataFragment msr = getMsr();
+            if (msr != null) {
+                msr.releaseNow();
+            }
         }
         HistoryActivity.start(BaseCashierActivity.this);
     }
