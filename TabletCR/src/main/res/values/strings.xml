@@ -734,6 +734,7 @@
     <string name="error_message_login_duplicate">You have already logged by this user</string>
     <string name="error_message_login_no_permission">You do not have the required permission</string>
     <string name="error_message_register_check">Can\'t find register.\nPlease contact your admin!</string>
+    <string name="error_message_register_pending">Register is in pending status.\nPlease contact your admin!</string>
     <string name="error_message_employee_not_active">Employee status should be \'Active\'</string>
     <string name="error_message_outdated">There has been a newer version of MyMintPos released recently. Please update in order to be eligible for sync. Your local data will not be lost.</string>
     <string name="error_message_offline">You are offline, please check your Internet connection and try again</string>

@@ -47,7 +47,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 //i think we should use command because it will be check subscription titledDate too
 public class LoginCommand extends GroundyTask {
 
-    public static enum Error {LOGIN_FAILED, SYNC_OUTDATED, SYNC_FAILED, REGISTER_CHECK_FAILED, EMPLOYEE_NOT_ACTIVE, OFFLINE, SYNC_INCONSISTENT, LOGIN_OFFLINE_FAILED}
+    public static enum Error {LOGIN_FAILED, SYNC_OUTDATED, SYNC_FAILED, REGISTER_CHECK_FAILED, EMPLOYEE_NOT_ACTIVE, OFFLINE, SYNC_INCONSISTENT, LOGIN_OFFLINE_FAILED, REGISTER_PENDING}
 
     public static enum Mode {
         LOGIN, SWITCH
@@ -78,9 +78,14 @@ public class LoginCommand extends GroundyTask {
             Logger.d("Performing remote login... login: %s, serial: %s", userName, registerSerial);
             RemoteLoginResult remoteLoginResult = webLogin(registerSerial, userName, password);
             if (remoteLoginResult != null) {
-                if (!remoteLoginResult.registerChecked) {
+                if (remoteLoginResult.registerNumber == null) {
                     Logger.d("Remote login FAILED! register check failed");
                     return failed().add(EXTRA_ERROR, Error.REGISTER_CHECK_FAILED);
+                }
+                else if(remoteLoginResult.registerNumber != RegisterStatus.ACTIVE)
+                {
+                    Logger.d("Remote login FAILED! register pending failed");
+                    return failed().add(EXTRA_ERROR, Error.REGISTER_PENDING);
                 }
                 EmployeeModel employeeModel = remoteLoginResult.employeeModel;
                 if (employeeModel == null) {
@@ -207,6 +212,7 @@ public class LoginCommand extends GroundyTask {
             throw new RuntimeException("Login clear db error");
         }
     }
+
     private RemoteLoginResult webLogin(String registerSerial, String userName, String password) {
         TcrApplication app = TcrApplication.get();
         SyncApi api = app.getRestAdapter().create(SyncApi.class);
@@ -217,14 +223,14 @@ public class LoginCommand extends GroundyTask {
                 return null;
             }
             if (!resp.isSuccess()) {
-                return new RemoteLoginResult(false, null);
+                return new RemoteLoginResult(null, null);
             }
             AuthInfo info = resp.getResponse();
             if (info == null) {
                 Logger.e("Login web login error: response is empty");
                 return null;
             }
-            return new RemoteLoginResult(info.register != null, info.employee);
+            return new RemoteLoginResult(info.register.status, info.employee);
         } catch (Exception e) {
             Logger.e("Remote login FAILED!", e);
         }
@@ -321,6 +327,9 @@ public class LoginCommand extends GroundyTask {
                 case REGISTER_CHECK_FAILED:
                     onRegisterCheckError();
                     break;
+                case REGISTER_PENDING:
+                    onRegisterPending();
+                    break;
                 case EMPLOYEE_NOT_ACTIVE:
                     onEmployeeNotActive();
                     break;
@@ -351,6 +360,8 @@ public class LoginCommand extends GroundyTask {
 
         protected abstract void onRegisterCheckError();
 
+        protected abstract void onRegisterPending();
+
         protected abstract void onOffline();
 
         protected abstract void onSyncInconsistent();
@@ -359,11 +370,11 @@ public class LoginCommand extends GroundyTask {
     }
 
     private static class RemoteLoginResult {
-        final boolean registerChecked;
+        final RegisterStatus registerNumber;
         final EmployeeModel employeeModel;
 
-        private RemoteLoginResult(boolean registerChecked, EmployeeModel employeeModel) {
-            this.registerChecked = registerChecked;
+        private RemoteLoginResult(RegisterStatus registerNumber, EmployeeModel employeeModel) {
+            this.registerNumber = registerNumber;
             this.employeeModel = employeeModel;
         }
     }
