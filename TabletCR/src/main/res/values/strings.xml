@@ -127,8 +127,11 @@
     <string name="pref_display_search">Search</string>
 
     <string name="pref_scanner_title">Configured scanner</string>
+    <string name="pref_usb_msr_title">Configured USB MSR</string>
     <string name="pref_scanner_subtitle">You can setup scanner here</string>
+    <string name="pref_usb_msr_subtitle">You can setup USB MSR here</string>
     <string name="pref_scanner_empty">Scanner is not configured</string>
+    <string name="pref_usb_msr_empty">USB MSR is not configured</string>
     <string name="pref_scanner_search">Search</string>
 
     <string name="sync_notify_title">Syncing...</string>
@@ -183,6 +186,10 @@
 
     <string name="pref_scanner_header_title">Scanner settings</string>
     <string name="pref_scanner_header_summary">Barcode scanner settings</string>
+
+    <string name="pref_msr_header_title">Msr settings</string>
+    <string name="pref_msr_header_summary">USB MSR settings</string>
+
     <string name="pref_swiper_header_title">Credit Card Swiper</string>
     <string name="pref_swiper_header_summary">Credit Card Swiper settings</string>
 
@@ -535,6 +542,7 @@
     <string name="scanner_not_configured">Scanner is not configured</string>
 
     <string name="swipe_card_error_not_ready_msg">Card reader is not ready yet.\nPlease try again!</string>
+    <string name="swipe_card_error_not_config_msg">Usb Card Reader is not set yet.\nPlease config in the setting page!</string>
     <string name="swipe_card_error_msg">Can\'t read data from card.\nPlease try again!</string>
 
     <string name="modifiers_action_copy">Copy from existing item</string>
@@ -726,6 +734,7 @@
     <string name="error_message_login_duplicate">You have already logged by this user</string>
     <string name="error_message_login_no_permission">You do not have the required permission</string>
     <string name="error_message_register_check">Can\'t find register.\nPlease contact your admin!</string>
+    <string name="error_message_register_pending">Register is in pending status.\nPlease contact your admin!</string>
     <string name="error_message_employee_not_active">Employee status should be \'Active\'</string>
     <string name="error_message_outdated">There has been a newer version of MyMintPos released recently. Please update in order to be eligible for sync. Your local data will not be lost.</string>
     <string name="error_message_offline">You are offline, please check your Internet connection and try again</string>
@@ -1385,6 +1394,9 @@
 
     <string name="scanner_delete_warning_dialog_title">Delete Scanner</string>
     <string name="scanner_delete_warning_dialog_message">Are you sure you want to delete scanner?</string>
+
+    <string name="usb_msr_delete_warning_dialog_title">Delete USB MSR</string>
+    <string name="usb_msr_delete_warning_dialog_message">Are you sure you want to delete usb msr?</string>
 
     <string name="tendering_choose_customer_dialog_title">Choose customer</string>
     <string name="printer_edit_alias_dialog_title">Printer Alias</string>

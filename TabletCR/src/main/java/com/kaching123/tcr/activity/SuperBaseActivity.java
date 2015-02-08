@@ -15,15 +15,21 @@ import android.widget.TextView;
 import com.googlecode.androidannotations.annotations.App;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Fullscreen;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.fragment.user.LoginFragment;
 import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.usb.SysBusUsbDevice;
+import com.kaching123.usb.SysBusUsbManager;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -50,7 +56,7 @@ public class SuperBaseActivity extends FragmentActivity {
 
     private Permission[] getPermissionsArray() {
         Set<Permission> permissions = getPermissions();
-        if(permissions == null)
+        if (permissions == null)
             return new Permission[0];
         return permissions.toArray(new Permission[permissions.size()]);
     }
@@ -61,6 +67,18 @@ public class SuperBaseActivity extends FragmentActivity {
         isDestroyed = false;
         tempLoginActionProvider = new TempLoginActionProvider(this);
         //ViewServer.get(this).addWindow(this);
+
+        setMintPos();
+        checkUsbMsr();
+    }
+
+    private void setMintPos() {
+        getApp().getShopPref().disableBSMSR().put(true); // mint
+        if (!getApp().getShopPref().notFirstTimeLoaded().getOr(false)) {
+            getApp().getShopPref().displayAddress().put(FindDeviceFragment.INTEGRATED_DISPLAYER);
+            getApp().getShopPref().displayName().put(FindDeviceFragment.SERIAL_PORT);
+            getApp().getShopPref().notFirstTimeLoaded().put(true);
+        }
     }
 
     @Override
@@ -80,6 +98,22 @@ public class SuperBaseActivity extends FragmentActivity {
         //ViewServer.get(this).setFocusedWindow(this);
     }
 
+    private void checkUsbMsr() {
+        SysBusUsbManager mUsbManagerLinux = new SysBusUsbManager();
+        HashMap<String, SysBusUsbDevice> mLinuxUsbDeviceList = mUsbManagerLinux.getUsbDevices();
+        Iterator<SysBusUsbDevice> deviceIterator = mLinuxUsbDeviceList.values().iterator();
+        Logger.d("trace UsbDevice length: " + mLinuxUsbDeviceList.size());
+        while (deviceIterator.hasNext()) {
+            SysBusUsbDevice device = deviceIterator.next();
+            Logger.d("trace UsbDevice " + device.getVID() + " /n" + device.getPID());
+            if (device.getVID().equalsIgnoreCase("1667") && device.getPID().equalsIgnoreCase("9")) {
+                getApp().getShopPref().usbMSRName().put(FindDeviceFragment.USB_MSR_NAME);
+                break;
+            }
+        }
+
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -88,7 +122,7 @@ public class SuperBaseActivity extends FragmentActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem lockItem =  menu.add(Menu.CATEGORY_ALTERNATIVE, Menu.NONE, getResources().getInteger(R.integer.menu_order_last), R.string.action_lock_label);
+        MenuItem lockItem = menu.add(Menu.CATEGORY_ALTERNATIVE, Menu.NONE, getResources().getInteger(R.integer.menu_order_last), R.string.action_lock_label);
         lockItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

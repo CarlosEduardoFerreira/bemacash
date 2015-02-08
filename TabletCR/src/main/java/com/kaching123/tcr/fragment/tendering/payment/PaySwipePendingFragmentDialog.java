@@ -18,7 +18,6 @@ import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.FragmentArg;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.BuildConfig;
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.data.CardData;
 import com.kaching123.tcr.fragment.data.MsrDataFragment;
@@ -39,6 +38,7 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
     public static final int CARD_CVN_MIN_LEN = 3;
     public static final int CARD_EXPDATE_MIN_LEN = 4;
     public static final int CARD_ZIP_MIN_LEN = 4;
+    public static final String USB_MSR_NOT_CONFIG = "Usb Msr Not Config";
 
 
     private ISaleSwipeListener listener;
@@ -84,7 +84,10 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
                 getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
 //        getDialog().getWindow().setWindowAnimations(R.style.DialogAnimation);
         hideError();
-//        trySwipe();
+        if (!getApp().getShopPref().disableBSMSR().get()) {
+            trySwipe();
+        } else
+            checkMSRConf();
         setCancelable(false);
 
         cardZip.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -102,14 +105,10 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
 
     @AfterTextChange
     protected void msrUsbInputAfterTextChanged(Editable s) {
-        Logger.d("trace msr: " + s.toString());
-
         String[] strs = s.toString().split(";");
-        if(strs.length == 2 && strs[1].endsWith("?"))
-        {
+        if (strs.length == 2 && strs[1].endsWith("?")) {
             CardData data = new CardData(s.toString().getBytes());
             if (listener != null) {
-                Logger.d("trace msr T2: " + data.getT2DataAscii());
                 listener.onSwiped(data.getT2DataAscii());
             }
         }
@@ -136,6 +135,11 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
     @AfterViews
     protected void init() {
         msrUsbInput.setInputType(0);
+    }
+
+    private void checkMSRConf() {
+        if (getApp().getShopPref().usbMSRName().getOr(USB_MSR_NOT_CONFIG).equalsIgnoreCase(USB_MSR_NOT_CONFIG))
+            showError(R.string.swipe_card_error_not_config_msg);
     }
 
     private void trySwipe() {
@@ -215,7 +219,9 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
         return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
-                stopSwipe();
+                if (!getApp().getShopPref().disableBSMSR().get()) {
+                    stopSwipe();
+                }
                 tryCancel();
                 return false;
             }

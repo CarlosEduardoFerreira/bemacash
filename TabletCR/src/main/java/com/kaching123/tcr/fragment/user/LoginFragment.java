@@ -357,6 +357,11 @@ public class LoginFragment extends SuperBaseDialogFragment {
         }
 
         @Override
+        protected void onRegisterPending() {
+            showError(R.string.error_message_register_pending);
+        }
+
+        @Override
         protected void onEmployeeNotActive() {
             showError(R.string.error_message_employee_not_active);
         }

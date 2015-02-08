@@ -243,18 +243,8 @@ public class TcrApplication extends Application {
 
         setUsers();
 
-        setMintPos();
     }
 
-    private void setMintPos()
-    {
-        if(!shopPref.notFirstTimeLoaded().get()) {
-            shopPref.displayAddress().put(FindDeviceFragment.INTEGRATED_DISPLAYER);
-            shopPref.displayName().put(FindDeviceFragment.SERIAL_PORT);
-            shopPref.usbMSRName().put(FindDeviceFragment.SERIAL_PORT);
-            shopPref.notFirstTimeLoaded().put(true);
-        }
-    }
     private synchronized void lazyInstantiateShopPref() {
         if (shopPref == null)
             shopPref = new ShopPref_(TcrApplication.this);

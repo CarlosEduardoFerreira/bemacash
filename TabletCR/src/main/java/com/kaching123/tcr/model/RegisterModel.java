@@ -56,7 +56,7 @@ public class RegisterModel implements IValueModel {
     }
 
     public enum RegisterStatus {
-        ACTIVE, INACTIVE, PAUSED, BLOCKED
+        ACTIVE, INACTIVE, PAUSED, BLOCKED, PENDING
     }
 
 }
