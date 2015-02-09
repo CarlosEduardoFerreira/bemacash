@@ -11,14 +11,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
-import com.kaching123.display.BluetoothSocketPrinter;
 import com.kaching123.display.DisplayPrinter;
-import com.kaching123.display.USBDiplayPrinter;
+import com.kaching123.display.SerialPortDiplayPrinter;
 import com.kaching123.display.actions.InitDisplayAction;
 import com.kaching123.tcr.BuildConfig;
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -100,12 +97,12 @@ public class DisplayService extends Service {
         DisplayPrinter displayPrinter = null;
 //        boolean usbDisplayerConf = getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER);
 //        if (usbDisplayerConf) {
-            displayPrinter = new USBDiplayPrinter(); // Mint only Serial port
+            displayPrinter = new SerialPortDiplayPrinter(); // Mint only Serial port
 //        } else
 //        {
-//            try
-//
-//            {
+            try
+
+            {
 //                BluetoothDevice display = getDisplay();
 //                if (display == null)
 //                    return false;
@@ -119,19 +116,19 @@ public class DisplayService extends Service {
 //                }
 //
 //                displayPrinter = new BluetoothSocketPrinter(display);
-//                initDisplayPrinter(displayPrinter);
-//            } catch (
-//                    IOException e
-//                    )
-//
-//            {
-//                try {
-//                    if (displayPrinter != null)
-//                        displayPrinter.close();
-//                } catch (IOException ignore) {
-//                }
-//                return false;
-//            }
+                initDisplayPrinter(displayPrinter);
+            } catch (
+                    IOException e
+                    )
+
+            {
+                try {
+                    if (displayPrinter != null)
+                        displayPrinter.close();
+                } catch (IOException ignore) {
+                }
+                return false;
+            }
 //        }
 
         this.displayPrinter = displayPrinter;

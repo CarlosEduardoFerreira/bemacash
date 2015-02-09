@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.InvalidParameterException;
 
-public class USBDiplayPrinter implements DisplayPrinter {
+public class SerialPortDiplayPrinter implements DisplayPrinter {
 
     private SerialPort mSerialPort = null;
     protected OutputStream mOutputStream;
@@ -16,7 +16,7 @@ public class USBDiplayPrinter implements DisplayPrinter {
     private final int stopbits = 1;
     private final int flowctl = 0;
 
-    public USBDiplayPrinter(){
+    public SerialPortDiplayPrinter(){
         if (mSerialPort == null) {
             /* Open the serial port */
             try {
