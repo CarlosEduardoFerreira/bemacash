@@ -108,12 +108,14 @@ public abstract class PrinterCommand extends PublicGroundyTask {
         }
 
         PosPrinter printer = null;
-        if (searchByMac){
-            info = FindPrinterByMacCommand.find(getContext(), info.macAddress, getAppCommandContext());
-            if (info == null)
-                return failed().add(EXTRA_ERROR_PRINTER, PrinterError.DISCONNECTED);
+        if ( info.ip.compareTo(USBPrinter.USB_DESC) != 0) {
+            if (searchByMac){
+                info = FindPrinterByMacCommand.find(getContext(), info.macAddress, getAppCommandContext());
+                if (info == null)
+                    return failed().add(EXTRA_ERROR_PRINTER, PrinterError.DISCONNECTED);
 
-            updatePrinterInDB(info);
+                updatePrinterInDB(info);
+            }
         }
 
         try {

@@ -16,6 +16,7 @@ import com.kaching123.display.DisplayPrinter;
 import com.kaching123.display.USBDiplayPrinter;
 import com.kaching123.display.actions.InitDisplayAction;
 import com.kaching123.tcr.BuildConfig;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 
@@ -97,41 +98,41 @@ public class DisplayService extends Service {
 
     private boolean openDisplayPrinter() {
         DisplayPrinter displayPrinter = null;
-        boolean usbDisplayerConf = getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER);
-        if (usbDisplayerConf) {
-            displayPrinter = new USBDiplayPrinter();
-        } else
-        {
-            try
-
-            {
-                BluetoothDevice display = getDisplay();
-                if (display == null)
-                    return false;
-
-                if (this.displayPrinter != null) {
-                    try {
-                        this.displayPrinter.close();
-                    } catch (IOException ignore) {
-                    }
-                    this.displayPrinter = null;
-                }
-
-                displayPrinter = new BluetoothSocketPrinter(display);
-                initDisplayPrinter(displayPrinter);
-            } catch (
-                    IOException e
-                    )
-
-            {
-                try {
-                    if (displayPrinter != null)
-                        displayPrinter.close();
-                } catch (IOException ignore) {
-                }
-                return false;
-            }
-        }
+//        boolean usbDisplayerConf = getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER);
+//        if (usbDisplayerConf) {
+            displayPrinter = new USBDiplayPrinter(); // Mint only Serial port
+//        } else
+//        {
+//            try
+//
+//            {
+//                BluetoothDevice display = getDisplay();
+//                if (display == null)
+//                    return false;
+//
+//                if (this.displayPrinter != null) {
+//                    try {
+//                        this.displayPrinter.close();
+//                    } catch (IOException ignore) {
+//                    }
+//                    this.displayPrinter = null;
+//                }
+//
+//                displayPrinter = new BluetoothSocketPrinter(display);
+//                initDisplayPrinter(displayPrinter);
+//            } catch (
+//                    IOException e
+//                    )
+//
+//            {
+//                try {
+//                    if (displayPrinter != null)
+//                        displayPrinter.close();
+//                } catch (IOException ignore) {
+//                }
+//                return false;
+//            }
+//        }
 
         this.displayPrinter = displayPrinter;
         return true;
