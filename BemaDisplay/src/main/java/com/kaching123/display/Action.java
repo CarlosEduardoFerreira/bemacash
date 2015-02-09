@@ -19,10 +19,10 @@ public abstract class Action extends BaseAction<Void>{
             }
         }
         byte[] finalBytes = new byte[line.length() + 3];
-        // 0x1b, 0x74, 0x02,  set Printer CP850
-        finalBytes[0] = C0X1B;
-        finalBytes[1] = C0X25;
-        finalBytes[2] = C0X02;
+        // C0X1B, C0X25, C0X02,  set Bematech device CP850
+        finalBytes[0] = E_C0X1B;
+        finalBytes[1] = E_C0X74;
+        finalBytes[2] = E_C0X02;
         System.arraycopy(cp850BytesCal, 0, finalBytes, 3, cp850BytesCal.length);
         return finalBytes;
     }

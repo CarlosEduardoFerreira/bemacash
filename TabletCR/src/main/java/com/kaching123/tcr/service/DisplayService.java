@@ -11,13 +11,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
-import com.kaching123.display.BluetoothSocketPrinter;
 import com.kaching123.display.DisplayPrinter;
-import com.kaching123.display.USBDiplayPrinter;
+import com.kaching123.display.SerialPortDiplayPrinter;
 import com.kaching123.display.actions.InitDisplayAction;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -97,27 +95,27 @@ public class DisplayService extends Service {
 
     private boolean openDisplayPrinter() {
         DisplayPrinter displayPrinter = null;
-        boolean usbDisplayerConf = getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER);
-        if (usbDisplayerConf) {
-            displayPrinter = new USBDiplayPrinter();
-        } else
-        {
+//        boolean usbDisplayerConf = getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER);
+//        if (usbDisplayerConf) {
+            displayPrinter = new SerialPortDiplayPrinter(); // Mint only Serial port
+//        } else
+//        {
             try
 
             {
-                BluetoothDevice display = getDisplay();
-                if (display == null)
-                    return false;
-
-                if (this.displayPrinter != null) {
-                    try {
-                        this.displayPrinter.close();
-                    } catch (IOException ignore) {
-                    }
-                    this.displayPrinter = null;
-                }
-
-                displayPrinter = new BluetoothSocketPrinter(display);
+//                BluetoothDevice display = getDisplay();
+//                if (display == null)
+//                    return false;
+//
+//                if (this.displayPrinter != null) {
+//                    try {
+//                        this.displayPrinter.close();
+//                    } catch (IOException ignore) {
+//                    }
+//                    this.displayPrinter = null;
+//                }
+//
+//                displayPrinter = new BluetoothSocketPrinter(display);
                 initDisplayPrinter(displayPrinter);
             } catch (
                     IOException e
@@ -131,7 +129,7 @@ public class DisplayService extends Service {
                 }
                 return false;
             }
-        }
+//        }
 
         this.displayPrinter = displayPrinter;
         return true;
