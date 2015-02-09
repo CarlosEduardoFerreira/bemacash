@@ -54,7 +54,6 @@ public class SettingsActivity extends SuperBaseActivity {
 
     @AfterViews
     protected void init() {
-        Logger.d("trace displayAddress 2 ():" + getApp().getShopPref().displayAddress().getOr("not set"));
         navigationList.setAdapter(new NavigationAdapter(this, Arrays.asList(
                 new NavigationItem(getString(R.string.pref_sync_title), getString(R.string.pref_sync_summary)),
                 new NavigationItem(getString(R.string.pref_printer_title), getString(R.string.pref_printer_summary)),
@@ -80,7 +79,6 @@ public class SettingsActivity extends SuperBaseActivity {
     }
 
     private void updateDetails(int pos) {
-        Logger.d("trace displayAddress 3 ():" + getApp().getShopPref().displayAddress().getOr("not set"));
         Fragment fragment = null;
         switch(pos){
             case 0:

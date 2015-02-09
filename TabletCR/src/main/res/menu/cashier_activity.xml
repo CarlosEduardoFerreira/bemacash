@@ -16,12 +16,12 @@
         android:showAsAction="always"
         android:orderInCategory="@integer/menu_order_default"/>
 
-    <!--<item
+    <item
         android:icon="@drawable/ic_action_add"
         android:id="@+id/action_barcode"
         android:showAsAction="always"
         android:title="@string/cashier_action_search_by_code"
-        android:orderInCategory="@integer/menu_order_default"/>-->
+        android:orderInCategory="@integer/menu_order_default"/>
 
     <item
         android:icon="@drawable/order_history"

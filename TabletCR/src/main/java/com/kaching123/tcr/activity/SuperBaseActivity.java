@@ -75,8 +75,13 @@ public class SuperBaseActivity extends FragmentActivity {
     private void setMintPos() {
         getApp().getShopPref().disableBSMSR().put(true); // mint
         if (!getApp().getShopPref().notFirstTimeLoaded().getOr(false)) {
+
             getApp().getShopPref().displayAddress().put(FindDeviceFragment.INTEGRATED_DISPLAYER);
             getApp().getShopPref().displayName().put(FindDeviceFragment.SERIAL_PORT);
+
+            getApp().getShopPref().scannerAddress().put(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS);
+            getApp().getShopPref().scannerName().put(FindDeviceFragment.SEARIL_PORT_SCANNER_NAME);
+
             getApp().getShopPref().notFirstTimeLoaded().put(true);
         }
     }
@@ -105,8 +110,8 @@ public class SuperBaseActivity extends FragmentActivity {
         Logger.d("trace UsbDevice length: " + mLinuxUsbDeviceList.size());
         while (deviceIterator.hasNext()) {
             SysBusUsbDevice device = deviceIterator.next();
-            Logger.d("trace UsbDevice " + device.getVID() + " /n" + device.getPID());
-            if (device.getVID().equalsIgnoreCase("1667") && device.getPID().equalsIgnoreCase("9")) {
+            Logger.d("trace UsbDevice " + device.getVID() + " \n" + device.getPID());
+            if (device.getVID().equalsIgnoreCase("1667") && device.getPID().equalsIgnoreCase("0009")) {
                 getApp().getShopPref().usbMSRName().put(FindDeviceFragment.USB_MSR_NAME);
                 break;
             }

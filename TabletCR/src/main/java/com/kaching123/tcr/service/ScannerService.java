@@ -12,9 +12,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
+import com.kaching123.display.SerialPortScanner;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -108,6 +110,7 @@ public class ScannerService extends Service {
             public void run() {
                 boolean connectionOpened = false;
                 int i = 0;
+                SerialPortScanner serialPortScanner = null;
                 while (i < RECONNECTIONS_COUNT) {
 
                     if (!shouldConnect) {
@@ -117,7 +120,15 @@ public class ScannerService extends Service {
                     }
 
                     Logger.d("ScannerService: OpenConnectionRunnable: trying to open connection: attempt " + (i + 1));
-                    connectionOpened = openConnection();
+                    if (getApp().getShopPref().scannerName().getOr(null).equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_NAME)) {
+                        Logger.d("trace scannerService: Searial Port Scanner openConnection");
+                        serialPortScanner = new SerialPortScanner();
+                        if (serialPortScanner != null)
+                            connectionOpened = true;
+                        break;
+                    } else {
+                        connectionOpened = openConnection();
+                    }
 
                     if (connectionOpened) {
                         break;
@@ -134,13 +145,20 @@ public class ScannerService extends Service {
                     return;
                 }
 
-                if (!read()) {
+                boolean beRead;
+
+                if (getApp().getShopPref().scannerName().getOr(null).equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_NAME))
+                    beRead = read(serialPortScanner);
+                else
+                    beRead = read();
+                if (beRead) {
                     isConnected.set(false);
                     if (shouldConnect)
                         sendOnDisconnected();
                 } else {
                     isConnected.set(false);
                 }
+
 
                 closeConnection();
             }
@@ -168,11 +186,12 @@ public class ScannerService extends Service {
                 Logger.d("ScannerService: openConnection(): uuid socket obtained - going to connect");
                 scannerSocket.connect();
                 Logger.d("ScannerService: openConnection(): just connected with uuid");
-            } catch (IOException e){
+            } catch (IOException e) {
                 if (scannerSocket != null)
                     try {
                         scannerSocket.close();
-                    } catch (IOException ignore) {}
+                    } catch (IOException ignore) {
+                    }
                 scannerSocket = null;
                 Logger.e("ScannerService: openConnection(): failed to create socket using uuid - fallback to port method", e);
             }
@@ -188,7 +207,8 @@ public class ScannerService extends Service {
             if (scannerSocket != null)
                 try {
                     scannerSocket.close();
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                }
             Logger.e("ScannerService: openConnection(): failed - connection failed!", e);
             return false;
         }
@@ -204,13 +224,35 @@ public class ScannerService extends Service {
     private BluetoothSocket createRfcommSocket(BluetoothDevice device) throws IOException {
         try {
             Class<?> clazz = device.getClass();
-            Class<?>[] paramTypes = new Class<?>[] {Integer.TYPE};
+            Class<?>[] paramTypes = new Class<?>[]{Integer.TYPE};
             Method m = clazz.getMethod("createRfcommSocket", paramTypes);
-            Object[] params = new Object[] {Integer.valueOf(1)};
+            Object[] params = new Object[]{Integer.valueOf(1)};
             return (BluetoothSocket) m.invoke(device, params);
         } catch (Exception e) {
             throw new IOException(e);
         }
+    }
+
+    private boolean read(SerialPortScanner serialPortScanner) {
+        InputStream inputStream = serialPortScanner.getInputStreamReader();
+        boolean isFinish = false;
+        while(!isFinish)
+        try {
+            int size;
+            byte[] buffer = new byte[64];
+            if (inputStream == null)
+                return false;
+            size = inputStream.read(buffer);
+            String barcode = new String(buffer);
+            if (size > 0) {
+                sendOnBarcodeReceived(barcode);
+                isFinish = true;
+            }
+        } catch (IOException e) {
+            Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
+            return false;
+        }
+        return true;
     }
 
     private boolean read() {
@@ -291,8 +333,8 @@ public class ScannerService extends Service {
         return device;
     }
 
-    private TcrApplication getApp(){
-        return (TcrApplication)getApplicationContext();
+    private TcrApplication getApp() {
+        return (TcrApplication) getApplicationContext();
     }
 
     private void sendOnDisconnected() {
@@ -354,7 +396,7 @@ public class ScannerService extends Service {
                     onDisconnected();
                     break;
                 case BARCODE_RECEIVED_WHAT:
-                    String barcode = (String)msg.obj;
+                    String barcode = (String) msg.obj;
                     onBarcodeReceived(barcode);
                     break;
             }
@@ -381,6 +423,7 @@ public class ScannerService extends Service {
     public interface ScannerListener {
 
         public void onDisconnected();
+
         public void onBarcodeReceived(String barcode);
     }
 
