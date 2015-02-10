@@ -416,7 +416,7 @@ public class DashboardActivity extends SuperBaseActivity {
         getSupportLoaderManager().restartLoader(LOADER_ALERT_ID, null, alertCounterLoader);
         getSupportLoaderManager().restartLoader(LOADER_OPENED_TRANSACTIONS_ID, null, openedTransactionsLoader);
         getSupportLoaderManager().restartLoader(LOADER_TIMESHEET_ID, null, timesheetLoader);
-        getSupportLoaderManager().restartLoader(LOADER_ACTIVATION_ID, null, activationLoader);
+//        getSupportLoaderManager().restartLoader(LOADER_ACTIVATION_ID, null, activationLoader);
     }
 
     private void need2StopCollectData() {
@@ -977,32 +977,32 @@ public class DashboardActivity extends SuperBaseActivity {
 
     };
 
-    private LoaderCallbacks activationLoader = new LoaderCallbacks<List<ActivationCarrierModel>>() {
-
-        @Override
-        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
-            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ActivationCarrierTable.URI_CONTENT))
-                    .where(ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
-                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
-                        @Override
-                        public ActivationCarrierModel apply(Cursor cursor) {
-                            return new ActivationCarrierModel(cursor);
-                        }
-                    }).build(DashboardActivity.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<ActivationCarrierModel>> loader, List<ActivationCarrierModel> data) {
-            activationCarriers = data;
-//            if (activationMenuItem != null) {
-//                activationMenuItem.setEnabled(data != null && !data.isEmpty());
-//            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<ActivationCarrierModel>> loader) {
-        }
-    };
+//    private LoaderCallbacks activationLoader = new LoaderCallbacks<List<ActivationCarrierModel>>() {
+//
+//        @Override
+//        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
+//            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ActivationCarrierTable.URI_CONTENT))
+//                    .where(ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
+//                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
+//                        @Override
+//                        public ActivationCarrierModel apply(Cursor cursor) {
+//                            return new ActivationCarrierModel(cursor);
+//                        }
+//                    }).build(DashboardActivity.this);
+//        }
+//
+//        @Override
+//        public void onLoadFinished(Loader<List<ActivationCarrierModel>> loader, List<ActivationCarrierModel> data) {
+//            activationCarriers = data;
+////            if (activationMenuItem != null) {
+////                activationMenuItem.setEnabled(data != null && !data.isEmpty());
+////            }
+//        }
+//
+//        @Override
+//        public void onLoaderReset(Loader<List<ActivationCarrierModel>> loader) {
+//        }
+//    };
 
     public static class SalesStatisticsConverter extends ListConverterFunction<Optional<SalesStatisticsModel>> {
 

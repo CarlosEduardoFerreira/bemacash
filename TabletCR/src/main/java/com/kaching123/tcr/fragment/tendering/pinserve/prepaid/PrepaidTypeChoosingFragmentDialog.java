@@ -25,7 +25,6 @@ import com.kaching123.tcr.model.ActivationCarrierModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 
 import java.util.List;
 
@@ -74,7 +73,7 @@ public class PrepaidTypeChoosingFragmentDialog extends StyledDialogFragment impl
         btnPinless.setOnClickListener(this);
         activationCenter.setOnClickListener(this);
 
-        getLoaderManager().initLoader(0, null, new ActivationLoader());
+//        getLoaderManager().initLoader(0, null, new ActivationLoader());
     }
 
     @Override
@@ -176,29 +175,29 @@ public class PrepaidTypeChoosingFragmentDialog extends StyledDialogFragment impl
         };
     }
 
-    private class ActivationLoader implements LoaderCallbacks<List<ActivationCarrierModel>>{
-
-        @Override
-        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
-            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ActivationCarrierTable.URI_CONTENT))
-                    .where(ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
-                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
-                        @Override
-                        public ActivationCarrierModel apply(Cursor cursor) {
-                            return new ActivationCarrierModel(cursor);
-                        }
-                    }).build(getActivity());
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<ActivationCarrierModel>> loader, List<ActivationCarrierModel> data) {
-            activationCarriers = data;
-            activationCenter.setEnabled(data != null && !data.isEmpty());
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<ActivationCarrierModel>> loader) {}
-    }
+//    private class ActivationLoader implements LoaderCallbacks<List<ActivationCarrierModel>>{
+//
+//        @Override
+//        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
+//            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ActivationCarrierTable.URI_CONTENT))
+//                    .where(ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
+//                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
+//                        @Override
+//                        public ActivationCarrierModel apply(Cursor cursor) {
+//                            return new ActivationCarrierModel(cursor);
+//                        }
+//                    }).build(getActivity());
+//        }
+//
+//        @Override
+//        public void onLoadFinished(Loader<List<ActivationCarrierModel>> loader, List<ActivationCarrierModel> data) {
+//            activationCarriers = data;
+//            activationCenter.setEnabled(data != null && !data.isEmpty());
+//        }
+//
+//        @Override
+//        public void onLoaderReset(Loader<List<ActivationCarrierModel>> loader) {}
+//    }
 
     public static void show(FragmentActivity context, PrepaidTypeChoosingFragmentDialogCallback listener) {
         PrepaidTypeChoosingFragmentDialog dialog = PrepaidTypeChoosingFragmentDialog_.builder().build();

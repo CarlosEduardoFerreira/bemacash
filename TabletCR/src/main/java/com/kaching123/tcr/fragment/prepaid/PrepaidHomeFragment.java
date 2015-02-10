@@ -73,33 +73,33 @@ public class PrepaidHomeFragment extends Fragment {
 
     @AfterViews
     public void init() {
-        getLoaderManager().initLoader(0, null, new ActivationLoader());
+//        getLoaderManager().initLoader(0, null, new ActivationLoader());
     }
 
-    private class ActivationLoader implements LoaderManager.LoaderCallbacks<List<ActivationCarrierModel>> {
-
-        @Override
-        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
-            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.ActivationCarrierTable.URI_CONTENT))
-                    .where(ShopStore.ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
-                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
-                        @Override
-                        public ActivationCarrierModel apply(Cursor cursor) {
-                            return new ActivationCarrierModel(cursor);
-                        }
-                    }).build(getActivity());
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<ActivationCarrierModel>> loader, List<ActivationCarrierModel> data) {
-            activationCarriers = data;
-            activationCenter.setEnabled(data != null && !data.isEmpty());
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<ActivationCarrierModel>> loader) {
-        }
-    }
+//    private class ActivationLoader implements LoaderManager.LoaderCallbacks<List<ActivationCarrierModel>> {
+//
+//        @Override
+//        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
+//            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.ActivationCarrierTable.URI_CONTENT))
+//                    .where(ShopStore.ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
+//                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
+//                        @Override
+//                        public ActivationCarrierModel apply(Cursor cursor) {
+//                            return new ActivationCarrierModel(cursor);
+//                        }
+//                    }).build(getActivity());
+//        }
+//
+//        @Override
+//        public void onLoadFinished(Loader<List<ActivationCarrierModel>> loader, List<ActivationCarrierModel> data) {
+//            activationCarriers = data;
+//            activationCenter.setEnabled(data != null && !data.isEmpty());
+//        }
+//
+//        @Override
+//        public void onLoaderReset(Loader<List<ActivationCarrierModel>> loader) {
+//        }
+//    }
 
     @Click
     void btnWireless() {

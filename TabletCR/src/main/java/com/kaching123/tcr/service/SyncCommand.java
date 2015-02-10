@@ -705,7 +705,7 @@ public class SyncCommand implements Runnable {
             JdbcJSONObject entity = resp.getEntity();
             syncBarcodePrefix(entity.getJSONArray("BARCODE_PREFIXES"));
             syncPrepaidTaxes(entity.getJSONArray("PREPAID_ITEM_TAXES"));
-            syncActivationCarriers(entity.getJSONArray("ACTIVATION_CARRIERS"));
+//            syncActivationCarriers(entity.getJSONArray("ACTIVATION_CARRIERS"));
             syncShop(entity.getJSONObject("SHOP"));
         } catch (Exception e) {
             Logger.e("Can't sync shop info", e);
