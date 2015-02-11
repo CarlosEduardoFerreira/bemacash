@@ -23,7 +23,6 @@ import com.kaching123.tcr.commands.rest.sync.GetPagedArrayResponse;
 import com.kaching123.tcr.commands.rest.sync.GetPrepaidOrderIdResponse;
 import com.kaching123.tcr.commands.rest.sync.GetResponse;
 import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
-import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter.BarcodePrefixes;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
@@ -290,12 +289,12 @@ public class TcrApplication extends Application {
 
     private synchronized void setBlackstoneUser() {
         blackstoneUser = new User(
-                shopInfo.blackstonePaymentAccount,
-                shopInfo.blackstonePaymentPassword,
-                shopInfo.blackstonePaymentMid,
+                "b3m@th3c11",
+                "matec_bs_ga3k12",
+                76074,
                 blackstoneUser.getCid(),
-                shopInfo.blackstonePaymentAppkey,
-                shopInfo.blackstonePaymentApptype);
+                "31D83578-B5C4-4F8B-9FBA-6737BF86F0CB",
+                11031);
     }
 
     private synchronized void setPrepaidUser() {
@@ -667,13 +666,11 @@ public class TcrApplication extends Application {
         return offlinePeriod;
     }
 
-    public void setNeedBillPaymentUpdated(boolean needed)
-    {
+    public void setNeedBillPaymentUpdated(boolean needed) {
         shopPref.NeedBillpaymentUpdated().put(needed);
     }
 
-    public boolean getNeedBillPaymentUpdated()
-    {
+    public boolean getNeedBillPaymentUpdated() {
         return shopPref.NeedBillpaymentUpdated().getOr(true);
     }
 

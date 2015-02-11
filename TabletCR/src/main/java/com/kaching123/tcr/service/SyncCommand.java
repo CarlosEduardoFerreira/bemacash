@@ -344,8 +344,8 @@ public class SyncCommand implements Runnable {
 
         syncShopInfo(employee);
 
-        checkAutoSettlement(wasTipsEnabled, oldAutoSettlementTime);
-        syncPAXMerchantInfo();
+//        checkAutoSettlement(wasTipsEnabled, oldAutoSettlementTime);
+//        syncPAXMerchantInfo();
 
         // download date from our amazon web server - end
 
