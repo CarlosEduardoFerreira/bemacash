@@ -12,7 +12,7 @@ public class SerialPortScanner implements DisplayPrinter {
     private SerialPort mSerialPort = null;
     protected OutputStream mOutputStream;
     protected InputStream mIntputStream;
-    private final String path = "/dev/ttymxc3";
+    private final String path = "/dev/ttymxc2";
     private final int baudrate = 9600;
     private final int databits = 8;
     private final int parity = 0;

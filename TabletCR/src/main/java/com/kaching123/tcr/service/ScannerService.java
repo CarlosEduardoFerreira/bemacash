@@ -235,8 +235,7 @@ public class ScannerService extends Service {
 
     private boolean read(SerialPortScanner serialPortScanner) {
         InputStream inputStream = serialPortScanner.getInputStreamReader();
-        boolean isFinish = false;
-        while(!isFinish)
+        while(shouldConnect)
         try {
             int size;
             byte[] buffer = new byte[64];
@@ -244,11 +243,15 @@ public class ScannerService extends Service {
                 return false;
             size = inputStream.read(buffer);
             String barcode = new String(buffer);
+            Logger.d("trace barcode value: "+barcode);
             if (size > 0) {
                 sendOnBarcodeReceived(barcode);
-                isFinish = true;
             }
         } catch (IOException e) {
+            Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
+            return false;
+        }catch (Exception e)
+        {
             Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
             return false;
         }
