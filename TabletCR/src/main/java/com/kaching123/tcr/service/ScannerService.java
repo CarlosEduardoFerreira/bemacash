@@ -51,6 +51,8 @@ public class ScannerService extends Service {
 
     private volatile boolean shouldConnect;
 
+    private SerialPortScanner serialPortScanner;
+
     private AtomicBoolean isConnected = new AtomicBoolean();
 
     public static void bind(Context context, ServiceConnection connection) {
@@ -110,7 +112,7 @@ public class ScannerService extends Service {
             public void run() {
                 boolean connectionOpened = false;
                 int i = 0;
-                SerialPortScanner serialPortScanner = null;
+
                 while (i < RECONNECTIONS_COUNT) {
 
                     if (!shouldConnect) {
@@ -235,26 +237,27 @@ public class ScannerService extends Service {
 
     private boolean read(SerialPortScanner serialPortScanner) {
         InputStream inputStream = serialPortScanner.getInputStreamReader();
-        while(shouldConnect)
-        try {
-            int size;
-            byte[] buffer = new byte[64];
-            if (inputStream == null)
+        while (shouldConnect)
+            try {
+                int size;
+                byte[] buffer = new byte[64];
+                if (inputStream == null)
+                    return false;
+                size = inputStream.read(buffer);
+
+                String barcode = new String(buffer);
+                Logger.d("trace barcode size: " + size);
+                Logger.d("trace barcode value: " + barcode);
+                if (size > 0) {
+                    sendOnBarcodeReceived(barcode);
+                }
+            } catch (IOException e) {
+                Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
                 return false;
-            size = inputStream.read(buffer);
-            String barcode = new String(buffer);
-            Logger.d("trace barcode value: "+barcode);
-            if (size > 0) {
-                sendOnBarcodeReceived(barcode);
+            } catch (Exception e) {
+                Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
+                return false;
             }
-        } catch (IOException e) {
-            Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
-            return false;
-        }catch (Exception e)
-        {
-            Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
-            return false;
-        }
         return true;
     }
 
@@ -304,6 +307,14 @@ public class ScannerService extends Service {
     private void closeConnection() {
         Logger.d("ScannerService: closeConnection()");
         synchronized (this) {
+            if (serialPortScanner != null) {
+                try {
+                    serialPortScanner.close();
+                } catch (IOException e) {
+                    Logger.e("ScannerService: closeConnection(): exiting with exception", e);
+                    return;
+                }
+            }
             if (scannerSocket == null) {
                 Logger.d("ScannerService: closeConnection(): ignore and exit - no socket to close");
                 return;
