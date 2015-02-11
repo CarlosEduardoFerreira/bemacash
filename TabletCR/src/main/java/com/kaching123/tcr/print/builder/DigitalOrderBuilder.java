@@ -243,7 +243,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
 
     @Override
     public void change(String cardName, BigDecimal amount) {
-        payment(SPACES_2 + cardName, amount);
+        payment(cardName, amount);
     }
 
     @Override

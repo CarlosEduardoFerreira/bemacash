@@ -104,7 +104,7 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
 
     @Override
     public void change(String label, BigDecimal amount) {
-        payment(SPACES_2 + label, amount);
+        payment(label, amount);
     }
 
     @Override
