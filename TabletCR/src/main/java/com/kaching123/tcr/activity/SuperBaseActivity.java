@@ -69,21 +69,21 @@ public class SuperBaseActivity extends FragmentActivity {
         //ViewServer.get(this).addWindow(this);
 
         setMintPos();
-        checkUsbMsr();
     }
 
     private void setMintPos() {
         getApp().getShopPref().disableBSMSR().put(true); // mint
-        if (!getApp().getShopPref().notFirstTimeLoaded().getOr(false)) {
+        if (checkUsbMsr())
+            if (!getApp().getShopPref().notFirstTimeLoaded().getOr(false)) {
 
-            getApp().getShopPref().displayAddress().put(FindDeviceFragment.INTEGRATED_DISPLAYER);
-            getApp().getShopPref().displayName().put(FindDeviceFragment.SERIAL_PORT);
+                getApp().getShopPref().displayAddress().put(FindDeviceFragment.INTEGRATED_DISPLAYER);
+                getApp().getShopPref().displayName().put(FindDeviceFragment.SERIAL_PORT);
 
-            getApp().getShopPref().scannerAddress().put(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS);
-            getApp().getShopPref().scannerName().put(FindDeviceFragment.SEARIL_PORT_SCANNER_NAME);
+                getApp().getShopPref().scannerAddress().put(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS);
+                getApp().getShopPref().scannerName().put(FindDeviceFragment.SEARIL_PORT_SCANNER_NAME);
 
-            getApp().getShopPref().notFirstTimeLoaded().put(true);
-        }
+                getApp().getShopPref().notFirstTimeLoaded().put(true);
+            }
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SuperBaseActivity extends FragmentActivity {
         //ViewServer.get(this).setFocusedWindow(this);
     }
 
-    private void checkUsbMsr() {
+    private boolean checkUsbMsr() {
         SysBusUsbManager mUsbManagerLinux = new SysBusUsbManager();
         HashMap<String, SysBusUsbDevice> mLinuxUsbDeviceList = mUsbManagerLinux.getUsbDevices();
         Iterator<SysBusUsbDevice> deviceIterator = mLinuxUsbDeviceList.values().iterator();
@@ -113,10 +113,10 @@ public class SuperBaseActivity extends FragmentActivity {
             Logger.d("trace UsbDevice " + device.getVID() + " \n" + device.getPID());
             if (device.getVID().equalsIgnoreCase("1667") && device.getPID().equalsIgnoreCase("0009")) {
                 getApp().getShopPref().usbMSRName().put(FindDeviceFragment.USB_MSR_NAME);
-                break;
+                return true;
             }
         }
-
+        return false;
     }
 
     @Override
