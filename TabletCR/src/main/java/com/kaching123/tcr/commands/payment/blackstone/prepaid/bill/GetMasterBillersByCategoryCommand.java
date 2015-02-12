@@ -31,7 +31,12 @@ public class GetMasterBillersByCategoryCommand extends SOAPWebCommand<GetMasterB
                 .arg(ARG_REQUEST, request)
                 .queueUsing(context);
     }
-
+    public MasterBillersByCategoryResponse sync(Context context, GetMasterBillersByCategoryRequest request) {
+        this.request = request;
+        //no need in command cache(creds passed on start)
+        TaskResult result = super.sync(context, null, null);
+        return isFailed(result) ? null : response;
+    }
     @Override
     protected TaskResult doInBackground() {
         return super.doInBackground().add(ARG_RESULT, response);
@@ -58,7 +63,7 @@ public class GetMasterBillersByCategoryCommand extends SOAPWebCommand<GetMasterB
 
     @Override
     protected GetMasterBillersByCategoryRequest getRequest() {
-        return (GetMasterBillersByCategoryRequest) getArgs().getSerializable(ARG_REQUEST);
+        return request == null ? (GetMasterBillersByCategoryRequest) getArgs().getSerializable(ARG_REQUEST) : request;
     }
 
     public static abstract class MasterBillerCategoryCommand {

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
+import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.FragmentArg;
@@ -162,8 +163,17 @@ public class PrepaidLongDistanceProductPopularSearchFragment extends PrepaidLong
         request.TID = String.valueOf(user.getTid());
         request.Password = String.valueOf(user.getPassword());
         GetBillerCategoriesCommand.start(context, this, request);
+//        BillerCategoriesResponse billerCategoriesResponse = new GetBillerCategoriesCommand().sync(context, request);
+//        if(billerCategoriesResponse != null)
+//        {
+//            VectorCategory temp = billerCategoriesResponse.categories;
+//            categories = new ArrayList<Category>(temp.size());
+//            categories.addAll(temp);
+//            assert categories != null && !categories.isEmpty();
+//            doGetMasterBillers(getActivity(), categories.get(categoryCount).id);
+//        }
     }
-
+    @UiThread
     protected void startUpdateBillPaymentCommand() {
         UpdateBillPaymentCommand.start(getActivity(), this, billPaymentItems);
     }
@@ -175,7 +185,7 @@ public class PrepaidLongDistanceProductPopularSearchFragment extends PrepaidLong
 
     }
 
-    @UiThread
+    @Background
     protected void doGetMasterBillers(FragmentActivity context, String caretodyId) {
         getMasterBillers(context, caretodyId);
     }
@@ -187,7 +197,6 @@ public class PrepaidLongDistanceProductPopularSearchFragment extends PrepaidLong
         categories.addAll(temp);
         assert categories != null && !categories.isEmpty();
         doGetMasterBillers(getActivity(), categories.get(categoryCount).id);
-
     }
 
 
@@ -209,29 +218,56 @@ public class PrepaidLongDistanceProductPopularSearchFragment extends PrepaidLong
         request.TID = String.valueOf(user.getTid());
         request.Password = String.valueOf(user.getPassword());
         currentCategory = categories.get(categoryCount);
-        GetMasterBillersByCategoryCommand.start(context, new GetMasterBillersByCategoryCommand.MasterBillerCategoryCommand() {
-            @Override
-            protected void onSuccess(MasterBillersByCategoryResponse result) {
-                ArrayList<MasterBiller> currentInputs = new ArrayList<MasterBiller>();
-                currentInputs.addAll(result.masterBillers);
-                for (MasterBiller masterBiller : currentInputs) {
-                    billPaymentItems.add(new BillPaymentItem(currentCategory.id, currentCategory.description, masterBiller.id, masterBiller.description));
-                }
-
-                if (++categoryCount < categories.size()) {
-                    doGetMasterBillers(getActivity(), categories.get(categoryCount).id);
-                } else {
-                    WaitDialogFragment.hide(getActivity());
-                    startUpdateBillPaymentCommand();
-                }
+        MasterBillersByCategoryResponse response = new GetMasterBillersByCategoryCommand().sync(context, request);
+        if (response != null) {
+            ArrayList<MasterBiller> currentInputs = new ArrayList<MasterBiller>();
+            currentInputs.addAll(response.masterBillers);
+            for (MasterBiller masterBiller : currentInputs) {
+                billPaymentItems.add(new BillPaymentItem(currentCategory.id, currentCategory.description, masterBiller.id, masterBiller.description));
             }
 
-            @Override
-            protected void onFailure(MasterBillersByCategoryResponse result) {
+            if (++categoryCount < categories.size()) {
+                doGetMasterBillers(getActivity(), categories.get(categoryCount).id);
+            } else {
                 WaitDialogFragment.hide(getActivity());
-                callback.error(result.resultDescription.toString());
+                startUpdateBillPaymentCommand();
             }
-        }, request);
+
+        } else {
+            WaitDialogFragment.hide(getActivity());
+            callback.popUpFragment();
+            Toast.makeText(getActivity(), "Cannot get Billpayment categories", Toast.LENGTH_LONG);
+        }
+
+//        GetMasterBillersByCategoryCommand.start(context, new GetMasterBillersByCategoryCommand.MasterBillerCategoryCommand() {
+//            @Override
+//            protected void onSuccess(MasterBillersByCategoryResponse result) {
+//                ArrayList<MasterBiller> currentInputs = new ArrayList<MasterBiller>();
+//                Logger.d("trace loading issue: getMasterBillers success 0");
+//
+//                currentInputs.addAll(result.masterBillers);
+//                for (MasterBiller masterBiller : currentInputs) {
+//                    billPaymentItems.add(new BillPaymentItem(currentCategory.id, currentCategory.description, masterBiller.id, masterBiller.description));
+//                }
+//
+//                if (++categoryCount < categories.size()) {
+//                    Logger.d("trace loading issue: getMasterBillers success doGetMasterBillers ");
+//
+//                    doGetMasterBillers(getActivity(), categories.get(categoryCount).id);
+//                } else {
+//                    Logger.d("trace loading issue: getMasterBillers success finish!! ");
+//
+//                    WaitDialogFragment.hide(getActivity());
+//                    startUpdateBillPaymentCommand();
+//                }
+//            }
+//
+//            @Override
+//            protected void onFailure(MasterBillersByCategoryResponse result) {
+//                WaitDialogFragment.hide(getActivity());
+//                callback.error(result.resultDescription.toString());
+//            }
+//        }, request);
     }
 
 
@@ -262,6 +298,8 @@ public class PrepaidLongDistanceProductPopularSearchFragment extends PrepaidLong
 
     @OnSuccess(UpdateBillPaymentCommand.class)
     public void onUpdateBillPaymentCommandSuccess() {
+        Logger.d("trace loading issue: getMasterBillers success finish!! startUpdateBillPaymentCommand success");
+
         WaitDialogFragment.hide(getActivity());
         billPayment2PopularGridFragment();
         TcrApplication.get().setNeedBillPaymentUpdated(false);

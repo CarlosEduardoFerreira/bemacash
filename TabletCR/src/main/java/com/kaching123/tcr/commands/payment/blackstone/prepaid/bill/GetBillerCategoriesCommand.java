@@ -21,11 +21,18 @@ public class GetBillerCategoriesCommand extends SOAPWebCommand<GetBillerCategori
 
     protected BillerCategoriesResponse response;
 
-    public  final static TaskHandler start(Context context, Object callback, GetBillerCategoriesRequest request) {
+    public final static TaskHandler start(Context context, Object callback, GetBillerCategoriesRequest request) {
         return create(GetBillerCategoriesCommand.class)
-                      .arg(ARG_REQUEST, request)
-                      .callback(callback)
-                      .queueUsing(context);
+                .arg(ARG_REQUEST, request)
+                .callback(callback)
+                .queueUsing(context);
+    }
+
+    public BillerCategoriesResponse sync(Context context, GetBillerCategoriesRequest request) {
+        this.request = request;
+        //no need in command cache(creds passed on start)
+        TaskResult result = super.sync(context, null, null);
+        return isFailed(result) ? null : response;
     }
 
     @Override
@@ -52,6 +59,6 @@ public class GetBillerCategoriesCommand extends SOAPWebCommand<GetBillerCategori
 
     @Override
     protected GetBillerCategoriesRequest getRequest() {
-        return (GetBillerCategoriesRequest) getArgs().getSerializable(ARG_REQUEST);
+        return request == null ? (GetBillerCategoriesRequest) getArgs().getSerializable(ARG_REQUEST) : request;
     }
 }
