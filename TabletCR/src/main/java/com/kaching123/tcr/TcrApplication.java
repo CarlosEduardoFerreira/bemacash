@@ -289,12 +289,12 @@ public class TcrApplication extends Application {
 
     private synchronized void setBlackstoneUser() {
         blackstoneUser = new User(
-                "b3m@th3c11",
-                "matec_bs_ga3k12",
-                76074,
+                shopInfo.blackstonePaymentAccount,
+                shopInfo.blackstonePaymentPassword,
+                shopInfo.blackstonePaymentMid,
                 blackstoneUser.getCid(),
-                "31D83578-B5C4-4F8B-9FBA-6737BF86F0CB",
-                11031);
+                shopInfo.blackstonePaymentAppkey,
+                shopInfo.blackstonePaymentApptype);
     }
 
     private synchronized void setPrepaidUser() {
