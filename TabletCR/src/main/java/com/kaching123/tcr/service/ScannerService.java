@@ -37,6 +37,7 @@ public class ScannerService extends Service {
 
     private static final int DISCONNECTED_WHAT = 0;
     private static final int BARCODE_RECEIVED_WHAT = 1;
+    private static final int TIME_DELAY = 2;
 
     private static final int RECONNECTIONS_COUNT = 2;
 
@@ -54,6 +55,10 @@ public class ScannerService extends Service {
     private SerialPortScanner serialPortScanner;
 
     private AtomicBoolean isConnected = new AtomicBoolean();
+
+    private StringBuilder stringBuilder;
+
+    private boolean sendBarcode;
 
     public static void bind(Context context, ServiceConnection connection) {
         Intent intent = new Intent(context, ScannerService.class);
@@ -76,6 +81,7 @@ public class ScannerService extends Service {
 
         executor = Executors.newSingleThreadExecutor();
         startOpenConnection();
+        stringBuilder = new StringBuilder();
     }
 
     @Override
@@ -237,6 +243,7 @@ public class ScannerService extends Service {
 
     private boolean read(SerialPortScanner serialPortScanner) {
         InputStream inputStream = serialPortScanner.getInputStreamReader();
+        sendBarcode = false;
         while (shouldConnect)
             try {
                 int size;
@@ -245,11 +252,15 @@ public class ScannerService extends Service {
                     return false;
                 size = inputStream.read(buffer);
 
-                String barcode = new String(buffer);
+                String barcode = new String(buffer, 0, size);
                 Logger.d("trace barcode size: " + size);
                 Logger.d("trace barcode value: " + barcode);
-                if (size > 0) {
-                    sendOnBarcodeReceived(barcode);
+                stringBuilder.append(barcode);
+                Logger.d("trace barcode stringBuilder value: " + stringBuilder);
+                if (!sendBarcode) {
+                    Logger.d("trace barcode sendBarcode" + sendBarcode);
+
+                    sendOnSerialPortBarcodeReceived();
                 }
             } catch (IOException e) {
                 Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
@@ -364,6 +375,11 @@ public class ScannerService extends Service {
         serviceHandler.sendMessage(msg);
     }
 
+    private void sendOnSerialPortBarcodeReceived() {
+        Logger.d("ScannerService: sendOnSerialPortBarcodeReceived()");
+        serviceHandler.sendEmptyMessage(TIME_DELAY);
+    }
+
     private void onDisconnected() {
         Logger.d("ScannerService: onDisconnected()");
         if (scannerListener != null)
@@ -412,6 +428,19 @@ public class ScannerService extends Service {
                 case BARCODE_RECEIVED_WHAT:
                     String barcode = (String) msg.obj;
                     onBarcodeReceived(barcode);
+                    break;
+                case TIME_DELAY:
+                    try {
+                        Thread.sleep(100);
+                        onBarcodeReceived(stringBuilder.toString());
+                        Logger.d("trace barcode before delete: " + stringBuilder);
+                        stringBuilder.delete(0, stringBuilder.length());
+                        sendBarcode = false;
+                        Logger.d("trace barcode after delete: " + stringBuilder);
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     break;
             }
         }
