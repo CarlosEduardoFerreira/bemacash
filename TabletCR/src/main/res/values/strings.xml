@@ -148,8 +148,8 @@
     <string name="upload_notify_message_success">Data was uploaded</string>
     <string name="upload_notify_message_error">Upload data error</string>
 
-    <string name="upload_notify_message_error_db_version_invalid">There\'s a newer version of Kashin available. Please update to be eligible for upload!</string>
-    <string name="upload_notify_message_error_db_version_failed">Failed to check Kashin version. Please try again later</string>
+    <string name="upload_notify_message_error_db_version_invalid">There\'s a newer version of MintPos available. Please update to be eligible for upload!</string>
+    <string name="upload_notify_message_error_db_version_failed">Failed to check MintPos version. Please try again later</string>
 
 
     <string name="sync_success_title">Database syncing</string>
@@ -1732,7 +1732,7 @@
     <string name="btn_checkin">Clock In</string>
     <string name="btn_checkout">Clock Out</string>
     <string name="cashier_action_search_disable">Search disable</string>
-    <string name="error_message_max_items_count">You have reached the maximum number of inventory items supported in your monthly plan. Please, Contact Kashin 123 support to learn how to increase this limit.</string>
+    <string name="error_message_max_items_count">You have reached the maximum number of inventory items supported in your monthly plan. Please, Contact MintPos support to learn how to increase this limit.</string>
     <string name="prepaid_head_home_button">Home</string>
     <string name="prepaid_head_long_distance_text">Long Distance</string>
     <string name="prepaid_head_wireless_text">Wireless</string>
