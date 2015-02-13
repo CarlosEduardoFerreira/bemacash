@@ -89,7 +89,7 @@ public class TotalCostFragment extends Fragment {
             btnPay.setTextSize(getActivity().getResources().getDimensionPixelOffset(R.dimen.button_pay_text_big));
         } else {
             btnPay.setBackgroundResource(R.drawable.return_btn);
-//            btnPay.setText(R.string.button_return);
+            btnPay.setText(R.string.button_return);
         }
     }
 
