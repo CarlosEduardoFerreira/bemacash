@@ -125,7 +125,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     }
 
     private boolean enableFinish() {
-        return ((phoneNumber != null && !phoneNumberStr.equalsIgnoreCase("")) && (amount != null && amount != BigDecimal.ZERO));
+        return ((phoneNumber != null && phoneNumberStr != null && !phoneNumberStr.equalsIgnoreCase("")) || chosenCategory.isPinBased()) && (amount != null && amount != BigDecimal.ZERO);
     }
 
     @AfterTextChange
