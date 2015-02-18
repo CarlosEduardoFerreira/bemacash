@@ -3,7 +3,6 @@ package com.kaching123.display;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.security.InvalidParameterException;
 
@@ -33,8 +32,7 @@ public class SerialPortScanner implements DisplayPrinter {
         }
     }
 
-    public InputStream getInputStreamReader()
-    {
+    public InputStream getInputStreamReader() {
         return mIntputStream;
     }
 
@@ -45,7 +43,11 @@ public class SerialPortScanner implements DisplayPrinter {
 
     @Override
     public void close() throws IOException {
-        mOutputStream.close();
+        if (mSerialPort != null) {
+            mOutputStream.close();
+            mSerialPort = null;
+        }
+
     }
 
     @Override

@@ -84,7 +84,7 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
                 getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
 //        getDialog().getWindow().setWindowAnimations(R.style.DialogAnimation);
         hideError();
-        if (!getApp().getShopPref().disableBSMSR().get()) {
+        if (!isSPMSRSet()) {
             trySwipe();
         } else
             checkMSRConf();
@@ -219,13 +219,17 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
         return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
-                if (!getApp().getShopPref().disableBSMSR().get()) {
+                if (!isSPMSRSet()) {
                     stopSwipe();
                 }
                 tryCancel();
                 return false;
             }
         };
+    }
+
+    protected boolean isSPMSRSet() {
+        return (!TextUtils.isEmpty(getApp().getShopPref().usbMSRName().get()));
     }
 
     private void stopSwipe() {

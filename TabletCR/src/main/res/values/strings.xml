@@ -1392,6 +1392,10 @@
     <string name="find_scanner_progress">Scanners searching...</string>
     <string name="find_scanner_empty">Can\'t find scanner. Please check your settings!</string>
 
+    <string name="find_msr_title">Please choose MSR</string>
+    <string name="find_msr_progress">MSR searching...</string>
+    <string name="find_msr_empty">Can\'t find MSR. Please check your settings!</string>
+
     <string name="scanner_delete_warning_dialog_title">Delete Scanner</string>
     <string name="scanner_delete_warning_dialog_message">Are you sure you want to delete scanner?</string>
 

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -152,12 +153,16 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!getApp().getShopPref().disableBSMSR().get()) {
+        if(!isSPMSRSet()) {
             Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
             if (frm == null) {
                 getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
             }
         }
+    }
+
+    protected boolean isSPMSRSet() {
+        return (!TextUtils.isEmpty(getApp().getShopPref().usbMSRName().get()));
     }
 
     @AfterViews

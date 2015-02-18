@@ -22,10 +22,14 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.DeviceModel;
+import com.kaching123.usb.SysBusUsbDevice;
+import com.kaching123.usb.SysBusUsbManager;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -51,11 +55,15 @@ public class FindDeviceFragment extends StyledDialogFragment {
     private DeviceAdapter adapter;
 
     protected FindDeviceListener findDeviceListener;
-    public static final String INTEGRATED_DISPLAYER = "Integrated Displayer";
-    public static final String SERIAL_PORT = "Serial Port Displayer";
-    public static String USB_MSR_NAME = "Integrated USB MSR";
-    public static String SEARIL_PORT_SCANNER_ADDRESS = "Integrated Scanner MSR";
-    public static String SEARIL_PORT_SCANNER_NAME = "Integrated Scanner MSR";
+    public static final String INTEGRATED_DISPLAYER = "Integrated Customer Display";
+    public static final String SERIAL_PORT = "Integrated Customer Displayer";
+    public static String USB_MSR_NAME = "Integrated MSR";
+    public static String SEARIL_PORT_SCANNER_ADDRESS = "Integrated Scanner";
+    public static String SEARIL_PORT_SCANNER_NAME = "Integrated Scanner";
+    public static String USB_MSR_VID = "1667";
+    public static String USB_MSR_PID = "0009";
+    public static String USB_SCANNER_VID = "0000";
+    public static String USB_SCANNER_PID = "5710";
     @FragmentArg
     protected Mode mode;
 
@@ -108,9 +116,12 @@ public class FindDeviceFragment extends StyledDialogFragment {
         if (mode == Mode.DISPLAY) {
             progressLabel.setText(R.string.find_display_progress);
             emptyView.setText(R.string.find_display_empty);
-        } else {
+        } else if (mode == Mode.SCANNER) {
             progressLabel.setText(R.string.find_scanner_progress);
             emptyView.setText(R.string.find_scanner_empty);
+        } else if (mode == Mode.USBMSR) {
+            progressLabel.setText(R.string.find_msr_progress);
+            emptyView.setText(R.string.find_msr_empty);
         }
 
         adapter = new DeviceAdapter(getActivity());
@@ -228,8 +239,22 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
         private Set<DeviceModel> getUsbMsrDevices() {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
-            devices.add(new DeviceModel(USB_MSR_NAME, USB_MSR_NAME));
+            if (checkUsb(USB_MSR_VID, USB_MSR_PID))
+                devices.add(new DeviceModel(USB_MSR_NAME, USB_MSR_NAME));
             return devices;
+        }
+
+        private boolean checkUsb(String VID, String PID) {
+            SysBusUsbManager mUsbManagerLinux = new SysBusUsbManager();
+            HashMap<String, SysBusUsbDevice> mLinuxUsbDeviceList = mUsbManagerLinux.getUsbDevices();
+            Iterator<SysBusUsbDevice> deviceIterator = mLinuxUsbDeviceList.values().iterator();
+            while (deviceIterator.hasNext()) {
+                SysBusUsbDevice device = deviceIterator.next();
+                if (device.getVID().equalsIgnoreCase(VID) && device.getPID().equalsIgnoreCase(PID)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private boolean checkConstraint(BluetoothDevice device) {

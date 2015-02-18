@@ -95,7 +95,6 @@ import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHan
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment.IOrderActionListener;
 import com.kaching123.tcr.fragment.search.SearchItemsListFragment;
-import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment.RefundAmount;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
@@ -322,10 +321,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             @Override
             public void onOrderLoaded(SaleOrderItemViewModel lastItem) {
                 if (lastItem == null) {
-                    Logger.d("trace--init: 0");
                     startCommand(new DisplayWelcomeMessageCommand());
                 } else {
-                    Logger.d("trace--init: 1");
                     startCommand(new DisplaySaleItemCommand(lastItem.getSaleItemGuid()));
                 }
             }
@@ -371,12 +368,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         alarmRingtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
 
-        if(!getApp().getShopPref().disableBSMSR().get()) {
+        if (!isSPMSRSet()) {
             Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
             if (frm == null) {
                 getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
             }
         }
+    }
+
+    protected boolean isSPMSRSet() {
+        return (!TextUtils.isEmpty(getApp().getShopPref().usbMSRName().get()));
     }
 
     protected abstract void showEditItemModifiers(final String saleItemGuid, final String itemGuid, final int modifiersCount, final int addonsCount, final int optionalsCount, final String selectedModifierGuid, final ArrayList<String> selectedAddonsGuids, final ArrayList<String> selectedOptionalsGuids);
@@ -1019,7 +1020,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             return;
         }
         Logger.d("Lets show some history");
-        if(!getApp().getShopPref().disableBSMSR().get()) {
+        if (!isSPMSRSet()) {
             MsrDataFragment msr = getMsr();
             if (msr != null) {
                 msr.releaseNow();

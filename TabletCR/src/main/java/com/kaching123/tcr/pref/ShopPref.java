@@ -224,9 +224,5 @@ public interface ShopPref {
 
     boolean NeedBillpaymentUpdated();
 
-    boolean notFirstTimeLoaded();
-
-    boolean disableBSMSR();
-
     String usbMSRName();
 }
