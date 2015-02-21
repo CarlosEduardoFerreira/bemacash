@@ -257,6 +257,8 @@ public class ScannerService extends Service {
     }
 
     private boolean read(SerialPortScanner serialPortScanner) {
+        final byte terminator = 0x0d;
+        final int maxBarCodeSize = 128;
         Logger.d("ScannerService: read()");
 //        try {
 //            BufferedReader reader = null;
@@ -281,22 +283,36 @@ public class ScannerService extends Service {
         InputStream inputStream = serialPortScanner.getInputStreamReader();
         sentBarcode.set(false);
         try {
+            int size;
+            byte[] buffer = new byte[maxBarCodeSize];
+            String barcode = "";
             while (shouldConnect) {
-                int size;
-                byte[] buffer = new byte[64];
+
                 if (inputStream == null)
                     return false;
                 size = inputStream.read(buffer);
-                String barcode = null;
-                if (size > 0)
-                    barcode = new String(buffer, 0, size);
-                if (barcode != null)
-                    sendOnSerialPortBarcodeReceived(barcode);
 
-                if (!sentBarcode.get()) {
-                    new Timer().start();
-                    sentBarcode.set(true);
+                if (size > 0) {
+
+                    barcode = barcode + new String(buffer, 0, size);
+                    if ( buffer[size-1] ==  terminator )
+                    {
+                        if (shouldConnect)
+                            sendOnBarcodeReceived(barcode);
+                        barcode = "";
+                    }
+
                 }
+                if (barcode.length() >= maxBarCodeSize)
+                    barcode = "";
+
+//                if (barcode != null)
+//                    sendOnSerialPortBarcodeReceived(barcode);
+//
+//                if (!sentBarcode.get()) {
+//                    new Timer().start();
+//                    sentBarcode.set(true);
+//                }
             }
 
         } catch (IOException e) {
@@ -427,14 +443,14 @@ public class ScannerService extends Service {
         serviceHandler.sendMessage(msg);
     }
 
-    private void sendOnSerialPortBarcodeReceived(String sb) {
-        Logger.d(" trace ScannerService: sendOnSerialPortBarcodeReceived(): " + sb + Thread.currentThread().getId());
-        Message msg = serviceHandler.obtainMessage();
-        msg.what = TIME_DELAY;
-        msg.obj = sb;
-        serviceHandler.sendMessage(msg);
-        Logger.d(" trace ScannerService: sendOnSerialPortBarcodeReceived() 1: " + sb + Thread.currentThread().getId());
-    }
+//    private void sendOnSerialPortBarcodeReceived(String sb) {
+//        Logger.d(" trace ScannerService: sendOnSerialPortBarcodeReceived(): " + sb + Thread.currentThread().getId());
+//        Message msg = serviceHandler.obtainMessage();
+//        msg.what = TIME_DELAY;
+//        msg.obj = sb;
+//        serviceHandler.sendMessage(msg);
+//        Logger.d(" trace ScannerService: sendOnSerialPortBarcodeReceived() 1: " + sb + Thread.currentThread().getId());
+//    }
 
     private void onDisconnected() {
         Logger.d("ScannerService: onDisconnected()");
@@ -485,16 +501,16 @@ public class ScannerService extends Service {
                     onBarcodeReceived(barcode);
                     break;
                 case TIME_DELAY:
-                    String sb = (String) msg.obj;
-                    sbMain.append(sb);
-                    Logger.d(" trace TIME_DELAY: " + sbMain.toString() + +Thread.currentThread().getId());
+//                    String sb = (String) msg.obj;
+//                    sbMain.append(sb);
+//                    Logger.d(" trace TIME_DELAY: " + sbMain.toString() + +Thread.currentThread().getId());
                     break;
                 case BARCODE_SENT_FROM_SERIAL:
-                    isConnected.set(false);
-                    sentBarcode.set(false);
-                    onBarcodeReceived(sbMain.toString());
-                    Logger.d(" trace BARCODE_SENT_FROM_SERIAL: " + sbMain.toString());
-                    sbMain.delete(0, sbMain.length());
+//                    isConnected.set(false);
+//                    sentBarcode.set(false);
+//                    onBarcodeReceived(sbMain.toString());
+//                    Logger.d(" trace BARCODE_SENT_FROM_SERIAL: " + sbMain.toString());
+//                    sbMain.delete(0, sbMain.length());
                     break;
             }
         }
