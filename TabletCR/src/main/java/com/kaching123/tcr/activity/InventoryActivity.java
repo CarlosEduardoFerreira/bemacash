@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.Menu;
@@ -50,11 +49,9 @@ import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.inventory.ItemsFragment;
 import com.kaching123.tcr.fragment.itempick.DrawerCategoriesFragment;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
-import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -124,7 +121,7 @@ public class InventoryActivity extends ScannerBaseActivity {
                     itemsFragment.setCategory(ItemsFragment.LOAD_ALL_CATEGORIES);
                     selectedDeartmentGuid = null;
                     selectedCategoryGuid = null;
-                    if (sortItem != null){
+                    if (sortItem != null) {
                         sortItem.setVisible(true);
                     }
                 } else {
@@ -132,7 +129,7 @@ public class InventoryActivity extends ScannerBaseActivity {
                     itemsFragment.setDepartment(depGuid);
                     selectedCategoryGuid = catGuid;
                     selectedDeartmentGuid = depGuid;
-                    if (sortItem != null){
+                    if (sortItem != null) {
                         sortItem.setVisible(false);
                     }
                 }
@@ -222,9 +219,9 @@ public class InventoryActivity extends ScannerBaseActivity {
     @OptionsItem
     protected void actionSortSelected() {
         int level = sortItem.getIcon().getLevel();
-        if (level == 0){
+        if (level == 0) {
             level = 1;
-        }else {
+        } else {
             level = 0;
         }
         sortByName = level == 1;
@@ -267,7 +264,7 @@ public class InventoryActivity extends ScannerBaseActivity {
     }
 
     @OptionsItem
-    protected void actionManagePrinterAliasSelected(){
+    protected void actionManagePrinterAliasSelected() {
         PrinterAliasActivity.start(this);
     }
 
@@ -308,9 +305,11 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @Override
     protected void onBarcodeReceived(String barcode) {
-        searchItem.expandActionView();
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQuery(barcode, true);
+        if (searchItem != null) {
+            searchItem.expandActionView();
+            SearchView searchView = (SearchView) searchItem.getActionView();
+            searchView.setQuery(barcode, true);
+        }
     }
 
 

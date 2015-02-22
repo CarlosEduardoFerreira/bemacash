@@ -44,7 +44,7 @@ public class SerialPortScanner implements DisplayPrinter {
     @Override
     public void close() throws IOException {
         if (mSerialPort != null) {
-            mOutputStream.close();
+            mSerialPort.close();
             mSerialPort = null;
         }
 

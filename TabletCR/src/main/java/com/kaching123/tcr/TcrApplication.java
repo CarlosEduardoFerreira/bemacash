@@ -12,6 +12,7 @@ import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.EApplication;
+import com.kaching123.display.SerialPortScanner;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.RestCommand.PlainTextResponse;
@@ -43,6 +44,7 @@ import com.squareup.okhttp.OkHttpClient;
 import org.apache.commons.codec.Charsets;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -104,6 +106,8 @@ public class TcrApplication extends Application {
     private RestAdapter restAdapter;
     private RestAdapter restAdapterJsonOrg;
 
+    private SerialPortScanner serialPortScanner;
+
     public String emailApiKey = "EvG5Cb8acZC4Dzm6b4a5GRdDBPk362";
 
     private static final ReentrantLock trainingModeLock = new ReentrantLock();
@@ -132,6 +136,7 @@ public class TcrApplication extends Application {
 
         lazyInstantiateShopPref();
         initPref();
+
     }
 
     public synchronized SyncOpenHelper getSyncOpenHelper() {
@@ -824,5 +829,25 @@ public class TcrApplication extends Application {
                 throw new ConversionException("Can't parse response: " + str, e);
             }
         }
+    }
+
+    public InputStream getScannerIS() {
+        serialPortScanner = new SerialPortScanner();
+
+        return serialPortScanner.getInputStreamReader();
+    }
+
+    public void closeSerialScanner() {
+        if (serialPortScanner != null) {
+            try {
+                serialPortScanner.close();
+                serialPortScanner = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                Logger.d("Tcrapplication closeSerialScanner faile: " + e.toString());
+                serialPortScanner = null;
+            }
+        }
+
     }
 }
