@@ -267,7 +267,7 @@ public class ScannerService extends Service {
 
                     if (buffer[size - 1] == terminator) {
                         if (shouldConnect)
-                            sendOnBarcodeReceived(barcode);
+                            sendOnBarcodeReceived(barcode.substring(0, barcode.length() - 2));
                         barcode = "";
                     }
 

@@ -9,6 +9,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.service.ScannerService;
 import com.kaching123.tcr.service.ScannerService.IScannerBinder;
 import com.kaching123.tcr.service.ScannerService.ScannerBinder;
@@ -22,6 +23,8 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
     private ScannerBinder scannerBinder;
 
     protected abstract void onBarcodeReceived(String barcode);
+
+    private boolean isUSBScanner;
 
     @Override
     protected void onStart() {
@@ -41,10 +44,22 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         Logger.d("ScannerBaseActivity: bindToScannerService()");
         boolean scannerConfigured = !TextUtils.isEmpty(getApp().getShopPref().scannerAddress().get());
 
-        if (scannerConfigured)
-            ScannerService.bind(this, scannerServiceConnection);
-        else
+        if (scannerConfigured) {
+            if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
+                ScannerService.bind(this, scannerServiceConnection);
+            if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_SCANNER_ADDRESS))
+                setUSBScanner(true);
+        } else
             Logger.d("ScannerBaseActivity: bindToScannerService(): failed - scanner is not configured!");
+    }
+
+    private void setUSBScanner(boolean flag) {
+        isUSBScanner = flag;
+    }
+
+    private boolean getUSBScanner()
+    {
+        return isUSBScanner;
     }
 
     private void unbindFromScannerService() {

@@ -326,6 +326,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     startCommand(new DisplaySaleItemCommand(lastItem.getSaleItemGuid()));
                 }
             }
+
+            @Override
+            public void onBarcodeReceivedFromUSB(String barcode) {
+                Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB()");
+                if (isPaying) {
+                    Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB(): ignore and exit - payment in progress");
+                    return;
+                }
+
+                Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB(): tryToSearchBarCode()");
+                tryToSearchBarCode(barcode, true);
+            }
         });
 
         searchResultFragment.setListener(new SearchItemsListFragment.IItemListener() {
