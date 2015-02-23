@@ -385,6 +385,11 @@ public class LoginFragment extends SuperBaseDialogFragment {
         protected void onLoginOfflineFailed() {
             showError(R.string.error_message_login_offline_failed);
         }
+
+        @Override
+        protected void onBlockMerchant() {
+            showError(R.string.block_merchant_message);
+        }
     }
 
     private void sendDevLog(){

@@ -1,5 +1,5 @@
 <resources>
-    <string name="api_server_url">http://bematech:1q2w3e@bematech.mytestpos.com</string>
-    <string name="api_basic_cred">bematech:1q2w3e</string>
-    <string name="merchant_register_url">http://demo.mytestpos.com/#merchant_signup</string>
+    <string name="api_server_url">http://mint-bema.mytestpos.com/</string>
+    <string name="api_basic_cred"></string>
+    <string name="merchant_register_url">http://mint-demo.mytestpos.com/#merchant_signup</string>
 </resources>

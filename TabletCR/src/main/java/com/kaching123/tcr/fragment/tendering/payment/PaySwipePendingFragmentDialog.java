@@ -134,7 +134,8 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
 
     @AfterViews
     protected void init() {
-        msrUsbInput.setInputType(0);
+        if (msrUsbInput != null)
+            msrUsbInput.setInputType(0);
     }
 
     private void checkMSRConf() {

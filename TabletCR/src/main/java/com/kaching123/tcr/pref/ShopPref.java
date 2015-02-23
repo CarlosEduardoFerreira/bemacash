@@ -40,6 +40,8 @@ public interface ShopPref {
 
     String shopViewType();
 
+    String shopStatus();
+
     String prepaidVersionId();
 
     String shopAddress1();

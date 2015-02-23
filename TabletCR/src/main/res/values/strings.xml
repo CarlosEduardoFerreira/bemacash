@@ -1829,5 +1829,6 @@
     <string name="sunopass_license_plate_number_null">License Plate Number cannot be null</string>
     <string name="sunopass_choose_document_payment_method">Choose Document Payment Method</string>
 
+    <string name="block_merchant_message">This Shop is blocked by MintPos, please contact MintPos for any questions. Thanks.</string>
     <string name="custom_service">CUSTOMER SERVICE</string>
 </resources>

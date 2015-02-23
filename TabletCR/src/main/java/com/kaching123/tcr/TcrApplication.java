@@ -25,6 +25,7 @@ import com.kaching123.tcr.commands.rest.sync.GetPrepaidOrderIdResponse;
 import com.kaching123.tcr.commands.rest.sync.GetResponse;
 import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter.BarcodePrefixes;
+import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
 import com.kaching123.tcr.model.EmployeeModel;
@@ -218,7 +219,8 @@ public class TcrApplication extends Application {
                     _decimal(shopPref.defaultStoreCommission().getOr(null)),
                     shopPref.offlinePeriodHours().getOr(0),
                     shopPref.printerTwoCopiesReceipt().getOr(false),
-                    shopPref.maxItemsCount().getOr(0));
+                    shopPref.maxItemsCount().getOr(0),
+                    _enum(ShopInfoViewJdbcConverter.ShopStatus.class, shopPref.shopStatus().get(), ShopInfoViewJdbcConverter.ShopStatus.ACTIVE));
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -498,6 +500,7 @@ public class TcrApplication extends Application {
                 .offlinePeriodHours().put(info.offlinePeriodHours)
                 .printerTwoCopiesReceipt().put(info.printerTwoCopiesReceipt)
                 .maxItemsCount().put(info.maxItemsCount)
+                .shopStatus().put(info.shopStatus == null ? ShopInfoViewJdbcConverter.ShopStatus.ACTIVE.name() : info.shopStatus.name())
                 .apply();
 
         setUsers();
@@ -848,6 +851,5 @@ public class TcrApplication extends Application {
                 serialPortScanner = null;
             }
         }
-
     }
 }

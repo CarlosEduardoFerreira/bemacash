@@ -89,6 +89,7 @@
                 android:paddingRight="8dp">
 
                 <fragment
+                    android:layout_marginTop="10dp"
                     android:id="@+id/total_cost_fragment"
                     android:name="com.kaching123.tcr.fragment.saleorder.TotalCostFragment_"
                     android:layout_width="match_parent"
