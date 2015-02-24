@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.ActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +23,7 @@ import com.googlecode.androidannotations.annotations.Fullscreen;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.fragment.user.LoginFragment;
 import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
@@ -36,7 +40,7 @@ import java.util.Set;
  */
 @EActivity
 @Fullscreen
-public class SuperBaseActivity extends FragmentActivity {
+public class SuperBaseActivity extends SerialPortScannerBaseActivity {
 
     @App
     protected TcrApplication app;
@@ -48,6 +52,8 @@ public class SuperBaseActivity extends FragmentActivity {
     public TcrApplication getApp() {
         return app;
     }
+
+    private Ringtone alarmRingtone;
 
     protected Set<Permission> getPermissions() {
         return null;
@@ -64,9 +70,16 @@ public class SuperBaseActivity extends FragmentActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Logger.d("SuperBaseActivity onReceive:" + intent.getStringExtra(SerialPortScannerService.EXTRA_BARCODE));
+            barcodeReceivedFromSerialPort(intent.getStringExtra(SerialPortScannerService.EXTRA_BARCODE));
         }
 
     };
+
+    public void errorAlarm() {
+        if (alarmRingtone == null || alarmRingtone.isPlaying())
+            return;
+        alarmRingtone.play();
+    }
 
     private Permission[] getPermissionsArray() {
         Set<Permission> permissions = getPermissions();
@@ -78,11 +91,22 @@ public class SuperBaseActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        alarmRingtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+
         isDestroyed = false;
         tempLoginActionProvider = new TempLoginActionProvider(this);
         //ViewServer.get(this).addWindow(this);
         Intent intent = new Intent(SuperBaseActivity.this, SerialPortScannerService.class);
-        startService(intent);
+
+        if (shouldSerialPortScanner()) {
+            startService(intent);
+        } else
+            stopService(intent);
+    }
+
+    private boolean shouldSerialPortScanner() {
+        return (!TextUtils.isEmpty(getApp().getShopPref().scannerAddress().get()) && (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS)));
     }
 
     @Override
@@ -186,6 +210,11 @@ public class SuperBaseActivity extends FragmentActivity {
 
         Set<Permission> operatorPermissions = getApp().getOperatorPermissions();
         return operatorPermissions == null ? false : operatorPermissions.containsAll(permissions);
+    }
+
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        errorAlarm();
     }
 
     private class TempLoginActionProvider extends ActionProvider {

@@ -25,6 +25,7 @@ import com.googlecode.androidannotations.annotations.Extra;
 import com.googlecode.androidannotations.annotations.FragmentById;
 import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.commands.store.export.ExportInventoryCommand;
@@ -312,6 +313,12 @@ public class InventoryActivity extends ScannerBaseActivity {
         }
     }
 
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("BaseItemActivity onReceive:" + barcode);
+
+        onBarcodeReceived(barcode);
+    }
 
     private class NavigationSpinnerAdapter extends ArrayAdapter<String> {
 

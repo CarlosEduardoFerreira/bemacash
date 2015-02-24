@@ -5,6 +5,7 @@ import android.content.Context;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.FragmentById;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.creditreceipt.CreditReceiptFilterFragment;
 import com.kaching123.tcr.fragment.creditreceipt.CreditReceiptListFragment;
@@ -53,4 +54,10 @@ public class CreditReceiptsActivity extends ScannerBaseActivity {
             filterFragment.setCreditReceiptNum(barcode);
     }
 
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("CreditReceiptsActivity onReceive:" + barcode);
+
+        onBarcodeReceived(barcode);
+    }
 }

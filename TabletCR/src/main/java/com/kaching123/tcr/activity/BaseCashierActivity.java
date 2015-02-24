@@ -216,6 +216,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private HashSet<String> salesmanGuids = new HashSet<String>();
 
     @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("BaseCashierActivity barcodeReceivedFromSerialPort onReceive:" + barcode);
+        onBarcodeReceived(barcode);
+    }
+
+    @Override
     protected Set<Permission> getPermissions() {
         return permissions;
     }

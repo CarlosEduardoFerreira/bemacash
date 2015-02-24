@@ -11,8 +11,6 @@ import com.kaching123.tcr.TcrApplication;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SerialPortScannerService extends Service {
     private final byte terminator = 0x0d;
@@ -20,7 +18,7 @@ public class SerialPortScannerService extends Service {
     public static String ACTION_SERIAL_PORT_SCANNER = "com.kaching123.tcr.service.ACTION_SERIAL_PORT_SCANNER";
     public static String EXTRA_BARCODE = "barcode";
     private Intent intent;
-    private ExecutorService executor;
+    private Reader reader;
 
     public SerialPortScannerService() {
     }
@@ -39,52 +37,46 @@ public class SerialPortScannerService extends Service {
             return;
         }
         intent = new Intent(ACTION_SERIAL_PORT_SCANNER);
-        executor = Executors.newSingleThreadExecutor();
-        startOpenConnection();
+        reader = new Reader();
+        reader.start();
 
     }
 
-    private void startOpenConnection() {
+    private class Reader extends Thread {
+        public void run() {
+            try {
+                InputStream inputStream = getInputStream();
+                int size;
+                byte[] buffer = new byte[maxBarCodeSize];
+                String barcode = "";
+                while (!Thread.currentThread().isInterrupted()) {
 
-        Logger.d("ScannerService: read()");
+                    if (inputStream == null)
+                        return;
+                    size = inputStream.read(buffer);
 
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    InputStream inputStream = getInputStream();
-                    int size;
-                    byte[] buffer = new byte[maxBarCodeSize];
-                    String barcode = "";
-                    while (true) {
+                    if (size > 0) {
 
-                        if (inputStream == null)
-                            return;
-                        size = inputStream.read(buffer);
+                        barcode = barcode + new String(buffer, 0, size);
+                        Logger.e("ScannerService: read() barcode: " + barcode + ", thread:" + Thread.currentThread().getId());
 
-                        if (size > 0) {
-
-                            barcode = barcode + new String(buffer, 0, size);
-                            Logger.e("ScannerService: read() barcode: " + barcode + ", thread:" + Thread.currentThread().getId());
-
-                            if (buffer[size - 1] == terminator) {
-                                intent.putExtra(EXTRA_BARCODE, barcode.substring(0, barcode.length() - 2));
-                                LocalBroadcastManager.getInstance(SerialPortScannerService.this).sendBroadcast(intent);
-                                barcode = "";
-                            }
-
-                        }
-                        if (barcode.length() >= maxBarCodeSize)
+                        if (buffer[size - 1] == terminator) {
+                            intent.putExtra(EXTRA_BARCODE, barcode.substring(0, barcode.length() - 2));
+                            LocalBroadcastManager.getInstance(SerialPortScannerService.this).sendBroadcast(intent);
                             barcode = "";
-                    }
+                        }
 
-                } catch (IOException e) {
-                    Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
-                } catch (Exception e) {
-                    Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
+                    }
+                    if (barcode.length() >= maxBarCodeSize)
+                        barcode = "";
                 }
+
+            } catch (IOException e) {
+                Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
+            } catch (Exception e) {
+                Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
             }
-        });
+        }
     }
 
     private static boolean isEmulate() {
@@ -100,7 +92,7 @@ public class SerialPortScannerService extends Service {
     public void onDestroy() {
         super.onDestroy();
         closeSerialScanner();
-        executor.shutdown();
+        reader.interrupt();
     }
 
     private InputStream getInputStream() {

@@ -31,6 +31,7 @@ import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.ViewById;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand.BaseOpenDrawerCallback;
@@ -82,6 +83,7 @@ import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.service.OfflineCommandsService;
+import com.kaching123.tcr.service.SerialPortScannerService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
@@ -244,6 +246,12 @@ public class DashboardActivity extends SuperBaseActivity {
             logout(false);
             Toast.makeText(this, R.string.offline_mode_error_toast_message_logout, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("DashboardActivity barcodeReceivedFromSerialPort onReceive:" + barcode);
+        errorAlarm();
     }
 
     @Click

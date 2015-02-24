@@ -417,6 +417,13 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         }
     }
 
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("HistoryActivity onReceive:" + barcode);
+
+        onBarcodeReceived(barcode);
+    }
+
     private ISettlementListener settlementListener = new ISettlementListener() {
 
         @Override

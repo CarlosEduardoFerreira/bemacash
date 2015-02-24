@@ -15,6 +15,7 @@ import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Extra;
 import com.googlecode.androidannotations.annotations.FragmentById;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.wireless.AddUnitsCommand;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
@@ -70,12 +71,19 @@ public class UnitActivity extends ScannerBaseActivity implements UnitItemListFra
         if (redirectBarcodeResult) {
             Fragment fragment = getSupportFragmentManager().getFragments().get(1);
             if (fragment != null && fragment instanceof BarcodeReceiver) {
-                BarcodeReceiver editFragment = (BarcodeReceiver)fragment;
+                BarcodeReceiver editFragment = (BarcodeReceiver) fragment;
                 editFragment.onBarcodeReceived(barcode);
             }
         } else {
             addRemoveOrEdit(null, barcode);
         }
+    }
+
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("UnitActivity onReceive:" + barcode);
+
+        onBarcodeReceived(barcode);
     }
 
     ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
@@ -93,7 +101,6 @@ public class UnitActivity extends ScannerBaseActivity implements UnitItemListFra
             return true;
         }
     };
-
 
 
     @Override

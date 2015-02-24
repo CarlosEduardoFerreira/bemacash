@@ -42,6 +42,7 @@ import com.googlecode.androidannotations.annotations.Extra;
 import com.googlecode.androidannotations.annotations.OnActivityResult;
 import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.ViewById;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.PrinterAliasActivity.PrinterAliasConverter;
@@ -401,53 +402,53 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             @Override
             protected void handleSuccess(final List<Unit> unit) {
 
-                   if (oldCodeType != null && newCodeType == null && !unit.isEmpty()) {
-                       AlertDialogWithCancelFragment.showWithTwo(BaseItemActivity.this,
-                               R.string.wireless_remove_items_title,
-                               getString(R.string.wireless_remove_items_body),
-                               R.string.btn_ok,
-                               new AlertDialogWithCancelFragment.OnDialogListener() {
-                                   @Override
-                                   public boolean onClick() {
-                                       model.codeType = newCodeType;
-                                       DropUnitsCommand.start(BaseItemActivity.this, (ArrayList<Unit>) unit, model, new UnitCallback() {
-                                           @Override
-                                           protected void handleSuccess(ItemExModel model) {
-                                               Toast.makeText(BaseItemActivity.this, getString(R.string.unit_drop_ok), Toast.LENGTH_LONG).show();
-                                               model.serializable = false;
-                                               onSerializableSet(false);
-                                               if (!stockTrackEnabled) {
-                                                   model.availableQty = null;
-                                               }
-                                               BaseItemActivity.this.model = model;
-                                               setQuantities();
-                                               invalidateOptionsMenu();
-                                           }
+                if (oldCodeType != null && newCodeType == null && !unit.isEmpty()) {
+                    AlertDialogWithCancelFragment.showWithTwo(BaseItemActivity.this,
+                            R.string.wireless_remove_items_title,
+                            getString(R.string.wireless_remove_items_body),
+                            R.string.btn_ok,
+                            new AlertDialogWithCancelFragment.OnDialogListener() {
+                                @Override
+                                public boolean onClick() {
+                                    model.codeType = newCodeType;
+                                    DropUnitsCommand.start(BaseItemActivity.this, (ArrayList<Unit>) unit, model, new UnitCallback() {
+                                        @Override
+                                        protected void handleSuccess(ItemExModel model) {
+                                            Toast.makeText(BaseItemActivity.this, getString(R.string.unit_drop_ok), Toast.LENGTH_LONG).show();
+                                            model.serializable = false;
+                                            onSerializableSet(false);
+                                            if (!stockTrackEnabled) {
+                                                model.availableQty = null;
+                                            }
+                                            BaseItemActivity.this.model = model;
+                                            setQuantities();
+                                            invalidateOptionsMenu();
+                                        }
 
-                                           @Override
-                                           protected void handleError() {
-                                               Toast.makeText(BaseItemActivity.this, getString(R.string.unit_drop_partially_faield), Toast.LENGTH_LONG).show();
-                                           }
-                                       });
-                                       return true;
-                                   }
+                                        @Override
+                                        protected void handleError() {
+                                            Toast.makeText(BaseItemActivity.this, getString(R.string.unit_drop_partially_faield), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    return true;
+                                }
 
-                                   @Override
-                                   public boolean onCancel() {
-                                       serializationType.setSelection(getIndexForType(oldCodeType));
-                                       return true;
-                                   }
-                               }
-                       );
+                                @Override
+                                public boolean onCancel() {
+                                    serializationType.setSelection(getIndexForType(oldCodeType));
+                                    return true;
+                                }
+                            }
+                    );
 
-                   } else if (oldCodeType == null && newCodeType != null) {
-                       model.codeType = newCodeType;
-                       model.serializable = true;
-                       onSerializableSet(true);
-                       model.availableQty = stockTrackEnabled ? BigDecimal.ZERO : null;
-                       setQuantities();
-                       invalidateOptionsMenu();
-                   }
+                } else if (oldCodeType == null && newCodeType != null) {
+                    model.codeType = newCodeType;
+                    model.serializable = true;
+                    onSerializableSet(true);
+                    model.availableQty = stockTrackEnabled ? BigDecimal.ZERO : null;
+                    setQuantities();
+                    invalidateOptionsMenu();
+                }
             }
 
             @Override
@@ -460,7 +461,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     private void stockTrackingSetup(CodeType codeType) {
         final boolean isSerializable = codeType != null;
-        if (isSerializable){
+        if (isSerializable) {
             stockTrackingFlag.setChecked(true);
         }
         stockTrackingFlag.setEnabled(!isSerializable);
@@ -983,6 +984,12 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         ItemCodeChooserAlertDialogFragment.show(BaseItemActivity.this, barcode);
     }
 
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("BaseItemActivity onReceive:" + barcode);
+
+        ItemCodeChooserAlertDialogFragment.show(BaseItemActivity.this, barcode);
+    }
 
     private static class PriceTypeHolder {
         final String label;

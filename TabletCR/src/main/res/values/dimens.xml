@@ -7,62 +7,49 @@
     <dimen name="item_list_header_padding_bottom">5dp</dimen>
     <dimen name="item_list_item_padding_top">6dp</dimen>
     <dimen name="item_list_item_padding_bottom">6dp</dimen>
-
     <dimen name="dropdownListPreferredItemHeight">48dp</dimen>
     <dimen name="action_button_min_width">64dp</dimen>
     <dimen name="action_button_min_height">56dp</dimen>
-
     <dimen name="category_list_item_height">60dp</dimen>
     <dimen name="list_item_padding_right">16dp</dimen>
     <dimen name="alert_dialog_button_bar_height">48dp</dimen>
-
     <dimen name="keyboard_popup_width">342dp</dimen>
-
     <dimen name="default_dlg_width">342dp</dimen>
     <dimen name="default_dlg_heigth">550dp</dimen>
     <dimen name="prepaid_dlg_heigth">725dp</dimen>
     <dimen name="wireless_dlg_heigth">725dp</dimen>
     <dimen name="prepaid_dlg_width">750dp</dimen>
     <dimen name="prepaid_type_dlg_width">1260dp</dimen>
-
     <dimen name="prepaid_category_dlg_width">1026dp</dimen>
-
     <dimen name="swipe_dlg_width">352dp</dimen>
     <dimen name="holdon_dlg_width">342dp</dimen>
     <dimen name="holdon_dlg_heigth">279dp</dimen>
     <dimen name="holdon_dlg_expanded_heigth">390dp</dimen>
-
     <dimen name="clockin_dlg_width">342dp</dimen>
-
     <dimen name="wireless_dlg_width">450dp</dimen>
-
     <dimen name="pay_cash_dialog_width">576dp</dimen>
     <dimen name="pay_cash_dialog_height">626dp</dimen>
-
     <dimen name="pay_charge_dialog_width">520dp</dimen>
-
     <dimen name="sn_dialog_width">360dp</dimen>
     <dimen name="sn_dialog_key_width">348dp</dimen>
     <dimen name="sn_dialog_height">750dp</dimen>
-
     <dimen name="reprint_order_receipt_dialog_width">330dp</dimen>
     <dimen name="reprint_order_receipt_dialog_height">250dp</dimen>
 
-    <!--<dimen name="refund_tender_dialog_height">530dp</dimen>
-    <dimen name="refund_tender_dialog_height_small">480dp</dimen>-->
+    <!--
+    <dimen name="refund_tender_dialog_height">530dp</dimen>
+    <dimen name="refund_tender_dialog_height_small">480dp</dimen>
+    -->
 
     <dimen name="pay_tender_dialog_height">526dp</dimen>
     <dimen name="pay_tender_dialog_height_expanded">630dp</dimen>
-
     <dimen name="pay_tender_dialog_width">900dp</dimen>
     <dimen name="pay_tender_dialog_height_3">648dp</dimen>
     <dimen name="pay_tender_dialog_height_3_expanded">672dp</dimen>
-
     <dimen name="listPreferredItemHeight">48dp</dimen>
     <dimen name="listPreferredItemHeight2">86dp</dimen>
     <dimen name="listPreferredHeaderHeight">50dp</dimen>
     <dimen name="listPreferredSmallItemHeight">32dp</dimen>
-
     <dimen name="modify_container_row_count">3dp</dimen>
     <dimen name="modify_container_padding">6dp</dimen>
     <dimen name="modify_container_margin_left">12dp</dimen>
@@ -72,20 +59,15 @@
     <dimen name="modify_button_price_zone_height">18dp</dimen>
     <dimen name="modify_dialog_height">480dp</dimen>
     <dimen name="modify_dialog_min_width">180dp</dimen>
-
     <dimen name="copy_modify_dialog_width">984dp</dimen>
     <dimen name="copy_modify_dialog_height">560dp</dimen>
-
     <dimen name="edit_modify_dialog_width">330dp</dimen>
     <dimen name="edit_modify_dialog_height">382dp</dimen>
-
     <dimen name="printer_edit_dialog_width">348dp</dimen>
     <dimen name="printer_config_dialog_width">400dp</dimen>
-
     <dimen name="payment_side_padding_charge">20dp</dimen>
     <dimen name="payment_editfield_passive_padding">12dp</dimen>
     <dimen name="payment_dots_padding">4dp</dimen>
-
     <dimen name="quick_category_item_pic_size">98dp</dimen>
     <dimen name="quick_category_item_width">108dp</dimen>
     <dimen name="quick_category_item_height">110dp</dimen>
@@ -96,63 +78,47 @@
     <dimen name="quick_category_item_text_zone_height">28dp</dimen>
     <dimen name="quick_category_grid_vertical_spacing">6dp</dimen>
     <dimen name="quick_categories_grid_padding">6dp</dimen>
-
     <dimen name="quick_items_grid_spacing">24dp</dimen>
-
-
     <dimen name="modifier_view_width">82dp</dimen>
     <dimen name="modifier_view_height">84dp</dimen>
-
     <dimen name="quick_item_view_width">82dp</dimen>
     <dimen name="quick_item_view_height">84dp</dimen>
-
     <dimen name="edit_item_row_margin_top">16dp</dimen>
     <dimen name="item_label_width">72dp</dimen>
     <dimen name="edit_item_table_margin_top">16dp</dimen>
     <dimen name="edit_item_table_margin_left">72dp</dimen>
     <dimen name="edit_item_table_1024_768__margin_left">30dp</dimen>
-
     <dimen name="shift_dlg_width">342dp</dimen>
     <dimen name="shift_dlg_heigth">550dp</dimen>
-
-    <dimen name ="dashboard_module_width">244dp</dimen>
-    <dimen name ="dashboard_module_height">214dp</dimen>
-    <dimen name ="dashboard_module_1024_768_width">226dp</dimen>
-    <dimen name ="dashboard_module_1024_768_height">206dp</dimen>
-    <dimen name ="dashboard_operator_name_label">18sp</dimen>
-    <dimen name ="dashboard_operator_name_value_label">44sp</dimen>
-    <dimen name ="dashboard_total_sales_container_width">260dp</dimen>
-    <dimen name ="dashboard_total_sales_container_height">134dp</dimen>
-    <dimen name ="dashboard_total_sales_label">20sp</dimen>
-    <dimen name ="dashboard_total_sales_value_label">34sp</dimen>
-    <dimen name ="dashboard_total_sales_sub_label">12sp</dimen>
-    <dimen name ="dashboard_total_sales_container_frame_height">184dp</dimen>
-
+    <dimen name="dashboard_module_width">244dp</dimen>
+    <dimen name="dashboard_module_height">214dp</dimen>
+    <dimen name="dashboard_module_1024_768_width">226dp</dimen>
+    <dimen name="dashboard_module_1024_768_height">206dp</dimen>
+    <dimen name="dashboard_operator_name_label">18sp</dimen>
+    <dimen name="dashboard_operator_name_value_label">44sp</dimen>
+    <dimen name="dashboard_total_sales_container_width">260dp</dimen>
+    <dimen name="dashboard_total_sales_container_height">134dp</dimen>
+    <dimen name="dashboard_total_sales_label">20sp</dimen>
+    <dimen name="dashboard_total_sales_value_label">34sp</dimen>
+    <dimen name="dashboard_total_sales_sub_label">12sp</dimen>
+    <dimen name="dashboard_total_sales_container_frame_height">184dp</dimen>
     <dimen name="modifiers_list_name_width">220dp</dimen>
     <dimen name="modifiers_list_name_1024_768_width">180dp</dimen>
     <dimen name="modifiers_list_name_padding_left">14dp</dimen>
     <dimen name="modifiers_list_price_padding_left">10dp</dimen>
-
-    <dimen name ="modifiers_copy_dialog_padding">32dp</dimen>
-    <dimen name ="modifiers_copy_dialog_space">48dp</dimen>
-    <dimen name ="modifiers_copy_dialog_container_width">270dp</dimen>
-
+    <dimen name="modifiers_copy_dialog_padding">32dp</dimen>
+    <dimen name="modifiers_copy_dialog_space">48dp</dimen>
+    <dimen name="modifiers_copy_dialog_container_width">270dp</dimen>
     <dimen name="categories_dialog_width">330dp</dimen>
     <dimen name="categories_dialog_height">304dp</dimen>
-
     <dimen name="categories_dialog_commission_height">388dp</dimen>
-
     <dimen name="categories_dialog_quick_width">421dp</dimen>
     <dimen name="categories_dialog_quick_height">564dp</dimen>
-
     <dimen name="categories_dialog_quick_commission_height">648dp</dimen>
-
     <dimen name="department_dialog_width">330dp</dimen>
     <dimen name="department_dialog_height">250dp</dimen>
-
     <dimen name="printer_alias_dialog_width">330dp</dimen>
     <dimen name="printer_alias_dialog_height">250dp</dimen>
-
     <dimen name="login_form_width">572dp</dimen>
     <dimen name="login_form_height">700dp</dimen>
     <dimen name="login_form_padding_left">22dp</dimen>
@@ -160,62 +126,45 @@
     <dimen name="login_form_padding_top">36dp</dimen>
     <dimen name="login_login_margin_top">52dp</dimen>
     <dimen name="login_form_padding_bottom">22dp</dimen>
-
     <dimen name="tax_group_dialog_width">330dp</dimen>
     <dimen name="tax_group_dialog_height">302dp</dimen>
-
     <dimen name="item_field_padding">8dp</dimen>
     <dimen name="sync_dlg_width">360dp</dimen>
     <dimen name="dlg_edit_text_font_size">22sp</dimen>
-
     <dimen name="filemanager_width">568dp</dimen>
     <dimen name="filemanager_height">590dp</dimen>
-
     <dimen name="bar_chart_bar_width">42dp</dimen>
     <dimen name="horizontal_bar_chart_bar_height">57dp</dimen>
     <dimen name="bar_chart_spacing">8dp</dimen>
-
     <dimen name="report_type_list_item_height">60dp</dimen>
     <dimen name="report_type_list_header_height">42dp</dimen>
-
     <dimen name="reports_details_header_height">88dp</dimen>
     <dimen name="datetime_picker_dlg_width">580dp</dimen>
-
     <dimen name="keyboard_width">306dp</dimen>
     <dimen name="reports_list_fragment_block_margin">48dp</dimen>
-
     <dimen name="notes_edit_dialog_width">400dp</dimen>
-
     <dimen name="button_view_select_dialog_width">380dp</dimen>
     <dimen name="button_view_select_dialog_height">600dp</dimen>
-
     <dimen name="report_spinner_def_width">172dp</dimen>
     <dimen name="pay_credit_receipt_dialog_height">530dp</dimen>
-
     <dimen name="xreport_webview_width">400dp</dimen>
     <dimen name="xreport_webview_height_land">600dp</dimen>
     <dimen name="xreport_webview_height_portrait">800dp</dimen>
-
     <dimen name="credit_receipt_print_dialog_height">480dp</dimen>
     <dimen name="qs_category_text_padding_bottom">2dp</dimen>
-
     <dimen name="prepaid_label_text_size">20sp</dimen>
     <dimen name="prepaid_activation_center_label_text_size">40sp</dimen>
-
     <dimen name="employee_tips_dialog_width">680dp</dimen>
-
     <dimen name="activation_dlg_width">550dp</dimen>
     <dimen name="activation_dlg_height">500dp</dimen>
 
-    <!--newly added for prepaid changes-->
+    <!-- newly added for prepaid changes -->
     <dimen name="prepaid_supass_choice_dlg_width">700dp</dimen>
     <dimen name="prepaid_wireless_payment_complete_heigth">660dp</dimen>
     <dimen name="prepaid_sunpass_credencial_width">860dp</dimen>
     <dimen name="prepaid_sunpass_pyd_amount_width">1060dp</dimen>
-
     <dimen name="prepaid_head_height">120dp</dimen>
     <dimen name="prepaid_body_height">680dp</dimen>
-
     <dimen name="product_view_height">160dp</dimen>
     <dimen name="product_view_width">240dp</dimen>
     <dimen name="product_amount_view_height">60dp</dimen>
@@ -229,4 +178,7 @@
     <dimen name="product_items_grid_spacing">10dp</dimen>
     <dimen name="product_flag_height">70dp</dimen>
     <dimen name="product_flag_width">70dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
 </resources>

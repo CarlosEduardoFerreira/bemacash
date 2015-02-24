@@ -45,10 +45,10 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         boolean scannerConfigured = !TextUtils.isEmpty(getApp().getShopPref().scannerAddress().get());
 
         if (scannerConfigured) {
-            if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
-                ScannerService.bind(this, scannerServiceConnection);
             if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_SCANNER_ADDRESS))
                 setUSBScanner(true);
+            else if(!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
+                ScannerService.bind(this, scannerServiceConnection);
         } else
             Logger.d("ScannerBaseActivity: bindToScannerService(): failed - scanner is not configured!");
     }

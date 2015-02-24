@@ -15,7 +15,6 @@ import android.os.Message;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,9 +35,9 @@ public class ScannerService extends Service {
 
     private static final int DISCONNECTED_WHAT = 0;
     private static final int BARCODE_RECEIVED_WHAT = 1;
+
     private static final int RECONNECTIONS_COUNT = 2;
-    private final byte terminator = 0x0d;
-    private final int maxBarCodeSize = 128;
+
 
     private ScannerBinder binder = new ScannerBinder();
 
@@ -51,8 +50,6 @@ public class ScannerService extends Service {
     private volatile boolean shouldConnect;
 
     private AtomicBoolean isConnected = new AtomicBoolean();
-
-    private AtomicBoolean sentBarcode = new AtomicBoolean();
 
     public static void bind(Context context, ServiceConnection connection) {
         Intent intent = new Intent(context, ScannerService.class);
@@ -67,6 +64,7 @@ public class ScannerService extends Service {
     public void onCreate() {
         Logger.d("ScannerService: onCreate()");
         super.onCreate();
+
         if (isEmulate()) {
             Logger.d("ScannerService: onCreate(): emulating");
             return;
@@ -74,15 +72,6 @@ public class ScannerService extends Service {
 
         executor = Executors.newSingleThreadExecutor();
         startOpenConnection();
-
-    }
-
-    private InputStream getInputStream() {
-        return getApp().getScannerIS();
-    }
-
-    private void closeSerialScanner() {
-        getApp().closeSerialScanner();
     }
 
     @Override
@@ -119,7 +108,6 @@ public class ScannerService extends Service {
             public void run() {
                 boolean connectionOpened = false;
                 int i = 0;
-
                 while (i < RECONNECTIONS_COUNT) {
 
                     if (!shouldConnect) {
@@ -129,14 +117,7 @@ public class ScannerService extends Service {
                     }
 
                     Logger.d("ScannerService: OpenConnectionRunnable: trying to open connection: attempt " + (i + 1));
-                    if (getApp().getShopPref().scannerName().getOr(null).equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_NAME)) {
-                        Logger.d("ScannerService: serialPortScanner create()" + ",thread: " + Thread.currentThread().getId());
-                        if (getInputStream() != null)
-                            connectionOpened = true;
-                        break;
-                    } else {
-                        connectionOpened = openConnection();
-                    }
+                    connectionOpened = openConnection();
 
                     if (connectionOpened) {
                         break;
@@ -153,26 +134,17 @@ public class ScannerService extends Service {
                     return;
                 }
 
-                boolean beRead;
-
-                if (getApp().getShopPref().scannerName().getOr(null).equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_NAME))
-                    beRead = readSerialPort();
-                else
-                    beRead = read();
-                if (!beRead) {
+                if (!read()) {
                     isConnected.set(false);
-
                     if (shouldConnect)
                         sendOnDisconnected();
                 } else {
                     isConnected.set(false);
                 }
 
-
                 closeConnection();
             }
         });
-
     }
 
     private void startCloseConnection() {
@@ -196,15 +168,13 @@ public class ScannerService extends Service {
                 Logger.d("ScannerService: openConnection(): uuid socket obtained - going to connect");
                 scannerSocket.connect();
                 Logger.d("ScannerService: openConnection(): just connected with uuid");
-            } catch (IOException e) {
+            } catch (IOException e){
                 if (scannerSocket != null)
                     try {
                         scannerSocket.close();
-                    } catch (IOException ignore) {
-                    }
+                    } catch (IOException ignore) {}
                 scannerSocket = null;
-                if (getInputStream() != null)
-                    closeSerialScanner();
+                Logger.e("ScannerService: openConnection(): failed to create socket using uuid - fallback to port method", e);
             }
 
             if (scannerSocket == null) {
@@ -218,10 +188,8 @@ public class ScannerService extends Service {
             if (scannerSocket != null)
                 try {
                     scannerSocket.close();
-                } catch (IOException ignore) {
-                }
-            if (getInputStream() != null)
-                closeSerialScanner();
+                } catch (IOException ignore) {}
+            Logger.e("ScannerService: openConnection(): failed - connection failed!", e);
             return false;
         }
 
@@ -236,59 +204,13 @@ public class ScannerService extends Service {
     private BluetoothSocket createRfcommSocket(BluetoothDevice device) throws IOException {
         try {
             Class<?> clazz = device.getClass();
-            Class<?>[] paramTypes = new Class<?>[]{Integer.TYPE};
+            Class<?>[] paramTypes = new Class<?>[] {Integer.TYPE};
             Method m = clazz.getMethod("createRfcommSocket", paramTypes);
-            Object[] params = new Object[]{Integer.valueOf(1)};
+            Object[] params = new Object[] {Integer.valueOf(1)};
             return (BluetoothSocket) m.invoke(device, params);
         } catch (Exception e) {
             throw new IOException(e);
         }
-    }
-
-    private boolean readSerialPort() {
-
-        Logger.d("ScannerService: read()");
-        InputStream inputStream = getInputStream();
-        try {
-            inputStream.reset();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        sentBarcode.set(false);
-        try {
-            int size;
-            byte[] buffer = new byte[maxBarCodeSize];
-            String barcode = "";
-            while (shouldConnect) {
-
-                if (inputStream == null)
-                    return false;
-                size = inputStream.read(buffer);
-
-                if (size > 0) {
-
-                    barcode = barcode + new String(buffer, 0, size);
-                    Logger.e("ScannerService: read() barcode: " +barcode+", thread:"+Thread.currentThread().getId());
-
-                    if (buffer[size - 1] == terminator) {
-                        if (shouldConnect)
-                            sendOnBarcodeReceived(barcode.substring(0, barcode.length() - 2));
-                        barcode = "";
-                    }
-
-                }
-                if (barcode.length() >= maxBarCodeSize)
-                    barcode = "";
-            }
-
-        } catch (IOException e) {
-            Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
-            return false;
-        } catch (Exception e) {
-            Logger.e("ScannerService: Serial Port Scanner read(): exiting with exception", e);
-            return false;
-        }
-        return true;
     }
 
     private boolean read() {
@@ -335,10 +257,8 @@ public class ScannerService extends Service {
     }
 
     private void closeConnection() {
-        Logger.d("ScannerService: closeConnection()" + ",thread: " + Thread.currentThread().getId());
+        Logger.d("ScannerService: closeConnection()");
         synchronized (this) {
-            if (getInputStream() != null)
-                closeSerialScanner();
             if (scannerSocket == null) {
                 Logger.d("ScannerService: closeConnection(): ignore and exit - no socket to close");
                 return;
@@ -352,7 +272,6 @@ public class ScannerService extends Service {
             scannerSocket = null;
             Logger.d("ScannerService: closeConnection(): closed");
         }
-
     }
 
     private BluetoothDevice getScanner() {
@@ -372,8 +291,8 @@ public class ScannerService extends Service {
         return device;
     }
 
-    private TcrApplication getApp() {
-        return (TcrApplication) getApplicationContext();
+    private TcrApplication getApp(){
+        return (TcrApplication)getApplicationContext();
     }
 
     private void sendOnDisconnected() {
@@ -382,22 +301,12 @@ public class ScannerService extends Service {
     }
 
     private void sendOnBarcodeReceived(String barcode) {
-        isConnected.set(false);
         Logger.d("ScannerService: sendOnBarcodeReceived(): barcode = " + barcode);
         Message msg = serviceHandler.obtainMessage();
         msg.what = BARCODE_RECEIVED_WHAT;
         msg.obj = barcode;
         serviceHandler.sendMessage(msg);
     }
-
-//    private void sendOnSerialPortBarcodeReceived(String sb) {
-//        Logger.d(" trace ScannerService: sendOnSerialPortBarcodeReceived(): " + sb + Thread.currentThread().getId());
-//        Message msg = serviceHandler.obtainMessage();
-//        msg.what = TIME_DELAY;
-//        msg.obj = sb;
-//        serviceHandler.sendMessage(msg);
-//        Logger.d(" trace ScannerService: sendOnSerialPortBarcodeReceived() 1: " + sb + Thread.currentThread().getId());
-//    }
 
     private void onDisconnected() {
         Logger.d("ScannerService: onDisconnected()");
@@ -429,6 +338,7 @@ public class ScannerService extends Service {
     }
 
     private void setScannerListener(ScannerListener scannerListener) {
+        Logger.d("ScannerService: setScannerListener(): scannerListener = " + scannerListener);
         this.scannerListener = scannerListener;
     }
 
@@ -444,7 +354,7 @@ public class ScannerService extends Service {
                     onDisconnected();
                     break;
                 case BARCODE_RECEIVED_WHAT:
-                    String barcode = (String) msg.obj;
+                    String barcode = (String)msg.obj;
                     onBarcodeReceived(barcode);
                     break;
             }
@@ -459,7 +369,6 @@ public class ScannerService extends Service {
         }
 
         public void tryReconnectScanner() {
-            sentBarcode.set(false);
             ScannerService.this.startOpenConnection();
         }
 
@@ -472,7 +381,6 @@ public class ScannerService extends Service {
     public interface ScannerListener {
 
         public void onDisconnected();
-
         public void onBarcodeReceived(String barcode);
     }
 

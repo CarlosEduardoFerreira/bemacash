@@ -84,7 +84,6 @@ public class EditItemActivity extends BaseItemActivity {
     }
 
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -240,7 +239,12 @@ public class EditItemActivity extends BaseItemActivity {
         }
     }
 
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("EditItemActivity onReceive:" + barcode);
 
+        onBarcodeReceived(barcode);
+    }
 
     private class SpinnerPriceTypeChangeListener extends SpinnerChangeListener {
 
