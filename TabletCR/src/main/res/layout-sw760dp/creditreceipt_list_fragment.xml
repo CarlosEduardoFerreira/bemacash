@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/total_panel"
+        android:layout_height="@dimen/listPreferredItemHeight"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="match_parent"
+            />
+
+        <TextView
+            style="@style/ItemList.Total"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="@string/credit_receipt_header_total_amount"/>
+
+        <TextView
+            style="@style/ItemList.Total"
+            android:id="@+id/total_amount"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            />
+
+        <TextView
+            style="@style/ItemList.Total"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="@string/credit_receipt_header_total_used_amount"/>
+
+        <TextView
+            style="@style/ItemList.Total"
+            android:id="@+id/total_used_amount"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_above="@id/total_panel"
+        android:background="@drawable/item_list_bg">
+
+        <LinearLayout
+            android:id="@+id/header"
+            style="@style/ItemList.HeaderLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="@string/credit_receipt_header_date"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="@string/credit_receipt_header_number"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="@string/credit_receipt_header_cashier"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="@string/credit_receipt_header_amount"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="@string/credit_receipt_header_expire"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="@string/credit_receipt_header_used_date"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="@string/credit_receipt_header_used_amount"/>
+        </LinearLayout>
+
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/list_divider"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+</RelativeLayout>

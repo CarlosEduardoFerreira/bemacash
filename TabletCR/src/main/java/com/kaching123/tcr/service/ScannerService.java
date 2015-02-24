@@ -249,6 +249,11 @@ public class ScannerService extends Service {
 
         Logger.d("ScannerService: read()");
         InputStream inputStream = getInputStream();
+        try {
+            inputStream.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         sentBarcode.set(false);
         try {
             int size;

@@ -2,6 +2,8 @@ package com.kaching123.tcr.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.ActionProvider;
@@ -18,18 +20,15 @@ import com.googlecode.androidannotations.annotations.Fullscreen;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.fragment.user.LoginFragment;
 import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.Permission;
-import com.kaching123.usb.SysBusUsbDevice;
-import com.kaching123.usb.SysBusUsbManager;
+import com.kaching123.tcr.service.SerialPortScannerService;
+import com.kaching123.tcr.util.ReceiverWrapper;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -54,6 +53,21 @@ public class SuperBaseActivity extends FragmentActivity {
         return null;
     }
 
+    private static final IntentFilter intentFilter = new IntentFilter();
+
+    static {
+        intentFilter.addAction(SerialPortScannerService.ACTION_SERIAL_PORT_SCANNER);
+    }
+
+    private ReceiverWrapper progressReceiver = new ReceiverWrapper(intentFilter) {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Logger.d("SuperBaseActivity onReceive:" + intent.getStringExtra(SerialPortScannerService.EXTRA_BARCODE));
+        }
+
+    };
+
     private Permission[] getPermissionsArray() {
         Set<Permission> permissions = getPermissions();
         if (permissions == null)
@@ -67,6 +81,8 @@ public class SuperBaseActivity extends FragmentActivity {
         isDestroyed = false;
         tempLoginActionProvider = new TempLoginActionProvider(this);
         //ViewServer.get(this).addWindow(this);
+        Intent intent = new Intent(SuperBaseActivity.this, SerialPortScannerService.class);
+        startService(intent);
     }
 
     @Override
@@ -84,8 +100,14 @@ public class SuperBaseActivity extends FragmentActivity {
     public void onResume() {
         super.onResume();
         //ViewServer.get(this).setFocusedWindow(this);
+        progressReceiver.register(SuperBaseActivity.this);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        progressReceiver.unregister(SuperBaseActivity.this);
+    }
 
     @Override
     protected void onStart() {
