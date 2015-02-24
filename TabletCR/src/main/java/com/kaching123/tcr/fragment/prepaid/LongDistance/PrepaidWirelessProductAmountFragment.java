@@ -113,6 +113,8 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
             viewPagerIndicator.setVisibility(View.GONE);
         } else {
             amountEditView.setVisibility(View.GONE);
+            if (phoneEditView.getVisibility() == View.GONE)
+                keyboard.setVisibility(View.GONE);
             amountZone.setVisibility(View.GONE);
             viewPager.setVisibility(View.VISIBLE);
             viewPagerIndicator.setVisibility(View.VISIBLE);
@@ -202,7 +204,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     private void error() {
         if (phoneNumber == null && ((amount == BigDecimal.ZERO) || amount == null))
             longDistanceProductAmount.headMessage(PrepaidLongDistanceHeadFragment.PHONE_NUMBER_NULL_AND_AMOUNT_ZERO_ERROR);
-        else if (phoneNumber == null || phoneNumberStr.equalsIgnoreCase(""))
+        else if (phoneNumber == null || phoneNumberStr == null || phoneNumberStr.equalsIgnoreCase(""))
             longDistanceProductAmount.headMessage(PrepaidLongDistanceHeadFragment.PHONE_NUMBER_NULL_ERROR);
         else if (amount == null || amount == BigDecimal.ZERO)
             longDistanceProductAmount.headMessage(PrepaidLongDistanceHeadFragment.AMOUNT_ZERO_ERROR);
