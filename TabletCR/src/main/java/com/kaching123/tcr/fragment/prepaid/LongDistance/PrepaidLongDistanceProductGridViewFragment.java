@@ -164,7 +164,7 @@ public class PrepaidLongDistanceProductGridViewFragment extends PrepaidLongDista
                                     }
                                     break;
                                 case PrepaidHomeFragment.WIRELESS:
-                                    if (item.isWireless()) {
+                                    if (item.isWireless()&&!item.isPinless()) {
                                         items.add(item);
                                     }
                                     break;
