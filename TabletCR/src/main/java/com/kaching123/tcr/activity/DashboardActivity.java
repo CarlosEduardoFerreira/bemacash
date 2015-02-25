@@ -30,7 +30,6 @@ import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
-import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -40,7 +39,6 @@ import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.device.WaitForCloseDrawerCommand;
 import com.kaching123.tcr.commands.device.WaitForCloseDrawerCommand.BaseWaitForCloseDrawerCallback;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
-import com.kaching123.tcr.commands.print.CheckUSBPrinterCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand.BasePrintCallback;
 import com.kaching123.tcr.commands.print.pos.PrintDropPayoutCommand;
 import com.kaching123.tcr.commands.store.settings.ExportDatabaseCommand;
@@ -68,6 +66,7 @@ import com.kaching123.tcr.fragment.shift.CloseDrawerFragment;
 import com.kaching123.tcr.fragment.shift.OpenAmountFragment;
 import com.kaching123.tcr.fragment.shift.PrintXReportFragment;
 import com.kaching123.tcr.fragment.shift.PutCashFragment;
+import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless.ActivationTypeChoosingFragmentDialog;
 import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginFragment.OnLoginCompleteListener;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
@@ -84,8 +83,10 @@ import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.service.OfflineCommandsService;
+import com.kaching123.tcr.service.SerialPortScannerService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
@@ -814,35 +815,10 @@ public class DashboardActivity extends SuperBaseActivity {
             public void onConfirm(BigDecimal value, String comment, MovementType movementType) {
                 AddCashDrawerMovementCommand.start(DashboardActivity.this, null, salesStatisticsModel.shiftModel.guid, movementType, value, comment);
                 PutCashFragment.show(DashboardActivity.this, false);
-                CheckUSBPrinterCommand.start(DashboardActivity.this, new CheckUSBPrinterCommandCallback());
+                WaitForCloseDrawerCommand.start(DashboardActivity.this, movementWaitForCloseDrawerCallback);
             }
         });
     }
-
-    @UiThread
-    protected void startWaitForCloseDrawerCommand() {
-        WaitForCloseDrawerCommand.start(DashboardActivity.this, movementWaitForCloseDrawerCallback);
-    }
-
-    @UiThread
-    protected void ignoreWaitForCloseDrawerCommand() {
-        PutCashFragment.hide(DashboardActivity.this);
-    }
-
-    protected class CheckUSBPrinterCommandCallback extends CheckUSBPrinterCommand.CheckUSBFindPrinterCallback {
-
-        @Override
-        protected void onSearchFinished() {
-            ignoreWaitForCloseDrawerCommand();
-        }
-
-        @Override
-        protected void onFailureFound() {
-            startWaitForCloseDrawerCommand();
-        }
-    }
-
-    protected static final Uri URI_PRINTER = ShopProvider.getContentWithLimitUri(ShopStore.PrinterTable.URI_CONTENT, 1);
 
     private void startUpdateShiftTime() {
         if (isShiftOpened) {

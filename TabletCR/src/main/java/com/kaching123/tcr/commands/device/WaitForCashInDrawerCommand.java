@@ -1,11 +1,15 @@
 package com.kaching123.tcr.commands.device;
 
 import android.content.Context;
+import android.database.Cursor;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.PosPrinter;
+import com.kaching123.pos.USBPrinter;
 import com.kaching123.pos.drawer.OpenDrawerAction;
 import com.kaching123.pos.drawer.WaitForCloseAction;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnCallback;
@@ -40,6 +44,8 @@ public class WaitForCashInDrawerCommand extends BaseDeviceCommand {
             }
             return succeeded();
         }
+        if (getPrinterID().equalsIgnoreCase(USBPrinter.USB_DESC))
+            return succeeded();
         Logger.d("PrinterCommand: WaitForCashInDrawerCommand before OpenDrawerAction");
         new OpenDrawerAction().execute(printer);
         Logger.d("PrinterCommand: WaitForCashInDrawerCommand after OpenDrawerAction");
@@ -114,5 +120,22 @@ public class WaitForCashInDrawerCommand extends BaseDeviceCommand {
         protected abstract void onDrawerClosed();
         protected abstract void onDrawerTimeoutError();
         protected abstract void onDrawerCloseError(PrinterError error);
+    }
+    protected String getPrinterID() {
+        String st = null;
+        Cursor c = ProviderAction.query(URI_PRINTER)
+                .projection(
+                        ShopStore.PrinterTable.IP
+                )
+                .where(ShopStore.PrinterTable.ALIAS_GUID + " IS NULL")
+                .perform(getContext());
+        PrinterInfo printerInfo = null;
+        if (c.moveToFirst()) {
+
+            st = c.getString(0);
+
+        }
+        c.close();
+        return st;
     }
 }
