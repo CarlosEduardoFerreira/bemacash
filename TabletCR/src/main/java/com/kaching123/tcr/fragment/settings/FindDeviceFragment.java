@@ -56,7 +56,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
     protected FindDeviceListener findDeviceListener;
     public static final String INTEGRATED_DISPLAYER = "Integrated Customer Display";
-    public static final String SERIAL_PORT = "Integrated Customer Displayer";
+    public static final String SERIAL_PORT = "Integrated Customer Display";
     public static String USB_MSR_NAME = "Integrated MSR";
     public static String USB_SCANNER_NAME = "USB SCANNER";
     public static String USB_SCANNER_ADDRESS = "USB SCANNER";
@@ -260,6 +260,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
             if (mode != Mode.DISPLAY)
                 return true;
 
+            if (device == null || device.getName() == null)
+                return false;
             return device.getName().contains(DISPLAY_DEVICE_NAME_CONSTRAINT);
         }
 
