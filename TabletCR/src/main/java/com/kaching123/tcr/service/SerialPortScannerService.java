@@ -61,7 +61,7 @@ public class SerialPortScannerService extends Service {
                         Logger.e("ScannerService: read() barcode: " + barcode + ", thread:" + Thread.currentThread().getId());
 
                         if (buffer[size - 1] == terminator) {
-                            intent.putExtra(EXTRA_BARCODE, barcode.substring(0, barcode.length() - 2));
+                            intent.putExtra(EXTRA_BARCODE, barcode.substring(0, barcode.length() > 1 ? barcode.length() - 1 : 1));
                             LocalBroadcastManager.getInstance(SerialPortScannerService.this).sendBroadcast(intent);
                             barcode = "";
                         }

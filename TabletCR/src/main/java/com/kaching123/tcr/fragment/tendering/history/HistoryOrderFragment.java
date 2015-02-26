@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -20,18 +21,21 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.collect.FluentIterable;
+import com.googlecode.androidannotations.annotations.AfterTextChange;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.ViewById;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.BaseCustomersAutocompleteAdapter;
 import com.kaching123.tcr.component.CustomEditBox;
@@ -94,6 +98,9 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     @ViewById
     protected CustomEditBox orderNumber;
 
+    @ViewById
+    protected EditText usbScannerInput;
+
     private MenuItem unitAction;
 
     private CashierFilterSpinnerAdapter cashierAdapter;
@@ -108,9 +115,21 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     private boolean isShown = true;
 
     public void setOrderNumber(String orderNumber) {
-		if (this.orderNumber != null && orderNumber != null)
-        	this.orderNumber.setText(orderNumber);
+        if (this.orderNumber != null && orderNumber != null)
+            this.orderNumber.setText(orderNumber);
+
+        Logger.d("HistoryOrderFragment setOrderNumber: " + ",Thread, " + Thread.currentThread().getId());
     }
+
+    @AfterTextChange
+    protected void usbScannerInputAfterTextChanged(Editable s) {
+        String st = s.toString();
+        if (st.contains("\n")) {
+            setOrderNumber(st.substring(0, st.length() > 1 ? st.length() - 1 : 1));
+            s.clear();
+        }
+    }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -244,7 +263,6 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
         orderNumber.setFilters(new InputFilter[]{new OrderNumberFormatInputFilter()});
         orderNumber.setKeyboardSupportConteiner(this);
-
         orderNumber.setEditListener(new CustomEditBox.IEditListener() {
             @Override
             public boolean onChanged(String text) {
@@ -269,7 +287,6 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                 setCustomer(customerAdapter.getItem(position).guid);
             }
         });
-
 
 
         getLoaderManager().initLoader(CASHIER_LOADER_ID, null, this);

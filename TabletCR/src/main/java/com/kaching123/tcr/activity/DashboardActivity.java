@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.googlecode.androidannotations.annotations.AfterTextChange;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
@@ -66,7 +69,6 @@ import com.kaching123.tcr.fragment.shift.CloseDrawerFragment;
 import com.kaching123.tcr.fragment.shift.OpenAmountFragment;
 import com.kaching123.tcr.fragment.shift.PrintXReportFragment;
 import com.kaching123.tcr.fragment.shift.PutCashFragment;
-import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless.ActivationTypeChoosingFragmentDialog;
 import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginFragment.OnLoginCompleteListener;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
@@ -83,10 +85,8 @@ import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.service.OfflineCommandsService;
-import com.kaching123.tcr.service.SerialPortScannerService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
@@ -189,6 +189,9 @@ public class DashboardActivity extends SuperBaseActivity {
     @ViewById
     protected ViewGroup checkinAndOutButton;
 
+    @ViewById
+    protected EditText usbScannerInput;
+
     private MenuItem alertCounterItem;
     private TextView alertCounterView;
 
@@ -247,6 +250,16 @@ public class DashboardActivity extends SuperBaseActivity {
             Toast.makeText(this, R.string.offline_mode_error_toast_message_logout, Toast.LENGTH_SHORT).show();
         }
     }
+
+    @AfterTextChange
+    protected void usbScannerInputAfterTextChanged(Editable s) {
+        String st = s.toString();
+        if (st.contains("\n")) {
+            barcodeReceivedFromSerialPort(st);
+            s.clear();
+        }
+    }
+
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {

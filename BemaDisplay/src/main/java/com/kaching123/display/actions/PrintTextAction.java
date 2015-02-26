@@ -11,10 +11,10 @@ public class PrintTextAction extends Action {
     private byte bytes[];
     private String text;
 
-    public PrintTextAction(String text) {
+    public PrintTextAction(String text, boolean isSerialPortDisplay) {
         this.text = text;
 //        bytes = text.getBytes(ASCII_CHARSET);
-        bytes = utf2cp850(text);
+            bytes = utf2cp850(text, isSerialPortDisplay);
     }
 
     @Override

@@ -412,6 +412,9 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
                 }
             }
             if (i == 0) {
+
+                Logger.d("HistoryActivity onBarcodeReceived: "+",Thread, "+Thread.currentThread().getId());
+
                 historyFragment.setOrderNumber(barcode);
             }
         }

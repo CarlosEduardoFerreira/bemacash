@@ -1511,7 +1511,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @Override
     public void onBarcodeReceived(String barcode) {
         if (barcodeListener != null) {
-            Logger.d("BaseCashierActivity: scannerListener: onBarcodeReceived(): barcode listener = " + barcodeListener);
+            Logger.d("BaseCashierActivity: onBarcodeReceived(): barcode  = " + barcode);
             int i = 0;
             for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                 if (fragment instanceof BarcodeReceiver) {
@@ -1584,6 +1584,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             Logger.d("BaseCashierActivity: defaultBarcodeListener: onBarcodeReceived()");
             if (isPaying) {
                 Logger.d("BaseCashierActivity: defaultBarcodeListener: onBarcodeReceived(): ignore and exit - payment in progress");
+                playAlarm();
                 return;
             }
 
