@@ -34,6 +34,7 @@ public class BasePosTextPrinter implements IPrinter {
     public static final DecimalFormat priceFormat = new DecimalFormat("0.00");
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy, h:mm a", Locale.US);
     public static final String SPACES_2 = "  ";
+    public static final String SPACES_4 = "    ";
 
     static {
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);

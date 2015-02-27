@@ -164,6 +164,7 @@ public class BaseItemModifiersFragment extends Fragment {
                 modifiers.setVisibility(View.VISIBLE);
             }
             modifiers.setList(modifierModels);
+            modifiers.setColumnNums(modifierModels != null && modifierModels.size() > 1 ? 2 : 1);
         }
 
         @Override
@@ -201,6 +202,10 @@ public class BaseItemModifiersFragment extends Fragment {
                 containerView.setVisibility(View.VISIBLE);
             }
             containerView.setList(addonsModels);
+            if (type == ModifierType.ADDON)
+                containerView.setColumnNums(addonsModels != null && addonsModels.size() > 1 ? 3 : 1);
+            else
+                containerView.setColumnNums(addonsModels != null && addonsModels.size() > 1 ? 2 : 1);
         }
 
         @Override
@@ -277,18 +282,15 @@ public class BaseItemModifiersFragment extends Fragment {
 
         int sections = items.size();
 
-            for (int k = 0; k < sections; k++) {
-                ColumnInfo i = items.get(k);
+        for (int k = 0; k < sections; k++) {
+            ColumnInfo i = items.get(k);
 
-                if(i.type == ColumnInfo.Type.A)
-                {
-                    i.displayColumn = Math.min(i.columns, addonColumnCount);
-                }
-                else
-                {
-                    i.displayColumn = Math.min(i.columns, otherColumnCount);
-                }
+            if (i.type == ColumnInfo.Type.A) {
+                i.displayColumn = Math.min(i.columns, addonColumnCount);
+            } else {
+                i.displayColumn = Math.min(i.columns, otherColumnCount);
             }
+        }
 
         return columnsInfo;
     }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.googlecode.androidannotations.annotations.EViewGroup;
+import com.googlecode.androidannotations.annotations.ViewById;
+import com.jess.ui.TwoWayGridView;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.ModifierModel;
 
@@ -43,5 +45,8 @@ public class AddonsContainerView extends BaseAddonContainerView<ModifierModel> {
 
     public void setSelectedAddonsGuids (ArrayList<String> selectedAddonsGuids){
         setSelectedItems(selectedAddonsGuids);
+    }
+    public void setColumnNums(int num) {
+        buttonGrid.setNumColumns(num);
     }
 }

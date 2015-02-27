@@ -32,6 +32,11 @@ public class PosKitchenPrinter extends BasePosTextPrinter implements IKitchenPri
     }
 
     @Override
+    public void addAddsOn(String description) {
+        splitRows(SPACES_4, description);
+    }
+
+    @Override
     public void tabbed(String first, String second) {
         add(new PrintLineAction(formatHolderString(PRINTER_MAX_TEXT_LEN, second.length(), first, second)));
     }
