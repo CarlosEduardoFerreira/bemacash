@@ -131,7 +131,7 @@ public class InventoryActivity extends ScannerBaseActivity {
                     selectedCategoryGuid = catGuid;
                     selectedDeartmentGuid = depGuid;
                     if (sortItem != null) {
-                        sortItem.setVisible(false);
+                        sortItem.setVisible(true);
                     }
                 }
             }

@@ -89,7 +89,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
     public void setCategory(String categoryGuid) {
         draggable = !LOAD_ALL_CATEGORIES.equals(categoryGuid);
         list.setDragEnabled(draggable);
-        ((Adapter)adapter).setDraggable(draggable);
+        ((Adapter) adapter).setDraggable(draggable);
         super.setCategory(categoryGuid);
     }
 
@@ -99,7 +99,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(URI_ITEMS);
         builder.projection(ItemExFunction.PROJECTION);
 
-        builder.orderBy(sortByName && LOAD_ALL_CATEGORIES.equals(categoryGuid)? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
+        builder.orderBy(sortByName ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
 
         builder.where(ItemTable.IS_DELETED + " = ?", 0);
 
@@ -129,7 +129,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         getLoaderManager().restartLoader(0, null, this);
     }
 
-    public void sortByName(boolean sortByName){
+    public void sortByName(boolean sortByName) {
         this.sortByName = sortByName;
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -172,7 +172,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
             return convertView;
         }
 
-        private void showEanOrProductCode(ViewHolder holder, String productCode, String eanCode){
+        private void showEanOrProductCode(ViewHolder holder, String productCode, String eanCode) {
             if (TextUtils.isEmpty(eanCode)) {
                 if (TextUtils.isEmpty(productCode)) {
                     holder.ean.setVisibility(View.GONE);
