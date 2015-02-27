@@ -118,7 +118,7 @@ public class BaseItemModifiersFragment extends Fragment {
         getLoaderManager().restartLoader(LOADER_OPTIONALS, null, new AddonModelLoader(ModifierType.OPTIONAL, optionals));
     }
 
-    private static int modifyColumnCount;
+    private static int addonColumnCount;
     private static int otherColumnCount;
 
     @AfterViews
@@ -126,7 +126,7 @@ public class BaseItemModifiersFragment extends Fragment {
         modifiers.setContainerTitle(getString(R.string.dlg_section_modifier));
         addons.setContainerTitle(getString(R.string.dlg_section_addon));
         optionals.setContainerTitle(getString(R.string.dlg_section_optional));
-        modifyColumnCount = 3;
+        addonColumnCount = 3;
         otherColumnCount = getActivity().getResources().getInteger(R.integer.addon_nooption_column);
     }
 
@@ -279,9 +279,9 @@ public class BaseItemModifiersFragment extends Fragment {
             for (int k = 0; k < sections; k++) {
                 ColumnInfo i = items.get(k);
 
-                if(i.type == ColumnInfo.Type.M)
+                if(i.type == ColumnInfo.Type.A)
                 {
-                    i.displayColumn = Math.min(i.columns, modifyColumnCount);
+                    i.displayColumn = Math.min(i.columns, addonColumnCount);
                 }
                 else
                 {
