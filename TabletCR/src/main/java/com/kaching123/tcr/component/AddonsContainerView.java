@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by vkompaniets on 18.11.13.
  */
-@EViewGroup (R.layout.modify_container)
+@EViewGroup (R.layout.addon_nooption_container)
 public class AddonsContainerView extends BaseAddonContainerView<ModifierModel> {
 
     public AddonsContainerView(Context context, AttributeSet attrs) {

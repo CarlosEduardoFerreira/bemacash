@@ -18,6 +18,7 @@ import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.AddonsContainerView;
 import com.kaching123.tcr.component.ModifiersContainerView;
+import com.kaching123.tcr.component.NoOptionsContainerView;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.converter.ModifierFunction;
@@ -50,7 +51,7 @@ public class BaseItemModifiersFragment extends Fragment {
     protected AddonsContainerView addons;
 
     @ViewById
-    protected AddonsContainerView optionals;
+    protected NoOptionsContainerView optionals;
 
     @InstanceState
     protected String itemGuid;

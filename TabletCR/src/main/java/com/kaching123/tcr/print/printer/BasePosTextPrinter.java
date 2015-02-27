@@ -206,7 +206,7 @@ public class BasePosTextPrinter implements IPrinter {
         } else {
             printTitle.append(title);
         }
-
+        String[] spaccSt = title.split(" ");
         if (printTitle.length() < maxLeftPart) {
             for (int i = printTitle.length(); i < maxLeftPart; i++) {
                 printTitle.append(' ');
@@ -217,6 +217,10 @@ public class BasePosTextPrinter implements IPrinter {
         String[] parts = title.split(" ");
         int partsSpace = parts.length == 0 ? 0 : parts.length - 1;
         for (int i = 1; i < priceLen - price.toString().length() - dolloarSignLen - partsSpace; i++) {
+            printTitle.append(' ');
+        }
+        // count space
+        for (int count = 1; count < spaccSt.length; count++) {
             printTitle.append(' ');
         }
         if (dolloarSignLen > 0) {

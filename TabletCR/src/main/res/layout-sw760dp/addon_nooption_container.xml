@@ -24,7 +24,7 @@
         android:scrollbarTrackHorizontal="@drawable/scrollbar_horizontal_track"
 
 
-        grid:numColumns="2"
+        grid:numColumns="3"
         grid:verticalSpacing="5dp"
         grid:horizontalSpacing="14dp"
         grid:scrollDirectionLandscape="vertical"/>
