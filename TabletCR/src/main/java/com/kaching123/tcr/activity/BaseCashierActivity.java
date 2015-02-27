@@ -2056,4 +2056,20 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
+    protected void hideQuickModifyFragment()
+    {
+        if(totalCostFragment != null)
+        {
+            getSupportFragmentManager().beginTransaction().hide(totalCostFragment).commit();
+        }
+    }
+
+    protected void showQuickModifyFragment()
+    {
+        if(totalCostFragment != null)
+        {
+            getSupportFragmentManager().beginTransaction().show(totalCostFragment).commit();
+        }
+    }
+
 }

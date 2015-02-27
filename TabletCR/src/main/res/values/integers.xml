@@ -26,6 +26,7 @@
     <integer name="product_flag_grid_columns">3</integer>
     <integer name="product_carrier_grid_columns">4</integer>
     <integer name="product_grid_rows">3</integer>
+    <integer name="addon_nooption_column">3</integer>
     <integer-array name="tips_predefine">
         <item name="tip1">15</item>
         <item name="tip2">18</item>

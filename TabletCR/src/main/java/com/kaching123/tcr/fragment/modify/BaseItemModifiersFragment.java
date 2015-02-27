@@ -118,11 +118,16 @@ public class BaseItemModifiersFragment extends Fragment {
         getLoaderManager().restartLoader(LOADER_OPTIONALS, null, new AddonModelLoader(ModifierType.OPTIONAL, optionals));
     }
 
+    private static int modifyColumnCount;
+    private static int otherColumnCount;
+
     @AfterViews
     protected void init() {
         modifiers.setContainerTitle(getString(R.string.dlg_section_modifier));
         addons.setContainerTitle(getString(R.string.dlg_section_addon));
         optionals.setContainerTitle(getString(R.string.dlg_section_optional));
+        modifyColumnCount = 3;
+        otherColumnCount = getActivity().getResources().getInteger(R.integer.addon_nooption_column);
     }
 
     public void setOnAddonsChangedListener(OnAddonsChangedListener onAddonsChangedListener) {
@@ -268,15 +273,22 @@ public class BaseItemModifiersFragment extends Fragment {
 
         int dif = 0;
         int total = 0;
-        int columnCount = 3;
+
         int sections = items.size();
-        for (int k = 0; k < sections; k++) {
-            ColumnInfo i = items.get(k);
-            int max = columnCount + dif /(sections - k);
-            i.displayColumn = Math.min(i.columns, max);
-            total += i.displayColumn;
-            dif = columnCount * (k + 1) - total;
-        }
+
+            for (int k = 0; k < sections; k++) {
+                ColumnInfo i = items.get(k);
+
+                if(i.type == ColumnInfo.Type.M)
+                {
+                    i.displayColumn = Math.min(i.columns, modifyColumnCount);
+                }
+                else
+                {
+                    i.displayColumn = Math.min(i.columns, otherColumnCount);
+                }
+            }
+
         return columnsInfo;
     }
 

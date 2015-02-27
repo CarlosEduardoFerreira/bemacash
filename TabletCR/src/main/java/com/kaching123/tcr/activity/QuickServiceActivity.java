@@ -1,7 +1,6 @@
 package com.kaching123.tcr.activity;
 
 import android.content.Context;
-import android.widget.ArrayAdapter;
 
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.FragmentById;
@@ -99,11 +98,12 @@ public class QuickServiceActivity extends BaseCashierActivity {
             return;
         getSupportFragmentManager().beginTransaction().hide(modifyFragment).commit();
         getSupportFragmentManager().popBackStack();
-
+        showQuickModifyFragment();
     }
 
     public void showModifiersFragment() {
         getSupportFragmentManager().beginTransaction().show(modifyFragment).addToBackStack(null).commit();
+        hideQuickModifyFragment();
     }
 
     @Override
@@ -133,11 +133,17 @@ public class QuickServiceActivity extends BaseCashierActivity {
         }
     };
 
-    public static void start(Context context){
+    public static void start(Context context) {
         QuickServiceActivity_.intent(context).start();
     }
 
-    public static void start4Return(Context context){
+    public static void start4Return(Context context) {
         QuickServiceActivity_.intent(context).isCreateReturnOrder(true).start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        showQuickModifyFragment();
     }
 }

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/modify_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/cashier_activity_background">
+
+    <LinearLayout
+        android:id="@+id/buttons_panel"
+        android:layout_height="match_parent"
+        android:layout_width="238dp"
+        android:padding="16dp"
+        android:orientation="vertical"
+        android:background="#1B1B1B">
+
+        <!--android:layout_marginTop="4dp"-->
+        <TextView
+            android:text="Coffee"
+            style="@style/QuickServiceInfo.Title"
+            android:id="@+id/item_title"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+        <!--android:layout_marginTop="12dp"-->
+        <LinearLayout
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:background="@drawable/dark_rounded_bg"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <RelativeLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+
+                <TextView
+                    style="@style/QuickServiceInfo.Price"
+                    android:id="@+id/item_price_value"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="00.00"/>
+
+                <TextView
+                    android:text="Coffee"
+                    android:id="@+id/item_price_label"
+                    style="@style/QuickServiceInfo.Label"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
+
+                <TextView
+                    android:layout_toRightOf="@id/item_price_label"
+                    android:layout_toLeftOf="@id/item_price_value"
+                    style="@style/QuickServiceInfo.Label"
+                    android:text="@string/lots_o_dots"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_alignBottom="@id/item_price_label"/>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_marginTop="4dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+
+                <TextView
+                    style="@style/QuickServiceInfo.Price"
+                    android:id="@+id/addons_price_value"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="00.00"/>
+
+                <TextView
+                    android:text="@string/qs_info_panel_addons_label"
+                    android:id="@+id/addons_price_label"
+                    style="@style/QuickServiceInfo.Label"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
+
+                <TextView
+                    android:layout_toRightOf="@id/addons_price_label"
+                    android:layout_toLeftOf="@id/addons_price_value"
+                    style="@style/QuickServiceInfo.Label"
+                    android:text="@string/lots_o_dots"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_alignBottom="@id/addons_price_label"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_height="2dp"
+                android:layout_width="match_parent"
+                android:background="@drawable/qs_horizontal_divider"/>
+
+            <RelativeLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+
+                <TextView
+                    style="@style/QuickServiceInfo.Total"
+                    android:id="@+id/total_price_value"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="00.00"/>
+
+                <TextView
+                    android:text="@string/qs_info_panel_total_label"
+                    android:id="@+id/total_price_label"
+                    style="@style/QuickServiceInfo.Total"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
+
+                <TextView
+                    android:layout_toRightOf="@id/total_price_label"
+                    android:layout_toLeftOf="@id/total_price_value"
+                    style="@style/QuickServiceInfo.Total"
+                    android:text="@string/lots_o_dots"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_alignBottom="@id/total_price_label"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <Button
+            style="@style/LocalizableButton.Green"
+            android:textSize="22sp"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/btn_confirm"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="@drawable/qs_btn_add"
+            />
+
+        <Button
+            style="@style/LocalizableButton.DarkGrey"
+            android:text="@string/button_cancel"
+            android:textSize="22sp"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/btn_cancel"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="@drawable/qs_btn_cancel"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/panel_divider"
+        android:layout_toRightOf="@id/buttons_panel"
+        android:layout_height="match_parent"
+        android:layout_width="15dp"
+        android:background="@drawable/quick_left_panel_arrow"/>
+
+    <LinearLayout
+        android:layout_toRightOf="@id/panel_divider"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <com.kaching123.tcr.component.ModifiersContainerView_
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:id="@+id/modifiers"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"/>
+
+        <com.kaching123.tcr.component.AddonsContainerView_
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:id="@+id/addons"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"/>
+
+        <com.kaching123.tcr.component.AddonsContainerView_
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:id="@+id/optionals"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
