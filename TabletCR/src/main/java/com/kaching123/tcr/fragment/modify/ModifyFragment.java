@@ -85,9 +85,10 @@ public class ModifyFragment extends StyledDialogFragment {
 
         int width = 0;
         int margin = getResources().getDimensionPixelOffset(R.dimen.modify_container_margin_left) * 2;
-        int rowCount = getResources().getInteger(R.integer.modify_container_row_count);
+        int modifyRowCount = getResources().getInteger(R.integer.modify_container_row_count);
+        int addOnRowCount = getResources().getInteger(R.integer.modify_container_row_count);
 
-        HashMap<ColumnInfo.Type, ColumnInfo> columnsInfo = ItemModifiersInnerFragment.calculateAvailableColumns(numModifiers, numAddons, numOptionals, rowCount);
+        HashMap<ColumnInfo.Type, ColumnInfo> columnsInfo = ItemModifiersInnerFragment.calculateAvailableColumns(numModifiers, numAddons, numOptionals, modifyRowCount, addOnRowCount);
 
         for (int i = 0; i < columnsInfo.size(); i++) {
             ColumnInfo c = i == 0 ? columnsInfo.get(ColumnInfo.Type.M) : i == 1 ? columnsInfo.get(ColumnInfo.Type.A) : columnsInfo.get(ColumnInfo.Type.O);

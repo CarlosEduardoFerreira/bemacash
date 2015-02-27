@@ -163,8 +163,9 @@ public class BaseItemModifiersFragment extends Fragment {
             } else {
                 modifiers.setVisibility(View.VISIBLE);
             }
+            int modifyMaxColumn = 2;
             modifiers.setList(modifierModels);
-            modifiers.setColumnNums(modifierModels != null && modifierModels.size() > 1 ? 2 : 1);
+            modifiers.setColumnNums(modifierModels.size() < modifyMaxColumn ? modifierModels.size() : modifyMaxColumn);
         }
 
         @Override
@@ -202,10 +203,12 @@ public class BaseItemModifiersFragment extends Fragment {
                 containerView.setVisibility(View.VISIBLE);
             }
             containerView.setList(addonsModels);
+            int addsOnMax = 3;
+            int onOptionsMax = 2;
             if (type == ModifierType.ADDON)
-                containerView.setColumnNums(addonsModels != null && addonsModels.size() > 1 ? 3 : 1);
+                containerView.setColumnNums(addonsModels.size() < addsOnMax ? addonsModels.size() : addsOnMax);
             else
-                containerView.setColumnNums(addonsModels != null && addonsModels.size() > 1 ? 2 : 1);
+                containerView.setColumnNums(addonsModels.size() < onOptionsMax ? addonsModels.size() : onOptionsMax);
         }
 
         @Override
@@ -224,9 +227,11 @@ public class BaseItemModifiersFragment extends Fragment {
             return 0;
         }
 
-        int rowCount = getResources().getInteger(R.integer.modify_container_row_count);
+        int modifyRowCount = getResources().getInteger(R.integer.modify_container_row_count);
 
-        HashMap<ColumnInfo.Type, ColumnInfo> columnsInfo = calculateAvailableColumns(numModifiers, numAddons, numOptionals, rowCount);
+        int addOnRowCount = getResources().getInteger(R.integer.modify_container_row_count);
+
+        HashMap<ColumnInfo.Type, ColumnInfo> columnsInfo = calculateAvailableColumns(numModifiers, numAddons, numOptionals, modifyRowCount, addOnRowCount);
 
         int width = 0;
         int margin = getResources().getDimensionPixelOffset(R.dimen.modify_container_margin_left) * 2;
@@ -264,16 +269,16 @@ public class BaseItemModifiersFragment extends Fragment {
         return size;
     }
 
-    public static HashMap<ColumnInfo.Type, ColumnInfo> calculateAvailableColumns(int numModifiers, int numAddons, int numOptionals, int rowCount) {
+    public static HashMap<ColumnInfo.Type, ColumnInfo> calculateAvailableColumns(int numModifiers, int numAddons, int numOptionals, int modifyRowCount, int addOnRowCount) {
         HashMap<ColumnInfo.Type, ColumnInfo> columnsInfo = new HashMap<ColumnInfo.Type, ColumnInfo>();
 
         ColumnInfo info;
         ArrayList<ColumnInfo> items = new ArrayList<ColumnInfo>(3);
-        items.add(info = new ColumnInfo(ColumnInfo.Type.M, numModifiers, rowCount));
+        items.add(info = new ColumnInfo(ColumnInfo.Type.M, numModifiers, modifyRowCount));
         columnsInfo.put(info.type, info);
-        items.add(info = new ColumnInfo(ColumnInfo.Type.A, numAddons, rowCount));
+        items.add(info = new ColumnInfo(ColumnInfo.Type.A, numAddons, addOnRowCount));
         columnsInfo.put(info.type, info);
-        items.add(info = new ColumnInfo(ColumnInfo.Type.O, numOptionals, rowCount));
+        items.add(info = new ColumnInfo(ColumnInfo.Type.O, numOptionals, modifyRowCount));
         columnsInfo.put(info.type, info);
         Collections.sort(items);
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="modify_container_row_count">3</integer>
+    <integer name="modify_container_row_count">2</integer>
+    <integer name="addon_container_row_count">3</integer>
     <integer name="quick_categories_columns">2</integer>
     <integer name="quick_grid_columns">7</integer>
     <integer name="quick_grid_1024_768_columns">7</integer>
