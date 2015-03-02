@@ -127,8 +127,6 @@ public class BaseItemModifiersFragment extends Fragment {
         modifiers.setContainerTitle(getString(R.string.dlg_section_modifier));
         addons.setContainerTitle(getString(R.string.dlg_section_addon));
         optionals.setContainerTitle(getString(R.string.dlg_section_optional));
-        addonColumnCount = 3;
-        otherColumnCount = getActivity().getResources().getInteger(R.integer.addon_nooption_column);
     }
 
     public void setOnAddonsChangedListener(OnAddonsChangedListener onAddonsChangedListener) {
@@ -284,7 +282,8 @@ public class BaseItemModifiersFragment extends Fragment {
 
         int dif = 0;
         int total = 0;
-
+        addonColumnCount = 3;
+        otherColumnCount = 2;
         int sections = items.size();
 
         for (int k = 0; k < sections; k++) {

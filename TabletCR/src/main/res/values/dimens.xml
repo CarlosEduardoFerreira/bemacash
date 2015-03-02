@@ -57,7 +57,7 @@
     <dimen name="modify_button_width">82dp</dimen>
     <dimen name="modify_button_height">84dp</dimen>
     <dimen name="modify_button_price_zone_height">18dp</dimen>
-    <dimen name="modify_dialog_height">480dp</dimen>
+    <dimen name="modify_dialog_height">500dp</dimen>
     <dimen name="modify_dialog_min_width">180dp</dimen>
     <dimen name="copy_modify_dialog_width">984dp</dimen>
     <dimen name="copy_modify_dialog_height">560dp</dimen>

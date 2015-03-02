@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="report_spinner_def_width">100dp</dimen>
+    <dimen name="modify_dialog_height">475dp</dimen>
 </resources>
