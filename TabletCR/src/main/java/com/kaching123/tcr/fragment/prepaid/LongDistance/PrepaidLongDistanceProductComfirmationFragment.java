@@ -15,6 +15,7 @@ import com.googlecode.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidLongDistanceActivity;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
+import com.kaching123.tcr.print.FormatterUtil;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import java.math.BigDecimal;
@@ -31,9 +32,11 @@ public class PrepaidLongDistanceProductComfirmationFragment extends PrepaidLongD
     protected WirelessItem chosenCategory;
     @FragmentArg
     protected String phoneNumber;
+    @FragmentArg
+    protected BigDecimal feeAmount;
 
     @ViewById
-    protected TextView productName, productNameDisplay, total, submit;
+    protected TextView productName, productNameDisplay, total, submit, feeAmountShows;
     @ViewById
     protected ImageView productImageview;
 
@@ -48,12 +51,13 @@ public class PrepaidLongDistanceProductComfirmationFragment extends PrepaidLongD
         productName.setText(chosenCategory.name);
         UrlImageViewHelper.setUrlDrawable(productImageview, chosenCategory.iconUrl, R.drawable.operator_default_icon, 60000);
         productNameDisplay.setText(chosenCategory.name);
-        total.setText(amount.toString());
+        feeAmountShows.setText(FormatterUtil.commaPriceFormat(feeAmount));
+        total.setText(FormatterUtil.commaPriceFormat(amount.add(feeAmount)));
     }
 
     @Click
     void submit() {
-        pcCallback.comfirm(phoneNumber, amount, chosenCategory);
+        pcCallback.comfirm(phoneNumber, amount.add(feeAmount), chosenCategory);
     }
 
     private ProductComfirmationCallback pcCallback;

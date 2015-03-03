@@ -65,6 +65,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     private List list;
     private final String MIN = "Min";
     private final String MAX = "Max";
+    private BigDecimal feeAmount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,6 +82,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     @AfterViews
     public void init() {
         keyboard.attachEditView(phoneEditView);
+        feeAmount = new BigDecimal(chosenCategory.feeAmount);
         updatePhoneViews();
         setPhoneEditView();
         setAmountEditView();
@@ -249,7 +251,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     }
 
     private void complete() {
-        longDistanceProductAmount.conditionSelected(amount, phoneNumberStr);
+        longDistanceProductAmount.conditionSelected(amount, phoneNumberStr, feeAmount);
         longDistanceProductAmount.headMessage(PrepaidLongDistanceHeadFragment.PURCHASE_SUMMARY);
     }
 

@@ -1527,6 +1527,7 @@
     <string name="prepaid_wireless_payment_complete_order_data">Your order data</string>
     <string name="prepaid_wireless_payment_complete_order_num">Order Number:</string>
     <string name="prepaid_wireless_payment_complete_product">Product:</string>
+    <string name="prepaid_wireless_payment_complete_product_transaction_fee">Transaction Fee:</string>
     <string name="prepaid_wireless_payment_complete_order_total_price">Total:</string>
     <string name="prepaid_sunpass_credencial_account_hint">Enter your transponder Number</string>
     <string name="prepaid_sunpass_credencial_account_validate_hint">Confirm your transponder Number</string>

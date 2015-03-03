@@ -169,8 +169,8 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
         }
 
         @Override
-        public void conditionSelected(BigDecimal amount, String phoneNumber) {
-            productComfirmationFragment = new PrepaidLongDistanceProductComfirmationFragment_().builder().amount(amount).phoneNumber(phoneNumber).chosenCategory(chosenCategory).build();
+        public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount) {
+            productComfirmationFragment = new PrepaidLongDistanceProductComfirmationFragment_().builder().amount(amount).feeAmount(feeAmount).phoneNumber(phoneNumber).chosenCategory(chosenCategory).build();
             productComfirmationFragment.setCallback(productComfirmationFragmentCallback);
             setCallback(productComfirmationFragment);
             getSupportFragmentManager().beginTransaction().addToBackStack("PrepaidLongDistanceProductComfirmationFragment").hide(productFragment).add(R.id.long_distance_body, productComfirmationFragment).commit();

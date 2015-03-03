@@ -39,13 +39,14 @@ public class WirelessItem implements IValueModel, Serializable {
     public ProductAccessPhone[] productAccessPhones;
     public int merchantBuyingFrequency;
     public int zipCodeBuyingFrequency;
+    public double feeAmount;
 
     public WirelessItem() {
     }
 
     public WirelessItem(String code, String name, boolean useFixedDenominations,
                         BigDecimal minDenomination, BigDecimal maxDenomination, String carrierName,
-                        String countryCode, String countryName, String type, BigDecimal[] denominations, String urlIcon, String dialCountryCode, String TermsAndConditions, ProductAccessPhone[] productAccessPhones, int merchantBuyingFrequency, int zipCodeBuyingFrequency) {
+                        String countryCode, String countryName, String type, BigDecimal[] denominations, String urlIcon, String dialCountryCode, String TermsAndConditions, ProductAccessPhone[] productAccessPhones, int merchantBuyingFrequency, int zipCodeBuyingFrequency, double feeAmount) {
         this.code = code;
         this.name = name;
         this.useFixedDenominations = useFixedDenominations;
@@ -62,6 +63,7 @@ public class WirelessItem implements IValueModel, Serializable {
         this.productAccessPhones = productAccessPhones;
         this.merchantBuyingFrequency = merchantBuyingFrequency;
         this.zipCodeBuyingFrequency = zipCodeBuyingFrequency;
+        this.feeAmount = feeAmount;
     }
 
     public WirelessItem(Product product) {
@@ -80,7 +82,8 @@ public class WirelessItem implements IValueModel, Serializable {
                 product.termsAndConditions,
                 null,
                 product.merchantBuyingFrequency,
-                product.zipCodeBuyingFrequency);
+                product.zipCodeBuyingFrequency,
+                product.feeAmount);
         if (product.denominations != null) {
             denominations = new BigDecimal[product.denominations.size()];
             int i = 0;
@@ -93,10 +96,10 @@ public class WirelessItem implements IValueModel, Serializable {
 //            if (product.productAccessPhones != null)
 //                for (ProductAccessPhone accessPhone1 : product.productAccessPhones)
 //                    Logger.d("trace 2014:" + accessPhone1.state + accessPhone1.city + accessPhone1.language + accessPhone1.phoneNumber);
-        if (product.productAccessPhones != null) {
-            productAccessPhones = new ProductAccessPhone[product.productAccessPhones.size()];
+        if (product.accessPhones != null) {
+            productAccessPhones = new ProductAccessPhone[product.accessPhones.size()];
             int i = 0;
-            for (ProductAccessPhone accessPhone : product.productAccessPhones) {
+            for (ProductAccessPhone accessPhone : product.accessPhones) {
                 productAccessPhones[i] = accessPhone;
                 i++;
             }
@@ -120,7 +123,8 @@ public class WirelessItem implements IValueModel, Serializable {
                 c.getString(c.getColumnIndex(WirelessTable.TERMSANDCONDITIONS)),
                 null,
                 c.getInt(c.getColumnIndex(WirelessTable.MERCHANGTBUYINGFREQUENCY)),
-                c.getInt(c.getColumnIndex(WirelessTable.ZIPCODEBUYFREQUENCY))
+                c.getInt(c.getColumnIndex(WirelessTable.ZIPCODEBUYFREQUENCY)),
+                c.getDouble(c.getColumnIndex(WirelessTable.FEEAMOUNT))
         );
         String[] buffer = c.getString(c.getColumnIndex(WirelessTable.DENOMINATIONS)).split(";");
         if (buffer != null) {
@@ -181,6 +185,7 @@ public class WirelessItem implements IValueModel, Serializable {
         v.put(WirelessTable.TERMSANDCONDITIONS, TermsAndConditions);
         v.put(WirelessTable.MERCHANGTBUYINGFREQUENCY, merchantBuyingFrequency);
         v.put(WirelessTable.ZIPCODEBUYFREQUENCY, zipCodeBuyingFrequency);
+        v.put(WirelessTable.FEEAMOUNT, feeAmount);
         StringBuilder builder = new StringBuilder();
         if (denominations == null) {
             v.put(WirelessTable.DENOMINATIONS, "");

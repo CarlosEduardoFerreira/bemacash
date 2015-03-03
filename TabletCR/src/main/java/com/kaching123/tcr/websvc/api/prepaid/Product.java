@@ -35,10 +35,13 @@ public class Product implements KvmSerializable, Serializable {
     public String imageUrl;
     public String dialCountryCode;
     public String termsAndConditions;
+    public String instructions;
     public VectorDouble denominations;
-    public VectorProductAccessPhone productAccessPhones;
+    public VectorProductAccessPhone accessPhones;
+    public ProductFlags flags;
     public int merchantBuyingFrequency;
     public int zipCodeBuyingFrequency;
+    public double feeAmount;
 
     public Product(){}
 
@@ -166,6 +169,16 @@ public class Product implements KvmSerializable, Serializable {
                 termsAndConditions = (String) obj;
             }
         }
+        if (soapObject.hasProperty("Instructions"))
+        {
+            Object obj = soapObject.getProperty("Instructions");
+            if (obj != null && obj.getClass().equals(SoapPrimitive.class)){
+                SoapPrimitive j =(SoapPrimitive) obj;
+                instructions = j.toString();
+            }else if (obj!= null && obj instanceof String){
+                instructions = (String) obj;
+            }
+        }
         if (soapObject.hasProperty("Denominations"))
         {
             SoapObject j = (SoapObject)soapObject.getProperty("Denominations");
@@ -174,7 +187,13 @@ public class Product implements KvmSerializable, Serializable {
         if (soapObject.hasProperty("AccessPhones"))
         {
             SoapObject j = (SoapObject)soapObject.getProperty("AccessPhones");
-            productAccessPhones = new VectorProductAccessPhone(j);
+            accessPhones = new VectorProductAccessPhone(j);
+        }
+        if (soapObject.hasProperty("Flags"))
+        {
+            SoapObject j = (SoapObject)soapObject.getProperty("Flags");
+            flags =  new ProductFlags (j);
+
         }
         if (soapObject.hasProperty("MerchantBuyingFrequency"))
         {
@@ -194,6 +213,16 @@ public class Product implements KvmSerializable, Serializable {
                 zipCodeBuyingFrequency = Integer.parseInt(j.toString());
             }else if (obj!= null && obj instanceof Number){
                 zipCodeBuyingFrequency = (Integer) obj;
+            }
+        }
+        if (soapObject.hasProperty("FeeAmount"))
+        {
+            Object obj = soapObject.getProperty("FeeAmount");
+            if (obj != null && obj.getClass().equals(SoapPrimitive.class)){
+                SoapPrimitive j =(SoapPrimitive) obj;
+                feeAmount = Double.parseDouble(j.toString());
+            }else if (obj!= null && obj instanceof Number){
+                feeAmount = (Double) obj;
             }
         }
     }
@@ -225,20 +254,26 @@ public class Product implements KvmSerializable, Serializable {
             case 11:
                 return termsAndConditions;
             case 12:
-                return denominations;
+                return instructions;
             case 13:
-                return productAccessPhones;
+                return denominations;
             case 14:
-                return merchantBuyingFrequency;
+                return accessPhones;
             case 15:
+                return flags;
+            case 16:
+                return merchantBuyingFrequency;
+            case 17:
                 return zipCodeBuyingFrequency;
+            case 18:
+                return feeAmount;
         }
         return null;
     }
 
     @Override
     public int getPropertyCount() {
-        return 16;
+        return 19;
     }
 
     @Override
@@ -293,20 +328,32 @@ public class Product implements KvmSerializable, Serializable {
                 info.name = "TermsAndConditions";
                 break;
             case 12:
-                info.type = PropertyInfo.VECTOR_CLASS;
-                info.name = "Denominations";
+                info.type = PropertyInfo.STRING_CLASS;
+                info.name = "Instructions";
                 break;
             case 13:
                 info.type = PropertyInfo.VECTOR_CLASS;
-                info.name = "AccessPhones";
+                info.name = "Denominations";
                 break;
             case 14:
+                info.type = PropertyInfo.VECTOR_CLASS;
+                info.name = "AccessPhones";
+                break;
+            case 15:
+                info.type = ProductFlags.class;
+                info.name = "Flags";
+                break;
+            case 16:
                 info.type = PropertyInfo.INTEGER_CLASS;
                 info.name = "MerchantBuyingFrequency";
                 break;
-            case 15:
+            case 17:
                 info.type = PropertyInfo.INTEGER_CLASS;
                 info.name = "ZipCodeBuyingFrequency";
+                break;
+            case 18:
+                info.type = Double.class;
+                info.name = "FeeAmount";
                 break;
         }
     }

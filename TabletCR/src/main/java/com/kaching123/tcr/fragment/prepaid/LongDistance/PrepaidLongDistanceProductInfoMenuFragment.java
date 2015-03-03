@@ -135,8 +135,8 @@ public class PrepaidLongDistanceProductInfoMenuFragment extends Fragment {
     class ProductionAmountSelectedCallback implements PrepaidLongDistanceProductAmountFragment.LongDistanceProductAmount {
 
         @Override
-        public void conditionSelected(BigDecimal amount, String phoneNumber) {
-            longDistanceProductInfoMenuInterface.conditionSelected(amount, phoneNumber);
+        public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount) {
+            longDistanceProductInfoMenuInterface.conditionSelected(amount, phoneNumber, feeAmount);
         }
 
         @Override
@@ -298,7 +298,7 @@ public class PrepaidLongDistanceProductInfoMenuFragment extends Fragment {
     public interface LongDistanceProductInfoMenuInterface {
         void menuSelected(int position);
 
-        void conditionSelected(BigDecimal amount, String phoneNumber);
+        void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount);
 
         void headMessage(int errorCode);
     }

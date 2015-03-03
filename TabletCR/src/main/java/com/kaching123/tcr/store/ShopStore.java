@@ -29,7 +29,7 @@ import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 295)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 296)
 @Provider(name = "ShopProvider", authority = "com.kaching123.tcr.store.AUTHORITY", schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -149,6 +149,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String ZIPCODEBUYFREQUENCY = "zipCodeBuyingFrequency";
+
+        @Column(type = Type.TEXT)
+        String FEEAMOUNT = "feeAmount";
     }
 
     @Table(UnitTable.TABLE_NAME)

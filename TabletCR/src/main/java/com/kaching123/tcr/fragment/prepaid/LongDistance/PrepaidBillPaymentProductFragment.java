@@ -339,8 +339,8 @@ public class PrepaidBillPaymentProductFragment extends Fragment implements Prepa
         }
 
         @Override
-        public void conditionSelected(BigDecimal amount, String phoneNumber) {
-            productFragmentCallback.conditionSelected(amount, phoneNumber);
+        public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount) {
+            productFragmentCallback.conditionSelected(amount, phoneNumber, feeAmount);
         }
 
         @Override

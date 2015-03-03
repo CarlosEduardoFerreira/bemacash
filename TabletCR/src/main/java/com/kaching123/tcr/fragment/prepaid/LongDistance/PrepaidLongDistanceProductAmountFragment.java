@@ -42,6 +42,7 @@ public class PrepaidLongDistanceProductAmountFragment extends PrepaidLongDistanc
     protected TextView submit;
     private BigDecimal amount;
     private String selectedTextAmount;
+    private BigDecimal feeAmount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,7 +62,7 @@ public class PrepaidLongDistanceProductAmountFragment extends PrepaidLongDistanc
         productName.setText(chosenCategory.name);
         UrlImageViewHelper.setUrlDrawable(icon, chosenCategory.iconUrl, R.drawable.operator_default_icon, 60000);
         amountItemsGrid.setAdapter(new GridAdapter());
-
+        feeAmount = new BigDecimal(chosenCategory.feeAmount);
         amountItemsGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View v, int position, long id) {
 
@@ -76,7 +77,7 @@ public class PrepaidLongDistanceProductAmountFragment extends PrepaidLongDistanc
     }
 
     public interface LongDistanceProductAmount {
-        void conditionSelected(BigDecimal amount, String phoneNumber);
+        void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount);
 
         void headMessage(int errorCode);
     }
@@ -100,7 +101,7 @@ public class PrepaidLongDistanceProductAmountFragment extends PrepaidLongDistanc
     }
 
     private void complete() {
-        longDistanceProductAmount.conditionSelected(amount, "");
+        longDistanceProductAmount.conditionSelected(amount, "",feeAmount);
         longDistanceProductAmount.headMessage(PrepaidLongDistanceHeadFragment.PURCHASE_SUMMARY);
     }
 
