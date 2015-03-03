@@ -57,7 +57,7 @@ public class PrepaidLongDistanceProductComfirmationFragment extends PrepaidLongD
 
     @Click
     void submit() {
-        pcCallback.comfirm(phoneNumber, amount.add(feeAmount), chosenCategory);
+        pcCallback.comfirm(phoneNumber, amount, chosenCategory, feeAmount);
     }
 
     private ProductComfirmationCallback pcCallback;
@@ -72,7 +72,7 @@ public class PrepaidLongDistanceProductComfirmationFragment extends PrepaidLongD
     }
 
     public interface ProductComfirmationCallback {
-        void comfirm(String phoneNumber, BigDecimal amount, WirelessItem chosenCategory);
+        void comfirm(String phoneNumber, BigDecimal amount, WirelessItem chosenCategory, BigDecimal feeAmount);
 
         void popUpFragment();
     }

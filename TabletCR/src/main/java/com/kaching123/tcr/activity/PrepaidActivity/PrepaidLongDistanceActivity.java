@@ -270,7 +270,7 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
 
             @Override
             public void comfirm() {
-                proceedToPayment(PrepaidLongDistanceActivity.this, total, billerData.vendorName, BillPaymentDescriptionModel.PrepaidType.BILL_PAYMENT, transactionFee, Broker.BILL_PAYMENT, null, null, formedRequest, chosenCategory);
+                proceedToPayment(PrepaidLongDistanceActivity.this, chosenAmount, billerData.vendorName, BillPaymentDescriptionModel.PrepaidType.BILL_PAYMENT, transactionFee, Broker.BILL_PAYMENT, null, null, formedRequest, chosenCategory);
             }
 
             @Override
@@ -285,14 +285,14 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
 
     class ProductComfirmationFragmentCallback implements PrepaidLongDistanceProductComfirmationFragment.ProductComfirmationCallback {
         @Override
-        public void comfirm(String phoneNumber, BigDecimal amount, WirelessItem chosenCategory) {
+        public void comfirm(String phoneNumber, BigDecimal amount, WirelessItem chosenCategory, BigDecimal feeAmount) {
             BillPaymentDescriptionModel.PrepaidType type;
             if (chosenCategory.isPinBased())
                 type = BillPaymentDescriptionModel.PrepaidType.WIRELESS_PIN;
             else
                 type = BillPaymentDescriptionModel.PrepaidType.WIRELESS_TOPUP;
 
-            proceedToPayment(PrepaidLongDistanceActivity.this, amount, chosenCategory.name, type, BigDecimal.ZERO, Broker.LONG_DISTANCE, chosenCategory.countryCode, phoneNumber, null, null);
+            proceedToPayment(PrepaidLongDistanceActivity.this, amount, chosenCategory.name, type, feeAmount, Broker.LONG_DISTANCE, chosenCategory.countryCode, phoneNumber, null, null);
         }
 
         @Override
