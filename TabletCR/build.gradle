@@ -85,10 +85,12 @@ android {
         prod {
             applicationId = "com.exmaple.flavor1"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
+            buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         dev {
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
+            buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         stage {
