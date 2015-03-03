@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.RadioGroup;
 
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.ImportType;

@@ -1,7 +1,7 @@
 package com.kaching123.tcr.pref;
 
-import com.googlecode.androidannotations.annotations.sharedpreferences.DefaultBoolean;
-import com.googlecode.androidannotations.annotations.sharedpreferences.SharedPref;
+import org.androidannotations.annotations.sharedpreferences.DefaultBoolean;
+import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
 @SharedPref
 public interface ShopPref {

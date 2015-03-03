@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
-import com.googlecode.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.EBean;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;

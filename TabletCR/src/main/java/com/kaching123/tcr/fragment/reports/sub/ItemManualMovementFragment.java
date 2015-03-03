@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.reports.ItemManualMovementQuery;

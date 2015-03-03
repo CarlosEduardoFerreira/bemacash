@@ -193,7 +193,7 @@
 
         <provider
             android:name=".store.ShopProviderExt"
-            android:authorities="com.kaching123.tcr.store.AUTHORITY"
+            android:authorities="${applicationId}.store.AUTHORITY"
             android:exported="false" />
         <provider
             android:name="android.support.v4.content.FileProvider"

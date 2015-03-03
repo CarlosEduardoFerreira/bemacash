@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.DatePicker;
 
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.fragment.SuperBaseDialogFragment;
 
 import java.util.Calendar;

@@ -2,8 +2,8 @@ package com.kaching123.tcr.fragment.settings;
 
 import android.app.Fragment;
 
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsMenu;
 import com.kaching123.tcr.R;
 
 @EFragment(R.layout.settings_discovery_printers_fragment)

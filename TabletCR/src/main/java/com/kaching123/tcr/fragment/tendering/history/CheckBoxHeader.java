@@ -5,8 +5,8 @@ import android.util.AttributeSet;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 
-import com.googlecode.androidannotations.annotations.EViewGroup;
-import com.googlecode.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.payment.HistoryDetailedOrderItemModel;
 

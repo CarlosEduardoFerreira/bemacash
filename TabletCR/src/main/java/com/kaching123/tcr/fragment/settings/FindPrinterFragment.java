@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.FindPrinterCommand;
 import com.kaching123.tcr.commands.device.FindPrinterCommand.BaseFindPrinterCallback;

@@ -3,8 +3,8 @@ package com.kaching123.tcr.activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.XReportChooserAlertDialogFragment.XReportTypeChooseListener;

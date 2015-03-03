@@ -7,9 +7,9 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.EActivity;
-import com.googlecode.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsMenu;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;

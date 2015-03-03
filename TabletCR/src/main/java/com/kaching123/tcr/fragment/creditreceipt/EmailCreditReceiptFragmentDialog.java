@@ -2,7 +2,7 @@ package com.kaching123.tcr.fragment.creditreceipt;
 
 import android.support.v4.app.FragmentActivity;
 
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.commands.print.digital.SendDigitalCreditCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;

@@ -1,5 +1,5 @@
 def findResDirs = {
-    return file(it).listFiles().findAll {it.name.startsWith('res')}.collect()
+    return file(it).listFiles().findAll { it.name.startsWith('res') }.collect()
 }
 
 buildscript {
@@ -7,12 +7,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.hamsterksu:android-aptlibs-gradle-plugin:1.1.0'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
     }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'aptlibs'
+apply plugin: 'android-apt'
 
 repositories {
     mavenCentral()
@@ -32,12 +32,12 @@ android {
 
     sourceSets {
         main {
-			res.srcDirs = findResDirs('src/main')
+            res.srcDirs = findResDirs('src/main')
             java.srcDirs = ['src/main/java', 'build/source/apt/${variant.dirName}']
         }
     }
-	
-	signingConfigs {
+
+    signingConfigs {
         debug {
             storeFile file("debug.keystore")
         }
@@ -49,9 +49,9 @@ android {
             keyPassword "bemapass"
         }
     }
-	
-	buildTypes {
-        debug{
+
+    buildTypes {
+        debug {
             buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
         }
 
@@ -59,19 +59,19 @@ android {
             buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
 
             debuggable false
-            jniDebugBuild false
+            jniDebuggable false
             signingConfig signingConfigs.release
         }
 
         debugPrinter.initWith(buildTypes.debug)
-		//debugPrinter.setBuildConfigFields()
-        debugPrinter{
-			buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
+        //debugPrinter.setBuildConfigFields()
+        debugPrinter {
+            buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
         }
 
         releasePrinter.initWith(buildTypes.release)
-		//releasePrinter.setBuildConfigFields()
-        releasePrinter{
+        //releasePrinter.setBuildConfigFields()
+        releasePrinter {
             buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
         }
     }
@@ -83,15 +83,16 @@ android {
     productFlavors {
 
         prod {
-
+            applicationId = "com.exmaple.flavor1"
+            buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
         }
 
         dev {
-
+            buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
         }
 
         stage {
-
+            applicationId = "com.exmaple.flavor1"
         }
 
         preprod {
@@ -101,7 +102,7 @@ android {
 }
 
 ext.asVersion = '1.9.0'
-ext.aaVersion = '2.7.1'
+ext.aaVersion = '3.0.1'
 ext.groundyVersion = '1.5'
 
 configurations {
@@ -120,16 +121,22 @@ dependencies {
     compile project(':PluginLoader')
     compile project(':BemaUsb')
 
-	compile fileTree(dir: 'libs', include: '*.jar')
+    compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.android.support:support-v4:19.0.0'
 
     compile 'com.squareup.picasso:picasso:2.1.1'
 
     compile 'com.google.guava:guava:13.0.1'
 
+    apt "com.github.hamsterksu:android-annotatedsql-processor:${asVersion}"
     compile "com.github.hamsterksu:android-annotatedsql-api:${asVersion}"
+
     compile "com.telly:groundy:${groundyVersion}"
-    compile "com.googlecode.androidannotations:androidannotations-api:${aaVersion}"
+    provided "com.telly:groundy-compiler:${groundyVersion}"
+    compile "org.androidannotations:androidannotations-api:${aaVersion}"
+
+    apt "org.androidannotations:androidannotations:${aaVersion}"
+    compile "org.androidannotations:androidannotations-api:${aaVersion}"
 
     compile 'com.google.code.gson:gson:2.2.+'
 
@@ -149,16 +156,21 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.1'
 }
 
-aptlibs {
-    annotatedSql {
-        version "${asVersion}"
-    }
+apt {
+    arguments {
+        androidManifestFile variant.outputs[0].processResources.manifestFile
+        // if you have multiple outputs (when using splits), you may want to have other index than 0
+        resourcePackageName 'com.kaching123.tcr'
 
-    groundy {
-        version "${groundyVersion}"
-    }
+        // If you're using Android NBS flavors you should use the following line instead of hard-coded packageName
+        // resourcePackageName android.defaultConfig.packageName
 
-    androidAnnotations {
-        version "${aaVersion}"
+        // You can set optional annotation processing options here, like these commented options:
+        // logLevel 'INFO'
+        // logFile '/var/log/aa.log'
+        customArgs { variant ->
+            arg "-AresourcePackageName", "com.kaching123.tcr"
+            arg "-AlogAppenderConsole", "true"
+        }
     }
 }

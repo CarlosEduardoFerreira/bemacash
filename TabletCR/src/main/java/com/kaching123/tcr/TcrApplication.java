@@ -10,8 +10,8 @@ import android.util.Base64;
 
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
-import com.googlecode.androidannotations.annotations.Background;
-import com.googlecode.androidannotations.annotations.EApplication;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EApplication;
 import com.kaching123.display.SerialPortScanner;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.rest.RestCommand;

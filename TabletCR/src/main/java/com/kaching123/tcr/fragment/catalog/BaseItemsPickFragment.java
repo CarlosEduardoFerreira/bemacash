@@ -7,7 +7,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.adapter.IObjectsAdapter;
 import com.kaching123.tcr.model.ItemExModel;

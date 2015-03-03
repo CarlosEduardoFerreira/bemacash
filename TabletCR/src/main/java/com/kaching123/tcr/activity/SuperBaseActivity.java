@@ -17,9 +17,9 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.TextView;
 
-import com.googlecode.androidannotations.annotations.App;
-import com.googlecode.androidannotations.annotations.EActivity;
-import com.googlecode.androidannotations.annotations.Fullscreen;
+import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Fullscreen;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;

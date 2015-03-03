@@ -3,7 +3,7 @@ package com.kaching123.tcr.fragment.dialog;
 import android.support.v4.app.FragmentActivity;
 import android.widget.ArrayAdapter;
 
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EFragment;
 
 /**
  * Created by vkompaniets on 10.01.14.

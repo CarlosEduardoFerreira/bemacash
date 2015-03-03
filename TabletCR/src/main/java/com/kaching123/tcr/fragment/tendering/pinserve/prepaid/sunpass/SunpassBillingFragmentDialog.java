@@ -3,9 +3,9 @@ package com.kaching123.tcr.fragment.tendering.pinserve.prepaid.sunpass;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.payment.blackstone.prepaid.sunpass.DoSunPassDocumentPaymentCommand;
 import com.kaching123.tcr.commands.payment.blackstone.prepaid.sunpass.DoSunPassReplenishmentCommand;

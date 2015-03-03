@@ -3,7 +3,7 @@ package com.kaching123.tcr.fragment.saleorder;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.googlecode.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.EViewGroup;
 import com.kaching123.tcr.R;
 
 import java.math.BigDecimal;

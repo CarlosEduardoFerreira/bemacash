@@ -2,7 +2,7 @@ package com.kaching123.tcr.activity;
 
 import android.os.Bundle;
 
-import com.googlecode.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.EActivity;
 import com.kaching123.tcr.R;
 import com.telly.groundy.CallbacksManager;
 
