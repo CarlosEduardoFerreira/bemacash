@@ -146,6 +146,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             viewPagerIndicator.setViewPager(viewPager);
             productFlagItemsPageAdapter.setList(data);
             setCarrierSearchWords();
+            viewPagerIndicator.notifyDataSetChanged();
         }
 
         @Override
@@ -188,6 +189,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             viewPagerIndicator.setViewPager(viewPager);
             itemsPageAdapter.setList2(data);
             setCarrierSearchWords();
+            viewPagerIndicator.notifyDataSetChanged();
         }
 
         @Override
@@ -255,7 +257,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
         public void onLoadFinished(Loader<List<WirelessItem>> loader, List<WirelessItem> wirelessItems) {
             hide();
             itemsPageAdapter.setList(wirelessItems);
-
+            viewPagerIndicator.notifyDataSetChanged();
         }
 
         @Override
@@ -364,6 +366,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             }
             countryFlagFragmentCallbak.refreshCountryCharacter(strs);
             selectedCountryInit = null;
+            viewPagerIndicator.notifyDataSetChanged();
         }
 
         @Override

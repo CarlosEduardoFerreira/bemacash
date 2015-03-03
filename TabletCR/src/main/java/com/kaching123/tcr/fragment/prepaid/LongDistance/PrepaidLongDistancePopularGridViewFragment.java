@@ -110,6 +110,7 @@ public class PrepaidLongDistancePopularGridViewFragment extends PrepaidLongDista
         public void onLoadFinished(Loader<List<BillPaymentItem>> loader, List<BillPaymentItem> data) {
             hide();
             productListViewAdapter.setList2(data);
+            viewPagerIndicator.notifyDataSetChanged();
         }
 
         @Override
@@ -207,6 +208,7 @@ public class PrepaidLongDistancePopularGridViewFragment extends PrepaidLongDista
     public void onLoadFinished(Loader<List<WirelessItem>> loader, List<WirelessItem> wirelessItems) {
         hide();
         productListViewAdapter.setList(wirelessItems);
+        viewPagerIndicator.notifyDataSetChanged();
     }
 
     @Override
