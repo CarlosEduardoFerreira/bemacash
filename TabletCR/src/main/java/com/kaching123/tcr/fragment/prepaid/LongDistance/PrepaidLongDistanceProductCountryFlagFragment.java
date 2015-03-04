@@ -128,8 +128,10 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
                                 if (!item.categoryDescription.equalsIgnoreCase(currentCategory))
                                     if (selectedCountryInit == null)
                                         billPaymentItems.add(item);
-                                    else if (item.categoryDescription.substring(0, 1).equalsIgnoreCase(selectedCountryInit))
+                                    else if (item.categoryDescription.substring(0, 1).equalsIgnoreCase(selectedCountryInit)) {
                                         billPaymentItems.add(item);
+                                        chosenCategory = item.categoryDescription.substring(0, 1);
+                                    }
 
                                 currentCategory = item.categoryDescription;
                             }
@@ -401,8 +403,11 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             if (prepaidMode == PrepaidHomeFragment.BILLPAYMENT) {
                 viewPager.setAdapter(itemsPageAdapter);
                 viewPagerIndicator.setViewPager(viewPager);
-                countryFlagFragmentCallbak.billPaymentCategoryChosen(carrierNames.get(position));
-                chosenCategory = carrierNames.get(position);
+                if (chosenCategory == null) {
+                    chosenCategory = carrierNames.get(position);
+                    countryFlagFragmentCallbak.billPaymentCategoryChosen(carrierNames.get(position));
+                } else
+                    countryFlagFragmentCallbak.billPaymentCategoryChosen(chosenCategory);
                 countryFlagFragmentCallbak.headMessage(PrepaidLongDistanceHeadFragment.SELECT_BILLER);
                 getLoaderManager().restartLoader(DEFAULT_LOADER, null, new BillPaymentMasterBillerLoader());
                 return;
