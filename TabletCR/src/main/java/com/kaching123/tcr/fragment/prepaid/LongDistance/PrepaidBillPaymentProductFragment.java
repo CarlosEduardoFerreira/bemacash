@@ -285,7 +285,7 @@ public class PrepaidBillPaymentProductFragment extends Fragment implements Prepa
     }
 
     private void updateAmountInterval() {
-        enterAmountInterval.setText(MIN + " " + commaPriceFormat(new BigDecimal(billerData.vendorTranAmtMin)) + "/" + MAX + commaPriceFormat(new BigDecimal(billerData.vendorAccountLengthMax)));
+        enterAmountInterval.setText(MIN + " " + commaPriceFormat(new BigDecimal(billerData.vendorTranAmtMin)) + "/" + MAX + commaPriceFormat(new BigDecimal(billerData.vendorTranAmtMax)));
     }
 
     public void getBillerOptions(final FragmentActivity context, String billerId) {

@@ -1788,7 +1788,7 @@
     <string name="prepaid_head_fee_null_error">Error: fee null</string>
     <string name="invalid_fields">Please fill the lines which has Red star</string>
     <string name="amount_minimum_error">Amount must be bigger than minimun</string>
-    <string name="prepaid_head_phone_number_null_error">Error: phone number null</string>
+    <string name="prepaid_head_phone_number_null_error">Error: phone number is invalid</string>
     <string name="prepaid_head_account_number_null_error">Error: account number null</string>
     <string name="prepaid_head_confirma_account_number_null_error">Error: confirm account number null</string>
     <string name="prepaid_head_account_number_not_equal_error">Error: the account numbers are not match</string>
