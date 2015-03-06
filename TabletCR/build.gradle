@@ -59,7 +59,7 @@ android {
             buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
 
             debuggable false
-            jniDebugBuild false
+            jniDebuggable false
             signingConfig signingConfigs.release
         }
 
