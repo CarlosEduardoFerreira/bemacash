@@ -24,13 +24,13 @@ import com.annotatedsql.annotation.sql.SqlQuery;
 import com.annotatedsql.annotation.sql.StaticWhere;
 import com.annotatedsql.annotation.sql.Table;
 import com.annotatedsql.annotation.sql.Unique;
-
+import com.kaching123.tcr.BuildConfig;
 import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 
 @Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 296)
-@Provider(name = "ShopProvider", authority = "com.kaching123.tcr.store.AUTHORITY", schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
+@Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
     /*force static initialization of class*/

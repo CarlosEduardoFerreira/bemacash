@@ -6,9 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.SystemService;
-import com.googlecode.androidannotations.annotations.res.ColorRes;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.util.KeyboardUtils;

@@ -3,8 +3,8 @@ package com.kaching123.tcr.activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.googlecode.androidannotations.annotations.EActivity;
-import com.googlecode.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.employee.EmployeeAttendanceFragment;
 

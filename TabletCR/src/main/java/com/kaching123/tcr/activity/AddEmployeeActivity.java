@@ -5,8 +5,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.user.AddEmployeeCommand;
 import com.kaching123.tcr.commands.store.user.BaseEmployeeCommand.BaseEmployeeCallback;

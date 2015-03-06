@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.EActivity;
-import com.googlecode.androidannotations.annotations.Extra;
-import com.googlecode.androidannotations.annotations.FragmentById;
-import com.googlecode.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OnActivityResult;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment;

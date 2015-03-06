@@ -2,7 +2,7 @@ package com.kaching123.tcr.fragment.prepaid.LongDistance;
 
 import android.support.v4.app.Fragment;
 
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EFragment;
 
 /**
  * Created by teli.yin on 10/29/2014.

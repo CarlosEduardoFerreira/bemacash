@@ -13,8 +13,8 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.InstanceState;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.InstanceState;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.CategoryItemView;

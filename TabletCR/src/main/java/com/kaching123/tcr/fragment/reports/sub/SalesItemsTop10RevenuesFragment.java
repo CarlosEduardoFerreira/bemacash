@@ -1,6 +1,6 @@
 package com.kaching123.tcr.fragment.reports.sub;
 
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.print.SaleReportsProcessor;
 import com.kaching123.tcr.model.OrderType;

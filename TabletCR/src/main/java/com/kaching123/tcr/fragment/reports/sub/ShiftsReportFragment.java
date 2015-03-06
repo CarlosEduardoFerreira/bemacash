@@ -14,9 +14,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.FragmentArg;
-import com.googlecode.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.SuperBaseFragment;

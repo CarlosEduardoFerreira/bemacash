@@ -9,8 +9,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.wireless.SearchUnitCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;

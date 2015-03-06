@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity;

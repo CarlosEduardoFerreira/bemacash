@@ -1,5 +1,5 @@
 def findResDirs = {
-    return file(it).listFiles().findAll {it.name.startsWith('res')}.collect()
+    return file(it).listFiles().findAll { it.name.startsWith('res') }.collect()
 }
 
 buildscript {
@@ -12,7 +12,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'aptlibs'
+apply plugin: 'android-apt'
 
 repositories {
     mavenCentral()
@@ -32,12 +32,12 @@ android {
 
     sourceSets {
         main {
-			res.srcDirs = findResDirs('src/main')
+            res.srcDirs = findResDirs('src/main')
             java.srcDirs = ['src/main/java', 'build/source/apt/${variant.dirName}']
         }
     }
-	
-	signingConfigs {
+
+    signingConfigs {
         debug {
             storeFile file("debug.keystore")
         }
@@ -49,9 +49,9 @@ android {
             keyPassword "bemapass"
         }
     }
-	
-	buildTypes {
-        debug{
+
+    buildTypes {
+        debug {
             buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
         }
 
@@ -64,14 +64,14 @@ android {
         }
 
         debugPrinter.initWith(buildTypes.debug)
-		//debugPrinter.setBuildConfigFields()
-        debugPrinter{
-			buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
+        //debugPrinter.setBuildConfigFields()
+        debugPrinter {
+            buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
         }
 
         releasePrinter.initWith(buildTypes.release)
-		//releasePrinter.setBuildConfigFields()
-        releasePrinter{
+        //releasePrinter.setBuildConfigFields()
+        releasePrinter {
             buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
         }
     }
@@ -83,15 +83,18 @@ android {
     productFlavors {
 
         prod {
-
+            applicationId = "com.kaching123.tcr"
+            buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
+            buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         dev {
-
+            buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
+            buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         stage {
-
+            applicationId = "com.exmaple.flavor1"
         }
 
         preprod {
@@ -101,7 +104,7 @@ android {
 }
 
 ext.asVersion = '1.9.0'
-ext.aaVersion = '2.7.1'
+ext.aaVersion = '3.0.1'
 ext.groundyVersion = '1.5'
 
 configurations {
@@ -119,16 +122,22 @@ dependencies {
     compile project(':WebService')
     compile project(':PluginLoader')
 
-	compile fileTree(dir: 'libs', include: '*.jar')
+    compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.android.support:support-v4:19.0.0'
 
     compile 'com.squareup.picasso:picasso:2.1.1'
 
     compile 'com.google.guava:guava:13.0.1'
 
+    apt "com.github.hamsterksu:android-annotatedsql-processor:${asVersion}"
     compile "com.github.hamsterksu:android-annotatedsql-api:${asVersion}"
+
     compile "com.telly:groundy:${groundyVersion}"
-    compile "com.googlecode.androidannotations:androidannotations-api:${aaVersion}"
+    provided "com.telly:groundy-compiler:${groundyVersion}"
+    compile "org.androidannotations:androidannotations-api:${aaVersion}"
+
+    apt "org.androidannotations:androidannotations:${aaVersion}"
+    compile "org.androidannotations:androidannotations-api:${aaVersion}"
 
     compile 'com.google.code.gson:gson:2.2.+'
 
@@ -146,20 +155,6 @@ dependencies {
     compile 'com.tonicartos:stickygridheaders:1.0.1'
 
     compile 'org.jsoup:jsoup:1.8.1'
-}
-
-aptlibs {
-    annotatedSql {
-        version "${asVersion}"
-    }
-
-    groundy {
-        version "${groundyVersion}"
-    }
-
-    androidAnnotations {
-        version "${aaVersion}"
-    }
 }
 
 apt {

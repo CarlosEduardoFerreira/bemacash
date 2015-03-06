@@ -367,7 +367,7 @@ Index: TabletCR/src/main/java/com/bematech/tcr/fragment/edit/QtyEditFragment.jav
 +import com.bematech.tcr.component.QuantityFormatInputFilter;
 +import com.bematech.tcr.component.SignedQuantityFormatInputFilter;
  import com.bematech.tcr.fragment.dialog.DialogUtil;
- import com.googlecode.androidannotations.annotations.EFragment;
+ import org.androidannotations.annotations.EFragment;
  
  import java.math.BigDecimal;
  
@@ -433,7 +433,7 @@ Index: TabletCR/src/main/java/com/bematech/tcr/fragment/edit/RefundQtyEditFragme
 +import com.bematech.tcr.component.QuantityFormatInputFilter;
  import com.bematech.tcr.fragment.dialog.DialogUtil;
  import com.bematech.tcr.model.payment.HistoryDetailedOrderItemModel;
- import com.googlecode.androidannotations.annotations.EFragment;
+ import org.androidannotations.annotations.EFragment;
  
  import java.math.BigDecimal;
  
@@ -488,7 +488,7 @@ Index: TabletCR/src/main/java/com/bematech/tcr/fragment/inventory/InventoryQtyEd
 +import com.bematech.tcr.component.SignedQuantityFormatInputFilter;
  import com.bematech.tcr.fragment.dialog.DialogUtil;
  import com.bematech.tcr.fragment.edit.QtyEditFragment;
- import com.googlecode.androidannotations.annotations.EFragment;
+ import org.androidannotations.annotations.EFragment;
  
  import java.math.BigDecimal;
  

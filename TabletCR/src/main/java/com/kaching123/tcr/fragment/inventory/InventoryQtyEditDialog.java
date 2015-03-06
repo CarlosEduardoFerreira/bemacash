@@ -3,7 +3,7 @@ package com.kaching123.tcr.fragment.inventory;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputFilter;
 
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.SignedQuantityFormatInputFilter;

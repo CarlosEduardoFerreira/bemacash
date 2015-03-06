@@ -38,8 +38,8 @@ Index: java/com/bematech/tcr/fragment/settings/AboutFragment.java
 +import com.bematech.tcr.Logger;
 +import com.bematech.tcr.R;
 +import com.bematech.tcr.fragment.SuperBaseFragment;
-+import com.googlecode.androidannotations.annotations.EFragment;
-+import com.googlecode.androidannotations.annotations.ViewById;
++import org.androidannotations.annotations.EFragment;
++import org.androidannotations.annotations.ViewById;
 +
 +/**
 + * Created by gdubina on 28/02/14.

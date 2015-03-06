@@ -2,9 +2,9 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.EActivity;
-import com.googlecode.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.FragmentById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.creditreceipt.CreditReceiptFilterFragment;
 import com.kaching123.tcr.fragment.creditreceipt.CreditReceiptListFragment;

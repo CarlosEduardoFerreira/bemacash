@@ -5,8 +5,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
 
 /**
  * Created by mayer

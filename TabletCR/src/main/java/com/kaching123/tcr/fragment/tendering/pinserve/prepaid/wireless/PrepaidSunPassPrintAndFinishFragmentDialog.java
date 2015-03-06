@@ -6,10 +6,10 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.ListView;
 
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.FragmentArg;
-import com.googlecode.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.PrepaidReceiptAdapter;
 import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;

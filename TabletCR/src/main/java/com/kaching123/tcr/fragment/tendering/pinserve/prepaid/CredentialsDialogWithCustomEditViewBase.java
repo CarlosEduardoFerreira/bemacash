@@ -8,9 +8,9 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.widget.TextView;
 
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.res.ColorRes;
-import com.googlecode.androidannotations.annotations.res.DrawableRes;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.res.ColorRes;
+import org.androidannotations.annotations.res.DrawableRes;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 

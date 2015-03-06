@@ -578,7 +578,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
  import android.widget.Spinner;
  import android.widget.TextView;
  
-+import com.googlecode.androidannotations.annotations.Click;
++import org.androidannotations.annotations.Click;
  import com.kaching123.tcr.Logger;
  import com.kaching123.tcr.R;
 +import com.kaching123.tcr.activity.CashierActivity;
@@ -1588,9 +1588,9 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +import android.widget.EditText;
 +import android.widget.TextView;
 +
-+import com.googlecode.androidannotations.annotations.EFragment;
-+import com.googlecode.androidannotations.annotations.res.ColorRes;
-+import com.googlecode.androidannotations.annotations.res.DrawableRes;
++import org.androidannotations.annotations.EFragment;
++import org.androidannotations.annotations.res.ColorRes;
++import org.androidannotations.annotations.res.DrawableRes;
 +import com.kaching123.tcr.R;
 +import com.kaching123.tcr.component.CustomEditBox;
 +import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -2413,8 +2413,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 -import android.support.v4.app.FragmentActivity;
 -import android.widget.TextView;
 -
--import com.googlecode.androidannotations.annotations.EFragment;
--import com.googlecode.androidannotations.annotations.ViewById;
+-import org.androidannotations.annotations.EFragment;
+-import org.androidannotations.annotations.ViewById;
 -import com.kaching123.tcr.Logger;
 -import com.kaching123.tcr.R;
 -import com.kaching123.tcr.commands.payment.PaymentGateway;
@@ -2517,8 +2517,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 -import android.support.v4.app.FragmentActivity;
 -import android.widget.TextView;
 -
--import com.googlecode.androidannotations.annotations.EFragment;
--import com.googlecode.androidannotations.annotations.ViewById;
+-import org.androidannotations.annotations.EFragment;
+-import org.androidannotations.annotations.ViewById;
 -import com.kaching123.tcr.R;
 -import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 -import com.kaching123.tcr.commands.payment.pax.PaxBalanceCommand;
@@ -3398,12 +3398,12 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +import android.widget.TextView;
 +
 +
-+import com.googlecode.androidannotations.annotations.AfterTextChange;
-+import com.googlecode.androidannotations.annotations.AfterViews;
-+import com.googlecode.androidannotations.annotations.EFragment;
-+import com.googlecode.androidannotations.annotations.FragmentArg;
-+import com.googlecode.androidannotations.annotations.ViewById;
-+import com.googlecode.androidannotations.annotations.res.ColorRes;
++import org.androidannotations.annotations.AfterTextChange;
++import org.androidannotations.annotations.AfterViews;
++import org.androidannotations.annotations.EFragment;
++import org.androidannotations.annotations.FragmentArg;
++import org.androidannotations.annotations.ViewById;
++import org.androidannotations.annotations.res.ColorRes;
 +import com.kaching123.tcr.R;
 +import com.kaching123.tcr.commands.payment.blackstone.prepaid.sunpass.GetSunPassDocumentInquiryCommand;
 +import com.kaching123.tcr.component.DocumentNumberCurrencyFormatInputFilter;
@@ -4596,11 +4596,11 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +import android.support.v4.app.FragmentActivity;
 +import android.widget.ListView;
 +
-+import com.googlecode.androidannotations.annotations.AfterViews;
-+import com.googlecode.androidannotations.annotations.EFragment;
-+import com.googlecode.androidannotations.annotations.FragmentArg;
-+import com.googlecode.androidannotations.annotations.UiThread;
-+import com.googlecode.androidannotations.annotations.ViewById;
++import org.androidannotations.annotations.AfterViews;
++import org.androidannotations.annotations.EFragment;
++import org.androidannotations.annotations.FragmentArg;
++import org.androidannotations.annotations.UiThread;
++import org.androidannotations.annotations.ViewById;
 +import com.kaching123.tcr.R;
 +import com.kaching123.tcr.adapter.PrepaidReceiptAdapter;
 +import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
@@ -4967,10 +4967,10 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +
 +import com.getbase.android.db.provider.ProviderAction;
 +import com.getbase.android.db.provider.Query;
-+import com.googlecode.androidannotations.annotations.AfterViews;
-+import com.googlecode.androidannotations.annotations.EFragment;
-+import com.googlecode.androidannotations.annotations.FragmentArg;
-+import com.googlecode.androidannotations.annotations.ViewById;
++import org.androidannotations.annotations.AfterViews;
++import org.androidannotations.annotations.EFragment;
++import org.androidannotations.annotations.FragmentArg;
++import org.androidannotations.annotations.ViewById;
 +import com.kaching123.tcr.Logger;
 +import com.kaching123.tcr.R;
 +import com.kaching123.tcr.adapter.PrepaidReceiptAdapter;
@@ -6141,10 +6141,10 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +
 +import com.getbase.android.db.provider.ProviderAction;
 +import com.getbase.android.db.provider.Query;
-+import com.googlecode.androidannotations.annotations.AfterViews;
-+import com.googlecode.androidannotations.annotations.EFragment;
-+import com.googlecode.androidannotations.annotations.FragmentArg;
-+import com.googlecode.androidannotations.annotations.ViewById;
++import org.androidannotations.annotations.AfterViews;
++import org.androidannotations.annotations.EFragment;
++import org.androidannotations.annotations.FragmentArg;
++import org.androidannotations.annotations.ViewById;
 +import com.kaching123.tcr.R;
 +import com.kaching123.tcr.adapter.PrepaidReceiptAdapter;
 +import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
@@ -6321,8 +6321,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 -import android.support.v4.app.FragmentActivity;
 -import android.widget.TextView;
 -
--import com.googlecode.androidannotations.annotations.EFragment;
--import com.googlecode.androidannotations.annotations.ViewById;
+-import org.androidannotations.annotations.EFragment;
+-import org.androidannotations.annotations.ViewById;
 -import com.kaching123.tcr.R;
 -import com.kaching123.tcr.commands.payment.pax.PaxRefundCommand;
 -import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -6976,11 +6976,11 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +import android.widget.Spinner;
 +import android.widget.TextView;
 +
-+import com.googlecode.androidannotations.annotations.AfterViews;
-+import com.googlecode.androidannotations.annotations.EFragment;
-+import com.googlecode.androidannotations.annotations.FragmentArg;
-+import com.googlecode.androidannotations.annotations.ViewById;
-+import com.googlecode.androidannotations.annotations.res.ColorRes;
++import org.androidannotations.annotations.AfterViews;
++import org.androidannotations.annotations.EFragment;
++import org.androidannotations.annotations.FragmentArg;
++import org.androidannotations.annotations.ViewById;
++import org.androidannotations.annotations.res.ColorRes;
 +import com.kaching123.tcr.R;
 +import com.kaching123.tcr.adapter.PrepaidSunpassPayYourDocumentOrderViewAdapter;
 +import com.kaching123.tcr.component.CustomEditBox;
@@ -7383,9 +7383,9 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
  import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 +import com.kaching123.tcr.model.payment.blackstone.prepaid.sunpass.request.SunPassDocumentPaymentRequest;
  import com.kaching123.tcr.model.payment.blackstone.prepaid.sunpass.request.SunReplenishmentRequest;
- import com.googlecode.androidannotations.annotations.AfterViews;
- import com.googlecode.androidannotations.annotations.EFragment;
- import com.googlecode.androidannotations.annotations.FragmentArg;
+ import org.androidannotations.annotations.AfterViews;
+ import org.androidannotations.annotations.EFragment;
+ import org.androidannotations.annotations.FragmentArg;
 +import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.SunpassType;
 +import com.kaching123.tcr.websvc.api.prepaid.BalanceResponse;
 +import com.kaching123.tcr.websvc.api.prepaid.DocumentPaymentResponse;
@@ -8140,7 +8140,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
  import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
  import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
- import com.googlecode.androidannotations.annotations.EBean;
+ import org.androidannotations.annotations.EBean;
 @@ -12,8 +14,12 @@
   * @author Ivan v. Rikhmayer
   */
@@ -9493,7 +9493,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +import android.widget.BaseAdapter;
 +import android.widget.TextView;
 +
-+import com.googlecode.androidannotations.annotations.res.ColorRes;
++import org.androidannotations.annotations.res.ColorRes;
 +import com.kaching123.tcr.R;
 +import com.kaching123.tcr.websvc.api.prepaid.MasterBiller;
 +import com.kaching123.tcr.websvc.api.prepaid.PaymentOption;
@@ -9605,10 +9605,10 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +import android.view.Gravity;
 +import android.widget.ImageView;
 +
-+import com.googlecode.androidannotations.annotations.Click;
-+import com.googlecode.androidannotations.annotations.EFragment;
-+import com.googlecode.androidannotations.annotations.ViewById;
-+import com.googlecode.androidannotations.annotations.res.ColorRes;
++import org.androidannotations.annotations.Click;
++import org.androidannotations.annotations.EFragment;
++import org.androidannotations.annotations.ViewById;
++import org.androidannotations.annotations.res.ColorRes;
 +import com.kaching123.tcr.R;
 +import com.kaching123.tcr.fragment.dialog.DialogUtil;
 +import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -9791,7 +9791,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.CredentialsDialogWithCustomEditViewBase;
  import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
  import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.request.BillPaymentRequest;
- import com.googlecode.androidannotations.annotations.AfterTextChange;
+ import org.androidannotations.annotations.AfterTextChange;
 @@ -30,84 +36,98 @@
   *         This class is intended to
   */

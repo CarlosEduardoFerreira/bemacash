@@ -10,10 +10,10 @@ import android.widget.TextView;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
-import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.FragmentArg;
-import com.googlecode.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.DashboardActivity;
 import com.kaching123.tcr.commands.store.user.TempLoginCommand;

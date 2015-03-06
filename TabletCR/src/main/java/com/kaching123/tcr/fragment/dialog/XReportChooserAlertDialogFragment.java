@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentActivity;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 

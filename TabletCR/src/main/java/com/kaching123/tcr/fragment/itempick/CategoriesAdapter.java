@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 
-import com.googlecode.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.EBean;
 import com.kaching123.tcr.store.ShopSchema2.CategoryView2.CategoryTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CategoryView;
