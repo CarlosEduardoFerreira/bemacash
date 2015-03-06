@@ -301,12 +301,12 @@ public class PrepaidProcessor {
     }
 
     private void proceedToBillPaymentPrintFinish(final FragmentActivity context, String orderGuid, final ArrayList<PaymentTransactionModel> transactions, IPrePaidInfo info, Category chosenCategory, BillPaymentRequest request, BigDecimal amount, BigDecimal transactionFee, String orderNum, String total) {
-        PrepaidBillPaymentPrintAndFinishFragmentDialog.show(context, orderGuid, new PrintAndFinishFragmentDialogBase.IFinishConfirmListener() {
-
-            @Override
-            public void onConfirmed() {
-                exit(context, true);
-            }
-        }, transactions, info, chosenCategory, request, amount, changeAmount, transactionFee, orderNum, total);
+//        PrepaidBillPaymentPrintAndFinishFragmentDialog.show(context, orderGuid, new PrintAndFinishFragmentDialogBase.IFinishConfirmListener() {
+//
+//            @Override
+//            public void onConfirmed() {
+//                exit(context, true);
+//            }
+//        }, transactions, info, chosenCategory, request, amount, changeAmount, transactionFee, orderNum, total);
     }
 }

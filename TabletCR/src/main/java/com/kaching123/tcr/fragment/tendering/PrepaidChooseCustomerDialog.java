@@ -23,9 +23,10 @@ public class PrepaidChooseCustomerDialog extends ChooseCustomerBaseDialog {
     protected void sendDigitalOrder(String email) {
         SendDigitalPrepaidOrderCommand.start(getActivity(), orderGuid, email, prepaidInfo, null);
         dismiss();
+        listener.onComplete();
     }
 
-    public static void show(FragmentActivity activity, String orderGuid, IPrePaidInfo prepaidInfo) {
-        DialogUtil.show(activity, DIALOG_NAME, PrepaidChooseCustomerDialog_.builder().orderGuid(orderGuid).prepaidInfo(prepaidInfo).build());
+    public static void show(FragmentActivity activity, String orderGuid, IPrePaidInfo prepaidInfo, emailSenderListener listener1) {
+        DialogUtil.show(activity, DIALOG_NAME, PrepaidChooseCustomerDialog_.builder().orderGuid(orderGuid).prepaidInfo(prepaidInfo).build()).setListener(listener1);
     }
 }

@@ -270,7 +270,7 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
 
             @Override
             public void comfirm() {
-                proceedToPayment(PrepaidLongDistanceActivity.this, chosenAmount, billerData.vendorName, BillPaymentDescriptionModel.PrepaidType.BILL_PAYMENT, transactionFee, Broker.BILL_PAYMENT, null, null, formedRequest, chosenCategory);
+                proceedToPayment(PrepaidLongDistanceActivity.this, chosenAmount, billerData.vendorName, BillPaymentDescriptionModel.PrepaidType.BILL_PAYMENT, transactionFee, Broker.BILL_PAYMENT, null, null, formedRequest, chosenCategory, chosenBillPaymentItem);
             }
 
             @Override
@@ -292,7 +292,7 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
             else
                 type = BillPaymentDescriptionModel.PrepaidType.WIRELESS_TOPUP;
 
-            proceedToPayment(PrepaidLongDistanceActivity.this, amount, chosenCategory.name, type, feeAmount, Broker.LONG_DISTANCE, chosenCategory.countryCode, phoneNumber, null, null);
+            proceedToPayment(PrepaidLongDistanceActivity.this, amount, chosenCategory.name, type, feeAmount, Broker.LONG_DISTANCE, chosenCategory.countryCode, phoneNumber, null, null, null);
         }
 
         @Override
@@ -303,7 +303,7 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
 
     }
 
-    protected void proceedToPayment(final FragmentActivity context, final BigDecimal amount, final String description, final BillPaymentDescriptionModel.PrepaidType type, final BigDecimal transactionFee, final Broker broker, final String countryCode, final String phoneNumber, final BillPaymentRequest formedRequest, final Category chosenCategory) {
+    protected void proceedToPayment(final FragmentActivity context, final BigDecimal amount, final String description, final BillPaymentDescriptionModel.PrepaidType type, final BigDecimal transactionFee, final Broker broker, final String countryCode, final String phoneNumber, final BillPaymentRequest formedRequest, final Category chosenCategory, final BillPaymentItem chosenBillPaymentItem) {
 
         PaymentFragmentDialog.show(context, Boolean.TRUE, amount, description, type, broker, transactionFee, new AddBillPaymentOrderCommand.BaseAddBillPaymentOrderCallback() {
 
@@ -317,7 +317,7 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
                             proceedToBilling(context, prepaidOrderId, transactionFee, amount, countryCode, orderGuid, null, phoneNumber);
                         else {
                             formedRequest.setOrderId(prepaidOrderId);
-                            proceedToBillPaymentBilling(context, formedRequest, prepaidOrderId, chosenCategory, amount, transactionFee, orderGuid, null);
+                            proceedToBillPaymentBilling(context, formedRequest, prepaidOrderId, chosenCategory, amount, transactionFee, orderGuid, null, chosenBillPaymentItem);
                         }
 
                     }
@@ -334,7 +334,7 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
                             proceedToBilling(context, prepaidOrderId, transactionFee, amount, countryCode, orderGuid, list, phoneNumber);
                         else {
                             formedRequest.setOrderId(prepaidOrderId);
-                            proceedToBillPaymentBilling(context, formedRequest, prepaidOrderId, chosenCategory, amount, transactionFee, orderGuid, list);
+                            proceedToBillPaymentBilling(context, formedRequest, prepaidOrderId, chosenCategory, amount, transactionFee, orderGuid, list, chosenBillPaymentItem);
                         }
                     }
                 }).setPrepaidMode().init(context);
@@ -355,8 +355,8 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
     }
 
     protected void proceedToBillPaymentBilling(final FragmentActivity context,
-                                               final BillPaymentRequest formedRequest, final long prepaidOrderId, final Category chosenCategory, final BigDecimal amount, final BigDecimal transactionFee, final String orderGuid, final ArrayList<PaymentTransactionModel> transactions) {
-        BillingFragmentDialog.show(context, formedRequest, transactionFee, orderGuid, new BillingFragmentDialog.BillingFragmentDialogCallback() {
+                                               final BillPaymentRequest formedRequest, final long prepaidOrderId, final Category chosenCategory, final BigDecimal amount, final BigDecimal transactionFee, final String orderGuid, final ArrayList<PaymentTransactionModel> transactions, BillPaymentItem chosenBillPaymentItem) {
+        BillingFragmentDialog.show(context, formedRequest, transactionFee, orderGuid,chosenBillPaymentItem, new BillingFragmentDialog.BillingFragmentDialogCallback() {
 
             @Override
             public void onError(String message) {
@@ -377,10 +377,10 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
             }
 
             @Override
-            public void onComplete(BillPaymentResponse response, BigDecimal transactionFee, String orderNum, String total) {
+            public void onComplete(BillPaymentResponse response, BigDecimal transactionFee, String orderNum, String total, BillPaymentItem chosenBillPaymentItem) {
                 hide();
 //                IPrePaidInfo info = new BillPaymentInfo(mChosenOption);
-                proceedToBillPaymentPrintFinish(context, orderGuid, transactions, null, chosenCategory, formedRequest, amount, transactionFee, orderNum, total);
+                proceedToBillPaymentPrintFinish(context, orderGuid, transactions, null, chosenCategory, formedRequest, amount, transactionFee, orderNum, total, chosenBillPaymentItem);
             }
 
             private void hide() {
@@ -389,14 +389,14 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
         });
     }
 
-    private void proceedToBillPaymentPrintFinish(final FragmentActivity context, String orderGuid, final ArrayList<PaymentTransactionModel> transactions, IPrePaidInfo info, Category chosenCategory, BillPaymentRequest request, BigDecimal amount, BigDecimal transactionFee, String orderNum, String total) {
+    private void proceedToBillPaymentPrintFinish(final FragmentActivity context, String orderGuid, final ArrayList<PaymentTransactionModel> transactions, IPrePaidInfo info, Category chosenCategory, BillPaymentRequest request, BigDecimal amount, BigDecimal transactionFee, String orderNum, String total, BillPaymentItem chosenBillPaymentItem) {
         PrepaidBillPaymentPrintAndFinishFragmentDialog.show(context, orderGuid, new PrintAndFinishFragmentDialogBase.IFinishConfirmListener() {
 
             @Override
             public void onConfirmed() {
                 finish();
             }
-        }, transactions, info, chosenCategory, request, amount, changeAmount, transactionFee, orderNum, total);
+        }, transactions, info, chosenCategory, request, amount, changeAmount, transactionFee, orderNum, total, chosenBillPaymentItem);
     }
 
 

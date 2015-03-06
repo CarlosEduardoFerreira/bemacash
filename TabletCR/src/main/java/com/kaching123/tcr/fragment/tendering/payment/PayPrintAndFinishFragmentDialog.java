@@ -27,6 +27,7 @@ import com.kaching123.tcr.fragment.PrintCallbackHelper2.IPrintCallback;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
 import com.kaching123.tcr.fragment.tendering.PayChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -139,7 +140,12 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     }
 
     protected void sendDigitalOrder() {
-        PayChooseCustomerDialog.show(getActivity(), orderGuid, transactions);
+        PayChooseCustomerDialog.show(getActivity(), orderGuid, transactions, new ChooseCustomerBaseDialog.emailSenderListener() {
+            @Override
+            public void onComplete() {
+                listener.onConfirmed();
+            }
+        });
     }
 
     //@Override
@@ -188,8 +194,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         WaitDialogFragment.hide(getActivity());
         if (emailBox.isChecked()) {
             sendDigitalOrder();
+        }else {
+            super.completeProcess();
         }
-        super.completeProcess();
     }
 
     private void onSignaturePrintSuccess() {

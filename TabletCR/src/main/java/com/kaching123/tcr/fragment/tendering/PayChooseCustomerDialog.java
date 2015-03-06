@@ -21,9 +21,11 @@ public class PayChooseCustomerDialog extends ChooseCustomerBaseDialog {
     protected void sendDigitalOrder(String email) {
         SendDigitalOrderCommand.start(getActivity(), orderGuid, email, null, transactions);
         dismiss();
+        listener.onComplete();
     }
 
-    public static void show(FragmentActivity activity, String orderGuid, ArrayList<PaymentTransactionModel> transactions) {
-        DialogUtil.show(activity, DIALOG_NAME, PayChooseCustomerDialog_.builder().transactions(transactions).orderGuid(orderGuid).build());
+    public static void show(FragmentActivity activity, String orderGuid, ArrayList<PaymentTransactionModel> transactions, emailSenderListener listener) {
+        DialogUtil.show(activity, DIALOG_NAME, PayChooseCustomerDialog_.builder().transactions(transactions).orderGuid(orderGuid).build()).setListener(listener);
     }
+
 }

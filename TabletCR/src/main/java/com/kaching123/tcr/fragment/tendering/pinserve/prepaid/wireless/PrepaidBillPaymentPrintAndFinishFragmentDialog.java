@@ -21,11 +21,13 @@ import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
 import com.kaching123.tcr.fragment.tendering.PrepaidChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayPrintAndFinishFragmentDialog;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.IPrePaidInfo;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.request.BillPaymentRequest;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
@@ -61,6 +63,8 @@ public class PrepaidBillPaymentPrintAndFinishFragmentDialog extends PayPrintAndF
     protected String mOrderNum;
     @FragmentArg
     protected String mTotal;
+    @FragmentArg
+    protected BillPaymentItem chosenBillPaymentItem;
     static private FragmentActivity mContext;
 
     @Override
@@ -79,7 +83,7 @@ public class PrepaidBillPaymentPrintAndFinishFragmentDialog extends PayPrintAndF
     @AfterViews
     void afterViewInitList() {
         productOrdernum.setText(mOrderNum);
-        productNameDisplay.setText(chosenCategory.id);
+        productNameDisplay.setText(chosenBillPaymentItem.masterBillerId.toUpperCase());
         accountNumber_Display.setText(request.accountNumber);
         amount.setText(DollarAmpsand + mAmount.toString());
         fee.setText(String.valueOf(DollarAmpsand + request.feeAmount));
@@ -121,7 +125,12 @@ public class PrepaidBillPaymentPrintAndFinishFragmentDialog extends PayPrintAndF
 
     @Override
     protected void sendDigitalOrder() {
-        PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info);
+        PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new ChooseCustomerBaseDialog.emailSenderListener() {
+            @Override
+            public void onComplete() {
+                listener.onConfirmed();
+            }
+        });
     }
 
     public static void show(FragmentActivity context,
@@ -135,10 +144,11 @@ public class PrepaidBillPaymentPrintAndFinishFragmentDialog extends PayPrintAndF
                             BigDecimal changeAmount,
                             BigDecimal transactionFee,
                             String orderNum,
-                            String total) {
+                            String total,
+                            BillPaymentItem chosenBillPaymentItem) {
         DialogUtil.show(context,
                 DIALOG_NAME,
-                PrepaidBillPaymentPrintAndFinishFragmentDialog_.builder().info(info).transactions(transactions).request(request).mAmount(mAmount).orderGuid(orderGuid).chosenCategory(chosenCategory).changeAmount(changeAmount).transactionFee(transactionFee).mOrderNum(orderNum).mTotal(total).build()).setListener(listener);
+                PrepaidBillPaymentPrintAndFinishFragmentDialog_.builder().info(info).transactions(transactions).request(request).mAmount(mAmount).orderGuid(orderGuid).chosenCategory(chosenCategory).chosenBillPaymentItem(chosenBillPaymentItem).changeAmount(changeAmount).transactionFee(transactionFee).mOrderNum(orderNum).mTotal(total).build()).setListener(listener);
     }
 
     public static void hide(FragmentActivity activity) {

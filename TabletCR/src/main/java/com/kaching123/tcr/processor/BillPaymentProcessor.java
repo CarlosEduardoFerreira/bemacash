@@ -20,6 +20,8 @@ import com.kaching123.tcr.model.BillPaymentDescriptionModel.PrepaidType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.request.BillPaymentRequest;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.websvc.api.prepaid.BillPaymentResponse;
 import com.kaching123.tcr.websvc.api.prepaid.BillerLoadRecord;
 import com.kaching123.tcr.websvc.api.prepaid.Category;
@@ -125,7 +127,7 @@ public class BillPaymentProcessor {
                                 BillPaymentProcessor.this.orderGuid = orderGuid;
                                 BillPaymentProcessor.this.transactions = transactions;
                                 formedRequest.setOrderId(prepaidOrderId);
-                                proceedToBilling(context, formedRequest, prepaidOrderId, chosenCategory, amount, transactionFee);
+//                                proceedToBilling(context, formedRequest, prepaidOrderId, chosenCategory, amount, transactionFee, chosenBillPaymentItem);
                             }
                         }, transactionFee);
 
@@ -192,8 +194,8 @@ public class BillPaymentProcessor {
     }
 
     protected void proceedToBilling(final FragmentActivity context,
-                                    final BillPaymentRequest formedRequest, final long prepaidOrderId, final Category chosenCategory, final BigDecimal amount, final BigDecimal transactionFee) {
-        BillingFragmentDialog.show(context, formedRequest, transactionFee, orderGuid, new BillingFragmentDialog.BillingFragmentDialogCallback() {
+                                    final BillPaymentRequest formedRequest, final long prepaidOrderId, final Category chosenCategory, final BigDecimal amount, final BigDecimal transactionFee, BillPaymentItem chosenBillPaymentItem) {
+        BillingFragmentDialog.show(context, formedRequest, transactionFee, orderGuid,chosenBillPaymentItem, new BillingFragmentDialog.BillingFragmentDialogCallback() {
 
             @Override
             public void onError(String message) {
@@ -214,12 +216,12 @@ public class BillPaymentProcessor {
             }
 
             @Override
-            public void onComplete(BillPaymentResponse response, BigDecimal transactionFee, String orderNum, String total) {
+            public void onComplete(BillPaymentResponse response, BigDecimal transactionFee, String orderNum, String total, BillPaymentItem chosenBillPaymentItem) {
                 hide();
 //                IPrePaidInfo info = new BillPaymentInfo(mChosenOption);
                 callback.onBillPaymentPrintRequested(context, orderGuid, transactions, null, chosenCategory, formedRequest, amount, transactionFee, orderNum, total);
-            }
 
+            }
             private void hide() {
                 BillingFragmentDialog.hide(context);
             }

@@ -23,6 +23,7 @@ import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
 import com.kaching123.tcr.fragment.tendering.PrepaidChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayPrintAndFinishFragmentDialog;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -149,7 +150,12 @@ public class PrepaidWirelessPrintAndFinishFragmentDialog extends PayPrintAndFini
 
     @Override
     protected void sendDigitalOrder() {
-        PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info);
+        PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new ChooseCustomerBaseDialog.emailSenderListener() {
+            @Override
+            public void onComplete() {
+                listener.onConfirmed();
+            }
+        });
     }
 
     public static void show(FragmentActivity context,

@@ -50,6 +50,8 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     private static final int ADD_CUSTOMER_REQUEST_CODE = 0x0100;
 
+    protected emailSenderListener listener;
+
     @ViewById(android.R.id.list)
     protected ListView listView;
 
@@ -96,6 +98,9 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
         return null;
     }
 
+    public interface emailSenderListener{
+        void onComplete();
+    }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -106,7 +111,11 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
         listView.setAdapter(adapter = new CustomerAdapter(getActivity()));
         getLoaderManager().restartLoader(0, null, this);
     }
-
+    protected ChooseCustomerBaseDialog setListener(emailSenderListener listener)
+    {
+        this.listener = listener;
+        return (ChooseCustomerBaseDialog)this;
+    }
     @ItemClick(android.R.id.list)
     protected void listViewItemClicked(int pos) {
         Cursor c = (Cursor) adapter.getItem(pos);

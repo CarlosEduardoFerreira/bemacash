@@ -13,6 +13,7 @@ import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.request.BillPaymentRequest;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
 import com.kaching123.tcr.websvc.api.prepaid.BillPaymentResponse;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
@@ -33,6 +34,8 @@ public class BillingFragmentDialog extends StyledDialogFragment {
 
     @FragmentArg
     protected BillPaymentRequest request;
+    @FragmentArg
+    protected BillPaymentItem chosenBillPaymentItem;
     @FragmentArg
     protected BigDecimal transactionFee;
     @FragmentArg
@@ -110,18 +113,21 @@ public class BillingFragmentDialog extends StyledDialogFragment {
     public interface BillingFragmentDialogCallback {
         public void onError(String message);
 
-        public void onComplete(BillPaymentResponse response, BigDecimal transactionFee, String orderNum, String total);
+        public void onComplete(BillPaymentResponse response, BigDecimal transactionFee, String orderNum, String total, BillPaymentItem chosenBillPaymentItem);
     }
 
     public static void show(FragmentActivity context,
                             BillPaymentRequest request,
                             BigDecimal transactionFee,
                             String orderGuid,
-                            BillingFragmentDialogCallback callback) {
+                            BillPaymentItem chosenBillPaymentItem,
+                            BillingFragmentDialogCallback callback
+                            ) {
         BillingFragmentDialog dialog = BillingFragmentDialog_.builder()
                 .request(request)
                 .transactionFee(transactionFee)
                 .orderGuid(orderGuid)
+                .chosenBillPaymentItem(chosenBillPaymentItem)
                 .build();
         dialog.setCallback(callback);
         DialogUtil.show(context, DIALOG_NAME, dialog);
@@ -137,7 +143,7 @@ public class BillingFragmentDialog extends StyledDialogFragment {
         @Override
         protected void handleSuccess(BillPaymentResponse result) {
             WaitDialogFragment.hide(getActivity());
-            callback.onComplete(result, transactionFee, mOrderNum, mTotal);
+            callback.onComplete(result, transactionFee, mOrderNum, mTotal, chosenBillPaymentItem);
         }
 
         @Override
