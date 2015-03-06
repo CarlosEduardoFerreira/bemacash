@@ -31,7 +31,14 @@ public class BillPaymentCommand extends BasePrepaidPaymentCommand<BillPaymentReq
 
     @Override
     protected TaskResult doInBackground() {
+        if(getTrainingMode())
+            return succeeded().add(ARG_RESULT, response);
         return super.doInBackground().add(ARG_RESULT, response);
+    }
+
+    private boolean getTrainingMode()
+    {
+        return getApp().isTrainingMode();
     }
 
     @Override
