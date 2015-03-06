@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
-    <string name="app_name">Kashin 123</string>
+    <string name="app_name">MintPos</string>
     <string name="dashboard_activity_label">Kashin 123</string>
     <string name="settings_activity_label">Configuraci\u00F3n</string>
     <string name="inventory_activity_label">Inventario</string>

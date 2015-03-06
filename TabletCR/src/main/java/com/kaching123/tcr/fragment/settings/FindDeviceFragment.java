@@ -22,10 +22,14 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.DeviceModel;
+import com.kaching123.usb.SysBusUsbDevice;
+import com.kaching123.usb.SysBusUsbManager;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -51,12 +55,22 @@ public class FindDeviceFragment extends StyledDialogFragment {
     private DeviceAdapter adapter;
 
     protected FindDeviceListener findDeviceListener;
-
+    public static final String INTEGRATED_DISPLAYER = "Integrated Customer Display";
+    public static final String SERIAL_PORT = "Integrated Customer Display";
+    public static String USB_MSR_NAME = "Integrated MSR";
+    public static String USB_SCANNER_NAME = "USB SCANNER";
+    public static String USB_SCANNER_ADDRESS = "USB SCANNER";
+    public static String SEARIL_PORT_SCANNER_ADDRESS = "Integrated Scanner";
+    public static String SEARIL_PORT_SCANNER_NAME = "Integrated Scanner";
+    public static String USB_MSR_VID = "1667";
+    public static String USB_MSR_PID = "0009";
+    public static String USB_SCANNER_VID = "0000";
+    public static String USB_SCANNER_PID = "5710";
     @FragmentArg
     protected Mode mode;
 
     public enum Mode {
-        DISPLAY, SCANNER
+        DISPLAY, SCANNER, USBMSR
     }
 
     public static void show(FragmentActivity activity, FindDeviceListener findDeviceListener, Mode mode) {
@@ -104,9 +118,12 @@ public class FindDeviceFragment extends StyledDialogFragment {
         if (mode == Mode.DISPLAY) {
             progressLabel.setText(R.string.find_display_progress);
             emptyView.setText(R.string.find_display_empty);
-        } else {
+        } else if (mode == Mode.SCANNER) {
             progressLabel.setText(R.string.find_scanner_progress);
             emptyView.setText(R.string.find_scanner_empty);
+        } else if (mode == Mode.USBMSR) {
+            progressLabel.setText(R.string.find_msr_progress);
+            emptyView.setText(R.string.find_msr_empty);
         }
 
         adapter = new DeviceAdapter(getActivity());
@@ -115,11 +132,13 @@ public class FindDeviceFragment extends StyledDialogFragment {
     }
 
     @ItemClick
-    protected void listViewItemClicked(DeviceModel device){
+    protected void listViewItemClicked(DeviceModel device) {
         if (mode == Mode.DISPLAY) {
             storeDisplay(device);
-        } else {
+        } else if (mode == Mode.SCANNER) {
             storeScanner(device);
+        } else if (mode == Mode.USBMSR) {
+            storeUsbMsr(device);
         }
 
         if (findDeviceListener != null)
@@ -137,6 +156,10 @@ public class FindDeviceFragment extends StyledDialogFragment {
         getApp().getShopPref().scannerName().put(scanner.getName());
     }
 
+    private void storeUsbMsr(DeviceModel usbMsr) {
+        getApp().getShopPref().usbMSRName().put(usbMsr.getAddress());
+    }
+
     private class GetDevicesTask extends AsyncTask<Void, Void, Collection<DeviceModel>> {
 
         private static final String DISPLAY_DEVICE_NAME_CONSTRAINT = "LCI Display";
@@ -145,6 +168,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
         private static final String EMULATED_DISPLAY_ADDRESS = "EMULATED_DISPLAY_ADDRESS";
         private static final String EMULATED_SCANNER_NAME = "Barcode Scanner EMULATED";
         private static final String EMULATED_SCANNER_ADDRESS = "EMULATED_SCANNER_ADDRESS";
+
 
         private boolean isEmulate() {
             return !BuildConfig.SUPPORT_PRINTER;
@@ -162,16 +186,30 @@ public class FindDeviceFragment extends StyledDialogFragment {
             }
 
             BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-            if (adapter == null || !adapter.isEnabled()) {
-                return null;
-            }
+//            if (adapter == null || !adapter.isEnabled()) {
+//                return null;
+//            }
+
             Set<BluetoothDevice> bluetoothDevices = adapter.getBondedDevices();
-            return getDevices(bluetoothDevices);
+            Set<DeviceModel> devices = null;
+            switch (mode) {
+                case DISPLAY:
+                case SCANNER:
+                    devices = getDevices(bluetoothDevices);
+                    break;
+                case USBMSR:
+                    devices = getUsbMsrDevices();
+                    break;
+                default:
+                    break;
+            }
+
+            return devices;
         }
 
         private Collection<DeviceModel> getEmulatedDevice() {
             DeviceModel emulatedDevice;
-            if (mode == Mode.DISPLAY ) {
+            if (mode == Mode.DISPLAY) {
                 emulatedDevice = new DeviceModel(EMULATED_DISPLAY_NAME, EMULATED_DISPLAY_ADDRESS);
             } else {
                 emulatedDevice = new DeviceModel(EMULATED_SCANNER_NAME, EMULATED_SCANNER_ADDRESS);
@@ -182,7 +220,14 @@ public class FindDeviceFragment extends StyledDialogFragment {
         private Set<DeviceModel> getDevices(Set<BluetoothDevice> bluetoothDevices) {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
             boolean useConstraint = mode == Mode.DISPLAY;
-            for(BluetoothDevice device: bluetoothDevices) {
+            if (mode == Mode.DISPLAY)
+                devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
+            else {
+                devices.add(new DeviceModel(SEARIL_PORT_SCANNER_ADDRESS, SEARIL_PORT_SCANNER_NAME));
+                if (checkUsb(USB_SCANNER_VID, USB_SCANNER_PID))
+                    devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
+            }
+            for (BluetoothDevice device : bluetoothDevices) {
                 if (useConstraint && !checkConstraint(device))
                     continue;
 
@@ -191,10 +236,32 @@ public class FindDeviceFragment extends StyledDialogFragment {
             return devices;
         }
 
+        private Set<DeviceModel> getUsbMsrDevices() {
+            Set<DeviceModel> devices = new HashSet<DeviceModel>();
+            if (checkUsb(USB_MSR_VID, USB_MSR_PID))
+                devices.add(new DeviceModel(USB_MSR_NAME, USB_MSR_NAME));
+            return devices;
+        }
+
+        private boolean checkUsb(String VID, String PID) {
+            SysBusUsbManager mUsbManagerLinux = new SysBusUsbManager();
+            HashMap<String, SysBusUsbDevice> mLinuxUsbDeviceList = mUsbManagerLinux.getUsbDevices();
+            Iterator<SysBusUsbDevice> deviceIterator = mLinuxUsbDeviceList.values().iterator();
+            while (deviceIterator.hasNext()) {
+                SysBusUsbDevice device = deviceIterator.next();
+                if (device.getVID().equalsIgnoreCase(VID) && device.getPID().equalsIgnoreCase(PID)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private boolean checkConstraint(BluetoothDevice device) {
             if (mode != Mode.DISPLAY)
                 return true;
 
+            if (device == null || device.getName() == null)
+                return false;
             return device.getName().contains(DISPLAY_DEVICE_NAME_CONSTRAINT);
         }
 
@@ -207,7 +274,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
             listView.setEmptyView(emptyView);
 
             adapter.clear();
-            if(devices != null && !devices.isEmpty()){
+            if (devices != null && !devices.isEmpty()) {
                 adapter.addAll(devices);
             }
         }
@@ -221,7 +288,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TextView textView = (TextView)super.getView(position, convertView, parent);
+            TextView textView = (TextView) super.getView(position, convertView, parent);
             String name = getItem(position).getName();
             textView.setText(TextUtils.isEmpty(name) ? getItem(position).getAddress() : name);
             return textView;

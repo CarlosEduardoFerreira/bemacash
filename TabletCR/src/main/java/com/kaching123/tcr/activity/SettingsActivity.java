@@ -12,6 +12,7 @@ import android.widget.TextView;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.fragment.settings.AboutFragment;
@@ -23,6 +24,7 @@ import com.kaching123.tcr.fragment.settings.PrinterListFragment;
 import com.kaching123.tcr.fragment.settings.ScannerFragment;
 import com.kaching123.tcr.fragment.settings.SyncSettingsFragment;
 import com.kaching123.tcr.fragment.settings.TrainingModeSettingsFragment;
+import com.kaching123.tcr.fragment.settings.USBMsrFragment;
 import com.kaching123.tcr.model.Permission;
 
 import java.util.Arrays;
@@ -59,6 +61,7 @@ public class SettingsActivity extends SuperBaseActivity {
                 new NavigationItem(getString(R.string.pref_drawer_header_title), getString(R.string.pref_drawer_header_summary)),
                 new NavigationItem(getString(R.string.pref_display_header_title), getString(R.string.pref_display_header_summary)),
                 new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
+                new NavigationItem(getString(R.string.pref_msr_header_title), getString(R.string.pref_msr_header_summary)),
                 new NavigationItem(getString(R.string.pref_datausage_header_title), getString(R.string.pref_datausage_header_summary)),
                 new NavigationItem(getString(R.string.pref_training_mode_header_title), getString(R.string.pref_training_mode_header_summary)),
                 new NavigationItem(getString(R.string.pref_about_header_title), getString(R.string.pref_about_header_summary))
@@ -97,12 +100,15 @@ public class SettingsActivity extends SuperBaseActivity {
                 fragment = ScannerFragment.instance();
                 break;
             case 6:
-                fragment = DataUsageStatFragment.instance();
+                fragment = USBMsrFragment.instance();
                 break;
             case 7:
-                fragment = TrainingModeSettingsFragment.instance();
+                fragment = DataUsageStatFragment.instance();
                 break;
             case 8:
+                fragment = TrainingModeSettingsFragment.instance();
+                break;
+            case 9:
                 fragment = AboutFragment.instance();
                 break;
         }

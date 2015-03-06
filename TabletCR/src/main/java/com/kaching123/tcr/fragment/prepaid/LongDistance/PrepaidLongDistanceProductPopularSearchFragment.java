@@ -197,6 +197,7 @@ public class PrepaidLongDistanceProductPopularSearchFragment extends PrepaidLong
         categories.addAll(temp);
         assert categories != null && !categories.isEmpty();
         doGetMasterBillers(getActivity(), categories.get(categoryCount).id);
+
     }
 
 

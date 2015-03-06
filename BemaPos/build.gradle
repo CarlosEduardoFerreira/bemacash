@@ -1,4 +1,21 @@
-apply plugin: 'java'
+apply plugin: 'com.android.library'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+dependencies {
+    compile 'com.android.support:support-v4:18.0.+'
+}
+android {
+    compileSdkVersion 19
+    buildToolsVersion "20"
+
+    defaultConfig {
+        minSdkVersion 12
+        targetSdkVersion 19
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+        }
+    }
+}

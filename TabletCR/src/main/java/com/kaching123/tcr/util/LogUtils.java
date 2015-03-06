@@ -25,6 +25,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import com.kaching123.tcr.BuildConfig;
 
 public class LogUtils {
 
@@ -150,7 +151,7 @@ public class LogUtils {
             log = null;
 
             // Send the file
-            final Uri shareUri = FileProvider.getUriForFile(context, context.getPackageName() + ".files", logFile);
+            final Uri shareUri = FileProvider.getUriForFile(context, BuildConfig.FILE_PROVIDER_AUTHORITY, logFile);
             final Intent sendIntent = ShareCompat.IntentBuilder.from(context)
                         .setStream(shareUri)
                         .setType("message/rfc822")

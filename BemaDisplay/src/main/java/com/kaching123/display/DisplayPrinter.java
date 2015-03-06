@@ -7,4 +7,6 @@ public interface DisplayPrinter {
 	void write(byte[] bytes) throws IOException;
 	
 	void close() throws IOException;
+
+    boolean isUSBDisplayer();
 }

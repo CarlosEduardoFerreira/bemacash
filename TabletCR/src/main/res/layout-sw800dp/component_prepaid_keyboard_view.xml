@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/num_keyboard"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:columnCount="3"
+    android:orientation="vertical"
+    android:rowCount="5">
+
+    <ImageButton
+        android:id="@+id/num1"
+        android:layout_marginTop="10px"
+        android:background="@drawable/prepaid_num1" />
+
+    <ImageButton
+        android:id="@+id/num4"
+        android:layout_marginTop="10px"
+        android:background="@drawable/prepaid_num4" />
+
+    <ImageButton
+        android:id="@+id/num7"
+        android:layout_marginTop="10px"
+        android:background="@drawable/prepaid_num7" />
+
+    <ImageButton
+        android:id="@+id/num0"
+        android:layout_marginTop="10px"
+        android:background="@drawable/prepaid_num0" />
+
+    <ImageButton
+        android:id="@+id/num_delete"
+        android:layout_marginTop="10px"
+        android:background="@drawable/prepaid_numdelete" />
+
+    <ImageButton
+        android:id="@+id/num2"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/prepaid_num2" />
+
+    <ImageButton
+        android:id="@+id/num5"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/prepaid_num5" />
+
+    <ImageButton
+        android:id="@+id/num8"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/prepaid_num8" />
+
+    <ImageButton
+        android:id="@+id/num_dot"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/prepaid_numdot" />
+
+    <ImageButton
+        android:id="@+id/num_enter"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/prepaid_numenter" />
+
+    <ImageButton
+        android:id="@+id/num3"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/prepaid_num3" />
+
+    <ImageButton
+        android:id="@+id/num6"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/prepaid_num6" />
+
+    <ImageButton
+        android:id="@+id/num9"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/prepaid_num9" />
+
+    <ImageButton
+        android:id="@+id/num_minus"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/prepaid_numminus" />
+
+    <ImageButton
+        android:id="@+id/num_delete_all"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="30px"
+        android:background="@drawable/numdeleteall" />
+
+</GridLayout>

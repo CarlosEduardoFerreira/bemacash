@@ -12,6 +12,9 @@ import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EApplication;
+import com.kaching123.display.SerialPortScanner;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EApplication;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.RestCommand.PlainTextResponse;
@@ -24,6 +27,7 @@ import com.kaching123.tcr.commands.rest.sync.GetPrepaidOrderIdResponse;
 import com.kaching123.tcr.commands.rest.sync.GetResponse;
 import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter.BarcodePrefixes;
+import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
 import com.kaching123.tcr.model.EmployeeModel;
@@ -43,6 +47,7 @@ import com.squareup.okhttp.OkHttpClient;
 import org.apache.commons.codec.Charsets;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -104,6 +109,8 @@ public class TcrApplication extends Application {
     private RestAdapter restAdapter;
     private RestAdapter restAdapterJsonOrg;
 
+    private SerialPortScanner serialPortScanner;
+
     public String emailApiKey = "EvG5Cb8acZC4Dzm6b4a5GRdDBPk362";
 
     private static final ReentrantLock trainingModeLock = new ReentrantLock();
@@ -132,6 +139,7 @@ public class TcrApplication extends Application {
 
         lazyInstantiateShopPref();
         initPref();
+
     }
 
     public synchronized SyncOpenHelper getSyncOpenHelper() {
@@ -213,7 +221,8 @@ public class TcrApplication extends Application {
                     _decimal(shopPref.defaultStoreCommission().getOr(null)),
                     shopPref.offlinePeriodHours().getOr(0),
                     shopPref.printerTwoCopiesReceipt().getOr(false),
-                    shopPref.maxItemsCount().getOr(0));
+                    shopPref.maxItemsCount().getOr(0),
+                    _enum(ShopInfoViewJdbcConverter.ShopStatus.class, shopPref.shopStatus().get(), ShopInfoViewJdbcConverter.ShopStatus.ACTIVE));
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -241,6 +250,7 @@ public class TcrApplication extends Application {
         registerSerial = formatByBlocksString(registerSerial);
 
         setUsers();
+
     }
 
     private synchronized void lazyInstantiateShopPref() {
@@ -492,6 +502,7 @@ public class TcrApplication extends Application {
                 .offlinePeriodHours().put(info.offlinePeriodHours)
                 .printerTwoCopiesReceipt().put(info.printerTwoCopiesReceipt)
                 .maxItemsCount().put(info.maxItemsCount)
+                .shopStatus().put(info.shopStatus == null ? ShopInfoViewJdbcConverter.ShopStatus.ACTIVE.name() : info.shopStatus.name())
                 .apply();
 
         setUsers();
@@ -683,13 +694,11 @@ public class TcrApplication extends Application {
         return offlinePeriod;
     }
 
-    public void setNeedBillPaymentUpdated(boolean needed)
-    {
+    public void setNeedBillPaymentUpdated(boolean needed) {
         shopPref.NeedBillpaymentUpdated().put(needed);
     }
 
-    public boolean getNeedBillPaymentUpdated()
-    {
+    public boolean getNeedBillPaymentUpdated() {
         return shopPref.NeedBillpaymentUpdated().getOr(true);
     }
 
@@ -841,6 +850,25 @@ public class TcrApplication extends Application {
 
             } catch (Exception e) {
                 throw new ConversionException("Can't parse response: " + str, e);
+            }
+        }
+    }
+
+    public InputStream getScannerIS() {
+        serialPortScanner = new SerialPortScanner();
+
+        return serialPortScanner.getInputStreamReader();
+    }
+
+    public void closeSerialScanner() {
+        if (serialPortScanner != null) {
+            try {
+                serialPortScanner.close();
+                serialPortScanner = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                Logger.d("Tcrapplication closeSerialScanner faile: " + e.toString());
+                serialPortScanner = null;
             }
         }
     }

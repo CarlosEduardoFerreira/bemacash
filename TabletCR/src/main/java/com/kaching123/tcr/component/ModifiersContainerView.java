@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import org.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.ViewById;
+import com.jess.ui.TwoWayGridView;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.ModifierModel;
 
@@ -14,7 +16,7 @@ import java.util.Set;
 /**
  * Created by vkompaniets on 18.11.13.
  */
-@EViewGroup (R.layout.modify_container)
+@EViewGroup(R.layout.modify_container)
 public class ModifiersContainerView extends BaseAddonContainerView<ModifierModel> {
 
     public ModifiersContainerView(Context context, AttributeSet attrs) {
@@ -23,7 +25,7 @@ public class ModifiersContainerView extends BaseAddonContainerView<ModifierModel
 
     @Override
     protected ButtonsAdapter<ModifierModel> createAdapter() {
-        return new ButtonsAdapter<ModifierModel>(getContext(), true){
+        return new ButtonsAdapter<ModifierModel>(getContext(), true) {
 
             @Override
             protected String getTitle(ModifierModel item) {
@@ -42,14 +44,18 @@ public class ModifiersContainerView extends BaseAddonContainerView<ModifierModel
         };
     }
 
-    public String getSelectedModifier(){
+    public String getSelectedModifier() {
         Set<String> selected = getSelectedItems();
-        if(selected.isEmpty())
+        if (selected.isEmpty())
             return null;
         return selected.iterator().next();
     }
 
-    public void setSelectedModifier(String selectedModifierGuid){
+    public void setSelectedModifier(String selectedModifierGuid) {
         setSelectedItems(Arrays.asList(selectedModifierGuid));
+    }
+
+    public void setColumnNums(int num) {
+        buttonGrid.setNumColumns(num);
     }
 }

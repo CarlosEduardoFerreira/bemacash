@@ -9,6 +9,7 @@ import com.kaching123.pos.data.PrinterStatusEx.OfflineStatusInfo;
 import com.kaching123.pos.data.PrinterStatusEx.PrinterHeadInfo;
 import com.kaching123.pos.data.PrinterStatusEx.PrinterStatusInfo;
 import com.kaching123.pos.printer.GetPrinterStatusExAction;
+import com.kaching123.pos.printer.GetPrinterBasicStatusAction;
 import com.kaching123.tcr.Logger;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -74,7 +75,11 @@ public class GetPrinterStatusCommand extends PrinterCommand {
         }
 
         try {
-            status = new GetPrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer);
+            if ( printer.supportExtendedStatus() )
+                status = new GetPrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer);
+            else
+                status = new GetPrinterBasicStatusAction().execute(printer);
+
         } catch (IOException e) {
             Logger.e("PrinterCommand validate statues execute: ", e);
             return failed().add(EXTRA_ERROR_PRINTER, PrinterError.DISCONNECTED);

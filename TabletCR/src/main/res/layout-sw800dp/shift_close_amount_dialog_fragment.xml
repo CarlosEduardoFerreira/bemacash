@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp">
+
+    <TextView android:id="@+id/opening_amount_label"
+        style="@style/Amount.Label"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBaseline="@+id/edit_text"
+        android:text="@string/dlg_close_amount_label"/>
+
+    <TextView
+        style="@style/Amount.Label"
+        android:ellipsize="none"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/opening_amount_label"
+        android:layout_toLeftOf="@+id/edit_text"
+        android:layout_alignBaseline="@+id/edit_text"
+        android:text="@string/lots_o_dots"/>
+
+    <com.kaching123.tcr.component.CustomEditBox
+        style="@style/CustomEditBox.ShiftAmount"
+        android:id="@+id/edit_text"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"/>
+
+</RelativeLayout>

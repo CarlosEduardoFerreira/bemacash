@@ -3,6 +3,8 @@ package com.kaching123.tcr.commands.device;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.kaching123.pos.USBPrinter;
+
 /**
  * Created by gdubina on 11.02.14.
  */
@@ -24,7 +26,10 @@ public class PrinterInfo implements Parcelable {
         this.subNet = subNet;
         this.gateway = gateway;
         this.dhcp = dhcp;
-        this.fullAddress = ip + ":" + port;
+        if ( ip.compareTo(USBPrinter.USB_DESC)==0)
+            this.fullAddress = USBPrinter.USB_DESC + " (" + USBPrinter.USB_MODELS + ")";
+        else
+            this.fullAddress = ip + ":" + port;
     }
 
     @Override

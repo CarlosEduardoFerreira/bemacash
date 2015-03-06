@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/prepaid_dialog_buttons_background_color">
+
+    <ImageView
+        android:layout_centerVertical="true"
+        android:id="@+id/icon"
+        android:layout_width="200dp"
+        android:layout_height="120dp"
+        android:layout_margin="7dp"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_margin="7dp"
+        style="@style/Prepaid.Spinner.Item"
+        android:singleLine="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:textAlignment="inherit"/>
+</RelativeLayout>

@@ -40,6 +40,8 @@ public interface ShopPref {
 
     String shopViewType();
 
+    String shopStatus();
+
     String prepaidVersionId();
 
     String shopAddress1();
@@ -227,4 +229,6 @@ public interface ShopPref {
     boolean SunpassActivated();
 
     boolean BillPaymentActivated();
+
+    String usbMSRName();
 }

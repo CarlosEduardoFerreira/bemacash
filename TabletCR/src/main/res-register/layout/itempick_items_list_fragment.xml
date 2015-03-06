@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/item_list_bg"
+                android:background="@color/bg_grey_color"
                 android:orientation="vertical">
 
     <include
@@ -15,7 +15,8 @@
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@drawable/list_divider"
+        android:divider="?android:attr/listDivider"
+        android:dividerHeight="0.2dp"
         android:layerType="software"/>
 
     <include

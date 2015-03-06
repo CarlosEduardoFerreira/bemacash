@@ -15,15 +15,17 @@ public abstract class BaseDisplayCommand<T extends IDisplayPrinterWrapper> imple
 
     @Override
     public void execute(Context context, DisplayPrinter printer) throws IOException {
-        final T printerWrapper = getPrinterWrapper();
+        final T printerWrapper = getPrinterWrapper(context);
 
         printerWrapper.clear();
         printBody(context, printerWrapper);
         printerWrapper.print(printer);
     }
 
-    protected abstract T getPrinterWrapper();
+    protected abstract T getPrinterWrapper(Context context);
 
     protected abstract void printBody(Context context, T printerWrapper);
+
+    protected abstract boolean getSerialPortDisplaySet(Context context);
 
 }

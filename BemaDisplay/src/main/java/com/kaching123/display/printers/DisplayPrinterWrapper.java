@@ -23,12 +23,17 @@ public class DisplayPrinterWrapper implements IDisplayPrinterWrapper {
 
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.##");
     private static final DecimalFormat priceFormat = new DecimalFormat("0.00");
+    private boolean isSerialPortDisplay;
     static {
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
         otherSymbols.setDecimalSeparator('.');
         otherSymbols.setGroupingSeparator(',');
         priceFormat.setDecimalFormatSymbols(otherSymbols);
         decimalFormat.setDecimalFormatSymbols(otherSymbols);
+    }
+    public DisplayPrinterWrapper(boolean isSerialPortDisplay)
+    {
+        this.isSerialPortDisplay = isSerialPortDisplay;
     }
 
     private static final char QUANTITY_SEPARATOR = 'x';
@@ -50,16 +55,16 @@ public class DisplayPrinterWrapper implements IDisplayPrinterWrapper {
 
     @Override
     public void clear() {
-        commands.add(new PrintTextAction(fill(MAX_TEXT_LEN, ' ')));
+        commands.add(new PrintTextAction(fill(MAX_TEXT_LEN, ' '), isSerialPortDisplay));
         commands.add(new SelectFirstDigitAction());
     }
 
     public void add(String text) {
-        commands.add(new PrintTextAction(cropText(MAX_TEXT_LEN, text)));
+        commands.add(new PrintTextAction(cropText(MAX_TEXT_LEN, text), isSerialPortDisplay));
     }
 
     public void addLine(String text) {
-        commands.add(new PrintTextAction(cropFillText(MAX_TEXT_LINE_LEN, text)));
+        commands.add(new PrintTextAction(cropFillText(MAX_TEXT_LINE_LEN, text), isSerialPortDisplay));
     }
 
     public void add(BigDecimal quantity, String description, BigDecimal total) {
@@ -67,8 +72,8 @@ public class DisplayPrinterWrapper implements IDisplayPrinterWrapper {
     }
 
     public void add(String quantity, String description, String total) {
-        commands.add(new PrintTextAction(formatText(MAX_TEXT_LINE_LEN, quantity, description)));
-        commands.add(new PrintTextAction(formatTextRight(MAX_TEXT_LINE_LEN, total)));
+        commands.add(new PrintTextAction(formatText(MAX_TEXT_LINE_LEN, quantity, description), isSerialPortDisplay));
+        commands.add(new PrintTextAction(formatTextRight(MAX_TEXT_LINE_LEN, total), isSerialPortDisplay));
     }
 
     public void add(String totalLabel, String discountLabel, BigDecimal orderTotalPrice, BigDecimal orderTotalDiscount) {
@@ -80,12 +85,12 @@ public class DisplayPrinterWrapper implements IDisplayPrinterWrapper {
     }
 
     public void add(String totalLabel, String orderTotalPrice) {
-        commands.add(new PrintTextAction(formatText(MAX_TEXT_LINE_LEN, orderTotalPrice.length(), totalLabel, orderTotalPrice)));
+        commands.add(new PrintTextAction(formatText(MAX_TEXT_LINE_LEN, orderTotalPrice.length(), totalLabel, orderTotalPrice), isSerialPortDisplay));
     }
 
     public void add(String totalLabel, String discountLabel, String orderTotalPrice, String orderTotalDiscount) {
-        commands.add(new PrintTextAction(formatText(MAX_TEXT_LINE_LEN, orderTotalPrice.length(), totalLabel, orderTotalPrice)));
-        commands.add(new PrintTextAction(formatText(MAX_TEXT_LINE_LEN, orderTotalDiscount.length(), discountLabel, orderTotalDiscount)));
+        commands.add(new PrintTextAction(formatText(MAX_TEXT_LINE_LEN, orderTotalPrice.length(), totalLabel, orderTotalPrice), isSerialPortDisplay));
+        commands.add(new PrintTextAction(formatText(MAX_TEXT_LINE_LEN, orderTotalDiscount.length(), discountLabel, orderTotalDiscount), isSerialPortDisplay));
     }
 
     public static String formatTextRight(int maxTextLen, String text) {

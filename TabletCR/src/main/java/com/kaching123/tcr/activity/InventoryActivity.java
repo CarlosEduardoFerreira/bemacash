@@ -26,6 +26,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.commands.store.export.ExportInventoryCommand;
@@ -124,7 +125,7 @@ public class InventoryActivity extends ScannerBaseActivity {
                     itemsFragment.setCategory(ItemsFragment.LOAD_ALL_CATEGORIES);
                     selectedDeartmentGuid = null;
                     selectedCategoryGuid = null;
-                    if (sortItem != null){
+                    if (sortItem != null) {
                         sortItem.setVisible(true);
                     }
                 } else {
@@ -132,8 +133,8 @@ public class InventoryActivity extends ScannerBaseActivity {
                     itemsFragment.setDepartment(depGuid);
                     selectedCategoryGuid = catGuid;
                     selectedDeartmentGuid = depGuid;
-                    if (sortItem != null){
-                        sortItem.setVisible(false);
+                    if (sortItem != null) {
+                        sortItem.setVisible(true);
                     }
                 }
             }
@@ -308,11 +309,19 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @Override
     protected void onBarcodeReceived(String barcode) {
-        searchItem.expandActionView();
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQuery(barcode, true);
+        if (searchItem != null) {
+            searchItem.expandActionView();
+            SearchView searchView = (SearchView) searchItem.getActionView();
+            searchView.setQuery(barcode, true);
+        }
     }
 
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("BaseItemActivity onReceive:" + barcode);
+
+        onBarcodeReceived(barcode);
+    }
 
     private class NavigationSpinnerAdapter extends ArrayAdapter<String> {
 

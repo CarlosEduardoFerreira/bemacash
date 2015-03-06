@@ -72,11 +72,19 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         ShopInfo shopInfo = app.getShopInfo();
 
         if (!TextUtils.isEmpty(shopInfo.footerMsg1)) {
-            printerWrapper.subTitle(shopInfo.footerMsg1);
+            String text = shopInfo.footerMsg1;
+            String[] strs = text.split("\n");
+            for (String line : strs) {
+                printerWrapper.subTitle(line);
+            }
         }
 
         if (!TextUtils.isEmpty(shopInfo.footerMsg2)) {
-            printerWrapper.subTitle(shopInfo.footerMsg2);
+            String text = shopInfo.footerMsg2;
+            String[] strs = text.split("\n");
+            for (String line : strs) {
+                printerWrapper.subTitle(line);
+            }
         }
 
 

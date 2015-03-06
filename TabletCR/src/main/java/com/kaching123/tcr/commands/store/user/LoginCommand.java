@@ -11,9 +11,12 @@ import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand;
 import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand.EndUncompletedTransactionsResult;
 import com.kaching123.tcr.commands.rest.sync.AuthResponse;
 import com.kaching123.tcr.commands.rest.sync.AuthResponse.AuthInfo;
+import com.kaching123.tcr.commands.rest.sync.GetResponse;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
+import com.kaching123.tcr.commands.rest.sync.SyncApi2;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
 import com.kaching123.tcr.commands.support.SendLogCommand;
+import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeePermissionsModel;
 import com.kaching123.tcr.model.EmployeeStatus;
@@ -31,6 +34,7 @@ import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
 import com.kaching123.tcr.store.ShopStore.RegisterTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.SyncOpenHelper;
+import com.kaching123.tcr.util.JdbcJSONObject;
 import com.kaching123.tcr.util.Util;
 import com.telly.groundy.Groundy;
 import com.telly.groundy.GroundyTask;
@@ -39,15 +43,20 @@ import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashSet;
 import java.util.Set;
+
+import retrofit.RetrofitError;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 //i think we should use command because it will be check subscription titledDate too
 public class LoginCommand extends GroundyTask {
 
-    public static enum Error {LOGIN_FAILED, SYNC_OUTDATED, SYNC_FAILED, REGISTER_CHECK_FAILED, EMPLOYEE_NOT_ACTIVE, OFFLINE, SYNC_INCONSISTENT, LOGIN_OFFLINE_FAILED}
+    public static enum Error {LOGIN_FAILED, SYNC_OUTDATED, SYNC_FAILED, REGISTER_CHECK_FAILED, EMPLOYEE_NOT_ACTIVE, OFFLINE, SYNC_INCONSISTENT, LOGIN_OFFLINE_FAILED, REGISTER_PENDING, BLOCK_MERCHANT}
 
     public static enum Mode {
         LOGIN, SWITCH
@@ -78,9 +87,14 @@ public class LoginCommand extends GroundyTask {
             Logger.d("Performing remote login... login: %s, serial: %s", userName, registerSerial);
             RemoteLoginResult remoteLoginResult = webLogin(registerSerial, userName, password);
             if (remoteLoginResult != null) {
-                if (!remoteLoginResult.registerChecked) {
+                if (remoteLoginResult.registerNumber == null) {
                     Logger.d("Remote login FAILED! register check failed");
                     return failed().add(EXTRA_ERROR, Error.REGISTER_CHECK_FAILED);
+                }
+                else if(remoteLoginResult.registerNumber != RegisterStatus.ACTIVE)
+                {
+                    Logger.d("Remote login FAILED! register pending failed");
+                    return failed().add(EXTRA_ERROR, Error.REGISTER_PENDING);
                 }
                 EmployeeModel employeeModel = remoteLoginResult.employeeModel;
                 if (employeeModel == null) {
@@ -93,6 +107,15 @@ public class LoginCommand extends GroundyTask {
                 }
 
                 boolean cleaned = checkDb(employeeModel);
+                try {
+                    syncShopInfo(employeeModel);
+                } catch (SyncException e) {
+                    e.printStackTrace();
+                    return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
+                } catch (SyncCommand.BlockException e) {
+                    e.printStackTrace();
+                    return failed().add(EXTRA_ERROR, Error.BLOCK_MERCHANT);
+                }
 
                 Error syncError = syncData(employeeModel);
                 if (syncError != null && syncError != Error.OFFLINE) {
@@ -147,7 +170,55 @@ public class LoginCommand extends GroundyTask {
                 .add(EXTRA_UPLOAD_TRANSACTION_INVALID, hadInvalidUploadTransaction)
                 .add(EXTRA_UPLOAD_UNCOMPLETED_SALE_ORDER_GUID, lastUncompletedSaleOrderGuid);
     }
+    private void syncShopInfo(EmployeeModel employeeModel) throws SyncException, SyncCommand.BlockException {
+        TcrApplication app = TcrApplication.get();
+        SyncApi2 api = app.getRestAdapter().create(SyncApi2.class);
 
+        boolean isShopAliave = false;
+        try {
+            GetResponse resp = makeShopInfoRequest(api, app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employeeModel, app));
+            if (resp == null || !resp.isSuccess()) {
+                Logger.e("can't parse shop", new RuntimeException());
+                throw new SyncException();
+            }
+            JdbcJSONObject entity = resp.getEntity();
+            isShopAliave = syncShop(entity.getJSONObject("SHOP"));
+
+        } catch (Exception e) {
+            Logger.e("Can't sync shop info", e);
+            throw new SyncException();
+        }
+        if (!isShopAliave)
+            throw new SyncCommand.BlockException();
+    }
+
+    private boolean syncShop(JdbcJSONObject shop) throws SyncException {
+        if (shop == null) {
+            Logger.e("can't parse shop", new RuntimeException());
+            throw new SyncException();
+        }
+        ShopInfoViewJdbcConverter.ShopInfo info;
+        try {
+            info = ShopInfoViewJdbcConverter.read(shop);
+            if (info.shopStatus == ShopInfoViewJdbcConverter.ShopStatus.BLOCKED || info.shopStatus == ShopInfoViewJdbcConverter.ShopStatus.DISABLED)
+                return false;
+        } catch (JSONException e) {
+            Logger.e("can't parse shop", e);
+            throw new SyncException();
+        }        return true;
+    }
+
+    private GetResponse makeShopInfoRequest(SyncApi2 api, String apiKey, JSONObject credentials) throws JSONException, SyncException {
+        int retry = 0;
+        while (retry++ < 5) {
+            try {
+                return api.downloadShopInfo(apiKey, credentials);
+            } catch (RetrofitError e) {
+                Logger.e("attempt: " + retry, e);
+            }
+        }
+        throw new SyncException();
+    }
     private String tryGetLastUncompletedSaleOrderGuid() {
         String lastUncompletedSaleOrderGuid = TcrApplication.get().getShopPref().lastUncompletedSaleOrderGuid().get();
         if (TextUtils.isEmpty(lastUncompletedSaleOrderGuid))
@@ -179,6 +250,9 @@ public class LoginCommand extends GroundyTask {
     private Error syncData(EmployeeModel employeeModel) {
         try {
             new SyncCommand(getContext(), true).syncNow(employeeModel, employeeModel.shopId);
+        } catch (SyncCommand.BlockException e) {
+            Logger.e("Login.sync error", e);
+            return Error.BLOCK_MERCHANT;
         } catch (SyncException e) {
             Logger.e("Login.sync error", e);
             return Error.SYNC_FAILED;
@@ -207,6 +281,7 @@ public class LoginCommand extends GroundyTask {
             throw new RuntimeException("Login clear db error");
         }
     }
+
     private RemoteLoginResult webLogin(String registerSerial, String userName, String password) {
         TcrApplication app = TcrApplication.get();
         SyncApi api = app.getRestAdapter().create(SyncApi.class);
@@ -217,14 +292,14 @@ public class LoginCommand extends GroundyTask {
                 return null;
             }
             if (!resp.isSuccess()) {
-                return new RemoteLoginResult(false, null);
+                return new RemoteLoginResult(null, null);
             }
             AuthInfo info = resp.getResponse();
             if (info == null) {
                 Logger.e("Login web login error: response is empty");
                 return null;
             }
-            return new RemoteLoginResult(info.register != null, info.employee);
+            return new RemoteLoginResult(info.register.status, info.employee);
         } catch (Exception e) {
             Logger.e("Remote login FAILED!", e);
         }
@@ -321,6 +396,9 @@ public class LoginCommand extends GroundyTask {
                 case REGISTER_CHECK_FAILED:
                     onRegisterCheckError();
                     break;
+                case REGISTER_PENDING:
+                    onRegisterPending();
+                    break;
                 case EMPLOYEE_NOT_ACTIVE:
                     onEmployeeNotActive();
                     break;
@@ -330,7 +408,10 @@ public class LoginCommand extends GroundyTask {
                     onSyncInconsistent();
                     break;
                 case LOGIN_OFFLINE_FAILED:
-                    onLoginOfflineFailed();
+                    onSyncInconsistent();
+                    break;
+                case BLOCK_MERCHANT:
+                    onBlockMerchant();
                     break;
                 default:
                     onLoginError();
@@ -351,19 +432,23 @@ public class LoginCommand extends GroundyTask {
 
         protected abstract void onRegisterCheckError();
 
+        protected abstract void onRegisterPending();
+
         protected abstract void onOffline();
 
         protected abstract void onSyncInconsistent();
 
         protected abstract void onLoginOfflineFailed();
+
+        protected abstract void onBlockMerchant();
     }
 
     private static class RemoteLoginResult {
-        final boolean registerChecked;
+        final RegisterStatus registerNumber;
         final EmployeeModel employeeModel;
 
-        private RemoteLoginResult(boolean registerChecked, EmployeeModel employeeModel) {
-            this.registerChecked = registerChecked;
+        private RemoteLoginResult(RegisterStatus registerNumber, EmployeeModel employeeModel) {
+            this.registerNumber = registerNumber;
             this.employeeModel = employeeModel;
         }
     }

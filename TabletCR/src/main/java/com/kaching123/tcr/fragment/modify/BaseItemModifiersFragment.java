@@ -18,6 +18,7 @@ import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.AddonsContainerView;
 import com.kaching123.tcr.component.ModifiersContainerView;
+import com.kaching123.tcr.component.NoOptionsContainerView;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.converter.ModifierFunction;
@@ -50,7 +51,7 @@ public class BaseItemModifiersFragment extends Fragment {
     protected AddonsContainerView addons;
 
     @ViewById
-    protected AddonsContainerView optionals;
+    protected NoOptionsContainerView optionals;
 
     @InstanceState
     protected String itemGuid;
@@ -118,6 +119,9 @@ public class BaseItemModifiersFragment extends Fragment {
         getLoaderManager().restartLoader(LOADER_OPTIONALS, null, new AddonModelLoader(ModifierType.OPTIONAL, optionals));
     }
 
+    private static int addonColumnCount;
+    private static int otherColumnCount;
+
     @AfterViews
     protected void init() {
         modifiers.setContainerTitle(getString(R.string.dlg_section_modifier));
@@ -157,7 +161,9 @@ public class BaseItemModifiersFragment extends Fragment {
             } else {
                 modifiers.setVisibility(View.VISIBLE);
             }
+            int modifyMaxColumn = 2;
             modifiers.setList(modifierModels);
+            modifiers.setColumnNums(modifierModels.size() < modifyMaxColumn ? modifierModels.size() : modifyMaxColumn);
         }
 
         @Override
@@ -195,6 +201,12 @@ public class BaseItemModifiersFragment extends Fragment {
                 containerView.setVisibility(View.VISIBLE);
             }
             containerView.setList(addonsModels);
+            int addsOnMax = 3;
+            int onOptionsMax = 2;
+            if (type == ModifierType.ADDON)
+                containerView.setColumnNums(addonsModels.size() < addsOnMax ? addonsModels.size() : addsOnMax);
+            else
+                containerView.setColumnNums(addonsModels.size() < onOptionsMax ? addonsModels.size() : onOptionsMax);
         }
 
         @Override
@@ -213,9 +225,11 @@ public class BaseItemModifiersFragment extends Fragment {
             return 0;
         }
 
-        int rowCount = getResources().getInteger(R.integer.modify_container_row_count);
+        int modifyRowCount = getResources().getInteger(R.integer.modify_container_row_count);
 
-        HashMap<ColumnInfo.Type, ColumnInfo> columnsInfo = calculateAvailableColumns(numModifiers, numAddons, numOptionals, rowCount);
+        int addOnRowCount = getResources().getInteger(R.integer.modify_container_row_count);
+
+        HashMap<ColumnInfo.Type, ColumnInfo> columnsInfo = calculateAvailableColumns(numModifiers, numAddons, numOptionals, modifyRowCount, addOnRowCount);
 
         int width = 0;
         int margin = getResources().getDimensionPixelOffset(R.dimen.modify_container_margin_left) * 2;
@@ -253,30 +267,35 @@ public class BaseItemModifiersFragment extends Fragment {
         return size;
     }
 
-    public static HashMap<ColumnInfo.Type, ColumnInfo> calculateAvailableColumns(int numModifiers, int numAddons, int numOptionals, int rowCount) {
+    public static HashMap<ColumnInfo.Type, ColumnInfo> calculateAvailableColumns(int numModifiers, int numAddons, int numOptionals, int modifyRowCount, int addOnRowCount) {
         HashMap<ColumnInfo.Type, ColumnInfo> columnsInfo = new HashMap<ColumnInfo.Type, ColumnInfo>();
 
         ColumnInfo info;
         ArrayList<ColumnInfo> items = new ArrayList<ColumnInfo>(3);
-        items.add(info = new ColumnInfo(ColumnInfo.Type.M, numModifiers, rowCount));
+        items.add(info = new ColumnInfo(ColumnInfo.Type.M, numModifiers, modifyRowCount));
         columnsInfo.put(info.type, info);
-        items.add(info = new ColumnInfo(ColumnInfo.Type.A, numAddons, rowCount));
+        items.add(info = new ColumnInfo(ColumnInfo.Type.A, numAddons, addOnRowCount));
         columnsInfo.put(info.type, info);
-        items.add(info = new ColumnInfo(ColumnInfo.Type.O, numOptionals, rowCount));
+        items.add(info = new ColumnInfo(ColumnInfo.Type.O, numOptionals, modifyRowCount));
         columnsInfo.put(info.type, info);
         Collections.sort(items);
 
         int dif = 0;
         int total = 0;
-        int columnCount = 3;
+        addonColumnCount = 3;
+        otherColumnCount = 2;
         int sections = items.size();
+
         for (int k = 0; k < sections; k++) {
             ColumnInfo i = items.get(k);
-            int max = columnCount + dif /(sections - k);
-            i.displayColumn = Math.min(i.columns, max);
-            total += i.displayColumn;
-            dif = columnCount * (k + 1) - total;
+
+            if (i.type == ColumnInfo.Type.A) {
+                i.displayColumn = Math.min(i.columns, addonColumnCount);
+            } else {
+                i.displayColumn = Math.min(i.columns, otherColumnCount);
+            }
         }
+
         return columnsInfo;
     }
 

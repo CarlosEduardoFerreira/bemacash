@@ -5,13 +5,18 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
+import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity;
@@ -61,6 +66,22 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     private boolean firstLoad;
 
     private boolean isCreateReturnOrder;
+
+    @ViewById
+    protected EditText usbScannerInput;
+
+    @AfterTextChange
+    protected void usbScannerInputAfterTextChanged(Editable s) {
+        String newline = System.getProperty("line.separator");
+        boolean hasNewline = s.toString().contains(newline);
+        if (hasNewline) {
+            Logger.d("OrderItemListFragment usbScannerInputAfterTextChanged hasNewline: " + s.toString());
+            String inputs[] = s.toString().split("\n");
+            String barcode = inputs[0];
+            itemsListHandler.onBarcodeReceivedFromUSB(barcode);
+            s.clear();
+        }
+    }
 
     public SaleOrderItemViewModel getLastItem() {
         if (adapter == null || adapter.getCount() == 0)
@@ -377,6 +398,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         void onRemoveLastItem();
 
         void onOrderLoaded(SaleOrderItemViewModel lastItem);
+
+        void onBarcodeReceivedFromUSB(String barcode);
     }
 
     private void needScrollToTheEnd() {

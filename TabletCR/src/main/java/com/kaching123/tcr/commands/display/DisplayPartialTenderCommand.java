@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.kaching123.display.printers.DisplayPrinterWrapper;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 
 import java.math.BigDecimal;
 
@@ -21,8 +23,8 @@ public class DisplayPartialTenderCommand extends BaseDisplayCommand<DisplayPrint
     }
 
     @Override
-    protected DisplayPrinterWrapper getPrinterWrapper() {
-        return new DisplayPrinterWrapper();
+    protected DisplayPrinterWrapper getPrinterWrapper(Context context) {
+        return new DisplayPrinterWrapper(getSerialPortDisplaySet(context));
     }
 
     @Override
@@ -30,5 +32,13 @@ public class DisplayPartialTenderCommand extends BaseDisplayCommand<DisplayPrint
 
         printerWrapper.add(context.getString(R.string.display_tender_title), context.getString(R.string.display_pending_title), tenderAmount, pendingAmount);
     }
-
+    @Override
+    protected boolean getSerialPortDisplaySet(Context context) {
+        if (context == null)
+            return false;
+        String displayAddress = ((TcrApplication) context.getApplicationContext()).getShopPref().displayAddress().toString();
+        if (displayAddress != null && displayAddress.equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER))
+            return true;
+        return false;
+    }
 }

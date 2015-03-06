@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:minWidth="334dp"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal" >
+
+    <com.kaching123.tcr.component.ModifiersContainerView_
+        android:layout_margin="12dp"
+        android:id="@+id/modifiers"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content" />
+
+    <com.kaching123.tcr.component.AddonsContainerView_
+        android:layout_margin="12dp"
+        android:id="@+id/addons"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content" />
+
+    <com.kaching123.tcr.component.NoOptionsContainerView_
+        android:layout_margin="12dp"
+        android:id="@+id/optionals"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content" />
+
+</LinearLayout>

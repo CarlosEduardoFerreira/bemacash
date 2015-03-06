@@ -13,9 +13,12 @@ import android.os.Message;
 
 import com.kaching123.display.BluetoothSocketPrinter;
 import com.kaching123.display.DisplayPrinter;
+import com.kaching123.display.SerialPortDiplayPrinter;
 import com.kaching123.display.actions.InitDisplayAction;
+import com.kaching123.display.actions.InitSerialPortDisplayAction;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +37,7 @@ public class DisplayService extends Service {
 
     private ExecutorService executor;
 
-    private BluetoothSocketPrinter displayPrinter;
+    private DisplayPrinter displayPrinter;
 
     private DisplayListener displayListener;
 
@@ -93,36 +96,55 @@ public class DisplayService extends Service {
         });
     }
 
+    private boolean isSerialPortDisplay() {
+        return getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER);
+    }
+
     private boolean openDisplayPrinter() {
-        BluetoothSocketPrinter displayPrinter = null;
-        try {
-            BluetoothDevice display = getDisplay();
-            if (display == null)
-                return false;
+        DisplayPrinter displayPrinter = null;
+        if (isSerialPortDisplay()) {
+            displayPrinter = new SerialPortDiplayPrinter(); // Mint only Serial port
+        } else {
+            try
 
-            if (this.displayPrinter != null) {
+            {
+                BluetoothDevice display = getDisplay();
+                if (display == null)
+                    return false;
+
+                if (this.displayPrinter != null) {
+                    try {
+                        this.displayPrinter.close();
+                    } catch (IOException ignore) {
+                    }
+                    this.displayPrinter = null;
+                }
+
+                displayPrinter = new BluetoothSocketPrinter(display);
+                initDisplayPrinter(displayPrinter);
+            } catch (
+                    IOException e
+                    )
+
+            {
                 try {
-                    this.displayPrinter.close();
-                } catch (IOException ignore) {}
-                this.displayPrinter = null;
+                    if (displayPrinter != null)
+                        displayPrinter.close();
+                } catch (IOException ignore) {
+                }
+                return false;
             }
-
-            displayPrinter = new BluetoothSocketPrinter(display);
-            initDisplayPrinter(displayPrinter);
-        } catch (IOException e) {
-            try {
-                if (displayPrinter != null)
-                    displayPrinter.close();
-            } catch (IOException ignore) {}
-            return false;
         }
 
         this.displayPrinter = displayPrinter;
         return true;
     }
 
-    private void initDisplayPrinter(BluetoothSocketPrinter displayPrinter) throws IOException{
-        new InitDisplayAction().execute(displayPrinter);
+    private void initDisplayPrinter(DisplayPrinter displayPrinter) throws IOException {
+        if (isSerialPortDisplay())
+            new InitSerialPortDisplayAction().execute(displayPrinter);
+        else
+            new InitDisplayAction().execute(displayPrinter);
     }
 
     private void closeDisplayPrinter() {
@@ -131,7 +153,8 @@ public class DisplayService extends Service {
 
         try {
             displayPrinter.close();
-        } catch (IOException ignore) {}
+        } catch (IOException ignore) {
+        }
     }
 
     private BluetoothDevice getDisplay() {
@@ -146,8 +169,8 @@ public class DisplayService extends Service {
         return device;
     }
 
-    private TcrApplication getApp(){
-        return (TcrApplication)getApplicationContext();
+    private TcrApplication getApp() {
+        return (TcrApplication) getApplicationContext();
     }
 
     private void sendOnDisconnected() {
@@ -237,6 +260,7 @@ public class DisplayService extends Service {
     public interface DisplayListener {
 
         public void onDisconnected();
+
         public void onError();
 
     }

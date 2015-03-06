@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:paddingTop="0dp"
+              android:paddingBottom="0dp"
+              style="@style/ItemList.ItemLayout"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <TextView
+        style="@style/SaleReport.ItemList.ItemText"
+        android:background="@drawable/list_items_block_bg"
+        android:id="@+id/time_in"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/time_out"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:background="@drawable/list_items_block_bg"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/time_total"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"/>
+
+</LinearLayout>

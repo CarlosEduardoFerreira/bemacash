@@ -1,1 +1,1 @@
-include ':android-support-v4-preferencefragment', ':SwipeListViewLib', ':AndroidStyledDialogs', ':TwoWayGridView', ':ViewPagerIndicator', ':WebService', ':BemaDisplay', ':PluginLoader'  , 'AndroidStyledDialogs', ':BemaPos', ':TabletCR'
+include ':android-support-v4-preferencefragment', ':SwipeListViewLib', ':AndroidStyledDialogs', ':TwoWayGridView', ':ViewPagerIndicator', ':WebService', ':BemaDisplay', ':PluginLoader', ':BemaUsb'  , 'AndroidStyledDialogs', ':BemaPos', ':TabletCR'

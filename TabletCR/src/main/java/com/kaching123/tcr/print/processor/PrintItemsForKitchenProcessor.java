@@ -121,18 +121,18 @@ public class PrintItemsForKitchenProcessor {
 
             if (!item.addons.isEmpty()){
                 for (String addon : item.addons){
-                    printer.addModifier(addon);
+                    printer.addAddsOn(addon);
                 }
             }
 
             if (!item.options.isEmpty()){
                 for (String option : item.options){
-                    printer.addModifier(context.getString(R.string.kitchen_receipt_no_option_prefix) + option);
+                    printer.addAddsOn(context.getString(R.string.kitchen_receipt_no_option_prefix) + option);
                 }
             }
 
             if (!TextUtils.isEmpty(item.notes)){
-                printer.addModifier(item.notes);
+                printer.addAddsOn(item.notes);
             }
         }
         printer.drawLine();

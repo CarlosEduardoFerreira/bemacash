@@ -6,6 +6,8 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.display.printers.DisplayPrinterWrapper;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.store.ShopProvider;
@@ -31,15 +33,14 @@ public class DisplaySaleItemCommand extends BaseDisplayCommand<DisplayPrinterWra
     }
 
     @Override
-    protected DisplayPrinterWrapper getPrinterWrapper() {
-        return new DisplayPrinterWrapper();
+    protected DisplayPrinterWrapper getPrinterWrapper(Context context) {
+        return new DisplayPrinterWrapper(getSerialPortDisplaySet(context));
     }
 
     @Override
     protected void printBody(Context context, DisplayPrinterWrapper printerWrapper) {
 
         SaleOrderItemViewModel saleItem = getSaleItem(context, saleItemGuid);
-
         printerWrapper.add(saleItem.itemModel.qty, saleItem.description, CalculationUtil.getSubTotal(saleItem.itemModel.qty, saleItem.fullPrice, saleItem.itemModel.discount, saleItem.itemModel.discountType));
     }
 
@@ -52,4 +53,13 @@ public class DisplaySaleItemCommand extends BaseDisplayCommand<DisplayPrinterWra
         return saleItemsList == null || saleItemsList.isEmpty() ? null : saleItemsList.get(0);
     }
 
+    @Override
+    protected boolean getSerialPortDisplaySet(Context context) {
+        if (context == null)
+            return false;
+        String displayAddress = ((TcrApplication) context.getApplicationContext()).getShopPref().displayAddress().toString();
+        if (displayAddress != null && displayAddress.equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER))
+            return true;
+        return false;
+    }
 }

@@ -7,13 +7,13 @@
     <FrameLayout
         android:layout_width="320dp"
         android:layout_height="match_parent"
-        android:background="@drawable/drawer_picker_bg">
+        android:background="@color/main_pages_bg_mint_color">
 
         <View
             android:layout_height="match_parent"
-            android:layout_width="7dp"
+            android:layout_width="2dp"
             android:layout_gravity="right"
-            android:background="@drawable/shadow_for_list"/>
+            android:background="@color/setting_grey_divider"/>
 
         <ListView
             style="@style/Settings.Navigation.List"
@@ -27,7 +27,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/bg_grey_color">
 
         <FrameLayout
             android:layout_height="match_parent"

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import org.androidannotations.annotations.EActivity;
@@ -24,12 +26,14 @@ import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
 import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment.OnAddonsChangedListener;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.PaymentTransactionModel;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @EActivity(R.layout.saleorder_cashier_activity)
 @OptionsMenu(R.menu.cashier_activity)
-public class CashierActivity extends BaseCashierActivity implements CustomEditBox.IKeyboardSupport{
+public class CashierActivity extends BaseCashierActivity implements CustomEditBox.IKeyboardSupport {
 
     @FragmentById
     protected ItemsListFragment itemsListFragment;
@@ -38,7 +42,7 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
     protected DrawerCategoriesFragment drawerCategoriesFragment;
 
     @ViewById
-    protected DrawerLayout drawerLayout;
+    protected static DrawerLayout drawerLayout;
 
     private ActionBarDrawerToggle drawerToggle;
 
@@ -150,10 +154,44 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //noinspection SimplifiableIfStatement
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
+//        if (drawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+        if (item.getItemId() == android.R.id.home)
+            if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+                drawerLayout.closeDrawer(Gravity.RIGHT);
+                return true;
+            } else
+                drawerLayout.openDrawer(Gravity.RIGHT);
         return super.onOptionsItemSelected(item);
+        //changed for mintpos
+//        if (item != null && item.toString().equalsIgnoreCase("Search")) {
+//            if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+//                drawerLayout.closeDrawer(Gravity.RIGHT);
+//            }
+//
+//            else {
+//                drawerLayout.openDrawer(Gravity.RIGHT);
+////                menuItem.setVisible(true);
+//            }
+//        }
+//        else if (item != null && item.toString().equalsIgnoreCase("Search disable"))
+//        {
+//            menuItem.setVisible(false);
+//            homeItem.setChecked(true);
+//            getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commit();
+//            drawerLayout.closeDrawer(Gravity.RIGHT);
+//        }
+//        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            drawerLayout.closeDrawers();
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -174,11 +212,11 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
         }
     };
 
-    public static void start(Context context){
+    public static void start(Context context) {
         CashierActivity_.intent(context).start();
     }
 
-    public static void start4Return(Context context){
+    public static void start4Return(Context context) {
         CashierActivity_.intent(context).isCreateReturnOrder(true).start();
     }
 

@@ -2,5 +2,6 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_activated="true" android:drawable="@drawable/dashboard_customers_disabled" />
+    <item android:state_pressed="true" android:drawable="@drawable/dashboard_customers_pressed" />
     <item android:drawable="@drawable/dashboard_customers_normal" />
 </selector>

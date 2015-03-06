@@ -218,6 +218,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private HashSet<String> salesmanGuids = new HashSet<String>();
 
     @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("BaseCashierActivity barcodeReceivedFromSerialPort onReceive:" + barcode);
+        onBarcodeReceived(barcode);
+    }
+
+    @Override
     protected Set<Permission> getPermissions() {
         return permissions;
     }
@@ -254,8 +260,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     private void bindToDisplayService() {
-        boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().displayAddress().get());
-
+        boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().displayAddress().get()); //Serial Port?
         if (displayConfigured)
             DisplayService.bind(this, displayServiceConnection);
     }
@@ -329,6 +334,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     startCommand(new DisplaySaleItemCommand(lastItem.getSaleItemGuid()));
                 }
             }
+
+            @Override
+            public void onBarcodeReceivedFromUSB(String barcode) {
+                Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB()");
+                if (isPaying) {
+                    Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB(): ignore and exit - payment in progress");
+                    return;
+                }
+
+                Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB(): tryToSearchBarCode()");
+                tryToSearchBarCode(barcode, true);
+            }
         });
 
         searchResultFragment.setListener(new SearchItemsListFragment.IItemListener() {
@@ -371,10 +388,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         alarmRingtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
 
-        Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
-        if (frm == null) {
-            getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
+        if (!isSPMSRSet()) {
+            Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
+            if (frm == null) {
+                getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
+            }
         }
+    }
+
+    protected boolean isSPMSRSet() {
+        return (!TextUtils.isEmpty(getApp().getShopPref().usbMSRName().get()));
     }
 
     protected abstract void showEditItemModifiers(final String saleItemGuid, final String itemGuid, final int modifiersCount, final int addonsCount, final int optionalsCount, final String selectedModifierGuid, final ArrayList<String> selectedAddonsGuids, final ArrayList<String> selectedOptionalsGuids);
@@ -720,6 +743,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         boolean b = super.onCreateOptionsMenu(menu);
         searchItem = menu.findItem(R.id.action_search);
         assert searchItem != null;
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+        // Getting the 'search_plate' LinearLayout.
+        View searchPlate = searchView.findViewById(searchPlateId);
+        // Setting background of 'search_plate' to earlier defined drawable.
+        searchPlate.setBackgroundResource(R.drawable.textfield_searchview_holo_light);
+
         initSearchView();
 
         holdCounterItem = menu.findItem(R.id.action_hold_counter);
@@ -1032,9 +1063,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             return;
         }
         Logger.d("Lets show some history");
-        MsrDataFragment msr = getMsr();
-        if (msr != null) {
-            msr.releaseNow();
+        if (!isSPMSRSet()) {
+            MsrDataFragment msr = getMsr();
+            if (msr != null) {
+                msr.releaseNow();
+            }
         }
         HistoryActivity.start(BaseCashierActivity.this);
     }
@@ -1073,51 +1106,51 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         UnitsSaleFragment.show(BaseCashierActivity.this, model, null, UnitsSaleFragment.UnitActionType.ADD_TO_ORDER,
                 model.codeType, new UnitsSaleFragment.UnitSaleCallback() {
 
-            @Override
-            public void handleSuccess(final Unit unit) {
-                Toast.makeText(BaseCashierActivity.this, getString(R.string.unit_edit_completed), Toast.LENGTH_SHORT).show();
-                runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {
-                        addItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState, unit);
+                    public void handleSuccess(final Unit unit) {
+                        Toast.makeText(BaseCashierActivity.this, getString(R.string.unit_edit_completed), Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                addItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState, unit);
+                            }
+                        });
+                        hide();
                     }
+
+                    @Override
+                    public void handleError(String message) {
+                        disconnectScanner();
+                        AlertDialogWithCancelFragment.show(BaseCashierActivity.this,
+                                R.string.wireless_already_item_title,
+                                message,
+                                R.string.btn_ok,
+                                new AlertDialogWithCancelFragment.OnDialogListener() {
+                                    @Override
+                                    public boolean onClick() {
+                                        tryReconnectScanner();
+                                        return true;
+                                    }
+
+                                    @Override
+                                    public boolean onCancel() {
+                                        tryReconnectScanner();
+                                        return true;
+                                    }
+                                }
+                        );
+                        hide();
+                    }
+
+                    @Override
+                    public void handleCancelling() {
+                    }
+
+                    private void hide() {
+                        UnitsSaleFragment.hide(BaseCashierActivity.this);
+                    }
+
                 });
-                hide();
-            }
-
-            @Override
-            public void handleError(String message) {
-                disconnectScanner();
-                AlertDialogWithCancelFragment.show(BaseCashierActivity.this,
-                        R.string.wireless_already_item_title,
-                        message,
-                        R.string.btn_ok,
-                        new AlertDialogWithCancelFragment.OnDialogListener() {
-                            @Override
-                            public boolean onClick() {
-                                tryReconnectScanner();
-                                return true;
-                            }
-
-                            @Override
-                            public boolean onCancel() {
-                                tryReconnectScanner();
-                                return true;
-                            }
-                        }
-                );
-                hide();
-            }
-
-            @Override
-            public void handleCancelling() {
-            }
-
-            private void hide() {
-                UnitsSaleFragment.hide(BaseCashierActivity.this);
-            }
-
-        });
     }
 
     private void addItemModel(final ItemExModel model, final String modifierGiud, final ArrayList<String> addonsGuids,
@@ -1195,7 +1228,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         return true;
     }
 
-    private void checkDrawerState(boolean searchByMac){
+    private void checkDrawerState(boolean searchByMac) {
         GetPrinterStatusCommand.start(this, searchByMac, printerStatusCallback);
     }
 
@@ -1503,7 +1536,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @Override
     public void onBarcodeReceived(String barcode) {
         if (barcodeListener != null) {
-            Logger.d("BaseCashierActivity: scannerListener: onBarcodeReceived(): barcode listener = " + barcodeListener);
+            Logger.d("BaseCashierActivity: onBarcodeReceived(): barcode  = " + barcode);
             int i = 0;
             for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                 if (fragment instanceof BarcodeReceiver) {
@@ -1576,6 +1609,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             Logger.d("BaseCashierActivity: defaultBarcodeListener: onBarcodeReceived()");
             if (isPaying) {
                 Logger.d("BaseCashierActivity: defaultBarcodeListener: onBarcodeReceived(): ignore and exit - payment in progress");
+                playAlarm();
                 return;
             }
 
@@ -2044,6 +2078,22 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             this.addonsGuids = addonsGuids;
             this.optionalGuids = optionalGuids;
             this.unit = unit;
+        }
+    }
+
+    protected void hideQuickModifyFragment()
+    {
+        if(totalCostFragment != null)
+        {
+            getSupportFragmentManager().beginTransaction().hide(totalCostFragment).commit();
+        }
+    }
+
+    protected void showQuickModifyFragment()
+    {
+        if(totalCostFragment != null)
+        {
+            getSupportFragmentManager().beginTransaction().show(totalCostFragment).commit();
         }
     }
 

@@ -1,10 +1,14 @@
 package com.kaching123.tcr.commands.device;
 
 import android.content.Context;
+import android.database.Cursor;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.PosPrinter;
+import com.kaching123.pos.USBPrinter;
 import com.kaching123.pos.drawer.WaitForCloseAction;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -39,9 +43,11 @@ public class WaitForCloseDrawerCommand extends BaseDeviceCommand {
             }
             return succeeded();
         }
+        if (getPrinterID().equalsIgnoreCase(USBPrinter.USB_DESC))
+            return succeeded();
 
         boolean checkDrawerStatus = getApp().getShopInfo().drawerClosedForSale;
-        if (!checkDrawerStatus){
+        if (!checkDrawerStatus) {
             Logger.d("PrinterCommand: WaitForCloseDrawerCommand doesn't wait");
             return succeeded();
         }
@@ -75,11 +81,11 @@ public class WaitForCloseDrawerCommand extends BaseDeviceCommand {
 
         @OnFailure(WaitForCloseDrawerCommand.class)
         public void onFailure(@Param(PrinterCommand.EXTRA_ERROR_PRINTER) PrinterError error, @Param(RESULT_CLOSE_ERROR) boolean isCloseError) {
-            if(error == PrinterError.NOT_CONFIGURED){
+            if (error == PrinterError.NOT_CONFIGURED) {
                 onDrawerClosed();
                 return;
             }
-            if(isCloseError){
+            if (isCloseError) {
                 onDrawerTimeoutError();
                 return;
             }
@@ -91,5 +97,23 @@ public class WaitForCloseDrawerCommand extends BaseDeviceCommand {
         protected abstract void onDrawerTimeoutError();
 
         protected abstract void onDrawerCloseError(PrinterError error);
+    }
+
+    protected String getPrinterID() {
+        String st = null;
+        Cursor c = ProviderAction.query(URI_PRINTER)
+                .projection(
+                        ShopStore.PrinterTable.IP
+                )
+                .where(ShopStore.PrinterTable.ALIAS_GUID + " IS NULL")
+                .perform(getContext());
+        PrinterInfo printerInfo = null;
+        if (c.moveToFirst()) {
+
+            st = c.getString(0);
+
+        }
+        c.close();
+        return st;
     }
 }

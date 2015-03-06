@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import org.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.ViewById;
+import com.jess.ui.TwoWayGridView;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.ModifierModel;
 
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 /**
  * Created by vkompaniets on 18.11.13.
  */
-@EViewGroup (R.layout.modify_container)
+@EViewGroup (R.layout.addon_nooption_container)
 public class AddonsContainerView extends BaseAddonContainerView<ModifierModel> {
 
     public AddonsContainerView(Context context, AttributeSet attrs) {
@@ -43,5 +45,8 @@ public class AddonsContainerView extends BaseAddonContainerView<ModifierModel> {
 
     public void setSelectedAddonsGuids (ArrayList<String> selectedAddonsGuids){
         setSelectedItems(selectedAddonsGuids);
+    }
+    public void setColumnNums(int num) {
+        buttonGrid.setNumColumns(num);
     }
 }

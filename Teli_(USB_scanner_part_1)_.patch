@@ -1,0 +1,292 @@
+Index: TabletCR/src/main/res-register/layout-sw760dp/itempick_items_list_green_header.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TabletCR/src/main/res-register/layout-sw760dp/itempick_items_list_green_header.xml	(revision )
++++ TabletCR/src/main/res-register/layout-sw760dp/itempick_items_list_green_header.xml	(revision )
+@@ -0,0 +1,36 @@
++<?xml version="1.0" encoding="utf-8"?>
++
++<LinearLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    style="@style/ItemList.HeaderLayout"
++    android:orientation="horizontal"
++    android:layout_width="match_parent"
++    android:layout_height="wrap_content"
++    android:background="@color/mint_color">
++
++    <TextView
++        style="@style/ItemList.HeaderText"
++        android:layout_height="match_parent"
++        android:layout_width="0dp"
++        android:layout_weight="5"
++        android:gravity="left"
++        android:text="@string/order_header_title"/>
++
++    <TextView
++        style="@style/ItemList.HeaderText"
++        android:layout_height="wrap_content"
++        android:layout_width="0dp"
++        android:layout_weight="1"
++        android:gravity="center_horizontal"
++        android:text="@string/order_header_discount"/>
++
++    <TextView
++        style="@style/ItemList.HeaderText"
++        android:layout_height="wrap_content"
++        android:layout_width="0dp"
++        android:layout_weight="1"
++        android:gravity="center_horizontal"
++        android:text="@string/order_header_unit_price"/>
++
++</LinearLayout>
++
+Index: TabletCR/src/main/res-register/layout-sw760dp/saleorder_items_list_header.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TabletCR/src/main/res-register/layout-sw760dp/saleorder_items_list_header.xml	(revision 2dfbb67aba45110f098bf6c37de36a4185a884d0)
++++ TabletCR/src/main/res-register/layout-sw760dp/saleorder_items_list_header.xml	(revision )
+@@ -14,8 +14,15 @@
+         android:layout_height="wrap_content"
+         android:gravity="left"
+         android:text="@string/order_header_title"
+-        android:layout_weight="16"/>
+-
++        android:layout_weight="3"/>
++    <EditText
++        android:id="@+id/usb_scanner_input"
++        android:textSize="1sp"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:gravity="center"
++        android:cursorVisible="false"
++        android:layout_weight="12"/>
+     <TextView
+         style="@style/ItemList.HeaderText.Border"
+         android:layout_width="0dp"
+Index: TabletCR/src/main/java/com/kaching123/tcr/service/ScannerService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TabletCR/src/main/java/com/kaching123/tcr/service/ScannerService.java	(revision 2dfbb67aba45110f098bf6c37de36a4185a884d0)
++++ TabletCR/src/main/java/com/kaching123/tcr/service/ScannerService.java	(revision )
+@@ -267,7 +267,7 @@
+ 
+                     if (buffer[size - 1] == terminator) {
+                         if (shouldConnect)
+-                            sendOnBarcodeReceived(barcode);
++                            sendOnBarcodeReceived(barcode.substring(0, barcode.length() - 2));
+                         barcode = "";
+                     }
+ 
+Index: TabletCR/src/main/java/com/kaching123/tcr/activity/ScannerBaseActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TabletCR/src/main/java/com/kaching123/tcr/activity/ScannerBaseActivity.java	(revision 2dfbb67aba45110f098bf6c37de36a4185a884d0)
++++ TabletCR/src/main/java/com/kaching123/tcr/activity/ScannerBaseActivity.java	(revision )
+@@ -9,6 +9,7 @@
+ import com.kaching123.tcr.R;
+ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
+ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
++import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
+ import com.kaching123.tcr.service.ScannerService;
+ import com.kaching123.tcr.service.ScannerService.IScannerBinder;
+ import com.kaching123.tcr.service.ScannerService.ScannerBinder;
+@@ -23,6 +24,8 @@
+ 
+     protected abstract void onBarcodeReceived(String barcode);
+ 
++    private boolean isUSBScanner;
++
+     @Override
+     protected void onStart() {
+         super.onStart();
+@@ -41,10 +44,22 @@
+         Logger.d("ScannerBaseActivity: bindToScannerService()");
+         boolean scannerConfigured = !TextUtils.isEmpty(getApp().getShopPref().scannerAddress().get());
+ 
+-        if (scannerConfigured)
++        if (scannerConfigured) {
++            if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
+-            ScannerService.bind(this, scannerServiceConnection);
++                ScannerService.bind(this, scannerServiceConnection);
+-        else
++            if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_SCANNER_ADDRESS))
++                setUSBScanner(true);
++        } else
+             Logger.d("ScannerBaseActivity: bindToScannerService(): failed - scanner is not configured!");
++    }
++
++    private void setUSBScanner(boolean flag) {
++        isUSBScanner = flag;
++    }
++
++    private boolean getUSBScanner()
++    {
++        return isUSBScanner;
+     }
+ 
+     private void unbindFromScannerService() {
+Index: TabletCR/src/main/res-register/layout-sw760dp/search_items_list_fragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TabletCR/src/main/res-register/layout-sw760dp/search_items_list_fragment.xml	(revision )
++++ TabletCR/src/main/res-register/layout-sw760dp/search_items_list_fragment.xml	(revision )
+@@ -0,0 +1,23 @@
++<?xml version="1.0" encoding="utf-8"?>
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++                android:layout_width="match_parent"
++                android:layout_height="match_parent"
++                style="@style/mintBGColor"
++                android:orientation="vertical">
++
++    <include
++        android:id="@+id/header"
++        layout="@layout/itempick_items_list_green_header"/>
++
++    <se.emilsjolander.stickylistheaders.StickyListHeadersListView
++        android:layout_below="@id/header"
++        android:id="@android:id/list"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:divider="?android:attr/listDivider"
++        android:dividerHeight="0.2dp"/>
++
++    <include
++        layout="@layout/itempick_items_list_vertical_dividers"/>
++
++</RelativeLayout>
+\ No newline at end of file
+Index: TabletCR/src/main/java/com/kaching123/tcr/fragment/settings/FindDeviceFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TabletCR/src/main/java/com/kaching123/tcr/fragment/settings/FindDeviceFragment.java	(revision 2dfbb67aba45110f098bf6c37de36a4185a884d0)
++++ TabletCR/src/main/java/com/kaching123/tcr/fragment/settings/FindDeviceFragment.java	(revision )
+@@ -58,6 +58,8 @@
+     public static final String INTEGRATED_DISPLAYER = "Integrated Customer Display";
+     public static final String SERIAL_PORT = "Integrated Customer Displayer";
+     public static String USB_MSR_NAME = "Integrated MSR";
++    public static String USB_SCANNER_NAME = "USB SCANNER";
++    public static String USB_SCANNER_ADDRESS = "USB SCANNER";
+     public static String SEARIL_PORT_SCANNER_ADDRESS = "Integrated Scanner";
+     public static String SEARIL_PORT_SCANNER_NAME = "Integrated Scanner";
+     public static String USB_MSR_VID = "1667";
+@@ -220,20 +222,17 @@
+             boolean useConstraint = mode == Mode.DISPLAY;
+             if (mode == Mode.DISPLAY)
+                 devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
+-            else
++            else {
+                 devices.add(new DeviceModel(SEARIL_PORT_SCANNER_ADDRESS, SEARIL_PORT_SCANNER_NAME));
++                if (checkUsb(USB_SCANNER_VID, USB_SCANNER_PID))
++                    devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
++            }
+             for (BluetoothDevice device : bluetoothDevices) {
+                 if (useConstraint && !checkConstraint(device))
+                     continue;
+ 
+                 devices.add(new DeviceModel(device.getName(), device.getAddress()));
+             }
+-            return devices;
+-        }
+-
+-        private Set<DeviceModel> getSerialPortDevices() {
+-            Set<DeviceModel> devices = new HashSet<DeviceModel>();
+-            devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
+             return devices;
+         }
+ 
+Index: TabletCR/src/main/java/com/kaching123/tcr/fragment/saleorder/OrderItemListFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TabletCR/src/main/java/com/kaching123/tcr/fragment/saleorder/OrderItemListFragment.java	(revision 2dfbb67aba45110f098bf6c37de36a4185a884d0)
++++ TabletCR/src/main/java/com/kaching123/tcr/fragment/saleorder/OrderItemListFragment.java	(revision )
+@@ -5,13 +5,18 @@
+ import android.support.v4.app.ListFragment;
+ import android.support.v4.app.LoaderManager.LoaderCallbacks;
+ import android.support.v4.content.Loader;
++import android.text.Editable;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.widget.EditText;
+ import android.widget.Toast;
+ 
+ import com.fortysevendeg.swipelistview.SwipeListView;
++import org.androidannotations.annotations.AfterTextChange;
+ import org.androidannotations.annotations.EFragment;
++import org.androidannotations.annotations.ViewById;
++import com.kaching123.tcr.Logger;
+ import com.kaching123.tcr.R;
+ import com.kaching123.tcr.activity.BaseCashierActivity;
+ import com.kaching123.tcr.activity.SuperBaseActivity;
+@@ -62,6 +67,22 @@
+ 
+     private boolean isCreateReturnOrder;
+ 
++    @ViewById
++    protected EditText usbScannerInput;
++
++    @AfterTextChange
++    protected void usbScannerInputAfterTextChanged(Editable s) {
++        String newline = System.getProperty("line.separator");
++        boolean hasNewline = s.toString().contains(newline);
++        if (hasNewline) {
++            Logger.d("OrderItemListFragment usbScannerInputAfterTextChanged hasNewline: " + s.toString());
++            String inputs[] = s.toString().split("\n");
++            String barcode = inputs[0];
++            itemsListHandler.onBarcodeReceivedFromUSB(barcode);
++            s.clear();
++        }
++    }
++
+     public SaleOrderItemViewModel getLastItem() {
+         if (adapter == null || adapter.getCount() == 0)
+             return null;
+@@ -377,6 +398,8 @@
+         void onRemoveLastItem();
+ 
+         void onOrderLoaded(SaleOrderItemViewModel lastItem);
++
++        void onBarcodeReceivedFromUSB(String barcode);
+     }
+ 
+     private void needScrollToTheEnd() {
+Index: TabletCR/src/main/java/com/kaching123/tcr/activity/BaseCashierActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TabletCR/src/main/java/com/kaching123/tcr/activity/BaseCashierActivity.java	(revision 2dfbb67aba45110f098bf6c37de36a4185a884d0)
++++ TabletCR/src/main/java/com/kaching123/tcr/activity/BaseCashierActivity.java	(revision )
+@@ -326,6 +326,18 @@
+                     startCommand(new DisplaySaleItemCommand(lastItem.getSaleItemGuid()));
+                 }
+             }
++
++            @Override
++            public void onBarcodeReceivedFromUSB(String barcode) {
++                Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB()");
++                if (isPaying) {
++                    Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB(): ignore and exit - payment in progress");
++                    return;
++                }
++
++                Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB(): tryToSearchBarCode()");
++                tryToSearchBarCode(barcode, true);
++            }
+         });
+ 
+         searchResultFragment.setListener(new SearchItemsListFragment.IItemListener() {

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -152,10 +153,16 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
-        if (frm == null) {
-            getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
+        if(!isSPMSRSet()) {
+            Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
+            if (frm == null) {
+                getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
+            }
         }
+    }
+
+    protected boolean isSPMSRSet() {
+        return (!TextUtils.isEmpty(getApp().getShopPref().usbMSRName().get()));
     }
 
     @AfterViews
@@ -405,9 +412,19 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
                 }
             }
             if (i == 0) {
+
+                Logger.d("HistoryActivity onBarcodeReceived: "+",Thread, "+Thread.currentThread().getId());
+
                 historyFragment.setOrderNumber(barcode);
             }
         }
+    }
+
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("HistoryActivity onReceive:" + barcode);
+
+        onBarcodeReceived(barcode);
     }
 
     private ISettlementListener settlementListener = new ISettlementListener() {

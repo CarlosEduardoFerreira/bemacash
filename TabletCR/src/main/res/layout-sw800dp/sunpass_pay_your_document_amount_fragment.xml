@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:background="@color/prepaid_dialog_buttons_background_color"
+    android:layout_width="fill_parent">
+
+    <TableLayout
+        android:id="@+id/tableview"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:layout_width="500dp">
+
+
+        <TableRow
+            android:id="@+id/tablerow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical">
+
+            <EditText
+                style="@style/StyledDialog.Content.EditText"
+                android:textColorHint="@color/prepaid_dialog_white"
+                android:hint="@string/sunpass_pyd_credential_document_num_hint"
+                android:id="@+id/document_number"
+                android:textColor="@color/prepaid_dialog_white"
+                android:layout_width="0dp"
+                android:singleLine="true"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textSize="@dimen/prepaid_label_text_size"
+                android:enabled="false"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/document_number_explain"
+                android:layout_below="@id/tablerow1"
+                android:layout_marginLeft="11dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/sunpass_pyd_credential_document_num_note"
+                android:textColor="@color/prepaid_dialog_white" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tablerow2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="20dp"
+            android:gravity="center_vertical">
+
+            <EditText
+                style="@style/StyledDialog.Content.EditText"
+                android:hint="@string/sunpass_pyd_credential_plate_num_hint"
+                android:textColorHint="@color/prepaid_dialog_white"
+                android:id="@+id/plate_number"
+                android:layout_width="0dp"
+                android:singleLine="true"
+                android:layout_height="wrap_content"
+                android:textColor="@color/prepaid_dialog_white"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textSize="@dimen/prepaid_label_text_size"
+                android:enabled="false"
+                />
+
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/plate_number_expain"
+                android:layout_below="@id/tablerow2"
+                android:layout_marginLeft="11dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/sunpass_pyd_credential_plate_num_note"
+                android:textColor="@color/prepaid_dialog_white" />
+        </TableRow>
+
+    </TableLayout>
+    <Spinner
+        android:id="@+id/biller"
+        android:paddingLeft="15dp"
+        style="@style/StyledDialog.Content.Spinner"
+        android:layout_width="500dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/tableview"
+        android:layout_toLeftOf="@id/keyboard"
+        android:paddingBottom="10dp"></Spinner>
+
+    <LinearLayout
+        android:id="@+id/linearlayout"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/tableview"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/review_order_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/prepaid_label_text_size"
+            android:text="@string/sunpass_credential_review_order_detail"
+            android:textColor="@color/prepaid_dialog_white" />
+
+        <LinearLayout
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/listview_item_name"
+                android:layout_below="@id/review_order_detail"
+                android:layout_alignLeft="@+id/review_order_detail"
+                android:layout_marginTop="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/prepaid_label_text_size"
+                android:text="@string/sunpass_pyd_order_view_item_name"
+                android:textColor="@color/prepaid_dialog_white" />
+            <TextView
+                android:id="@+id/listview_item_content"
+                android:layout_below="@id/review_order_detail"
+                android:layout_marginLeft="30dp"
+                android:layout_toRightOf="@+id/listview_item_name"
+                android:layout_marginTop="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/prepaid_label_text_size"
+                android:text="@string/sunpass_pyd_order_view_item_content"
+                android:textColor="@color/prepaid_dialog_white" />
+        </LinearLayout>
+
+        <View
+            android:layout_marginTop="10dp"
+            android:layout_width="350dp"
+            android:layout_height="1dip"
+            android:background="@color/prepaid_dialog_white"
+            />
+
+        <ListView
+            android:id="@+id/listview"
+            android:layout_marginTop="10dp"
+            android:layout_width="300dp"
+            android:layout_height="120dp"></ListView>
+
+        <View
+            android:layout_marginTop="10dp"
+            android:layout_width="350dp"
+            android:layout_height="1dip"
+            android:background="@color/prepaid_dialog_white"
+            />
+
+        <LinearLayout
+            android:id="@+id/linearlayout4"
+            android:layout_marginTop="20dp"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="20sp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="@string/sunpass_credential_amount"
+                android:textColor="@color/prepaid_dialog_white" />
+
+            <TextView
+                android:textSize="20sp"
+                android:id="@+id/amount_textview"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/prepaid_dialog_white" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/linearlayout5"
+            android:layout_marginTop="20dp"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="20sp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="@string/sunpass_credential_fees"
+                android:textColor="@color/prepaid_dialog_white" />
+
+            <TextView
+                android:textSize="20sp"
+                android:id="@+id/fee_textview"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/prepaid_dialog_white" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/linearlayout5"
+            android:layout_alignLeft="@+id/linearlayout5"
+            android:layout_width="350dp"
+            android:layout_height="1dip"
+            android:background="@color/prepaid_dialog_white"
+            />
+
+        <LinearLayout
+            android:id="@+id/linearlayout6"
+            android:layout_marginTop="50dp"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="20sp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="@string/sunpass_credential_tatal"
+                android:textColor="@color/prepaid_dialog_white" />
+
+            <TextView
+                android:textSize="20sp"
+                android:id="@+id/total_textview"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/prepaid_dialog_white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/error"
+        android:layout_marginTop="20dp"
+        style="@style/Sunpass.CredentialErrorText"
+        android:layout_toRightOf="@+id/tableview"
+        android:layout_alignLeft="@+id/linearlayout"
+        android:layout_below="@+id/linearlayout"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="@dimen/prepaid_label_text_size"
+        android:text="@string/sunpass_credential_error" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/error_content"
+        style="@style/Sunpass.CredentialErrorText"
+        android:layout_below="@+id/error"
+        android:layout_toRightOf="@+id/tableview"
+        android:textSize="15sp"
+        android:textColor="@android:color/holo_red_light"
+        android:text="@string/sunpass_credential_error_content" />
+
+
+
+
+
+</RelativeLayout>

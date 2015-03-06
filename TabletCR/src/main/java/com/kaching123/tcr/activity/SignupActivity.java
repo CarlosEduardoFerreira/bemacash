@@ -22,7 +22,6 @@ import com.kaching123.tcr.util.KeyboardUtils;
  * Created by vkompaniets on 07.07.2014.
  */
 @EActivity(R.layout.activation_activity)
-@OptionsMenu(R.menu.activation_activity)
 public class SignupActivity extends SuperBaseActivity {
 
     @Extra

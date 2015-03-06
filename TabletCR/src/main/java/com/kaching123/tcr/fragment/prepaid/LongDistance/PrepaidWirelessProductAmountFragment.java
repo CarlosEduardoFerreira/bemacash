@@ -10,6 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CustomEditBox;
@@ -20,13 +26,6 @@ import com.kaching123.tcr.fragment.prepaid.utilities.ProductWirelessAmountItemsP
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 import com.viewpagerindicator.LinePageIndicator;
-
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

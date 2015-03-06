@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ItemList.ItemLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/name"
+        style="@style/ItemList.ItemText"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1.5"
+        android:gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/login"
+        style="@style/ItemList.ItemText"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/email"
+        style="@style/ItemList.ItemText"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/address"
+        style="@style/ItemList.ItemText"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1.5"
+        android:gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/status"
+        style="@style/ItemList.ItemText"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:gravity="center_vertical"/>
+
+</LinearLayout>
+

@@ -31,4 +31,9 @@ public class BluetoothSocketPrinter implements DisplayPrinter {
 		socket.close();
 	}
 
+    @Override
+    public boolean isUSBDisplayer() {
+        return false;
+    }
+
 }

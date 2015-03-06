@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                style="@style/QuickServiceItem.Item"
+                android:layout_width="@dimen/quick_item_view_width"
+                android:layout_height="@dimen/quick_item_view_height"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp">
+
+    <TextView
+        style="@style/QuickServiceItem.Price"
+        android:id="@+id/price"
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="2dp"
+        android:lines="1"/>
+
+    <TextView
+        android:layout_above="@id/price"
+        style="@style/QuickServiceItem.Title"
+        android:id="@+id/title"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:lines="2"/>
+</RelativeLayout>

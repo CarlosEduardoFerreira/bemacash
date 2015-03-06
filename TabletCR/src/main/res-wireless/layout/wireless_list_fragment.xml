@@ -7,7 +7,7 @@
         android:id="@+id/body_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/item_list_bg"
+        android:background="@color/bg_grey_color"
         android:orientation="vertical">
 
         <include
@@ -19,7 +19,7 @@
             android:id="@android:id/list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:divider="@drawable/list_divider"
+            android:divider="?android:attr/listDivider"
             android:choiceMode="multipleChoiceModal" />
 
         <include layout="@layout/unit_vertical_div" />
