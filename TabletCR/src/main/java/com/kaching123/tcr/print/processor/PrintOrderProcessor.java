@@ -83,7 +83,6 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ? transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
-        final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() > 0) ? transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
             @Override
             public void handleItem(String saleItemGuid, String description, BigDecimal qty,

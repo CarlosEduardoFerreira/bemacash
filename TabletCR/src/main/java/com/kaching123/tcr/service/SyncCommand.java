@@ -742,8 +742,8 @@ public class SyncCommand implements Runnable {
         ShopInfo info;
         try {
             info = ShopInfoViewJdbcConverter.read(shop);
-            if (info.shopStatus == ShopInfoViewJdbcConverter.ShopStatus.BLOCKED || info.shopStatus == ShopInfoViewJdbcConverter.ShopStatus.DISABLED)
-                return false;
+//            if (info.shopStatus == ShopInfoViewJdbcConverter.ShopStatus.BLOCKED || info.shopStatus == ShopInfoViewJdbcConverter.ShopStatus.DISABLED)
+//                return false;
         } catch (JSONException e) {
             Logger.e("can't parse shop", e);
             throw new SyncException();

@@ -221,8 +221,7 @@ public class TcrApplication extends Application {
                     _decimal(shopPref.defaultStoreCommission().getOr(null)),
                     shopPref.offlinePeriodHours().getOr(0),
                     shopPref.printerTwoCopiesReceipt().getOr(false),
-                    shopPref.maxItemsCount().getOr(0),
-                    _enum(ShopInfoViewJdbcConverter.ShopStatus.class, shopPref.shopStatus().get(), ShopInfoViewJdbcConverter.ShopStatus.ACTIVE));
+                    shopPref.maxItemsCount().getOr(0));
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -502,7 +501,6 @@ public class TcrApplication extends Application {
                 .offlinePeriodHours().put(info.offlinePeriodHours)
                 .printerTwoCopiesReceipt().put(info.printerTwoCopiesReceipt)
                 .maxItemsCount().put(info.maxItemsCount)
-                .shopStatus().put(info.shopStatus == null ? ShopInfoViewJdbcConverter.ShopStatus.ACTIVE.name() : info.shopStatus.name())
                 .apply();
 
         setUsers();

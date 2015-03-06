@@ -141,8 +141,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBigDecimal(DEFAULT_STORE_COMMISSION),
                 rs.getInt(OFFLINE_PERIOD),
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
-                rs.getLong(MAX_ITEMS_COUNT),
-                _enum(ShopStatus.class, rs.getString(SHOP_STATUS), ShopStatus.ACTIVE));
+                rs.getLong(MAX_ITEMS_COUNT)
+                );
     }
 
     public static ShopInfo read(JdbcJSONObject rs) throws JSONException {
@@ -199,8 +199,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getInt(OFFLINE_PERIOD),
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
                 //TODO delete
-                rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE),
-                _enum(ShopStatus.class, rs.getString(SHOP_STATUS), ShopStatus.ACTIVE));
+                rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE));
     }
 
     public static final class ShopInfo {
@@ -273,8 +272,6 @@ public class ShopInfoViewJdbcConverter {
 
         public final long maxItemsCount;
 
-        public final ShopStatus shopStatus;
-
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
@@ -322,8 +319,7 @@ public class ShopInfoViewJdbcConverter {
                         BigDecimal defaultStoreCommission,
                         int offlinePeriodHours,
                         boolean printerTwoCopiesReceipt,
-                        long maxItemsCount,
-                        ShopStatus shopStatus) {
+                        long maxItemsCount) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -384,12 +380,7 @@ public class ShopInfoViewJdbcConverter {
             this.printerTwoCopiesReceipt = printerTwoCopiesReceipt;
 
             this.maxItemsCount = maxItemsCount;
-            this.shopStatus = shopStatus;
         }
 
-    }
-
-    public enum ShopStatus {
-        ACTIVE, INITIAL_SIGNUP, BLOCKED, PENDING_EMAIL, PENDING_EMPLOYEE, PENDING_REGISTER, DISABLED;
     }
 }
