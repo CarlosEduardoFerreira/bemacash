@@ -168,6 +168,36 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/prepaid_button"
+                    style="@style/DashboardModule.Container.yellow"
+                    android:layout_width="@dimen/dashboard_module_1024_768_width"
+                    android:layout_height="@dimen/dashboard_module_1024_768_height"
+                    android:layout_alignTop="@+id/drops_and_payouts_button"
+                    android:layout_alignLeft="@+id/reports_button"
+                    android:layout_alignStart="@+id/reports_button">
+
+                    <ImageView
+                        android:layout_height="110dp"
+                        android:layout_width="110dp"
+                        android:background="@drawable/prepaid_button_bg"
+                        android:id="@+id/imageView9"
+                        android:layout_marginTop="8dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/cashier_action_prapaid"
+
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="15dp" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/employees_button"
                     style="@style/DashboardModule.Container.blue"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
