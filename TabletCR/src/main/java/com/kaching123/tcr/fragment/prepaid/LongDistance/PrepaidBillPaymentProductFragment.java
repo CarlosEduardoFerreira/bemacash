@@ -28,6 +28,7 @@ import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.PrepaidKeyboardView;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.request.GetMasterBillerPaymentOptionsRequest;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
@@ -339,8 +340,8 @@ public class PrepaidBillPaymentProductFragment extends Fragment implements Prepa
         }
 
         @Override
-        public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount) {
-            productFragmentCallback.conditionSelected(amount, phoneNumber, feeAmount);
+        public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount, Broker broker) {
+            productFragmentCallback.conditionSelected(amount, phoneNumber, feeAmount, Broker.BILL_PAYMENT);
         }
 
         @Override

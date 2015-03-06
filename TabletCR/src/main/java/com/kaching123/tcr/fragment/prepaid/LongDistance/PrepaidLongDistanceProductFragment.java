@@ -13,6 +13,7 @@ import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidLongDistanceActivity;
 import com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
@@ -88,7 +89,25 @@ public class PrepaidLongDistanceProductFragment extends Fragment implements Prep
         productFragmentCallback.popUpFragment(searchMode);
     }
 
-
+    private Broker getBroker(int prepaidMode)
+    {
+        switch (prepaidMode)
+        {
+            case PrepaidHomeFragment.BILLPAYMENT:
+                return Broker.BILL_PAYMENT;
+            case PrepaidHomeFragment.INTERNATIONAL:
+                return Broker.INTERNATIONAL_TOPUP;
+            case PrepaidHomeFragment.LONGDISTANCE:
+                return Broker.LONG_DISTANCE;
+            case PrepaidHomeFragment.SUNPASS:
+                return Broker.SUNPASS;
+            case PrepaidHomeFragment.WIRELESS:
+                return Broker.WIRELESS_RECHARGE;
+            case PrepaidHomeFragment.PINLESS:
+                return Broker.PINLESS;
+        }
+        return Broker.PINLESS;
+    }
     class ProductInfoMenuFragmentCallback implements PrepaidLongDistanceProductInfoMenuFragment.LongDistanceProductInfoMenuInterface {
         @Override
         public void menuSelected(int position) {
@@ -96,8 +115,8 @@ public class PrepaidLongDistanceProductFragment extends Fragment implements Prep
         }
 
         @Override
-        public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount) {
-            productFragmentCallback.conditionSelected(amount, phoneNumber, feeAmount);
+        public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount, Broker broker) {
+            productFragmentCallback.conditionSelected(amount, phoneNumber, feeAmount, getBroker(prepaidMode));
         }
 
         @Override

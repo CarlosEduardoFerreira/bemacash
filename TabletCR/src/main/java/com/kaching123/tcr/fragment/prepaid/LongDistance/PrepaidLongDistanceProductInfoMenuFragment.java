@@ -16,6 +16,7 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.DoProductRatesRequest;
 
@@ -132,11 +133,30 @@ public class PrepaidLongDistanceProductInfoMenuFragment extends Fragment {
 
     }
 
+    private Broker getBroker(int prepaidMode)
+    {
+        switch (prepaidMode)
+        {
+            case PrepaidHomeFragment.BILLPAYMENT:
+                return Broker.BILL_PAYMENT;
+            case PrepaidHomeFragment.INTERNATIONAL:
+                return Broker.INTERNATIONAL_TOPUP;
+            case PrepaidHomeFragment.LONGDISTANCE:
+                return Broker.LONG_DISTANCE;
+            case PrepaidHomeFragment.SUNPASS:
+                return Broker.SUNPASS;
+            case PrepaidHomeFragment.WIRELESS:
+                return Broker.WIRELESS_RECHARGE;
+            case PrepaidHomeFragment.PINLESS:
+                return Broker.PINLESS;
+        }
+        return Broker.PINLESS;
+    }
     class ProductionAmountSelectedCallback implements PrepaidLongDistanceProductAmountFragment.LongDistanceProductAmount {
 
         @Override
         public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount) {
-            longDistanceProductInfoMenuInterface.conditionSelected(amount, phoneNumber, feeAmount);
+            longDistanceProductInfoMenuInterface.conditionSelected(amount, phoneNumber, feeAmount, getBroker(prepaidMode));
         }
 
         @Override
@@ -298,7 +318,7 @@ public class PrepaidLongDistanceProductInfoMenuFragment extends Fragment {
     public interface LongDistanceProductInfoMenuInterface {
         void menuSelected(int position);
 
-        void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount);
+        void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount, Broker broker);
 
         void headMessage(int errorCode);
     }

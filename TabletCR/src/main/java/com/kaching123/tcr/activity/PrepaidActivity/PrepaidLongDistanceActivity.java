@@ -169,8 +169,8 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
         }
 
         @Override
-        public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount) {
-            productComfirmationFragment = new PrepaidLongDistanceProductComfirmationFragment_().builder().amount(amount).feeAmount(feeAmount).phoneNumber(phoneNumber).chosenCategory(chosenCategory).build();
+        public void conditionSelected(BigDecimal amount, String phoneNumber, BigDecimal feeAmount, Broker broker) {
+            productComfirmationFragment = new PrepaidLongDistanceProductComfirmationFragment_().builder().broker(broker).amount(amount).feeAmount(feeAmount).phoneNumber(phoneNumber).chosenCategory(chosenCategory).build();
             productComfirmationFragment.setCallback(productComfirmationFragmentCallback);
             setCallback(productComfirmationFragment);
             getSupportFragmentManager().beginTransaction().addToBackStack("PrepaidLongDistanceProductComfirmationFragment").hide(productFragment).add(R.id.long_distance_body, productComfirmationFragment).commit();
@@ -285,14 +285,14 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
 
     class ProductComfirmationFragmentCallback implements PrepaidLongDistanceProductComfirmationFragment.ProductComfirmationCallback {
         @Override
-        public void comfirm(String phoneNumber, BigDecimal amount, WirelessItem chosenCategory, BigDecimal feeAmount) {
+        public void comfirm(String phoneNumber, BigDecimal amount, WirelessItem chosenCategory, BigDecimal feeAmount,  Broker broker) {
             BillPaymentDescriptionModel.PrepaidType type;
             if (chosenCategory.isPinBased())
                 type = BillPaymentDescriptionModel.PrepaidType.WIRELESS_PIN;
             else
                 type = BillPaymentDescriptionModel.PrepaidType.WIRELESS_TOPUP;
 
-            proceedToPayment(PrepaidLongDistanceActivity.this, amount, chosenCategory.name, type, feeAmount, Broker.LONG_DISTANCE, chosenCategory.countryCode, phoneNumber, null, null, null);
+            proceedToPayment(PrepaidLongDistanceActivity.this, amount, chosenCategory.name, type, feeAmount, broker, chosenCategory.countryCode, phoneNumber, null, null, null);
         }
 
         @Override

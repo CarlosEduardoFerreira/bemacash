@@ -14,6 +14,7 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidLongDistanceActivity;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
 import com.kaching123.tcr.print.FormatterUtil;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
@@ -34,6 +35,8 @@ public class PrepaidLongDistanceProductComfirmationFragment extends PrepaidLongD
     protected String phoneNumber;
     @FragmentArg
     protected BigDecimal feeAmount;
+    @FragmentArg
+    protected Broker broker;
 
     @ViewById
     protected TextView productName, productNameDisplay, total, submit, feeAmountShows;
@@ -57,7 +60,7 @@ public class PrepaidLongDistanceProductComfirmationFragment extends PrepaidLongD
 
     @Click
     void submit() {
-        pcCallback.comfirm(phoneNumber, amount, chosenCategory, feeAmount);
+        pcCallback.comfirm(phoneNumber, amount, chosenCategory, feeAmount, broker);
     }
 
     private ProductComfirmationCallback pcCallback;
@@ -72,7 +75,7 @@ public class PrepaidLongDistanceProductComfirmationFragment extends PrepaidLongD
     }
 
     public interface ProductComfirmationCallback {
-        void comfirm(String phoneNumber, BigDecimal amount, WirelessItem chosenCategory, BigDecimal feeAmount);
+        void comfirm(String phoneNumber, BigDecimal amount, WirelessItem chosenCategory, BigDecimal feeAmount, Broker broker);
 
         void popUpFragment();
     }
