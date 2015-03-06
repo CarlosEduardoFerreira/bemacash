@@ -23,7 +23,7 @@
         android:layout_weight="1"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
-        android:background="@color/report_view_grey"
+        android:background="@color/bar_chart_bar_bg"
         app:bar_background="@drawable/bar_chart_bar_bg"
         />
 

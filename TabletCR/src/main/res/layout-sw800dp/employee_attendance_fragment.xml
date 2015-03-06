@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/bg_grey_color"
+              android:background="@color/beige"
               android:orientation="vertical">
 
     <LinearLayout
@@ -57,13 +57,13 @@
         android:layout_width="match_parent"
         android:layout_below="@id/from_edit"
         android:layout_marginTop="8dp"
-        android:background="@color/report_view_grey"
+        android:background="@color/reports_divider"
         />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_grey_color">
+        android:background="@drawable/item_list_bg">
 
         <LinearLayout
             style="@style/ItemList.HeaderLayout.1280"
@@ -104,7 +104,7 @@
             android:layout_below="@id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="?android:attr/listDivider"/>
+            android:divider="@drawable/list_divider"/>
 
         <LinearLayout
             android:layout_height="match_parent"

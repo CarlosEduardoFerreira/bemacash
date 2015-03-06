@@ -59,10 +59,9 @@ public class SyncOpenHelper extends BaseOpenHelper {
         db.beginTransaction();
         try {
             for (ContentValues values : valuesArray) {
-                ContentValues contentValue = hotFixForTips(tableName, values);
-                long id = db.insertWithOnConflict(tableName, null, contentValue, SQLiteDatabase.CONFLICT_REPLACE);
+                long id = db.insertWithOnConflict(tableName, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 if (id == -1L) {
-                    Logger.e("SyncOpenHelper.insert(): can't insert values: " + contentValue + "; tableName: " + tableName);
+                    Logger.e("SyncOpenHelper.insert(): can't insert values: " + values + "; tableName: " + tableName);
                     return false;
                 }
             }
@@ -74,16 +73,6 @@ public class SyncOpenHelper extends BaseOpenHelper {
             db.endTransaction();
         }
         return false;
-    }
-
-    private ContentValues hotFixForTips(String tableName, ContentValues value) {
-        ContentValues contentValue = value;
-        if (tableName.equalsIgnoreCase("employee_tips"))
-            if (value.containsKey("employee_id") && value.get("employee_id").toString().equalsIgnoreCase("0")) {
-                String temp = null;
-                contentValue.put("employee_id", temp);
-            }
-        return contentValue;
     }
 
     public synchronized Cursor getMaxUpdateTime(String[] selectionArgs) {

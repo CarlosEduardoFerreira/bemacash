@@ -3,9 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/ItemList.HeaderLayout.1280"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/mint_color"
-    >
+    android:layout_height="wrap_content">
 
     <TextView
         style="@style/ItemList.HeaderText"
@@ -24,6 +22,7 @@
         android:text="User ID"/>
 
     <TextView
+
         style="@style/ItemList.HeaderText"
         android:layout_height="match_parent"
         android:layout_width="0dp"

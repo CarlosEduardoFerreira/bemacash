@@ -4,7 +4,7 @@
           android:id="@android:id/text1"
           style="?android:attr/spinnerItemStyle"
           android:singleLine="true"
-          android:textColor="@color/mint_text_color"
+          android:textColor="#6a6963"
           android:textSize="18sp"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"

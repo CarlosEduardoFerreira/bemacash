@@ -5,36 +5,33 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <View
+        style="@style/ItemList.HeaderSpace"
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1.5"/>
-    <View
-        style="@style/mintVerticalDivider"/>
-    <View
-        android:layout_height="match_parent"
-        android:layout_width="0dp"
-        android:layout_weight="1"/>
-    <View
-        style="@style/mintVerticalDivider"/>
-    <View
-        android:layout_height="match_parent"
-        android:layout_width="0dp"
-        android:layout_weight="1"/>
-    <View
-        style="@style/mintVerticalDivider"/>
 
     <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"/>
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"/>
+
+    <View
+        style="@style/ItemList.HeaderSpace"
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1.5"/>
-    <View
-        style="@style/mintVerticalDivider"/>
 
     <View
+        style="@style/ItemList.HeaderSpace"
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="0.5"/>
-    <View
-        style="@style/mintVerticalDivider"/>
 
 </LinearLayout>

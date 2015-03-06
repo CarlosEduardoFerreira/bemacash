@@ -3,24 +3,18 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/bg_grey_color">
+              android:background="@drawable/item_list_bg">
 
     <include
         android:id="@+id/header"
-        layout="@layout/employee_list_header"
-        />
-    <View
-        android:layout_below="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider"/>
+        layout="@layout/employee_list_header" />
+
     <ListView
         android:id="@+id/list"
         android:layout_below="@id/header"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:divider="?android:attr/listDivider"
-        android:dividerHeight="0.2dp"/>
+        android:divider="@drawable/list_divider"/>
 
     <include layout="@layout/employee_list_vertical_dividers" />
 

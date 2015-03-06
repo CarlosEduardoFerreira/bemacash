@@ -179,7 +179,7 @@
                     <ImageView
                         android:layout_height="110dp"
                         android:layout_width="110dp"
-                        android:background="@drawable/prepaid_button_bg"
+                        android:background="@drawable/prepaid_dashborad_button_bg"
                         android:id="@+id/imageView9"
                         android:layout_marginTop="8dp"
                         android:layout_alignParentTop="true"
