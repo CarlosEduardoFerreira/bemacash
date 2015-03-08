@@ -19,6 +19,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidLongDistanceActivity;
 import com.kaching123.tcr.commands.payment.blackstone.prepaid.bill.GetMasterBillerPaymentOptionsCommand;
@@ -201,12 +203,12 @@ public class PrepaidBillPaymentProductFragment extends Fragment implements Prepa
 
 
         BigDecimal amountTemp;
+        try{
         if (s.toString().length() > 0)
             amountTemp = new BigDecimal(UiHelper.valueOf(new BigDecimal(s.toString())));
         else
             amountTemp = new BigDecimal(0);
 
-        try {
             assert minAmount != null;
             assert maxAmount != null;
             chosenAmount = amountTemp;
@@ -222,7 +224,7 @@ public class PrepaidBillPaymentProductFragment extends Fragment implements Prepa
                 amountValid = false;
             }
         } catch (NumberFormatException e) {
-            amountValid = false;
+            Logger.d(e.toString());
         }
     }
 

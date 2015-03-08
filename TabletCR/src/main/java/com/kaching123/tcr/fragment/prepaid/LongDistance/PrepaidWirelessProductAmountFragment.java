@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CustomEditBox;
@@ -133,7 +134,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
         return ((phoneNumber != null && phoneNumberStr != null && !phoneNumberStr.equalsIgnoreCase("")) ||
                 chosenCategory.isPinBased()) && (amount != null &&
                 amount != BigDecimal.ZERO && amount.compareTo(chosenCategory.minDenomination) >= 0
-               );
+        );
     }
 
     @AfterTextChange
@@ -149,12 +150,16 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     @AfterTextChange
     protected void amountEditViewAfterTextChanged(Editable s) {
         longDistanceProductAmount.headMessage(PrepaidLongDistanceProductInfoMenuFragment.SELECT_AMOUNT);
-        if (s.toString().length() > 0)
-            amount = new BigDecimal(UiHelper.valueOf(new BigDecimal(s.toString())));
-        else
-            amount = BigDecimal.ZERO;
-        if (amount.compareTo(chosenCategory.maxDenomination) > 0) {
-            amountEditView.setText(UiHelper.valueOf(chosenCategory.maxDenomination));
+        try {
+            if (s.toString().length() > 0)
+                amount = new BigDecimal(UiHelper.valueOf(new BigDecimal(s.toString())));
+            else
+                amount = BigDecimal.ZERO;
+            if (amount.compareTo(chosenCategory.maxDenomination) > 0) {
+                amountEditView.setText(UiHelper.valueOf(chosenCategory.maxDenomination));
+            }
+        } catch (NumberFormatException e) {
+            Logger.d(e.toString());
         }
     }
 
