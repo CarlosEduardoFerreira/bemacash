@@ -127,7 +127,7 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     }
 
     private void setAmountZone() {
-        amountZone.setText(MIN + " " + chosenCategory.minDenomination + "/" + MAX + chosenCategory.maxDenomination);
+        amountZone.setText(MIN + " " + chosenCategory.minDenomination + "/" + MAX + " " + chosenCategory.maxDenomination);
     }
 
     private boolean enableFinish() {

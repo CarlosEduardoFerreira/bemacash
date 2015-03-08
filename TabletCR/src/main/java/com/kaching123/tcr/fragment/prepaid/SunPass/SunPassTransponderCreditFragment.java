@@ -231,7 +231,7 @@ public class SunPassTransponderCreditFragment extends Fragment implements Custom
     private void showAmountView() {
         amountTitle.setVisibility(View.VISIBLE);
         enterAmountInterval.setVisibility(View.VISIBLE);
-        enterAmountInterval.setText(MIN + " " + commaPriceFormat(minAmount) + "/" + MAX + commaPriceFormat(maxAmount));
+        enterAmountInterval.setText(MIN + " " + commaPriceFormat(minAmount) + "/" + MAX + " " + commaPriceFormat(maxAmount));
         amount.setVisibility(View.VISIBLE);
     }
 
