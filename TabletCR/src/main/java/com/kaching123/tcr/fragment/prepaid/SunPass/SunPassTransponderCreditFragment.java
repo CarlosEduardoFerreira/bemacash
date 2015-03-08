@@ -243,6 +243,7 @@ public class SunPassTransponderCreditFragment extends Fragment implements Custom
         accountNumber.setEnabled(false);
         accountNumberValidate.setEnabled(false);
         keyboard.detachEditView();
+        keyboard.setDotEnabled(true);
 //        keyboard.setVisibility(View.GONE);
         transponderNumber.setText(strAccountNumber);
         lastKnownBalance.setText(commaPriceFormat(new BigDecimal(String.valueOf(result.currentBalance))));
