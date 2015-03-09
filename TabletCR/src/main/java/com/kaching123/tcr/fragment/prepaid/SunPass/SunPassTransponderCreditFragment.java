@@ -219,6 +219,10 @@ public class SunPassTransponderCreditFragment extends Fragment implements Custom
             callBack.headMessage(PrepaidSunPassHeadFragment.AMOUNT_ZERO_ERROR);
             return false;
         }
+        if (chosenAmount == null || chosenAmount.compareTo(minAmount) < 0) {
+            callBack.headMessage(PrepaidSunPassHeadFragment.AMOUNT_MINIMUN_ERROR);
+            return false;
+        }
         return true;
     }
 
