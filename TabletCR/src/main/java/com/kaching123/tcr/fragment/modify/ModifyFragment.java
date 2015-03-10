@@ -92,7 +92,7 @@ public class ModifyFragment extends StyledDialogFragment {
 
         for (int i = 0; i < columnsInfo.size(); i++) {
             ColumnInfo c = i == 0 ? columnsInfo.get(ColumnInfo.Type.M) : i == 1 ? columnsInfo.get(ColumnInfo.Type.A) : columnsInfo.get(ColumnInfo.Type.O);
-            int containerWidth = ItemModifiersInnerFragment.calcContainerWidth(getActivity(), c.itemsCount, c.displayColumn);
+            int containerWidth = ItemModifiersInnerFragment.calcContainerWidth(getActivity(), c.itemsCount, c.displayColumn, c);
             width += containerWidth + (c.itemsCount == 0 ? 0 : margin);
 
         }

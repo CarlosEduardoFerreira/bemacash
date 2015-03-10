@@ -11,10 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.InstanceState;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.AddonsContainerView;
 import com.kaching123.tcr.component.ModifiersContainerView;
@@ -24,6 +20,11 @@ import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.converter.ModifierFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.InstanceState;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -238,7 +239,7 @@ public class BaseItemModifiersFragment extends Fragment {
 
         for (int i = 0; i < viewGroups.length; i++) {
             ColumnInfo c = i == 0 ? columnsInfo.get(ColumnInfo.Type.M) : i == 1 ? columnsInfo.get(ColumnInfo.Type.A) : columnsInfo.get(ColumnInfo.Type.O);
-            int containerWidth = calcContainerWidth(getActivity(), c.itemsCount, c.displayColumn);
+            int containerWidth = calcContainerWidth(getActivity(), c.itemsCount, c.displayColumn, c);
             setContainerWidth(viewGroups[i], containerWidth);
             width += containerWidth + (c.itemsCount == 0 ? 0 : margin);
         }
@@ -254,11 +255,11 @@ public class BaseItemModifiersFragment extends Fragment {
         params.width = width;
     }
 
-    public static int calcContainerWidth(Context context, int addonCnt, int availableColumns) {
+    public static int calcContainerWidth(Context context, int addonCnt, int availableColumns, ColumnInfo info) {
         if (addonCnt == 0) {
             return 0;
         }
-        int columnCnt = (addonCnt + 2) / context.getResources().getInteger(R.integer.modify_container_row_count);
+        int columnCnt = (addonCnt + (info.type == ColumnInfo.Type.A && info.itemsCount >= 3 ? 3 : 2)) / context.getResources().getInteger(R.integer.modify_container_row_count);
         columnCnt = Math.min(columnCnt, availableColumns);
         int btnWidth = context.getResources().getDimensionPixelOffset(R.dimen.modify_button_width);
         int padding = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_padding);
@@ -311,7 +312,7 @@ public class BaseItemModifiersFragment extends Fragment {
         ColumnInfo(Type type, int items, int rowCount) {
             this.type = type;
             this.itemsCount = items;
-            this.columns = (items + 2) / rowCount;
+            this.columns = (items + (this.type == Type.A ? 3 : 2)) / rowCount;
         }
 
         @Override

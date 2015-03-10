@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,11 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ItemClick;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -24,6 +20,12 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.DeviceModel;
 import com.kaching123.usb.SysBusUsbDevice;
 import com.kaching123.usb.SysBusUsbManager;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -66,6 +68,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
     public static String USB_MSR_PID = "0009";
     public static String USB_SCANNER_VID = "0000";
     public static String USB_SCANNER_PID = "5710";
+    public static String MODEL_NUMBER_OLD = "EcolMini";
+    public static String MODEL_NUMBER_NEW = "8010";
     @FragmentArg
     protected Mode mode;
 
@@ -146,6 +150,43 @@ public class FindDeviceFragment extends StyledDialogFragment {
         dismiss();
     }
 
+    private boolean isAIO() {
+        return getDeviceName().contains(MODEL_NUMBER_OLD) || getDeviceName().contains(MODEL_NUMBER_NEW);
+    }
+
+    public String getDeviceName() {
+        final String manufacturer = Build.MANUFACTURER;
+        final String model = Build.MODEL;
+        if (model.startsWith(manufacturer)) {
+            return capitalize(model);
+        }
+        if (manufacturer.equalsIgnoreCase("HTC")) {
+            // make sure "HTC" is fully capitalized.
+            return "HTC " + model;
+        }
+        return capitalize(manufacturer) + " " + model;
+    }
+
+    private String capitalize(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return str;
+        }
+        final char[] arr = str.toCharArray();
+        boolean capitalizeNext = true;
+        String phrase = "";
+        for (final char c : arr) {
+            if (capitalizeNext && Character.isLetter(c)) {
+                phrase += Character.toUpperCase(c);
+                capitalizeNext = false;
+                continue;
+            } else if (Character.isWhitespace(c)) {
+                capitalizeNext = true;
+            }
+            phrase += c;
+        }
+        return phrase;
+    }
+
     private void storeDisplay(DeviceModel display) {
         getApp().getShopPref().displayAddress().put(display.getAddress());
         getApp().getShopPref().displayName().put(display.getName());
@@ -220,13 +261,14 @@ public class FindDeviceFragment extends StyledDialogFragment {
         private Set<DeviceModel> getDevices(Set<BluetoothDevice> bluetoothDevices) {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
             boolean useConstraint = mode == Mode.DISPLAY;
-            if (mode == Mode.DISPLAY)
-                devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
-            else {
-                devices.add(new DeviceModel(SEARIL_PORT_SCANNER_ADDRESS, SEARIL_PORT_SCANNER_NAME));
-                if (checkUsb(USB_SCANNER_VID, USB_SCANNER_PID))
-                    devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
-            }
+            if (isAIO())
+                if (mode == Mode.DISPLAY)
+                    devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
+                else {
+                    devices.add(new DeviceModel(SEARIL_PORT_SCANNER_ADDRESS, SEARIL_PORT_SCANNER_NAME));
+                    if (checkUsb(USB_SCANNER_VID, USB_SCANNER_PID))
+                        devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
+                }
             for (BluetoothDevice device : bluetoothDevices) {
                 if (useConstraint && !checkConstraint(device))
                     continue;
