@@ -6,8 +6,8 @@
 
 
     <LinearLayout android:orientation="vertical"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_height="160dp"
@@ -667,6 +667,17 @@
                         android:text="@string/cashier_action_prapaid"/>
 
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/checkin_and_out_button"
+                    android:layout_width="@dimen/dashboard_module_1024_768_width"
+                    android:layout_height="@dimen/dashboard_module_1024_768_height"
+                    android:visibility="gone"
+                    >
+
+
+                </RelativeLayout>
+
 
             </RelativeLayout>
 

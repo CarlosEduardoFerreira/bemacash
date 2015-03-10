@@ -107,13 +107,11 @@ public class SyncCommand implements Runnable {
 
     public static String ACTION_SYNC_PROGRESS = "com.kaching123.tcr.service.ACTION_SYNC_PROGRESS";
     public static String ACTION_SYNC_COMPLETED = "com.kaching123.tcr.service.ACTION_SYNC_COMPLETED";
-    public static String ACTION_SYNC_MERCHANT_BLOCK = "com.kaching123.tcr.service.ACTION_SYNC_MERCHANT_BLOCK";
     public static String EXTRA_TABLE = "table";
     public static String EXTRA_PAGES = "pages";
     public static String EXTRA_PROGRESS = "progress";
     public static String EXTRA_DATA_LABEL = "data_label";
     public static String EXTRA_SUCCESS = "success";
-    public static String EXTRA_BLOCK = "block";
 
     private static final String[] TABLES_URIS = new String[]{
             RegisterTable.URI_CONTENT,
@@ -185,8 +183,6 @@ public class SyncCommand implements Runnable {
             isOffline = true;
         } catch (SyncInconsistentException e) {
             error = service.getString(R.string.error_message_sync_inconsistent);
-        } catch (BlockException e) {
-            error = service.getString(R.string.block_merchant_message);
         } catch (Exception e) {
             //TODO: handle sub commands exceptions
             error = getErrorString(null);
@@ -209,7 +205,7 @@ public class SyncCommand implements Runnable {
 
     private static Handler handler = new Handler();
 
-    public int syncNow(final EmployeeModel employee, final long shopId) throws SyncException, DBVersionCheckException, OfflineException, SyncInconsistentException, BlockException {
+    public int syncNow(final EmployeeModel employee, final long shopId) throws SyncException, DBVersionCheckException, OfflineException, SyncInconsistentException {
         if (!getApp().isTrainingMode() && !Util.isNetworkAvailable(service)) {
             Logger.e("SyncCommand: NO CONNECTION");
             setOfflineMode(true);
@@ -236,10 +232,6 @@ public class SyncCommand implements Runnable {
             Logger.e("SyncCommand failed", e);
             setOfflineMode(true);
             throw e;
-        } catch (BlockException e) {
-            Logger.e("SyncCommand failed", e);
-            setOfflineMode(true);
-            throw e;
         }
     }
 
@@ -261,10 +253,10 @@ public class SyncCommand implements Runnable {
         }
     }
 
-    private int syncNowInner(final EmployeeModel employee, final long shopId) throws SyncException, DBVersionCheckException, SyncInconsistentException, BlockException {
+    private int syncNowInner(final EmployeeModel employee, final long shopId) throws SyncException, DBVersionCheckException, SyncInconsistentException {
         if (getApp().isTrainingMode()) {
             syncPAXMerchantInfo();
-//            syncWireless(service);
+            syncWireless(service);
             return 0;
         }
 
@@ -352,13 +344,13 @@ public class SyncCommand implements Runnable {
 
         syncShopInfo(employee);
 
-//        checkAutoSettlement(wasTipsEnabled, oldAutoSettlementTime);
-//        syncPAXMerchantInfo();
+        checkAutoSettlement(wasTipsEnabled, oldAutoSettlementTime);
+        syncPAXMerchantInfo();
 
         // download date from our amazon web server - end
 
         //go to the blackstone api to refresh cache
-//        syncWireless(service);
+        syncWireless(service);
 
         sendSyncSuccessful(api, employee);
 
@@ -592,7 +584,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while (retry++ < 5) {
+        while(retry++ < 5) {
             try {
                 return api.download(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -604,7 +596,7 @@ public class SyncCommand implements Runnable {
 
     private GetResponse makeShopInfoRequest(SyncApi2 api, String apiKey, JSONObject credentials) throws JSONException, SyncException {
         int retry = 0;
-        while (retry++ < 5) {
+        while(retry++ < 5) {
             try {
                 return api.downloadShopInfo(apiKey, credentials);
             } catch (RetrofitError e) {
@@ -690,15 +682,6 @@ public class SyncCommand implements Runnable {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private void blockEvent(Context context) {
-        if (!isManual)
-            return;
-
-        Intent intent = new Intent(ACTION_SYNC_MERCHANT_BLOCK);
-        intent.putExtra(EXTRA_BLOCK, context.getString(R.string.block_merchant_message));
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-    }
-
     private void fireCompleteEvent(Context context, boolean success) {
         if (!isManual)
             return;
@@ -708,12 +691,11 @@ public class SyncCommand implements Runnable {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private void syncShopInfo(EmployeeModel employeeModel) throws SyncException, BlockException {
+    private void syncShopInfo(EmployeeModel employeeModel) throws SyncException {
         TcrApplication app = TcrApplication.get();
         SyncApi2 api = app.getRestAdapter().create(SyncApi2.class);
 
         fireEvent(service, null, service.getString(R.string.sync_shop_info), 0, 0);
-        boolean isShopAliave = false;
         try {
             GetResponse resp = makeShopInfoRequest(api, app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employeeModel, app));
             if (resp == null || !resp.isSuccess()) {
@@ -723,18 +705,15 @@ public class SyncCommand implements Runnable {
             JdbcJSONObject entity = resp.getEntity();
             syncBarcodePrefix(entity.getJSONArray("BARCODE_PREFIXES"));
             syncPrepaidTaxes(entity.getJSONArray("PREPAID_ITEM_TAXES"));
-//            syncActivationCarriers(entity.getJSONArray("ACTIVATION_CARRIERS"));
-            isShopAliave = syncShop(entity.getJSONObject("SHOP"));
-
+            syncActivationCarriers(entity.getJSONArray("ACTIVATION_CARRIERS"));
+            syncShop(entity.getJSONObject("SHOP"));
         } catch (Exception e) {
             Logger.e("Can't sync shop info", e);
             throw new SyncException();
         }
-        if (!isShopAliave)
-            throw new BlockException();
     }
 
-    private boolean syncShop(JdbcJSONObject shop) throws SyncException {
+    private void syncShop(JdbcJSONObject shop) throws SyncException {
         if (shop == null) {
             Logger.e("can't parse shop", new RuntimeException());
             throw new SyncException();
@@ -742,8 +721,6 @@ public class SyncCommand implements Runnable {
         ShopInfo info;
         try {
             info = ShopInfoViewJdbcConverter.read(shop);
-//            if (info.shopStatus == ShopInfoViewJdbcConverter.ShopStatus.BLOCKED || info.shopStatus == ShopInfoViewJdbcConverter.ShopStatus.DISABLED)
-//                return false;
         } catch (JSONException e) {
             Logger.e("can't parse shop", e);
             throw new SyncException();
@@ -751,7 +728,6 @@ public class SyncCommand implements Runnable {
         boolean oldTipsEnabled = getApp().isTipsEnabled();
         getApp().saveShopInfo(info);
         checkTipsEnabled(oldTipsEnabled, info.tipsEnabled);
-        return true;
     }
 
     private void checkTipsEnabled(boolean oldTipsEnabled, final boolean newTipsEnabled) {
@@ -1063,17 +1039,13 @@ public class SyncCommand implements Runnable {
 
         public String localTable;
 
-        public SyncException() {
+        private SyncException() {
 
         }
 
         private SyncException(String localTable) {
             this.localTable = localTable;
         }
-    }
-
-    public static class BlockException extends Exception {
-
     }
 
     public static class DBVersionCheckException extends Exception {

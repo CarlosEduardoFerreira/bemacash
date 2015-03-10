@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.res.StringRes;
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.UploadTask;
@@ -87,15 +86,11 @@ public class SyncWaitDialogFragment extends WaitDialogFragment{
                 if (table != null)
                     dataLabel = getString(TABLE_NAMES.get(table));
 
-				if(pages == 0 && progress == 0){
-					progressMsg.setText(String.format(Locale.US, waitMsgTmpl2, dataLabel));
-				} else {
-					progressMsg.setText(String.format(Locale.US, waitMsgTmpl, dataLabel, progress, pages));
-				}
-            }
-            if(SyncCommand.ACTION_SYNC_MERCHANT_BLOCK.equals(intent.getAction()))
-            {
-                Logger.d("trace, merchant was blocked");
+                if(pages == 0 && progress == 0){
+                    progressMsg.setText(String.format(Locale.US, waitMsgTmpl2, dataLabel));
+                } else {
+                    progressMsg.setText(String.format(Locale.US, waitMsgTmpl, dataLabel, progress, pages));
+                }
             }
         }
     };

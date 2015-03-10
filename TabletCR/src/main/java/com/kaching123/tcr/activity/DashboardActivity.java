@@ -722,29 +722,29 @@ public class DashboardActivity extends SuperBaseActivity {
         OpenDrawerCommand.start(DashboardActivity.this, searchByMac, callback);
     }
 
-//    @Click
-//    protected void clockInButtonContainerClicked() {
-//        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_IN, null, new TimesheetFragment.OnTimesheetListener() {
-//            @Override
-//            public void onCredentialsEntered(String login/*, String password*/) {
-//                TimesheetFragment.hide(DashboardActivity.this);
-//                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_in));
-//                ClockInCommand.start(DashboardActivity.this, login/*, password*/, clockInCallback);
-//            }
-//        });
-//    }
-//
-//    @Click
-//    protected void clockOutButtonContainerClicked() {
-//        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_OUT, null, new TimesheetFragment.OnTimesheetListener() {
-//            @Override
-//            public void onCredentialsEntered(String login/*, String password*/) {
-//                TimesheetFragment.hide(DashboardActivity.this);
-//                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_out));
-//                ClockOutCommand.start(DashboardActivity.this, login/*, password*/, clockOutCallback);
-//            }
-//        });
-//    }
+    @Click
+    protected void clockInButtonContainerClicked() {
+        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_IN, null, new TimesheetFragment.OnTimesheetListener() {
+            @Override
+            public void onCredentialsEntered(String login/*, String password*/) {
+                TimesheetFragment.hide(DashboardActivity.this);
+                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_in));
+                ClockInCommand.start(DashboardActivity.this, login/*, password*/, clockInCallback);
+            }
+        });
+    }
+
+    @Click
+    protected void clockOutButtonContainerClicked() {
+        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_OUT, null, new TimesheetFragment.OnTimesheetListener() {
+            @Override
+            public void onCredentialsEntered(String login/*, String password*/) {
+                TimesheetFragment.hide(DashboardActivity.this);
+                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_out));
+                ClockOutCommand.start(DashboardActivity.this, login/*, password*/, clockOutCallback);
+            }
+        });
+    }
 
     @Click
     protected void employeesButtonClicked() {
