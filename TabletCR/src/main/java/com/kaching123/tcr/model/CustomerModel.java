@@ -31,6 +31,7 @@ public class CustomerModel implements IValueModel, Serializable {
     public boolean sex;
     public Date createTime;
     public boolean consentPromotions;
+    public String notes;
 
 
     public CustomerModel(String guid, Date createTime) {
@@ -52,11 +53,12 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(CustomerTable.PHONE)),
                 _bool(cursor, cursor.getColumnIndex(CustomerTable.SEX)),
                 _nullableDate(cursor, cursor.getColumnIndex(CustomerTable.CREATE_TIME)),
-                _bool(cursor, cursor.getColumnIndex(CustomerTable.CONSENT_PROMOTIONS))
+                _bool(cursor, cursor.getColumnIndex(CustomerTable.CONSENT_PROMOTIONS)),
+                cursor.getString(cursor.getColumnIndex(CustomerTable.NOTES))
         );
     }
 
-    public CustomerModel(String guid, String firstName, String lastName, String street, String complementary, String city, String state, String country, String zip, String email, String phone, boolean sex, Date createTime, boolean consentPromotions) {
+    public CustomerModel(String guid, String firstName, String lastName, String street, String complementary, String city, String state, String country, String zip, String email, String phone, boolean sex, Date createTime, boolean consentPromotions, String notes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.guid = guid;
@@ -71,9 +73,10 @@ public class CustomerModel implements IValueModel, Serializable {
         this.sex = sex;
         this.createTime = createTime;
         this.consentPromotions = consentPromotions;
+        this.notes = notes;
     }
 
-    public String getFullName(){
+    public String getFullName() {
         return UiHelper.concatFullname(firstName, lastName);
     }
 
@@ -99,6 +102,7 @@ public class CustomerModel implements IValueModel, Serializable {
         v.put(CustomerTable.SEX, sex);
         _nullableDate(v, CustomerTable.CREATE_TIME, createTime);
         v.put(CustomerTable.CONSENT_PROMOTIONS, consentPromotions);
+        v.put(CustomerTable.NOTES, notes);
         return v;
     }
 
@@ -116,6 +120,7 @@ public class CustomerModel implements IValueModel, Serializable {
         v.put(CustomerTable.PHONE, phone);
         v.put(CustomerTable.SEX, sex);
         v.put(CustomerTable.CONSENT_PROMOTIONS, consentPromotions);
+        v.put(CustomerTable.NOTES, notes);
         return v;
     }
 

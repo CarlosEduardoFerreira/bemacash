@@ -16,6 +16,8 @@
     <integer name="name_max_length">128</integer>
     <integer name="email_max_length">128</integer>
     <integer name="address_max_length">255</integer>
+    <integer name="notes_max_length">500</integer>
+    <integer name="notes_max_lines">4</integer>
     <integer name="full_address_max_length">512</integer>
     <integer name="phone_max_length">14</integer>
     <integer name="category_icon_columns_count">3</integer>

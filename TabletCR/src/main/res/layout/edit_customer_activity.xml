@@ -196,7 +196,31 @@
                     android:maxLength="@integer/phone_max_length"
                     android:nextFocusDown="@+id/street"/>
             </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
 
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/customer_label_notes"/>
+                </FrameLayout>
+
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/notes"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="textMultiLine"
+                    android:maxLines="@integer/notes_max_lines"
+                    android:maxLength="@integer/notes_max_length"
+                    android:scrollbars="vertical"
+                    android:nextFocusDown="@+id/street"/>
+            </TableRow>
         </TableLayout>
 
         <TableLayout
