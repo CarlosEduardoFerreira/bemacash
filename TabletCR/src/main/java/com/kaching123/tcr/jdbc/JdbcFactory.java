@@ -228,7 +228,7 @@ public class JdbcFactory {
         API_METHOD.put(CreditReceiptTable.TABLE_NAME, "credit_receipts");
         API_METHOD2.put(CreditReceiptModel.class, "credit_receipts");
 
-//        CONVERTERS.put(ActivationCarrierTable.TABLE_NAME, c = new ActivationCarrierJdbcConverter());
+        CONVERTERS.put(ActivationCarrierTable.TABLE_NAME, c = new ActivationCarrierJdbcConverter());
         CONVERTERS2.put(ActivationCarrierModel.class, c);
 
         CONVERTERS.put(EmployeeCommissionsTable.TABLE_NAME, c = new CommissionsJdbcConverter());

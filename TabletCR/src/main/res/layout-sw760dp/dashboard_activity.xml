@@ -22,21 +22,22 @@
                 android:paddingTop="15dp"
                 android:paddingBottom="26dp"
                 android:paddingLeft="25dp"
-                android:background="@color/prepaid_dialog_white">
+                android:background="@color/beige">
 
                 <RelativeLayout
                     android:id="@+id/register_button"
-                    style="@style/DashboardModule.Container.green"
+                    style="@style/DashboardModule.Container"
+                    android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_marginRight="9dp"
                     android:enabled="false">
 
                     <ImageView
-                        android:layout_height="125dp"
-                        android:layout_width="125dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:background="@drawable/dashboard_register_bg"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="20dp"
                         android:layout_centerHorizontal="true" />
 
                     <TextView
@@ -52,16 +53,17 @@
 
                 <RelativeLayout
                     android:id="@+id/inventory_button"
-                    style="@style/DashboardModule.Container.green"
+                    style="@style/DashboardModule.Container"
+                    android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_toRightOf="@id/register_button"
                     android:layout_marginRight="9dp">
 
                     <ImageView
-                        android:layout_marginTop="6dp"
-                        android:layout_height="120dp"
-                        android:layout_width="120dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:background="@drawable/dashboard_inventory_bg"
                         android:layout_alignParentTop="true"
                         android:layout_alignLeft="@+id/textView3"
@@ -81,15 +83,16 @@
 
                 <RelativeLayout
                     android:id="@+id/no_sale_button"
-                    style="@style/DashboardModule.Container.green"
+                    style="@style/DashboardModule.Container"
+                    android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_toRightOf="@id/inventory_button">
 
                     <ImageView
-                        android:layout_marginTop="6dp"
-                        android:layout_height="110dp"
-                        android:layout_width="110dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:background="@drawable/dashboard_no_sale_bg"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true" />
@@ -108,24 +111,71 @@
 
                 <RelativeLayout
                     android:id="@+id/drops_and_payouts_button"
-                    style="@style/DashboardModule.Container.yellow"
+                    style="@style/DashboardModule.Container"
+                    android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
-                    android:visibility="gone">
-                    />
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/employees_button"
+                    android:layout_marginTop="10dp">
+
+                    <ImageView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:background="@drawable/dashboard_drop_layouts"
+                        android:id="@+id/imageView"
+                        android:layout_marginTop="20dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/dashboard_activity_drops_and_payouts_button_label_short"
+
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="15dp" />
 
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/checkin_and_out_button"
-                    android:visibility="gone"
+                    style="@style/DashboardModule.Container"
+                    android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
-                    android:layout_height="@dimen/dashboard_module_1024_768_height"></RelativeLayout>
+                    android:layout_height="@dimen/dashboard_module_1024_768_height"
+                    android:layout_alignTop="@+id/drops_and_payouts_button"
+                    android:layout_alignLeft="@+id/customers_button"
+                    android:layout_alignStart="@+id/customers_button">
 
+                    <ImageView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:background="@drawable/dashboard_checkin_out_layouts"
+                        android:id="@+id/imageView1"
+                        android:layout_marginTop="20dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/dashboard_activity_checkin_and_out_button_label"
+
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="15dp" />
+
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/prepaid_button"
-                    style="@style/DashboardModule.Container.yellow"
+                    style="@style/DashboardModule.Container"
+                    android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_alignTop="@+id/drops_and_payouts_button"
@@ -133,11 +183,11 @@
                     android:layout_alignStart="@+id/reports_button">
 
                     <ImageView
-                        android:layout_height="110dp"
-                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:background="@drawable/prepaid_dashborad_button_bg"
                         android:id="@+id/imageView9"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="20dp"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true" />
 
@@ -153,10 +203,10 @@
 
                 </RelativeLayout>
 
-
                 <RelativeLayout
                     android:id="@+id/employees_button"
-                    style="@style/DashboardModule.Container.blue"
+                    style="@style/DashboardModule.Container"
+                    android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:visibility="visible"
@@ -165,10 +215,10 @@
                     android:layout_alignParentStart="true">
 
                     <ImageView
-                        android:layout_height="110dp"
-                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:background="@drawable/dashboard_employees_bg"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="20dp"
                         android:layout_centerHorizontal="true" />
 
                     <TextView
@@ -184,7 +234,8 @@
 
                 <RelativeLayout
                     android:id="@+id/customers_button"
-                    style="@style/DashboardModule.Container.blue"
+                    style="@style/DashboardModule.Container"
+                    android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:visibility="visible"
@@ -192,10 +243,10 @@
                     android:layout_toRightOf="@+id/register_button">
 
                     <ImageView
-                        android:layout_height="130dp"
-                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="20dp"
                         android:background="@drawable/dashboard_customers_bg" />
 
                     <TextView
@@ -211,17 +262,18 @@
 
                 <RelativeLayout
                     android:id="@+id/reports_button"
-                    style="@style/DashboardModule.Container.blue"
+                    style="@style/DashboardModule.Container"
+                    android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_alignTop="@+id/customers_button"
                     android:layout_toRightOf="@+id/inventory_button">
 
                     <ImageView
-                        android:layout_height="110dp"
+                        android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:background="@drawable/dashboard_reports_bg"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="20dp"
                         android:layout_centerHorizontal="true" />
 
                     <TextView
@@ -612,6 +664,15 @@
                     android:background="@android:color/darker_gray" />
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/clock_in_button_container"
+                android:layout_height="wrap_content"
+                android:layout_width="93dp"></RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/clock_out_button_container"
+                android:layout_height="wrap_content"
+                android:layout_width="93dp"></RelativeLayout>
 
         </RelativeLayout>
 

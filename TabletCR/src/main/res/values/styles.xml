@@ -828,7 +828,9 @@
     </style>
 
     <style name="DashboardModule" />
-    <style name="DashboardModule.Container"/>
+    <style name="DashboardModule.Container">
+        <item name="android:background">@drawable/dashboard_module_bg</item>
+    </style>
     <style name="DashboardModule.Container.green">
         <item name="android:background">@drawable/dashboard_module_green_bg</item>
     </style>
