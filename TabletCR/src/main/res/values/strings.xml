@@ -474,7 +474,7 @@
     <string name="dashboard_activity_no_sale_button_label">No-Sale</string>
     <string name="dashboard_activity_employees_button_label">Employees</string>
     <string name="dashboard_activity_customers_button_label">Customers</string>
-    <string name="dashboard_activity_drops_and_payouts_button_label">Drops and Payouts</string>
+    <string name="dashboard_activity_drops_and_payouts_button_label">Drops &amp; Payouts</string>
     <string name="dashboard_activity_drops_and_payouts_button_label_short">Drops/Payouts</string>
     <string name="dashboard_activity_xreport_button_label">X Report</string>
     <string name="dashboard_activity_opened_transactions_warning_title">Open credit card transactions</string>

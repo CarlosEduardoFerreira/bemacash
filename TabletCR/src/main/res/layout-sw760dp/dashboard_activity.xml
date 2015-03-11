@@ -119,8 +119,9 @@
 
                 <ImageView
                     android:id="@+id/shift_action_image"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_height="110dp"
+                    android:layout_width="170dp"
                     android:background="@drawable/shift_open_btn_bg"/>
 
                 <TextView
@@ -158,7 +159,7 @@
                     android:layout_alignLeft="@id/shift_action_image"
                     android:layout_alignRight="@id/shift_action_image"
                     android:layout_alignBottom="@id/shift_action_image"
-                    android:layout_marginBottom="75dp"
+                    android:layout_marginBottom="60dp"
                     android:visibility="gone"
                     />
 
@@ -390,7 +391,7 @@
                     android:layout_alignParentRight="true"
                     android:textStyle="bold"
                     android:textColor="@color/beige"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:text="@string/dashboard_activity_cash_in_drawer_label"/>
 
                 <TextView
@@ -404,7 +405,7 @@
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:textColor="@color/dashboard_cash_on_drawer_value_text"
-                    android:textSize="24sp"
+                    android:textSize="26sp"
                     android:text="0.00"/>
 
                 <TextView
@@ -416,7 +417,7 @@
                     android:layout_marginTop="8dp"
                     android:textStyle="bold"
                     android:textColor="@color/beige"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:text="@string/dashboard_activity_opening_amount"/>
 
                 <TextView
@@ -430,7 +431,7 @@
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:textColor="@color/dashboard_opening_amount_value_text"
-                    android:textSize="24sp"
+                    android:textSize="26sp"
                     android:text="0.00"/>
 
             </RelativeLayout>
@@ -448,7 +449,7 @@
                 android:layout_width="match_parent"
                 android:paddingTop="26dp"
                 android:paddingBottom="26dp"
-                android:paddingLeft="15dp"
+                android:paddingLeft="18dp"
                 android:background="@color/beige">
 
                 <RelativeLayout
@@ -457,7 +458,7 @@
                     android:background="@drawable/dashboard_module_bg"
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
-                    android:layout_marginRight="18dp"
+                    android:layout_marginRight="28dp"
                     android:enabled="false">
 
                     <ImageView
@@ -484,7 +485,7 @@
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_toRightOf="@id/register_button"
-                    android:layout_marginRight="18dp">
+                    android:layout_marginRight="28dp">
 
                     <ImageView
                         android:layout_height="wrap_content"
@@ -510,7 +511,7 @@
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_toRightOf="@id/inventory_button"
-                    android:layout_marginRight="18dp"
+                    android:layout_marginRight="28dp"
                     >
 
                     <ImageView
@@ -552,7 +553,7 @@
                         android:layout_width="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="9dp"
+                        android:layout_marginBottom="19dp"
                         android:text="@string/dashboard_activity_drops_and_payouts_button_label"/>
 
                 </RelativeLayout>
@@ -563,8 +564,8 @@
                     android:layout_width="@dimen/dashboard_module_1024_768_width"
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_below="@id/register_button"
-                    android:layout_marginTop="56dp"
-                    android:layout_marginRight="18dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginRight="28dp"
                     android:visibility="visible">
 
                     <ImageView
@@ -592,7 +593,7 @@
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_alignTop="@id/employees_button"
                     android:layout_toRightOf="@id/employees_button"
-                    android:layout_marginRight="18dp"
+                    android:layout_marginRight="28dp"
                     android:visibility="visible">
 
                     <ImageView
@@ -620,7 +621,7 @@
                     android:layout_height="@dimen/dashboard_module_1024_768_height"
                     android:layout_alignTop="@id/customers_button"
                     android:layout_toRightOf="@id/customers_button"
-                    android:layout_marginRight="18dp">
+                    android:layout_marginRight="28dp">
 
                     <ImageView
                         android:layout_height="wrap_content"
