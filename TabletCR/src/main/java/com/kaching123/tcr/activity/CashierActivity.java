@@ -42,7 +42,7 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
     protected DrawerCategoriesFragment drawerCategoriesFragment;
 
     @ViewById
-    protected static DrawerLayout drawerLayout;
+    protected DrawerLayout drawerLayout;
 
     private ActionBarDrawerToggle drawerToggle;
 
@@ -154,35 +154,10 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //noinspection SimplifiableIfStatement
-//        if (drawerToggle.onOptionsItemSelected(item)) {
-//            return true;
-//        }
-        if (item.getItemId() == android.R.id.home)
-            if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
-                drawerLayout.closeDrawer(Gravity.RIGHT);
-                return true;
-            } else
-                drawerLayout.openDrawer(Gravity.RIGHT);
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
-        //changed for mintpos
-//        if (item != null && item.toString().equalsIgnoreCase("Search")) {
-//            if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
-//                drawerLayout.closeDrawer(Gravity.RIGHT);
-//            }
-//
-//            else {
-//                drawerLayout.openDrawer(Gravity.RIGHT);
-////                menuItem.setVisible(true);
-//            }
-//        }
-//        else if (item != null && item.toString().equalsIgnoreCase("Search disable"))
-//        {
-//            menuItem.setVisible(false);
-//            homeItem.setChecked(true);
-//            getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commit();
-//            drawerLayout.closeDrawer(Gravity.RIGHT);
-//        }
-//        return false;
     }
 
     @Override

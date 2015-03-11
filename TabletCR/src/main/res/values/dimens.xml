@@ -119,8 +119,8 @@
     <dimen name="department_dialog_height">250dp</dimen>
     <dimen name="printer_alias_dialog_width">330dp</dimen>
     <dimen name="printer_alias_dialog_height">250dp</dimen>
-    <dimen name="login_form_width">572dp</dimen>
-    <dimen name="login_form_height">700dp</dimen>
+    <dimen name="login_form_width">280dp</dimen>
+    <dimen name="login_form_height">330dp</dimen>
     <dimen name="login_form_padding_left">22dp</dimen>
     <dimen name="login_form_padding_right">22dp</dimen>
     <dimen name="login_form_padding_top">36dp</dimen>

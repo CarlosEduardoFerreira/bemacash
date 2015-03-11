@@ -27,13 +27,6 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -101,6 +94,14 @@ import com.kaching123.tcr.store.ShopStore.TotalSalesQuery;
 import com.kaching123.tcr.util.DateUtils;
 import com.kaching123.tcr.util.ScreenUtils;
 import com.telly.groundy.TaskHandler;
+
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -192,8 +193,6 @@ public class DashboardActivity extends SuperBaseActivity {
     protected ViewGroup reportsButton;
     @ViewById
     protected ViewGroup prepaidButton;
-    @ViewById
-    protected ViewGroup checkinAndOutButton;
 
     @ViewById
     protected EditText usbScannerInput;
@@ -271,11 +270,6 @@ public class DashboardActivity extends SuperBaseActivity {
     public void barcodeReceivedFromSerialPort(String barcode) {
         Logger.d("DashboardActivity barcodeReceivedFromSerialPort onReceive:" + barcode);
         errorAlarm();
-    }
-
-    @Click
-    protected void checkinAndOutButtonClicked() {
-        showCheckInOrOutDialog();
     }
 
     protected void showCheckInOrOutDialog() {
@@ -623,15 +617,15 @@ public class DashboardActivity extends SuperBaseActivity {
             CashierActivity.start(this);
         }
     }
-    private boolean getBillpaymentActivate()
-    {
+
+    private boolean getBillpaymentActivate() {
         return TcrApplication.get().getBillPaymentActivated();
     }
 
-    private boolean getSunpassActivate()
-    {
+    private boolean getSunpassActivate() {
         return TcrApplication.get().getSunpassActivated();
     }
+
     @Click
     protected void inventoryButtonClicked() {
         runInventory(false);

@@ -859,7 +859,7 @@
         <item name="android:shadowRadius">1</item>
         <item name="android:shadowDx">0</item>
         <item name="android:shadowDy">1</item>
-        <item name="android:textSize">36sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/dashboard_shift_time_text_color</item>
     </style>
