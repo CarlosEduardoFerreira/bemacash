@@ -173,14 +173,15 @@
     <Button
         style="@style/LocalizableButton.Blue"
         android:text="@string/button_search"
+        android:textSize="28sp"
         android:id="@+id/filter"
         android:layout_marginTop="6dp"
         android:layout_below="@+id/above_holder"
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="70dp"
-        android:background="@drawable/filter_btn" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/filter_btn"/>
 
     <LinearLayout
         android:id="@+id/below_holder"

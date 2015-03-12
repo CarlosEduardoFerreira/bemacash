@@ -40,6 +40,9 @@ public class HistoryOrderView extends FrameLayout {
     protected TextView tenderType;
 
     @ViewById
+    protected TextView prepaid;
+
+    @ViewById
     protected TextView tipsAmount;
 
     @ViewById
@@ -71,6 +74,7 @@ public class HistoryOrderView extends FrameLayout {
         this.amount.setText(UiHelper.valueOf(total));
         this.cashier.setText(operatorName);
         this.tenderType.setText(tenderType != null ? tenderType.label : R.string.edit_printer_unknown);
+        this.prepaid.setText(orderType == OrderType.PREPAID ? R.string.order_status_prepaid_yes : R.string.order_status_prepaid_no);
 
         if (!isTipsEnabled)
             return;

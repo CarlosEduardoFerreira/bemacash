@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/beige"
+        android:background="@drawable/item_list_bg"
         android:orientation="vertical">
 
         <LinearLayout
@@ -40,7 +40,7 @@
             style="@style/SwipeList.List"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:divider="?android:attr/listDivider"
+            android:divider="@drawable/list_divider"
             />
 
 

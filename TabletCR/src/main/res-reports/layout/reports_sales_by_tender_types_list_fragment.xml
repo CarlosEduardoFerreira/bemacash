@@ -65,9 +65,7 @@
             style="@style/SwipeList.List"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:divider="?android:attr/listDivider"
-            />
-
+            android:divider="@drawable/list_divider"/>
 
     </LinearLayout>
 

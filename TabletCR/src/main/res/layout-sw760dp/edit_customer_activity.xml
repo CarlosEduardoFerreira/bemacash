@@ -373,6 +373,7 @@
 
     <Button
         style="@style/LocalizableButton.Green"
+        android:text="@string/btn_save"
         android:textSize="26sp"
         android:paddingBottom="6dp"
         android:id="@+id/save_button"
