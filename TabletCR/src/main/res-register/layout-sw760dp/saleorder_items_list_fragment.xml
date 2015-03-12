@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
+        xmlns:swipe="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_grey_color"
-        android:orientation="vertical">
+        android:background="@drawable/item_list_bg"
+        android:orientation="vertical" >
 
         <include layout="@layout/saleorder_items_list_header" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.2dp"
-            android:background="?android:attr/listDivider"/>
-
         <com.fortysevendeg.swipelistview.SwipeListView
-
             android:id="@android:id/list"
             style="@style/SwipeList.List"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:divider="?android:attr/listDivider"
-            android:dividerHeight="0.2dp"
+            swipe:swipeFrontView="@+id/item_front"
             swipe:swipeBackView="@+id/item_back"
-            swipe:swipeFrontView="@+id/item_front" />
+            android:divider="@drawable/list_divider"
+            />
 
     </LinearLayout>
 

@@ -150,7 +150,7 @@
     </style>
 
     <style name="ItemList.HeaderLayout">
-        <!--<item name="android:background">@drawable/item_list_header_bg</item>-->
+        <item name="android:background">@drawable/item_list_header_bg</item>
         <item name="android:minHeight">@dimen/item_list_header_height</item>
         <item name="android:maxHeight">@dimen/item_list_header_height</item>
         <item name="android:orientation">horizontal</item>

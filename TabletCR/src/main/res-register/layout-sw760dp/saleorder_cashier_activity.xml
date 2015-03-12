@@ -37,7 +37,7 @@
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="320dp">
+                        android:layout_height="290dp">
 
                         <fragment
                             android:id="@+id/total_cost_fragment"
@@ -49,7 +49,6 @@
                     <!--style="@style/CustomEditBox.Barcode"-->
                     <!--android:imeOptions="actionDone"-->
                     <com.kaching123.tcr.component.CustomEditBox
-                        android:paddingTop="20dp"
                         android:hint="Search by code"
                         style="@style/CashierActivity.Barcode"
                         android:layout_height="wrap_content"
