@@ -172,6 +172,7 @@
 
     <Button
         style="@style/LocalizableButton.Blue"
+        android:text="@string/button_search"
         android:id="@+id/filter"
         android:layout_marginTop="6dp"
         android:layout_below="@+id/above_holder"

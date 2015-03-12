@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/bg_grey_color"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/fragment_header"
@@ -37,14 +37,14 @@
         android:layout_height="2dp"
         android:layout_width="match_parent"
         android:layout_marginTop="8dp"
-        android:background="@color/report_view_grey"
+        android:background="@color/reports_divider"
         />
 
     <LinearLayout
         android:layout_below="@id/divider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_grey_color"
+        android:background="@drawable/item_list_bg"
         android:orientation="vertical">
 
         <LinearLayout
@@ -111,7 +111,7 @@
             style="@style/SwipeList.List"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:divider="?android:attr/listDivider"/>
+            android:divider="@drawable/list_divider"/>
 
 
     </LinearLayout>

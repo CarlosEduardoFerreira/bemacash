@@ -87,7 +87,7 @@
         android:paddingTop="0dp"
         android:paddingBottom="0dp"
         android:id="@+id/item_front"
-        android:background="@color/bg_grey_color"
+        android:background="@drawable/item_list_bg"
         style="@style/ItemList.ItemLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

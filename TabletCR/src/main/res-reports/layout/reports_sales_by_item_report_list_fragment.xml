@@ -37,7 +37,7 @@
         android:layout_above="@id/total_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_grey_color"
+        android:background="@drawable/item_list_bg"
         android:orientation="vertical">
 
         <LinearLayout

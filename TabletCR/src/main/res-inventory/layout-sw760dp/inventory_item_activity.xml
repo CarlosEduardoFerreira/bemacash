@@ -7,7 +7,7 @@
     android:paddingRight="40dp"
     android:paddingTop="25dp"
     android:paddingBottom="25dp"
-    android:background="@color/bg_grey_color">
+    android:background="@color/beige">
 
     <LinearLayout
         android:layout_height="match_parent"
@@ -565,6 +565,7 @@
 
         <Button
             style="@style/LocalizableButton.Green"
+            android:text="@string/button_save"
             android:textSize="26sp"
             android:paddingBottom="6dp"
             android:id="@+id/button"

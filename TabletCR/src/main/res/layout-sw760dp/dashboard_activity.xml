@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
-            android:layout_height="160dp"
+            android:layout_height="145dp"
             android:layout_width="match_parent"
             android:background="@color/cashier_activity_background"
             android:paddingBottom="8dp">
@@ -19,7 +19,7 @@
                 android:id="@+id/operator_name_label"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginLeft="16dp"
                 android:textSize="@dimen/dashboard_operator_name_label"
                 android:textColor="@color/dashboard_operator_name_text"

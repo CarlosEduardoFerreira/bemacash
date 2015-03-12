@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_grey_color"
+    android:background="@drawable/item_list_bg"
     android:orientation="vertical">
 
     <com.kaching123.tcr.fragment.tendering.history.CheckBoxHeader_

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/bg_grey_color">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige">
 
     <GridLayout
         android:layout_height="@dimen/reports_details_header_height"
@@ -146,7 +146,7 @@
     <LinearLayout
         android:layout_height="32dp"
         android:layout_width="match_parent"
-        android:background="@color/report_view_grey"
+        android:background="@color/bar_chart_bar_bg"
         android:orientation="horizontal"
         android:gravity="center">
 

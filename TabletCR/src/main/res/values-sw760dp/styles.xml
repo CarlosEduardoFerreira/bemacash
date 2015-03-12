@@ -167,7 +167,7 @@
         <item name="android:paddingLeft">2dp</item>
         <item name="android:paddingRight">2dp</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">@color/very_dark_gray</item>
         <item name="android:textStyle">normal</item>
         <item name="android:singleLine">true</item>
     </style>
@@ -710,7 +710,7 @@
         <item name="android:paddingRight">80dp</item>
         <item name="android:paddingTop">40dp</item>
         <item name="android:paddingBottom">40dp</item>
-        <item name="android:background">@color/bg_grey_color</item>
+        <item name="android:background">@color/beige</item>
     </style>
 
     <style name="EditItem" />
@@ -722,12 +722,12 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#9f9d95</item>
     </style>
 
     <style name="EditItem.Table.Label.Required">
         <item name="android:drawableRight">@drawable/star_for_required_field</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#9f9d95</item>
     </style>
 
     <style name="EditItem.Table.LabelLayout">
@@ -799,19 +799,19 @@
 
     <style name="EditItem.Table.Edittext">
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
-        <item name="android:background">@drawable/edit_text_holo_dark</item>
-        <item name="android:gravity">center</item>
+        <item name="android:textColor">#6a6963</item>
+        <!--<item name="android:background">@drawable/edit_text_holo_dark</item>-->
+        <!--<item name="android:gravity">center</item>-->
     </style>
 
     <style name="EditItem.Table.Textview">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#6a6963</item>
     </style>
 
     <style name="EditItem.Table.Spinner" parent="android:Widget.Holo.Light.Spinner">
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#6a6963</item>
         <item name="android:colorBackground">#111111</item>
 
     </style>
@@ -1007,7 +1007,7 @@
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
         <item name="android:gravity">right</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">@color/gray_dark</item>
     </style>
 
     <style name="StyledDialog.Content.Label.Light">
@@ -1060,12 +1060,12 @@
 
     <style name="SimpleList.Item.Text">
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#6a6963</item>
     </style>
 
     <style name="SimpleList.Header.Text">
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#a19e8f</item>
     </style>
 
     <style name="AppTheme.Transparent">
@@ -1111,24 +1111,24 @@
 
     <style name="Reports.Label">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#b2ac9d</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Reports.Label.Value">
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#8e8879</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Reports.Label.SubValue">
         <item name="android:textSize">10sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#8e8879</item>
     </style>
 
     <style name="Reports.DateEdit" parent="android:Widget.Holo.Light.EditText">
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#8e8879</item>
         <item name="android:textStyle">bold</item>
 
         <item name="android:inputType">textNoSuggestions</item>
@@ -1139,7 +1139,7 @@
 
     <style name="Reports.Label.More">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#ccc6b6</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -1163,7 +1163,7 @@
         <item name="android:singleLine">true</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">#908978</item>
     </style>
 
     <style name="BarChart.Item.FooterLabel">
@@ -1206,7 +1206,7 @@
     </style>
 
     <style name="AlertDialog.List.Item.Sub">
-        <item name="android:textColor">@color/mint_text_color</item>
+        <item name="android:textColor">@color/gray_dark</item>
         <item name="android:textSize">16sp</item>
     </style>
 
@@ -1314,12 +1314,12 @@
         <item name="android:singleLine">true</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:minHeight">@dimen/listPreferredHeaderHeight</item>
-        <item name="android:background">@color/mint_color</item>
+        <item name="android:background">@drawable/modifications_activity_list_bg_header</item>
     </style>
 
     <style name="Reports.Groups.List">
         <!--<item name="android:listSelector">@android:color/transparent</item>-->
-        <item name="android:background">@color/bg_grey_color</item>
+        <item name="android:background">@drawable/modifications_activity_list_bg</item>
     </style>
 
     <style name="Prepaid" />
@@ -1389,20 +1389,20 @@
         <item name="android:background">@drawable/edit_text_holo_light</item>
     </style>
 
-    <style name="mintVerticalDivider">
-        <item name="android:layout_width">0.2dp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/mint_divider_vertical_color</item>
-    </style>
-    <style name="mintHorizontalDivider">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0.2dp</item>
-        <item name="android:background">@color/mint_divider_horizontal_color</item>
-    </style>
+    <!--<style name="mintVerticalDivider">-->
+        <!--<item name="android:layout_width">0.2dp</item>-->
+        <!--<item name="android:layout_height">match_parent</item>-->
+        <!--<item name="android:background">@color/mint_divider_vertical_color</item>-->
+    <!--</style>-->
+    <!--<style name="mintHorizontalDivider">-->
+        <!--<item name="android:layout_width">match_parent</item>-->
+        <!--<item name="android:layout_height">0.2dp</item>-->
+        <!--<item name="android:background">@color/mint_divider_horizontal_color</item>-->
+    <!--</style>-->
 
-    <style name="mintBGColor">
-        <item name="android:background">@color/bg_grey_color</item>
-    </style>
+    <!--<style name="mintBGColor">-->
+        <!--<item name="android:background">@color/bg_grey_color</item>-->
+    <!--</style>-->
     <style name="Prepaid.body"></style>
 
     <style name="Prepaid.body.Text">
@@ -1512,5 +1512,11 @@
 
     <style name="Prepaid.Head.Text.SmallText.LongDistance">
         <item name="android:textColor">@color/gray_dark</item>
+    </style>
+
+    <style name="EditActivity.1024_768">
+        <item name="android:paddingLeft">40dp</item>
+        <item name="android:paddingRight">40dp</item>
+        <item name="android:paddingTop">20dp</item>
     </style>
 </resources>
