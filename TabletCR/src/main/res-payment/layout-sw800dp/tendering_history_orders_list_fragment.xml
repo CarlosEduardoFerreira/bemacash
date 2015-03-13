@@ -13,12 +13,13 @@
     <ListView
         android:layout_below="@id/header"
         android:id="@android:id/list"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:divider="@drawable/list_divider"
         />
 
     <include layout="@layout/sale_order_vertical_dividers"/>
 
 </RelativeLayout>
+
 

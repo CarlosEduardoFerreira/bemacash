@@ -167,6 +167,7 @@
 
     <Button
         style="@style/LocalizableButton.Blue"
+        android:text="@string/button_search"
         android:textSize="28sp"
         android:id="@+id/filter"
         android:layout_marginTop="6dp"

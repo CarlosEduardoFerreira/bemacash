@@ -66,7 +66,6 @@
         android:layout_weight="0.7"/>
 
     <TextView
-        android:visibility="gone"
         android:paddingLeft="@dimen/item_field_padding"
         android:paddingRight="@dimen/item_field_padding"
         android:id="@+id/prepaid"

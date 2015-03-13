@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.kaching123.tcr"
-          android:versionCode="133"
-          android:versionName="2.13">
+          android:versionCode="134"
+          android:versionName="2.14">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -199,12 +199,12 @@
 
         <provider
             android:name=".store.ShopProviderExt"
-            android:authorities="com.kaching123.tcr.store.AUTHORITY"
-            android:exported="false"/>
+            android:authorities="${applicationId}.store.AUTHORITY"
+            android:exported="false" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.kaching123.tcr.files"
+            android:authorities="${applicationId}.store.files"
             android:exported="false"
             android:grantUriPermissions="true">
 
