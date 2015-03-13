@@ -29,7 +29,7 @@ import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 296)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 297)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -888,6 +888,7 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER, defVal = "0")
         String IS_MERCHANT = "is_merchant";
+
     }
 
     @Table(EmployeePermissionTable.TABLE_NAME)
@@ -1327,6 +1328,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.INTEGER, defVal = "0")
         String CONSENT_PROMOTIONS = "consent_promotions";
+
+        @Column(type = Column.Type.TEXT)
+        String NOTES = "notes";
     }
 
     @Table(PrinterAliasTable.TABLE_NAME)

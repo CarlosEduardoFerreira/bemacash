@@ -219,6 +219,10 @@ public class SunPassTransponderCreditFragment extends Fragment implements Custom
             callBack.headMessage(PrepaidSunPassHeadFragment.AMOUNT_ZERO_ERROR);
             return false;
         }
+        if (chosenAmount == null || chosenAmount.compareTo(minAmount) < 0) {
+            callBack.headMessage(PrepaidSunPassHeadFragment.AMOUNT_MINIMUN_ERROR);
+            return false;
+        }
         return true;
     }
 
@@ -231,7 +235,7 @@ public class SunPassTransponderCreditFragment extends Fragment implements Custom
     private void showAmountView() {
         amountTitle.setVisibility(View.VISIBLE);
         enterAmountInterval.setVisibility(View.VISIBLE);
-        enterAmountInterval.setText(MIN + " " + commaPriceFormat(minAmount) + "/" + MAX + commaPriceFormat(maxAmount));
+        enterAmountInterval.setText(MIN + " " + commaPriceFormat(minAmount) + "/" + MAX + " " + commaPriceFormat(maxAmount));
         amount.setVisibility(View.VISIBLE);
     }
 
@@ -243,6 +247,7 @@ public class SunPassTransponderCreditFragment extends Fragment implements Custom
         accountNumber.setEnabled(false);
         accountNumberValidate.setEnabled(false);
         keyboard.detachEditView();
+        keyboard.setDotEnabled(true);
 //        keyboard.setVisibility(View.GONE);
         transponderNumber.setText(strAccountNumber);
         lastKnownBalance.setText(commaPriceFormat(new BigDecimal(String.valueOf(result.currentBalance))));

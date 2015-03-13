@@ -1026,6 +1026,7 @@
     <string name="customer_label_sex">Sex</string>
     <string name="customer_label_email">Email</string>
     <string name="customer_label_phone">Phone</string>
+    <string name="customer_label_notes">Notes</string>
     <string name="customer_label_street">Street</string>
     <string name="customer_label_complementary">Complementary</string>
     <string name="customer_label_city">City</string>
@@ -1498,7 +1499,7 @@
     <string name="prepaid_head_amount_zero_error">Error: amount 0</string>
     <string name="prepaid_head_fee_null_error">Error: fee null</string>
     <string name="invalid_fields">Please fill the lines which has Red star</string>
-    <string name="amount_minimum_error">Amount must be bigger than minimun</string>
+    <string name="amount_minimum_error">Amount entered is less than minimum</string>
     <string name="prepaid_head_phone_number_null_error">Error: phone number is invalid</string>
     <string name="prepaid_head_account_number_null_error">Error: account number null</string>
     <string name="prepaid_head_confirma_account_number_null_error">Error: confirm account number null</string>

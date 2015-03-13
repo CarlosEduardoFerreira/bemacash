@@ -49,6 +49,7 @@ import com.mayer.sql.update.version.Update4_2to5_3;
 import com.mayer.sql.update.version.Update4_2to5_4;
 import com.mayer.sql.update.version.Update4_2to5_5;
 import com.mayer.sql.update.version.Update4_2to5_6;
+import com.mayer.sql.update.version.Update4_2to5_7;
 import com.mayer.sql.update.version.Update4to4_1;
 import com.mayer.sql.update.version.Update4to4_2;
 import com.mayer.sql.update.version.Update4to5;
@@ -63,22 +64,29 @@ import com.mayer.sql.update.version.Update5_1to5_3;
 import com.mayer.sql.update.version.Update5_1to5_4;
 import com.mayer.sql.update.version.Update5_1to5_5;
 import com.mayer.sql.update.version.Update5_1to5_6;
+import com.mayer.sql.update.version.Update5_1to5_7;
 import com.mayer.sql.update.version.Update5_2to5_3;
 import com.mayer.sql.update.version.Update5_2to5_4;
 import com.mayer.sql.update.version.Update5_2to5_5;
 import com.mayer.sql.update.version.Update5_2to5_6;
+import com.mayer.sql.update.version.Update5_2to5_7;
 import com.mayer.sql.update.version.Update5_3to5_4;
 import com.mayer.sql.update.version.Update5_3to5_5;
 import com.mayer.sql.update.version.Update5_3to5_6;
+import com.mayer.sql.update.version.Update5_3to5_7;
 import com.mayer.sql.update.version.Update5_4to5_5;
 import com.mayer.sql.update.version.Update5_4to5_6;
+import com.mayer.sql.update.version.Update5_4to5_7;
 import com.mayer.sql.update.version.Update5_5to5_6;
+import com.mayer.sql.update.version.Update5_5to5_7;
+import com.mayer.sql.update.version.Update5_6to5_7;
 import com.mayer.sql.update.version.Update5to5_1;
 import com.mayer.sql.update.version.Update5to5_2;
 import com.mayer.sql.update.version.Update5to5_3;
 import com.mayer.sql.update.version.Update5to5_4;
 import com.mayer.sql.update.version.Update5to5_5;
 import com.mayer.sql.update.version.Update5to5_6;
+import com.mayer.sql.update.version.Update5to5_7;
 
 public class SqlUpdateVersionMatcher {
 
@@ -160,27 +168,35 @@ public class SqlUpdateVersionMatcher {
         UPDATE4_2TO5_4(new Update4_2to5_4()),
         UPDATE4_2TO5_5(new Update4_2to5_5()),
         UPDATE4_2TO5_6(new Update4_2to5_6()),
+        UPDATE4_2TO5_7(new Update4_2to5_7()),
         UPDATE5TO5_1(new Update5to5_1()),
         UPDATE5TO5_2(new Update5to5_2()),
         UPDATE5TO5_3(new Update5to5_3()),
         UPDATE5TO5_4(new Update5to5_4()),
         UPDATE5TO5_5(new Update5to5_5()),
         UPDATE5TO5_6(new Update5to5_6()),
+        UPDATE5TO5_7(new Update5to5_7()),
         UPDATE5_1TO5_2(new Update5_1to5_2()),
         UPDATE5_1TO5_3(new Update5_1to5_3()),
         UPDATE5_1TO5_4(new Update5_1to5_4()),
         UPDATE5_1TO5_5(new Update5_1to5_5()),
         UPDATE5_1TO5_6(new Update5_1to5_6()),
+        UPDATE5_1TO5_7(new Update5_1to5_7()),
         UPDATE5_2TO5_3(new Update5_2to5_3()),
         UPDATE5_2TO5_4(new Update5_2to5_4()),
         UPDATE5_2TO5_5(new Update5_2to5_5()),
         UPDATE5_2TO5_6(new Update5_2to5_6()),
+        UPDATE5_2TO5_7(new Update5_2to5_7()),
         UPDATE5_3TO5_4(new Update5_3to5_4()),
         UPDATE5_3TO5_5(new Update5_3to5_5()),
         UPDATE5_3TO5_6(new Update5_3to5_6()),
+        UPDATE5_3TO5_7(new Update5_3to5_7()),
         UPDATE5_4TO5_5(new Update5_4to5_5()),
         UPDATE5_4TO5_6(new Update5_4to5_6()),
-        UPDATE5_5TO5_6(new Update5_5to5_6());
+        UPDATE5_4TO5_7(new Update5_4to5_7()),
+        UPDATE5_5TO5_6(new Update5_5to5_6()),
+        UPDATE5_5TO5_7(new Update5_5to5_7()),
+        UPDATE5_6TO5_7(new Update5_6to5_7());
 
 
         private IUpdateContainer container;

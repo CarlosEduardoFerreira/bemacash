@@ -10,12 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CustomEditBox;
@@ -26,6 +21,13 @@ import com.kaching123.tcr.fragment.prepaid.utilities.ProductWirelessAmountItemsP
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 import com.viewpagerindicator.LinePageIndicator;
+
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -125,14 +127,14 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     }
 
     private void setAmountZone() {
-        amountZone.setText(MIN + " " + chosenCategory.minDenomination + "/" + MAX + chosenCategory.maxDenomination);
+        amountZone.setText(MIN + " " + chosenCategory.minDenomination + "/" + MAX + " " + chosenCategory.maxDenomination);
     }
 
     private boolean enableFinish() {
         return ((phoneNumber != null && phoneNumberStr != null && !phoneNumberStr.equalsIgnoreCase("")) ||
                 chosenCategory.isPinBased()) && (amount != null &&
                 amount != BigDecimal.ZERO && amount.compareTo(chosenCategory.minDenomination) >= 0
-               );
+        );
     }
 
     @AfterTextChange
@@ -148,12 +150,16 @@ public class PrepaidWirelessProductAmountFragment extends PrepaidLongDistanceBas
     @AfterTextChange
     protected void amountEditViewAfterTextChanged(Editable s) {
         longDistanceProductAmount.headMessage(PrepaidLongDistanceProductInfoMenuFragment.SELECT_AMOUNT);
-        if (s.toString().length() > 0)
-            amount = new BigDecimal(UiHelper.valueOf(new BigDecimal(s.toString())));
-        else
-            amount = BigDecimal.ZERO;
-        if (amount.compareTo(chosenCategory.maxDenomination) > 0) {
-            amountEditView.setText(UiHelper.valueOf(chosenCategory.maxDenomination));
+        try {
+            if (s.toString().length() > 0)
+                amount = new BigDecimal(UiHelper.valueOf(new BigDecimal(s.toString())));
+            else
+                amount = BigDecimal.ZERO;
+            if (amount.compareTo(chosenCategory.maxDenomination) > 0) {
+                amountEditView.setText(UiHelper.valueOf(chosenCategory.maxDenomination));
+            }
+        } catch (NumberFormatException e) {
+            Logger.d(e.toString());
         }
     }
 
