@@ -1324,8 +1324,8 @@
 
     <style name="Prepaid" />
     <style name="Prepaid.ImageButton">
-        <item name="android:layout_width">370dp</item>
-        <item name="android:layout_height">160dp</item>
+        <item name="android:layout_width">296dp</item>
+        <item name="android:layout_height">128dp</item>
     </style>
     <style name="Prepaid.Spinner" />
 
@@ -1408,12 +1408,15 @@
     <style name="Prepaid.body.Text">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingTop">20dp</item>
-        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingLeft">8dp</item>
         <item name="android:textColor">@color/text_grey</item>
-        <item name="android:textSize">25sp</item>
+        <item name="android:textSize">20sp</item>
     </style>
-
+    <style name="Prepaid.body.Key">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
+    </style>
     <style name="Prepaid.body.icon">
         <item name="android:layout_width">30dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -1427,12 +1430,12 @@
     </style>
 
     <style name="Prepaid.body.SubmitButton">
-        <item name="android:layout_width">180dp</item>
-        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_width">144dp</item>
+        <item name="android:layout_height">56dp</item>
         <item name="android:textColor">@color/prepaid_dialog_white</item>
         <item name="android:background">@drawable/prepaid_submit_button_bg</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">40sp</item>
+        <item name="android:textSize">32sp</item>
     </style>
 
     <style name="Prepaid.AccessNumbers">
@@ -1491,7 +1494,7 @@
     </style>
 
     <style name="Prepaid.Head.Text.BigText">
-        <item name="android:textSize">40sp</item>
+        <item name="android:textSize">32sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -1500,7 +1503,7 @@
     </style>
 
     <style name="Prepaid.Head.Text.SmallText">
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="Prepaid.body.countryName">

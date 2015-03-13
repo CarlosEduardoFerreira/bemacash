@@ -254,7 +254,6 @@ public class PrepaidSunPassActivity extends PrepaidBaseFragmentActivity {
                     @Override
                     public void onCancel() {
                         RemoveSaleOrderCommand.start(context, context, orderGuid, OrderType.PREPAID);
-                        finish();
                     }
 
                     @Override

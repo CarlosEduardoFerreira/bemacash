@@ -3,4 +3,11 @@
     <dimen name="report_spinner_def_width">100dp</dimen>
     <dimen name="modify_dialog_height">475dp</dimen>
     <dimen name="dashboard_operator_name_value_label">22sp</dimen>
+    <dimen name="prepaid_supass_choice_dlg_width">700dp</dimen>
+    <dimen name="prepaid_wireless_payment_complete_heigth">660dp</dimen>
+    <dimen name="prepaid_sunpass_credencial_width">860dp</dimen>
+    <dimen name="prepaid_sunpass_pyd_amount_width">1060dp</dimen>
+    <dimen name="prepaid_head_height">120dp</dimen>
+    <dimen name="prepaid_body_height">658dp</dimen>
+    <dimen name="prepaid_label_text_size">20sp</dimen>
 </resources>

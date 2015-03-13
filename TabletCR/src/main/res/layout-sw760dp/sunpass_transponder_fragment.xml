@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:background="@color/prepaid_dialog_white"
+    android:layout_width="fill_parent">
+
+    <TextView
+        android:layout_marginLeft="20dp"
+        android:id="@+id/title"
+        style="@style/Prepaid.body.Text"
+        android:layout_width="wrap_content"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:text="@string/prepaid_dialog_sunpass_transponder_title" />
+
+    <TextView
+        android:layout_alignLeft="@+id/title"
+        android:paddingTop="10dp"
+        android:id="@+id/transponder_number_title"
+        android:layout_marginTop="30dp"
+        style="@style/Prepaid.body.Text"
+        android:layout_below="@+id/title"
+        android:textStyle="bold"
+        android:text="@string/sunpass_credential_transponder_numer" />
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/balance_layout"
+        android:layout_toRightOf="@+id/account_number"
+        android:layout_alignTop="@+id/transponder_number_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_marginLeft="50dp"
+            style="@style/Prepaid.body.Text"
+            android:paddingTop="8dp"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:text="@string/sunpass_credential_review_order_detail" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/prepaid_button_bg">
+
+            <TextView
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:text="@string/sunpass_credential_your_balance" />
+
+            <TextView
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:textSize="22sp"
+                android:text="@string/sunpass_prepaid_dialog_credentials" />
+
+            <TextView
+                android:id="@+id/transponder_number"
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:textSize="22sp"
+                android:text="@string/sunpass_prepaid_dialog_credentials" />
+
+            <TextView
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:textSize="22sp"
+                android:text="@string/sunpass_credential_last_known_balance" />
+
+            <TextView
+                android:id="@+id/last_known_balance"
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:textSize="22sp"
+                android:text="@string/sunpass_prepaid_dialog_credentials" />
+
+            <TextView
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:textSize="22sp"
+                android:text="@string/sunpass_credential_minimum_recharge_amount" />
+
+            <TextView
+                android:id="@+id/minimun_recharge_amount"
+                style="@style/Prepaid.body.Text"
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:textSize="22sp"
+                android:text="@string/sunpass_prepaid_dialog_credentials" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.kaching123.tcr.component.CustomEditBox
+        android:hint="@string/prepaid_sunpass_credencial_account_hint"
+        android:id="@+id/account_number"
+        style="@style/CustomEditBox.PaymentInputField"
+        android:background="@drawable/prepaid_textview_bg"
+        android:layout_alignLeft="@+id/transponder_number_title"
+        android:layout_below="@+id/transponder_number_title"
+        android:textSize="20sp"
+        android:layout_width="360dp"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:textColorHint="@color/light_gray" />
+
+    <TextView
+        android:layout_alignLeft="@+id/title"
+        android:paddingTop="10dp"
+        android:id="@+id/account_number_validate_title"
+        style="@style/Prepaid.body.Text"
+        android:layout_below="@+id/account_number"
+        android:textStyle="bold"
+        android:text="@string/prepaid_sunpass_credencial_account_validate_hint" />
+
+    <com.kaching123.tcr.component.CustomEditBox
+        android:id="@+id/account_number_validate"
+        android:hint="@string/prepaid_sunpass_credencial_account_validate_hint"
+        style="@style/CustomEditBox.PaymentInputField"
+        android:background="@drawable/prepaid_textview_bg"
+        android:layout_alignLeft="@+id/account_number_validate_title"
+        android:layout_below="@+id/account_number_validate_title"
+        android:textSize="20sp"
+        android:layout_width="360dp"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:textColorHint="@color/light_gray" />
+
+    <TextView
+        android:layout_alignLeft="@+id/title"
+        android:paddingTop="10dp"
+        android:id="@+id/amount_title"
+        style="@style/Prepaid.body.Text"
+        android:layout_below="@+id/account_number_validate"
+        android:textStyle="bold"
+        android:text="@string/amount" />
+
+    <TextView
+        android:layout_marginLeft="15dp"
+        android:paddingTop="10dp"
+        android:id="@+id/enter_amount_interval"
+        style="@style/Prepaid.body.Text"
+        android:layout_marginRight="20dp"
+        android:layout_alignRight="@+id/amount"
+        android:layout_below="@+id/account_number_validate"
+        android:text="@string/bill_payment_product_enter_amount" />
+
+    <com.kaching123.tcr.component.CustomEditBox
+        android:id="@+id/amount"
+        android:hint="@string/prepaid_wireless_amount_hint"
+        style="@style/CustomEditBox.PaymentInputField"
+        android:background="@drawable/prepaid_textview_bg"
+        android:layout_alignLeft="@+id/account_number_validate_title"
+        android:layout_below="@+id/amount_title"
+        android:textSize="20sp"
+        android:layout_width="360dp"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:textColorHint="@color/light_gray" />
+
+    <TextView
+        android:layout_above="@+id/submit_instruction"
+        style="@style/Prepaid.body.SubmitButton"
+        android:paddingLeft="30dp"
+        android:paddingTop="8dp"
+        android:layout_marginLeft="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="80dp"
+        android:id="@+id/check"
+        android:text="@string/btn_check" />
+
+    <com.kaching123.tcr.component.PrepaidKeyboardView_
+        android:id="@+id/keyboard"
+        android:layout_alignRight="@+id/tableview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@id/charge"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginRight="10dp" />
+
+
+</RelativeLayout>

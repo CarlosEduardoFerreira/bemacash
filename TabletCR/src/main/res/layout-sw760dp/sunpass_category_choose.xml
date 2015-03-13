@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/prepaid_dialog_white"
+    >
+
+    <ImageView
+        android:id="@+id/pay_your_document"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:src="@drawable/imageview_sunpass_transponder"
+        android:layout_marginTop="160dp" />
+
+    <ImageView
+        android:layout_marginLeft="64dp"
+        android:id="@+id/transponder"
+        android:layout_width="400dp"
+        android:layout_marginTop="160dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/imageview_sunpass_pay_your_document"
+         />
+
+</LinearLayout>
