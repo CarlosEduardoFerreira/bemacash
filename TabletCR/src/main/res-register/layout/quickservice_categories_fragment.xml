@@ -6,7 +6,7 @@
 
     <GridView
         android:id="@+id/grid_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
 
         android:paddingLeft="@dimen/quick_categories_grid_padding"

@@ -23,6 +23,11 @@
             android:layout_gravity="center"
             android:text="@string/blackstone_pay_swipe_body" />
 
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:id="@+id/msr_usb_input" />
+
         <Button
             android:textColor="#ffffff"
             android:layout_marginTop="16dp"
@@ -61,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/swipe_manual_cardnumber_hint"
-            android:nextFocusDown="@+id/card_exp_date"/>
+            android:nextFocusDown="@+id/card_exp_date" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -79,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="@string/swipe_manual_expdate_hint"
-                android:nextFocusDown="@+id/card_cvn"/>
+                android:nextFocusDown="@+id/card_cvn" />
 
             <EditText
                 android:id="@+id/card_cvn"
@@ -92,7 +97,7 @@
                 android:layout_marginLeft="6dp"
                 android:layout_weight="1"
                 android:hint="@string/swipe_manual_cvn_hint"
-                android:nextFocusDown="@+id/card_zip"/>
+                android:nextFocusDown="@+id/card_zip" />
 
         </LinearLayout>
 
@@ -106,7 +111,7 @@
             android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/swipe_manual_zip_hint"/>
+            android:hint="@string/swipe_manual_zip_hint" />
 
         <Button
             android:id="@+id/btn_manual_submit"
@@ -114,6 +119,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
-            android:text="@string/btn_submit"/>
+            android:text="@string/btn_submit" />
     </LinearLayout>
 </FrameLayout>

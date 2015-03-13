@@ -5,7 +5,8 @@
     style="@style/ItemList.HeaderLayout"
     android:orientation="horizontal"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    >
 
     <TextView
         style="@style/ItemList.HeaderText"
@@ -23,7 +24,6 @@
         android:gravity="center"
         android:layout_weight="1"
         android:text="@string/inventory_items_header_cost"/>
-
 
     <TextView
         style="@style/ItemList.HeaderText"

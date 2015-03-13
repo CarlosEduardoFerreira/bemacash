@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="366dp">
+        android:layout_marginLeft="255dp">
 
         <TextView
             android:id="@+id/text"

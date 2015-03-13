@@ -105,6 +105,7 @@
 
 
     <TextView
+        android:visibility="gone"
         android:paddingLeft="@dimen/item_field_padding"
         android:paddingRight="@dimen/item_field_padding"
         android:gravity="right|center_vertical"
