@@ -1446,13 +1446,13 @@
     <style name="Prepaid.AccessNumbers.List"></style>
 
     <style name="Prepaid.AccessNumbers.List.Text">
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/text_grey</item>
         <item name="android:layout_weight">1</item>
     </style>
 
     <style name="Prepaid.AccessNumbers.TextTitle">
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/text_grey</item>
     </style>
@@ -1463,7 +1463,7 @@
         <item name="android:textColor">@color/prepaid_dialog_white</item>
         <item name="android:background">@drawable/prepaid_amount_button_bg</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="Prepaid.Head">
@@ -1484,6 +1484,7 @@
 
     <style name="Prepaid.Head.Button.LongDistance">
         <item name="android:layout_marginTop">20dp</item>
+        <item name="android:textSize">26sp</item>
         <item name="android:textColor">@color/prepaid_module_text_color</item>
         <item name="android:background">@drawable/head_button_frame</item>
     </style>

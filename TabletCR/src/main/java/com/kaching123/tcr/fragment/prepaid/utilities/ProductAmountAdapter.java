@@ -67,7 +67,7 @@ public class ProductAmountAdapter extends BaseAdapter {
             mViewHolder.amountText.setBackgroundResource(R.drawable.amount_item_bg);
 
 
-        mViewHolder.amountText.setPadding(20, 10, 0, 0);
+        mViewHolder.amountText.setPadding(16, 8, 0, 0);
 
         mViewHolder.amountText.setOnClickListener(new View.OnClickListener() {
             @Override

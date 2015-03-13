@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/most_popular_button"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="32dp"
         style="@style/Prepaid.Head.Button.LongDistance"
         android:text="@string/most_popular"
         android:clickable="false" />
@@ -14,7 +14,7 @@
     <TextView
         android:id="@+id/country_search_button"
         android:layout_toLeftOf="@+id/view_all_button"
-        android:layout_marginRight="520dp"
+        android:layout_marginRight="350dp"
         style="@style/Prepaid.Head.Button.pressed"
         android:text="@string/country_search"
         android:clickable="false" />
@@ -23,7 +23,7 @@
     <TextView
         android:id="@+id/view_all_button"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="50dp"
+        android:layout_marginRight="48dp"
         style="@style/Prepaid.Head.Button.LongDistance"
         android:text="@string/view_all"
         android:clickable="false" />
@@ -52,7 +52,7 @@
     <FrameLayout
         android:layout_below="@+id/view_all_button"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="48dp"
         android:id="@+id/coutry_character_grid_view" />
 
     <FrameLayout

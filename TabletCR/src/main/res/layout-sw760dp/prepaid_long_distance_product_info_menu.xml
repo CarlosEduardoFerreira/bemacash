@@ -24,6 +24,7 @@
 
         <TextView
             style="@style/Prepaid.body.Text"
+            android:layout_marginTop="8dp"
             android:text="@string/view_rates" />
     </LinearLayout>
 
@@ -46,6 +47,7 @@
 
         <TextView
             style="@style/Prepaid.body.Text"
+            android:layout_marginTop="8dp"
             android:text="@string/terms_of_use" />
     </LinearLayout>
 
@@ -68,6 +70,7 @@
 
         <TextView
             style="@style/Prepaid.body.Text"
+            android:layout_marginTop="8dp"
             android:text="@string/access_numbers" />
     </LinearLayout>
 </RelativeLayout>

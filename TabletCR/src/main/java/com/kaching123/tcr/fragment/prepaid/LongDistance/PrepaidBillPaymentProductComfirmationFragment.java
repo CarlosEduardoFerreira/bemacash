@@ -17,6 +17,7 @@ import com.kaching123.tcr.activity.PrepaidActivity.PrepaidLongDistanceActivity;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.request.BillPaymentRequest;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
+import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.websvc.api.prepaid.BillerLoadRecord;
 import com.kaching123.tcr.websvc.api.prepaid.Category;
 import com.kaching123.tcr.websvc.api.prepaid.MasterBiller;
@@ -64,9 +65,9 @@ public class PrepaidBillPaymentProductComfirmationFragment extends PrepaidLongDi
     @AfterViews
     public void init() {
         productNameDisplay.setText(chosenBillPaymentItem.masterBillerId);
-        amountText.setText(chosenAmount.toString());
-        feeText.setText(transactionFee.toString());
-        totalText.setText(total.toString());
+        amountText.setText(FormatterUtil.priceFormat(chosenAmount));
+        feeText.setText(FormatterUtil.priceFormat(transactionFee));
+        totalText.setText(FormatterUtil.priceFormat(total));
     }
 
     @Click

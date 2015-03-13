@@ -7,26 +7,26 @@
 
     <LinearLayout
         android:id="@+id/title_line"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="32dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
             android:layout_weight="1"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="60dp"
             style="@style/Prepaid.AccessNumbers.TextTitle"
             android:text="@string/prepaid_access_numbers" />
 
         <TextView
             android:layout_weight="1"
             android:layout_toRightOf="@+id/access_number"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="60dp"
             style="@style/Prepaid.AccessNumbers.TextTitle"
             android:text="@string/prepaid_city" />
 
         <TextView
             android:layout_weight="1"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="60dp"
             style="@style/Prepaid.AccessNumbers.TextTitle"
             android:text="@string/prepaid_state" />
 
@@ -42,18 +42,18 @@
 
         <ImageView
             android:id="@+id/close_button"
-            android:layout_marginTop="30dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginRight="8dp"
             android:layout_toLeftOf="@+id/close_text"
-            android:layout_width="30dp"
+            android:layout_width="24dp"
             android:layout_height="wrap_content"
             android:src="@drawable/minus" />
 
         <TextView
             android:id="@+id/close_text"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="35dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="26dp"
             android:textColor="@color/text_grey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
     </LinearLayout>
 
     <View
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="32dp"
         android:id="@+id/view"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/title_line"
@@ -73,7 +73,7 @@
         android:background="@android:color/black" />
 
     <ListView
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="32dp"
         android:layout_below="@+id/view"
         android:id="@+id/listview"
         android:layout_width="match_parent"

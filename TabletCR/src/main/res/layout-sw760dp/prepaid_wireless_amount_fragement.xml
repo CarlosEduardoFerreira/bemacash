@@ -11,16 +11,16 @@
         android:id="@+id/icon"
         android:layout_width="250dp"
         android:layout_height="140dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="8dp" />
 
     <TextView
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="64dp"
         android:id="@+id/product_name"
         style="@style/Prepaid.body.Text"
         android:layout_toRightOf="@+id/icon"
-        android:layout_width="200dp"
-        android:layout_marginLeft="30dp" />
+        android:layout_width="160dp"
+        android:layout_marginLeft="10dp" />
 
     <TextView
         android:paddingTop="0dp"
@@ -37,8 +37,8 @@
         android:id="@+id/phone_edit_view"
         android:layout_below="@+id/phone_number"
         android:textSize="25sp"
-        android:layout_width="450dp"
-        android:layout_height="70dp"
+        android:layout_width="360dp"
+        android:layout_height="56dp"
         android:hint="@string/prepaid_wireless_phone_number_hint"
         android:textColorHint="@color/light_gray" />
 
@@ -55,7 +55,7 @@
         android:layout_marginTop="5dp"
         android:layout_alignRight="@+id/phone_edit_view"
         android:layout_marginRight="10dp"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:paddingTop="0dp"
         android:layout_below="@+id/phone_edit_view"
         android:text="@string/select_amount" />
@@ -67,8 +67,8 @@
         android:id="@+id/amount_edit_view"
         android:textSize="25sp"
         android:layout_below="@+id/text"
-        android:layout_width="450dp"
-        android:layout_height="70dp"
+        android:layout_width="360dp"
+        android:layout_height="56dp"
         android:hint="@string/prepaid_wireless_amount_hint"
         android:textColorHint="@color/light_gray" />
 
@@ -77,14 +77,14 @@
         android:id="@+id/view_pager"
         android:layout_marginTop="16dp"
         android:layout_height="wrap_content"
-        android:layout_width="500dp" />
+        android:layout_width="400dp" />
 
     <com.viewpagerindicator.LinePageIndicator
         android:id="@+id/view_pager_indicator"
         android:layout_below="@+id/text"
         android:padding="5dip"
         android:layout_height="wrap_content"
-        android:layout_width="500dp"
+        android:layout_width="400dp"
         app:strokeWidth="4dp"
         app:lineWidth="30dp"
         app:unselectedColor="#FF888888"
@@ -94,10 +94,10 @@
     <TextView
         android:id="@+id/submit_instruction"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:layout_width="450dp"
+        android:layout_marginBottom="65dp"
+        android:layout_width="360dp"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textColor="@color/gray_dark"
         android:text="@string/prepaid_wireless_amount_submit_instruction" />
 
@@ -106,19 +106,20 @@
         style="@style/Prepaid.body.SubmitButton"
         android:paddingLeft="20dp"
         android:paddingTop="8dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="5dp"
         android:id="@+id/submit"
         android:text="@string/btn_submit" />
 
     <com.kaching123.tcr.component.PrepaidKeyboardView_
         android:id="@+id/keyboard"
+        android:layout_alignTop="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_toLeftOf="@id/charge"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="20dp" />
+        android:layout_marginRight="20dp"
+        />
 
 
 </RelativeLayout>

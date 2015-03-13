@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/most_popular_button"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="48dp"
 
         style="@style/Prepaid.Head.Button.pressed"
         android:text="@string/most_popular"
@@ -17,14 +17,14 @@
         android:id="@+id/country_search_button"
         android:layout_toLeftOf="@+id/view_all_button"
         style="@style/Prepaid.Head.Button.LongDistance"
-        android:layout_marginRight="500dp"
+        android:layout_marginRight="350dp"
         android:text="@string/country_search"
         android:clickable="false" />
 
     <TextView
         android:id="@+id/view_all_button"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="50dp"
+        android:layout_marginRight="48dp"
         style="@style/Prepaid.Head.Button.LongDistance"
         android:text="@string/view_all"
         android:clickable="false" />
@@ -32,6 +32,7 @@
 
     <FrameLayout
         android:layout_below="@+id/country_search_button"
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/popular_grid_view" />

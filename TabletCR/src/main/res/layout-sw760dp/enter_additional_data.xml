@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/prepaid_dialog_white">
+
+    <TextView
+        android:id="@+id/product_name"
+        style="@style/Prepaid.body.Text"
+        android:layout_width="450dp"
+        android:layout_marginLeft="20dp"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:text="@string/product_name" />
+
+    <TextView
+        android:id="@+id/view"
+        android:layout_toRightOf="@+id/account_customer_first_name"
+        style="@style/Prepaid.body.Text"
+        android:layout_width="450dp"
+        android:layout_marginLeft="20dp"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:paddingBottom="20dp"
+         />
+    <TextView
+        android:paddingTop="0dp"
+        android:id="@+id/account_number_alternative_title"
+        android:layout_marginLeft="30dp"
+        style="@style/Prepaid.body.Text"
+        android:textStyle="bold"
+        android:layout_below="@+id/view"
+        android:text="@string/prepaid_dialog_credentials_2"
+        android:layout_toRightOf="@+id/account_customer_first_name"
+        android:layout_toEndOf="@+id/account_customer_first_name" />
+
+    <EditText
+        android:layout_marginTop="10dp"
+        android:background="@drawable/prepaid_textview_bg"
+        android:gravity="center_vertical"
+        style="@style/CustomEditBox.PaymentInputField"
+        android:id="@+id/account_number_alternative"
+        android:textSize="25sp"
+        android:layout_width="450dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="10dp"
+        android:hint="@string/prepaid_dialog_credentials_data_2"
+        android:textColorHint="@color/light_gray"
+        android:layout_below="@+id/account_number_alternative_title"
+        android:layout_alignLeft="@+id/account_number_alternative_title"
+        android:layout_alignStart="@+id/account_number_alternative_title" />
+
+    <TextView
+        android:id="@+id/account_customer_first_name_title"
+        style="@style/Prepaid.body.Text"
+        android:textStyle="bold"
+        android:text="@string/prepaid_dialog_credentials_5"
+        android:layout_below="@+id/product_name"
+        android:layout_alignLeft="@+id/send"
+        android:layout_alignStart="@+id/send" />
+
+    <EditText
+        style="@style/CustomEditBox.PaymentInputField"
+        android:background="@drawable/prepaid_textview_bg"
+        android:gravity="center_vertical"
+        android:layout_marginTop="10dp"
+        android:id="@+id/account_customer_first_name"
+        android:textSize="25sp"
+        android:layout_width="450dp"
+        android:layout_height="56dp"
+        android:hint="@string/prepaid_dialog_credentials_data_5"
+        android:textColorHint="@color/light_gray"
+        android:layout_below="@+id/account_customer_first_name_title"
+        android:layout_alignLeft="@+id/account_customer_first_name_title"
+        android:layout_alignStart="@+id/account_customer_first_name_title" />
+
+
+    <TextView
+        android:paddingTop="0dp"
+        android:layout_marginLeft="30dp"
+        android:id="@+id/account_add_first_title"
+        style="@style/Prepaid.body.Text"
+        android:textStyle="bold"
+        android:text="@string/prepaid_dialog_credentials_3"
+        android:layout_toRightOf="@+id/account_customer_first_name"
+        android:layout_below="@+id/account_number_alternative" />
+
+    <EditText
+        android:layout_marginTop="10dp"
+        android:background="@drawable/prepaid_textview_bg"
+        android:gravity="center_vertical"
+        style="@style/CustomEditBox.PaymentInputField"
+        android:id="@+id/account_add_first"
+        android:textSize="25sp"
+        android:layout_width="450dp"
+        android:layout_height="56dp"
+        android:hint="@string/prepaid_dialog_credentials_data_3"
+        android:layout_marginBottom="10dp"
+        android:textColorHint="@color/light_gray"
+        android:layout_below="@+id/account_add_first_title"
+        android:layout_alignLeft="@+id/account_add_first_title" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:paddingTop="0dp"
+        android:id="@+id/account_customer_last_name_title"
+        style="@style/Prepaid.body.Text"
+        android:textStyle="bold"
+        android:text="@string/prepaid_dialog_credentials_6"
+        android:layout_below="@+id/account_customer_first_name"
+        android:layout_alignLeft="@+id/account_customer_first_name_title"
+        />
+
+    <EditText
+        style="@style/CustomEditBox.PaymentInputField"
+        android:background="@drawable/prepaid_textview_bg"
+        android:gravity="center_vertical"
+        android:layout_marginTop="10dp"
+        android:id="@+id/account_customer_last_name"
+        android:textSize="25sp"
+        android:layout_width="450dp"
+        android:layout_height="56dp"
+        android:hint="@string/prepaid_dialog_credentials_data_6"
+        android:textColorHint="@color/light_gray"
+        android:layout_below="@+id/account_customer_last_name_title"
+        android:layout_alignLeft="@+id/account_customer_first_name"
+ />
+
+    <TextView
+        android:layout_marginLeft="30dp"
+        android:paddingTop="0dp"
+        android:id="@+id/account_add_second_title"
+        style="@style/Prepaid.body.Text"
+        android:textStyle="bold"
+        android:text="@string/prepaid_dialog_credentials_4"
+        android:layout_below="@+id/account_add_first"
+        android:layout_toRightOf="@+id/account_customer_first_name" />
+
+    <EditText
+        android:layout_marginTop="10dp"
+        android:background="@drawable/prepaid_textview_bg"
+        android:gravity="center_vertical"
+        style="@style/CustomEditBox.PaymentInputField"
+        android:id="@+id/account_add_second"
+        android:textSize="25sp"
+        android:layout_width="450dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="10dp"
+        android:hint="@string/prepaid_dialog_credentials_data_4"
+        android:textColorHint="@color/light_gray"
+        android:layout_below="@+id/account_add_second_title"
+        android:layout_alignLeft="@+id/account_add_second_title" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:paddingTop="0dp"
+        android:id="@+id/account_sender_first_name_title"
+        style="@style/Prepaid.body.Text"
+        android:textStyle="bold"
+        android:text="@string/prepaid_dialog_credentials_7"
+        android:layout_below="@+id/account_customer_last_name"
+        android:layout_alignLeft="@+id/account_customer_last_name_title"
+        android:layout_alignStart="@+id/account_customer_last_name_title" />
+
+    <EditText
+        android:layout_marginTop="10dp"
+        android:background="@drawable/prepaid_textview_bg"
+        android:gravity="center_vertical"
+        style="@style/CustomEditBox.PaymentInputField"
+        android:id="@+id/account_sender_first_name"
+        android:textSize="25sp"
+        android:layout_width="450dp"
+        android:layout_height="56dp"
+        android:hint="@string/prepaid_dialog_credentials_data_7"
+        android:textColorHint="@color/light_gray"
+        android:layout_below="@+id/account_sender_first_name_title"
+        android:layout_alignLeft="@+id/account_sender_first_name_title"
+        android:layout_alignStart="@+id/account_sender_first_name_title" />
+
+    <TextView
+        android:layout_marginLeft="30dp"
+        android:paddingTop="0dp"
+        android:id="@+id/account_sender_last_name_title"
+        style="@style/Prepaid.body.Text"
+        android:textStyle="bold"
+        android:text="@string/prepaid_dialog_credentials_8"
+        android:layout_below="@+id/account_add_second"
+        android:layout_toRightOf="@+id/account_customer_first_name" />
+
+    <EditText
+        android:layout_marginTop="10dp"
+        android:background="@drawable/prepaid_textview_bg"
+        android:gravity="center_vertical"
+        style="@style/CustomEditBox.PaymentInputField"
+        android:id="@+id/account_sender_last_name"
+        android:textSize="25sp"
+        android:layout_width="450dp"
+        android:layout_height="56dp"
+        android:hint="@string/prepaid_dialog_credentials_data_8"
+        android:textColorHint="@color/light_gray"
+        android:layout_below="@+id/account_sender_last_name_title"
+        android:layout_alignLeft="@+id/account_sender_last_name_title" />
+
+    <TextView
+        android:layout_above="@+id/submit_instruction"
+        style="@style/Prepaid.body.SubmitButton"
+        android:paddingLeft="40dp"
+        android:paddingTop="8dp"
+        android:layout_marginLeft="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="200dp"
+        android:id="@+id/send"
+        android:text="@string/btn_send" />
+
+
+    <TextView
+        style="@style/Prepaid.body.Text"
+        android:paddingTop="0dp"
+        android:layout_toRightOf="@+id/send"
+        android:layout_alignTop="@+id/send"
+        android:id="@+id/total_linear_amount"
+        android:layout_marginLeft="40dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="@string/printer_amount" />
+
+    <TextView
+        style="@style/Prepaid.body.Text"
+        android:paddingTop="0dp"
+        android:layout_alignTop="@+id/send"
+        android:layout_toRightOf="@+id/total_linear_amount"
+        android:id="@+id/total_linear_amount_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp" />
+
+    <TextView
+        style="@style/Prepaid.body.Text"
+        android:paddingTop="0dp"
+        android:id="@+id/total_linear_fee"
+        android:layout_below="@+id/total_linear_amount"
+        android:layout_alignLeft="@+id/total_linear_amount"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="@string/bill_pauments_fee" />
+
+    <TextView
+        style="@style/Prepaid.body.Text"
+        android:paddingTop="0dp"
+        android:layout_below="@+id/total_linear_amount"
+        android:layout_toRightOf="@+id/total_linear_fee"
+        android:id="@+id/total_linear_fee_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp" />
+
+    <TextView
+        style="@style/Prepaid.body.Text"
+        android:paddingTop="0dp"
+        android:id="@+id/total_linear_total"
+        android:layout_below="@+id/total_linear_fee"
+        android:layout_alignLeft="@+id/total_linear_amount"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:text="@string/blackstone_pay_total" />
+
+    <TextView
+        style="@style/Prepaid.body.Text"
+        android:paddingTop="0dp"
+        android:layout_below="@+id/total_linear_fee"
+        android:layout_toRightOf="@+id/total_linear_fee"
+        android:id="@+id/total_linear_total_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>

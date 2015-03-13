@@ -2,11 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="15dp"
     android:background="@color/prepaid_dialog_white">
 
     <TextView
         android:id="@+id/most_popular_button"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="32dp"
         style="@style/Prepaid.Head.Button.LongDistance"
         android:text="@string/most_popular"
         android:clickable="false" />
@@ -14,7 +15,7 @@
     <TextView
         android:id="@+id/country_search_button"
         android:layout_toLeftOf="@+id/view_all_button"
-        android:layout_marginRight="530dp"
+        android:layout_marginRight="360dp"
         style="@style/Prepaid.Head.Button.LongDistance"
         android:text="@string/country_search"
         android:clickable="false" />
@@ -23,7 +24,7 @@
     <TextView
         android:id="@+id/view_all_button"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="65dp"
+        android:layout_marginRight="52dp"
         style="@style/Prepaid.Head.Button.pressed"
         android:text="@string/view_all"
         android:clickable="false" />
@@ -31,6 +32,7 @@
 
     <FrameLayout
         android:layout_below="@+id/country_search_button"
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/product_grid_view" />

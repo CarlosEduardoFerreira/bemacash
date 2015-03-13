@@ -132,13 +132,13 @@ public class PrepaidLongDistanceCountryCharacterGridFragment extends PrepaidLong
     private void initCharacterText(MyViewHolder mViewHolder) {
         mViewHolder.countryCharacter.setBackgroundResource(Color.TRANSPARENT);
         mViewHolder.countryCharacter.setTextColor(getResources().getColor(R.color.text_grey));
-        mViewHolder.countryCharacter.setTextSize(TypedValue.COMPLEX_UNIT_SP, 35);
+        mViewHolder.countryCharacter.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
     }
 
     private void selectedCharacterText(MyViewHolder mViewHolder) {
         mViewHolder.countryCharacter.setBackgroundResource(R.drawable.country_character);
         mViewHolder.countryCharacter.setTextColor(getResources().getColor(R.color.prepaid_dialog_white));
-        mViewHolder.countryCharacter.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40);
+        mViewHolder.countryCharacter.setTextSize(TypedValue.COMPLEX_UNIT_SP, 32);
     }
 
     private boolean isCharacterAvailable(String countryCharacter) {

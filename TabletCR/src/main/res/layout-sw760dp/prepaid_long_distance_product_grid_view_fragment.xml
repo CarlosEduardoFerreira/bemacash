@@ -10,7 +10,7 @@
         android:id="@+id/view_pager"
         android:layout_marginTop="16dp"
         android:layout_height="match_parent"
-        android:layout_width="1200dp" />
+        android:layout_width="1024dp" />
 
     <com.viewpagerindicator.LinePageIndicator
         android:id="@+id/view_pager_indicator"

@@ -16,13 +16,15 @@
     <TextView
         android:id="@+id/product_name"
         style="@style/Prepaid.body.Text"
-        android:layout_below="@+id/icon"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="20dp"
          />
 
     <TextView
         android:id="@+id/text"
         style="@style/Prepaid.body.Text"
-        android:layout_below="@+id/product_name"
+        android:layout_below="@+id/icon"
         android:textStyle="bold"
         android:text="@string/select_amount" />
 
@@ -45,7 +47,7 @@
 
     <TextView
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="100dp"
         style="@style/Prepaid.body.SubmitButton"
         android:paddingLeft="20dp"
         android:paddingTop="8dp"
