@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <LinearLayout
         style="@style/TotalCostTable.Container"
@@ -202,6 +202,7 @@
     <Button
         style="@style/LocalizableButton.Grey"
         android:textSize="26sp"
+        android:text="@string/button_send_receipt"
         android:layout_marginTop="8dp"
         android:id="@+id/btn_email"
         android:layout_width="match_parent"
@@ -211,6 +212,7 @@
     <Button
         style="@style/LocalizableButton.Grey"
         android:textSize="26sp"
+        android:text="@string/button_print_receipt"
         android:paddingLeft="22dp"
         android:id="@+id/btn_reprint"
         android:layout_width="match_parent"
@@ -220,6 +222,7 @@
     <Button
         style="@style/LocalizableButton.Grey"
         android:textSize="26sp"
+        android:text="@string/button_kitchen_receipt"
         android:paddingLeft="22dp"
         android:id="@+id/btn_reprint_kitchen"
         android:layout_width="match_parent"
@@ -229,8 +232,8 @@
 
     <Button
         style="@style/LocalizableButton.LightRed"
-        android:text="@string/button_add_tips"
         android:textSize="26sp"
+        android:text="@string/button_add_tips"
         android:id="@+id/btn_close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
