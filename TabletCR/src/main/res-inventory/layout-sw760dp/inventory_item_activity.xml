@@ -247,7 +247,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
                     android:checked="true" />
 
             </TableRow>
@@ -376,7 +375,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
                     android:checked="true" />
             </TableRow>
 
@@ -438,7 +436,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
                     android:checked="true" />
             </TableRow>
 
@@ -503,7 +500,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
                     android:checked="true" />
             </TableRow>
 
