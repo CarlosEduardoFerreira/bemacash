@@ -290,7 +290,6 @@
                     android:id="@+id/has_notes"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:button="@drawable/checkbox_mint"
                     android:layout_weight="1" />
 
             </TableRow>

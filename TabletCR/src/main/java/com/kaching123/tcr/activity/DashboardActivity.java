@@ -254,6 +254,9 @@ public class DashboardActivity extends SuperBaseActivity {
             logout(false);
             Toast.makeText(this, R.string.offline_mode_error_toast_message_logout, Toast.LENGTH_SHORT).show();
         }
+
+        if(usbScannerInput!=null)
+            usbScannerInput.setInputType(0);
     }
 
     @AfterTextChange

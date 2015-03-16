@@ -125,7 +125,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     protected void usbScannerInputAfterTextChanged(Editable s) {
         String st = s.toString();
         if (st.contains("\n")) {
-            setOrderNumber(st.substring(0, st.length() > 1 ? st.length() - 1 : 1));
+            setOrderNumber(st.substring(0, st.length() > 1 ? st.length() - 2 : 1));
             s.clear();
         }
     }
@@ -260,6 +260,11 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
     @AfterViews
     public void onCreate() {
+
+        if(usbScannerInput!=null)
+            usbScannerInput.setInputType(0);
+
+        usbScannerInput.requestFocus();
 
         orderNumber.setFilters(new InputFilter[]{new OrderNumberFormatInputFilter()});
         orderNumber.setKeyboardSupportConteiner(this);
