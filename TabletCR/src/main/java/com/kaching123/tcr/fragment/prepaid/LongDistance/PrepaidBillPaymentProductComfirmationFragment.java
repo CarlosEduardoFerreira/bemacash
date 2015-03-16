@@ -65,9 +65,9 @@ public class PrepaidBillPaymentProductComfirmationFragment extends PrepaidLongDi
     @AfterViews
     public void init() {
         productNameDisplay.setText(chosenBillPaymentItem.masterBillerId);
-        amountText.setText(FormatterUtil.priceFormat(chosenAmount));
-        feeText.setText(FormatterUtil.priceFormat(transactionFee));
-        totalText.setText(FormatterUtil.priceFormat(total));
+        amountText.setText(FormatterUtil.commaPriceFormat(chosenAmount));
+        feeText.setText(FormatterUtil.commaPriceFormat(transactionFee));
+        totalText.setText(FormatterUtil.commaPriceFormat(total));
     }
 
     @Click

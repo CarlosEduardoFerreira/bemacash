@@ -24,6 +24,7 @@ import com.kaching123.tcr.activity.PrepaidActivity.PrepaidLongDistanceActivity;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.request.BillPaymentRequest;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
+import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.websvc.api.prepaid.BillerLoadFormDetails;
 import com.kaching123.tcr.websvc.api.prepaid.BillerLoadRecord;
 import com.kaching123.tcr.websvc.api.prepaid.Category;
@@ -102,9 +103,9 @@ public class PrepaidBillPaymentAdditionalDataFragment extends PrepaidLongDistanc
     }
 
     private void setTotalView() {
-        totalLinearAmountContent.setText(chosenAmount.toString());
-        totalLinearFeeContent.setText(fee.toString());
-        totalLinearTotalContent.setText(total.toString());
+        totalLinearAmountContent.setText(FormatterUtil.commaPriceFormat(chosenAmount));
+        totalLinearFeeContent.setText(FormatterUtil.commaPriceFormat(fee));
+        totalLinearTotalContent.setText(FormatterUtil.commaPriceFormat(total));
     }
 
 

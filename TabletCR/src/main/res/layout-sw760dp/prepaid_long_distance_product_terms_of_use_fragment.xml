@@ -32,17 +32,25 @@
             android:text="@string/btn_close" />
 
 
-        </LinearLayout>
+    </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/text"
-        android:textColor="@color/text_grey"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+    <ScrollView
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/close_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="20sp"
-        />
+        android:layout_height="500dp"
+        android:scrollbars="vertical">
+
+        <TextView
+            android:id="@+id/text"
+            android:textColor="@color/text_grey"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="20sp" />
+
+    </ScrollView>
+
+
 </RelativeLayout>
