@@ -85,6 +85,8 @@ public class EditCustomerActivity extends SuperBaseActivity {
     protected EditText country;
     @ViewById
     protected EditText zip;
+    @ViewById
+    protected EditText notes;
 
     @ViewById
     protected Spinner sexSpinner;
@@ -150,6 +152,7 @@ public class EditCustomerActivity extends SuperBaseActivity {
         zip.setText(model.zip);
         sexSpinner.setSelection(model.sex ? Sex.MALE.ordinal() : Sex.FEMALE.ordinal());
         consentPromotions.setChecked(model.consentPromotions);
+        notes.setText(model.notes);
     }
 
     @Override
@@ -247,6 +250,7 @@ public class EditCustomerActivity extends SuperBaseActivity {
         model.zip = zip.getText().toString().trim();
         model.sex = sexSpinner.getSelectedItem() == Sex.MALE;
         model.consentPromotions = consentPromotions.isChecked();
+        model.notes = notes.getText().toString().trim();
     }
 
     private void setResult() {
