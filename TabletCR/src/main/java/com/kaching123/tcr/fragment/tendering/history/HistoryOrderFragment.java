@@ -6,8 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -21,27 +19,18 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.collect.FluentIterable;
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.BaseCustomersAutocompleteAdapter;
 import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.CustomEditBox.IKeyboardSupport;
 import com.kaching123.tcr.component.KeyboardView;
-import com.kaching123.tcr.component.OrderNumberFormatInputFilter;
 import com.kaching123.tcr.fragment.filter.CashierFilterSpinnerAdapter;
 import com.kaching123.tcr.fragment.reports.DateRangeFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryOrderListFragment.ILoader;
@@ -54,6 +43,13 @@ import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -98,9 +94,6 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     @ViewById
     protected CustomEditBox orderNumber;
 
-    @ViewById
-    protected EditText usbScannerInput;
-
     private MenuItem unitAction;
 
     private CashierFilterSpinnerAdapter cashierAdapter;
@@ -115,19 +108,11 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     private boolean isShown = true;
 
     public void setOrderNumber(String orderNumber) {
-        if (this.orderNumber != null && orderNumber != null)
-            this.orderNumber.setText(orderNumber);
+        String orderNumberFilted = orderNumber.replace("\n", "").replace("\r", "");
+        if (this.orderNumber != null && orderNumberFilted != null)
+            this.orderNumber.setText(orderNumberFilted);
 
         Logger.d("HistoryOrderFragment setOrderNumber: " + ",Thread, " + Thread.currentThread().getId());
-    }
-
-    @AfterTextChange
-    protected void usbScannerInputAfterTextChanged(Editable s) {
-        String st = s.toString();
-        if (st.contains("\n")) {
-            setOrderNumber(st.substring(0, st.length() > 1 ? st.length() - 2 : 1));
-            s.clear();
-        }
     }
 
 
@@ -261,12 +246,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     @AfterViews
     public void onCreate() {
 
-        if(usbScannerInput!=null)
-            usbScannerInput.setInputType(0);
-
-        usbScannerInput.requestFocus();
-
-        orderNumber.setFilters(new InputFilter[]{new OrderNumberFormatInputFilter()});
+//        orderNumber.setFilters(new InputFilter[]{new OrderNumberFormatInputFilter()});
         orderNumber.setKeyboardSupportConteiner(this);
         orderNumber.setEditListener(new CustomEditBox.IEditListener() {
             @Override

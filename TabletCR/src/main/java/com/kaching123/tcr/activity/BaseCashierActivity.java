@@ -486,6 +486,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         public boolean onClick() {
                             if (fromScanner)
                                 tryReconnectScanner();
+                            focusCustomEditBox();
                             return true;
                         }
                     }, null
@@ -545,7 +546,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         Logger.d("Scanner: tryToAddByBarcode - addItemDiscount item");
         tryToAddItem(item, price, quantity, unit);
     }
+    public void focusCustomEditBox()
+    {
 
+    }
     private void playAlarm() {
         if (alarmRingtone == null || alarmRingtone.isPlaying())
             return;

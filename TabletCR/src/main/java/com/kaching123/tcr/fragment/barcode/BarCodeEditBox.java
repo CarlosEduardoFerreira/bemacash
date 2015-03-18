@@ -47,11 +47,13 @@ public class BarCodeEditBox extends CustomEditBox {
     public BarCodeEditBox(Context context) {
         super(context);
         resetFormatter();
+        setInputType(0);
     }
 
     public BarCodeEditBox(Context context, AttributeSet attrs) {
         super(context, attrs);
         resetFormatter();
+        setInputType(0);
     }
 
     public BarCodeEditBox(Context context, AttributeSet attrs, int defStyle) {
@@ -98,10 +100,10 @@ public class BarCodeEditBox extends CustomEditBox {
         super.setText(getFormatter().format(value.toString()), type);
     }
 
-    @Override
-    public CharSequence getText() {
-        return value;
-    }
+//    @Override
+//    public CharSequence getText() {
+//        return value;
+//    }
 
 
     public void setCodeType(CodeType type) {

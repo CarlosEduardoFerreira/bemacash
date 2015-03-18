@@ -44,11 +44,12 @@ public class WaitForCashInDrawerCommand extends BaseDeviceCommand {
             }
             return succeeded();
         }
-        if (getPrinterID().equalsIgnoreCase(USBPrinter.USB_DESC))
-            return succeeded();
+
         Logger.d("PrinterCommand: WaitForCashInDrawerCommand before OpenDrawerAction");
         new OpenDrawerAction().execute(printer);
         Logger.d("PrinterCommand: WaitForCashInDrawerCommand after OpenDrawerAction");
+        if (getPrinterID().equalsIgnoreCase(USBPrinter.USB_DESC))
+            return succeeded();
         callback(CALLBACK_OPENED);
 
         boolean checkDrawerStatus = getApp().getShopInfo().drawerClosedForSale;

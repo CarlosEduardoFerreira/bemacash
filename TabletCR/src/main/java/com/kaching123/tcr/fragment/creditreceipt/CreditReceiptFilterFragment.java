@@ -51,7 +51,7 @@ public class CreditReceiptFilterFragment extends DateRangeFragment implements IK
 
     @AfterViews
     public void onCreate(){
-        creditReceiptNum.setFilters(new InputFilter[]{new OrderNumberFormatInputFilter()});
+//        creditReceiptNum.setFilters(new InputFilter[]{new OrderNumberFormatInputFilter()});
         creditReceiptNum.setKeyboardSupportConteiner(this);
 
         creditReceiptNum.setEditListener(new CustomEditBox.IEditListener() {

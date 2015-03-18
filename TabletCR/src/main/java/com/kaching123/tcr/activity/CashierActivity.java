@@ -4,17 +4,16 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
-import android.view.Menu;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand;
@@ -26,14 +25,18 @@ import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
 import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment.OnAddonsChangedListener;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.PaymentTransactionModel;
 
-import java.math.BigDecimal;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 
 @EActivity(R.layout.saleorder_cashier_activity)
 @OptionsMenu(R.menu.cashier_activity)
 public class CashierActivity extends BaseCashierActivity implements CustomEditBox.IKeyboardSupport {
+    private final int TIMES_UP = 0;
 
     @FragmentById
     protected ItemsListFragment itemsListFragment;
@@ -52,6 +55,8 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
     @ViewById
     protected CustomEditBox scannerInput;
 
+    private Timer timer;
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -62,6 +67,47 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private Handler USBHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case TIMES_UP:
+                    tryToSearchBarCode(scannerInput);
+                    timer.interrupt();
+                    timer = null;
+                    break;
+
+            }
+        }
+
+    };
+
+    @Override
+    public void focusCustomEditBox() {
+        scannerInput.requestFocus();
+    }
+
+    private class Timer extends Thread {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(200);
+                notifyHandler();
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    ;
+
+    private void notifyHandler() {
+        USBHandler.sendEmptyMessage(TIMES_UP);
     }
 
     @Override
@@ -97,6 +143,19 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
                 tryToAddItem(model);
             }
         });
+        scannerInput.requestFocus();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Logger.d("trace key-onKeyDown--" + keyCode);
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_CTRL_LEFT:
+                timer = new Timer();
+                timer.start();
+            default:
+                return super.onKeyDown(keyCode, event);
+        }
     }
 
     @Override

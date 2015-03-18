@@ -3,6 +3,7 @@ package com.kaching123.tcr.component;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.kaching123.tcr.Logger;
@@ -10,7 +11,7 @@ import com.kaching123.tcr.Logger;
 /**
  * Created by gdubina on 07/11/13.
  */
-public class CustomEditBox extends TextView {
+public class CustomEditBox extends EditText {
 
     private IEditListener editListener;
     private IKeyboardSupport keyboardSupportConteiner;
@@ -18,16 +19,19 @@ public class CustomEditBox extends TextView {
     public CustomEditBox(Context context) {
         super(context);
         setLongClickable(false);
+        hideKeyboard();
     }
 
     public CustomEditBox(Context context, AttributeSet attrs) {
         super(context, attrs);
         setLongClickable(false);
+        hideKeyboard();
     }
 
     public CustomEditBox(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setLongClickable(false);
+        hideKeyboard();
     }
 
     public boolean valid() {
@@ -38,6 +42,11 @@ public class CustomEditBox extends TextView {
     public void selectAll() {
 
     }*/
+
+    public void hideKeyboard()
+    {
+        super.setInputType(0);
+    }
 
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
@@ -58,7 +67,7 @@ public class CustomEditBox extends TextView {
         this.keyboardSupportConteiner = keyboardSupportConteiner;
     }
 
-    private void attachMe2Keyboard() {
+    public void attachMe2Keyboard() {
         getKeyboardListener().attachMe2Keyboard(this);
     }
 

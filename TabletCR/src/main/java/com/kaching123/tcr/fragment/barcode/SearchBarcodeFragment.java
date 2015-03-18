@@ -4,8 +4,11 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.component.CustomEditBox;
@@ -13,18 +16,13 @@ import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.edit.KeyboardDialogFragment;
 import com.kaching123.tcr.model.ItemExModel;
 
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-
 import java.math.BigDecimal;
 
 /**
  * Created by gdubina on 22/11/13.
  */
 @EFragment
-public class SearchBarcodeFragment extends KeyboardDialogFragment {
+public class SearchBarcodeFragment extends KeyboardDialogFragment{
 
     //private static final String ARG_LOADER_BARCODE = "ARG_LOADER_BARCODE";
 
@@ -36,21 +34,6 @@ public class SearchBarcodeFragment extends KeyboardDialogFragment {
     @ViewById
     protected View progressBar;
     private OnSearchListener listener;
-    @ViewById
-    protected EditText usbScannerInput;
-
-    @AfterTextChange
-    protected void usbScannerInputAfterTextChanged(Editable s) {
-        String st = s.toString();
-        if (st.contains("\n")) {
-            setCodeNumber(st.substring(0, st.length() > 1 ? st.length() - 2 : 1));
-            s.clear();
-        }
-    }
-
-    private void setCodeNumber(String code) {
-        editText.setText(code);
-    }
 
     @AfterViews
     protected void attachViews() {
@@ -65,10 +48,6 @@ public class SearchBarcodeFragment extends KeyboardDialogFragment {
                 return false;
             }
         });
-        if (usbScannerInput != null)
-            usbScannerInput.setInputType(0);
-
-        usbScannerInput.requestFocus();
     }
 
     @AfterTextChange
@@ -91,7 +70,7 @@ public class SearchBarcodeFragment extends KeyboardDialogFragment {
     }
 
     private void searchBarcode(final String barcode) {
-        new SearchBarcodeLoader(getActivity(), 0, barcode) {
+        new SearchBarcodeLoader(getActivity(), 0, barcode){
             @Override
             protected void onPreExecute() {
                 progressBar.setVisibility(View.VISIBLE);

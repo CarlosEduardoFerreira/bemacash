@@ -262,7 +262,7 @@ public class DashboardActivity extends SuperBaseActivity {
     @AfterTextChange
     protected void usbScannerInputAfterTextChanged(Editable s) {
         String st = s.toString();
-        if (st.contains("\n")) {
+        if (st.contains("\n")||st.contains("\r")||st.contains("\r\n")) {
             barcodeReceivedFromSerialPort(st);
             s.clear();
         }

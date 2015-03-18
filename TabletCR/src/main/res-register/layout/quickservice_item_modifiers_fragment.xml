@@ -132,6 +132,7 @@
 
         <Button
             style="@style/LocalizableButton.Green"
+            android:text="@string/button_add_to_order"
             android:textSize="22sp"
             android:layout_marginTop="12dp"
             android:layout_gravity="center_horizontal"
