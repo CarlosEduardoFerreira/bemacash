@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -16,16 +17,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.wireless.ApplyMultipleWarrantyCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelListener;
@@ -36,6 +34,13 @@ import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.converter.UnitFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +67,20 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
 
     @ViewById
     protected RelativeLayout bodyContent;
+    @ViewById
+    protected EditText usbScannerInput;
+
+    @AfterTextChange
+    protected void usbScannerInputAfterTextChanged(Editable s) {
+        String newline = System.getProperty("line.separator");
+        boolean hasNewline = s.toString().contains(newline);
+        if (hasNewline) {
+            Logger.d("OrderItemListFragment usbScannerInputAfterTextChanged hasNewline: " + s.toString());
+            String result = s.toString().replace("\n", "").replace("\r", "");
+            callback.onBarcodeReceivedByUsb(result);
+            s.clear();
+        }
+    }
 
     public UnitItemListFragment setCallback(IUnitCallback callback) {
         this.callback = callback;
@@ -202,17 +221,17 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
     }
 
     @OptionsItem
-    protected void actionMultipleSelected(){
+    protected void actionMultipleSelected() {
         callback.onMultiAdd();
     }
 
     @OptionsItem
-    protected void actionAddSelected(){
+    protected void actionAddSelected() {
         callback.onAdd();
     }
 
     @OptionsItem
-    protected void actionWarrantySelected(){
+    protected void actionWarrantySelected() {
         WarrantyFragment.show(getActivity(), new IWarrantyListener() {
             @Override
             public void onConfirm(int warranty) {
@@ -229,8 +248,13 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
 
     public interface IUnitCallback {
         void onAdd();
+
+        void onBarcodeReceivedByUsb(String barcode);
+
         void onMultiAdd();
+
         void onEdit(Unit item);
+
         void onDelete(List<Unit> units);
     }
 

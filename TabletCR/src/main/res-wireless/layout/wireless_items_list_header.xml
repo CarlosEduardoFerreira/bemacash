@@ -14,9 +14,14 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/wireless_header_serial"
-        android:layout_weight="1"
+        android:layout_weight="0.9"
         />
-
+    <EditText
+        android:id="@+id/usb_scanner_input"
+        android:textSize="1sp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"/>
     <TextView
         style="@style/ItemList.HeaderText"
         android:layout_width="0dp"

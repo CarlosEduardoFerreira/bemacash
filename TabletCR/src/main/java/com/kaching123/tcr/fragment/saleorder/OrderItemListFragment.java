@@ -13,9 +13,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.BaseCashierActivity;
@@ -48,6 +45,10 @@ import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
 import com.telly.groundy.annotations.OnSuccess;
 
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,9 +77,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         boolean hasNewline = s.toString().contains(newline);
         if (hasNewline) {
             Logger.d("OrderItemListFragment usbScannerInputAfterTextChanged hasNewline: " + s.toString());
-            String inputs[] = s.toString().split("\n");
-            String barcode = inputs[0];
-            itemsListHandler.onBarcodeReceivedFromUSB(barcode);
+            String result = s.toString().replace("\n", "").replace("\r", "");
+            itemsListHandler.onBarcodeReceivedFromUSB(result);
             s.clear();
         }
     }

@@ -48,7 +48,7 @@ public class SerialPortScannerService extends Service {
                 InputStream inputStream = getInputStream();
                 int size;
                 byte[] buffer = new byte[maxBarCodeSize];
-                String barcode = "";
+                String input = "";
                 while (!Thread.currentThread().isInterrupted()) {
 
                     if (inputStream == null)
@@ -57,18 +57,19 @@ public class SerialPortScannerService extends Service {
 
                     if (size > 0) {
 
-                        barcode = barcode + new String(buffer, 0, size);
-                        Logger.e("ScannerService: read() barcode: " + barcode + ", thread:" + Thread.currentThread().getId());
+                        input = input + new String(buffer, 0, size);
+                        Logger.e("ScannerService: read() barcode: " + input + ", thread:" + Thread.currentThread().getId());
 
                         if (buffer[size - 1] == terminator) {
-                            intent.putExtra(EXTRA_BARCODE, barcode.substring(0, barcode.length() > 1 ? barcode.length() - 1 : 1));
+                            String barcode = input.replace("\r", "").replace(" ", "").replace("\n", "");
+                            intent.putExtra(EXTRA_BARCODE, barcode);
                             LocalBroadcastManager.getInstance(SerialPortScannerService.this).sendBroadcast(intent);
-                            barcode = "";
+                            input = "";
                         }
 
                     }
-                    if (barcode.length() >= maxBarCodeSize)
-                        barcode = "";
+                    if (input.length() >= maxBarCodeSize)
+                        input = "";
                 }
 
             } catch (IOException e) {

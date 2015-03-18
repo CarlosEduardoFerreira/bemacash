@@ -76,6 +76,7 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
 
             switch (msg.what) {
                 case TIMES_UP:
+                    filtInput();
                     tryToSearchBarCode(scannerInput);
                     timer.interrupt();
                     timer = null;
@@ -86,8 +87,14 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
 
     };
 
+    private void filtInput() {
+        String input = scannerInput.getText().toString();
+        String result = input.toString().replace("\n", "").replace("\r", "");
+        scannerInput.setText(result);
+    }
+
     @Override
-    public void focusCustomEditBox() {
+    public void focusUsbInput() {
         scannerInput.requestFocus();
     }
 

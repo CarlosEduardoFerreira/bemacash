@@ -13,7 +13,14 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:text="@string/order_header_title"
-        android:layout_weight="16"/>
+        android:layout_weight="3"/>
+
+    <EditText
+        android:id="@+id/usb_scanner_input"
+        android:textSize="1sp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="13"/>
 
     <TextView
         style="@style/ItemList.HeaderText.Border"

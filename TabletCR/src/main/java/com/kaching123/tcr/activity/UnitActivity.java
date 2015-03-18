@@ -167,6 +167,13 @@ public class UnitActivity extends ScannerBaseActivity implements UnitItemListFra
     }
 
     @Override
+    public void onBarcodeReceivedByUsb(String barcode) {
+        Logger.d("UnitActivity onBarcodeReceivedByUsb:" + barcode);
+
+        onBarcodeReceived(barcode);
+    }
+
+    @Override
     public void onMultiAdd() {
         redirectBarcodeResult = true;
         UnitsRecursiveAddFragment.show(self(), model, null, model.codeType, new UnitsRecursiveAddFragment.UnitCallback() {

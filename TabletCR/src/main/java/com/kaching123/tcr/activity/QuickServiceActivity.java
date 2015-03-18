@@ -1,10 +1,15 @@
 package com.kaching123.tcr.activity;
 
 import android.content.Context;
+import android.text.Editable;
+import android.widget.EditText;
 
+import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand;
@@ -68,7 +73,10 @@ public class QuickServiceActivity extends BaseCashierActivity {
         });
         hideModifiersFragment();
     }
+    @Override
+    public void focusUsbInput() {
 
+    }
     @Override
     protected void completeOrder() {
         super.completeOrder();
