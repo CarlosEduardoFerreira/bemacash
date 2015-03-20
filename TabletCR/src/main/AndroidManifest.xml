@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kaching123.tcr"
-    android:versionCode="135"
+    android:versionCode="137"
     android:versionName="2.18">
 
     <uses-sdk
