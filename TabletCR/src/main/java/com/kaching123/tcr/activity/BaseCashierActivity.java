@@ -30,12 +30,6 @@ import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -65,6 +59,7 @@ import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand.BaseGetItemsForFaickVoidCallback;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand.BaseHoldOrderCallback;
+import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
@@ -138,6 +133,13 @@ import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.ViewById;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -162,6 +164,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_ORDERS_COUNT = 2;
     private static final int LOADER_CHECK_ORDER = 3;
     private static final int LOADER_CHECK_ORDER_PAYMENTS = 4;
+    private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 5;
     private static final int LOADER_SEARCH_BARCODE = 10;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
@@ -192,6 +195,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private AddSaleOrderCallback addOrderCallback = new AddSaleOrderCallback();
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
+    private ItemPrintInfoLoader checkItemPrintStatusLoader = new ItemPrintInfoLoader();
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -546,10 +550,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         Logger.d("Scanner: tryToAddByBarcode - addItemDiscount item");
         tryToAddItem(item, price, quantity, unit);
     }
-    public void focusUsbInput()
-    {
+
+    public void focusUsbInput() {
 
     }
+
     private void playAlarm() {
         if (alarmRingtone == null || alarmRingtone.isPlaying())
             return;
@@ -1464,6 +1469,19 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         );
     }
 
+    private void showErrorVoidMessage() {
+        AlertDialogFragment.showAlert(this,
+                R.string.dlg_void_title,
+                getString(R.string.dlg_void_forbidden_msg),
+                new OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        return true;
+                    }
+                }
+        );
+    }
+
     protected void completeOrder() {
         if (TextUtils.isEmpty(this.orderGuid))
             return;
@@ -2057,7 +2075,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         return;
                     }
 
-                    showVoidConfirmDialog();
+                    getSupportLoaderManager().restartLoader(LOADER_CHECK_ITEM_PRINT_STATUS, null, checkItemPrintStatusLoader);
                 }
             });
         }
@@ -2066,6 +2084,58 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
 
+        }
+    }
+
+    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+
+        @Override
+        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder.forUri(ORDER_URI)
+                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
+                    .transform(new Function<Cursor, SaleOrderModel>() {
+                        @Override
+                        public SaleOrderModel apply(Cursor cursor) {
+                            return new SaleOrderModel(cursor);
+                        }
+                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
+                        @Override
+                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
+                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
+                                return new SaleOrderModelResult(null);
+                            } else {
+                                return new SaleOrderModelResult(saleOrderModels.get(0));
+                            }
+                        }
+                    }).build(BaseCashierActivity.this);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (saleOrderModel.model != null)
+                        if ((saleOrderModel.model.kitchenPrintStatus != PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
+                            showVoidConfirmDialog();
+                        else {
+                            PermissionFragment.showCancelable(BaseCashierActivity.this, new BaseTempLoginListener(BaseCashierActivity.this) {
+                                @Override
+                                public void onLoginComplete() {
+                                    super.onLoginComplete();
+                                    showVoidConfirmDialog();
+                                }
+                            }, Permission.ADMIN);
+                        }
+                }
+            });
+
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
+            updateTitle(null);
         }
     }
 
@@ -2085,20 +2155,20 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    protected void hideQuickModifyFragment()
-    {
-        if(totalCostFragment != null)
-        {
+    protected void hideQuickModifyFragment() {
+        if (totalCostFragment != null) {
             getSupportFragmentManager().beginTransaction().hide(totalCostFragment).commit();
         }
     }
 
-    protected void showQuickModifyFragment()
-    {
-        if(totalCostFragment != null)
-        {
+    protected void showQuickModifyFragment() {
+        if (totalCostFragment != null) {
             getSupportFragmentManager().beginTransaction().show(totalCostFragment).commit();
         }
+    }
+
+    private Set<Permission> getOperatorPermissions() {
+        return getApp().getOperatorPermissions();
     }
 
 }
