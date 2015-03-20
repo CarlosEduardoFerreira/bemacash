@@ -1,8 +1,12 @@
 package com.kaching123.tcr.fragment.saleorder;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -11,8 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
-import org.androidannotations.annotations.EFragment;
+import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.google.common.base.Function;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
@@ -20,11 +26,14 @@ import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand.BaseDiscountSaleOrderItemCallback;
+import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdatePriceSaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdatePriceSaleOrderItemCommand.BaseUpdatePriceSaleOrderItemCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand.BaseUpdateQtySaleOrderItemCallback;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
+import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.edit.NotesEditFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment.OnEditPriceListener;
@@ -39,13 +48,19 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.annotations.OnSuccess;
+
+import org.androidannotations.annotations.EFragment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @EFragment
 public class OrderItemListFragment extends ListFragment implements LoaderCallbacks<List<SaleOrderItemViewModel>>, BarcodeListenerHolder.BarcodeListener {
@@ -61,6 +76,10 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     private boolean firstLoad;
 
     private boolean isCreateReturnOrder;
+    private static final Uri ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
+    private ItemPrintInfoLoader checkItemPrintStatusLoader = new ItemPrintInfoLoader();
+    private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 0;
+    private int position;
 
     public SaleOrderItemViewModel getLastItem() {
         if (adapter == null || adapter.getCount() == 0)
@@ -86,6 +105,69 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         return inflater.inflate(R.layout.saleorder_items_list_fragment, container, false);
     }
 
+    private static class SaleOrderModelResult {
+
+        private final SaleOrderModel model;
+
+        private SaleOrderModelResult(SaleOrderModel model) {
+            this.model = model;
+        }
+    }
+
+    private static final Handler handler = new Handler();
+
+    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+
+        @Override
+        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder.forUri(ORDER_URI)
+                    .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
+                    .transform(new Function<Cursor, SaleOrderModel>() {
+                        @Override
+                        public SaleOrderModel apply(Cursor cursor) {
+                            return new SaleOrderModel(cursor);
+                        }
+                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
+                        @Override
+                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
+                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
+                                return new SaleOrderModelResult(null);
+                            } else {
+                                return new SaleOrderModelResult(saleOrderModels.get(0));
+                            }
+                        }
+                    }).build(getActivity());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (saleOrderModel.model != null) {
+                        if ((saleOrderModel.model.kitchenPrintStatus != PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
+                            doRemoceClickLine();
+                        else {
+                            PermissionFragment.showCancelable(getActivity(), new BaseTempLoginListener(getActivity()) {
+                                @Override
+                                public void onLoginComplete() {
+                                    super.onLoginComplete();
+                                    doRemoceClickLine();
+                                }
+                            }, Permission.ADMIN);
+                        }
+                    }
+                }
+            });
+
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
+        }
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -95,16 +177,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         adapter.setItemRemoveListener(new ItemView.OnItemRemoveClick() {
             @Override
             public void onRemoveClicked(View v, final int pos) {
-                getListView().closeOpenedItems();
-
-                if (adapter.getCount() == 1) {
-                    if (itemsListHandler != null) {
-                        itemsListHandler.onRemoveLastItem();
-                    }
-                    return;
-                }
-
-                RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(pos), OrderItemListFragment.this);
+                position = pos;
+                getActivity().getSupportLoaderManager().restartLoader(LOADER_CHECK_ITEM_PRINT_STATUS, null, checkItemPrintStatusLoader);
             }
 
             @Override
@@ -191,6 +265,32 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             }
         });
         setListAdapter(adapter);
+    }
+
+    private void showErrorVoidMessage() {
+        AlertDialogFragment.showAlert(getActivity(),
+                R.string.dlg_void_title,
+                getString(R.string.dlg_void_forbidden_msg),
+                new StyledDialogFragment.OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        return true;
+                    }
+                }
+        );
+    }
+
+    private void doRemoceClickLine() {
+        getListView().closeOpenedItems();
+
+        if (adapter.getCount() == 1) {
+            if (itemsListHandler != null) {
+                itemsListHandler.onRemoveLastItem();
+            }
+            return;
+        }
+
+        RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(position), OrderItemListFragment.this);
     }
 
     private void highlightedColumn(String saleItemGuid, Type type) {
@@ -381,6 +481,10 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private void needScrollToTheEnd() {
         getListView().setSelection(adapter.getCount() - 1);
+    }
+
+    private Set<Permission> getOperatorPermissions() {
+        return ((TcrApplication) getActivity().getApplication()).getOperatorPermissions();
     }
 
 }

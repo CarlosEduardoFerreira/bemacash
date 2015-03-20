@@ -65,6 +65,7 @@ import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand.BaseGetItemsForFaickVoidCallback;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand.BaseHoldOrderCallback;
+import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
@@ -162,6 +163,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_ORDERS_COUNT = 2;
     private static final int LOADER_CHECK_ORDER = 3;
     private static final int LOADER_CHECK_ORDER_PAYMENTS = 4;
+    private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 5;
     private static final int LOADER_SEARCH_BARCODE = 10;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
@@ -192,6 +194,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private AddSaleOrderCallback addOrderCallback = new AddSaleOrderCallback();
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
+    private ItemPrintInfoLoader checkItemPrintStatusLoader = new ItemPrintInfoLoader();
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -1427,6 +1430,19 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         );
     }
 
+    private void showErrorVoidMessage() {
+        AlertDialogFragment.showAlert(this,
+                R.string.dlg_void_title,
+                getString(R.string.dlg_void_forbidden_msg),
+                new OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        return true;
+                    }
+                }
+        );
+    }
+
     protected void completeOrder() {
         if (TextUtils.isEmpty(this.orderGuid))
             return;
@@ -2019,7 +2035,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         return;
                     }
 
-                    showVoidConfirmDialog();
+                    getSupportLoaderManager().restartLoader(LOADER_CHECK_ITEM_PRINT_STATUS, null, checkItemPrintStatusLoader);
                 }
             });
         }
@@ -2028,6 +2044,58 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
 
+        }
+    }
+
+    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+
+        @Override
+        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder.forUri(ORDER_URI)
+                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
+                    .transform(new Function<Cursor, SaleOrderModel>() {
+                        @Override
+                        public SaleOrderModel apply(Cursor cursor) {
+                            return new SaleOrderModel(cursor);
+                        }
+                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
+                        @Override
+                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
+                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
+                                return new SaleOrderModelResult(null);
+                            } else {
+                                return new SaleOrderModelResult(saleOrderModels.get(0));
+                            }
+                        }
+                    }).build(BaseCashierActivity.this);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (saleOrderModel.model != null)
+                        if ((saleOrderModel.model.kitchenPrintStatus != PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
+                            showVoidConfirmDialog();
+                        else {
+                            PermissionFragment.showCancelable(BaseCashierActivity.this, new BaseTempLoginListener(BaseCashierActivity.this) {
+                                @Override
+                                public void onLoginComplete() {
+                                    super.onLoginComplete();
+                                    showVoidConfirmDialog();
+                                }
+                            }, Permission.ADMIN);
+                        }
+                }
+            });
+
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
+            updateTitle(null);
         }
     }
 
@@ -2045,6 +2113,22 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             this.optionalGuids = optionalGuids;
             this.unit = unit;
         }
+    }
+
+    protected void hideQuickModifyFragment() {
+        if (totalCostFragment != null) {
+            getSupportFragmentManager().beginTransaction().hide(totalCostFragment).commit();
+        }
+    }
+
+    protected void showQuickModifyFragment() {
+        if (totalCostFragment != null) {
+            getSupportFragmentManager().beginTransaction().show(totalCostFragment).commit();
+        }
+    }
+
+    private Set<Permission> getOperatorPermissions() {
+        return getApp().getOperatorPermissions();
     }
 
 }
