@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -15,8 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
-import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.google.common.base.Function;
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity;
@@ -46,6 +44,7 @@ import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -77,7 +76,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private boolean isCreateReturnOrder;
     private static final Uri ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
-    private ItemPrintInfoLoader checkItemPrintStatusLoader = new ItemPrintInfoLoader();
+    //    private ItemPrintInfoLoader checkItemPrintStatusLoader = new ItemPrintInfoLoader();
     private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 0;
     private int position;
 
@@ -116,57 +115,58 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private static final Handler handler = new Handler();
 
-    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
-
-        @Override
-        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder.forUri(ORDER_URI)
-                    .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-                    .transform(new Function<Cursor, SaleOrderModel>() {
-                        @Override
-                        public SaleOrderModel apply(Cursor cursor) {
-                            return new SaleOrderModel(cursor);
-                        }
-                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
-                        @Override
-                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
-                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
-                                return new SaleOrderModelResult(null);
-                            } else {
-                                return new SaleOrderModelResult(saleOrderModels.get(0));
-                            }
-                        }
-                    }).build(getActivity());
-        }
-
-        @Override
-        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (saleOrderModel.model != null) {
-                        if ((saleOrderModel.model.kitchenPrintStatus != PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
-                            doRemoceClickLine();
-                        else {
-                            PermissionFragment.showCancelable(getActivity(), new BaseTempLoginListener(getActivity()) {
-                                @Override
-                                public void onLoginComplete() {
-                                    super.onLoginComplete();
-                                    doRemoceClickLine();
-                                }
-                            }, Permission.ADMIN);
-                        }
-                    }
-                }
-            });
-
-
-        }
-
-        @Override
-        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
-        }
-    }
+//    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+//
+//        @Override
+//        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
+//            return CursorLoaderBuilder.forUri(ORDER_URI)
+//                    .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
+//                    .transform(new Function<Cursor, SaleOrderModel>() {
+//                        @Override
+//                        public SaleOrderModel apply(Cursor cursor) {
+//                            return new SaleOrderModel(cursor);
+//                        }
+//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
+//                        @Override
+//                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
+//                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
+//                                return new SaleOrderModelResult(null);
+//                            } else {
+//                                return new SaleOrderModelResult(saleOrderModels.get(0));
+//                            }
+//                        }
+//                    }).build(getActivity());
+//        }
+//
+//        @Override
+//        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (saleOrderModel.model != null) {
+//                        if (saleOrderModel.model.orderStatus != OrderStatus.COMPLETED && orderGuid != null)
+//                            if ((saleOrderModel.model.kitchenPrintStatus == PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
+//                                doRemoceClickLine();
+//                            else {
+//                                PermissionFragment.showCancelable(getActivity(), new BaseTempLoginListener(getActivity()) {
+//                                    @Override
+//                                    public void onLoginComplete() {
+//                                        super.onLoginComplete();
+//                                        doRemoceClickLine();
+//                                    }
+//                                }, Permission.VOID_SALES);
+//                            }
+//                    }
+//                }
+//            });
+//
+//
+//        }
+//
+//        @Override
+//        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
+//        }
+//    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -178,7 +178,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             @Override
             public void onRemoveClicked(View v, final int pos) {
                 position = pos;
-                getActivity().getSupportLoaderManager().restartLoader(LOADER_CHECK_ITEM_PRINT_STATUS, null, checkItemPrintStatusLoader);
+//                getActivity().getSupportLoaderManager().restartLoader(LOADER_CHECK_ITEM_PRINT_STATUS, null, checkItemPrintStatusLoader);
+                isVoidNeedPermission();
             }
 
             @Override
@@ -266,6 +267,53 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         });
         setListAdapter(adapter);
     }
+
+    private boolean isVoidNeedPermission() {
+        Cursor c = ProviderAction.query(ORDER_URI)
+                .projection(
+                        ShopStore.SaleOrderTable.GUID,
+                        ShopStore.SaleOrderTable.STATUS,
+                        ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS
+                )
+                .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
+                .perform(getActivity());
+        SaleOrderPrintInfo saleOrderPrintInfo = null;
+        if (c.moveToFirst()) {
+            saleOrderPrintInfo = new SaleOrderPrintInfo(
+                    c.getString(0),
+                    c.getString(1),
+                    c.getString(2)
+            );
+        }
+        if (saleOrderPrintInfo.kitchenPrintStatus != OrderStatus.COMPLETED.name() && saleOrderPrintInfo.Guid != null)
+            if ((saleOrderPrintInfo.kitchenPrintStatus == PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED.name()) || getOperatorPermissions().contains(Permission.VOID_SALES))
+                doRemoceClickLine();
+            else {
+                PermissionFragment.showCancelable(getActivity(), new BaseTempLoginListener(getActivity()) {
+                    @Override
+                    public void onLoginComplete() {
+                        super.onLoginComplete();
+                        doRemoceClickLine();
+                    }
+                }, Permission.VOID_SALES);
+            }
+        c.close();
+
+        return false;
+    }
+
+    class SaleOrderPrintInfo {
+        String Guid;
+        String status;
+        String kitchenPrintStatus;
+
+        public SaleOrderPrintInfo(String Guid, String status, String kitchenPrintStatus) {
+            this.Guid = Guid;
+            this.status = status;
+            this.kitchenPrintStatus = kitchenPrintStatus;
+        }
+    }
+
 
     private void showErrorVoidMessage() {
         AlertDialogFragment.showAlert(getActivity(),
