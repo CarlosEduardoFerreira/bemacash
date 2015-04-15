@@ -227,4 +227,8 @@ public interface ShopPref {
     boolean SunpassActivated();
 
     boolean BillPaymentActivated();
+
+    String lastUserName();
+
+    String lastUserPassword();
 }

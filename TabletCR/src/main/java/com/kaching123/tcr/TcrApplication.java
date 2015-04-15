@@ -693,6 +693,22 @@ public class TcrApplication extends Application {
         return shopPref.NeedBillpaymentUpdated().getOr(true);
     }
 
+    public void setLastUserName(String name) {
+        shopPref.lastUserName().put(name);
+    }
+
+    public String getLastUserName() {
+        return shopPref.lastUserName().getOr(null);
+    }
+
+    public void setLastUserPassword(String password) {
+        shopPref.lastUserPassword().put(password);
+    }
+
+    public String getLastUserPassword() {
+        return shopPref.lastUserPassword().getOr(null);
+    }
+
     public synchronized ShopInfo getShopInfo() {
         return shopInfo;
     }

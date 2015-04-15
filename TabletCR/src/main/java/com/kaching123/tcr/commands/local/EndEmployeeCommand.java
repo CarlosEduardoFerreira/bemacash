@@ -29,7 +29,7 @@ public class EndEmployeeCommand extends PublicGroundyTask {
 
         ContentValues values = new ContentValues();
         values.put(SqlCommandTable.CREATE_TIME, System.currentTimeMillis());
-        values.put(SqlCommandTable.SQL_COMMAND, UploadTask.CMD_END_TRANSACTION);
+        values.put(SqlCommandTable.SQL_COMMAND, UploadTask.CMD_END_EMPLOYEE);
 
         getContext().getContentResolver().insert(ShopProvider.contentUri(SqlCommandTable.URI_CONTENT), values);
 

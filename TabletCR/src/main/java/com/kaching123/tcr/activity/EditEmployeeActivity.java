@@ -13,6 +13,7 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.local.EndEmployeeCommand;
+import com.kaching123.tcr.commands.local.StartEmployeeCommand;
 import com.kaching123.tcr.commands.local.StartTransactionCommand;
 import com.kaching123.tcr.commands.store.user.BaseEmployeeCommand.BaseEmployeeCallback;
 import com.kaching123.tcr.commands.store.user.DeleteEmployeeCommand;
@@ -147,7 +148,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
     @Override
     protected void callCommand(final EmployeeModel model, ArrayList<Permission> permissions) {
-        StartTransactionCommand.start(this);
+        StartEmployeeCommand.start(this);
         EditEmployeeCommand.start(EditEmployeeActivity.this, model, permissions, editEmployeeCallback);
     }
 

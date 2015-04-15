@@ -1,7 +1,9 @@
 package com.kaching123.tcr.commands.store.user;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
@@ -20,10 +22,12 @@ import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.SyncCommand.OfflineException;
 import com.kaching123.tcr.service.SyncCommand.SyncException;
 import com.kaching123.tcr.service.SyncCommand.SyncInconsistentException;
+import com.kaching123.tcr.service.v2.UploadTaskV2;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
 import com.kaching123.tcr.store.ShopStore;
@@ -44,6 +48,7 @@ import java.util.Set;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
+import java.util.ArrayList;
 //i think we should use command because it will be check subscription titledDate too
 public class LoginCommand extends GroundyTask {
 
@@ -61,6 +66,8 @@ public class LoginCommand extends GroundyTask {
     private static final String ARG_PASSWORD = "arg_password";
     private static final String ARG_USER = "arg_username";
     private static final String ARG_MODE = "arg_mode";
+    protected UploadTaskV2 uploadTaskV2Adapter;
+    protected static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.getNoNotifyContentUri(ShopStore.SqlCommandTable.URI_CONTENT);
 
     @Override
     protected TaskResult doInBackground() {
@@ -73,6 +80,13 @@ public class LoginCommand extends GroundyTask {
         boolean isTrainingMode = TcrApplication.get().isTrainingMode();
         String registerSerial = app.getRegisterSerial();
         boolean isOffline = !Util.isNetworkAvailable(getContext());
+
+        String lastUserName = getLastUserName();
+        String lastUserPassword = getLastUserPassword();
+        if (lastUserName != null && lastUserPassword != null) {
+            uploadTaskV2Adapter = new UploadTaskV2(loginLocal(getLastUserName(), getLastUserPassword()));
+            doEmployeeUpload();
+        }
 
         if (mode == Mode.LOGIN && !isTrainingMode && !isOffline) {
             Logger.d("Performing remote login... login: %s, serial: %s", userName, registerSerial);
@@ -91,7 +105,8 @@ public class LoginCommand extends GroundyTask {
                     Logger.d("Remote login FAILED! employee not active");
                     return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
                 }
-
+                setLastUserName(employeeModel.login);
+                setLastUserPassword(employeeModel.password);
                 boolean cleaned = checkDb(employeeModel);
 
                 Error syncError = syncData(employeeModel);
@@ -174,6 +189,35 @@ public class LoginCommand extends GroundyTask {
             return true;
         }
         return false;
+    }
+
+    private void doEmployeeUpload() {
+        Logger.d("[OfflineService] doUpload: isManual = false");
+//        executor.submit(new UploadTask(this, false, true));
+        try {
+            ContentResolver cr = getContext().getContentResolver();
+            uploadTaskV2Adapter.employeeUpload(cr);
+            cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+        } catch (UploadTaskV2.TransactionNotFinalizedException e) {
+            e.printStackTrace();
+            Logger.e("UploadTask uploadEmployee error", e);
+        }
+    }
+
+    private String getLastUserName() {
+        return TcrApplication.get().getLastUserName();
+    }
+
+    private void setLastUserName(String name) {
+        TcrApplication.get().setLastUserName(name);
+    }
+
+    private String getLastUserPassword() {
+        return TcrApplication.get().getLastUserPassword();
+    }
+
+    private void setLastUserPassword(String password) {
+        TcrApplication.get().setLastUserPassword(password);
     }
 
     private Error syncData(EmployeeModel employeeModel) {

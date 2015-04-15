@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.local.EndEmployeeCommand;
+import com.kaching123.tcr.commands.local.StartEmployeeCommand;
 import com.kaching123.tcr.commands.local.StartTransactionCommand;
 import com.kaching123.tcr.commands.store.user.AddEmployeeCommand;
 import com.kaching123.tcr.commands.store.user.BaseEmployeeCommand.BaseEmployeeCallback;
@@ -68,7 +69,7 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
 
     @Override
     protected void callCommand(final EmployeeModel model, ArrayList<Permission> permissions) {
-        StartTransactionCommand.start(this);
+        StartEmployeeCommand.start(this);
         AddEmployeeCommand.start(AddEmployeeActivity.this, model, permissions, addEmployeeCallback);
     }
 
