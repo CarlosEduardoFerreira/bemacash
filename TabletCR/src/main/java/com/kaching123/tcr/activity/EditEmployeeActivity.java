@@ -11,11 +11,9 @@ import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.local.EndEmployeeCommand;
+import com.kaching123.tcr.commands.local.StartTransactionCommand;
 import com.kaching123.tcr.commands.store.user.BaseEmployeeCommand.BaseEmployeeCallback;
 import com.kaching123.tcr.commands.store.user.DeleteEmployeeCommand;
 import com.kaching123.tcr.commands.store.user.EditEmployeeCommand;
@@ -28,6 +26,11 @@ import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,7 +86,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     }
 
     @OptionsItem
-    protected void actionRemoveSelected(){
+    protected void actionRemoveSelected() {
         deleteEmployee();
     }
 
@@ -144,6 +147,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
     @Override
     protected void callCommand(final EmployeeModel model, ArrayList<Permission> permissions) {
+        StartTransactionCommand.start(this);
         EditEmployeeCommand.start(EditEmployeeActivity.this, model, permissions, editEmployeeCallback);
     }
 
@@ -160,24 +164,28 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         @Override
         protected void onSuccess() {
             WaitDialogFragment.hide(EditEmployeeActivity.this);
+            EndEmployeeCommand.start(EditEmployeeActivity.this, true);
             finish();
         }
 
         @Override
         protected void onEmployeeError() {
             WaitDialogFragment.hide(EditEmployeeActivity.this);
+            EndEmployeeCommand.start(EditEmployeeActivity.this);
             AlertDialogFragment.showAlert(EditEmployeeActivity.this, R.string.error_dialog_title, getString(R.string.employee_edit_error_msg));
         }
 
         @Override
         protected void onEmployeeAlreadyExists() {
             WaitDialogFragment.hide(EditEmployeeActivity.this);
+            EndEmployeeCommand.start(EditEmployeeActivity.this);
             AlertDialogFragment.showAlert(EditEmployeeActivity.this, R.string.error_dialog_title, getString(R.string.employee_edit_error_already_exists_msg, "\"" + model.login + "\""));
         }
 
         @Override
         protected void onEmailAlreadyExists() {
             WaitDialogFragment.hide(EditEmployeeActivity.this);
+            EndEmployeeCommand.start(EditEmployeeActivity.this);
             AlertDialogFragment.showAlert(EditEmployeeActivity.this, R.string.error_dialog_title, getString(R.string.employee_edit_error_email_already_exists_msg, "\"" + model.email + "\""));
         }
     }
