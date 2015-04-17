@@ -115,7 +115,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 if (itemDiscount.compareTo(BigDecimal.ZERO) == 1) {
                     printerWrapper.addItemDiscount(itemDiscountText, negative(itemDiscount));
                 }
-                printerWrapper.addNotes(note);
+                if (note != null)
+                    printerWrapper.addNotes(note);
             }
 
             @Override
