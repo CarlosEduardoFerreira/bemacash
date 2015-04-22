@@ -89,6 +89,7 @@ android {
         }
 
         dev {
+            applicationId = "com.kaching123.tcr"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
             buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
@@ -98,7 +99,9 @@ android {
         }
 
         preprod {
-
+            applicationId = "com.kaching123.tcr"
+            buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
+            buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
     }
 }
@@ -155,6 +158,8 @@ dependencies {
     compile 'com.tonicartos:stickygridheaders:1.0.1'
 
     compile 'org.jsoup:jsoup:1.8.1'
+
+    compile 'com.crittercism:crittercism-android-agent:+'
 }
 
 apt {

@@ -11,7 +11,8 @@ public enum WirelessType {
     PINLESS("PINLESS"),
     INTERNATIONAL_TOP_UP("INTERNATIONAL TOP UP"),
     LONG_DISTANCE_PIN("LONG DISTANCE PIN"),
-    NATIONAL_WIRELESS_PIN("NATIONAL WIRELESS PIN");
+    NATIONAL_WIRELESS_PIN("NATIONAL WIRELESS PIN"),
+    UNKNOWN_PRODCUT("UNKNOWN_PRODCUT");
     private String name;
 
     WirelessType(String name) {
@@ -37,7 +38,10 @@ public enum WirelessType {
             return LONG_DISTANCE_PIN;
         } else if (NATIONAL_WIRELESS_PIN.name.equals(name)) {
             return NATIONAL_WIRELESS_PIN;
-        } else return null;
+        } else if (UNKNOWN_PRODCUT.name.equals(name)) {
+            return UNKNOWN_PRODCUT;
+        } else
+            return null;
     }
 
     public boolean isLongDistance() {
@@ -47,6 +51,7 @@ public enum WirelessType {
     public boolean isWireless() {
         return equals(NATIONAL_TOP_UP) || equals(NATIONAL_WIRELESS_PIN);
     }
+
     public boolean isPinless() {
         return equals(PINLESS);
     }

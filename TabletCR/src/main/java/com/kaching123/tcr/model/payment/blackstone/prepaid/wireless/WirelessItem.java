@@ -104,6 +104,28 @@ public class WirelessItem implements IValueModel, Serializable {
                 i++;
             }
         }
+        if (product.name == null)
+            Logger.d("trace WirelessItem constructor: name == null, " + product.name);
+        if (product.carrierName == null)
+            Logger.d("trace WirelessItem constructor: carrierName == null" + product.name);
+        if (product.code == null)
+            Logger.d("trace WirelessItem constructor: code == null" + product.name);
+        if (product.countryCode == null)
+            Logger.d("trace WirelessItem constructor: countryCode == null" + product.name);
+        if (product.dialCountryCode == null)
+            Logger.d("trace WirelessItem constructor: dialCountryCode == null" + product.name);
+        if (product.flags == null)
+            Logger.d("trace WirelessItem constructor: flags == null" + product.name);
+        if (product.imageUrl == null)
+            Logger.d("trace WirelessItem constructor: imageUrl == null" + product.name);
+        if (product.type == null)
+            Logger.d("trace WirelessItem constructor: type == null" + product.name);
+        if (product.instructions == null)
+            Logger.d("trace WirelessItem constructor: instructions == null" + product.name);
+        if (product.termsAndConditions == null)
+            Logger.d("trace WirelessItem constructor: termsAndConditions == null" + product.name);
+
+
     }
 
     public WirelessItem(Cursor c) {
@@ -172,17 +194,23 @@ public class WirelessItem implements IValueModel, Serializable {
     @Override
     public ContentValues toValues() {
         ContentValues v = new ContentValues();
-        v.put(WirelessTable.CODE, code);
-        v.put(WirelessTable.NAME, name);
+
+        v.put(WirelessTable.CODE, code == null ? "" : code);
+        v.put(WirelessTable.NAME, name == null ? "" : name);
         v.put(WirelessTable.USEFIXEDDENOMINATIONS, useFixedDenominations);
         v.put(WirelessTable.MINDENOMINATION, _decimal(minDenomination));
         v.put(WirelessTable.MAXDENOMINATION, _decimal(maxDenomination));
-        v.put(WirelessTable.CARRIERNAME, carrierName);
-        v.put(WirelessTable.COUNTRYCODE, countryCode);
-        v.put(WirelessTable.COUNTRYNAME, countryName);
-        v.put(WirelessTable.DIALCOUNTRYCODE, dialCountryCode);
-        v.put(WirelessTable.TYPE, type.getName());
-        v.put(WirelessTable.TERMSANDCONDITIONS, TermsAndConditions);
+        v.put(WirelessTable.CARRIERNAME, carrierName == null ? "" : carrierName);
+        v.put(WirelessTable.COUNTRYCODE, countryCode == null ? "" : countryCode);
+        v.put(WirelessTable.COUNTRYNAME, countryName == null ? "" : countryName);
+        v.put(WirelessTable.DIALCOUNTRYCODE, dialCountryCode == null ? "" : dialCountryCode);
+        v.put(WirelessTable.TYPE, type != null ? (type.getName() == null ? WirelessType.UNKNOWN_PRODCUT.getName() : type.getName()) : WirelessType.UNKNOWN_PRODCUT.getName());
+        if (type == null)
+            Logger.d("trace WirelessItem type==null, product: " + name);
+        if (type != null && type.getName() == null)
+            Logger.d("trace WirelessItem type.getName() == null, product: " + name);
+
+        v.put(WirelessTable.TERMSANDCONDITIONS, TermsAndConditions == null ? "" : TermsAndConditions);
         v.put(WirelessTable.MERCHANGTBUYINGFREQUENCY, merchantBuyingFrequency);
         v.put(WirelessTable.ZIPCODEBUYFREQUENCY, zipCodeBuyingFrequency);
         v.put(WirelessTable.FEEAMOUNT, feeAmount);
@@ -198,19 +226,23 @@ public class WirelessItem implements IValueModel, Serializable {
             }
             v.put(WirelessTable.DENOMINATIONS, builder.toString());
         }
-        v.put(WirelessTable.URL, iconUrl);
+        v.put(WirelessTable.URL, iconUrl == null ? "" : iconUrl);
 
         StringBuilder sb = new StringBuilder();
         if (productAccessPhones == null) {
             v.put(WirelessTable.PRODUCTACCESSPHONES, "");
         } else {
             for (ProductAccessPhone accessPhone : productAccessPhones) {
-                sb.append(accessPhone.state + "/" + accessPhone.city + "/" + accessPhone.language + "/" + accessPhone.phoneNumber);
-                sb.append(";");
+                if (accessPhone != null) {
+                    sb.append(accessPhone.state + "/" + accessPhone.city + "/" + accessPhone.language + "/" + accessPhone.phoneNumber);
+                    sb.append(";");
+                } else {
+                    Logger.d("trace WirelessItem, null accessPhone.");
+                }
             }
-            v.put(WirelessTable.PRODUCTACCESSPHONES, sb.toString());
+            v.put(WirelessTable.PRODUCTACCESSPHONES, sb.toString() != null ? sb.toString() : "");
 
-            Logger.d("trace accessphone: " + sb.toString());
+            //Logger.d("trace accessphone: " + sb.toString());
         }
         return v;
     }
@@ -221,22 +253,33 @@ public class WirelessItem implements IValueModel, Serializable {
     }
 
     public boolean isLongDistance() {
+        if (type == null)
+            return false;
         return type.isLongDistance();
     }
 
     public boolean isPinless() {
+
+        if (type == null)
+            return false;
         return type.isPinless();
     }
 
     public boolean isWirelessInternational() {
+        if (type == null)
+            return false;
         return type.isWirelessInternational();
     }
 
     public boolean isWireless() {
+        if (type == null)
+            return false;
         return type.isWireless();
     }
 
     public boolean isPinBased() {
+        if (type == null)
+            return false;
         return type.isPin();
     }
 

@@ -242,6 +242,20 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     }
 
     @Override
+    public void addNotes(String notes) {
+        stringBuilder.append(_styled("table", TABLE_STYLE));
+        stringBuilder.append("<tr>");
+        stringBuilder.append("<td>");
+        stringBuilder.append("&nbsp;").append(' ').append("Notes");
+        stringBuilder.append("</td>");
+        stringBuilder.append(_styled("td", PRICE_STYLE));
+        stringBuilder.append(notes);
+        stringBuilder.append("</td>");
+        stringBuilder.append("</tr>");
+        stringBuilder.append("</table>");
+    }
+
+    @Override
     public void change(String cardName, BigDecimal amount) {
         payment(cardName, amount);
     }

@@ -26,9 +26,12 @@ import java.util.ArrayList;
 public class UploadTaskV2 {
 
     protected static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.contentUriNoNotify(SqlCommandTable.URI_CONTENT);
-    private static final int BATCH_SIZE = 20;
+    public static final int BATCH_SIZE = 20;
     public static final String CMD_START_TRANSACTION = "start_transaction";
     public static final String CMD_END_TRANSACTION = "end_transaction";
+    public static final String CMD_START_EMPLOYEE = "start_employee";
+    public static final String CMD_END_EMPLOYEE = "end_employee";
+    private EmployeeModel employee;
 
     static ContentValues sentValues = new ContentValues();
 
@@ -40,6 +43,10 @@ public class UploadTaskV2 {
 
     public UploadTaskV2(OfflineCommandsService service) {
         this.service = service;
+    }
+
+    public UploadTaskV2(EmployeeModel employeeModel) {
+        this.employee = employeeModel;
     }
 
     public boolean webApiUpload(ContentResolver cr) throws TransactionNotFinalizedException {
@@ -57,7 +64,7 @@ public class UploadTaskV2 {
                 final long id = c.getLong(0);
                 String json = c.getString(1);
                 Logger.d("[CMD_TABLE] %d = %s", id, json);
-                if (CMD_START_TRANSACTION.equals(json)) {
+                if (CMD_START_TRANSACTION.equals(json) || CMD_START_EMPLOYEE.equals(json)) {
                     Logger.d("START TRANSACTION");
                     ArrayList<Long> subIds = new ArrayList<Long>();
                     //read transaction
@@ -69,7 +76,7 @@ public class UploadTaskV2 {
                         String subJson = c.getString(1);
                         Logger.d("[CMD_TABLE] %d = %s", subId, subJson);
                         //TODO need to verify end
-                        if (CMD_END_TRANSACTION.equals(subJson)) {
+                        if (CMD_END_TRANSACTION.equals(subJson) || CMD_END_EMPLOYEE.equals(subJson)) {
                             endTransactionId = subId;
                             Logger.d("END TRANSACTION");
                             break;
@@ -116,9 +123,85 @@ public class UploadTaskV2 {
         return !errorsOccurred;
     }
 
+    public boolean employeeUpload(ContentResolver cr) throws TransactionNotFinalizedException {
+        if (TcrApplication.get().isTrainingMode())
+            return true;
+
+        boolean employeeNeedUpload = false;
+        boolean errorsOccurred = false;
+
+        Cursor c = cr.query(URI_SQL_COMMAND_NO_NOTIFY, new String[]{SqlCommandTable.ID, SqlCommandTable.SQL_COMMAND},
+                SqlCommandTable.IS_SENT + " = ?", new String[]{"0"},
+                SqlCommandTable.ID);
+        ArrayList<UploadCommand> commands = new ArrayList<UploadCommand>(BATCH_SIZE);
+        try {
+            while (c.moveToNext()) {
+                final long id = c.getLong(0);
+                String json = c.getString(1);
+                Logger.d("[CMD_TABLE] %d = %s", id, json);
+                if (CMD_START_EMPLOYEE.equals(json)) {
+                    Logger.d("START TRANSACTION");
+                    ArrayList<Long> subIds = new ArrayList<Long>();
+                    //read transaction
+                    BatchSqlCommand batch = null;
+                    long endTransactionId = 0;
+                    while (c.moveToNext()) {
+                        long subId = c.getLong(0);
+                        subIds.add(subId);
+                        String subJson = c.getString(1);
+                        Logger.d("[CMD_TABLE] %d = %s", subId, subJson);
+                        //TODO need to verify end
+                        if (CMD_END_EMPLOYEE.equals(subJson)) {
+                            employeeNeedUpload = true;
+                            endTransactionId = subId;
+                            Logger.d("END TRANSACTION");
+                            break;
+                        }
+                        try {
+                            if (batch == null) {
+                                batch = BatchSqlCommand.fromJson(subJson);
+                            } else {
+                                batch.add(BatchSqlCommand.fromJson(subJson));
+                            }
+                        } catch (JSONException e) {
+                            throw new IllegalArgumentException("can't parse command: " + subJson, e);
+                        }
+                    }
+                    if (batch == null && endTransactionId != 0) {
+                        //need to delete start and end transaction
+                        cr.update(URI_SQL_COMMAND_NO_NOTIFY, sentValues, SqlCommandTable.ID + " = ? OR " + SqlCommandTable.ID + " = ?", new String[]{String.valueOf(id), String.valueOf(endTransactionId)});
+                    } else if (batch == null || endTransactionId == 0) {
+                        throw new TransactionNotFinalizedException("employee is not finalized!");
+                    } else {
+                        String transactionCmd = batch.toJson();
+                        Logger.d("TRANSACTION_RESULT: %s", transactionCmd);
+                        commands.add(new UploadCommand(id, transactionCmd, subIds));
+                    }
+                } else {
+                    commands.add(new UploadCommand(id, json));
+                }
+                if (commands.size() == BATCH_SIZE) {
+                    boolean uploaded = try2Upload(cr, commands);
+                    commands.clear();
+                    if (!uploaded) {
+                        errorsOccurred = true;
+                        break;
+                    }
+                }
+            }
+        } finally {
+            c.close();
+        }
+
+        if (!commands.isEmpty() && employeeNeedUpload) {
+            errorsOccurred = !try2Upload(cr, commands);
+        }
+        return !errorsOccurred;
+    }
+
     private boolean try2Upload(ContentResolver cr, ArrayList<UploadCommand> commands) {
         TcrApplication app = TcrApplication.get();
-        EmployeeModel employeeModel = app.getOperator();
+        EmployeeModel employeeModel = app.getOperator() == null ? employee : app.getOperator();
         if (employeeModel == null) {
             Logger.e("[UploadWeb] user not logged in!");
             return false;
@@ -179,7 +262,7 @@ public class UploadTaskV2 {
         private TransactionNotFinalizedException() {
         }
 
-        private TransactionNotFinalizedException(String detailMessage) {
+        public TransactionNotFinalizedException(String detailMessage) {
             super(detailMessage);
         }
 
