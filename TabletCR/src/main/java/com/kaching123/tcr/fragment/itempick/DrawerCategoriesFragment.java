@@ -28,6 +28,6 @@ public class DrawerCategoriesFragment extends BaseCategoriesFragment{
 
     @Override
     protected String getOrderBy() {
-        return CategoryTable.ORDER_NUM;
+        return CategoryTable.TITLE;
     }
 }
