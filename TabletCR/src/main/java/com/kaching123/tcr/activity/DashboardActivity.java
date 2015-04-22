@@ -31,6 +31,8 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidProcessorActivity;
@@ -107,6 +109,8 @@ import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
+
+import com.crittercism.app.Crittercism;
 
 /**
  * Created by pkabakov on 03.12.13.
@@ -238,6 +242,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 
