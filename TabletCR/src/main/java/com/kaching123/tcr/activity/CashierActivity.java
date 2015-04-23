@@ -228,7 +228,7 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+        if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
             drawerLayout.closeDrawers();
             return;
         }

@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
@@ -117,7 +118,6 @@ import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.processor.PaxBalanceProcessor;
 import com.kaching123.tcr.processor.PaymentProcessor;
 import com.kaching123.tcr.processor.PaymentProcessor.IPaymentProcessor;
-import com.kaching123.tcr.processor.PrepaidProcessor;
 import com.kaching123.tcr.service.DisplayService;
 import com.kaching123.tcr.service.DisplayService.Command;
 import com.kaching123.tcr.service.DisplayService.DisplayBinder;
@@ -195,7 +195,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private AddSaleOrderCallback addOrderCallback = new AddSaleOrderCallback();
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
-    private ItemPrintInfoLoader checkItemPrintStatusLoader = new ItemPrintInfoLoader();
+//    private ItemPrintInfoLoader checkItemPrintStatusLoader = new ItemPrintInfoLoader();
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -1035,13 +1035,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         PrepaidProcessorActivity.start(this, getBillpaymentActivate(), getSunpassActivate());
     }
 
-    private boolean getBillpaymentActivate()
-    {
+    private boolean getBillpaymentActivate() {
         return TcrApplication.get().getBillPaymentActivated();
     }
 
-    private boolean getSunpassActivate()
-    {
+    private boolean getSunpassActivate() {
         return TcrApplication.get().getSunpassActivated();
     }
 
@@ -2075,7 +2073,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         return;
                     }
 
-                    getSupportLoaderManager().restartLoader(LOADER_CHECK_ITEM_PRINT_STATUS, null, checkItemPrintStatusLoader);
+//                    getSupportLoaderManager().restartLoader(LOADER_CHECK_ITEM_PRINT_STATUS, null, checkItemPrintStatusLoader);
+                    isVoidNeedPermission();
                 }
             });
         }
@@ -2087,57 +2086,104 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
-
-        @Override
-        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder.forUri(ORDER_URI)
-                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-                    .transform(new Function<Cursor, SaleOrderModel>() {
-                        @Override
-                        public SaleOrderModel apply(Cursor cursor) {
-                            return new SaleOrderModel(cursor);
-                        }
-                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
-                        @Override
-                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
-                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
-                                return new SaleOrderModelResult(null);
-                            } else {
-                                return new SaleOrderModelResult(saleOrderModels.get(0));
-                            }
-                        }
-                    }).build(BaseCashierActivity.this);
+    private boolean isVoidNeedPermission() {
+        Cursor c = ProviderAction.query(ORDER_URI)
+                .projection(
+                        SaleOrderTable.GUID,
+                        SaleOrderTable.STATUS,
+                        SaleOrderTable.KITCHEN_PRINT_STATUS
+                )
+                .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
+                .perform(BaseCashierActivity.this);
+        SaleOrderPrintInfo saleOrderPrintInfo = null;
+        if (c.moveToFirst()) {
+            saleOrderPrintInfo = new SaleOrderPrintInfo(
+                    c.getString(0),
+                    c.getString(1),
+                    c.getString(2)
+            );
         }
+        if (saleOrderPrintInfo.kitchenPrintStatus != OrderStatus.COMPLETED.name() && saleOrderPrintInfo.Guid != null)
+            if ((saleOrderPrintInfo.kitchenPrintStatus == PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED.name()) || getOperatorPermissions().contains(Permission.VOID_SALES))
+                showVoidConfirmDialog();
+            else {
+                PermissionFragment.showCancelable(BaseCashierActivity.this, new BaseTempLoginListener(BaseCashierActivity.this) {
+                    @Override
+                    public void onLoginComplete() {
+                        super.onLoginComplete();
+                        showVoidConfirmDialog();
+                    }
+                }, Permission.VOID_SALES);
+            }
+        c.close();
 
-        @Override
-        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (saleOrderModel.model != null)
-                        if ((saleOrderModel.model.kitchenPrintStatus != PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
-                            showVoidConfirmDialog();
-                        else {
-                            PermissionFragment.showCancelable(BaseCashierActivity.this, new BaseTempLoginListener(BaseCashierActivity.this) {
-                                @Override
-                                public void onLoginComplete() {
-                                    super.onLoginComplete();
-                                    showVoidConfirmDialog();
-                                }
-                            }, Permission.ADMIN);
-                        }
-                }
-            });
+        return false;
+    }
 
+    class SaleOrderPrintInfo {
+        String Guid;
+        String status;
+        String kitchenPrintStatus;
 
-        }
-
-        @Override
-        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
-            updateTitle(null);
+        public SaleOrderPrintInfo(String Guid, String status, String kitchenPrintStatus) {
+            this.Guid = Guid;
+            this.status = status;
+            this.kitchenPrintStatus = kitchenPrintStatus;
         }
     }
+
+//    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+//
+//        @Override
+//        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
+//            return CursorLoaderBuilder.forUri(ORDER_URI)
+//                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
+//                    .transform(new Function<Cursor, SaleOrderModel>() {
+//                        @Override
+//                        public SaleOrderModel apply(Cursor cursor) {
+//                            return new SaleOrderModel(cursor);
+//                        }
+//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
+//                        @Override
+//                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
+//                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
+//                                return new SaleOrderModelResult(null);
+//                            } else {
+//                                return new SaleOrderModelResult(saleOrderModels.get(0));
+//                            }
+//                        }
+//                    }).build(BaseCashierActivity.this);
+//        }
+//
+//        @Override
+//        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (saleOrderModel.model != null)
+//                        if (saleOrderModel.model.orderStatus != OrderStatus.COMPLETED && orderGuid != null)
+//                            if ((saleOrderModel.model.kitchenPrintStatus == PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
+//                                showVoidConfirmDialog();
+//                            else {
+//                                PermissionFragment.showCancelable(BaseCashierActivity.this, new BaseTempLoginListener(BaseCashierActivity.this) {
+//                                    @Override
+//                                    public void onLoginComplete() {
+//                                        super.onLoginComplete();
+//                                        showVoidConfirmDialog();
+//                                    }
+//                                }, Permission.VOID_SALES);
+//                            }
+//                }
+//            });
+//
+//
+//        }
+//
+//        @Override
+//        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
+//            updateTitle(null);
+//        }
+//    }
 
     private static class SaleOrderItemModelWrapper {
         private final SaleOrderItemModel model;
@@ -2146,7 +2192,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         private final ArrayList<String> optionalGuids;
         private final Unit unit;
 
-        private SaleOrderItemModelWrapper(SaleOrderItemModel model, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, Unit unit) {
+        public SaleOrderItemModelWrapper(SaleOrderItemModel model, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, Unit unit) {
             this.model = model;
             this.modifierGiud = modifierGiud;
             this.addonsGuids = addonsGuids;
