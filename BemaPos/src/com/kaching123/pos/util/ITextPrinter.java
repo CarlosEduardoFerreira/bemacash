@@ -21,5 +21,6 @@ public interface ITextPrinter extends IHeaderFooterPrinter {
     public void powerBy(String label);
     public void payment(String cardName, BigDecimal amount);
     public void add(String content);
+    public void addNotes(String notes);
     public void change(String cardName, BigDecimal amount);
 }
