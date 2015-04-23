@@ -128,6 +128,9 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
             if (oldVersion != IUpdateContainer.VERSION5_7 && newVersion == IUpdateContainer.VERSION5_7) {
                 TcrApplication.get().getShopPref().prepaidVersionId().put(null);
             }
+            if (newVersion == IUpdateContainer.VERSION5_7) {
+                TcrApplication.get().getShopPref().prepaidVersionId().put(null);
+            }
             Logger.d("BaseOpenHelper.onUpgrade(): database was successfully updated");
         } catch (UnsupportedOperationException e) {
             Logger.e("BaseOpenHelper.onUpgrade(): failed to update database, its going to be recreated!", e);
