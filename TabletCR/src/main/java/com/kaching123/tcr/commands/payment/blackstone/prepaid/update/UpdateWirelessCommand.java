@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.SOAPWebCommand;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.GetProductListRequest;
@@ -78,9 +79,14 @@ public class UpdateWirelessCommand extends SOAPWebCommand<GetProductListRequest>
 
         int count = response.products == null ? 0 : response.products.size();
         for (int i = 0; i < count; i++) {
-            operations.add(ContentProviderOperation.newInsert(URI_WIRELESS)
-                    .withValues(new WirelessItem(response.products.get(i)).toValues())
-                    .build());
+            if(response.products.get(i) != null) {
+                operations.add(ContentProviderOperation.newInsert(URI_WIRELESS)
+                        .withValues(new WirelessItem(response.products.get(i)).toValues())
+                        .build());
+            }
+            else{
+                Logger.d("trace WirelessItem createDbOperations, i: "+i);
+            }
         }
 
         return operations;
