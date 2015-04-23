@@ -29,7 +29,8 @@ public class UploadTask implements Runnable {
     public static String ACTION_UPLOAD_STARTED = "com.kaching123.tcr.service.ACTION_UPLOAD_STARTED";
     public static String ACTION_UPLOAD_COMPLETED = "com.kaching123.tcr.service.ACTION_UPLOAD_COMPLETED";
     public static String ACTION_INVALID_UPLOAD_TRANSACTION = "com.kaching123.tcr.service.ACTION_INVALID_UPLOAD_TRANSACTION";
-
+    public static final String CMD_START_EMPLOYEE = "start_employee";
+    public static final String CMD_END_EMPLOYEE = "end_employee";
     public static String EXTRA_SUCCESS = "success";
 
     protected static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.getNoNotifyContentUri(SqlCommandTable.URI_CONTENT);
@@ -44,11 +45,14 @@ public class UploadTask implements Runnable {
 
     private final boolean isManual;
 
-    public UploadTask(OfflineCommandsService service, boolean isManual) {
+    private boolean uploadEmployee;
+
+    public UploadTask(OfflineCommandsService service, boolean isManual, boolean uploadEmployee) {
         this.service = service;
         this.isManual = isManual;
         uploadTaskV1Adapter = new UploadTaskV1(service);
         uploadTaskV2Adapter = new UploadTaskV2(service);
+        this.uploadEmployee = uploadEmployee;
     }
 
     private void fireStartEvent(Context context) {
@@ -83,7 +87,19 @@ public class UploadTask implements Runnable {
             if (isManual)
                 Logger.e("UploadTask skip task: NO USER");
             else
-                Logger.w("UploadTask skip task: NO USER");
+            {
+
+                if (uploadEmployee)
+                    try {
+                        ContentResolver cr = service.getContentResolver();
+                        uploadTaskV2Adapter.employeeUpload(cr);
+                        cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+                    } catch (TransactionNotFinalizedException e) {
+                        e.printStackTrace();
+                        Logger.e("UploadTask uploadEmployee error", e);
+                    }
+
+            }
             return;
         }
 

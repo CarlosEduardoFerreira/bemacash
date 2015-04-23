@@ -230,5 +230,9 @@ public interface ShopPref {
 
     boolean BillPaymentActivated();
 
+    String lastUserName();
+
+    String lastUserPassword();
+
     String usbMSRName();
 }

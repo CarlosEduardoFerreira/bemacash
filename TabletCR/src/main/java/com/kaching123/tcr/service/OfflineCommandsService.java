@@ -3,13 +3,18 @@ package com.kaching123.tcr.service;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.IBinder;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.service.v2.UploadTaskV2;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
@@ -23,16 +28,23 @@ public class OfflineCommandsService extends Service {
 
     public static final String ACTION_SYNC = "OfflineCommandsService.ACTION_SYNC";
     public static final String ACTION_UPLOAD = "OfflineCommandsService.ACTION_UPLOAD";
+    public static final String ACTION_EMPLOYEE_UPLOAD = "OfflineCommandsService.ACTION_EMPLOYEE_UPLOAD";
     public static final String ACTION_UPLOAD_AND_SYNC = "OfflineCommandsService.ACTION_UPLOAD_AND_SYNC";
 
     public static final String EXTRA_IS_MANUAL = "OfflineCommandsService.EXTRA_IS_MANUAL";
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
-
-
+    protected UploadTaskV2 uploadTaskV2Adapter;
+    protected static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.getNoNotifyContentUri(ShopStore.SqlCommandTable.URI_CONTENT);
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        uploadTaskV2Adapter = new UploadTaskV2(this);
     }
 
     @Override
@@ -49,6 +61,8 @@ public class OfflineCommandsService extends Service {
         } else if (ACTION_UPLOAD_AND_SYNC.equals(intent.getAction())) {
             doUpload(false);
             doDownload(false);
+        } else if (ACTION_EMPLOYEE_UPLOAD.equals(intent.getAction())) {
+            doEmployeeUpload();
         }
         return START_STICKY;
     }
@@ -75,7 +89,20 @@ public class OfflineCommandsService extends Service {
      */
     private void doUpload(boolean isManual) {
         Logger.d("[OfflineService] doUpload: isManual = " + isManual);
-        executor.submit(new UploadTask(this, isManual));
+        executor.submit(new UploadTask(this, isManual, false));
+    }
+
+    private void doEmployeeUpload( ) {
+        Logger.d("[OfflineService] doUpload: isManual = false");
+//        executor.submit(new UploadTask(this, false, true));
+        try {
+            ContentResolver cr = this.getContentResolver();
+            uploadTaskV2Adapter.employeeUpload(cr);
+            cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+        } catch (UploadTaskV2.TransactionNotFinalizedException e) {
+            e.printStackTrace();
+            Logger.e("UploadTask uploadEmployee error", e);
+        }
     }
 
     public static void scheduleSyncAction(Context context) {
@@ -117,6 +144,13 @@ public class OfflineCommandsService extends Service {
         return intent;
     }
 
+    private static Intent getEmployeeUploadIntent(Context context, boolean isManual) {
+        Intent intent = new Intent(context, OfflineCommandsService.class);
+        intent.setAction(ACTION_EMPLOYEE_UPLOAD);
+        intent.putExtra(EXTRA_IS_MANUAL, isManual);
+        return intent;
+    }
+
     private static Intent getScheduleIntent(Context context) {
         Intent intent = new Intent(context, OfflineCommandsService.class);
         intent.setAction(ACTION_UPLOAD_AND_SYNC);
@@ -140,6 +174,12 @@ public class OfflineCommandsService extends Service {
     public static void startUpload(Context context, boolean isManual) {
         Logger.d("[OfflineService] startUpload");
         Intent intent = getUploadIntent(context, isManual);
+        context.startService(intent);
+    }
+
+    public static void startemployeeTableUpload(Context context) {
+        Logger.d("[OfflineService] startUpload");
+        Intent intent = getEmployeeUploadIntent(context, false);
         context.startService(intent);
     }
 
