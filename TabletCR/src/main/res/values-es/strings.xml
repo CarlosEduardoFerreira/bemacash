@@ -1237,14 +1237,14 @@
     <string name="sync_shop_info">shop</string>
     <string name="sync_recalc_data">local</string>
 
-    <string name="kitchen_print_qty_update_failed">Items printed quantity not updated for printer \'%s\'</string>
+    <string name="kitchen_print_qty_update_failed">Ítems impresos no actualizados para impresora \'%s\'</string>
 
-    <string name="warning_message_incomplete_order">There was an incomplete order, it will be uploaded to the server as it is</string>
-    <string name="warning_message_incomplete_order_try_to_complete">There was an incomplete order, it will be uploaded to the server as it is. Do you want to complete it?</string>
+    <string name="warning_message_incomplete_order">Detectada una orden incompleta. Será sincronizado con el servidor parcialmente.</string>
+    <string name="warning_message_incomplete_order_try_to_complete">Detectada una orden incompleta. Será sincronizado con el servidor parcialmente. Desea finalizar la orden?</string>
 
-    <string name="inventory_status_report_print_warning_msg">Printing inventory list may take several minutes to complete</string>
+    <string name="inventory_status_report_print_warning_msg">Impresiónnpuede llevar vários minutos.</string>
 
-    <string name="customer_email_invalid_msg">Email is empty or invalid</string>
+    <string name="customer_email_invalid_msg">Email inválido</string>
 
     <string name="button_login">Sign in</string>
     <string name="button_signup">Sign up</string>
@@ -1277,13 +1277,13 @@
     <string name="switch_drop">safe drop</string>
     <string name="switch_payout">payout</string>
 
-    <string name="dashboard_sync_dialog_title">Synchronization</string>
-    <string name="dashboard_sync_dialog_msg">Your local changes will be fetched as soon as synchronization passes successfully</string>
+    <string name="dashboard_sync_dialog_title">Sincronizaci\u00F3n</string>
+    <string name="dashboard_sync_dialog_msg">Sus cambios seran actualizados asi que la sincronizaci\u00F3n occura.</string>
 
-    <string name="warning_message_tips_enabled">Tips feature was enabled</string>
-    <string name="warning_message_tips_disabled">Tips feature was disabled</string>
+    <string name="warning_message_tips_enabled">Propinas habilitadas</string>
+    <string name="warning_message_tips_disabled">Propinas deshabilitadas</string>
 
-    <string name="wait_message_manual_return">Please wait...</string>
+    <string name="wait_message_manual_return">Por favor, esperar...</string>
 
     <string name="yes">Sí</string>
     <string name="no">No</string>
@@ -1309,7 +1309,7 @@
         <item quantity="other">Garantía caducada por %d dias</item>
     </plurals>
 
-    <string name="error_message_max_items_count">Has alcanzado el número máximo de items de inventario soportado en su plan mensual . Por favor , Contactar Kashin 123 para aumentar este límite.</string>
+    <string name="error_message_max_items_count">Has alcanzado el número máximo de items de inventario soportado en su plan mensual . Por favor , Contactar BlackStone para aumentar este límite.</string>
     <string name="prepaid_head_home_button">Home</string>
     <string name="prepaid_head_long_distance_text">Long Distance</string>
     <string name="prepaid_head_wireless_text">Wireless</string>
