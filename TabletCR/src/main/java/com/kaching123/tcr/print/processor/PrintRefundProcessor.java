@@ -95,7 +95,8 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                                        BigDecimal itemDiscount, BigDecimal itemTax,
                                        BigDecimal singleItemPrice, List<Unit> units,
                                        ArrayList<SaleOrderItemViewModel.AddonInfo> addons,
-                                       BigDecimal transactionFee, BigDecimal itemFullPrice) {
+                                       BigDecimal transactionFee, BigDecimal itemFullPrice,
+                                       String note) {
                     if (!saleItemsQty.containsKey(saleItemGuid))
                         return;
 

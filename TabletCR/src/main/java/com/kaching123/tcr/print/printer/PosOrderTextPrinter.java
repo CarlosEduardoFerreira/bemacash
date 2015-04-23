@@ -103,6 +103,11 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
     }
 
     @Override
+    public void addNotes(String notes) {
+        add(new PrintLineAction(formatStirng_notes(PRINTER_MAX_TEXT_LEN, PRINTER_FOUR_QTY_LEN, notes)));
+    }
+
+    @Override
     public void change(String label, BigDecimal amount) {
         payment(label, amount);
     }

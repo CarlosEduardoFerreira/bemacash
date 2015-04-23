@@ -230,6 +230,23 @@ public class BasePosTextPrinter implements IPrinter {
         return printTitle.toString();
     }
 
+    public static String formatStirng_notes(int maxLen, int qtyLen, String note) {
+        String title = "Notes";
+
+        StringBuilder printTitle = new StringBuilder();
+
+        for (int i = qtyLen; i > 0; i--) {
+            printTitle.append(" ");
+        }
+        printTitle.append(title);
+        for (int j = 0; j < maxLen - qtyLen - title.length() - note.length(); j++) {
+            printTitle.append(" ");
+        }
+
+        printTitle.append(note);
+        return printTitle.toString();
+    }
+
     public static String formatString_Header(int maxLen, int rightBlockLen, String left, String fixedRight) {
         if (left == null)
             left = "";

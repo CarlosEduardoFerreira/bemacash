@@ -87,7 +87,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             @Override
             public void handleItem(String saleItemGuid, String description, BigDecimal qty,
                                    BigDecimal itemSubtotal, BigDecimal itemDiscount,
-                                   BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice) {
+                                   BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note) {
                 List<String> unitAsStrings = new ArrayList<String>(units.size());
                 for (Unit unit : units) {
                     unitAsStrings.add(unit.serialCode);
@@ -115,6 +115,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 if (itemDiscount.compareTo(BigDecimal.ZERO) == 1) {
                     printerWrapper.addItemDiscount(itemDiscountText, negative(itemDiscount));
                 }
+                printerWrapper.addNotes(note);
             }
 
             @Override
