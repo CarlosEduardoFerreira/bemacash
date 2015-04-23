@@ -103,6 +103,13 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -342,6 +349,10 @@ public class DashboardActivity extends SuperBaseActivity {
             showLoginFragment();
             updateUI(null);
         }
+        if (!getApp().hasPermission(Permission.CASH_DRAWER_MONEY)) {
+            cashOnDrawerContainer.setVisibility(View.GONE);
+            totalSalesContainer.setVisibility(View.GONE);
+        }
     }
 
     private void showLoginFragment() {
@@ -429,8 +440,8 @@ public class DashboardActivity extends SuperBaseActivity {
 
     private void setStatisticsContainers() {
         boolean hasShiftPermission = getApp().hasPermission(Permission.OPEN_CLOSE_SHIFT);
-        totalSalesContainer.setVisibility(isShiftOpened && hasShiftPermission ? View.VISIBLE : View.GONE);
-        cashOnDrawerContainer.setVisibility(hasShiftPermission ? View.VISIBLE : View.GONE);
+        totalSalesContainer.setVisibility(isShiftOpened && hasShiftPermission && getApp().hasPermission(Permission.CASH_DRAWER_MONEY) ? View.VISIBLE : View.GONE);
+        cashOnDrawerContainer.setVisibility(hasShiftPermission && getApp().hasPermission(Permission.CASH_DRAWER_MONEY) ? View.VISIBLE : View.GONE);
     }
 
     private void need2CollectData() {
