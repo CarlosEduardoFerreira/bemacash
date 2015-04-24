@@ -12,6 +12,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.component.CustomSwitch;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.util.KeyboardUtils;
@@ -32,7 +33,7 @@ public class CashDrawerMovementEditFragment extends DecimalEditFragment {
     protected BigDecimal cashInDrawer;
 
     @ViewById
-    protected Switch movementTypeSwitch;
+    protected CustomSwitch movementTypeSwitch;
     @ViewById
     protected EditText commentBox;
 
