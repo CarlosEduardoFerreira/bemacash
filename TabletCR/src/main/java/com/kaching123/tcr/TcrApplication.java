@@ -10,8 +10,6 @@ import android.util.Base64;
 
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EApplication;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.RestCommand.PlainTextResponse;
@@ -40,6 +38,8 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.kaching123.tcr.util.OrgJsonConverter;
 import com.squareup.okhttp.OkHttpClient;
 
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EApplication;
 import org.apache.commons.codec.Charsets;
 
 import java.io.IOException;
@@ -213,7 +213,8 @@ public class TcrApplication extends Application {
                     _decimal(shopPref.defaultStoreCommission().getOr(null)),
                     shopPref.offlinePeriodHours().getOr(0),
                     shopPref.printerTwoCopiesReceipt().getOr(false),
-                    shopPref.maxItemsCount().getOr(0));
+                    shopPref.maxItemsCount().getOr(0),
+                    shopPref.printDropOrPayout().getOr(true));
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -492,6 +493,7 @@ public class TcrApplication extends Application {
                 .offlinePeriodHours().put(info.offlinePeriodHours)
                 .printerTwoCopiesReceipt().put(info.printerTwoCopiesReceipt)
                 .maxItemsCount().put(info.maxItemsCount)
+                .printDropOrPayout().put(info.printDropOrPayout)
                 .apply();
 
         setUsers();
@@ -573,21 +575,19 @@ public class TcrApplication extends Application {
         return shopInfo.printerTwoCopiesReceipt;
     }
 
-    public void setSunpassActivated(boolean activated){
+    public void setSunpassActivated(boolean activated) {
         shopPref.SunpassActivated().put(activated);
     }
 
-    public boolean getSunpassActivated()
-    {
+    public boolean getSunpassActivated() {
         return shopPref.SunpassActivated().get();
     }
 
-    public void setBillPaymentActivated(boolean activated){
+    public void setBillPaymentActivated(boolean activated) {
         shopPref.BillPaymentActivated().put(activated);
     }
 
-    public boolean getBillPaymentActivated()
-    {
+    public boolean getBillPaymentActivated() {
         return shopPref.BillPaymentActivated().get();
     }
 
@@ -683,14 +683,16 @@ public class TcrApplication extends Application {
         return offlinePeriod;
     }
 
-    public void setNeedBillPaymentUpdated(boolean needed)
-    {
+    public void setNeedBillPaymentUpdated(boolean needed) {
         shopPref.NeedBillpaymentUpdated().put(needed);
     }
 
-    public boolean getNeedBillPaymentUpdated()
-    {
+    public boolean getNeedBillPaymentUpdated() {
         return shopPref.NeedBillpaymentUpdated().getOr(true);
+    }
+
+    public boolean getPrintDropOrPayout() {
+        return shopPref.printDropOrPayout().getOr(true);
     }
 
     public void setLastUserName(String name) {

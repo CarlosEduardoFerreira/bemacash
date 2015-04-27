@@ -231,4 +231,6 @@ public interface ShopPref {
     String lastUserName();
 
     String lastUserPassword();
+
+    boolean printDropOrPayout();
 }

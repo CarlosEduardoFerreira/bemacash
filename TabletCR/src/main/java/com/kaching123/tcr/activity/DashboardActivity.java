@@ -20,19 +20,12 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crittercism.app.Crittercism;
 import com.getbase.android.db.cursors.FluentCursor;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
-
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidProcessorActivity;
@@ -99,6 +92,13 @@ import com.kaching123.tcr.util.DateUtils;
 import com.kaching123.tcr.util.ScreenUtils;
 import com.telly.groundy.TaskHandler;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -109,8 +109,6 @@ import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
-
-import com.crittercism.app.Crittercism;
 
 /**
  * Created by pkabakov on 03.12.13.
@@ -562,15 +560,15 @@ public class DashboardActivity extends SuperBaseActivity {
             CashierActivity.start(this);
         }
     }
-    private boolean getBillpaymentActivate()
-    {
+
+    private boolean getBillpaymentActivate() {
         return TcrApplication.get().getBillPaymentActivated();
     }
 
-    private boolean getSunpassActivate()
-    {
+    private boolean getSunpassActivate() {
         return TcrApplication.get().getSunpassActivated();
     }
+
     @Click
     protected void inventoryButtonClicked() {
         runInventory(false);
@@ -1438,8 +1436,17 @@ public class DashboardActivity extends SuperBaseActivity {
     }
 
     private void printDropAndPayout(boolean skipPaperWarning, boolean searchByMac) {
-        WaitDialogFragment.show(this, getString(R.string.wait_printing));
-        PrintDropPayoutCommand.start(this, null, skipPaperWarning, searchByMac, printDropPayoutCallback);
+        boolean printDropOrPayout = getPrintDropOrPayout();
+        if (printDropOrPayout)
+        {
+            WaitDialogFragment.show(this, getString(R.string.wait_printing));
+            PrintDropPayoutCommand.start(this, null, skipPaperWarning, searchByMac, printDropPayoutCallback);
+        }
+
+    }
+
+    private boolean getPrintDropOrPayout() {
+        return getApp().getPrintDropOrPayout();
     }
 
     private class StartShiftCallback extends StartShiftCommand.BaseStartShiftCallback {
