@@ -9,9 +9,12 @@ import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.text.Editable;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -26,6 +29,7 @@ import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment.OnAddonsChan
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.model.ItemExModel;
 
+import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsMenu;
@@ -128,6 +132,19 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
             public boolean onChanged(String text) {
                 tryToSearchBarCode(scannerInput);
                 return true;
+            }
+        });
+        scannerInput.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    Toast.makeText(CashierActivity.this, scannerInput.getText(), Toast.LENGTH_SHORT).show();
+                    tryToSearchBarCode(scannerInput);
+                    return true;
+                }
+                return false;
             }
         });
         super.init();

@@ -8,6 +8,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -256,7 +257,19 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
             }
         });
 
-
+        orderNumber.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    Toast.makeText(getActivity(), orderNumber.getText(), Toast.LENGTH_SHORT).show();
+                    filterClicked();
+                    return true;
+                }
+                return false;
+            }
+        });
         cashierAdapter = new CashierFilterSpinnerAdapter(getActivity());
         merchant.setAdapter(cashierAdapter);
 
