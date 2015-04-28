@@ -3,7 +3,10 @@ package com.kaching123.tcr.fragment.creditreceipt;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -62,6 +65,20 @@ public class CreditReceiptFilterFragment extends DateRangeFragment implements IK
             }
         });
 
+        creditReceiptNum.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    Toast.makeText(getActivity(), creditReceiptNum.getText(), Toast.LENGTH_SHORT).show();
+                    filterClicked();
+                    return false;
+                }
+                return false;
+            }
+        });
+
         cashierAdapter = new CashierFilterSpinnerAdapter(getActivity());
         cashier.setAdapter(cashierAdapter);
 
@@ -116,6 +133,11 @@ public class CreditReceiptFilterFragment extends DateRangeFragment implements IK
         }
     }
 
+    public void makeCreditReceiptNumFocus()
+    {
+        creditReceiptNum.setFocusableInTouchMode(true);
+        creditReceiptNum.requestFocus();
+    }
     @Override
     public void attachMe2Keyboard(CustomEditBox v) {
         keyboard.attachEditView(v);

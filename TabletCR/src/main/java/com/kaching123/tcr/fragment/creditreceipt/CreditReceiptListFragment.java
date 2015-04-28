@@ -15,10 +15,6 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ItemClick;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.creditreceipt.CreditReceiptFilterFragment.CreditReceiptFilterListener;
@@ -30,6 +26,11 @@ import com.kaching123.tcr.store.ShopSchema2.CreditReceiptExView2.PaymentTable;
 import com.kaching123.tcr.store.ShopSchema2.CreditReceiptExView2.RegisterTable;
 import com.kaching123.tcr.store.ShopStore.CreditReceiptExView;
 import com.kaching123.tcr.util.DateUtils;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -66,20 +67,25 @@ public class CreditReceiptListFragment extends SuperBaseFragment implements Cred
     private ReceiptsAdapter adapter;
     Calendar calendar = Calendar.getInstance();
     //private IListRefreshedListener listener;
+    protected CreditReceiptListFragmentListener creditReceiptListFragmentListener;
 
     private CreditReceiptsLoader creditReceiptsLoader = new CreditReceiptsLoader();
     private CreditReceiptInfoLoader creditReceiptInfoLoader = new CreditReceiptInfoLoader();
 
     @AfterViews
-    public void onCreate(){
+    public void onCreate() {
         adapter = new ReceiptsAdapter(getActivity());
         listView.setAdapter(adapter);
     }
 
     @ItemClick(android.R.id.list)
-    protected void listViewItemClicked(int pos){
+    protected void listViewItemClicked(int pos) {
         String receiptGuid = adapter.getGuid(pos);
         PrintCreditReceiptFragmentDialog.show(getActivity(), receiptGuid);
+    }
+
+    public void setListener(CreditReceiptListFragmentListener creditReceiptListFragmentListener) {
+        this.creditReceiptListFragmentListener = creditReceiptListFragmentListener;
     }
 
     private Loader getLoader(int loaderId) {
@@ -128,6 +134,8 @@ public class CreditReceiptListFragment extends SuperBaseFragment implements Cred
     private void setTotal(CreditReceiptsInfo creditReceiptsInfo) {
         showPrice(totalAmount, creditReceiptsInfo.total);
         showPrice(totalUsedAmount, creditReceiptsInfo.usedTotal);
+        if (creditReceiptListFragmentListener != null)
+            creditReceiptListFragmentListener.onSearchFinish();
     }
 
     @Override
@@ -243,10 +251,10 @@ public class CreditReceiptListFragment extends SuperBaseFragment implements Cred
             showPrice(holder.amount, _decimal(c, c.getColumnIndex(CreditReceiptTable.AMOUNT)));
 
             long usedTime = c.getLong(c.getColumnIndex(PaymentTable.CREATE_TIME));
-            if(usedTime > 0){
+            if (usedTime > 0) {
                 holder.usedTime.setText(DateUtils.dateOnlyFormat(usedTime));
                 showPrice(holder.usedAmount, _decimal(c, c.getColumnIndex(PaymentTable.AMOUNT)));
-            }else{
+            } else {
                 holder.usedTime.setText(null);
                 holder.usedAmount.setText(null);
             }
@@ -255,17 +263,17 @@ public class CreditReceiptListFragment extends SuperBaseFragment implements Cred
         }
 
         public String getGuid(int pos) {
-            Cursor c = (Cursor)getItem(pos);
+            Cursor c = (Cursor) getItem(pos);
             return c.getString(c.getColumnIndex(CreditReceiptTable.GUID));
         }
 
         public BigDecimal getAmount(int pos) {
-            Cursor c = (Cursor)getItem(pos);
+            Cursor c = (Cursor) getItem(pos);
             return _decimal(c, c.getColumnIndex(CreditReceiptTable.AMOUNT));
         }
 
         public BigDecimal getUsedAmount(int pos) {
-            Cursor c = (Cursor)getItem(pos);
+            Cursor c = (Cursor) getItem(pos);
             long usedTime = c.getLong(c.getColumnIndex(PaymentTable.CREATE_TIME));
             return usedTime > 0 ? _decimal(c, c.getColumnIndex(PaymentTable.AMOUNT)) : null;
         }
@@ -291,4 +299,7 @@ public class CreditReceiptListFragment extends SuperBaseFragment implements Cred
         }
     }
 
+    public interface CreditReceiptListFragmentListener {
+        void onSearchFinish();
+    }
 }

@@ -228,7 +228,6 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                     regs,
                     seqs);
         }
-
     }
 
     private Pair<String, String> getSeq(String s) {
@@ -265,7 +264,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                     // Perform action on key press
                     Toast.makeText(getActivity(), orderNumber.getText(), Toast.LENGTH_SHORT).show();
                     filterClicked();
-                    return true;
+                    return false;
                 }
                 return false;
             }
@@ -333,6 +332,16 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     @Override
     public void onItemClicked(String ignore0, BigDecimal ignore1, Date ignore2, String ignore3, String numText, OrderType type, boolean isOrderTipped) {
 
+    }
+
+    @Override
+    public void onSearchFinish() {
+
+    }
+
+    public void makeCreditReceiptNumFocus() {
+        orderNumber.setFocusableInTouchMode(true);
+        orderNumber.requestFocus();
     }
 
     @Override

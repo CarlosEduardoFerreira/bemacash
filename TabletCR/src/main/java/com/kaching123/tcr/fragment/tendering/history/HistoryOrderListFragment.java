@@ -15,11 +15,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -40,6 +35,12 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.TipsTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTipsQuery;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -106,7 +107,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @AfterViews
     protected void init() {
-        isTipsEnabled = ((TcrApplication)getActivity().getApplicationContext()).isTipsEnabled();
+        isTipsEnabled = ((TcrApplication) getActivity().getApplicationContext()).isTipsEnabled();
         setListAdapter(adapter = new HistoryOrderAdapter(getActivity(), isTipsEnabled));
         getListView().setOnItemClickListener(new OnItemClickListener() {
 
@@ -214,6 +215,10 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         for (ILoader loader : loaderCallback) {
             loader.onLoad(adapter.getCount(), priceRange.first, priceRange.second);
         }*/
+        for (ILoader loader : loaderCallback) {
+            loader.onSearchFinish();
+        }
+
     }
 
     private Pair<BigDecimal, BigDecimal> getPriceRange(List<SaleOrderTipsViewModel> saleOrderModels) {
@@ -250,8 +255,8 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     }
 
     @OptionsItem
-    protected void actionAddSelected(){
-        if (((TcrApplication)getActivity().getApplicationContext()).getStartView() == ShopInfoViewJdbcConverter.ShopInfo.ViewType.QUICK_SERVICE) {
+    protected void actionAddSelected() {
+        if (((TcrApplication) getActivity().getApplicationContext()).getStartView() == ShopInfoViewJdbcConverter.ShopInfo.ViewType.QUICK_SERVICE) {
             QuickServiceActivity.start4Return(getActivity());
         } else {
             CashierActivity.start4Return(getActivity());
@@ -263,6 +268,8 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         void onLoad(int count, BigDecimal min, BigDecimal max);
 
         void onItemClicked(String guid, BigDecimal totalAmount, Date dateText, String cashierText, String numText, OrderType type, boolean isTipped);
+
+        void onSearchFinish();
     }
 
     private class SaleOrderTipsViewFunction extends ListConverterFunction<SaleOrderTipsViewModel> {
@@ -282,25 +289,25 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
             TenderType tenderType;
             ArrayList<TenderType> tenderTypes = new ArrayList<TenderType>();
-            if (hasCashTransactions){
+            if (hasCashTransactions) {
                 tenderTypes.add(TenderType.CASH);
             }
-            if (hasCreditTransactions){
+            if (hasCreditTransactions) {
                 tenderTypes.add(TenderType.CREDIT_CARD);
             }
-            if (hasDebitTransactions){
+            if (hasDebitTransactions) {
                 tenderTypes.add(TenderType.DEBIT_CARD);
             }
-            if (hasEbtTransactions){
+            if (hasEbtTransactions) {
                 tenderTypes.add(TenderType.EBT);
             }
             if (hasOtherTransactions) {
                 tenderTypes.add(TenderType.OTHER);
             }
 
-            if (tenderTypes.isEmpty()){
+            if (tenderTypes.isEmpty()) {
                 tenderType = null;
-            } else if (tenderTypes.size() == 1){
+            } else if (tenderTypes.size() == 1) {
                 tenderType = tenderTypes.get(0);
             } else {
                 tenderType = TenderType.MULTIPLE;
@@ -346,9 +353,6 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
 
     }
-
-
-
 
 
 }

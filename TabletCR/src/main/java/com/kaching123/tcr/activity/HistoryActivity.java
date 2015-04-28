@@ -401,6 +401,11 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     }
 
     @Override
+    public void onSearchFinish() {
+        historyFragment.makeCreditReceiptNumFocus();
+    }
+
+    @Override
     public void onBarcodeReceived(String barcode) {
         if (historyFragment != null) {
             int i = 0;

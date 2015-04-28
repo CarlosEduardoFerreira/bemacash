@@ -1018,6 +1018,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void showScannerWaitBlock(boolean visible) {
         scannerWaitBlock.setVisibility(visible ? View.VISIBLE : View.GONE);
+        makeScannerInputFocus();
+    }
+
+    protected void makeScannerInputFocus()
+    {
+
     }
 
     protected void actionBarItemClicked() {

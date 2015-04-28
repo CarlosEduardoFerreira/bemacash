@@ -2,14 +2,15 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.FragmentById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.creditreceipt.CreditReceiptFilterFragment;
 import com.kaching123.tcr.fragment.creditreceipt.CreditReceiptListFragment;
 import com.kaching123.tcr.model.Permission;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.FragmentById;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +19,7 @@ import java.util.Set;
  * Created by gdubina on 27/02/14.
  */
 @EActivity(R.layout.creditreceipt_activity)
-public class CreditReceiptsActivity extends ScannerBaseActivity {
+public class CreditReceiptsActivity extends ScannerBaseActivity implements CreditReceiptListFragment.CreditReceiptListFragmentListener {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -45,6 +46,7 @@ public class CreditReceiptsActivity extends ScannerBaseActivity {
 
     @AfterViews
     protected void init() {
+        listFragment.setListener(CreditReceiptsActivity.this);
         filterFragment.setListener(listFragment);
     }
 
@@ -60,4 +62,11 @@ public class CreditReceiptsActivity extends ScannerBaseActivity {
 
         onBarcodeReceived(barcode);
     }
+
+    @Override
+    public void onSearchFinish() {
+        filterFragment.makeCreditReceiptNumFocus();
+    }
+
+
 }
