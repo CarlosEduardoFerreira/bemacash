@@ -96,7 +96,7 @@ public class OpenAmountFragment extends DecimalEditFragment {
 
     private void try2OpenDrawer(boolean searchByMac){
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_open_drawer));
-        OpenDrawerCommand.start(getActivity(), searchByMac, openDrawerCallback);
+        OpenDrawerCommand.start(getActivity(), searchByMac, openDrawerCallback, false);
     }
 
     @Override
@@ -149,11 +149,11 @@ public class OpenAmountFragment extends DecimalEditFragment {
         }
 
         @Override
-        protected void onDrawerOpened() {
-            onDrawerOpened(false);
+        protected void onDrawerOpened(boolean needSync) {
+            onDrawerOpened(false, needSync);
         }
 
-        private void onDrawerOpened(boolean ignoreDrawable) {
+        private void onDrawerOpened(boolean ignoreDrawable, boolean needSync) {
             WaitDialogFragment.hide(getActivity());
             if (editAmountListener != null)
                 editAmountListener.onPutCash(ignoreDrawable, openAmount);
