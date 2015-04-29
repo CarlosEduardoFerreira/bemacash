@@ -105,7 +105,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
@@ -764,7 +763,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     waitForCloseDrawerCallback.onDrawerClosed(false);
                 } else {
                     showPutCashDialog();
-                    closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this,false, waitForCloseDrawerCallback);
+                    closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, false, waitForCloseDrawerCallback);
                 }
             }
 
@@ -1144,7 +1143,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
         @Override
         protected void onDrawerClosed(boolean needSync) {
-            if(needSync)
+            if (needSync)
                 OfflineCommandsService.startUpload(DashboardActivity.this);
             if (isShiftOpened) {
                 CloseDrawerFragment.hide(DashboardActivity.this);
@@ -1157,6 +1156,11 @@ public class DashboardActivity extends SuperBaseActivity {
                 WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_start_shift));
                 StartShiftCommand.start(DashboardActivity.this, startShiftCallback, openAmount);
                 openAmount = null;
+            }
+            if (!getApp().isShiftOpened()) {
+                AlertDialogFragment.showAlert(DashboardActivity.this, R.string.error_dialog_title, getResources().getString(R.string.reports_error_open_shift));
+            } else {
+                PrintXReportFragment.show(DashboardActivity.this, getApp().getShiftGuid(), ReportsActivity.ReportType.X_REPORT_CURRENT_SHIFT);
             }
         }
 
@@ -1171,7 +1175,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         private void handleTryAgainBtn() {
-            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this,false, this);
+            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, false, this);
         }
 
         @Override
@@ -1281,7 +1285,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            try2OpenDrawer(true, noSaleOpenDrowerCallback,false);
+                            try2OpenDrawer(true, noSaleOpenDrowerCallback, false);
                             return true;
                         }
                     }
@@ -1440,8 +1444,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
     private void printDropAndPayout(boolean skipPaperWarning, boolean searchByMac) {
         boolean printDropOrPayout = getPrintDropOrPayout();
-        if (printDropOrPayout)
-        {
+        if (printDropOrPayout) {
             WaitDialogFragment.show(this, getString(R.string.wait_printing));
             PrintDropPayoutCommand.start(this, null, skipPaperWarning, searchByMac, printDropPayoutCallback);
         }
