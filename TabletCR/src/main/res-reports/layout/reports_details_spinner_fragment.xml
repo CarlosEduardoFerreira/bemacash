@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/beige"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_height="48dp"
@@ -21,12 +21,26 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_marginLeft="4dp"
-            android:minWidth="58dp"/>
+            android:minWidth="58dp" />
 
         <Spinner
             android:id="@+id/mode_entities_spinner"
             android:layout_height="wrap_content"
-            android:layout_width="@dimen/report_spinner_def_width"/>
+            android:layout_width="@dimen/report_spinner_def_width" />
+
+        <TextView
+            android:id="@+id/cash_drawer_type_label"
+            style="@style/Reports.Label"
+            android:text="@string/report_sales_by_drops_and_payments_header_type"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:minWidth="58dp" />
+
+        <Spinner
+            android:id="@+id/type_spinner"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/report_spinner_def_width" />
 
         <TextView
             android:id="@+id/from_label"
@@ -34,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_marginLeft="15dp"
-            android:text="@string/reports_from_label"/>
+            android:text="@string/reports_from_label" />
 
         <EditText
             android:id="@+id/from_edit"
@@ -43,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_below="@id/from_label"
             android:layout_marginRight="8dp"
-            android:layout_marginLeft="4dp"/>
+            android:layout_marginLeft="4dp" />
 
         <TextView
             android:id="@+id/to_label"
@@ -52,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_toRightOf="@id/from_edit"
             android:paddingLeft="11dp"
-            android:text="@string/reports_to_label"/>
+            android:text="@string/reports_to_label" />
 
         <EditText
             android:id="@+id/to_edit"
@@ -61,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_below="@id/to_label"
             android:layout_alignLeft="@id/to_label"
-            android:layout_marginRight="86dp"/>
+            android:layout_marginRight="86dp" />
 
     </LinearLayout>
 
@@ -71,14 +85,12 @@
         android:layout_width="match_parent"
         android:layout_below="@id/from_edit"
         android:layout_marginTop="8dp"
-        android:background="@color/reports_divider"
-        />
+        android:background="@color/reports_divider" />
 
     <FrameLayout
         android:id="@+id/details_body"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_gravity="center"
-        />
+        android:layout_gravity="center" />
 
 </LinearLayout>

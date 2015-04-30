@@ -6,6 +6,7 @@ import android.widget.EditText;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.picker.DateTimePickerFragment;
 import com.kaching123.tcr.component.picker.DateTimePickerFragment.OnDateTimeSetListener;
@@ -25,7 +26,7 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
 
     protected static final long DAY_IN_MILLIS = TimeUnit.DAYS.toMillis(1);
     protected static final long HOUR_IN_MILLIS = TimeUnit.HOURS.toMillis(1);
-    protected static final SimpleDateFormat periodDateFormat = new SimpleDateFormat("h:mm a  dd MMM");
+    public static final SimpleDateFormat periodDateFormat = new SimpleDateFormat("h:mm a  dd MMM");
 
     @ViewById
     protected EditText fromEdit;
@@ -117,7 +118,7 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
     }
 
     protected boolean setPeriodDate(Date date, Date newDate) {
-        if(date.getTime() == newDate.getTime())
+        if (date.getTime() == newDate.getTime())
             return true;
 
         if (!validatePeriodDates(date, newDate))

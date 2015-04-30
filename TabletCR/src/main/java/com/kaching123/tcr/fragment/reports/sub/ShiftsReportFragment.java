@@ -14,9 +14,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
@@ -83,7 +85,7 @@ public class ShiftsReportFragment extends SuperBaseFragment implements IDetailsF
     }
 
     @Override
-    public void updateData(long startTime, long endTime, long registerId) {
+    public void updateData(long startTime, long endTime, long registerId, long type) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.registerId = registerId;

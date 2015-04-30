@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
@@ -62,7 +63,8 @@ public class ReportsListFragment extends SuperBaseFragment {
                 ReportType.RETURNED_ITEMS,
                 ReportType.SALES_BY_CUSTOMERS,
                 ReportType.PREPAID_SALES_BY_ITEMS,
-                ReportType.PREPAID_SALES_TOP_10_REVENUES
+                ReportType.PREPAID_SALES_TOP_10_REVENUES,
+                ReportType.DROPS_AND_PAYOUTS
         }));
 
         inventoryList.setAdapter(new ReportsAdapter(getActivity(), new ReportType[]{

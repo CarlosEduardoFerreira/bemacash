@@ -949,6 +949,9 @@
     <string name="report_type_tips_report">Shift Gratuity</string>
     <string name="report_type_prepaid_sales_by_items">Pre-paid Item Sales</string>
     <string name="report_type_prepaid_sales_top10_revenues">Top 10 Pre-paid Revenues</string>
+    <string name="report_type_drops_and_payouts">Drops and Payouts</string>
+    <string name="report_type_title_drops">Drops</string>
+    <string name="report_type_title_payouts">Payouts</string>
 
     <string name="report_category_sales">Sales</string>
     <string name="report_category_inventory">Inventory</string>
@@ -1116,6 +1119,10 @@
     <string name="report_sales_by_deps_header_title">Title</string>
     <string name="report_sales_by_tender_types_header_type">Type</string>
     <string name="report_sales_by_tender_types_header_amount">Amount</string>
+    <string name="report_sales_by_drops_and_payments_header_amount">Amount</string>
+    <string name="report_sales_by_drops_and_payments_header_date">Date</string>
+    <string name="report_sales_by_drops_and_payments_header_type">Type</string>
+    <string name="report_sales_by_drops_and_payments_header_comment">Comment</string>
 
     <string name="report_employee_attendance_header_clockin">Clock in</string>
     <string name="report_employee_attendance_header_clockout">Clock out</string>

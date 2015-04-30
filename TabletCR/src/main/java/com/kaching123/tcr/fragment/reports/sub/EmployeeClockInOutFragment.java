@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.reports.EmployeeReportsDetailsFragment.IDetailsFragment;
@@ -57,7 +58,7 @@ public class EmployeeClockInOutFragment extends SalesBaseFragment implements IDe
     @Override
     public void updateData(long startTime, long endTime, String employeeGuid) {
         this.employeeGuid = employeeGuid;
-        super.updateData(startTime, endTime, 0);
+        super.updateData(startTime, endTime, 0, -1);
     }
 
     private static class HeaderRow {

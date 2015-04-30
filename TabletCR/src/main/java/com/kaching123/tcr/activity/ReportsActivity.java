@@ -3,8 +3,6 @@ package com.kaching123.tcr.activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.XReportChooserAlertDialogFragment.XReportTypeChooseListener;
@@ -20,6 +18,9 @@ import com.kaching123.tcr.fragment.reports.ReportsListFragment.OnReportSelectedL
 import com.kaching123.tcr.fragment.reports.sub.InventoryStatusReportFragment;
 import com.kaching123.tcr.fragment.shift.PrintXReportFragment;
 import com.kaching123.tcr.model.Permission;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -130,7 +131,8 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
         X_REPORT(R.string.report_type_x_report, R.string.report_category_shift),
         X_REPORT_CURRENT_SHIFT(R.string.xreport_chooser_current_shift_sales, R.string.report_category_shift),
         X_REPORT_DAILY_SALES(R.string.xreport_chooser_sale_for_a_day, R.string.report_category_shift),
-        EMPLOYEE_TIPS(R.string.report_type_tips_report, R.string.report_category_employee);
+        EMPLOYEE_TIPS(R.string.report_type_tips_report, R.string.report_category_employee),
+        DROPS_AND_PAYOUTS(R.string.report_type_drops_and_payouts, R.string.report_category_sales);
 
         private final int labelRes;
         private final int categoryRes;

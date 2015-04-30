@@ -14,6 +14,7 @@ import android.widget.TextView;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.UiHelper;
@@ -86,7 +87,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
         };
     }
 
-    protected TotalValues calcTotalValues(List<SaleOrderViewModel> result){
+    protected TotalValues calcTotalValues(List<SaleOrderViewModel> result) {
         TotalValues tv = new TotalValues();
         for (SaleOrderViewModel i : result) {
             BigDecimal subtotal = i.tmpTotalPrice.add(i.tmpTotalDiscount).subtract(i.tmpTotalTax);
@@ -117,7 +118,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
     }
 
     @Override
-    public void updateData(long startTime, long endTime, long resisterId) {
+    public void updateData(long startTime, long endTime, long resisterId, long type) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.resisterId = resisterId;
