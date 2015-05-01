@@ -230,14 +230,17 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
 
         long type = typeSpinner.getSelectedItemPosition();
         long resisterId = getSelectedRegisterId();
-        String managerGuid = getSelectedManagerLogin();
+        String managerGuid = getSelectedManagerGuid();
         fragmentInterface.updateData(start, end, resisterId, type, managerGuid);
     }
 
     @Override
     protected void print(boolean ignorePaperEnd, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_dialog_title));
-        PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintCallback());
+        if (type == ReportType.DROPS_AND_PAYOUTS)
+            PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintCallback());
+        else
+            PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), typeSpinner.getSelectedItemPosition(), getSelectedEmployeeName(), new PrintCallback());
     }
 
     @Override
@@ -273,7 +276,11 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     @OptionsItem
     protected void actionEmailSelected() {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_email));
-        SendDigitalReportsCommand.start(getActivity(), type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintDigitalSaleByItemsReportCallback());
+        if (type != ReportType.DROPS_AND_PAYOUTS)
+            SendDigitalReportsCommand.start(getActivity(), type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintDigitalSaleByItemsReportCallback());
+        else
+            SendDigitalReportsCommand.start(getActivity(), type, fromDate.getTime(), toDate.getTime(), getSelectedManagerGuid(), typeSpinner.getSelectedItemPosition(), getSelectedEmployeeName(), new PrintDigitalSaleByItemsReportCallback());
+
     }
 
     @OptionsItem
@@ -298,7 +305,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         return resisterId;
     }
 
-    private String getSelectedManagerLogin() {
+    private String getSelectedManagerGuid() {
         if (type != ReportType.DROPS_AND_PAYOUTS)
             return null;
         int selectedManagerPos = modeEntitiesSpinner.getSelectedItemPosition();
@@ -307,6 +314,17 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
             managerGuid = employeesAdapter.getItem(selectedManagerPos).guid;
         }
         return managerGuid;
+    }
+
+    private String getSelectedEmployeeName() {
+        if (type != ReportType.DROPS_AND_PAYOUTS)
+            return null;
+        int selectedManagerPos = modeEntitiesSpinner.getSelectedItemPosition();
+        String employeeName = null;
+        if (selectedManagerPos != -1) {
+            employeeName = employeesAdapter.getItem(selectedManagerPos).fullName();
+        }
+        return employeeName;
     }
 
     private long getSelectedType() {
@@ -368,6 +386,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
             return false;
         }
     }
+
     public static RegisterReportsDetailsFragment instance(ReportType reportType) {
         return RegisterReportsDetailsFragment_.builder().type(reportType).build();
     }

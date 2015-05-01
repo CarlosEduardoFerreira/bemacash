@@ -33,6 +33,7 @@ import com.kaching123.tcr.reports.SalesByCustomersReportQuery;
 import com.kaching123.tcr.reports.SalesByDepartmentsReportQuery;
 import com.kaching123.tcr.reports.SalesByDepartmentsReportQuery.CategoryStat;
 import com.kaching123.tcr.reports.SalesByDepartmentsReportQuery.DepartmentStatistics;
+import com.kaching123.tcr.reports.SalesByDropsAndPayoutsReportQuery;
 import com.kaching123.tcr.reports.SalesByItemsReportQuery;
 import com.kaching123.tcr.reports.SalesByItemsReportQuery.ReportItemInfo;
 import com.kaching123.tcr.reports.SalesByTenderTypeQuery;
@@ -102,6 +103,57 @@ public final class SaleReportsProcessor {
         }
 
         return null;
+    }
+
+    public static PrintReportsProcessor print(Context context, ReportType reportType, long startTime, long endTime, long resisterId, String employeeGuid, String name, IAppCommandContext appCommandContext, long type) {
+
+        return printDropsAndPayouts(context, startTime, endTime, employeeGuid, name, appCommandContext, type);
+    }
+
+    private static PrintReportsProcessor printDropsAndPayouts(final Context context, long startTime, long endTime, String employeeGuid, final String name, IAppCommandContext appCommandContext, long type) {
+        final Collection<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState> items = new SalesByDropsAndPayoutsReportQuery().getItems(employeeGuid, context, type, startTime, endTime);
+
+        return new PrintReportsProcessor<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState>(context.getString(R.string.report_type_drops_and_payouts), items, new Date(startTime), new Date(endTime), appCommandContext) {
+
+            @Override
+            protected void printTableHeader(IReportsPrinter printer) {
+            }
+
+            @Override
+            protected BigDecimal printItem(IReportsPrinter printer, SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState item) {
+                if (item == null)
+                    return null;
+
+                printer.add(name);
+                for (SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState i : items) {
+                    if (i.type == 0)
+                        printer.add(context.getString(R.string.report_type_title_drops));
+                    else
+                        printer.add(context.getString(R.string.report_type_title_payouts));
+                    printer.startBody();
+                    String iComment = "";
+                    if (i.comment != null)
+                        iComment = i.comment;
+                    printer.add(((new Date(Long.parseLong(i.date)))), iComment, i.amount);
+                    printer.endBody();
+
+                }
+                printer.emptyLine();
+                return null;
+            }
+
+            @Override
+            protected void printTotal(IReportsPrinter printer, String totalLabel, BigDecimal total) {
+                BigDecimal totalAmount = BigDecimal.ZERO;
+
+                for (SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState item : items) {
+                    totalAmount = totalAmount.add(item.amount);
+                }
+                printer.startBody();
+                printer.addWithTab(context.getString(R.string.reports_employee_tips_print_total), totalAmount);
+                printer.endBody();
+            }
+        };
     }
 
     private static PrintReportsProcessor printEmployeeTips(final Context context, long startTime, long endTime, String employeeGuid, IAppCommandContext appCommandContext) {
