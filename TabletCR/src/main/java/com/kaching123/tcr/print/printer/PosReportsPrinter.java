@@ -18,7 +18,7 @@ import static com.kaching123.tcr.util.DateUtils.timeOnlyAttendanceFormat;
 public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPrinter {
 
     protected static final SimpleDateFormat shortDateFormat = new SimpleDateFormat("MMM d, HH:mm", Locale.US);
-    protected static final SimpleDateFormat superShortDateFormat = new SimpleDateFormat("M/d/yy  HH:mm", Locale.US);
+    public static final SimpleDateFormat superShortDateFormat = new SimpleDateFormat("M/d/yy  HH:mm", Locale.US);
 
     protected static final int PRINTER_MAX_QTY_LEN = 7;
     protected static final int SHORT_DATE_LEN = 13;

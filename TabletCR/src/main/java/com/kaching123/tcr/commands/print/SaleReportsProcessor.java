@@ -11,6 +11,7 @@ import com.kaching123.tcr.function.SalesByCustomersWrapFunction;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SalesByCustomerModel;
+import com.kaching123.tcr.print.printer.PosReportsPrinter;
 import com.kaching123.tcr.print.processor.PrintReportsProcessor;
 import com.kaching123.tcr.reports.ClockInOutReportQuery;
 import com.kaching123.tcr.reports.ClockInOutReportQuery.EmployeeInfo;
@@ -124,19 +125,21 @@ public final class SaleReportsProcessor {
                 if (item == null)
                     return null;
 
-                printer.add(name);
+                if (name == null)
+                    printer.add(context.getString(R.string.register_label_all));
+                else
+                    printer.add(name);
                 for (SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState i : items) {
                     if (i.type == 0)
                         printer.add(context.getString(R.string.report_type_title_drops));
                     else
                         printer.add(context.getString(R.string.report_type_title_payouts));
                     printer.startBody();
-                    String iComment = "";
-                    if (i.comment != null)
-                        iComment = i.comment;
-                    printer.add(((new Date(Long.parseLong(i.date)))), iComment, i.amount);
-                    printer.endBody();
 
+                    printer.add((PosReportsPrinter.superShortDateFormat.format(new Date(Long.parseLong(i.date)))).toString(), i.amount);
+                    if (i.comment != null)
+                        printer.add(context.getString(R.string.report_sales_by_drops_and_payments_header_comment, i.comment));
+                    printer.endBody();
                 }
                 printer.emptyLine();
                 return null;

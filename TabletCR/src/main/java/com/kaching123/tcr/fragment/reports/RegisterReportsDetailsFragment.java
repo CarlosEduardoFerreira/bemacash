@@ -237,7 +237,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     @Override
     protected void print(boolean ignorePaperEnd, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_dialog_title));
-        if (type == ReportType.DROPS_AND_PAYOUTS)
+        if (type != ReportType.DROPS_AND_PAYOUTS)
             PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintCallback());
         else
             PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), typeSpinner.getSelectedItemPosition(), getSelectedEmployeeName(), new PrintCallback());
