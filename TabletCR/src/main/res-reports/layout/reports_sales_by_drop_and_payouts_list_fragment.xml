@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="@string/report_sales_by_drops_and_payments_header_date"
-                android:layout_weight="5" />
+                android:layout_weight="3" />
 
             <TextView
                 style="@style/ItemList.HeaderText"
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="@string/report_sales_by_drops_and_payments_header_type"
-                android:layout_weight="0.9" />
+                android:layout_weight="3" />
 
             <TextView
                 style="@style/ItemList.HeaderText"

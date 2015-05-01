@@ -7,6 +7,7 @@ import android.net.Uri;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.google.common.base.Function;
+import com.kaching123.tcr.R;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 
@@ -23,14 +24,14 @@ public class SalesByDropsAndPayoutsReportQuery {
 
     private final Uri URI_CASH_DRAWER_MOVEMENT = ShopProvider.getContentUri(ShopStore.CashDrawerMovementTable.URI_CONTENT);
 
-    public List<DropsAndPayoutsState> getItems(long resisterId, Context context, long type, long startTime, long endTime) {
+    public List<DropsAndPayoutsState> getItems(String managerGuid, Context context, long type, long startTime, long endTime) {
         Query query = ProviderAction.query(URI_CASH_DRAWER_MOVEMENT)
                 .projection(ShopStore.CashDrawerMovementTable.MOVEMENT_TIME, ShopStore.CashDrawerMovementTable.COMMENT, ShopStore.CashDrawerMovementTable.AMOUNT, ShopStore.CashDrawerMovementTable.TYPE)
                 .where(ShopStore.CashDrawerMovementTable.TYPE + " = ?", type)
                 .where(ShopStore.CashDrawerMovementTable.MOVEMENT_TIME + " >= ? and " + ShopStore.CashDrawerMovementTable.MOVEMENT_TIME + " <= ?", startTime, endTime);
 
-        if (resisterId != 0)
-            query.where(ShopStore.CashDrawerMovementTable.MANAGER_GUID + " = ?", resisterId);
+        if (managerGuid != null && managerGuid.compareTo(context.getString(R.string.register_label_all)) != 0)
+            query.where(ShopStore.CashDrawerMovementTable.MANAGER_GUID + " = ?", managerGuid);
 
         List list = query.perform(context)
                 .toFluentIterable(new ConvertFunction()).toImmutableList();

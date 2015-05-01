@@ -58,7 +58,7 @@ public class EmployeeClockInOutFragment extends SalesBaseFragment implements IDe
     @Override
     public void updateData(long startTime, long endTime, String employeeGuid) {
         this.employeeGuid = employeeGuid;
-        super.updateData(startTime, endTime, 0, -1);
+        super.updateData(startTime, endTime, 0, -1, null);
     }
 
     private static class HeaderRow {

@@ -46,6 +46,8 @@ public abstract class SalesBaseFragment<T> extends Fragment implements LoaderCal
 
     protected ObjectsCursorAdapter<T> adapter;
 
+    protected String managerGuid;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -56,10 +58,11 @@ public abstract class SalesBaseFragment<T> extends Fragment implements LoaderCal
     protected abstract ObjectsCursorAdapter<T> createAdapter();
 
     @Override
-    public void updateData(long startTime, long endTime, long resisterId, long type) {
+    public void updateData(long startTime, long endTime, long resisterId, long type, String managerGuid) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.resisterId = resisterId;
+        this.managerGuid = managerGuid;
         if (type != -1)
             this.type = type;
         if (getActivity() != null) {

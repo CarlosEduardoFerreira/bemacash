@@ -118,7 +118,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
     }
 
     @Override
-    public void updateData(long startTime, long endTime, long resisterId, long type) {
+    public void updateData(long startTime, long endTime, long resisterId, long type, String managerGuid) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.resisterId = resisterId;
