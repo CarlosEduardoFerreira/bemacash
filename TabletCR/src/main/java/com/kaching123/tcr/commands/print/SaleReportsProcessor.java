@@ -106,18 +106,22 @@ public final class SaleReportsProcessor {
         return null;
     }
 
-    public static PrintReportsProcessor print(Context context, ReportType reportType, long startTime, long endTime, long resisterId, String employeeGuid, String name, IAppCommandContext appCommandContext, long type) {
+    public static PrintReportsProcessor print(Context context, ReportType reportType, long startTime, long endTime, long resisterId, String employeeGuid, String name, IAppCommandContext appCommandContext, int type) {
 
         return printDropsAndPayouts(context, startTime, endTime, employeeGuid, name, appCommandContext, type);
     }
 
-    private static PrintReportsProcessor printDropsAndPayouts(final Context context, long startTime, long endTime, String employeeGuid, final String name, IAppCommandContext appCommandContext, long type) {
+    private static PrintReportsProcessor printDropsAndPayouts(final Context context, long startTime, long endTime, String employeeGuid, final String name, IAppCommandContext appCommandContext, int type) {
         final Collection<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState> items = new SalesByDropsAndPayoutsReportQuery().getItems(employeeGuid, context, type, startTime, endTime);
 
         return new PrintReportsProcessor<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState>(context.getString(R.string.report_type_drops_and_payouts), items, new Date(startTime), new Date(endTime), appCommandContext) {
 
             @Override
             protected void printTableHeader(IReportsPrinter printer) {
+                if (name == null)
+                    printer.add(context.getString(R.string.register_label_all));
+                else
+                    printer.add(name);
             }
 
             @Override
@@ -125,22 +129,15 @@ public final class SaleReportsProcessor {
                 if (item == null)
                     return null;
 
-                if (name == null)
-                    printer.add(context.getString(R.string.register_label_all));
+                if (item.type == 0)
+                    printer.add(context.getString(R.string.report_type_title_drops));
                 else
-                    printer.add(name);
-                for (SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState i : items) {
-                    if (i.type == 0)
-                        printer.add(context.getString(R.string.report_type_title_drops));
-                    else
-                        printer.add(context.getString(R.string.report_type_title_payouts));
-                    printer.startBody();
+                    printer.add(context.getString(R.string.report_type_title_payouts));
+                printer.startBody();
 
-                    printer.add((PosReportsPrinter.superShortDateFormat.format(new Date(Long.parseLong(i.date)))).toString(), i.amount);
-                    if (i.comment != null)
-                        printer.add(context.getString(R.string.report_sales_by_drops_and_payments_header_comment, i.comment));
-                    printer.endBody();
-                }
+                printer.add((PosReportsPrinter.superShortDateFormat.format(new Date(Long.parseLong(item.date)))).toString(), item.amount);
+                if (item.comment != null)
+                    printer.add(context.getString(R.string.report_sales_by_drops_and_payments_header_comment, item.comment));
                 printer.emptyLine();
                 return null;
             }

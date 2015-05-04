@@ -24,7 +24,7 @@ public class SalesByDropsAndPayoutsReportQuery {
 
     private final Uri URI_CASH_DRAWER_MOVEMENT = ShopProvider.getContentUri(ShopStore.CashDrawerMovementTable.URI_CONTENT);
 
-    public List<DropsAndPayoutsState> getItems(String managerGuid, Context context, long type, long startTime, long endTime) {
+    public List<DropsAndPayoutsState> getItems(String managerGuid, Context context, int type, long startTime, long endTime) {
         Query query = ProviderAction.query(URI_CASH_DRAWER_MOVEMENT)
                 .projection(ShopStore.CashDrawerMovementTable.MOVEMENT_TIME, ShopStore.CashDrawerMovementTable.COMMENT, ShopStore.CashDrawerMovementTable.AMOUNT, ShopStore.CashDrawerMovementTable.TYPE)
                 .where(ShopStore.CashDrawerMovementTable.TYPE + " = ?", type)
@@ -43,9 +43,9 @@ public class SalesByDropsAndPayoutsReportQuery {
         public String date;
         public String comment;
         public BigDecimal amount;
-        public long type;
+        public int type;
 
-        public DropsAndPayoutsState(String date, String comment, BigDecimal amount, long type) {
+        public DropsAndPayoutsState(String date, String comment, BigDecimal amount, int type) {
             this.date = date;
             this.comment = comment;
             this.amount = amount;
@@ -60,7 +60,7 @@ public class SalesByDropsAndPayoutsReportQuery {
                     c.getString(0),
                     c.getString(1),
                     _decimalQty(c.getString(2)),
-                    _long(c.getString(3))
+                    Integer.parseInt(c.getString(3))
             );
         }
     }

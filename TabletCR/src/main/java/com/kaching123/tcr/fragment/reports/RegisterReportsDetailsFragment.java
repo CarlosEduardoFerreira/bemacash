@@ -228,7 +228,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         long start = fromDate.getTime();
         long end = toDate.getTime();
 
-        long type = typeSpinner.getSelectedItemPosition();
+        int type = typeSpinner.getSelectedItemPosition();
         long resisterId = getSelectedRegisterId();
         String managerGuid = getSelectedManagerGuid();
         fragmentInterface.updateData(start, end, resisterId, type, managerGuid);
@@ -237,10 +237,11 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     @Override
     protected void print(boolean ignorePaperEnd, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_dialog_title));
+        int selectedMoveType = typeSpinner.getSelectedItemPosition();
         if (type != ReportType.DROPS_AND_PAYOUTS)
             PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintCallback());
         else
-            PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), typeSpinner.getSelectedItemPosition(), getSelectedEmployeeName(), new PrintCallback());
+            PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedManagerGuid(), selectedMoveType, getSelectedEmployeeName(), new PrintCallback());
     }
 
     @Override
@@ -327,7 +328,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         return employeeName;
     }
 
-    private long getSelectedType() {
+    private int getSelectedType() {
         int selectedType = typeSpinner.getSelectedItemPosition();
         return selectedType;
     }
@@ -392,7 +393,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     }
 
     public static interface IDetailsFragment {
-        void updateData(long startTime, long endTime, long resisterId, long type, String managerGuid);
+        void updateData(long startTime, long endTime, long resisterId, int type, String managerGuid);
     }
 
     public class ExportCallback extends ExportCommandBaseCallback {

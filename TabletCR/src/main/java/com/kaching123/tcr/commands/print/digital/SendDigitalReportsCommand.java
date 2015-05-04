@@ -35,7 +35,7 @@ public class SendDigitalReportsCommand extends BaseSendEmailCommand {
         long startTime = getLongArg(ARG_START_TIME);
         long endTime = getLongArg(ARG_END_TIME);
         long resisterId = getLongArg(ARG_REGISTER_GUID);
-        long type = getLongArg(ARG_CASH_DRAWER_TYPE);
+        int type = getIntArg(ARG_CASH_DRAWER_TYPE);
         String name = getStringArg(ARG_EMPLOYEE_NAME);
 
         String employeeGuid = getStringArg(ARG_EMPLOYEE_GUID);

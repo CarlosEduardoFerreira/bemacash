@@ -99,7 +99,7 @@ public class SalesByDropsAndPayoutsFragment extends SalesBaseFragment<SalesByDro
         }
     }
 
-    public static SalesByDropsAndPayoutsFragment instance(long startTime, long endTime, long resisterId, long type) {
+    public static SalesByDropsAndPayoutsFragment instance(long startTime, long endTime, long resisterId, int type) {
         return SalesByDropsAndPayoutsFragment_.builder().startTime(startTime).endTime(endTime).resisterId(resisterId).type(type).build();
     }
 }

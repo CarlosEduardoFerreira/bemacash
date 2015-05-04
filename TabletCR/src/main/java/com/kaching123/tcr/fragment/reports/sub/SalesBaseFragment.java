@@ -37,7 +37,7 @@ public abstract class SalesBaseFragment<T> extends Fragment implements LoaderCal
     protected long resisterId;
 
     @FragmentArg
-    protected long type;
+    protected int type;
 
     @ViewById
     protected TextView total;
@@ -58,7 +58,7 @@ public abstract class SalesBaseFragment<T> extends Fragment implements LoaderCal
     protected abstract ObjectsCursorAdapter<T> createAdapter();
 
     @Override
-    public void updateData(long startTime, long endTime, long resisterId, long type, String managerGuid) {
+    public void updateData(long startTime, long endTime, long resisterId, int type, String managerGuid) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.resisterId = resisterId;
