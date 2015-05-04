@@ -130,8 +130,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
                 response = (SaleActionResponse) possibleData;
             }
             Logger.d("PaxSaleCommand response:" + response);
-            if (200 == response.getDetails().getSale().getResponseCode())
-            {
+            if (200 == response.getDetails().getSale().getResponseCode()) {
                 transaction.updateWith(response);
                 if (response.getDetails().getDigits() != null)
                     transaction.lastFour = response.getDetails().getDigits();
@@ -139,12 +138,16 @@ public class PaxSaleCommand extends PaxBaseCommand {
                     transaction.cashBack = new BigDecimal(response.getDetails().getCashBackAmount()).negate();
                 if (response.getDetails().getTransactionNumber() != null)
                     transaction.authorizationNumber = response.getDetails().getSale().getAuthNumber();
+                if (response.getDetails().getBalanceCash() != null)
+                    transaction.balance = new BigDecimal(response.getDetails().getBalanceCash());
+                if (response.getDetails().getBalanceFS() != null)
+                    transaction.balance = new BigDecimal(response.getDetails().getBalanceFS());
                 PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                 operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
                         .withValues(transactionModel.toValues())
                         .build());
                 sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
-            }else{
+            } else {
                 errorReason = "";
                 for (String msg : response.getDetails().getSale().getMessage()) {
                     if (errorReason.length() > 0) {
