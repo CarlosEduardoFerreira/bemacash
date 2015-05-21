@@ -94,6 +94,7 @@
     <string name="printers_searching">Printers searching...</string>
     <string name="pax_searching">Pax searching...</string>
     <string name="pref_current_pax_msg">You can setup PAX pinpad here</string>
+    <string name="pref_timeout_config">Configure Pax Search Timeout</string>
     <string name="btn_exact">Exact</string>
     <string name="pref_current_pax">Configured PAX pinpads</string>
     <string name="pref_current_printer">Configured printers</string>
@@ -440,6 +441,7 @@
     <string name="pax_not_configured">Wrong IP address, PAX pinpad wasn\'t configured</string>
     <string name="pax_configuring">Please wait for the device to be checked</string>
     <string name="pax_configured">Device ready!</string>
+    <string name="pax_time_out_millisecond">Milliseconds</string>
     <string name="pax_timeout">Connection has timed out. This may be caused by device malfunction or bad configuration. Do not swipe the card and press Cancel if the device is still waiting for it.</string>
     <string name="pax_reload_timeout">The last transaction was cancelled manually or network issue.</string>
     <string name="pax_reload_after_relaod"> After Reload: </string>
@@ -506,6 +508,7 @@
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
     <string name="pax_wait_dialog_title">Searching Pax...</string>
+    <string name="pax_not_found_message">Pax not found</string>
     <string name="wait_message_open_drawer">Opening drawer</string>
     <string name="wait_message_start_shift">Opening shift</string>
     <string name="wait_message_stop_shift">Closing shift</string>

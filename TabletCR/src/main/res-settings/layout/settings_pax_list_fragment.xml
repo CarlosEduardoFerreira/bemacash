@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:dslv="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="6dp"
-                android:paddingBottom="8dp">
+    xmlns:dslv="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="8dp">
 
     <TextView
         android:layout_marginTop="4dp"
@@ -15,7 +15,7 @@
         android:id="@+id/title_label"
         android:text="@string/pref_current_pax"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <TextView
         android:layout_below="@id/title_label"
@@ -23,16 +23,52 @@
         android:id="@+id/title_sublabel"
         android:text="@string/pref_current_pax_msg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:id="@+id/time_out_layout"
+        android:layout_below="@+id/title_sublabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/time_out_title"
+            style="@style/Settings.Fragments.SubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_timeout_config" />
+
+
+        <TextView
+            android:id="@+id/millisecond_text"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            style="@style/Settings.Fragments.SubTitle2"
+            android:paddingLeft="10dp"
+            android:text="@string/pax_time_out_millisecond"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            style="@style/EditItem.Table.Edittext"
+            android:gravity="right"
+            android:id="@+id/time_out_input"
+            android:layout_toLeftOf="@+id/millisecond_text"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:inputType="number"
+            />
+    </RelativeLayout>
 
     <View
         android:layout_marginTop="9dp"
         android:id="@+id/divider"
-        android:layout_below="@id/title_sublabel"
+        android:layout_below="@id/time_out_layout"
         android:layout_marginBottom="8dp"
         android:layout_height="1dp"
         android:layout_width="match_parent"
-        android:background="@color/settings_divider"/>
+        android:background="@color/settings_divider" />
 
     <com.mobeta.android.dslv.DragSortListView
         android:id="@+id/list"
@@ -47,7 +83,8 @@
         dslv:remove_mode="flingRemove"
         dslv:drag_enabled="true"
         dslv:drag_handle_id="@+id/drag"
-        dslv:drag_start_mode="onMove"/>
+        dslv:drag_start_mode="onMove" />
+
 
     <TextView
         android:visibility="gone"
@@ -55,6 +92,6 @@
         android:id="@android:id/empty"
         android:layout_centerInParent="true"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"/>
+        android:layout_width="wrap_content" />
 
 </RelativeLayout>

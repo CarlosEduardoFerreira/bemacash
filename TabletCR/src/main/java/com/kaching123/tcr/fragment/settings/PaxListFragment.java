@@ -8,21 +8,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
-
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
@@ -31,6 +29,13 @@ import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PaxTable;
 import com.mobeta.android.dslv.DragSortListView;
+
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 @EFragment(R.layout.settings_pax_list_fragment)
 @OptionsMenu(R.menu.discover_pax_activity)
@@ -44,6 +49,11 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
     @ViewById
     protected DragSortListView list;
 
+    @ViewById
+    protected EditText timeOutInput;
+
+    private final int PAX_TIME_OUT_DEFAULT = 25;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -56,6 +66,36 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
             }
         });
         getLoaderManager().initLoader(LOADER_ID, null, this);
+    }
+
+    @AfterTextChange(R.id.time_out_input)
+    protected void afterTextChangedOntimeOutInput(Editable s, TextView view) {
+        if (validTimeout(s.toString()))
+            setPaxTimeout(Integer.parseInt(s.toString()));
+    }
+
+    @AfterViews
+    protected void init() {
+        timeOutInput.setText("" + (getPaxTimeout() == 0 ? PAX_TIME_OUT_DEFAULT : getPaxTimeout()));
+    }
+
+    private int getPaxTimeout() {
+        return ((TcrApplication) (getActivity().getApplication())).getPaxTimeOut();
+    }
+
+    private void setPaxTimeout(int timeout) {
+        ((TcrApplication) (getActivity().getApplication())).setPaxTimeOut(timeout);
+    }
+
+    private boolean validTimeout(String timeout) {
+        try {
+            Integer.parseInt(timeout);
+        } catch (NumberFormatException e) {
+            return false;
+        } catch (NullPointerException e) {
+            return false;
+        }
+        return true;
     }
 
     @OptionsItem
@@ -72,7 +112,7 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
         if (list != null && list.getCount() > 0) {
             Toast.makeText(getActivity(), "Only one active pinpad is available", Toast.LENGTH_LONG).show();
         } else {
-            FindPAXFragment.show(getActivity());
+            FindPAXFragment.show(getActivity(), getPaxTimeout());
         }
     }
 

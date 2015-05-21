@@ -706,6 +706,14 @@ public class TcrApplication extends Application {
         return shopPref.NeedBillpaymentUpdated().getOr(true);
     }
 
+    public void setPaxTimeOut(int timeout) {
+        shopPref.paxTimeOut().put(timeout);
+    }
+
+    public int getPaxTimeOut() {
+        return shopPref.paxTimeOut().getOr(0);
+    }
+
     public void setLastUserName(String name) {
         shopPref.lastUserName().put(name);
     }

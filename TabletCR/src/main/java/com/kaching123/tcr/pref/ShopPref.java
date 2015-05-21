@@ -236,5 +236,7 @@ public interface ShopPref {
 
     String lastUserPassword();
 
+    int paxTimeOut();
+
     String usbMSRName();
 }

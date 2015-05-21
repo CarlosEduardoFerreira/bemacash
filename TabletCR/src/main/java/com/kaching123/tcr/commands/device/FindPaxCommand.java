@@ -27,6 +27,7 @@ public class FindPaxCommand extends PublicGroundyTask {
     private static final String CALLBACK_ADD_PAX = "CALLBACK_ADD_PAX";
 
     private static final String EXTRA_PAX = "EXTRA_PAX";
+    private static final String ARG_TIME_OUT = "ARG_TIME_OUT";
 
     protected static final long SEARCHING_TIME = TimeUnit.MINUTES.toMillis(1);
 
@@ -36,13 +37,13 @@ public class FindPaxCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
-        long time = System.currentTimeMillis();
         String ipHead = logLocalIpAddresses();
+        int timeOut = getIntArg(ARG_TIME_OUT);
         PaxModel model = new PaxModel(null, "", 6911, "", null, null, false, null);
         boolean success = false;
         try {
             Logger.d("Discovery Pax findIteration");
-            success = create(model, ipHead);
+            success = create(model, ipHead, timeOut);
 
         } catch (Exception e) {
             Logger.e("Discovery printers ", e);
@@ -53,7 +54,7 @@ public class FindPaxCommand extends PublicGroundyTask {
 
     }
 
-    private boolean create(PaxModel model, String ipHead) {
+    private boolean create(PaxModel model, String ipHead, int timeOut) {
         {
             for (int i = 0; i < 255; i++) {
                 try {
@@ -63,7 +64,7 @@ public class FindPaxCommand extends PublicGroundyTask {
                     socket.setSoTimeout(READ_TIMEOUT);
                     model.ip = String.format(ipHead + "%d", i);
                     Logger.d("trace socket ip: " + model.ip);
-                    socket.connect(new InetSocketAddress(model.ip, model.port), CONNECTION_TIMEOUT_25_MILLI);
+                    socket.connect(new InetSocketAddress(model.ip, model.port), timeOut);
                     if (socket.isConnected()) {
                         if (model != null) {
                             firePrinterInfo(packPrinterData(model));
@@ -144,8 +145,8 @@ public class FindPaxCommand extends PublicGroundyTask {
         return (hb << 8) | (lb & 0xFF);
     }
 
-    public static TaskHandler start(Context context, BaseFindPaxCallback callback) {
-        return create(FindPaxCommand.class).callback(callback).queueUsing(context);
+    public static TaskHandler start(Context context, int timeout, BaseFindPaxCallback callback) {
+        return create(FindPaxCommand.class).arg(ARG_TIME_OUT, timeout).callback(callback).queueUsing(context);
     }
 
     public TaskResult sync(Context context) {

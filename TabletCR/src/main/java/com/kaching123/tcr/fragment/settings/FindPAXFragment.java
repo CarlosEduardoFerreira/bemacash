@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckedTextView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,7 +25,10 @@ import com.kaching123.tcr.model.PaxModel;
 import com.telly.groundy.TaskHandler;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.ViewById;
 
 /**
@@ -30,6 +36,12 @@ import org.androidannotations.annotations.ViewById;
  */
 @EFragment
 public class FindPAXFragment extends StyledDialogFragment {
+
+    @ViewById
+    protected TextView paxNotFoundText;
+
+    @FragmentArg
+    protected int timeout;
 
     private static final String DIALOG_NAME = "FindPaxFragment";
 
@@ -40,12 +52,6 @@ public class FindPAXFragment extends StyledDialogFragment {
 
     private PaxListAdapter adapter;
     private TaskHandler currentTask;
-
-    @ViewById
-    protected TextView progressLabel;
-
-    @ViewById
-    protected ProgressBar progress;
 
     @Override
     protected int getDialogContentLayout() {
@@ -98,7 +104,6 @@ public class FindPAXFragment extends StyledDialogFragment {
         View v = getView();
         listView = (ListView) v.findViewById(R.id.list_view);
         progressBlock = v.findViewById(R.id.progress_block);
-
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listView.setAdapter(adapter = new PaxListAdapter(getActivity()));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,17 +115,20 @@ public class FindPAXFragment extends StyledDialogFragment {
         });
     }
 
+    @AfterViews
+    public void init() {
+        paxNotFoundText.setText(getString(R.string.pax_not_found_message));
+        paxNotFoundText.setVisibility(View.GONE);
+        getPositiveButton().setTextColor(disabledBtnColor);
+        getPositiveButton().setEnabled(false);
+
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        currentTask = FindPaxCommand.start(getActivity(), findPrinterCallback);
+        currentTask = FindPaxCommand.start(getActivity(), timeout, findPrinterCallback);
         progressBlock.setVisibility(View.VISIBLE);
-    }
-
-    @AfterViews
-    public void init() {
-        getPositiveButton().setTextColor(disabledBtnColor);
-        getPositiveButton().setEnabled(false);
     }
 
     @Override
@@ -143,10 +151,13 @@ public class FindPAXFragment extends StyledDialogFragment {
         protected void onSearchFinished() {
             currentTask = null;
             progressBlock.setVisibility(View.GONE);
+            if (adapter.getCount() == 0)
+                paxNotFoundText.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void handleAddPax(PaxModel info) {
+            paxNotFoundText.setVisibility(View.GONE);
             if (info == null) {
                 return;
             }
@@ -173,7 +184,7 @@ public class FindPAXFragment extends StyledDialogFragment {
                 convertView = LayoutInflater.from(getActivity()).inflate(R.layout.simple_list_item_one_choice_dark, parent, false);
             }
             PaxModel info = getItem(position);
-            TextView textView = (TextView) convertView;
+            CheckedTextView textView = (CheckedTextView) convertView;
             textView.setText(info.ip + ":" + info.port);
             /*itemView = (PrinterInfoListItem) convertView;
             itemView.bind(info.fullAddress, info.macAddress);*/
@@ -182,8 +193,9 @@ public class FindPAXFragment extends StyledDialogFragment {
 
     }
 
-    public static void show(FragmentActivity activity) {
-        DialogUtil.show(activity, DIALOG_NAME, FindPAXFragment_.builder().build());
+
+    public static void show(FragmentActivity activity, int timeout) {
+        DialogUtil.show(activity, DIALOG_NAME, FindPAXFragment_.builder().timeout(timeout).build());
     }
 
 }
