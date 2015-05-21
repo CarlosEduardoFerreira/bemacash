@@ -11,12 +11,12 @@ import android.widget.Toast;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.commands.display.DisplayOrderCommand;
 import com.kaching123.tcr.commands.display.DisplayPartialTenderCommand;
 import com.kaching123.tcr.commands.display.DisplayTenderCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
+import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackGateway;
 import com.kaching123.tcr.commands.payment.pax.PaxBaseCommand;
@@ -147,6 +147,10 @@ public class PaymentProcessor {
     public PaymentProcessor setPrepaidMode() {
         prepaidMode = true;
         return this;
+    }
+
+    interface test {
+        void teee();
     }
 
     /**
@@ -815,22 +819,28 @@ public class PaymentProcessor {
 
             @Override
             public void onComplete(Transaction transaction, String reason) {
+                if (reason != null && reason.equals(WebCommand.ErrorReason.DUE_TO_PAX_IP_CHANGED.getDescription())) {
+                    return;
+                }
                 hide();
+                WaitDialogFragment.hide(context);
                 proceedToNotificationBlock(context, transaction, reason);
             }
 
             @Override
             public void onCancel() {
+                WaitDialogFragment.hide(context);
                 hide();
                 proceedToTender(context, 0);
             }
 
             @Override
             public void onSearchNeed(final PaxModel model) {
+                WaitDialogFragment.hide(context);
                 EditPaxCommand.start(context, model, new EditPaxCommand.PaxEditCommandBaseCallback() {
                     @Override
                     protected void handleSuccess() {
-
+                        hide();
                         Toast.makeText(context, context.getString(R.string.pax_configured), Toast.LENGTH_LONG).show();
                         proceedToPAXPayment(context, transaction);
                     }
@@ -841,6 +851,11 @@ public class PaymentProcessor {
                         hide();
                     }
                 });
+            }
+
+            @Override
+            public void onCloseRequest() {
+                WaitDialogFragment.show(context, context.getString(R.string.pax_wait_dialog_title));
             }
 
             private void hide() {

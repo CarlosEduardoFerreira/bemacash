@@ -70,6 +70,11 @@ public class PayPAXPendingFragmentDialog extends TransactionPendingFragmentDialo
                 DeletePaxCommand.start(getActivity(), paxModel.getGuid(), true, paxModel.serial);
                 listener.onSearchNeed(paxModel);
             }
+
+            @Override
+            protected void closePaxWindow() {
+                listener.onCloseRequest();
+            }
         }, null, null, transaction, reloadResponse);
     }
 
@@ -80,6 +85,8 @@ public class PayPAXPendingFragmentDialog extends TransactionPendingFragmentDialo
         void onCancel();
 
         void onSearchNeed(PaxModel model);
+
+        void onCloseRequest();
     }
 
     @Override

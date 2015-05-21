@@ -26,8 +26,6 @@ public class DeletePaxCommand extends PublicGroundyTask {
         String serial = getStringArg(ARG_SERIAL);
         boolean deleteOther = getBooleanArg(ARG_DELETE_OTHER);
         if (!deleteOther) {
-            getApp().getShopPref().paxPort().remove();
-            getApp().getShopPref().paxUrl().remove();
             ProviderAction
                     .delete(URI_PRINTER)
                     .where(PaxTable.GUID + " = ? ", guid)
@@ -38,7 +36,8 @@ public class DeletePaxCommand extends PublicGroundyTask {
                     .delete(URI_PRINTER)
                     .perform(getContext());
         }
-
+        getApp().getShopPref().paxPort().remove();
+        getApp().getShopPref().paxUrl().remove();
 
         return succeeded();
     }

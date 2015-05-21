@@ -15,7 +15,6 @@ import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.payment.blackstone.pax.PaxTransaction;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
-import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -54,6 +53,8 @@ public class PaxSaleCommand extends PaxBaseCommand {
     private static final String ARG_SALEACTIONRESPONSE = "SaleActionResponse";
     private static final String ARG_PURPOSE = "ARG_AMOUNT_1";
     private static final String CALLBACK_SEARCH_PAX = "CALLBACK_SEARCH_PAX";
+    //    private static final String CALLBACK_CLOSE_TRANSACTION_WINDOW = "CALLBACK_CLOSE_TRANSACTION_WINDOW";
+    private static final String CALLBACK_CLOSE_TRANSACTION_WINDOW = "CALLBACK_CLOSE_TRANSACTION_WINDOW";
 
     private PaxTransaction transaction;
     private String errorReason;
@@ -102,6 +103,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
         }
 
         if (isFailed(result)) {
+            callback(CALLBACK_CLOSE_TRANSACTION_WINDOW);
             boolean Ok = !isFailed(new FindPaxCommand().sync(getContext()));
             if (Ok) {
                 String paxIP = getApp().getShopPref().paxUrl().get();
@@ -110,6 +112,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
                 bundle.putString(EXTRA_PAX_IP, paxIP);
                 bundle.putInt(EXTRA_PAX_PORT, paxPORT);
                 callback(CALLBACK_SEARCH_PAX, bundle);
+                errorReason = ErrorReason.DUE_TO_PAX_IP_CHANGED.getDescription();
             } else {
                 if (transaction != null)
                     transaction.allowReload = true;
@@ -225,6 +228,11 @@ public class PaxSaleCommand extends PaxBaseCommand {
             handleSearchPort(ip, port);
         }
 
+        @OnCallback(value = PaxSaleCommand.class, name = CALLBACK_CLOSE_TRANSACTION_WINDOW)
+        public void onCloseRequest() {
+            closePaxWindow();
+        }
+
         protected abstract void handleSuccess(Transaction result, String errorReason);
 
         @OnFailure(PaxSaleCommand.class)
@@ -235,6 +243,8 @@ public class PaxSaleCommand extends PaxBaseCommand {
         protected abstract void handleError();
 
         protected abstract void handleSearchPort(String ip, int port);
+
+        protected abstract void closePaxWindow();
     }
 
 }

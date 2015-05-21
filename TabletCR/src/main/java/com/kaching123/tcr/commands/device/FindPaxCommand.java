@@ -15,8 +15,11 @@ import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.nio.channels.IllegalBlockingModeException;
 import java.util.concurrent.TimeUnit;
 
 public class FindPaxCommand extends PublicGroundyTask {
@@ -28,7 +31,7 @@ public class FindPaxCommand extends PublicGroundyTask {
     protected static final long SEARCHING_TIME = TimeUnit.MINUTES.toMillis(1);
 
     private static final int READ_TIMEOUT = (int) TimeUnit.SECONDS.toMillis(10);
-    private static final int CONNECTION_TIMEOUT = (int) TimeUnit.SECONDS.toMillis(10);
+    private static final int CONNECTION_TIMEOUT_25_MILLI = 50;
     private Socket socket;
 
     @Override
@@ -36,10 +39,10 @@ public class FindPaxCommand extends PublicGroundyTask {
         long time = System.currentTimeMillis();
         String ipHead = logLocalIpAddresses();
         PaxModel model = new PaxModel(null, "", 6911, "", null, null, false, null);
-
+        boolean success = false;
         try {
             Logger.d("Discovery Pax findIteration");
-            create(model, ipHead);
+            success = create(model, ipHead);
 
         } catch (Exception e) {
             Logger.e("Discovery printers ", e);
@@ -50,28 +53,41 @@ public class FindPaxCommand extends PublicGroundyTask {
 
     }
 
-    private Socket create(PaxModel model, String ipHead) {
+    private boolean create(PaxModel model, String ipHead) {
         {
-            int ipBottom = -1;
-
             for (int i = 0; i < 255; i++) {
                 try {
+                    if (isQuitting())
+                        cancelled();
                     socket = new Socket();
                     socket.setSoTimeout(READ_TIMEOUT);
-                    ipBottom++;
-                    model.ip = String.format(ipHead + "%d", ipBottom);
+                    model.ip = String.format(ipHead + "%d", i);
                     Logger.d("trace socket ip: " + model.ip);
-                    socket.connect(new InetSocketAddress(model.ip, model.port), 25);
+                    socket.connect(new InetSocketAddress(model.ip, model.port), CONNECTION_TIMEOUT_25_MILLI);
                     if (socket.isConnected()) {
                         if (model != null) {
                             firePrinterInfo(packPrinterData(model));
                             getApp().getShopPref().paxPort().put(model.port);
                             getApp().getShopPref().paxUrl().put(model.ip);
                         }
-                        break;
+                        socket.close();
+                        return true;
                     }
 
+                }catch (ConnectException ex) {
+                    Logger.d("FindPaxCommand ConnectException: " + ex.toString());
+                    continue;
+                } catch (SocketTimeoutException ex) {
+                    Logger.d("FindPaxCommand SocketTimeoutException: " + ex.toString());
+                    continue;
+                } catch (IllegalBlockingModeException ex) {
+                    Logger.d("FindPaxCommand IllegalBlockingModeException: " + ex.toString());
+                    continue;
+                } catch (IllegalArgumentException ex) {
+                    Logger.d("FindPaxCommand IllegalArgumentException: " + ex.toString());
+                    continue;
                 } catch (IOException ex) {
+                    Logger.d("FindPaxCommand IOException: " + ex.toString());
                     continue;
                 }
             }
@@ -81,7 +97,7 @@ public class FindPaxCommand extends PublicGroundyTask {
             Logger.d("Discovery printers cancelled");
             cancelled();
         }
-        return socket;
+        return false;
     }
 
     public String logLocalIpAddresses() {

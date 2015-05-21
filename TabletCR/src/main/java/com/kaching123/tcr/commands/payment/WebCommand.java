@@ -22,7 +22,8 @@ public abstract class WebCommand extends AsyncCommand {
         DUE_TO_CANCEL_BY_GROUP("Cancelled by group"),
         DUE_TO_OFFLINE("Can't launch a transaction while offline"),
         DUE_TO_USER_CANCELLED("Cancelled by user"),
-        DUE_TO_MALFUNCTION("Failed due to gateway malfunction");
+        DUE_TO_MALFUNCTION("Failed due to gateway malfunction"),
+        DUE_TO_PAX_IP_CHANGED("ignore error");
 
         String description;
 

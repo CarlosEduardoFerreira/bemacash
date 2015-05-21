@@ -92,6 +92,7 @@
     <string name="orders_history_order_num">Order#:</string>
     <string name="orders_history_transactions_status">Status:</string>
     <string name="printers_searching">Printers searching...</string>
+    <string name="pax_searching">Pax searching...</string>
     <string name="pref_current_pax_msg">You can setup PAX pinpad here</string>
     <string name="btn_exact">Exact</string>
     <string name="pref_current_pax">Configured PAX pinpads</string>
