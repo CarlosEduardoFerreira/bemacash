@@ -153,6 +153,7 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
             super(context, R.layout.settings_printers_list_item_view, null, false);
         }
 
+
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View v = super.newView(context, cursor, parent);
@@ -199,12 +200,12 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
         @Override
         public void remove(int i) {
-            handleRemove(getModel(i).getGuid());
+            handleRemove(getModel(i));
         }
 
     }
 
-    private void handleRemove(final String printerGuid) {
+    private void handleRemove(final PaxModel model) {
         AlertDialogFragment.show(
                 getActivity(),
                 DialogType.CONFIRM_NONE,
@@ -214,7 +215,7 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        DeletePaxCommand.start(getActivity(), printerGuid, false, null);
+                        DeletePaxCommand.start(getActivity(), model, false);
                         return true;
                     }
                 }, new OnDialogClickListener() {

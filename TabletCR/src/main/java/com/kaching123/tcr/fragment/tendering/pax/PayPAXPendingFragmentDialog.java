@@ -67,7 +67,7 @@ public class PayPAXPendingFragmentDialog extends TransactionPendingFragmentDialo
             @Override
             protected void handleSearchPort(String ip, int port) {
                 PaxModel paxModel = new PaxModel(null, ip, port, "", null, null, false, null);
-                DeletePaxCommand.start(getActivity(), paxModel.getGuid(), true, paxModel.serial);
+//                DeletePaxCommand.start(getActivity(), paxModel.getGuid(), true, paxModel.serial);
                 listener.onSearchNeed(paxModel);
             }
 

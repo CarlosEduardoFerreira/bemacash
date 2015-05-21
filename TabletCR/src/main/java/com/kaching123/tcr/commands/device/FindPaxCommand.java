@@ -50,52 +50,59 @@ public class FindPaxCommand extends PublicGroundyTask {
             return failed();
 
         }
-        return succeeded();
+        return success ? succeeded() : failed();
 
     }
 
     private boolean create(PaxModel model, String ipHead, int timeOut) {
         {
-            for (int i = 0; i < 255; i++) {
-                try {
-                    if (isQuitting())
-                        cancelled();
-                    socket = new Socket();
-                    socket.setSoTimeout(READ_TIMEOUT);
-                    model.ip = String.format(ipHead + "%d", i);
-                    Logger.d("trace socket ip: " + model.ip);
-                    socket.connect(new InetSocketAddress(model.ip, model.port), timeOut);
-                    if (socket.isConnected()) {
-                        if (model != null) {
-                            firePrinterInfo(packPrinterData(model));
-                            getApp().getShopPref().paxPort().put(model.port);
-                            getApp().getShopPref().paxUrl().put(model.ip);
+            // loop j works for ARP table refresh.
+            for (int j = 0; j < 2; j++) {
+                // loop i
+                for (int i = 1; i < 255; i++) {
+                    try {
+                        if (isQuitting()||Thread.currentThread().isInterrupted()) {
+                            return false;
                         }
-                        socket.close();
-                        return true;
-                    }
+                        socket = new Socket();
+                        socket.setSoTimeout(READ_TIMEOUT);
+                        model.ip = String.format(ipHead + "%d", i);
+                        Logger.d("trace socket ip: " + model.ip);
+                        socket.connect(new InetSocketAddress(model.ip, model.port), j == 0 ? 1 : timeOut);
+                        if (socket.isConnected()) {
+                            if (model != null) {
+                                firePrinterInfo(packPrinterData(model));
+                                getApp().getShopPref().paxPort().put(model.port);
+                                getApp().getShopPref().paxUrl().put(model.ip);
+                            }
+                            socket.close();
+                            return true;
+                        }
 
-                } catch (ConnectException ex) {
-                    Logger.d("FindPaxCommand ConnectException: " + ex.toString());
-                    continue;
-                } catch (SocketTimeoutException ex) {
-                    Logger.d("FindPaxCommand SocketTimeoutException: " + ex.toString());
-                    continue;
-                } catch (IllegalBlockingModeException ex) {
-                    Logger.d("FindPaxCommand IllegalBlockingModeException: " + ex.toString());
-                    continue;
-                } catch (IllegalArgumentException ex) {
-                    Logger.d("FindPaxCommand IllegalArgumentException: " + ex.toString());
-                    continue;
-                } catch (IOException ex) {
-                    Logger.d("FindPaxCommand IOException: " + ex.toString());
-                    continue;
+                    } catch (ConnectException ex) {
+                        Logger.d("FindPaxCommand ConnectException: " + ex.toString());
+                        continue;
+                    } catch (SocketTimeoutException ex) {
+                        Logger.d("FindPaxCommand SocketTimeoutException: " + ex.toString());
+                        continue;
+                    } catch (IllegalBlockingModeException ex) {
+                        Logger.d("FindPaxCommand IllegalBlockingModeException: " + ex.toString());
+                        continue;
+                    } catch (IllegalArgumentException ex) {
+                        Logger.d("FindPaxCommand IllegalArgumentException: " + ex.toString());
+                        continue;
+                    } catch (IOException ex) {
+                        Logger.d("FindPaxCommand IOException: " + ex.toString());
+                        continue;
+                    } catch (Exception ex) {
+                        Logger.e("FindPaxCommand Exception: " + ex.toString());
+                    }
                 }
             }
         }
 
         if (isQuitting()) {
-            Logger.d("Discovery printers cancelled");
+            Logger.d("Search PAx device cancelled");
             cancelled();
         }
         return false;

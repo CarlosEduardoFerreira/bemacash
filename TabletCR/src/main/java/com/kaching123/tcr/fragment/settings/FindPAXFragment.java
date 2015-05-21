@@ -8,11 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckedTextView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,13 +20,12 @@ import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.PaxModel;
+import com.telly.groundy.GroundyManager;
 import com.telly.groundy.TaskHandler;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.ViewById;
 
 /**
@@ -105,6 +101,17 @@ public class FindPAXFragment extends StyledDialogFragment {
     }
 
     @Override
+    protected OnDialogClickListener getNegativeButtonListener() {
+        return new OnDialogClickListener() {
+            @Override
+            public boolean onClick() {
+                cancelCurTask();
+                return true;
+            }
+        };
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         View v = getView();
@@ -115,8 +122,16 @@ public class FindPAXFragment extends StyledDialogFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                getPositiveButton().setTextColor(normalBtnColor);
-                getPositiveButton().setEnabled(true);
+                CheckedTextView c = (CheckedTextView) view;
+                if (c.isChecked()) {
+                    getPositiveButton().setTextColor(normalBtnColor);
+                    getPositiveButton().setEnabled(true);
+                }
+                else
+                {
+                    getPositiveButton().setTextColor(disabledBtnColor);
+                    getPositiveButton().setEnabled(false);
+                }
             }
         });
     }
@@ -145,6 +160,7 @@ public class FindPAXFragment extends StyledDialogFragment {
 
     private void cancelCurTask() {
         progressBlock.setVisibility(View.GONE);
+        GroundyManager.cancelAll(getActivity());
         if (currentTask != null) {
             currentTask.cancel(getActivity(), 0, null);
         }

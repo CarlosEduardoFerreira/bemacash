@@ -255,7 +255,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
+        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 

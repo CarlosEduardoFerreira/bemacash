@@ -30,7 +30,9 @@ import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import retrofit.RetrofitError;
 
@@ -127,11 +129,32 @@ public class PaxSaleCommand extends PaxBaseCommand {
                 .add(RESULT_ERROR_REASON, errorReason);
     }
 
+    private Socket socket;
+    private static final int READ_TIMEOUT = (int) TimeUnit.SECONDS.toMillis(10);
+    private static final int CONNECTION_TIMEOUT = 100;
+
     @Override
     protected TaskResult doCommand(PaxWebApi api) {
         PaymentTransactionJdbcConverter jdbcConverter = (PaymentTransactionJdbcConverter) JdbcFactory.getConverter(PaymentTransactionTable.TABLE_NAME);
         operations = new ArrayList<ContentProviderOperation>();
         sqlCommand = batchInsert(PaymentTransactionModel.class);
+
+//        PaxModel model = getArgs().getParcelable(ARG_DATA_PAX);
+
+//        socket = new Socket();
+//        try {
+//            socket.setSoTimeout(READ_TIMEOUT);
+//            socket.connect(new InetSocketAddress(model.ip, model.port), CONNECTION_TIMEOUT);
+//            if (!socket.isConnected())
+//                return failed();
+//        } catch (SocketException e) {
+//            Logger.e("PaxError", e);
+//            return failed();
+//        } catch (IOException e) {
+//            Logger.e("PaxError", e);
+//            return failed();
+//        }
+
 
         int transactionId = getIntArg(ARG_PURPOSE);
         transaction = getArgs().getParcelable(ARG_AMOUNT);
@@ -196,6 +219,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
             // I put this check due to possibilty on DB corruption, DB access failure and many other ugly rare stuff
             Logger.e("Rare SQL exception caught, data was not updated", e);
             errorReason = "Rare SQL exception caught, data was not updated";
+            return failed();
         }
         return succeeded();
     }

@@ -145,12 +145,12 @@ public class MSRSettingsFragment extends Fragment implements LoaderCallbacks<Cur
 
         @Override
         public void remove(int i) {
-            handleRemove(getModel(i).getGuid());
+            handleRemove(getModel(i));
         }
 
     }
 
-    private void handleRemove(final String printerGuid) {
+    private void handleRemove(final PaxModel model) {
         AlertDialogFragment.show(
                 getActivity(),
                 DialogType.CONFIRM_NONE,
@@ -160,7 +160,7 @@ public class MSRSettingsFragment extends Fragment implements LoaderCallbacks<Cur
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        DeletePaxCommand.start(getActivity(), printerGuid, false, null);
+                        DeletePaxCommand.start(getActivity(), model, false);
                         return true;
                     }
                 }, new OnDialogClickListener() {

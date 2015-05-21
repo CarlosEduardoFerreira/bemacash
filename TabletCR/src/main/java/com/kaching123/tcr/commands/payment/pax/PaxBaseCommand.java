@@ -47,9 +47,12 @@ import retrofit.http.POST;
  */
 public abstract class PaxBaseCommand extends AsyncCommand {
 
-    public static final int CONNECTION_TIMEOUT = (int) TimeUnit.MINUTES.toMillis(2);
+    public static final int CONNECTION_TIMEOUT = 30000;
+
+    public static final int TRANSACTION_TIMEOUT = (int) TimeUnit.MINUTES.toMillis(1);
 
     protected static final String ARG_DATA_PAX = "ARG_DATA_PAX";
+    protected static final String ARG_INIT_CONNECT = "ARG_INIT_CONNECT";
 
     protected static final String RESULT_DATA = "RESULT_DATA";
     protected static final String RESULT_ERROR = "RESULT_ERROR";
@@ -61,7 +64,8 @@ public abstract class PaxBaseCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         if (paxTerminal == null)
             paxTerminal = getArgs().getParcelable(ARG_DATA_PAX);
-        return doCommand(getApi());
+        boolean init = getBooleanArg(ARG_INIT_CONNECT);
+        return doCommand(getApi(init));
     }
 
     protected abstract TaskResult doCommand(PaxWebApi api);
@@ -81,7 +85,7 @@ public abstract class PaxBaseCommand extends AsyncCommand {
         return null;
     }
 
-    private PaxWebApi getApi() {
+    private PaxWebApi getApi(final boolean initConnect) {
         RestAdapter.Builder adapterBuilder = new RestAdapter.Builder().setEndpoint(String.format("http://%s:%s", paxTerminal.ip, paxTerminal.port));
         adapterBuilder.setErrorHandler(new PaxErrorHandler());
         adapterBuilder.setConverter(new GsonConverter(createGson()));
@@ -91,8 +95,8 @@ public abstract class PaxBaseCommand extends AsyncCommand {
             @Override
             protected HttpURLConnection openConnection(Request request) throws IOException {
                 HttpURLConnection connection = super.openConnection(request);
-                connection.setReadTimeout(CONNECTION_TIMEOUT);
-                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+                connection.setReadTimeout(initConnect ? CONNECTION_TIMEOUT : TRANSACTION_TIMEOUT);
+                connection.setConnectTimeout(initConnect ? CONNECTION_TIMEOUT : TRANSACTION_TIMEOUT);
                 return connection;
             }
         };

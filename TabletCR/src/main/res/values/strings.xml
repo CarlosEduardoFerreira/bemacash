@@ -92,7 +92,7 @@
     <string name="orders_history_order_num">Order#:</string>
     <string name="orders_history_transactions_status">Status:</string>
     <string name="printers_searching">Printers searching...</string>
-    <string name="pax_searching">Pax searching...</string>
+    <string name="pax_searching">searching device...</string>
     <string name="pref_current_pax_msg">You can setup PAX pinpad here</string>
     <string name="pref_timeout_config">Configure Pax Search Timeout</string>
     <string name="btn_exact">Exact</string>
@@ -103,7 +103,7 @@
     <string name="pref_printer_ip_tmpl">IP: %s</string>
     <string name="pref_printer_mac_tmpl">Mask: %s</string>
     <string name="pref_printers_list">Please choose printer</string>
-    <string name="pref_paxes_list">Please choose Pax</string>
+    <string name="pref_paxes_list">Select Pinpad Device</string>
     <string name="pref_printer_status">Printer status</string>
     <string name="pref_printer_print_logo">Print Logo</string>
     <string name="pref_display_title">Configured display</string>

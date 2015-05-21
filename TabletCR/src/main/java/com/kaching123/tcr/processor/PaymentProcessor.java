@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.commands.display.DisplayOrderCommand;
 import com.kaching123.tcr.commands.display.DisplayPartialTenderCommand;
 import com.kaching123.tcr.commands.display.DisplayTenderCommand;
@@ -842,6 +843,7 @@ public class PaymentProcessor {
                     protected void handleSuccess() {
                         hide();
                         Toast.makeText(context, context.getString(R.string.pax_configured), Toast.LENGTH_LONG).show();
+                        DeletePaxCommand.start(context,model, true);
                         proceedToPAXPayment(context, transaction);
                     }
 
@@ -849,6 +851,7 @@ public class PaymentProcessor {
                     protected void handleError() {
                         Toast.makeText(context, context.getString(R.string.pax_not_configured), Toast.LENGTH_LONG).show();
                         hide();
+                        proceedToTender(context, 0);
                     }
                 });
             }

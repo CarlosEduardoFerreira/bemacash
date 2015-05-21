@@ -32,6 +32,7 @@ public class PaxHelloCommand extends PaxBaseCommand {
     public TaskResult sync(Context context, PaxModel model) {
         Bundle b = new Bundle();
         b.putParcelable(ARG_DATA_PAX, model);
+        b.putBoolean(ARG_INIT_CONNECT, true);
         //no need in commands cache (creds on start)
         return super.sync(context, b, null);
     }
