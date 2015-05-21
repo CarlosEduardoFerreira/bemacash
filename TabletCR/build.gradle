@@ -161,6 +161,8 @@ dependencies {
     compile 'com.tonicartos:stickygridheaders:1.0.1'
 
     compile 'org.jsoup:jsoup:1.8.1'
+
+    compile 'com.crittercism:crittercism-android-agent:+'
 }
 
 apt {
