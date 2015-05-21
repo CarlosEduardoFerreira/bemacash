@@ -21,6 +21,7 @@ import com.kaching123.tcr.commands.device.FindPaxCommand;
 import com.kaching123.tcr.commands.store.settings.EditPaxCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.PaxModel;
 import com.telly.groundy.TaskHandler;
 
@@ -80,15 +81,20 @@ public class FindPAXFragment extends StyledDialogFragment {
         return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
+                WaitDialogFragment.show(getActivity(), getString(R.string.pax_connect_wait_dialog_title));
+                getPositiveButton().setEnabled(false);
+                getNegativeButton().setEnabled(false);
                 EditPaxCommand.start(getActivity(), paxModel, new EditPaxCommand.PaxEditCommandBaseCallback() {
                     @Override
                     protected void handleSuccess() {
                         Toast.makeText(getActivity(), getString(R.string.pax_configured), Toast.LENGTH_LONG).show();
+                        WaitDialogFragment.hide(getActivity());
                         FindPAXFragment.this.dismiss();
                     }
 
                     @Override
                     protected void handleError() {
+                        WaitDialogFragment.hide(getActivity());
                         Toast.makeText(getActivity(), getString(R.string.pax_not_configured), Toast.LENGTH_LONG).show();
                         FindPAXFragment.this.dismiss();
                     }

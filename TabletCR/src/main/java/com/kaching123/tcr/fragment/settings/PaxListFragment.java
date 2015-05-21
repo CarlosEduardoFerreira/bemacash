@@ -52,7 +52,7 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
     @ViewById
     protected EditText timeOutInput;
 
-    private final int PAX_TIME_OUT_DEFAULT = 25;
+    private final int PAX_TIME_OUT_DEFAULT = 100;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -70,13 +70,18 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
     @AfterTextChange(R.id.time_out_input)
     protected void afterTextChangedOntimeOutInput(Editable s, TextView view) {
-        if (validTimeout(s.toString()))
-            setPaxTimeout(Integer.parseInt(s.toString()));
+        if (validTimeout(s.toString())) {
+            if (PAX_TIME_OUT_DEFAULT > Integer.parseInt(s.toString())) {
+                Toast.makeText(getActivity(), getString(R.string.pax_search_time_out_warning), Toast.LENGTH_LONG).show();
+                setPaxTimeout(PAX_TIME_OUT_DEFAULT);
+            } else
+                setPaxTimeout(Integer.parseInt(s.toString()));
+        }
     }
 
     @AfterViews
     protected void init() {
-        timeOutInput.setText("" + (getPaxTimeout() == 0 ? PAX_TIME_OUT_DEFAULT : getPaxTimeout()));
+        timeOutInput.setText("" + (getPaxTimeout() < PAX_TIME_OUT_DEFAULT ? PAX_TIME_OUT_DEFAULT : getPaxTimeout()));
     }
 
     private int getPaxTimeout() {

@@ -16,7 +16,6 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSetAutomaticBatchCloseCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackUpdateAutomaticHourToCloseBatchCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxHelloCommand;
 import com.kaching123.tcr.commands.payment.pax.PaxMIDownloadCommand;
 import com.kaching123.tcr.commands.rest.sync.DBVersionCheckCommand;
 import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;
@@ -28,6 +27,7 @@ import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncApi2;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
 import com.kaching123.tcr.commands.support.SendLogCommand;
+import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter.BarcodePrefixes;
@@ -564,7 +564,7 @@ public class SyncCommand implements Runnable {
 
     private int syncLocalSingleTable(Context context, String localTable) throws SyncException {
         //TODO: fire spec event?
-        //fireEvent(context, localTable);
+        fireEvent(context, SyncWaitDialogFragment.SYNC_LOCAL + localTable);
 
         ShopProviderExt.callMethod(context, Method.METHOD_COPY_TABLE_FROM_SYNC_DB, localTable, null);
         if (!isManual)

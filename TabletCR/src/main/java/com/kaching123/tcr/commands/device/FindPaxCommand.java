@@ -38,7 +38,7 @@ public class FindPaxCommand extends PublicGroundyTask {
     @Override
     protected TaskResult doInBackground() {
         String ipHead = logLocalIpAddresses();
-        int timeOut = getIntArg(ARG_TIME_OUT);
+        int timeOut = getIntArg(ARG_TIME_OUT) == 0 ? getApp().getPaxTimeOut() : getIntArg(ARG_TIME_OUT);
         PaxModel model = new PaxModel(null, "", 6911, "", null, null, false, null);
         boolean success = false;
         try {
@@ -75,7 +75,7 @@ public class FindPaxCommand extends PublicGroundyTask {
                         return true;
                     }
 
-                }catch (ConnectException ex) {
+                } catch (ConnectException ex) {
                     Logger.d("FindPaxCommand ConnectException: " + ex.toString());
                     continue;
                 } catch (SocketTimeoutException ex) {

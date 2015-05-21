@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.res.StringRes;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.UploadTask;
@@ -39,6 +37,9 @@ import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.ShopStore.WirelessTable;
 import com.kaching123.tcr.util.ReceiverWrapper;
 
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.res.StringRes;
+
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -46,14 +47,17 @@ import java.util.Locale;
  * Created by gdubina on 24.12.13.
  */
 @EFragment
-public class SyncWaitDialogFragment extends WaitDialogFragment{
+public class SyncWaitDialogFragment extends WaitDialogFragment {
 
     private static final String DIALOG_NAME = "syncProgressDialog";
+
+    public static final String SYNC_LOCAL = "loacl:";
 
     @StringRes(R.string.sync_wait_msg_tmpl)
     protected String waitMsgTmpl;
 
     private static final IntentFilter intentFilter = new IntentFilter();
+
     static {
         intentFilter.addAction(UploadTask.ACTION_UPLOAD_STARTED);
         intentFilter.addAction(UploadTask.ACTION_INVALID_UPLOAD_TRANSACTION);
@@ -84,9 +88,14 @@ public class SyncWaitDialogFragment extends WaitDialogFragment{
                 int progress = intent.getIntExtra(SyncCommand.EXTRA_PROGRESS, 0);
 
                 if (table != null)
-                    dataLabel = getString(TABLE_NAMES.get(table));
+                    if (table.contains(SYNC_LOCAL)) {
+                        table = table.substring(6);
+                        dataLabel = SYNC_LOCAL + getString(TABLE_NAMES.get(table));
+                    }
+                    else
+                        dataLabel = getString(TABLE_NAMES.get(table));
 
-                if(pages == 0 && progress == 0){
+                if (pages == 0 && progress == 0) {
                     progressMsg.setText(String.format(Locale.US, waitMsgTmpl2, dataLabel));
                 } else {
                     progressMsg.setText(String.format(Locale.US, waitMsgTmpl, dataLabel, progress, pages));
@@ -115,7 +124,8 @@ public class SyncWaitDialogFragment extends WaitDialogFragment{
     }
 
     public static final HashMap<String, Integer> TABLE_NAMES = new HashMap<String, Integer>();
-    static{
+
+    static {
         TABLE_NAMES.put(CategoryTable.TABLE_NAME, R.string.sync_category);
         TABLE_NAMES.put(DepartmentTable.TABLE_NAME, R.string.sync_department);
 

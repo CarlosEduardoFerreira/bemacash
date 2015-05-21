@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -18,6 +20,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.BuildConfig;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.data.CardData;
 import com.kaching123.tcr.fragment.data.MsrDataFragment;
@@ -273,10 +276,15 @@ public class PaySwipePendingFragmentDialog extends StyledDialogFragment {
             return false;
         }
 
-        if (TextUtils.isEmpty(cvn) && getApp().getShopInfo().cvnMandatory) {
-            showAlert(R.string.swipe_manual_card_cvn_empty_msg);
-            return false;
-        }
+//        if (TextUtils.isEmpty(cvn) && getApp().getShopInfo().cvnMandatory) {
+//            showAlert(R.string.swipe_manual_card_cvn_empty_msg);
+//            return false;
+//        }
+//
+//        if (!TextUtils.isEmpty(cvn) && cvn.length() < CARD_CVN_MIN_LEN) {
+//            showAlert(R.string.swipe_manual_card_cvn_invalid_msg);
+//            return false;
+//        }
 
         if (!TextUtils.isEmpty(cvn) && cvn.length() < CARD_CVN_MIN_LEN) {
             showAlert(R.string.swipe_manual_card_cvn_invalid_msg);

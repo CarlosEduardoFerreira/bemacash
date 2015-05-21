@@ -2,15 +2,18 @@ package com.kaching123.tcr.store;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
 import com.mayer.sql.update.version.IUpdateContainer;
 
@@ -30,6 +33,7 @@ import java.util.Date;
 public class ShopOpenHelper extends BaseOpenHelper {
 
     private static final DateFormat FILE_NAME_DATE_FORMAT = new SimpleDateFormat("MM_dd_yyyy");
+    private static final int PAGE_ROWS = 1800;
 
     private static final String EXTRA_DB_ALIAS = "\'extraDb\'";
     private static final String SQL_ATTACH_DB = "ATTACH DATABASE \'%s\' AS " + EXTRA_DB_ALIAS + ";";
@@ -38,6 +42,11 @@ public class ShopOpenHelper extends BaseOpenHelper {
     private static final String SQL_CLEAR_TABLE_IN_DB = "DELETE FROM " + EXTRA_DB_ALIAS + ".%s;";
 
     private TrainingShopOpenHelper trainingShopOpenHelper;
+    public static String ACTION_SYNC_PROGRESS = "com.kaching123.tcr.service.ACTION_SYNC_PROGRESS";
+    public static String EXTRA_TABLE = "table";
+    public static String EXTRA_PAGES = "pages";
+    public static String EXTRA_PROGRESS = "progress";
+    public static String EXTRA_DATA_LABEL = "data_label";
 
     public ShopOpenHelper(Context context) {
         super(context);
@@ -62,7 +71,7 @@ public class ShopOpenHelper extends BaseOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         super.onUpgrade(db, oldVersion, newVersion);
 
-        if (oldVersion < IUpdateContainer.VERSION5){
+        if (oldVersion < IUpdateContainer.VERSION5) {
             Logger.d("ShopOpenHelper.onUpgrade(): need2DownloadAfter1stLaunch() set to true");
             ((TcrApplication) mContext.getApplicationContext()).getShopPref().need2DownloadAfter1stLaunch().put(true);
         }
@@ -123,7 +132,7 @@ public class ShopOpenHelper extends BaseOpenHelper {
             String registerSerial = TcrApplication.get().getRegisterSerial();
             String operatorGuid = TcrApplication.get().getOperatorGuid();
             copyTableAcrossDatabases(db, trainingDb, ShopStore.RegisterTable.TABLE_NAME,
-                    ShopStore.RegisterTable.REGISTER_SERIAL + " = ? AND "+ ShopStore.RegisterTable.STATUS + " <> ?",
+                    ShopStore.RegisterTable.REGISTER_SERIAL + " = ? AND " + ShopStore.RegisterTable.STATUS + " <> ?",
                     new String[]{registerSerial, String.valueOf(RegisterStatus.BLOCKED.ordinal())},
                     true);
             copyTableAcrossDatabases(db, trainingDb, ShopStore.EmployeeTable.TABLE_NAME, ShopStore.EmployeeTable.GUID, operatorGuid, true);
@@ -149,7 +158,7 @@ public class ShopOpenHelper extends BaseOpenHelper {
         String[] selectionArgs = null;
         if (!TextUtils.isEmpty(guidField)) {
             selection = guidField + " = ?";
-            selectionArgs = new String[] {guid};
+            selectionArgs = new String[]{guid};
         }
         copyTableAcrossDatabases(sourceDb, destinationDb, tableName, selection, selectionArgs, failOnEmptyData);
     }
@@ -236,16 +245,22 @@ public class ShopOpenHelper extends BaseOpenHelper {
         db.execSQL(String.format(SQL_DETACH_DB));
     }
 
-    public void copyTableFromExtraDatabase(String tableName) {
+    public void copyTableFromExtraDatabase(String tableName, Context context) {
         SQLiteDatabase db = getWritableDatabase();
 
         Cursor cursor = db.query(EXTRA_DB_ALIAS + '.' + tableName, null, null, null, null, null, null);
         ContentValues values = new ContentValues();
+        int pages = (PAGE_ROWS + cursor.getCount()) / PAGE_ROWS;
+        int steps = 0;
         try {
             while (cursor.moveToNext()) {
+                steps++;
+                int currentPage = steps / PAGE_ROWS;
                 values.clear();
                 DatabaseUtils.cursorRowToContentValues(cursor, values);
                 long rowId = db.insertWithOnConflict(tableName, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                if (pages != 0)
+                    fireEvent(context, tableName, null, pages, currentPage);
                 if (rowId == -1L)
                     throw new SQLiteException();
             }
@@ -256,6 +271,15 @@ public class ShopOpenHelper extends BaseOpenHelper {
             if (cursor != null)
                 cursor.close();
         }
+    }
+
+    private void fireEvent(Context context, String table, String dataLabel, int pages, int progress) {
+        Intent intent = new Intent(ACTION_SYNC_PROGRESS);
+        intent.putExtra(EXTRA_TABLE, SyncWaitDialogFragment.SYNC_LOCAL + table);
+        intent.putExtra(EXTRA_DATA_LABEL, dataLabel);
+        intent.putExtra(EXTRA_PAGES, pages);
+        intent.putExtra(EXTRA_PROGRESS, progress);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     public void clearTableInExtraDatabase(String tableName) {

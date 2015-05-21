@@ -507,8 +507,10 @@
     <string name="print_order_power_by_backstone">Blackstone</string>
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
+    <string name="pax_connect_wait_dialog_title">Connecting Pax...</string>
     <string name="pax_wait_dialog_title">Searching Pax...</string>
     <string name="pax_not_found_message">Pax not found</string>
+    <string name="pax_search_time_out_warning">Pax search minimum time outis 100 milliseconds</string>
     <string name="wait_message_open_drawer">Opening drawer</string>
     <string name="wait_message_start_shift">Opening shift</string>
     <string name="wait_message_stop_shift">Closing shift</string>
@@ -1216,7 +1218,7 @@
     <string name="bill_payment_category_dialog_biller_placeholder">Choose Biller</string>
     <string name="bill_payment_category_dialog_payment_option_placeholder">Choose Payment Option</string>
     <string name="swipe_manual_cardnumber_hint">Card number</string>
-    <string name="swipe_manual_expdate_hint">Expire date</string>
+    <string name="swipe_manual_expdate_hint">MM/YY</string>
     <string name="swipe_manual_cvn_hint">CVN</string>
     <string name="swipe_manual_zip_hint">Zip</string>
     <string name="swipe_manual_alert_title">Invalid data</string>

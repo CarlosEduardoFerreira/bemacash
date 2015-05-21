@@ -129,7 +129,7 @@ public class ShopProviderExt extends ShopProvider {
         } else if (Method.METHOD_DETACH_SYNC_DB.equals(method)) {
             ((ShopOpenHelper) dbHelper).detachExtraDatabase();
         } else if (Method.METHOD_COPY_TABLE_FROM_SYNC_DB.equals(method) && !TextUtils.isEmpty(arg)) {
-            ((ShopOpenHelper) dbHelper).copyTableFromExtraDatabase(arg);
+            ((ShopOpenHelper) dbHelper).copyTableFromExtraDatabase(arg, getContext());
         } else if (Method.METHOD_CLEAR_TABLE_IN_SYNC_DB.equals(method) && !TextUtils.isEmpty(arg)) {
             ((ShopOpenHelper) dbHelper).clearTableInExtraDatabase(arg);
         }
@@ -215,7 +215,7 @@ public class ShopProviderExt extends ShopProvider {
             } else if (ItemTable.URI_CONTENT.equals(path)) {
                 Logger.d("recalculateAvailableQty: bulkInsert ItemTable");
                 itemMovementHelper.bulkRecalcAvailableItemMovementTableAfterSync(true);
-            } else if (SaleOrderTable.URI_CONTENT.equals(path)){
+            } else if (SaleOrderTable.URI_CONTENT.equals(path)) {
                 Logger.d("recalculateAvailableQty: bulkInsert SaleOrderTable");
                 saleItemHelper.bulkRecalculateOrderTotalPriceAfterSync();
             }
