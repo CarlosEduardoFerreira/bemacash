@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  * Created by vkompaniets on 14.02.14.
  */
 public class PosKitchenPrinter extends BasePosTextPrinter implements IKitchenPrinter {
-
+    public static final int PRINTER_KITCHEN_MAX_TEXT_LEN = 39;
     @Override
     public void header(String shopName, String registerTitle, String orderNumLabel, int orderSeqNum, String operatorLabel, String operatorName, String stationLabel, String station, String orderHolder, String orderTitle) {
         boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, shopName)));
@@ -38,17 +38,17 @@ public class PosKitchenPrinter extends BasePosTextPrinter implements IKitchenPri
 
     @Override
     public void tabbed(String first, String second) {
-        add(new PrintLineAction(formatHolderString(PRINTER_MAX_TEXT_LEN, second.length(), first, second)));
+        add(new PrintLineAction(formatHolderString(PRINTER_KITCHEN_MAX_TEXT_LEN, second.length(), first, second)));
     }
 
     @Override
     public void center(String message) {
-        add(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, message)));
+        add(new PrintLineAction(centerString(PRINTER_KITCHEN_MAX_TEXT_LEN, message)));
     }
 
 
     private void splitRows(String prefix, String line) {
-        int maxLineLen = PRINTER_MAX_TEXT_LEN - prefix.length();
+        int maxLineLen = PRINTER_KITCHEN_MAX_TEXT_LEN - prefix.length();
 
         if (maxLineLen <= 0)
             return;
