@@ -1,3 +1,0 @@
-# Use -keep to explicitly keep any other classes shrinking would remove
--keep com.kaching123.tcr.*
--ignorewarnings
