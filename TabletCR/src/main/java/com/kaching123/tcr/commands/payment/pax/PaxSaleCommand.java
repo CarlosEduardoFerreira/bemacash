@@ -15,6 +15,7 @@ import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.payment.blackstone.pax.PaxTransaction;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
+import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -160,8 +161,6 @@ public class PaxSaleCommand extends PaxBaseCommand {
                     transaction.balance = (new BigDecimal(response.getDetails().getBalanceCash()));
                 if (response.getDetails().getBalanceFS() != null)
                     transaction.balance = (new BigDecimal(response.getDetails().getBalanceFS()));
-                if (response.getDetails().getSale().getBalance() != null)
-                    transaction.balance = new BigDecimal(response.getDetails().getSale().getBalance());
                 PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                 operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
                         .withValues(transactionModel.toValues())

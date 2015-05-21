@@ -12,6 +12,7 @@ import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
@@ -171,9 +172,9 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             if (isChanged) {
                 printerWrapper.change(changeText, p.changeAmount);
             }
-            if (p.balance != null && p.balance.compareTo(BigDecimal.ZERO) != 0) {
+            if (p.balance != null) {
 //                printerWrapper.orderFooter(context.getString(R.string.printer_balance) + p.lastFour != null ? " (" + p.lastFour + ")" : "", p.balance, true);
-                printerWrapper.orderFooter(context.getString(R.string.printer_balance), p.balance, true);
+                printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
             }
         }
     }
