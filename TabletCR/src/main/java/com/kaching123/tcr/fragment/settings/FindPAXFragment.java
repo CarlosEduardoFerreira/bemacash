@@ -20,7 +20,6 @@ import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.PaxModel;
-import com.telly.groundy.GroundyManager;
 import com.telly.groundy.TaskHandler;
 
 import org.androidannotations.annotations.AfterViews;
@@ -126,9 +125,7 @@ public class FindPAXFragment extends StyledDialogFragment {
                 if (c.isChecked()) {
                     getPositiveButton().setTextColor(normalBtnColor);
                     getPositiveButton().setEnabled(true);
-                }
-                else
-                {
+                } else {
                     getPositiveButton().setTextColor(disabledBtnColor);
                     getPositiveButton().setEnabled(false);
                 }
@@ -190,6 +187,13 @@ public class FindPAXFragment extends StyledDialogFragment {
             }
             paxModel = info;
             adapter.add(info);
+        }
+
+        @Override
+        protected void handleFailure() {
+            currentTask = null;
+            progressBlock.setVisibility(View.GONE);
+            paxNotFoundText.setVisibility(View.VISIBLE);
         }
     }
 

@@ -11,6 +11,7 @@ import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnCallback;
+import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
@@ -173,9 +174,17 @@ public class FindPaxCommand extends PublicGroundyTask {
             handleAddPax(info);
         }
 
+        @OnFailure(FindPaxCommand.class)
+        public void onFailure()
+        {
+            handleFailure();
+        }
+
         protected abstract void onSearchFinished();
 
         protected abstract void handleAddPax(PaxModel info);
+
+        protected abstract void handleFailure( );
     }
 
 }
