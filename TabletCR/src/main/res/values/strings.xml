@@ -101,6 +101,7 @@
     <string name="pref_printer_ip_tmpl">IP: %s</string>
     <string name="pref_printer_mac_tmpl">Mask: %s</string>
     <string name="pref_printers_list">Please choose printer</string>
+    <string name="pref_paxes_list">Please choose Pax</string>
     <string name="pref_printer_status">Printer status</string>
     <string name="pref_printer_print_logo">Print Logo</string>
     <string name="pref_display_title">Configured display</string>
@@ -1077,6 +1078,7 @@
     <string name="email_order_send_label">Send</string>
     <string name="print_order_copy_header">COPY</string>
     <string name="printers_action_add">Add</string>
+    <string name="printers_action_search">Search</string>
     <string name="login_login_label">You are logged in as</string>
     <string name="login_switch_user_label"><u>Switch User</u></string>
     <string name="action_lock_label">Switch User</string>

@@ -1,13 +1,13 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.store.ShopStore.PaxTable;
 
-import java.io.Serializable;
-
-public class PaxModel implements IValueModel, Serializable{
+public class PaxModel implements IValueModel, Parcelable {
 
     public String guid;
     public String ip;
@@ -16,9 +16,10 @@ public class PaxModel implements IValueModel, Serializable{
     public String subNet;
     public String gateway;
     public boolean dhcp;
+    public String serial;
 
 
-    public PaxModel(String guid, String ip, int port, String mac, String subNet, String gateway, boolean dhcp) {
+    public PaxModel(String guid, String ip, int port, String mac, String subNet, String gateway, boolean dhcp, String serial) {
         this.guid = guid;
         this.ip = ip;
         this.port = port;
@@ -26,6 +27,7 @@ public class PaxModel implements IValueModel, Serializable{
         this.subNet = subNet;
         this.gateway = gateway;
         this.dhcp = dhcp;
+        this.serial = serial;
     }
 
     @Override
@@ -43,6 +45,7 @@ public class PaxModel implements IValueModel, Serializable{
         values.put(PaxTable.SUBNET, subNet);
         values.put(PaxTable.GATEWAY, gateway);
         values.put(PaxTable.DHCP, dhcp);
+        values.put(PaxTable.SERIAL, serial);
         return values;
     }
 
@@ -53,6 +56,46 @@ public class PaxModel implements IValueModel, Serializable{
 
     public static PaxModel get() {
         TcrApplication app = TcrApplication.get();
-        return new PaxModel(null, app.getShopPref().paxUrl().get(), app.getShopPref().paxPort().get(), null, null, null, false);
+        return new PaxModel(null, app.getShopPref().paxUrl().get(), app.getShopPref().paxPort().get(), null, null, null, false, null);
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(guid);
+        dest.writeString(ip);
+        dest.writeInt(port);
+        dest.writeString(mac);
+        dest.writeString(subNet);
+        dest.writeString(gateway);
+        dest.writeInt(dhcp ? 1 : 0);
+        dest.writeString(serial);
+    }
+
+    public static Creator<PaxModel> CREATOR = new Creator<PaxModel>() {
+
+        @Override
+        public PaxModel createFromParcel(Parcel source) {
+            return new PaxModel(
+                    source.readString(),
+                    source.readString(),
+                    source.readInt(),
+                    source.readString(),
+                    source.readString(),
+                    source.readString(),
+                    source.readInt() == 1,
+                    source.readString()
+            );
+        }
+
+        @Override
+        public PaxModel[] newArray(int size) {
+            return new PaxModel[size];
+        }
+    };
 }

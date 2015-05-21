@@ -10,8 +10,6 @@ import android.util.Base64;
 
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EApplication;
 import com.kaching123.display.SerialPortScanner;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EApplication;
@@ -44,6 +42,8 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.kaching123.tcr.util.OrgJsonConverter;
 import com.squareup.okhttp.OkHttpClient;
 
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EApplication;
 import org.apache.commons.codec.Charsets;
 
 import java.io.IOException;
@@ -582,21 +582,19 @@ public class TcrApplication extends Application {
         return shopInfo.printerTwoCopiesReceipt;
     }
 
-    public void setSunpassActivated(boolean activated){
+    public void setSunpassActivated(boolean activated) {
         shopPref.SunpassActivated().put(activated);
     }
 
-    public boolean getSunpassActivated()
-    {
+    public boolean getSunpassActivated() {
         return shopPref.SunpassActivated().get();
     }
 
-    public void setBillPaymentActivated(boolean activated){
+    public void setBillPaymentActivated(boolean activated) {
         shopPref.BillPaymentActivated().put(activated);
     }
 
-    public boolean getBillPaymentActivated()
-    {
+    public boolean getBillPaymentActivated() {
         return shopPref.BillPaymentActivated().get();
     }
 
@@ -606,6 +604,14 @@ public class TcrApplication extends Application {
 
     public boolean isPaxTipsEnabled() {
         return shopPref.paxTipsEnabled().get();
+    }
+
+    public void setPaxSerial(String serial) {
+        shopPref.paxSerial().put(serial);
+    }
+
+    public String getPaxSerial() {
+        return shopPref.paxSerial().get();
     }
 
     public void setPaxTipsEnabled(boolean isPaxTipsEnabled) {

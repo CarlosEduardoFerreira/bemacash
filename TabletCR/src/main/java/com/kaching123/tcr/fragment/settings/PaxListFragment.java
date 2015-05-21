@@ -66,6 +66,15 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
         }
     }
 
+    @OptionsItem
+    protected void actionSearchSelected() {
+        if (list != null && list.getCount() > 0) {
+            Toast.makeText(getActivity(), "Only one active pinpad is available", Toast.LENGTH_LONG).show();
+        } else {
+            FindPAXFragment.show(getActivity());
+        }
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(), URI_PRINTER, new String[]{
@@ -77,6 +86,7 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
                 PaxTable.SUBNET,
                 PaxTable.GATEWAY,
                 PaxTable.DHCP,
+                PaxTable.SERIAL,
         }, null, null, PaxTable.PORT);
     }
 
@@ -138,7 +148,8 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
                     c.getString(4),
                     c.getString(5),
                     c.getString(6),
-                    c.getInt(7) == 1);
+                    c.getInt(7) == 1,
+                    c.getString(8));
         }
 
         @Override

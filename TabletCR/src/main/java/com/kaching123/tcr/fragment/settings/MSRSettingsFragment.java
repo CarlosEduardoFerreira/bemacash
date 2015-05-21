@@ -21,6 +21,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -31,7 +32,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PaxTable;
 import com.mobeta.android.dslv.DragSortListView;
 
-@EFragment (R.layout.settings_msr_list_fragment)
+@EFragment(R.layout.settings_msr_list_fragment)
 @OptionsMenu(R.menu.msr_activity)
 public class MSRSettingsFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
@@ -108,10 +109,10 @@ public class MSRSettingsFragment extends Fragment implements LoaderCallbacks<Cur
             config.setOnClickListener(configItemClickListener);
 
             v.setTag(new UiHolder(
-                    (TextView) v.findViewById(android.R.id.text1),
-                    (TextView) v.findViewById(android.R.id.text2),
-                    edit,
-                    config)
+                            (TextView) v.findViewById(android.R.id.text1),
+                            (TextView) v.findViewById(android.R.id.text2),
+                            edit,
+                            config)
             );
             return v;
         }
@@ -138,7 +139,8 @@ public class MSRSettingsFragment extends Fragment implements LoaderCallbacks<Cur
                     c.getString(4),
                     c.getString(5),
                     c.getString(6),
-                    c.getInt(7) == 1);
+                    c.getInt(7) == 1,
+                    c.getString(8));
         }
 
         @Override
@@ -175,9 +177,9 @@ public class MSRSettingsFragment extends Fragment implements LoaderCallbacks<Cur
 
         @Override
         public void onClick(View v) {
-            Integer pos = (Integer)v.getTag();
+            Integer pos = (Integer) v.getTag();
             final PaxModel model = adapter.getModel(pos);
-            if(TextUtils.isEmpty(model.mac)){
+            if (TextUtils.isEmpty(model.mac)) {
                 return;
             }
 //            PrinterConfigFragment.show(getActivity(), model);

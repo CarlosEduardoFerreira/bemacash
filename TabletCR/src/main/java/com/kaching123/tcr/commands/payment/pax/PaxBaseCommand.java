@@ -13,12 +13,14 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.request.LastTransactionRe
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.MIDownloadRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.MIRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.SaleActionRequest;
+import com.kaching123.tcr.websvc.api.pax.model.payment.request.SerialRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.SettlementRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.AddTipsResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.HelloResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.LastTrasnactionResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.MIResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
+import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SerialResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SettlementResponse;
 import com.squareup.okhttp.OkHttpClient;
 import com.telly.groundy.TaskResult;
@@ -58,13 +60,13 @@ public abstract class PaxBaseCommand extends AsyncCommand {
     @Override
     protected TaskResult doCommand() {
         if (paxTerminal == null)
-            paxTerminal = (PaxModel) getArgs().getSerializable(ARG_DATA_PAX);
+            paxTerminal = getArgs().getParcelable(ARG_DATA_PAX);
         return doCommand(getApi());
     }
 
     protected abstract TaskResult doCommand(PaxWebApi api);
 
-	@Override
+    @Override
     protected boolean validateAppCommandContext() {
         return false;
     }
@@ -145,6 +147,9 @@ public abstract class PaxBaseCommand extends AsyncCommand {
 
         @POST("/")
         HelloResponse hello(@Body HelloRequest request);
+
+        @POST("/")
+        SerialResponse serial(@Body SerialRequest request);
 
         @POST("/")
         MIResponse midownload(@Body MIDownloadRequest request);

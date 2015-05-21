@@ -25,11 +25,12 @@ import com.annotatedsql.annotation.sql.StaticWhere;
 import com.annotatedsql.annotation.sql.Table;
 import com.annotatedsql.annotation.sql.Unique;
 import com.kaching123.tcr.BuildConfig;
+
 import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 297)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 298)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -1382,6 +1383,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String DHCP = "dhcp";
+
+        @Column(type = Type.TEXT)
+        String SERIAL = "serial";
 
     }
 

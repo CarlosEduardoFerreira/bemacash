@@ -212,6 +212,8 @@ public interface ShopPref {
     /**
      * blackstone pax **
      */
+    String paxSerial();
+
     String paxUrl();
 
     int paxPort();

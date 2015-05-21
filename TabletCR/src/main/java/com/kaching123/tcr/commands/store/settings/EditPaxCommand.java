@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.pax.PaxHelloCommand;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.store.ShopProvider;
@@ -25,23 +26,26 @@ public class EditPaxCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
-        printerModel = (PaxModel)getArgs().getSerializable(ARG_PRINTER);
+        printerModel = getArgs().getParcelable(ARG_PRINTER);
 
         boolean needInsert = printerModel.guid == null;
-        if(needInsert){
+        if (needInsert) {
             printerModel.guid = UUID.randomUUID().toString();
         }
         ContentValues v = printerModel.toValues();
         boolean ok = !isFailed(new PaxHelloCommand().sync(getContext(), printerModel));
         if (!ok) {
             return failed();
+        } else {
+            if (getApp().getShopPref().paxSerial().get() != null)
+                Logger.d("EditPaxCommand found serial: " + getApp().getShopPref().paxSerial().get());
         }
-        if(needInsert){
+        if (needInsert) {
             ProviderAction
                     .insert(URI_PRINTER)
                     .values(v)
                     .perform(getContext());
-        }else{
+        } else {
             v.remove(PaxTable.GUID);
 
             ProviderAction
@@ -53,12 +57,12 @@ public class EditPaxCommand extends PublicGroundyTask {
         return succeeded();
     }
 
-   /* @Override
-    protected ISqlCommand createSqlCommand() {
-        return command(JdbcFactory.getConverter(printerModel).updateSQL(printerModel));
-    }
-*/
-    public static void start(Context context, PaxModel model, PaxEditCommandBaseCallback callback){
+    /* @Override
+     protected ISqlCommand createSqlCommand() {
+         return command(JdbcFactory.getConverter(printerModel).updateSQL(printerModel));
+     }
+ */
+    public static void start(Context context, PaxModel model, PaxEditCommandBaseCallback callback) {
         create(EditPaxCommand.class)
                 .arg(ARG_PRINTER, model)
                 .callback(callback)

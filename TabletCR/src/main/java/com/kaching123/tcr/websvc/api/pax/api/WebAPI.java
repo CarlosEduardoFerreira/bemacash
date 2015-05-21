@@ -15,7 +15,7 @@ public abstract class WebAPI {
 
             public static final String PARAM_STATUS = "status";
             public static final String PARAM_MESSAGE = "message";
-            public static final String PARAM_R_ENTITY= "entity";
+            public static final String PARAM_R_ENTITY = "entity";
         }
     }
 
@@ -38,6 +38,10 @@ public abstract class WebAPI {
             public static final String PARAM_DISPLAY = "display";
             public static final String PARAM_USE_INTERNAL_PRINTER = "use-internal-printer";
 
+        }
+
+        public static final class SerialCommand {
+            public static final String SERIAL = "serial";
         }
 
         public static final class MIDownloadCommand {

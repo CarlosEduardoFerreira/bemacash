@@ -5,9 +5,8 @@ import android.os.Bundle;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.model.PaxModel;
-import com.kaching123.tcr.processor.PaxPokeProcessor;
-import com.kaching123.tcr.websvc.api.pax.model.payment.request.HelloRequest;
-import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.HelloResponse;
+import com.kaching123.tcr.websvc.api.pax.model.payment.request.SerialRequest;
+import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SerialResponse;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
@@ -15,13 +14,13 @@ import com.telly.groundy.annotations.Param;
 
 import retrofit.RetrofitError;
 
-public class PaxHelloCommand extends PaxBaseCommand {
+public class PaxSerialCommand extends PaxBaseCommand {
 
     public static final String RESULT_DETAILS = "RESULT_DETAILS";
     public static final String RESULT_CODE = "RESULT_CODE";
 
-    public static void start(Context context, PaxModel paxTerminal, PaxHelloCommandBaseCallback callback) {
-        create(PaxHelloCommand.class).arg(ARG_DATA_PAX, paxTerminal).allowNonUiCallbacks().callback(callback).queueUsing(context);
+    public static void start(Context context, PaxModel paxTerminal, PaxSerialCommandBaseCallback callback) {
+        create(PaxSerialCommand.class).arg(ARG_DATA_PAX, paxTerminal).allowNonUiCallbacks().callback(callback).queueUsing(context);
     }
 
     @Override
@@ -41,18 +40,11 @@ public class PaxHelloCommand extends PaxBaseCommand {
         String errorMsg = null;
         int errorCode = 0;
         try {
-            String top = getApp().getShopInfo().displayWelcomeMsg;
-            String bottom = getApp().getShopInfo().displayWelcomeMsgBottom;
-            HelloResponse response = api.hello(new HelloRequest().setDisplay(String.format("%s^%s", top != null ? top : "", bottom != null ? bottom : "")));
+            SerialResponse response = api.serial(new SerialRequest());
             errorCode = response.getResponse();
             if (errorCode == 200) {
-                new PaxMIDownloadCommand().sync(getContext(), paxTerminal);
-                PaxPokeProcessor.get().start(getContext());
-                getApp().getShopPref().paxUrl().put(paxTerminal.ip);
-                getApp().getShopPref().paxPort().put(paxTerminal.port);
+                getApp().getShopPref().paxSerial().put(response.getDetails());
                 Logger.d("response was ok");
-
-                new PaxSerialCommand().sync(getContext(), paxTerminal);
                 return succeeded().add(RESULT_DETAILS, response.getDetails()).add(RESULT_CODE, errorCode);
             }
             errorMsg = response.getDetails();
@@ -69,16 +61,16 @@ public class PaxHelloCommand extends PaxBaseCommand {
         return failed().add(RESULT_DETAILS, errorMsg).add(RESULT_CODE, errorCode);
     }
 
-    public static abstract class PaxHelloCommandBaseCallback {
+    public static abstract class PaxSerialCommandBaseCallback {
 
-        @OnSuccess(PaxHelloCommand.class)
+        @OnSuccess(PaxSerialCommand.class)
         public final void onSuccess(@Param(RESULT_DETAILS) String details) {
             handleSuccess(details);
         }
 
         protected abstract void handleSuccess(String details);
 
-        @OnFailure(PaxHelloCommand.class)
+        @OnFailure(PaxSerialCommand.class)
         public final void onFailure(@Param(RESULT_DETAILS) String error) {
             handleError(error);
         }
