@@ -24,7 +24,9 @@ repositories {
 android {
     compileSdkVersion 19
     buildToolsVersion "20"
-
+    dexOptions {
+        jumboMode = true
+    }
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 19
@@ -52,11 +54,10 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
-            proguardFile 'proguard-project-debug.txt'
             buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
+            proguardFile 'proguard-project-debug.txt'
+            minifyEnabled false
         }
-
         release {
             buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
 

@@ -1,5 +1,3 @@
--keep class com.your.code.**
 # Use -keep to explicitly keep any other classes shrinking would remove
--dontoptimize
--dontobfuscate
+-keep com.kaching123.tcr.*
 -ignorewarnings
