@@ -6,10 +6,12 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.commands.display.DisplayOrderCommand;
 import com.kaching123.tcr.commands.display.DisplayPartialTenderCommand;
 import com.kaching123.tcr.commands.display.DisplayTenderCommand;
@@ -23,8 +25,10 @@ import com.kaching123.tcr.commands.payment.pax.PaxGateway;
 import com.kaching123.tcr.commands.print.pos.PrintSignatureOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
+import com.kaching123.tcr.commands.store.settings.EditPaxCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.employee.EmployeeTipsFragmentDialog;
 import com.kaching123.tcr.fragment.employee.EmployeeTipsFragmentDialog.IAddTipsListener;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
@@ -56,6 +60,7 @@ import com.kaching123.tcr.fragment.tendering.payment.SettlementNotificationFragm
 import com.kaching123.tcr.fragment.tendering.payment.SettlementTransPendingFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.SettlementTransPendingFragmentDialog.ISettlementProgressListener;
 import com.kaching123.tcr.model.OrderType;
+import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -818,6 +823,24 @@ public class PaymentProcessor {
             public void onCancel() {
                 hide();
                 proceedToTender(context, 0);
+            }
+
+            @Override
+            public void onSearchNeed(final PaxModel model) {
+                EditPaxCommand.start(context, model, new EditPaxCommand.PaxEditCommandBaseCallback() {
+                    @Override
+                    protected void handleSuccess() {
+
+                        Toast.makeText(context, context.getString(R.string.pax_configured), Toast.LENGTH_LONG).show();
+                        proceedToPAXPayment(context, transaction);
+                    }
+
+                    @Override
+                    protected void handleError() {
+                        Toast.makeText(context, context.getString(R.string.pax_not_configured), Toast.LENGTH_LONG).show();
+                        hide();
+                    }
+                });
             }
 
             private void hide() {

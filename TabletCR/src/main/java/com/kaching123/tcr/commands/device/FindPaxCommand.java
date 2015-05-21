@@ -17,7 +17,6 @@ import com.telly.groundy.annotations.Param;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class FindPaxCommand extends PublicGroundyTask {
@@ -66,6 +65,8 @@ public class FindPaxCommand extends PublicGroundyTask {
                     if (socket.isConnected()) {
                         if (model != null) {
                             firePrinterInfo(packPrinterData(model));
+                            getApp().getShopPref().paxPort().put(model.port);
+                            getApp().getShopPref().paxUrl().put(model.ip);
                         }
                         break;
                     }
@@ -129,6 +130,10 @@ public class FindPaxCommand extends PublicGroundyTask {
 
     public static TaskHandler start(Context context, BaseFindPaxCallback callback) {
         return create(FindPaxCommand.class).callback(callback).queueUsing(context);
+    }
+
+    public TaskResult sync(Context context) {
+        return super.sync(context, null, null);
     }
 
     public static abstract class BaseFindPaxCallback {

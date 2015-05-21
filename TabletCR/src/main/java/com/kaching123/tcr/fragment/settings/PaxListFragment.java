@@ -21,6 +21,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -31,7 +32,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PaxTable;
 import com.mobeta.android.dslv.DragSortListView;
 
-@EFragment (R.layout.settings_pax_list_fragment)
+@EFragment(R.layout.settings_pax_list_fragment)
 @OptionsMenu(R.menu.discover_pax_activity)
 public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
@@ -118,10 +119,10 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
             config.setOnClickListener(configItemClickListener);
 
             v.setTag(new UiHolder(
-                    (TextView) v.findViewById(android.R.id.text1),
-                    (TextView) v.findViewById(android.R.id.text2),
-                    edit,
-                    config)
+                            (TextView) v.findViewById(android.R.id.text1),
+                            (TextView) v.findViewById(android.R.id.text2),
+                            edit,
+                            config)
             );
             return v;
         }
@@ -169,7 +170,7 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        DeletePaxCommand.start(getActivity(), printerGuid);
+                        DeletePaxCommand.start(getActivity(), printerGuid, false, null);
                         return true;
                     }
                 }, new OnDialogClickListener() {
@@ -186,9 +187,9 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
         @Override
         public void onClick(View v) {
-            Integer pos = (Integer)v.getTag();
+            Integer pos = (Integer) v.getTag();
             final PaxModel model = adapter.getModel(pos);
-            if(TextUtils.isEmpty(model.mac)){
+            if (TextUtils.isEmpty(model.mac)) {
                 return;
             }
 //            PrinterConfigFragment.show(getActivity(), model);

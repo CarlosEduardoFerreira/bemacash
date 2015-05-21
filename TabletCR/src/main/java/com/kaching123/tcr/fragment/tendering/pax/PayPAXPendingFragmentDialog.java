@@ -4,18 +4,21 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
 import com.kaching123.tcr.commands.payment.pax.PaxSaleCommand.PaxSaleCommandBaseCallback;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase;
+import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -60,6 +63,13 @@ public class PayPAXPendingFragmentDialog extends TransactionPendingFragmentDialo
             protected void handleError() {
                 listener.onComplete(null, WebCommand.ErrorReason.UNKNOWN.getDescription());
             }
+
+            @Override
+            protected void handleSearchPort(String ip, int port) {
+                PaxModel paxModel = new PaxModel(null, ip, port, "", null, null, false, null);
+                DeletePaxCommand.start(getActivity(), paxModel.getGuid(), true, paxModel.serial);
+                listener.onSearchNeed(paxModel);
+            }
         }, null, null, transaction, reloadResponse);
     }
 
@@ -68,6 +78,8 @@ public class PayPAXPendingFragmentDialog extends TransactionPendingFragmentDialo
         void onComplete(Transaction transaction, String errorReason);
 
         void onCancel();
+
+        void onSearchNeed(PaxModel model);
     }
 
     @Override

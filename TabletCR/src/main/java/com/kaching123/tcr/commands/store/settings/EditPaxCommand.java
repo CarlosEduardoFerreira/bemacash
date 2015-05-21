@@ -32,14 +32,17 @@ public class EditPaxCommand extends PublicGroundyTask {
         if (needInsert) {
             printerModel.guid = UUID.randomUUID().toString();
         }
-        ContentValues v = printerModel.toValues();
+
         boolean ok = !isFailed(new PaxHelloCommand().sync(getContext(), printerModel));
         if (!ok) {
             return failed();
         } else {
-            if (getApp().getShopPref().paxSerial().get() != null)
-                Logger.d("EditPaxCommand found serial: " + getApp().getShopPref().paxSerial().get());
+            if (getApp().getShopPref().paxSerial().get() != null) {
+                printerModel.serial = getApp().getShopPref().paxSerial().get();
+            }
+
         }
+        ContentValues v = printerModel.toValues();
         if (needInsert) {
             ProviderAction
                     .insert(URI_PRINTER)

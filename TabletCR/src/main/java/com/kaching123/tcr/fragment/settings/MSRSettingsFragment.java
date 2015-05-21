@@ -160,7 +160,7 @@ public class MSRSettingsFragment extends Fragment implements LoaderCallbacks<Cur
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        DeletePaxCommand.start(getActivity(), printerGuid);
+                        DeletePaxCommand.start(getActivity(), printerGuid, false, null);
                         return true;
                     }
                 }, new OnDialogClickListener() {

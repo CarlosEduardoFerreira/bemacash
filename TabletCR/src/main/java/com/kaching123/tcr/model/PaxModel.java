@@ -35,6 +35,10 @@ public class PaxModel implements IValueModel, Parcelable {
         return guid;
     }
 
+    public String getSerial() {
+        return serial;
+    }
+
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues(4);

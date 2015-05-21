@@ -504,6 +504,7 @@
     <string name="print_order_power_by_backstone">Blackstone</string>
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
+    <string name="pax_wait_dialog_title">Searching Pax...</string>
     <string name="wait_message_open_drawer">Opening drawer</string>
     <string name="wait_message_start_shift">Opening shift</string>
     <string name="wait_message_stop_shift">Closing shift</string>

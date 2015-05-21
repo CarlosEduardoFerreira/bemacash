@@ -2,10 +2,12 @@ package com.kaching123.tcr.commands.payment.pax;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.device.FindPaxCommand;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
@@ -22,6 +24,7 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.request.SaleActionRequest
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnCallback;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
@@ -49,12 +52,16 @@ public class PaxSaleCommand extends PaxBaseCommand {
     private static final String RESULT_ERROR_REASON = "ERROR";
     private static final String ARG_SALEACTIONRESPONSE = "SaleActionResponse";
     private static final String ARG_PURPOSE = "ARG_AMOUNT_1";
+    private static final String CALLBACK_SEARCH_PAX = "CALLBACK_SEARCH_PAX";
 
     private PaxTransaction transaction;
     private String errorReason;
 
     private ArrayList<ContentProviderOperation> operations;
     private BatchSqlCommand sqlCommand;
+
+    private final static String EXTRA_PAX_IP = "EXTRA_PAX_IP";
+    private final static String EXTRA_PAX_PORT = "EXTRA_PAX_PORT";
 
     public static final TaskHandler startSale(Context context,
                                               PaxModel paxTerminal,
@@ -94,11 +101,22 @@ public class PaxSaleCommand extends PaxBaseCommand {
         }
 
         if (isFailed(result)) {
-            if (transaction != null)
-                transaction.allowReload = true;
-            if (TextUtils.isEmpty(errorReason))
-                errorReason = ErrorReason.UNKNOWN.getDescription();
+            boolean Ok = !isFailed(new FindPaxCommand().sync(getContext()));
+            if (Ok) {
+                String paxIP = getApp().getShopPref().paxUrl().get();
+                int paxPORT = getApp().getShopPref().paxPort().get();
+                Bundle bundle = new Bundle();
+                bundle.putString(EXTRA_PAX_IP, paxIP);
+                bundle.putInt(EXTRA_PAX_PORT, paxPORT);
+                callback(CALLBACK_SEARCH_PAX, bundle);
+            } else {
+                if (transaction != null)
+                    transaction.allowReload = true;
+                if (TextUtils.isEmpty(errorReason))
+                    errorReason = ErrorReason.UNKNOWN.getDescription();
+            }
         }
+
 
         return succeeded()
                 .add(RESULT_TRANSACTION, transaction)
@@ -169,6 +187,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
             transaction.allowReload = true;
             errorReason = getContext().getString(R.string.pax_timeout);
             Logger.e("PaxError", e);
+            return failed();
         } catch (Exception e) {
             transaction.allowReload = true;
             // Though it should not happen, as Gena confirms we only care about local DB and data will sync after,
@@ -202,6 +221,11 @@ public class PaxSaleCommand extends PaxBaseCommand {
             handleSuccess(result, errorReason);
         }
 
+        @OnCallback(value = PaxSaleCommand.class, name = CALLBACK_SEARCH_PAX)
+        public void onAddPax(@Param(EXTRA_PAX_IP) String ip, @Param(EXTRA_PAX_PORT) int port) {
+            handleSearchPort(ip, port);
+        }
+
         protected abstract void handleSuccess(Transaction result, String errorReason);
 
         @OnFailure(PaxSaleCommand.class)
@@ -210,6 +234,8 @@ public class PaxSaleCommand extends PaxBaseCommand {
         }
 
         protected abstract void handleError();
+
+        protected abstract void handleSearchPort(String ip, int port);
     }
 
 }

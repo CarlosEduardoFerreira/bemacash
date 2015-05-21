@@ -16,6 +16,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSetAutomaticBatchCloseCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackUpdateAutomaticHourToCloseBatchCommand;
+import com.kaching123.tcr.commands.payment.pax.PaxHelloCommand;
 import com.kaching123.tcr.commands.payment.pax.PaxMIDownloadCommand;
 import com.kaching123.tcr.commands.rest.sync.DBVersionCheckCommand;
 import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;
@@ -584,7 +585,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.download(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -596,7 +597,7 @@ public class SyncCommand implements Runnable {
 
     private GetResponse makeShopInfoRequest(SyncApi2 api, String apiKey, JSONObject credentials) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.downloadShopInfo(apiKey, credentials);
             } catch (RetrofitError e) {
