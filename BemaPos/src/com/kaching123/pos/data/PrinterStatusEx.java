@@ -6,7 +6,7 @@ import static com.kaching123.pos.util.ByteUtil._bit;
 /**
  * Created by gdubina on 16.12.13.
  */
-public class PrinterStatusEx implements Serializable{
+public class PrinterStatusEx implements Serializable {
 
     public PrinterStatusInfo printerStatus;
     public OfflineStatusInfo offlineStatus;
@@ -20,9 +20,25 @@ public class PrinterStatusEx implements Serializable{
         this.printerHead = printerHead;
     }
 
-    public static class PrinterStatusInfo implements Serializable{
+    public PrinterStatusEx(PrinterStatusInfo printerStatus) {
+        this.printerStatus = printerStatus;
+    }
 
-        public static enum BufferState{EMPTY, UNDER_1_3, ABOVE_1_3, BEYOND_3_4}
+    public PrinterStatusEx(OfflineStatusInfo offlineStatus) {
+        this.offlineStatus = offlineStatus;
+    }
+
+    public PrinterStatusEx(ErrorStatusInfo errorStatus) {
+        this.errorStatus = errorStatus;
+    }
+
+    public PrinterStatusEx(PrinterHeadInfo printerHead) {
+        this.printerHead = printerHead;
+    }
+
+    public static class PrinterStatusInfo implements Serializable {
+
+        public static enum BufferState {EMPTY, UNDER_1_3, ABOVE_1_3, BEYOND_3_4}
 
         /**
          * Bit 2: OVR (Overrun Error)
@@ -54,25 +70,25 @@ public class PrinterStatusEx implements Serializable{
          */
         public BufferState bufferState;
 
-        public PrinterStatusInfo(byte b){
-            isOverrunError = _bit(b, 2) == 1;
+        public PrinterStatusInfo(byte b, boolean isKitchenPrinter) {
             printerIsOffline = _bit(b, 3) == 1;
+            isOverrunError = isKitchenPrinter == false ? _bit(b, 2) == 1 : printerIsOffline;
             isBusy = _bit(b, 6) == 1;
 
-            int bufState = _bit(b, 5) +  _bit(b, 6);
+            int bufState = _bit(b, 5) + _bit(b, 6);
             bufferState = BufferState.values()[bufState];
         }
 
         public PrinterStatusInfo(){}
 
-        public static PrinterStatusInfo emulate(){
+        public static PrinterStatusInfo emulate() {
             PrinterStatusInfo info = new PrinterStatusInfo();
             info.bufferState = BufferState.EMPTY;
             return info;
         }
     }
 
-    public static class OfflineStatusInfo implements Serializable{
+    public static class OfflineStatusInfo implements Serializable {
         /**
          * Bit 1: PNES – Paper Near-end Sensor
          * 0 – Paper is not near the end of roll.
@@ -116,11 +132,19 @@ public class PrinterStatusEx implements Serializable{
             coverIsClosed = _bit(b, 7) == 1;
         }
 
+        public OfflineStatusInfo(byte b, int drawerClosedValue, boolean coverIsClosed) {
+            paperIsNearEnd = !coverIsClosed;
+            noPaper = _bit(b, 2) == 1;
+            drawerIsClosed = _bit(b, 4) == drawerClosedValue;
+            isError = _bit(b, 6) == 1;
+            this.coverIsClosed = coverIsClosed;
+        }
+
         public OfflineStatusInfo(){
 
         }
 
-        public static OfflineStatusInfo emulate(){
+        public static OfflineStatusInfo emulate() {
             OfflineStatusInfo info = new OfflineStatusInfo();
             info.drawerIsClosed = true;
             info.coverIsClosed = true;
@@ -128,7 +152,7 @@ public class PrinterStatusEx implements Serializable{
         }
     }
 
-    public static class ErrorStatusInfo implements Serializable{
+    public static class ErrorStatusInfo implements Serializable {
         /**
          * Bit 2: CA – Cutter Absence
          * 0 – Cutter present.
@@ -166,12 +190,12 @@ public class PrinterStatusEx implements Serializable{
 
         public ErrorStatusInfo(){}
 
-        public static ErrorStatusInfo emulate(){
+        public static ErrorStatusInfo emulate() {
             return new ErrorStatusInfo();
         }
     }
 
-    public static class PrinterHeadInfo implements Serializable{
+    public static class PrinterHeadInfo implements Serializable {
         /**
          * Bit 2: HOH – Head Overheat
          * 0 – Print head has normal temperature.
@@ -185,7 +209,7 @@ public class PrinterStatusEx implements Serializable{
 
         public PrinterHeadInfo(){}
 
-        public static PrinterHeadInfo emulate(){
+        public static PrinterHeadInfo emulate() {
             return new PrinterHeadInfo();
         }
     }

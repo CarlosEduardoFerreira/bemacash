@@ -70,7 +70,7 @@ public class PrinterListFragment extends Fragment implements LoaderCallbacks<Cur
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int i, long l) {
                 PrinterModel model = adapter.getModel(i);
-                PrinterStatusFragment.show(getActivity(), model.ip, model.port, model.mac);
+                PrinterStatusFragment.show(getActivity(), model.ip, model.port, model.mac, model.aliasGuid);
             }
         });
         getLoaderManager().initLoader(LOADER_ID, null, this);

@@ -127,7 +127,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                     return result.add(EXTRA_PRINTER, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
                 } else {
                     boolean qtyUpdated = new UpdateSaleItemKitchenQty().syncStandalone(getContext(), e.getValue(), getAppCommandContext());
-                    if (!qtyUpdated){
+                    if (!qtyUpdated) {
                         return failed().add(EXTRA_PRINTER, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
                     }
                 }
@@ -203,7 +203,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 .where(SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .where(ItemTable.PRINTER_ALIAS_GUID + " IS NOT NULL");
 
-        if (!printAllItems){
+        if (!printAllItems) {
             query.where(SaleItemTable.QUANTITY + " != " + SaleItemTable.KITCHEN_PRINTED_QTY);
         }
 
@@ -278,6 +278,11 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
 
         protected PrinterInfo getPrinter() {
             return printer;
+        }
+
+        @Override
+        protected boolean isKitchenPrinter() {
+            return aliasGuid != null;
         }
 
         @Override

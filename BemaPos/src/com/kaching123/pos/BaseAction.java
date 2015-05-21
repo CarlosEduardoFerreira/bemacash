@@ -7,6 +7,11 @@ public abstract class BaseAction<T> {
     public static final byte ESC = 0x1B;
     public static final byte GS = 0x1D;
     public static final byte DLE = 0x10;
+    public static final byte EOT = 0x04;
+    public static final byte N1 = 0x01;
+    public static final byte N2 = 0x02;
+    public static final byte N3 = 0x03;
+    public static final byte N4 = 0x04;
     public static final byte FS = 0x1C;
 
     public static final byte F8 = (byte) 0xf8;

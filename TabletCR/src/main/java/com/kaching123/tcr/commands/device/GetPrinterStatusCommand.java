@@ -8,6 +8,10 @@ import com.kaching123.pos.data.PrinterStatusEx.ErrorStatusInfo;
 import com.kaching123.pos.data.PrinterStatusEx.OfflineStatusInfo;
 import com.kaching123.pos.data.PrinterStatusEx.PrinterHeadInfo;
 import com.kaching123.pos.data.PrinterStatusEx.PrinterStatusInfo;
+import com.kaching123.pos.printer.GetMP200ErrorStatusExAction;
+import com.kaching123.pos.printer.GetMP200OffLineStatusExAction;
+import com.kaching123.pos.printer.GetMP200PaperRollSensorStatusExAction;
+import com.kaching123.pos.printer.GetMP200PrinterStatusExAction;
 import com.kaching123.pos.printer.GetPrinterStatusExAction;
 import com.kaching123.pos.printer.GetPrinterBasicStatusAction;
 import com.kaching123.tcr.Logger;
@@ -28,6 +32,7 @@ public class GetPrinterStatusCommand extends PrinterCommand {
     public static final String ARG_PRINTER_IP = "ARG_PRINTER_IP";
     public static final String ARG_PRINTER_PORT = "ARG_PRINTER_PORT";
     public static final String ARG_PRINTER_MAC = "ARG_PRINTER_MAC";
+    public static final String ARG_ALIAS_GUID = "ARG_ALIAS_GUID";
 
     private PrinterStatusEx status;
 
@@ -69,14 +74,26 @@ public class GetPrinterStatusCommand extends PrinterCommand {
     }
 
     @Override
-    protected TaskResult validatePrinterState(PosPrinter printer){
+    protected TaskResult validatePrinterState(PosPrinter printer) {
         if (isEmulate()) {
             return null;
         }
 
+        String aliasGuid = getStringArg(ARG_ALIAS_GUID);
         try {
             if ( printer.supportExtendedStatus() )
+            {
+            if (aliasGuid == null)
                 status = new GetPrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer);
+            else {
+                PrinterStatusInfo printerStatus = new GetMP200PrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer).printerStatus;
+                OfflineStatusInfo offlineStatusInfo = new GetMP200OffLineStatusExAction(getApp().getDrawerClosedValue(), !printerStatus.printerIsOffline).execute(printer).offlineStatus;
+                ErrorStatusInfo errorStatusInfo = new GetMP200ErrorStatusExAction(getApp().getDrawerClosedValue()).execute(printer).errorStatus;
+                PrinterHeadInfo printerHeadInfo = new GetMP200PaperRollSensorStatusExAction(getApp().getDrawerClosedValue()).execute(printer).printerHead;
+
+                status = new PrinterStatusEx(printerStatus, offlineStatusInfo, errorStatusInfo, printerHeadInfo);
+            }
+            }
             else
                 status = new GetPrinterBasicStatusAction().execute(printer);
 
@@ -93,16 +110,17 @@ public class GetPrinterStatusCommand extends PrinterCommand {
         return validatePrinterStateExt(status);
     }
 
-    public static void start(Context context, String ip, int port, String mac, boolean searchByMac, BasePrinterStatusCallback callback){
+    public static void start(Context context, String ip, int port, String mac, boolean searchByMac, BasePrinterStatusCallback callback, String aliasGuid) {
         create(GetPrinterStatusCommand.class)
                 .arg(ARG_PRINTER_IP, ip)
                 .arg(ARG_PRINTER_PORT, port)
                 .arg(ARG_PRINTER_MAC, mac)
                 .arg(ARG_SEARCH_BY_MAC, searchByMac)
+                .arg(ARG_ALIAS_GUID, aliasGuid)
                 .callback(callback).queueUsing(context);
     }
 
-    public static void start(Context context, boolean searchByMac, BasePrinterStatusCallback callback){
+    public static void start(Context context, boolean searchByMac, BasePrinterStatusCallback callback) {
         create(GetPrinterStatusCommand.class).callback(callback).arg(ARG_SEARCH_BY_MAC, searchByMac).queueUsing(context);
     }
 
@@ -115,7 +133,7 @@ public class GetPrinterStatusCommand extends PrinterCommand {
 
         @OnFailure(GetPrinterStatusCommand.class)
         public void onFailure(@Param(PrinterCommand.EXTRA_ERROR_PRINTER) PrinterError error) {
-            if (error != null && error == PrinterError.IP_NOT_FOUND){
+            if (error != null && error == PrinterError.IP_NOT_FOUND) {
                 onPrinterIpNotFound();
                 return;
             }
@@ -123,7 +141,9 @@ public class GetPrinterStatusCommand extends PrinterCommand {
         }
 
         protected abstract void onPrinterStatusSuccess(PrinterStatusEx statusInfo);
+
         protected abstract void onPrinterStatusError(PrinterError error);
+
         protected abstract void onPrinterIpNotFound();
     }
 }

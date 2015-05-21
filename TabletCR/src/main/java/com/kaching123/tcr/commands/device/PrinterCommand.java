@@ -13,6 +13,10 @@ import com.kaching123.pos.SocketPrinter;
 import com.kaching123.pos.USBPrinter;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.pos.drawer.ConfigurePaperSensorAction;
+import com.kaching123.pos.printer.GetMP200ErrorStatusExAction;
+import com.kaching123.pos.printer.GetMP200OffLineStatusExAction;
+import com.kaching123.pos.printer.GetMP200PaperRollSensorStatusExAction;
+import com.kaching123.pos.printer.GetMP200PrinterStatusExAction;
 import com.kaching123.pos.printer.GetPrinterStatusExAction;
 import com.kaching123.pos.printer.GetPrinterBasicStatusAction;
 import com.kaching123.pos.printer.SelectPOSAction;
@@ -55,7 +59,7 @@ public abstract class PrinterCommand extends PublicGroundyTask {
                 .where(PrinterTable.ALIAS_GUID + " IS NULL")
                 .perform(getContext());
         PrinterInfo printerInfo = null;
-        if(c.moveToFirst()){
+        if (c.moveToFirst()) {
             printerInfo = new PrinterInfo(
                     c.getString(0),
                     c.getInt(1),
@@ -168,8 +172,18 @@ public abstract class PrinterCommand extends PublicGroundyTask {
 
         try {
             new ConfigurePaperSensorAction().execute(printer);
+              
             if (printer.supportExtendedStatus()) {
+          if (!isKitchenPrinter())
                 status = new GetPrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer);
+            else {
+                PrinterStatusEx.PrinterStatusInfo printerStatus = new GetMP200PrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer).printerStatus;
+                PrinterStatusEx.OfflineStatusInfo offlineStatusInfo = new GetMP200OffLineStatusExAction(getApp().getDrawerClosedValue(), !printerStatus.printerIsOffline).execute(printer).offlineStatus;
+                PrinterStatusEx.ErrorStatusInfo errorStatusInfo = new GetMP200ErrorStatusExAction(getApp().getDrawerClosedValue()).execute(printer).errorStatus;
+                PrinterStatusEx.PrinterHeadInfo printerHeadInfo = new GetMP200PaperRollSensorStatusExAction(getApp().getDrawerClosedValue()).execute(printer).printerHead;
+
+                status = new PrinterStatusEx(printerStatus, offlineStatusInfo, errorStatusInfo, printerHeadInfo);
+            }
             }
             else {
                 status = new GetPrinterBasicStatusAction().execute(printer);
@@ -196,6 +210,10 @@ public abstract class PrinterCommand extends PublicGroundyTask {
         }
 
         return validateStateExtResult;
+    }
+
+    protected boolean isKitchenPrinter() {
+        return false;
     }
 
     private void internalConfigure(PosPrinter printer) throws IOException {

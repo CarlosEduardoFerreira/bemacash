@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
@@ -21,6 +19,9 @@ import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2.IPrintCallback;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 
 import java.util.ArrayList;
 
@@ -46,6 +47,9 @@ public class PrinterStatusFragment extends StyledDialogFragment {
 
     @FragmentArg
     protected String printerMac;
+
+    @FragmentArg
+    protected String aliasGuid;
 
     @Override
     protected int getDialogContentLayout() {
@@ -86,8 +90,8 @@ public class PrinterStatusFragment extends StyledDialogFragment {
         checkPrinterState(false);
     }
 
-    private void checkPrinterState(boolean searchByMac){
-        GetPrinterStatusCommand.start(getActivity(), printerIp, printerPort, printerMac, searchByMac, printerStatusCallback);
+    private void checkPrinterState(boolean searchByMac) {
+        GetPrinterStatusCommand.start(getActivity(), printerIp, printerPort, printerMac, searchByMac, printerStatusCallback, aliasGuid);
     }
 
     public class PrinterStatusCallback extends BasePrinterStatusCallback {
@@ -129,7 +133,7 @@ public class PrinterStatusFragment extends StyledDialogFragment {
             });
         }
 
-        private void setFailure(){
+        private void setFailure() {
             printerStatusList.setAdapter(new PrinterStatusAdapter(getActivity(), convert(null)));
             progressBlock.setVisibility(View.GONE);
         }
@@ -196,7 +200,7 @@ public class PrinterStatusFragment extends StyledDialogFragment {
         }
     }
 
-    public static void show(FragmentActivity activity, String printerIp, int port, String macAddress) {
-        DialogUtil.show(activity, DIALOG_NAME, PrinterStatusFragment_.builder().printerIp(printerIp).printerPort(port).printerMac(macAddress).build());
+    public static void show(FragmentActivity activity, String printerIp, int port, String macAddress, String aliasGuid) {
+        DialogUtil.show(activity, DIALOG_NAME, PrinterStatusFragment_.builder().printerIp(printerIp).printerPort(port).printerMac(macAddress).aliasGuid(aliasGuid).build());
     }
 }

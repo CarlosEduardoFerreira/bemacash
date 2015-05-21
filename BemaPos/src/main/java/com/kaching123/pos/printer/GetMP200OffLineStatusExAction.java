@@ -2,10 +2,6 @@ package com.kaching123.pos.printer;
 
 import com.kaching123.pos.ActionWithAnswer;
 import com.kaching123.pos.data.PrinterStatusEx;
-import com.kaching123.pos.data.PrinterStatusEx.ErrorStatusInfo;
-import com.kaching123.pos.data.PrinterStatusEx.OfflineStatusInfo;
-import com.kaching123.pos.data.PrinterStatusEx.PrinterHeadInfo;
-import com.kaching123.pos.data.PrinterStatusEx.PrinterStatusInfo;
 
 /**
  * [Function] Printer extended status enquiry.
@@ -16,24 +12,23 @@ import com.kaching123.pos.data.PrinterStatusEx.PrinterStatusInfo;
  * <p/>
  * Created by gdubina on 16/12/13.
  */
-public class GetPrinterStatusExAction extends ActionWithAnswer<PrinterStatusEx> {
+public class GetMP200OffLineStatusExAction extends ActionWithAnswer<PrinterStatusEx> {
     private static int ANSWER_LEN = 5;
-    private static byte[] COMMAND = new byte[]{GS, F8, 0x31};
+    private static byte[] COMMAND = new byte[]{DLE, EOT, N2};
 
     private final int drawerClosedValue;
+    private final boolean printerIsOffline;
 
-    public GetPrinterStatusExAction(int drawerClosedValue) {
+    public GetMP200OffLineStatusExAction(int drawerClosedValue, boolean printerIsOffline) {
         super(ANSWER_LEN);
         this.drawerClosedValue = drawerClosedValue;
+        this.printerIsOffline = printerIsOffline;
     }
 
     @Override
     public PrinterStatusEx parseAnswer(byte[] bytes) {
         return new PrinterStatusEx(
-                new PrinterStatusInfo(bytes[0], false),
-                new OfflineStatusInfo(bytes[1], drawerClosedValue),
-                new ErrorStatusInfo(bytes[2]),
-                new PrinterHeadInfo(bytes[3])
+                new PrinterStatusEx.OfflineStatusInfo(bytes[0], drawerClosedValue, printerIsOffline)
         );
     }
 
