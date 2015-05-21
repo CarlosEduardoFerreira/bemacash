@@ -47,6 +47,7 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
     private static final String CHANGE_AMOUNT = "CHANGE_AMOUNT";
     private static final String IS_PREAUTH = "IS_PREAUTH";
     private static final String CASH_BACK = "CASH_BACK";
+    private static final String EBT_BALANCE = "EBT_BALANCE";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -68,7 +69,8 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
                 rs.getString(CARD_NAME),
                 rs.getBigDecimal(CHANGE_AMOUNT),
                 rs.getBoolean(IS_PREAUTH),
-                rs.getBigDecimal(CASH_BACK)
+                rs.getBigDecimal(CASH_BACK),
+                rs.getBigDecimal(EBT_BALANCE)
         ).toValues();
     }
 
@@ -92,7 +94,8 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
                 rs.getString(CARD_NAME),
                 rs.getBigDecimal(CHANGE_AMOUNT),
                 rs.getBoolean(IS_PREAUTH),
-                rs.getBigDecimal(CASH_BACK)
+                rs.getBigDecimal(CASH_BACK),
+                rs.getBigDecimal(EBT_BALANCE)
         );
     }
 
@@ -132,6 +135,7 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
                 .add(CHANGE_AMOUNT, model.changeAmount)
                 .add(IS_PREAUTH, model.isPreauth)
                 .add(CASH_BACK, model.cashBack)
+                .add(EBT_BALANCE, model.balance)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -184,6 +188,7 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
                 .add(IS_PREAUTH, model.isPreauth)
                 .add(JdbcBuilder.FIELD_IS_DELETED, 1)
                 .add(CASH_BACK, model.cashBack)
+                .add(EBT_BALANCE, model.balance)
                 .build(JdbcFactory.getApiMethod(model));
     }
 }

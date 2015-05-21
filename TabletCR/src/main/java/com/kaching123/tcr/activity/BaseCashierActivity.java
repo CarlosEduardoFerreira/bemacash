@@ -1973,6 +1973,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     "CASH",
                     null,
                     false,
+                    BigDecimal.ZERO,
                     BigDecimal.ZERO
             );
             model.availableAmount = model.amount;

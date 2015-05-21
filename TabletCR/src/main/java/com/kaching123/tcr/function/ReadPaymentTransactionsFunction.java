@@ -156,7 +156,8 @@ public final class ReadPaymentTransactionsFunction {
                         c.getString(c.getColumnIndex(PaymentTransactionTable.CARD_NAME)),
                         _decimal(c, c.getColumnIndex(PaymentTransactionTable.CHANGE_AMOUNT)),
                         _bool(c, c.getColumnIndex(PaymentTransactionTable.IS_PREAUTH)),
-                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK))
+                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK)),
+                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE))
                 );
                 model.balance = _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE));
                 String parentGuid = c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID));

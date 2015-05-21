@@ -139,9 +139,9 @@ public class PaxSaleCommand extends PaxBaseCommand {
                 if (response.getDetails().getTransactionNumber() != null)
                     transaction.authorizationNumber = response.getDetails().getSale().getAuthNumber();
                 if (response.getDetails().getBalanceCash() != null)
-                    transaction.balance = new BigDecimal(response.getDetails().getBalanceCash());
+                    transaction.balance = (new BigDecimal(response.getDetails().getBalanceCash()));
                 if (response.getDetails().getBalanceFS() != null)
-                    transaction.balance = new BigDecimal(response.getDetails().getBalanceFS());
+                    transaction.balance = (new BigDecimal(response.getDetails().getBalanceFS()));
                 if (response.getDetails().getSale().getBalance() != null)
                     transaction.balance = new BigDecimal(response.getDetails().getSale().getBalance());
                 PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);

@@ -171,8 +171,9 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             if (isChanged) {
                 printerWrapper.change(changeText, p.changeAmount);
             }
-            if (p.balance != null) {
-                printerWrapper.orderFooter(context.getString(R.string.printer_balance) + p.lastFour != null ? " (" + p.lastFour + ")" : "", p.balance, true);
+            if (p.balance != null && p.balance.compareTo(BigDecimal.ZERO) != 0) {
+//                printerWrapper.orderFooter(context.getString(R.string.printer_balance) + p.lastFour != null ? " (" + p.lastFour + ")" : "", p.balance, true);
+                printerWrapper.orderFooter(context.getString(R.string.printer_balance), p.balance, true);
             }
         }
     }

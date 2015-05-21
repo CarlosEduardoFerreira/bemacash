@@ -73,7 +73,8 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
                                    String cardName,
                                    BigDecimal changeAmount,
                                    boolean isPreauth,
-                                   BigDecimal cashBack) {
+                                   BigDecimal cashBack,
+                                   BigDecimal ebtBalance) {
         this.guid = guid;
         this.orderGuid = orderGuid;
         this.amount = amount;
@@ -95,6 +96,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.availableAmount = BigDecimal.ZERO;
         this.isPreauth = isPreauth;
         this.cashBack = cashBack;
+        this.balance = ebtBalance;
     }
 
     public PaymentTransactionModel(String guid, String shiftGuid, Date createTime, ITransaction transaction) {
@@ -118,6 +120,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.availableAmount = transaction.getAvailableAmount();
         this.isPreauth = transaction.getIsPreauth();
         this.cashBack = transaction.getCashBack();
+        this.balance = transaction.getEBTBalance();
     }
 
     public PaymentTransactionModel(String shiftGuid, ITransaction transaction) {
@@ -149,6 +152,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.lastFour = transaction.getLastFour();
         this.availableAmount = transaction.getAvailableAmount();
         this.cashBack = transaction.getCashBack();
+        this.balance = transaction.getEBTBalance();
     }
 
     public Transaction toTransaction() {
@@ -183,6 +187,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         result.balance = balance;
         result.allowReload = allowReload;
         result.cashBack = cashBack;
+        result.balance = balance;
         return result;
     }
 
@@ -202,7 +207,8 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
                 .append("\ndeclineReason : ").append(declineReason)
                 .append("\ncardName : ").append(cardName)
                 .append("\nisPreauth : ").append(isPreauth)
-                .append("\ncashBack : ").append(cashBack);
+                .append("\ncashBack : ").append(cashBack)
+                .append("\nbalance : ").append(balance);
         return sb.toString();
     }
 
@@ -233,6 +239,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         v.put(PaymentTransactionTable.IS_PREAUTH, isPreauth);
         v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
         v.put(PaymentTransactionTable.CASH_BACK, _decimal(cashBack));
+        v.put(PaymentTransactionTable.BALANCE, _decimal(cashBack));
         return v;
     }
 

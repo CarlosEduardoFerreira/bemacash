@@ -49,6 +49,7 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
     public boolean isPreauth;
     private boolean isClosedPreauth;
     public BigDecimal cashBack;
+    public BigDecimal ebtBalance;
 
     @Expose
     @SerializedName(WebAPI.BlackStoneAPI.REQUEST_PARAM_AMOUNT)
@@ -101,6 +102,7 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
         isPreauth = model.isPreauth;
         isClosedPreauth = isPreauth && PaymentType.SALE.equals(paymentType) && PaymentStatus.SUCCESS.equals(model.status);
         cashBack = model.cashBack;
+        ebtBalance = model.balance;
     }
 
     public Transaction() {
@@ -143,6 +145,11 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
 
     public T setCashBack(BigDecimal cashBack) {
         this.cashBack = cashBack;
+        return (T) this;
+    }
+
+    public T setEBTBalance(BigDecimal ebtBalance) {
+        this.ebtBalance = ebtBalance;
         return (T) this;
     }
 
@@ -228,6 +235,11 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
     @Override
     public BigDecimal getCashBack() {
         return cashBack;
+    }
+
+    @Override
+    public BigDecimal getEBTBalance() {
+        return ebtBalance;
     }
 
     public T setIsPreauth(boolean isPreauth) {
@@ -360,10 +372,11 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
         dest.writeString(operatorId);
         dest.writeInt(isPreauth ? 1 : 0);
         dest.writeInt(isClosedPreauth ? 1 : 0);
-        dest.writeString(gateway == null ? "" :gateway.toString());
+        dest.writeString(gateway == null ? "" : gateway.toString());
         dest.writeSerializable(balance);
         dest.writeInt(allowReload ? 1 : 0);
         dest.writeSerializable(cashBack);
+        dest.writeSerializable(ebtBalance);
     }
 
     public T initFromParcelableSource(Parcel source) {
@@ -388,6 +401,7 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
         balance = os == null ? null : (BigDecimal)os;
         allowReload = source.readInt() > 0;
         cashBack = (BigDecimal) source.readSerializable();
+        ebtBalance = (BigDecimal) source.readSerializable();
         return (T) this;
     }
 
@@ -414,6 +428,7 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
                 ", type=" + type +
                 ", serviceTransactionNumber='" + serviceTransactionNumber + '\'' +
                 ", cashback='" + cashBack + '\'' +
+                ", ebtBlance='" + ebtBalance + '\'' +
                 '}';
     }
 }

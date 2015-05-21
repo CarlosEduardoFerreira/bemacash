@@ -22,6 +22,7 @@ public interface ITransaction {
     public String getOrderGuid();
 
     public BigDecimal getAmount();
+
     public BigDecimal getAvailableAmount();
 
     public PaymentStatus getStatus();
@@ -45,4 +46,6 @@ public interface ITransaction {
     public boolean getIsPreauth();
 
     public BigDecimal getCashBack();
+
+    public BigDecimal getEBTBalance();
 }
