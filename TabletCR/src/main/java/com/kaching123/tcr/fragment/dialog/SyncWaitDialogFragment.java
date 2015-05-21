@@ -51,7 +51,7 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
 
     private static final String DIALOG_NAME = "syncProgressDialog";
 
-    public static final String SYNC_LOCAL = "loacl:";
+    public static final String SYNC_LOCAL = "local:";
 
     @StringRes(R.string.sync_wait_msg_tmpl)
     protected String waitMsgTmpl;

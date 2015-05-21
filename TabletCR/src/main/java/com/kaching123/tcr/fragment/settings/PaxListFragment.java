@@ -70,18 +70,13 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
     @AfterTextChange(R.id.time_out_input)
     protected void afterTextChangedOntimeOutInput(Editable s, TextView view) {
-        if (validTimeout(s.toString())) {
-            if (PAX_TIME_OUT_DEFAULT > Integer.parseInt(s.toString())) {
-                Toast.makeText(getActivity(), getString(R.string.pax_search_time_out_warning), Toast.LENGTH_LONG).show();
-                setPaxTimeout(PAX_TIME_OUT_DEFAULT);
-            } else
-                setPaxTimeout(Integer.parseInt(s.toString()));
-        }
+        if (validTimeout(s.toString()))
+            setPaxTimeout(Integer.parseInt(s.toString()));
     }
 
     @AfterViews
     protected void init() {
-        timeOutInput.setText("" + (getPaxTimeout() < PAX_TIME_OUT_DEFAULT ? PAX_TIME_OUT_DEFAULT : getPaxTimeout()));
+        timeOutInput.setText("" + (getPaxTimeout() == 0 ? PAX_TIME_OUT_DEFAULT : getPaxTimeout()));
     }
 
     private int getPaxTimeout() {
@@ -93,14 +88,18 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
     }
 
     private boolean validTimeout(String timeout) {
+        int t = 0;
         try {
-            Integer.parseInt(timeout);
+            t = Integer.parseInt(timeout);
         } catch (NumberFormatException e) {
             return false;
         } catch (NullPointerException e) {
             return false;
         }
-        return true;
+        if (t > 0)
+            return true;
+        else
+            return false;
     }
 
     @OptionsItem
