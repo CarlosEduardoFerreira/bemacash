@@ -41,6 +41,14 @@ public class Details implements Serializable {
     private String fees;
 
     @Expose
+    @SerializedName(WebAPI.PAX_API.SaleCommand.Response.PARAM_BALANCECASH)
+    private String balanceCash;
+
+    @Expose
+    @SerializedName(WebAPI.PAX_API.SaleCommand.Response.PARAM_BALANCEFS)
+    private String balanceFS;
+
+    @Expose
     @SerializedName(WebAPI.PAX_API.SaleCommand.Response.PARAM_SALEAMOUNT)
     private String saleAmount;
 
@@ -52,29 +60,45 @@ public class Details implements Serializable {
     public Sale getSale() {
         return sale;
     }
+
     public String getTransactionNumber() {
         return transactionNumber;
     }
+
     public String getAmount() {
         return amount;
     }
+
     public String getDigits() {
         return digits;
     }
+
     public int getStatus() {
         return status;
     }
+
     public String getVerbiage() {
         return verbiage;
     }
+
     public String getFees() {
         return fees;
     }
+
     public String getSaleAmount() {
         return saleAmount;
     }
+
     public String getCashBackAmount() {
         return cashBackAmount;
+    }
+
+    public String getBalanceCash() {
+        return balanceCash;
+    }
+
+    public String getBalanceFS() {
+        return balanceFS;
     }
 
     @Override
@@ -89,6 +113,8 @@ public class Details implements Serializable {
                 ", fees='" + fees + '\'' +
                 ", saleAmount='" + saleAmount + '\'' +
                 ", cashBackAmount='" + cashBackAmount + '\'' +
+                ", balanceCash='" + balanceCash + '\'' +
+                ", balanceFS='" + balanceFS + '\'' +
                 '}';
     }
 }

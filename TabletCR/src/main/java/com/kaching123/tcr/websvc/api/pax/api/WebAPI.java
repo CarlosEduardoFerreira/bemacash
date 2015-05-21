@@ -169,6 +169,8 @@ public abstract class WebAPI {
                 public static final String PARAM_SALEAMOUNT = "SaleAmount";
                 public static final String PARAM_TRANSACTION_AMOUNT = "Amount";
                 public static final String PARAM_CASHBACKAMOUNT = "CashBackAmount";
+                public static final String PARAM_BALANCECASH = "BalanceCash";
+                public static final String PARAM_BALANCEFS = "BalanceFS";
             }
 
             public static final class SaleObject {
