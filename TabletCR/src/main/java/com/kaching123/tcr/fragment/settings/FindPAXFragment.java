@@ -160,7 +160,6 @@ public class FindPAXFragment extends StyledDialogFragment {
 
     private void cancelCurTask() {
         progressBlock.setVisibility(View.GONE);
-        GroundyManager.cancelAll(getActivity());
         if (currentTask != null) {
             currentTask.cancel(getActivity(), 0, null);
         }

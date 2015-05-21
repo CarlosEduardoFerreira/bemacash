@@ -139,23 +139,6 @@ public class PaxSaleCommand extends PaxBaseCommand {
         operations = new ArrayList<ContentProviderOperation>();
         sqlCommand = batchInsert(PaymentTransactionModel.class);
 
-//        PaxModel model = getArgs().getParcelable(ARG_DATA_PAX);
-
-//        socket = new Socket();
-//        try {
-//            socket.setSoTimeout(READ_TIMEOUT);
-//            socket.connect(new InetSocketAddress(model.ip, model.port), CONNECTION_TIMEOUT);
-//            if (!socket.isConnected())
-//                return failed();
-//        } catch (SocketException e) {
-//            Logger.e("PaxError", e);
-//            return failed();
-//        } catch (IOException e) {
-//            Logger.e("PaxError", e);
-//            return failed();
-//        }
-
-
         int transactionId = getIntArg(ARG_PURPOSE);
         transaction = getArgs().getParcelable(ARG_AMOUNT);
         BigDecimal amount = transaction.getAmount();

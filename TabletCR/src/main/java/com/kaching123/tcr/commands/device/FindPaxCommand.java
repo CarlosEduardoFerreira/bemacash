@@ -33,6 +33,7 @@ public class FindPaxCommand extends PublicGroundyTask {
 
     private static final int READ_TIMEOUT = (int) TimeUnit.SECONDS.toMillis(10);
     private static final int CONNECTION_TIMEOUT_25_MILLI = 50;
+    private static final int CONNECTION_TIMEOUT_1_MILLI = 1;
     private Socket socket;
 
     @Override
@@ -61,14 +62,14 @@ public class FindPaxCommand extends PublicGroundyTask {
                 // loop i
                 for (int i = 1; i < 255; i++) {
                     try {
-                        if (isQuitting()||Thread.currentThread().isInterrupted()) {
+                        if (isQuitting() || Thread.currentThread().isInterrupted()) {
                             return false;
                         }
                         socket = new Socket();
                         socket.setSoTimeout(READ_TIMEOUT);
                         model.ip = String.format(ipHead + "%d", i);
                         Logger.d("trace socket ip: " + model.ip);
-                        socket.connect(new InetSocketAddress(model.ip, model.port), j == 0 ? 1 : timeOut);
+                        socket.connect(new InetSocketAddress(model.ip, model.port), j == 0 ? CONNECTION_TIMEOUT_1_MILLI : timeOut);
                         if (socket.isConnected()) {
                             if (model != null) {
                                 firePrinterInfo(packPrinterData(model));
