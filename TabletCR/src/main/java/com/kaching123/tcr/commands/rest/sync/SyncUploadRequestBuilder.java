@@ -2,6 +2,7 @@ package com.kaching123.tcr.commands.rest.sync;
 
 import android.content.Context;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.ApplicationVersion;
@@ -60,7 +61,11 @@ public class SyncUploadRequestBuilder {
         JSONObject request = new JSONObject();
         JSONArray transactions = new JSONArray();
         for (UploadCommand c : commands) {
-            transactions.put(getCommand(c.id, c.json));
+            try {
+                transactions.put(getCommand(c.id, c.json));
+            } catch (JSONException ex) {
+                Logger.e("SyncUploadRequestBuilder" + ex.toString());
+            }
         }
         request.put("transactions", transactions);
         return request;

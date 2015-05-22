@@ -563,6 +563,7 @@ public class SyncCommand implements Runnable {
     }
 
     private int syncLocalSingleTable(Context context, String localTable) throws SyncException {
+
         //TODO: fire spec event?
         fireEvent(context, SyncWaitDialogFragment.SYNC_LOCAL + localTable);
 

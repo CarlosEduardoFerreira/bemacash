@@ -89,15 +89,11 @@ public class UploadTask implements Runnable {
             else
             {
 
-                if (uploadEmployee)
-                    try {
-                        ContentResolver cr = service.getContentResolver();
-                        uploadTaskV2Adapter.employeeUpload(cr);
-                        cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
-                    } catch (TransactionNotFinalizedException e) {
-                        e.printStackTrace();
-                        Logger.e("UploadTask uploadEmployee error", e);
-                    }
+                if (uploadEmployee) {
+                    ContentResolver cr = service.getContentResolver();
+                    uploadTaskV2Adapter.webApiUpload(cr);
+                    cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+                }
 
             }
             return;
@@ -137,15 +133,17 @@ public class UploadTask implements Runnable {
                 errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr);
             }
             cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
-        } catch (TransactionNotFinalizedException e) {
-            if (isManual)
-                Logger.e("UploadTask: transaction not finalized!", e);
-            else
-                Logger.w("UploadTask: transaction not finalized yet", e);
-            NotificationHelper.removeUploadNotification(service);
-            fireCompleteEvent(service, false);
-            return;
-        } catch (Exception e) {
+        }
+//        catch (TransactionNotFinalizedException e) {
+//            if (isManual)
+//                Logger.e("UploadTask: transaction not finalized!", e);
+//            else
+//                Logger.w("UploadTask: transaction not finalized yet", e);
+//            NotificationHelper.removeUploadNotification(service);
+//            fireCompleteEvent(service, false);
+//            return;
+//        }
+        catch (Exception e) {
             Logger.e("UploadTask error", e);
             errorsOccurred = true;
         } finally {
@@ -153,8 +151,10 @@ public class UploadTask implements Runnable {
         }
 
         if (errorsOccurred) {
-            NotificationHelper.showUploadErrorNotification(service);
-            onUploadFailure();
+            if (isManual) {
+                NotificationHelper.showUploadErrorNotification(service);
+                onUploadFailure();
+            }
             SendLogCommand.start(service);
         } else {
             NotificationHelper.removeUploadNotification(service);

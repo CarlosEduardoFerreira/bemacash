@@ -95,14 +95,9 @@ public class OfflineCommandsService extends Service {
     private void doEmployeeUpload( ) {
         Logger.d("[OfflineService] doUpload: isManual = false");
 //        executor.submit(new UploadTask(this, false, true));
-        try {
-            ContentResolver cr = this.getContentResolver();
-            uploadTaskV2Adapter.employeeUpload(cr);
-            cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
-        } catch (UploadTaskV2.TransactionNotFinalizedException e) {
-            e.printStackTrace();
-            Logger.e("UploadTask uploadEmployee error", e);
-        }
+        ContentResolver cr = this.getContentResolver();
+        uploadTaskV2Adapter.webApiUpload(cr);
+        cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
     }
 
     public static void scheduleSyncAction(Context context) {

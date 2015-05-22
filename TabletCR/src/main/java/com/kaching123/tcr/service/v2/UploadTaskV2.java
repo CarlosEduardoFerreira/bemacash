@@ -49,7 +49,7 @@ public class UploadTaskV2 {
         this.employee = employeeModel;
     }
 
-    public boolean webApiUpload(ContentResolver cr) throws TransactionNotFinalizedException {
+    public boolean webApiUpload(ContentResolver cr) {
         if (TcrApplication.get().isTrainingMode())
             return true;
 
@@ -76,7 +76,7 @@ public class UploadTaskV2 {
                         String subJson = c.getString(1);
                         Logger.d("[CMD_TABLE] %d = %s", subId, subJson);
                         //TODO need to verify end
-                        if (CMD_END_TRANSACTION.equals(subJson) || CMD_END_EMPLOYEE.equals(subJson)) {
+                        if ((CMD_START_TRANSACTION.equals(json) && CMD_END_TRANSACTION.equals(subJson)) || (CMD_START_EMPLOYEE.equals(json) && CMD_END_EMPLOYEE.equals(subJson))) {
                             endTransactionId = subId;
                             Logger.d("END TRANSACTION");
                             break;
@@ -88,14 +88,17 @@ public class UploadTaskV2 {
                                 batch.add(BatchSqlCommand.fromJson(subJson));
                             }
                         } catch (JSONException e) {
-                            throw new IllegalArgumentException("can't parse command: " + subJson, e);
+//                            throw new IllegalArgumentException("can't parse command: " + subJson, e);
+                            Logger.e("can't parse command: " + subJson, e);
+                            // TODO send log
                         }
                     }
                     if (batch == null && endTransactionId != 0) {
                         //need to delete start and end transaction
                         cr.update(URI_SQL_COMMAND_NO_NOTIFY, sentValues, SqlCommandTable.ID + " = ? OR " + SqlCommandTable.ID + " = ?", new String[]{String.valueOf(id), String.valueOf(endTransactionId)});
                     } else if (batch == null || endTransactionId == 0) {
-                        throw new TransactionNotFinalizedException("transaction is not finalized!");
+//                        throw new TransactionNotFinalizedException("transaction is not finalized!");
+                        Logger.e("transaction is not finalized!");
                     } else {
                         String transactionCmd = batch.toJson();
                         Logger.d("TRANSACTION_RESULT: %s", transactionCmd);
@@ -118,82 +121,6 @@ public class UploadTaskV2 {
         }
 
         if (!commands.isEmpty()) {
-            errorsOccurred = !try2Upload(cr, commands);
-        }
-        return !errorsOccurred;
-    }
-
-    public boolean employeeUpload(ContentResolver cr) throws TransactionNotFinalizedException {
-        if (TcrApplication.get().isTrainingMode())
-            return true;
-
-        boolean employeeNeedUpload = false;
-        boolean errorsOccurred = false;
-
-        Cursor c = cr.query(URI_SQL_COMMAND_NO_NOTIFY, new String[]{SqlCommandTable.ID, SqlCommandTable.SQL_COMMAND},
-                SqlCommandTable.IS_SENT + " = ?", new String[]{"0"},
-                SqlCommandTable.ID);
-        ArrayList<UploadCommand> commands = new ArrayList<UploadCommand>(BATCH_SIZE);
-        try {
-            while (c.moveToNext()) {
-                final long id = c.getLong(0);
-                String json = c.getString(1);
-                Logger.d("[CMD_TABLE] %d = %s", id, json);
-                if (CMD_START_EMPLOYEE.equals(json)) {
-                    Logger.d("START TRANSACTION");
-                    ArrayList<Long> subIds = new ArrayList<Long>();
-                    //read transaction
-                    BatchSqlCommand batch = null;
-                    long endTransactionId = 0;
-                    while (c.moveToNext()) {
-                        long subId = c.getLong(0);
-                        subIds.add(subId);
-                        String subJson = c.getString(1);
-                        Logger.d("[CMD_TABLE] %d = %s", subId, subJson);
-                        //TODO need to verify end
-                        if (CMD_END_EMPLOYEE.equals(subJson)) {
-                            employeeNeedUpload = true;
-                            endTransactionId = subId;
-                            Logger.d("END TRANSACTION");
-                            break;
-                        }
-                        try {
-                            if (batch == null) {
-                                batch = BatchSqlCommand.fromJson(subJson);
-                            } else {
-                                batch.add(BatchSqlCommand.fromJson(subJson));
-                            }
-                        } catch (JSONException e) {
-                            throw new IllegalArgumentException("can't parse command: " + subJson, e);
-                        }
-                    }
-                    if (batch == null && endTransactionId != 0) {
-                        //need to delete start and end transaction
-                        cr.update(URI_SQL_COMMAND_NO_NOTIFY, sentValues, SqlCommandTable.ID + " = ? OR " + SqlCommandTable.ID + " = ?", new String[]{String.valueOf(id), String.valueOf(endTransactionId)});
-                    } else if (batch == null || endTransactionId == 0) {
-                        throw new TransactionNotFinalizedException("employee is not finalized!");
-                    } else {
-                        String transactionCmd = batch.toJson();
-                        Logger.d("TRANSACTION_RESULT: %s", transactionCmd);
-                        commands.add(new UploadCommand(id, transactionCmd, subIds));
-                    }
-                } else {
-                    commands.add(new UploadCommand(id, json));
-                }
-                if (commands.size() == BATCH_SIZE) {
-                    boolean uploaded = try2Upload(cr, commands);
-                    commands.clear();
-                    if (!uploaded) {
-                        errorsOccurred = true;
-                        break;
-                    }
-                }
-            }
-        } finally {
-            c.close();
-        }
-
-        if (!commands.isEmpty() && employeeNeedUpload) {
             errorsOccurred = !try2Upload(cr, commands);
         }
         return !errorsOccurred;
@@ -251,6 +178,7 @@ public class UploadTaskV2 {
             }
             return true;
         } catch (Exception e) {
+            // TODO find out where does login catch this exception
             Logger.e("[UploadWeb] error", e);
             Logger.e("[UploadWeb] error, request: " + (req == null ? null : req.toString()));
             return false;
