@@ -2,8 +2,10 @@ package com.kaching123.tcr.commands.store.user;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -12,6 +14,8 @@ import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnFailure;
+import com.telly.groundy.annotations.OnSuccess;
 
 import java.util.ArrayList;
 
@@ -48,7 +52,24 @@ public class DeleteEmployeeCommand extends AsyncCommand {
         return JdbcFactory.delete(EmployeeTable.TABLE_NAME, guid, getAppCommandContext());
     }
 
-    public static void start(Context context, String employeeGuid){
-        create(DeleteEmployeeCommand.class).arg(ARG_EMPLOYEE_GUID, employeeGuid).queueUsing(context);
+    public static void start(Context context, String employeeGuid, DeleteEmployeeCallback callback) {
+        create(DeleteEmployeeCommand.class).arg(ARG_EMPLOYEE_GUID, employeeGuid).callback(callback).queueUsing(context);
+    }
+
+    public static abstract class DeleteEmployeeCallback {
+        @OnSuccess(DeleteEmployeeCommand.class)
+        public void handleSuccess() {
+            onSuccess();
+        }
+
+        @OnFailure(DeleteEmployeeCommand.class)
+        public void handleFailure() {
+            onFailure();
+        }
+
+        protected abstract void onSuccess();
+
+        protected abstract void onFailure();
+
     }
 }

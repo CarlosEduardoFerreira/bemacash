@@ -1,6 +1,7 @@
 package com.kaching123.tcr.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,12 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.StringArrayRes;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
@@ -54,6 +49,14 @@ import com.kaching123.tcr.model.TipsModel.PaymentType;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringArrayRes;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -136,10 +139,10 @@ public class EmployeesActivity extends SuperBaseActivity {
     }
 
     @OptionsItem
-    protected void actionAddTipsSelected(){
-        if (getApp().hasPermission(Permission.TIPS)){
+    protected void actionAddTipsSelected() {
+        if (getApp().hasPermission(Permission.TIPS)) {
             showTipsDialog();
-        }else{
+        } else {
             PermissionFragment.showCancelable(EmployeesActivity.this, new BaseTempLoginListener(this) {
                 @Override
                 public void onLoginComplete() {
@@ -161,7 +164,7 @@ public class EmployeesActivity extends SuperBaseActivity {
         });
     }
 
-    private void try2OpenDrawer(boolean searchByMac){
+    private void try2OpenDrawer(boolean searchByMac) {
         WaitDialogFragment.show(EmployeesActivity.this, getString(R.string.wait_message_open_drawer));
         OpenDrawerCommand.start(EmployeesActivity.this, searchByMac, openDrawerCallback);
     }
@@ -315,10 +318,12 @@ public class EmployeesActivity extends SuperBaseActivity {
         }
     }
 
-    /******************************************* TIPS *********************************************/
+    /**
+     * **************************************** TIPS ********************************************
+     */
 
     private void addTips() {
-        if (tipsEmplGuids.size() == 1){
+        if (tipsEmplGuids.size() == 1) {
             AddTipsCommand.start(EmployeesActivity.this, new TipsModel(
                     UUID.randomUUID().toString(),
                     null,
@@ -331,7 +336,7 @@ public class EmployeesActivity extends SuperBaseActivity {
                     tipsNotes,
                     PaymentType.CASH
             ), addTipsCallback);
-        }else{
+        } else {
             SplitTipsCommand.start(EmployeesActivity.this, new ArrayList<String>(tipsEmplGuids), tipsAmount, tipsNotes, splitTipsCallback);
         }
     }
@@ -447,9 +452,19 @@ public class EmployeesActivity extends SuperBaseActivity {
         }
     };
 
-    /**********************************************************************************************/
+    /**
+     * ******************************************************************************************
+     */
 
     public static void start(Context context) {
-        EmployeesActivity_.intent(context).start();
+        EmployeesActivity_.intent(context).startForResult(EditEmployeeActivity.REQUEST_CODE);
+    }
+
+    @OnActivityResult(EditEmployeeActivity.REQUEST_CODE)
+    protected void onResult(int code, Intent data) {
+        if (code == EditEmployeeActivity.REQUEST_CODE && data != null) {
+            setResult(DashboardActivity.EXTRA_CODE, new Intent().putExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, data.getBooleanExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, false)));
+            finish();
+        }
     }
 }

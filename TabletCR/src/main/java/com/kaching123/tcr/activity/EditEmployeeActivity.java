@@ -1,6 +1,7 @@
 package com.kaching123.tcr.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,11 +11,11 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.local.EndEmployeeCommand;
 import com.kaching123.tcr.commands.local.StartEmployeeCommand;
-import com.kaching123.tcr.commands.local.StartTransactionCommand;
 import com.kaching123.tcr.commands.store.user.BaseEmployeeCommand.BaseEmployeeCallback;
 import com.kaching123.tcr.commands.store.user.DeleteEmployeeCommand;
 import com.kaching123.tcr.commands.store.user.EditEmployeeCommand;
@@ -26,6 +27,7 @@ import com.kaching123.tcr.fragment.user.LoginFragment;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
 
 import org.androidannotations.annotations.AfterViews;
@@ -47,10 +49,12 @@ import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 @EActivity(R.layout.employee_edit_activity)
 @OptionsMenu(R.menu.employee_edit_actions)
 public class EditEmployeeActivity extends BaseEmployeeActivity {
+    public static final int REQUEST_CODE = 1;
 
     private static final Uri URI_PERMISSIONS = ShopProvider.getContentUri(EmployeePermissionTable.URI_CONTENT);
 
     public EditEmployeeCallback editEmployeeCallback = new EditEmployeeCallback();
+    private static final Uri EMPLOYEE_URI = ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT);
 
     @AfterViews
     @Override
@@ -88,7 +92,13 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
     @OptionsItem
     protected void actionRemoveSelected() {
+        StartEmployeeCommand.start(this);
         deleteEmployee();
+    }
+
+    public void logOut(Context context) {
+        setResult(REQUEST_CODE, new Intent().putExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, true));
+        finish();
     }
 
     private void deleteEmployee() {
@@ -101,12 +111,63 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        DeleteEmployeeCommand.start(EditEmployeeActivity.this, model.guid);
-                        finish();
+                        DeleteEmployeeCommand.start(EditEmployeeActivity.this, model.guid, new DeleteEmployeeCommandListener());
                         return true;
                     }
                 }
         );
+    }
+
+    private class DeleteEmployeeCommandListener extends DeleteEmployeeCommand.DeleteEmployeeCallback {
+
+        @Override
+        protected void onSuccess() {
+            EndEmployeeCommand.start(EditEmployeeActivity.this, true);
+
+            if (isCurrentUserDeleted(model.login)) {
+                updateLastSuccessfulLoginUser();
+                logOut(EditEmployeeActivity.this);
+            } else
+                finish();
+
+
+        }
+
+        @Override
+        protected void onFailure() {
+
+        }
+    }
+
+    private boolean updateLastSuccessfulLoginUser() {
+
+        Cursor c = ProviderAction.query(EMPLOYEE_URI)
+                .projection(ShopStore.EmployeeTable.LOGIN, ShopStore.EmployeeTable.PASSWORD)
+                .orderBy(ShopStore.EmployeeTable.UPDATE_TIME + " desc ")
+                .perform(EditEmployeeActivity.this);
+        if (c.moveToFirst()) {
+            updateLastLogin(c.getString(0));
+            updateLastPassword(c.getString(1));
+        }
+        c.close();
+        return true;
+
+    }
+
+    private void updateLastLogin(String login) {
+        if (login == null)
+            return;
+        getApp().setLastUserName(login);
+    }
+
+    private void updateLastPassword(String password) {
+        if (password == null)
+            return;
+        getApp().setLastUserPassword(password);
+    }
+
+    private boolean isCurrentUserDeleted(String login) {
+        return getApp().getOperatorLogin().equalsIgnoreCase(login);
     }
 
     @Override
@@ -158,12 +219,13 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     }
 
     public static void start(Context context, EmployeeModel model) {
-        EditEmployeeActivity_.intent(context).model(model).start();
+        EditEmployeeActivity_.intent(context).model(model).startForResult(EditEmployeeActivity.REQUEST_CODE);
     }
 
     public class EditEmployeeCallback extends BaseEmployeeCallback {
         @Override
         protected void onSuccess() {
+            disableForceLogOut();
             WaitDialogFragment.hide(EditEmployeeActivity.this);
             EndEmployeeCommand.start(EditEmployeeActivity.this, true);
             finish();
@@ -171,6 +233,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
         @Override
         protected void onEmployeeError() {
+            disableForceLogOut();
             WaitDialogFragment.hide(EditEmployeeActivity.this);
             EndEmployeeCommand.start(EditEmployeeActivity.this);
             AlertDialogFragment.showAlert(EditEmployeeActivity.this, R.string.error_dialog_title, getString(R.string.employee_edit_error_msg));
@@ -178,6 +241,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
         @Override
         protected void onEmployeeAlreadyExists() {
+            disableForceLogOut();
             WaitDialogFragment.hide(EditEmployeeActivity.this);
             EndEmployeeCommand.start(EditEmployeeActivity.this);
             AlertDialogFragment.showAlert(EditEmployeeActivity.this, R.string.error_dialog_title, getString(R.string.employee_edit_error_already_exists_msg, "\"" + model.login + "\""));
@@ -185,10 +249,21 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
         @Override
         protected void onEmailAlreadyExists() {
+            disableForceLogOut();
             WaitDialogFragment.hide(EditEmployeeActivity.this);
             EndEmployeeCommand.start(EditEmployeeActivity.this);
             AlertDialogFragment.showAlert(EditEmployeeActivity.this, R.string.error_dialog_title, getString(R.string.employee_edit_error_email_already_exists_msg, "\"" + model.email + "\""));
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        disableForceLogOut();
+    }
+
+    private void disableForceLogOut() {
+        setResult(REQUEST_CODE, new Intent().putExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, false));
     }
 
     private class UserPermissionsLoader implements LoaderCallbacks<List<Permission>> {

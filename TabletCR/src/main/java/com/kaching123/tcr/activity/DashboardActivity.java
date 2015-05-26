@@ -22,7 +22,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crittercism.app.Crittercism;
 import com.getbase.android.db.cursors.FluentCursor;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
@@ -100,13 +99,7 @@ import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
@@ -245,17 +238,21 @@ public class DashboardActivity extends SuperBaseActivity {
     private boolean isShiftLoaderFinished = true;
     private boolean isEmployeeTimeshiftLoaderFinished = true;
 
+    public static final int EXTRA_CODE = 1;
+
+    public static String EXTRA_FORCE_LOGOUT = "EXTRA_FORCE_LOGOUT";
+
     public static void startClearTop(Context context) {
         DashboardActivity_.intent(context).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
     }
 
     public static void start(Context context) {
-        DashboardActivity_.intent(context).start();
+        DashboardActivity_.intent(context).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
+//        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 
@@ -264,14 +261,14 @@ public class DashboardActivity extends SuperBaseActivity {
             Toast.makeText(this, R.string.offline_mode_error_toast_message_logout, Toast.LENGTH_SHORT).show();
         }
 
-        if(usbScannerInput!=null)
+        if (usbScannerInput != null)
             usbScannerInput.setInputType(0);
     }
 
     @AfterTextChange
     protected void usbScannerInputAfterTextChanged(Editable s) {
         String st = s.toString();
-        if (st.contains("\n")||st.contains("\r")||st.contains("\r\n")) {
+        if (st.contains("\n") || st.contains("\r") || st.contains("\r\n")) {
             barcodeReceivedFromSerialPort(st);
             s.clear();
         }
@@ -464,10 +461,18 @@ public class DashboardActivity extends SuperBaseActivity {
         getSupportLoaderManager().destroyLoader(LOADER_ACTIVATION_ID);
     }
 
+    @OnActivityResult(EXTRA_CODE)
+    protected void onResult(int code, Intent data) {
+        if (data != null && code == EXTRA_CODE) {
+            if (data.getBooleanExtra(EXTRA_FORCE_LOGOUT, false))
+                logout(true);
+        }
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-
         setTitle();
         setOperatorName();
         need2CollectData();

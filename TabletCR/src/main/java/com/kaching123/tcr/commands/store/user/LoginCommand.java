@@ -22,7 +22,6 @@ import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
-import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.SyncCommand.OfflineException;
 import com.kaching123.tcr.service.SyncCommand.SyncException;
@@ -48,7 +47,6 @@ import java.util.Set;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
-import java.util.ArrayList;
 //i think we should use command because it will be check subscription titledDate too
 public class LoginCommand extends GroundyTask {
 
@@ -83,8 +81,9 @@ public class LoginCommand extends GroundyTask {
 
         String lastUserName = getLastUserName();
         String lastUserPassword = getLastUserPassword();
+        Logger.d("LoginCommand: getLastUserName: " + getLastUserName());
         if (lastUserName != null && lastUserPassword != null) {
-            uploadTaskV2Adapter = new UploadTaskV2(loginLocal(getLastUserName(), getLastUserPassword()));
+            uploadTaskV2Adapter = new UploadTaskV2(loginLocal(getLastUserName()));
             doEmployeeUpload();
         }
 
@@ -102,11 +101,13 @@ public class LoginCommand extends GroundyTask {
                     return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
                 }
                 if (employeeModel.status != EmployeeStatus.ACTIVE) {
-                    Logger.d("Remote login FAILED! employee not active");
+                    Logger.d("Remote login FAI4444LED! employee not active");
                     return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
                 }
-                setLastUserName(employeeModel.login);
-                setLastUserPassword(employeeModel.password);
+                if (employeeModel.login != null && !isOffline)
+                    setLastUserName(employeeModel.login);
+                if (employeeModel.password != null && isOffline)
+                    setLastUserPassword(employeeModel.password);
                 boolean cleaned = checkDb(employeeModel);
 
                 Error syncError = syncData(employeeModel);
@@ -246,6 +247,7 @@ public class LoginCommand extends GroundyTask {
             throw new RuntimeException("Login clear db error");
         }
     }
+
     private RemoteLoginResult webLogin(String registerSerial, String userName, String password) {
         TcrApplication app = TcrApplication.get();
         SyncApi api = app.getRestAdapter().create(SyncApi.class);
@@ -275,6 +277,19 @@ public class LoginCommand extends GroundyTask {
         Cursor c = ProviderAction.query(ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT))
                 .where(ShopStore.EmployeeTable.LOGIN + " = ?", userName)
                 .where(ShopStore.EmployeeTable.PASSWORD + " = ?", password)
+                .perform(getContext());
+
+        if (c.moveToFirst()) {
+            model = new EmployeeModel(c);
+        }
+        c.close();
+        return model;
+    }
+
+    private EmployeeModel loginLocal(String userName) {
+        EmployeeModel model = null;
+        Cursor c = ProviderAction.query(ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT))
+                .where(ShopStore.EmployeeTable.LOGIN + " = ?", userName)
                 .perform(getContext());
 
         if (c.moveToFirst()) {
