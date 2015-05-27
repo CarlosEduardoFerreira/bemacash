@@ -644,7 +644,7 @@
     <string name="employee_salary_info">Salary info</string>
     <string name="employee_contacts">Contacts</string>
     <string name="employee_permission">Permission</string>
-    <string name="employee_first_name_label">Firts name:</string>
+    <string name="employee_first_name_label">First name:</string>
     <string name="employee_last_name_label">Last name:</string>
     <string name="employee_street_label">Street:</string>
     <string name="employee_complementary_label">Complementary:</string>
