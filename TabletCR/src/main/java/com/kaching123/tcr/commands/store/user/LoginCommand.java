@@ -81,7 +81,6 @@ public class LoginCommand extends GroundyTask {
 
         String lastUserName = getLastUserName();
         String lastUserPassword = getLastUserPassword();
-        Logger.d("LoginCommand: getLastUserName: " + getLastUserName());
         if (lastUserName != null ) {
             uploadTaskV2Adapter = new UploadTaskV2(loginLocal(getLastUserName()));
             doEmployeeUpload();
@@ -104,13 +103,16 @@ public class LoginCommand extends GroundyTask {
                     Logger.d("Remote login FAI4444LED! employee not active");
                     return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
                 }
+
+                boolean cleaned = checkDb(employeeModel);
+
                 if (employeeModel.login != null && !isOffline)
                     setLastUserName(employeeModel.login);
                 if (employeeModel.password != null && !isOffline)
                     setLastUserPassword(employeeModel.password);
-                boolean cleaned = checkDb(employeeModel);
 
                 Error syncError = syncData(employeeModel);
+
                 if (syncError != null && syncError != Error.OFFLINE) {
                     SendLogCommand.start(getContext());
                 }
@@ -156,7 +158,7 @@ public class LoginCommand extends GroundyTask {
                 Logger.e("Login: had invalid upload transactions, last uncompleted sale order guid: " + lastUncompletedSaleOrderGuid);
             }
         }
-
+        Logger.d("logincommand: success : "+app.getLastUserName());
         Logger.d("Login success!");
         return succeeded()
                 .add(EXTRA_EMPLOYEE, new EmployeePermissionsModel(employeeModel, getEmployeePermissions(employeeModel)))
@@ -201,19 +203,19 @@ public class LoginCommand extends GroundyTask {
     }
 
     private String getLastUserName() {
-        return TcrApplication.get().getLastUserName();
+        return ((TcrApplication)getContext().getApplicationContext()).getLastUserName();
     }
 
     private void setLastUserName(String name) {
-        TcrApplication.get().setLastUserName(name);
+        ((TcrApplication)getContext().getApplicationContext()).setLastUserName(name);
     }
 
     private String getLastUserPassword() {
-        return TcrApplication.get().getLastUserPassword();
+        return ((TcrApplication)getContext().getApplicationContext()).getLastUserPassword();
     }
 
     private void setLastUserPassword(String password) {
-        TcrApplication.get().setLastUserPassword(password);
+        ((TcrApplication)getContext().getApplicationContext()).setLastUserPassword(password);
     }
 
     private Error syncData(EmployeeModel employeeModel) {
