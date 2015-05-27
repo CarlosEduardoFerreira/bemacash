@@ -601,10 +601,15 @@ public final class SaleReportsProcessor {
                 printer.endBody();
                 printer.emptyLine();
                 printer.startBody();
+                BigDecimal total = BigDecimal.ZERO;
                 for (ReportItemInfo item : groupedResult) {
-                    printItem(printer, item);
+                    total = total.add(printItem(printer, item));
                 }
+
                 printer.endBody();
+                printer.drawLine();
+
+                printTotal(printer, context.getString(R.string.report_sale_by_items_total), total);
                 printer.drawLine();
             }
 

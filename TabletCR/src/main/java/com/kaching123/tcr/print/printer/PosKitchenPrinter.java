@@ -1,5 +1,7 @@
 package com.kaching123.tcr.print.printer;
 
+import com.kaching123.pos.printer.BarcodeTextBelowPositionAction;
+import com.kaching123.pos.printer.InitPrintAction;
 import com.kaching123.pos.printer.PrintLineAction;
 import com.kaching123.pos.util.IKitchenPrinter;
 
@@ -10,6 +12,16 @@ import java.math.BigDecimal;
  */
 public class PosKitchenPrinter extends BasePosTextPrinter implements IKitchenPrinter {
     public static final int PRINTER_KITCHEN_MAX_TEXT_LEN = 39;
+
+    public PosKitchenPrinter() {
+        add(new InitPrintAction());
+        //add(new SelectPOSAction());
+        //add(new SelectPOSUtf8Action());
+
+        //init barcode
+        add(new BarcodeTextBelowPositionAction());
+    }
+
     @Override
     public void header(String shopName, String registerTitle, String orderNumLabel, int orderSeqNum, String operatorLabel, String operatorName, String stationLabel, String station, String orderHolder, String orderTitle) {
         boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, shopName)));
