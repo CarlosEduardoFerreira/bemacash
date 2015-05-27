@@ -82,7 +82,7 @@ public class LoginCommand extends GroundyTask {
         String lastUserName = getLastUserName();
         String lastUserPassword = getLastUserPassword();
         Logger.d("LoginCommand: getLastUserName: " + getLastUserName());
-        if (lastUserName != null && lastUserPassword != null) {
+        if (lastUserName != null ) {
             uploadTaskV2Adapter = new UploadTaskV2(loginLocal(getLastUserName()));
             doEmployeeUpload();
         }
@@ -106,7 +106,7 @@ public class LoginCommand extends GroundyTask {
                 }
                 if (employeeModel.login != null && !isOffline)
                     setLastUserName(employeeModel.login);
-                if (employeeModel.password != null && isOffline)
+                if (employeeModel.password != null && !isOffline)
                     setLastUserPassword(employeeModel.password);
                 boolean cleaned = checkDb(employeeModel);
 
