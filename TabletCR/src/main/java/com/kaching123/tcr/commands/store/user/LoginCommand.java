@@ -81,9 +81,11 @@ public class LoginCommand extends GroundyTask {
 
         String lastUserName = getLastUserName();
         String lastUserPassword = getLastUserPassword();
-        if (lastUserName != null ) {
-            uploadTaskV2Adapter = new UploadTaskV2(loginLocal(getLastUserName()));
-            doEmployeeUpload();
+        boolean isEmployeeSuccessUpload = true;
+        boolean forceLocalLogin = false;
+        if (lastUserName != null) {
+            uploadTaskV2Adapter = new UploadTaskV2(loginLocal(lastUserName, lastUserPassword));
+            isEmployeeSuccessUpload = doEmployeeUpload();
         }
 
         if (mode == Mode.LOGIN && !isTrainingMode && !isOffline) {
@@ -96,28 +98,38 @@ public class LoginCommand extends GroundyTask {
                 }
                 EmployeeModel employeeModel = remoteLoginResult.employeeModel;
                 if (employeeModel == null) {
-                    Logger.d("Remote login FAILED! employee is null");
-                    return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
+                    if (isEmployeeSuccessUpload) {
+                        Logger.d("Remote login FAILED! employee is null");
+                        return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
+                    } else {
+                        boolean isOfflineModeExpired = mode == Mode.LOGIN && !isTrainingMode && TcrApplication.get().isOfflineModeExpired();
+                        if (!isOfflineModeExpired)
+                            forceLocalLogin = true;
+                    }
+
                 }
-                if (employeeModel.status != EmployeeStatus.ACTIVE) {
-                    Logger.d("Remote login FAI4444LED! employee not active");
-                    return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
-                }
+                if(!forceLocalLogin)
+                {
+                    if (employeeModel.status != EmployeeStatus.ACTIVE) {
+                        Logger.d("Remote login FAILED! employee not active");
+                        return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
+                    }
 
-                boolean cleaned = checkDb(employeeModel);
+                    boolean cleaned = checkDb(employeeModel);
 
-                if (employeeModel.login != null && !isOffline)
-                    setLastUserName(employeeModel.login);
-                if (employeeModel.password != null && !isOffline)
-                    setLastUserPassword(employeeModel.password);
+                    if (employeeModel.login != null && !isOffline)
+                        setLastUserName(employeeModel.login);
+                    if (employeeModel.password != null && !isOffline)
+                        setLastUserPassword(employeeModel.password);
 
-                Error syncError = syncData(employeeModel);
+                    Error syncError = syncData(employeeModel);
 
-                if (syncError != null && syncError != Error.OFFLINE) {
-                    SendLogCommand.start(getContext());
-                }
-                if (cleaned && syncError != null) {
-                    return failed().add(EXTRA_ERROR, syncError);
+                    if (syncError != null && syncError != Error.OFFLINE) {
+                        SendLogCommand.start(getContext());
+                    }
+                    if (cleaned && syncError != null) {
+                        return failed().add(EXTRA_ERROR, syncError);
+                    }
                 }
             }
         }
@@ -158,7 +170,7 @@ public class LoginCommand extends GroundyTask {
                 Logger.e("Login: had invalid upload transactions, last uncompleted sale order guid: " + lastUncompletedSaleOrderGuid);
             }
         }
-        Logger.d("logincommand: success : "+app.getLastUserName());
+        Logger.d("logincommand: success : " + app.getLastUserName());
         Logger.d("Login success!");
         return succeeded()
                 .add(EXTRA_EMPLOYEE, new EmployeePermissionsModel(employeeModel, getEmployeePermissions(employeeModel)))
@@ -194,28 +206,29 @@ public class LoginCommand extends GroundyTask {
         return false;
     }
 
-    private void doEmployeeUpload() {
+    private boolean doEmployeeUpload() {
         Logger.d("[OfflineService] doUpload: isManual = false");
 //        executor.submit(new UploadTask(this, false, true));
         ContentResolver cr = getContext().getContentResolver();
-        uploadTaskV2Adapter.webApiUpload(cr);
+        boolean updateEmployeeInfoSucceed = uploadTaskV2Adapter.webApiUpload(cr);
         cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+        return updateEmployeeInfoSucceed;
     }
 
     private String getLastUserName() {
-        return ((TcrApplication)getContext().getApplicationContext()).getLastUserName();
+        return ((TcrApplication) getContext().getApplicationContext()).getLastUserName();
     }
 
     private void setLastUserName(String name) {
-        ((TcrApplication)getContext().getApplicationContext()).setLastUserName(name);
+        ((TcrApplication) getContext().getApplicationContext()).setLastUserName(name);
     }
 
     private String getLastUserPassword() {
-        return ((TcrApplication)getContext().getApplicationContext()).getLastUserPassword();
+        return ((TcrApplication) getContext().getApplicationContext()).getLastUserPassword();
     }
 
     private void setLastUserPassword(String password) {
-        ((TcrApplication)getContext().getApplicationContext()).setLastUserPassword(password);
+        ((TcrApplication) getContext().getApplicationContext()).setLastUserPassword(password);
     }
 
     private Error syncData(EmployeeModel employeeModel) {
@@ -288,18 +301,19 @@ public class LoginCommand extends GroundyTask {
         return model;
     }
 
-    private EmployeeModel loginLocal(String userName) {
-        EmployeeModel model = null;
-        Cursor c = ProviderAction.query(ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT))
-                .where(ShopStore.EmployeeTable.LOGIN + " = ?", userName)
-                .perform(getContext());
-
-        if (c.moveToFirst()) {
-            model = new EmployeeModel(c);
-        }
-        c.close();
-        return model;
-    }
+//    private EmployeeModel LastSuccessLogin(String userName, String lastPassword) {
+//        EmployeeModel model = null;
+//        Cursor c = ProviderAction.query(ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT))
+//                .where(ShopStore.EmployeeTable.LOGIN + " = ?", userName)
+//                .perform(getContext());
+//
+//        if (c.moveToFirst()) {
+//            model = new EmployeeModel(c);
+//            model.password = lastPassword;
+//        }
+//        c.close();
+//        return model;
+//    }
 
     private Set<Permission> getEmployeePermissions(EmployeeModel employee) {
         HashSet<Permission> permissions = new HashSet<Permission>();

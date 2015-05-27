@@ -55,15 +55,20 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
     public EditEmployeeCallback editEmployeeCallback = new EditEmployeeCallback();
     private static final Uri EMPLOYEE_URI = ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT);
+    private boolean isCurrentUser;
 
     @AfterViews
     @Override
     protected void init() {
         super.init();
         fillFields();
+        isCurrentUser = checkCurrentUser();
         getSupportLoaderManager().initLoader(0, null, new UserPermissionsLoader());
     }
 
+    private boolean checkCurrentUser() {
+        return (login.getText().toString().equalsIgnoreCase(getLastLogin()));
+    }
     /*@BeforeTextChange
     protected void testBeforeTextChanged(CharSequence s){
         BCFormatter formatter = new BCFormatter();
@@ -143,6 +148,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
         Cursor c = ProviderAction.query(EMPLOYEE_URI)
                 .projection(ShopStore.EmployeeTable.LOGIN, ShopStore.EmployeeTable.PASSWORD)
+                .where(ShopStore.EmployeeTable.LOGIN + " !=?", model.login)
                 .orderBy(ShopStore.EmployeeTable.UPDATE_TIME + " desc ")
                 .perform(EditEmployeeActivity.this);
         if (c.moveToFirst()) {
@@ -164,6 +170,14 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         if (password == null)
             return;
         getApp().setLastUserPassword(password);
+    }
+
+    private String getLastLogin() {
+        return getApp().getLastUserName();
+    }
+
+    private String getLastPassword() {
+        return getApp().getLastUserPassword();
     }
 
     private boolean isCurrentUserDeleted(String login) {
@@ -226,6 +240,8 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         @Override
         protected void onSuccess() {
             disableForceLogOut();
+            if (isCurrentUser)
+                updateLastSuccessfulLoginUser();
             WaitDialogFragment.hide(EditEmployeeActivity.this);
             EndEmployeeCommand.start(EditEmployeeActivity.this, true);
             finish();

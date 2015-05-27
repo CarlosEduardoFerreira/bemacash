@@ -464,7 +464,8 @@ public class EmployeesActivity extends SuperBaseActivity {
     protected void onResult(int code, Intent data) {
         if (code == EditEmployeeActivity.REQUEST_CODE && data != null) {
             setResult(DashboardActivity.EXTRA_CODE, new Intent().putExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, data.getBooleanExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, false)));
-            finish();
+            if (data.getBooleanExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, false))
+                finish();
         }
     }
 }
