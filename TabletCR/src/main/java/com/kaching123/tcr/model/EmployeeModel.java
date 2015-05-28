@@ -51,6 +51,8 @@ public class EmployeeModel implements IValueModel, Serializable{
 
     public boolean isMerchant;
 
+
+
     public EmployeeModel(String guid, String firstName, String lastName, String login){
         this.guid = guid;
         this.firstName = firstName;

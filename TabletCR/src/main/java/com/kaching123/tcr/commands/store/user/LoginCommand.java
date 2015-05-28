@@ -82,7 +82,6 @@ public class LoginCommand extends GroundyTask {
         String lastUserName = getLastUserName();
         String lastUserPassword = getLastUserPassword();
         boolean isEmployeeSuccessUpload = true;
-        boolean forceLocalLogin = false;
         if (lastUserName != null) {
             uploadTaskV2Adapter = new UploadTaskV2(loginLocal(lastUserName, lastUserPassword));
             isEmployeeSuccessUpload = doEmployeeUpload();
@@ -98,39 +97,31 @@ public class LoginCommand extends GroundyTask {
                 }
                 EmployeeModel employeeModel = remoteLoginResult.employeeModel;
                 if (employeeModel == null) {
-                    if (isEmployeeSuccessUpload) {
-                        Logger.d("Remote login FAILED! employee is null");
-                        return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
-                    } else {
-                        boolean isOfflineModeExpired = mode == Mode.LOGIN && !isTrainingMode && TcrApplication.get().isOfflineModeExpired();
-                        if (!isOfflineModeExpired)
-                            forceLocalLogin = true;
-                    }
-
+                    Logger.d("Remote login FAILED! employee is null");
+                    return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
                 }
-                if(!forceLocalLogin)
-                {
-                    if (employeeModel.status != EmployeeStatus.ACTIVE) {
-                        Logger.d("Remote login FAILED! employee not active");
-                        return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
-                    }
 
-                    boolean cleaned = checkDb(employeeModel);
-
-                    if (employeeModel.login != null && !isOffline)
-                        setLastUserName(employeeModel.login);
-                    if (employeeModel.password != null && !isOffline)
-                        setLastUserPassword(employeeModel.password);
-
-                    Error syncError = syncData(employeeModel);
-
-                    if (syncError != null && syncError != Error.OFFLINE) {
-                        SendLogCommand.start(getContext());
-                    }
-                    if (cleaned && syncError != null) {
-                        return failed().add(EXTRA_ERROR, syncError);
-                    }
+                if (employeeModel.status != EmployeeStatus.ACTIVE) {
+                    Logger.d("Remote login FAILED! employee not active");
+                    return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
                 }
+
+                boolean cleaned = checkDb(employeeModel);
+
+                if (employeeModel.login != null && !isOffline)
+                    setLastUserName(employeeModel.login);
+                if (employeeModel.password != null && !isOffline)
+                    setLastUserPassword(employeeModel.password);
+
+                Error syncError = syncData(employeeModel);
+
+                if (syncError != null && syncError != Error.OFFLINE) {
+                    SendLogCommand.start(getContext());
+                }
+                if (cleaned && syncError != null) {
+                    return failed().add(EXTRA_ERROR, syncError);
+                }
+
             }
         }
 
