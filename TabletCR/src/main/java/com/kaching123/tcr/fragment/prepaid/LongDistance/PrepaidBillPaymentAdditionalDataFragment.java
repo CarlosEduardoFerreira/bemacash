@@ -253,7 +253,7 @@ public class PrepaidBillPaymentAdditionalDataFragment extends PrepaidLongDistanc
         request.altAccountNumber = accNumAlter.editable.getText().toString().trim();
         request.additAccountNumber1 = accAddFirst.editable.getText().toString().trim();
         request.additAccountNumber2 = accAddSecond.editable.getText().toString().trim();
-        request.paymentAmount = total;
+        request.paymentAmount = chosenAmount;
         request.feeAmount = chosenOption.feeAmount;
         request.customerFirstName = accCustFirst.editable.getText().toString().trim();
         request.customerLastName = accCustLast.editable.getText().toString().trim();
