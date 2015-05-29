@@ -30,7 +30,7 @@ import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 298)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 299)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -889,6 +889,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER, defVal = "0")
         String IS_MERCHANT = "is_merchant";
+
+        @Column(type = Column.Type.INTEGER, defVal = "1")
+        String IS_SYNC = "is_sync";
 
     }
 

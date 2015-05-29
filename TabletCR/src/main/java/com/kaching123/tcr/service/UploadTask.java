@@ -19,7 +19,6 @@ import com.kaching123.tcr.notification.NotificationHelper;
 import com.kaching123.tcr.pref.ShopPref_;
 import com.kaching123.tcr.service.v1.UploadTaskV1;
 import com.kaching123.tcr.service.v2.UploadTaskV2;
-import com.kaching123.tcr.service.v2.UploadTaskV2.TransactionNotFinalizedException;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.SqlCommandTable;
 import com.kaching123.tcr.util.Util;
@@ -28,6 +27,8 @@ public class UploadTask implements Runnable {
 
     public static String ACTION_UPLOAD_STARTED = "com.kaching123.tcr.service.ACTION_UPLOAD_STARTED";
     public static String ACTION_UPLOAD_COMPLETED = "com.kaching123.tcr.service.ACTION_UPLOAD_COMPLETED";
+    public static String ACTION_EMPLOYEE_UPLOAD_COMPLETED = "com.kaching123.tcr.service.ACTION_EMPLOYEE_UPLOAD_COMPLETED";
+    public static String ACTION_EMPLOYEE_UPLOAD_FAILED = "com.kaching123.tcr.service.ACTION_EMPLOYEE_UPLOAD_FAILED";
     public static String ACTION_INVALID_UPLOAD_TRANSACTION = "com.kaching123.tcr.service.ACTION_INVALID_UPLOAD_TRANSACTION";
     public static final String CMD_START_EMPLOYEE = "start_employee";
     public static final String CMD_END_EMPLOYEE = "end_employee";
@@ -45,14 +46,11 @@ public class UploadTask implements Runnable {
 
     private final boolean isManual;
 
-    private boolean uploadEmployee;
-
-    public UploadTask(OfflineCommandsService service, boolean isManual, boolean uploadEmployee) {
+    public UploadTask(OfflineCommandsService service, boolean isManual) {
         this.service = service;
         this.isManual = isManual;
         uploadTaskV1Adapter = new UploadTaskV1(service);
         uploadTaskV2Adapter = new UploadTaskV2(service);
-        this.uploadEmployee = uploadEmployee;
     }
 
     private void fireStartEvent(Context context) {
@@ -72,6 +70,12 @@ public class UploadTask implements Runnable {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
+//    private void fireUploadEmployeeCompleteEvent(Context context, boolean success) {
+//        Intent intent = new Intent(ACTION_EMPLOYEE_UPLOAD_COMPLETED);
+//        intent.putExtra(EXTRA_SUCCESS, success);
+//        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+//    }
+
     private void fireInvalidUploadTransactionEvent(Context context) {
         if (!isManual)
             return;
@@ -87,15 +91,7 @@ public class UploadTask implements Runnable {
             if (isManual)
                 Logger.e("UploadTask skip task: NO USER");
             else
-            {
-
-                if (uploadEmployee) {
-                    ContentResolver cr = service.getContentResolver();
-                    uploadTaskV2Adapter.webApiUpload(cr);
-                    cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
-                }
-
-            }
+                Logger.w("UploadTask skip task: NO USER");
             return;
         }
 
@@ -130,7 +126,7 @@ public class UploadTask implements Runnable {
                 pref.isV1CommandsSent().put(isV1CommandsSent);
             }
             if (isV1CommandsSent) {
-                errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr);
+                errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr, service);
             }
             cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
         }

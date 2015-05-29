@@ -52,6 +52,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
     private static final String ELIGIBLE_FOR_COMMISSION = "ELIGIBLE_FOR_COMMISSION";
     private static final String COMMISSION = "COMMISSION";
     private static final String RESELLER_ID = "RESELLER_ID";
+    private static final String IS_SYNC = "IS_SYNC";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -83,7 +84,8 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 rs.getBoolean(TIPS_ELIGIBLE),
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
                 rs.getBigDecimal(COMMISSION),
-                !rs.isNull(RESELLER_ID)
+                !rs.isNull(RESELLER_ID),
+                rs.getBoolean(IS_SYNC)
         );
     }
 
@@ -111,7 +113,8 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 rs.getBoolean(TIPS_ELIGIBLE),
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
                 rs.getBigDecimal(COMMISSION),
-                !TextUtils.isEmpty(rs.getString(RESELLER_ID))
+                !TextUtils.isEmpty(rs.getString(RESELLER_ID)),
+                rs.getBoolean(IS_SYNC)
         );
     }
 
@@ -153,6 +156,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(TIPS_ELIGIBLE, model.tipsEligible)
                 .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
                 .add(COMMISSION, model.commission)
+                .add(IS_SYNC, model.isSynced)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -183,6 +187,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(TIPS_ELIGIBLE, model.tipsEligible)
                 .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
                 .add(COMMISSION, model.commission)
+                .add(IS_SYNC, model.isSynced)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

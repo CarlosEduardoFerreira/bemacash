@@ -23,11 +23,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
@@ -39,6 +34,12 @@ import com.kaching123.tcr.model.LabaledEnum;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PermissionPreset;
 import com.kaching123.tcr.util.CalculationUtil;
+
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -167,6 +168,8 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
         if (!validateForm()) {
             return;
         }
+        if (login.isEnabled())
+            model.isSynced = false;
         bindModel();
         doCommand();
     }
@@ -184,7 +187,7 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
         model.country = country.getText().toString();
         model.zip = zip.getText().toString();
         model.hRate = parseBigDecimal(hourlyRate, BigDecimal.ZERO);
-        model.status = (EmployeeStatus)status.getSelectedItem();
+        model.status = (EmployeeStatus) status.getSelectedItem();
         model.tipsEligible = tipsEligible.isChecked();
         model.commissionEligible = commissionsEligible.isChecked();
         model.commission = parseBigDecimal(commissions, BigDecimal.ZERO);
@@ -218,7 +221,7 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
         }
 
         String emailText = email.getText().toString().trim();
-        if (!TextUtils.isEmpty(emailText) && !isValidEmail(emailText)){
+        if (!TextUtils.isEmpty(emailText) && !isValidEmail(emailText)) {
             Toast.makeText(this, R.string.employee_edit_email_not_valid_error, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -322,7 +325,7 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
     }
 
 
-    private class PermissionAdapter extends ObjectsCursorAdapter<Permission>{
+    private class PermissionAdapter extends ObjectsCursorAdapter<Permission> {
 
         public PermissionAdapter(Context context, List<Permission> permissions) {
             super(context);
@@ -354,16 +357,16 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
 
             holder.name.setText(getString(i.getLabelId()));
 
-            if (position == 0 || item.getGroup() != getItem(position - 1).getGroup()){
+            if (position == 0 || item.getGroup() != getItem(position - 1).getGroup()) {
                 holder.header.setVisibility(View.VISIBLE);
                 holder.header.setText(item.getGroup().getLabelId());
-            }else{
+            } else {
                 holder.header.setVisibility(View.GONE);
             }
 
-            if (position == getCount() - 1 || item.getGroup() != getItem(position + 1).getGroup()){
+            if (position == getCount() - 1 || item.getGroup() != getItem(position + 1).getGroup()) {
                 holder.divider.setVisibility(View.GONE);
-            }else{
+            } else {
                 holder.divider.setVisibility(View.VISIBLE);
             }
 
@@ -427,9 +430,6 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
             label.setText(item.getLabelRes());
         }
     }
-
-
-
 
 
 }

@@ -1,6 +1,7 @@
 package com.kaching123.tcr.commands.store.user;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -66,6 +67,7 @@ public class LoginCommand extends GroundyTask {
     private static final String ARG_MODE = "arg_mode";
     protected UploadTaskV2 uploadTaskV2Adapter;
     protected static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.getNoNotifyContentUri(ShopStore.SqlCommandTable.URI_CONTENT);
+    protected static final Uri URI_EMPLOYEE_SYNCED = ShopProvider.getNoNotifyContentUri(ShopStore.EmployeeTable.URI_CONTENT);
 
     @Override
     protected TaskResult doInBackground() {
@@ -185,6 +187,10 @@ public class LoginCommand extends GroundyTask {
         return orderIsActive ? lastUncompletedSaleOrderGuid : null;
     }
 
+    private void markEmployeeSynced() {
+
+    }
+
     protected boolean checkDb(EmployeeModel employeeModel) {
         TcrApplication app = ((TcrApplication) getContext().getApplicationContext());
         long shopId = app.getShopPref().shopId().getOr(0L);
@@ -201,8 +207,14 @@ public class LoginCommand extends GroundyTask {
         Logger.d("[OfflineService] doUpload: isManual = false");
 //        executor.submit(new UploadTask(this, false, true));
         ContentResolver cr = getContext().getContentResolver();
-        boolean updateEmployeeInfoSucceed = uploadTaskV2Adapter.webApiUpload(cr);
-        cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+        boolean updateEmployeeInfoSucceed = uploadTaskV2Adapter.employeeUpload(cr, getContext());
+        if (updateEmployeeInfoSucceed) {
+            cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+            ContentValues v = new ContentValues(1);
+            v.put(ShopStore.EmployeeTable.IS_SYNC, "1");
+            cr.update(URI_EMPLOYEE_SYNCED, v, ShopStore.EmployeeTable.IS_SYNC + " = ?", new String[]{"0"});
+        }
+
         return updateEmployeeInfoSucceed;
     }
 

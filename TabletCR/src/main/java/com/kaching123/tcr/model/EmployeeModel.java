@@ -51,7 +51,7 @@ public class EmployeeModel implements IValueModel, Serializable{
 
     public boolean isMerchant;
 
-
+    public boolean isSynced;
 
     public EmployeeModel(String guid, String firstName, String lastName, String login){
         this.guid = guid;
@@ -66,7 +66,7 @@ public class EmployeeModel implements IValueModel, Serializable{
     }
 
     public EmployeeModel(String guid, String firstName, String lastName, String login, String password, String street, String complementary, String city, String state, String country, String zip,
-                         String phone, String email, boolean sexMale, Date hireDate, Date fireDate, EmployeeStatus status, long shopId, BigDecimal hRate, boolean tipsEligible, boolean commissionEligible, BigDecimal commission, boolean isMerchant) {
+                         String phone, String email, boolean sexMale, Date hireDate, Date fireDate, EmployeeStatus status, long shopId, BigDecimal hRate, boolean tipsEligible, boolean commissionEligible, BigDecimal commission, boolean isMerchant, boolean isSynced) {
         this.guid = guid;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -90,6 +90,7 @@ public class EmployeeModel implements IValueModel, Serializable{
         this.commissionEligible = commissionEligible;
         this.commission = commission;
         this.isMerchant = isMerchant;
+        this.isSynced = isSynced;
     }
 
     public EmployeeModel(Cursor c){
@@ -116,7 +117,8 @@ public class EmployeeModel implements IValueModel, Serializable{
                 _bool(c, c.getColumnIndex(EmployeeTable.TIPS_ELIGIBLE)),
                 _bool(c, c.getColumnIndex(EmployeeTable.ELIGIBLE_FOR_COMMISSION)),
                 _decimal(c, c.getColumnIndex(EmployeeTable.COMMISSION)),
-                c.getInt(c.getColumnIndex(EmployeeTable.IS_MERCHANT)) == 1
+                c.getInt(c.getColumnIndex(EmployeeTable.IS_MERCHANT)) == 1,
+                c.getInt(c.getColumnIndex(EmployeeTable.IS_SYNC)) == 1
         );
     }
 
@@ -155,8 +157,11 @@ public class EmployeeModel implements IValueModel, Serializable{
         v.put(EmployeeTable.ELIGIBLE_FOR_COMMISSION, commissionEligible);
         v.put(EmployeeTable.COMMISSION, _decimal(commission));
         v.put(EmployeeTable.IS_MERCHANT, isMerchant);
+        v.put(EmployeeTable.IS_SYNC, isSynced);
         return v;
     }
+
+
 
     public static boolean isLoginValid (String login){
         Pattern pattern = Pattern.compile("^[0-9]{3}$");

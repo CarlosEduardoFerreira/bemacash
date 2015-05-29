@@ -36,6 +36,7 @@ public class OfflineCommandsService extends Service {
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     protected UploadTaskV2 uploadTaskV2Adapter;
     protected static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.getNoNotifyContentUri(ShopStore.SqlCommandTable.URI_CONTENT);
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -89,15 +90,21 @@ public class OfflineCommandsService extends Service {
      */
     private void doUpload(boolean isManual) {
         Logger.d("[OfflineService] doUpload: isManual = " + isManual);
-        executor.submit(new UploadTask(this, isManual, false));
+        executor.submit(new UploadTask(this, isManual));
     }
 
-    private void doEmployeeUpload( ) {
+    private void doEmployeeUpload() {
         Logger.d("[OfflineService] doUpload: isManual = false");
 //        executor.submit(new UploadTask(this, false, true));
-        ContentResolver cr = this.getContentResolver();
-        uploadTaskV2Adapter.webApiUpload(cr);
-        cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+        final ContentResolver cr = this.getContentResolver();
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                if (uploadTaskV2Adapter.employeeUpload(cr, OfflineCommandsService.this))
+                    cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+            }
+        });
+
     }
 
     public static void scheduleSyncAction(Context context) {

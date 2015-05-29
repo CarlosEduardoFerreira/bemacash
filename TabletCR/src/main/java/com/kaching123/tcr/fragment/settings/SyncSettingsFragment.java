@@ -15,6 +15,7 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.AddEmployeeActivity;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.service.OfflineCommandsService;
@@ -32,6 +33,8 @@ public class SyncSettingsFragment extends PreferenceFragment {
     static {
         intentFilter.addAction(UploadTask.ACTION_UPLOAD_COMPLETED);
         intentFilter.addAction(SyncCommand.ACTION_SYNC_COMPLETED);
+        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED);
+        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED);
     }
 
     @App
@@ -64,6 +67,14 @@ public class SyncSettingsFragment extends PreferenceFragment {
                 } else {
                     AlertDialogFragment.showAlert(getActivity(), R.string.sync_error_title, getString(R.string.sync_error_message));
                 }
+            }
+            if(UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction()))
+            {
+
+            }
+            if(UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction()))
+            {
+
             }
         }
     };

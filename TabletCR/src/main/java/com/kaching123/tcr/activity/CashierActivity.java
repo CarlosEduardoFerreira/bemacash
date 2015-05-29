@@ -2,6 +2,8 @@ package com.kaching123.tcr.activity;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +29,9 @@ import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
 import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment.OnAddonsChangedListener;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.service.UploadTask;
+import com.kaching123.tcr.service.v2.UploadTaskV2;
+import com.kaching123.tcr.util.ReceiverWrapper;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
@@ -87,6 +92,41 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
             }
         }
 
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        progressReceiver.register(CashierActivity.this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        progressReceiver.unregister(CashierActivity.this);
+    }
+
+    private static final IntentFilter intentFilter = new IntentFilter();
+
+    static {
+        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED);
+        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED);
+    }
+
+    private ReceiverWrapper progressReceiver = new ReceiverWrapper(intentFilter) {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction())) {
+                if (!intent.getBooleanExtra(UploadTaskV2.EXTRA_SUCCESS, false))
+                    if (intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE) != null && intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE).equalsIgnoreCase("400"))
+                        Toast.makeText(CashierActivity.this, R.string.warning_transaction_upload_fail, Toast.LENGTH_LONG).show();
+            }
+            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction())) {
+
+            }
+        }
     };
 
     private void filtInput() {

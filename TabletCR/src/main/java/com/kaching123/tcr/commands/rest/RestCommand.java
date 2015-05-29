@@ -31,6 +31,9 @@ public abstract class RestCommand extends PublicGroundyTask {
         public boolean isSuccess() {
             return STATUS_SUCCESS.equals(status) || "200".equals(status);
         }
+        public boolean isCredentialsFial() {
+            return "400".equals(status);
+        }
 
         @Override
         public String toString() {

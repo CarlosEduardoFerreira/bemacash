@@ -517,8 +517,11 @@
     <string name="wait_message_print_zreport">Please wait...</string>
     <string name="wait_message_clock_in">Clock-In</string>
     <string name="wait_message_clock_out">Clock-Out</string>
+    <string name="wait_message_save_employee">Saving Employee</string>
     <string name="error_dialog_title">Error</string>
     <string name="warning_dialog_title">Warning</string>
+    <string name="warning_delete_employee">Please goto back office to delete the employee</string>
+    <string name="warning_transaction_upload_fail">Sale transaction upload fail, please check the credentials.</string>
     <string name="error_message_printer_unknown">Printer Error</string>
     <string name="error_message_printer_disconnected">Printer is disconnected.</string>
     <string name="error_message_printer_ip_not_found">Printer was not found by IP\nPerform searching by MAC-address?</string>

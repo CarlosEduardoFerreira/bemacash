@@ -1,7 +1,10 @@
 package com.kaching123.tcr.activity;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,9 +28,12 @@ import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.user.LoginFragment;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.service.UploadTask;
+import com.kaching123.tcr.service.v2.UploadTaskV2;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
+import com.kaching123.tcr.util.ReceiverWrapper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -51,6 +57,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     public static final int REQUEST_CODE = 1;
 
     private static final Uri URI_PERMISSIONS = ShopProvider.getContentUri(EmployeePermissionTable.URI_CONTENT);
+    protected static final Uri URI_EMPLOYEE_SYNCED = ShopProvider.getNoNotifyContentUri(ShopStore.EmployeeTable.URI_CONTENT);
 
     public EditEmployeeCallback editEmployeeCallback = new EditEmployeeCallback();
     private static final Uri EMPLOYEE_URI = ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT);
@@ -60,7 +67,16 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     protected void init() {
         super.init();
         fillFields();
+        initUserAndPwd();
         getSupportLoaderManager().initLoader(0, null, new UserPermissionsLoader());
+    }
+
+    private void initUserAndPwd() {
+        if (model.isSynced) {
+            login.setEnabled(false);
+            password.setEnabled(false);
+            passwordConfirm.setEnabled(false);
+        }
     }
 
     /*@BeforeTextChange
@@ -91,13 +107,61 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
     @OptionsItem
     protected void actionRemoveSelected() {
+        if (model.isSynced) {
+            Toast.makeText(EditEmployeeActivity.this, getString(R.string.warning_delete_employee), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         StartEmployeeCommand.start(this);
         deleteEmployee();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        progressReceiver.register(EditEmployeeActivity.this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        progressReceiver.unregister(EditEmployeeActivity.this);
     }
 
     public void logOut(Context context) {
         setResult(REQUEST_CODE, new Intent().putExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, true));
         finish();
+    }
+
+    private static final IntentFilter intentFilter = new IntentFilter();
+
+    static {
+        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED);
+        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED);
+    }
+
+    private ReceiverWrapper progressReceiver = new ReceiverWrapper(intentFilter) {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction())) {
+                if (intent.getBooleanExtra(UploadTaskV2.EXTRA_SUCCESS, false))
+                    updateEmployeeSyncStatus();
+            }
+            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction())) {
+
+            }
+            WaitDialogFragment.hide(EditEmployeeActivity.this);
+            finish();
+        }
+    };
+
+    private void updateEmployeeSyncStatus() {
+        ContentResolver cr = EditEmployeeActivity.this.getContentResolver();
+        ContentValues v = new ContentValues(1);
+        v.put(ShopStore.EmployeeTable.IS_SYNC, "1");
+        cr.update(URI_EMPLOYEE_SYNCED, v, ShopStore.EmployeeTable.IS_SYNC + " = ?", new String[]{"0"});
     }
 
     private void deleteEmployee() {
@@ -194,20 +258,20 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         String passwordText = password.getText().toString().trim();
         String passwordConfirmText = passwordConfirm.getText().toString().trim();
         boolean isPswdEmpty = TextUtils.isEmpty(passwordText);
-        if (isPswdEmpty && TextUtils.isEmpty(passwordConfirmText))
+        if (model.isSynced || isPswdEmpty && TextUtils.isEmpty(passwordConfirmText))
             return true;
 
-        if (isPswdEmpty) {
+        if (model.isSynced || isPswdEmpty) {
             Toast.makeText(this, R.string.employee_edit_password_error, Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (passwordText.length() < PASSWORD_MIN_LEN) {
+        if (model.isSynced || passwordText.length() < PASSWORD_MIN_LEN) {
             Toast.makeText(this, R.string.employee_edit_password_min_error, Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (!passwordConfirmText.equals(passwordText)) {
+        if (model.isSynced || !passwordConfirmText.equals(passwordText)) {
             Toast.makeText(this, R.string.employee_edit_password_confirm_error, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -235,7 +299,8 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
             disableForceLogOut();
             WaitDialogFragment.hide(EditEmployeeActivity.this);
             EndEmployeeCommand.start(EditEmployeeActivity.this, true);
-            finish();
+            WaitDialogFragment.show(EditEmployeeActivity.this, getString(R.string.wait_message_save_employee));
+//            finish();
         }
 
         @Override

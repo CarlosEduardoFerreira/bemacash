@@ -1,14 +1,9 @@
 package com.kaching123.tcr.activity;
 
 import android.content.Context;
-import android.text.Editable;
-import android.widget.EditText;
-
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
@@ -22,6 +17,13 @@ import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment.OnCancelListener;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.service.UploadTask;
+import com.kaching123.tcr.service.v2.UploadTaskV2;
+import com.kaching123.tcr.util.ReceiverWrapper;
+
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OptionsMenu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -73,10 +75,12 @@ public class QuickServiceActivity extends BaseCashierActivity {
         });
         hideModifiersFragment();
     }
+
     @Override
     public void focusUsbInput() {
 
     }
+
     @Override
     protected void completeOrder() {
         super.completeOrder();
@@ -95,6 +99,41 @@ public class QuickServiceActivity extends BaseCashierActivity {
         });
         showModifiersFragment();
     }
+
+    private static final IntentFilter intentFilter = new IntentFilter();
+
+    static {
+        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED);
+        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        progressReceiver.register(QuickServiceActivity.this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        progressReceiver.unregister(QuickServiceActivity.this);
+    }
+
+    private ReceiverWrapper progressReceiver = new ReceiverWrapper(intentFilter) {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction())) {
+                if (!intent.getBooleanExtra(UploadTaskV2.EXTRA_SUCCESS, false))
+                    if (intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE) != null && intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE).equalsIgnoreCase("400"))
+                        Toast.makeText(QuickServiceActivity.this, R.string.warning_delete_employee, Toast.LENGTH_LONG).show();
+            }
+            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction())) {
+
+            }
+        }
+    };
 
     @Override
     protected void actionBarItemClicked() {

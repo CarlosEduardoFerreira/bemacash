@@ -3,10 +3,15 @@ package com.kaching123.tcr.service.v2;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
@@ -32,7 +37,10 @@ public class UploadTaskV2 {
     public static final String CMD_START_EMPLOYEE = "start_employee";
     public static final String CMD_END_EMPLOYEE = "end_employee";
     private EmployeeModel employee;
-
+    public static String ACTION_EMPLOYEE_UPLOAD_FAILED = "com.kaching123.tcr.service.ACTION_EMPLOYEE_UPLOAD_FAILED";
+    public static String ACTION_EMPLOYEE_UPLOAD_COMPLETED = "com.kaching123.tcr.service.ACTION_EMPLOYEE_UPLOAD_COMPLETED";
+    public static String EXTRA_SUCCESS = "success";
+    public static String EXTRA_ERROR_CODE = "EXTRA_ERROR_CODE";
     static ContentValues sentValues = new ContentValues();
 
     static {
@@ -49,7 +57,7 @@ public class UploadTaskV2 {
         this.employee = employeeModel;
     }
 
-    public boolean webApiUpload(ContentResolver cr) {
+    public boolean webApiUpload(ContentResolver cr, Context context) {
         if (TcrApplication.get().isTrainingMode())
             return true;
 
@@ -108,7 +116,7 @@ public class UploadTaskV2 {
                     commands.add(new UploadCommand(id, json));
                 }
                 if (commands.size() == BATCH_SIZE) {
-                    boolean uploaded = try2Upload(cr, commands);
+                    boolean uploaded = try2Upload(cr, commands, context);
                     commands.clear();
                     if (!uploaded) {
                         errorsOccurred = true;
@@ -121,12 +129,103 @@ public class UploadTaskV2 {
         }
 
         if (!commands.isEmpty()) {
-            errorsOccurred = !try2Upload(cr, commands);
+            errorsOccurred = !try2Upload(cr, commands, context);
         }
         return !errorsOccurred;
     }
 
-    private boolean try2Upload(ContentResolver cr, ArrayList<UploadCommand> commands) {
+    public boolean employeeUpload(ContentResolver cr, Context context) {
+        if (TcrApplication.get().isTrainingMode())
+            return true;
+
+        boolean errorsOccurred = false;
+
+        Cursor c = cr.query(URI_SQL_COMMAND_NO_NOTIFY, new String[]{SqlCommandTable.ID, SqlCommandTable.SQL_COMMAND},
+                SqlCommandTable.IS_SENT + " = ?", new String[]{"0"},
+                SqlCommandTable.ID);
+        ArrayList<UploadCommand> commands = new ArrayList<UploadCommand>(BATCH_SIZE);
+        try {
+            while (c.moveToNext()) {
+                final long id = c.getLong(0);
+                String json = c.getString(1);
+                Logger.d("[CMD_TABLE] %d = %s", id, json);
+                if (CMD_START_EMPLOYEE.equals(json)) {
+                    Logger.d("START EMPLOYEE UPLOAD");
+                    ArrayList<Long> subIds = new ArrayList<Long>();
+                    //read transaction
+                    BatchSqlCommand batch = null;
+                    long endTransactionId = 0;
+                    while (c.moveToNext()) {
+                        long subId = c.getLong(0);
+                        subIds.add(subId);
+                        String subJson = c.getString(1);
+                        Logger.d("[CMD_TABLE] %d = %s", subId, subJson);
+                        //TODO need to verify end
+                        if ((CMD_START_TRANSACTION.equals(json)) || (CMD_END_TRANSACTION.equals(json))) {
+                            break;
+                        }
+
+                        if ((CMD_END_EMPLOYEE.equals(subJson))) {
+                            endTransactionId = subId;
+                            Logger.d("END EMPLOYEE UPLOAD");
+                            break;
+                        }
+                        try {
+                            if (batch == null) {
+                                batch = BatchSqlCommand.fromJson(subJson);
+                            } else {
+                                batch.add(BatchSqlCommand.fromJson(subJson));
+                            }
+                        } catch (JSONException e) {
+//                            throw new IllegalArgumentException("can't parse command: " + subJson, e);
+                            Logger.e("can't parse command: " + subJson, e);
+                            // TODO send log
+                        }
+                    }
+                    if (batch == null && endTransactionId != 0) {
+                        //need to delete start and end transaction
+                        cr.update(URI_SQL_COMMAND_NO_NOTIFY, sentValues, SqlCommandTable.ID + " = ? OR " + SqlCommandTable.ID + " = ?", new String[]{String.valueOf(id), String.valueOf(endTransactionId)});
+                    } else if (batch == null || endTransactionId == 0) {
+//                        throw new TransactionNotFinalizedException("transaction is not finalized!");
+                        Logger.e("transaction is not finalized!");
+                    } else {
+                        String transactionCmd = batch.toJson();
+                        Logger.d("TRANSACTION_RESULT: %s", transactionCmd);
+                        commands.add(new UploadCommand(id, transactionCmd, subIds));
+                    }
+                } else {
+                    commands.add(new UploadCommand(id, json));
+                }
+                if (commands.size() == BATCH_SIZE) {
+                    boolean uploaded = try2Upload(cr, commands, context);
+                    commands.clear();
+                    if (!uploaded) {
+                        errorsOccurred = true;
+                        break;
+                    }
+                }
+            }
+        } finally {
+            c.close();
+        }
+
+        if (!commands.isEmpty()) {
+            errorsOccurred = !try2Upload(cr, commands, context);
+        }
+
+        fireUploadEmployeeCompleteEvent(context, !errorsOccurred, "200");
+
+        return !errorsOccurred;
+    }
+
+    private void fireUploadEmployeeCompleteEvent(Context context, boolean success, String errorCode) {
+        Intent intent = new Intent(ACTION_EMPLOYEE_UPLOAD_COMPLETED);
+        intent.putExtra(EXTRA_SUCCESS, success);
+        intent.putExtra(EXTRA_ERROR_CODE, errorCode);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private boolean try2Upload(ContentResolver cr, ArrayList<UploadCommand> commands, Context context) {
         TcrApplication app = TcrApplication.get();
         EmployeeModel employeeModel = app.getOperator() == null ? employee : app.getOperator();
         if (employeeModel == null) {
@@ -151,6 +250,8 @@ public class UploadTaskV2 {
                 Logger.e("[UploadWeb] error: request: " + req);
                 Logger.e("[UploadWeb] error: response: " + resp);
                 skippId = resp.optFailedId(-1L);
+                if (resp.isCredentialsFial())
+                    fireUploadEmployeeCompleteEvent(context, false, "400");
                 if (skippId == -1L)
                     return false;
             }

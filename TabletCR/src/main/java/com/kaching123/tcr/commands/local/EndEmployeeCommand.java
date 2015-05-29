@@ -34,7 +34,7 @@ public class EndEmployeeCommand extends PublicGroundyTask {
         getContext().getContentResolver().insert(ShopProvider.contentUri(SqlCommandTable.URI_CONTENT), values);
 
         if (startUpload)
-            OfflineCommandsService.startUpload(getContext());
+            OfflineCommandsService.startemployeeTableUpload(getContext());
 
         return succeeded();
     }
