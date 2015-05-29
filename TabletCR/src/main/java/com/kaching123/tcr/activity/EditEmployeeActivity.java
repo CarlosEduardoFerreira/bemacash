@@ -148,6 +148,8 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
             if (UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction())) {
                 if (intent.getBooleanExtra(UploadTaskV2.EXTRA_SUCCESS, false))
                     updateEmployeeSyncStatus();
+                if (intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE) != null && intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE).equalsIgnoreCase("400"))
+                    Toast.makeText(EditEmployeeActivity.this, R.string.warning_employee_upload_fail, Toast.LENGTH_LONG).show();
             }
             if (UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction())) {
 

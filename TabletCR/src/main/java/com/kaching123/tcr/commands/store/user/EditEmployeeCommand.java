@@ -70,6 +70,7 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
+        model.isSynced = true;
         EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter) JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
         BatchSqlCommand batch = batchUpdate(model)
                 .add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()))

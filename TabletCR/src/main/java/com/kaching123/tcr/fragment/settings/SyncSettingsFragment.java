@@ -1,27 +1,33 @@
 package com.kaching123.tcr.fragment.settings;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.v4.app.Fragment;
 import android.support.v4.preference.PreferenceFragment;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.App;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.AddEmployeeActivity;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.UploadTask;
+import com.kaching123.tcr.service.v2.UploadTaskV2;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.ReceiverWrapper;
+
+import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 
 /**
  * Created by gdubina on 07/11/13.
@@ -30,6 +36,8 @@ import com.kaching123.tcr.util.ReceiverWrapper;
 @OptionsMenu(R.menu.settings_sync_fragment)
 public class SyncSettingsFragment extends PreferenceFragment {
     private static final IntentFilter intentFilter = new IntentFilter();
+    protected static final Uri URI_EMPLOYEE_SYNCED = ShopProvider.getNoNotifyContentUri(ShopStore.EmployeeTable.URI_CONTENT);
+
     static {
         intentFilter.addAction(UploadTask.ACTION_UPLOAD_COMPLETED);
         intentFilter.addAction(SyncCommand.ACTION_SYNC_COMPLETED);
@@ -68,16 +76,24 @@ public class SyncSettingsFragment extends PreferenceFragment {
                     AlertDialogFragment.showAlert(getActivity(), R.string.sync_error_title, getString(R.string.sync_error_message));
                 }
             }
-            if(UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction()))
-            {
-
+            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction())) {
+                if (intent.getBooleanExtra(UploadTaskV2.EXTRA_SUCCESS, false))
+                    updateEmployeeSyncStatus();
+                if (intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE) != null && intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE).equalsIgnoreCase("400"))
+                    Toast.makeText(getActivity(), R.string.warning_main_upload_fail, Toast.LENGTH_LONG).show();
             }
-            if(UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction()))
-            {
+            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction())) {
 
             }
         }
     };
+
+    private void updateEmployeeSyncStatus() {
+        ContentResolver cr = getActivity().getContentResolver();
+        ContentValues v = new ContentValues(1);
+        v.put(ShopStore.EmployeeTable.IS_SYNC, "1");
+        cr.update(URI_EMPLOYEE_SYNCED, v, ShopStore.EmployeeTable.IS_SYNC + " = ?", new String[]{"0"});
+    }
 
     @Override
     public void onResume() {
@@ -112,7 +128,7 @@ public class SyncSettingsFragment extends PreferenceFragment {
     }
 
     @OptionsItem
-    protected void actionSyncSelected(){
+    protected void actionSyncSelected() {
         SyncWaitDialogFragment.show(getActivity(), getString(R.string.pref_sync_wait));
         isUploadSuccess = false;
         OfflineCommandsService.startUpload(getActivity(), true);

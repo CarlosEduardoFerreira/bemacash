@@ -20,6 +20,7 @@ import com.kaching123.tcr.fragment.user.LoginFragment;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.service.UploadTask;
+import com.kaching123.tcr.service.v2.UploadTaskV2;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.ReceiverWrapper;
@@ -101,7 +102,10 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
         public void onReceive(Context context, Intent intent) {
 
             if (UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction())) {
-                updateEmployeeSyncStatus();
+                if (intent.getBooleanExtra(UploadTaskV2.EXTRA_SUCCESS, false))
+                    updateEmployeeSyncStatus();
+                if (intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE) != null && intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE).equalsIgnoreCase("400"))
+                    Toast.makeText(AddEmployeeActivity.this, R.string.warning_employee_upload_fail, Toast.LENGTH_LONG).show();
             }
             if (UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction())) {
 

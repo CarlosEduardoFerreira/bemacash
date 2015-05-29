@@ -8,10 +8,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
@@ -146,6 +144,7 @@ public class UploadTaskV2 {
         ArrayList<UploadCommand> commands = new ArrayList<UploadCommand>(BATCH_SIZE);
         try {
             while (c.moveToNext()) {
+                boolean emloyee_upload_end = false;
                 final long id = c.getLong(0);
                 String json = c.getString(1);
                 Logger.d("[CMD_TABLE] %d = %s", id, json);
@@ -155,7 +154,7 @@ public class UploadTaskV2 {
                     //read transaction
                     BatchSqlCommand batch = null;
                     long endTransactionId = 0;
-                    while (c.moveToNext()) {
+                    while (c.moveToNext() && !emloyee_upload_end) {
                         long subId = c.getLong(0);
                         subIds.add(subId);
                         String subJson = c.getString(1);
@@ -167,7 +166,21 @@ public class UploadTaskV2 {
 
                         if ((CMD_END_EMPLOYEE.equals(subJson))) {
                             endTransactionId = subId;
+                            emloyee_upload_end = true;
                             Logger.d("END EMPLOYEE UPLOAD");
+
+                            if (batch == null && endTransactionId != 0) {
+                                //need to delete start and end transaction
+                                cr.update(URI_SQL_COMMAND_NO_NOTIFY, sentValues, SqlCommandTable.ID + " = ? OR " + SqlCommandTable.ID + " = ?", new String[]{String.valueOf(id), String.valueOf(endTransactionId)});
+                            } else if (batch == null || endTransactionId == 0) {
+//                        throw new TransactionNotFinalizedException("transaction is not finalized!");
+                                Logger.e("transaction is not finalized!");
+                            } else {
+                                String transactionCmd = batch.toJson();
+                                Logger.d("TRANSACTION_RESULT: %s", transactionCmd);
+                                commands.add(new UploadCommand(id, transactionCmd, subIds));
+                            }
+
                             break;
                         }
                         try {
@@ -182,27 +195,7 @@ public class UploadTaskV2 {
                             // TODO send log
                         }
                     }
-                    if (batch == null && endTransactionId != 0) {
-                        //need to delete start and end transaction
-                        cr.update(URI_SQL_COMMAND_NO_NOTIFY, sentValues, SqlCommandTable.ID + " = ? OR " + SqlCommandTable.ID + " = ?", new String[]{String.valueOf(id), String.valueOf(endTransactionId)});
-                    } else if (batch == null || endTransactionId == 0) {
-//                        throw new TransactionNotFinalizedException("transaction is not finalized!");
-                        Logger.e("transaction is not finalized!");
-                    } else {
-                        String transactionCmd = batch.toJson();
-                        Logger.d("TRANSACTION_RESULT: %s", transactionCmd);
-                        commands.add(new UploadCommand(id, transactionCmd, subIds));
-                    }
-                } else {
-                    commands.add(new UploadCommand(id, json));
-                }
-                if (commands.size() == BATCH_SIZE) {
-                    boolean uploaded = try2Upload(cr, commands, context);
-                    commands.clear();
-                    if (!uploaded) {
-                        errorsOccurred = true;
-                        break;
-                    }
+
                 }
             }
         } finally {
@@ -213,7 +206,7 @@ public class UploadTaskV2 {
             errorsOccurred = !try2Upload(cr, commands, context);
         }
 
-        fireUploadEmployeeCompleteEvent(context, !errorsOccurred, "200");
+        fireUploadEmployeeCompleteEvent(context, !errorsOccurred, "errorCode");
 
         return !errorsOccurred;
     }

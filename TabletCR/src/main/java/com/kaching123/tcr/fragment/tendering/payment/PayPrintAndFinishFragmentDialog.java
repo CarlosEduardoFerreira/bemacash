@@ -6,9 +6,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
@@ -31,6 +28,10 @@ import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
 import com.kaching123.tcr.fragment.tendering.PayChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -160,7 +161,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac, ReceiptType receiptType, PrintSignatureOrderCallback printSignatureCallback) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH)
+        if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH && receiptType != ReceiptType.EBT)
             if (!printBox.isChecked()) {
                 receiptType = ReceiptType.MERCHANT;
             }
@@ -179,10 +180,10 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             printOrder(false, false);
         } else if (signatureBox.isChecked() && !signatureOrderPrinted) {
             printSignatureOrder(false, false);
-        } else if (printBox.isChecked()&&(gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT_CASH )&& isPrinterTwoCopiesReceipt) {
+        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT||gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
             printOrder(false, false);
             isPrinterTwoCopiesReceipt = false;
-        } else if (printBox.isChecked()&&(gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT_CASH ) && !debitOrEBTDetailsPrinted) {
+        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT||gateWay == ReceiptType.EBT_CASH) && !debitOrEBTDetailsPrinted) {
             printDebitorEBTDetails(false, false);
         } else {
             completeProcess();
@@ -194,7 +195,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         WaitDialogFragment.hide(getActivity());
         if (emailBox.isChecked()) {
             sendDigitalOrder();
-        }else {
+        } else {
             super.completeProcess();
         }
     }

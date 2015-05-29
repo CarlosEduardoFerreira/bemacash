@@ -126,7 +126,8 @@ public class UploadTask implements Runnable {
                 pref.isV1CommandsSent().put(isV1CommandsSent);
             }
             if (isV1CommandsSent) {
-                errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr, service);
+                boolean uploadEmployeeError = !uploadTaskV2Adapter.employeeUpload(cr, service);
+                errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr, service) && uploadEmployeeError;
             }
             cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
         }

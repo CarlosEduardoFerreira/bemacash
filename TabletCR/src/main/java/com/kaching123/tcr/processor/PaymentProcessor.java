@@ -706,6 +706,7 @@ public class PaymentProcessor {
                 if (TcrApplication.get().isPaxConfigured() && paxGateway.acceptPaxCreditEnabled()) {
                     transaction = !usePreauthTransactions ? paxGateway.createTransaction(context, amount, orderGuid) : paxGateway.createPreauthTransaction(context, amount, orderGuid);
                     transaction.cashBack = BigDecimal.ZERO;
+                    gateWay = PrintSignatureOrderCommand.ReceiptType.EBT;
                     transaction.setType(TransactionType.PAX);
                     proceedToPAXPayment(context, transaction);
                 } else {
@@ -724,7 +725,7 @@ public class PaymentProcessor {
             case PAX_DEBIT: {
                 transaction = PaymentGateway.PAX_DEBIT.gateway().createTransaction(context, amount, orderGuid);
                 transaction.cashBack = BigDecimal.ZERO;
-                gateWay = PrintSignatureOrderCommand.ReceiptType.DEBIT;
+                gateWay = PrintSignatureOrderCommand.ReceiptType.EBT;
                 transaction.setType(TransactionType.PAX_DEBIT);
                 proceedToPAXPayment(context, transaction);
                 break;
@@ -732,6 +733,7 @@ public class PaymentProcessor {
             case PAX_EBT_FOODSTAMP: {
                 transaction = PaymentGateway.PAX_EBT_FOODSTAMP.gateway().createTransaction(context, amount, orderGuid);
                 transaction.cashBack = BigDecimal.ZERO;
+                gateWay = PrintSignatureOrderCommand.ReceiptType.EBT;
                 transaction.setType(TransactionType.PAX_EBT_FOODSTAMP);
                 proceedToPAXPayment(context, transaction);
                 break;

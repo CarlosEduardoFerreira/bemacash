@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class PrintSignatureOrderCommand extends BasePrintCommand<PosSignatureTextPrinter> {
 
-    public static enum ReceiptType {CUSTOMER, MERCHANT, DEBIT, EBT_CASH}
+    public static enum ReceiptType {CUSTOMER, MERCHANT, DEBIT, EBT_CASH, EBT}
 
     private static final String ARG_ORDER_GUID = "ARG_ORDER_GUID";
     private static final String ARG_TRANSACTIONS = "ARG_TRANSACTIONS";
