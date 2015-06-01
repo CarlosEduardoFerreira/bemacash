@@ -12,6 +12,8 @@
     <color name ="printer_status_ok">#69ac32</color>-->
     <color name="beige">#e8e5d9</color>
 
+    <color name="password_gray">#CCCCCC</color>
+
     <color name ="dashboard_module_text">#908978</color>
     <color name ="dashboard_module_disabled_text">#66908978</color>
 

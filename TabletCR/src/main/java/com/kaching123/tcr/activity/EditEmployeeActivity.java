@@ -74,10 +74,16 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     private void initUserAndPwd() {
         if (model.isSynced) {
             login.setEnabled(false);
+
+            login.setBackgroundColor(getResources().getColor(R.color.password_gray));
+
             password.setEnabled(false);
             password.setText(getString(R.string.employee_password_grayed));
+            password.setBackgroundColor(getResources().getColor(R.color.password_gray));
+
             passwordConfirm.setText(getString(R.string.employee_password_grayed));
             passwordConfirm.setEnabled(false);
+            passwordConfirm.setBackgroundColor(getResources().getColor(R.color.password_gray));
         }
     }
 

@@ -127,7 +127,7 @@ public class QuickServiceActivity extends BaseCashierActivity {
             if (UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction())) {
                 if (!intent.getBooleanExtra(UploadTaskV2.EXTRA_SUCCESS, false))
                     if (intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE) != null && intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE).equalsIgnoreCase("400"))
-                        Toast.makeText(QuickServiceActivity.this, R.string.warning_delete_employee, Toast.LENGTH_LONG).show();
+                        Toast.makeText(QuickServiceActivity.this, R.string.warning_transaction_upload_fail, Toast.LENGTH_LONG).show();
             }
             if (UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction())) {
 
