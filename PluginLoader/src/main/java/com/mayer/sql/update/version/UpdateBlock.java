@@ -184,7 +184,7 @@ class UpdateBlock {
 
     private static final String SQL_ADD_COLUMN_SERIAL_IN_PAX_TABLE = "ALTER TABLE pax_table ADD COLUMN serial TEXT;";
 
-    private static final String SQL_ADD_COLUMN_EMPLOYEE_TABLE = "ALTER TABLE employee ADD COLUMN is_sync INTEGER;";
+    private static final String SQL_ADD_COLUMN_EMPLOYEE_TABLE = "ALTER TABLE employee ADD COLUMN is_sync INTEGER DEFAULT(1);";
 
     static void update5_8to5_9(SQLiteDatabase db) {
         db.execSQL(SQL_ADD_COLUMN_EMPLOYEE_TABLE);
