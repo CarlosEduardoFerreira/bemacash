@@ -780,6 +780,7 @@
     <string name="employee_tips_dialog_notes">Notes</string>
     <string name="employee_tips_dialog_employee_hint">Assign tip to:</string>
     <string name="employee_tips_dialog_amount_hint">Amount</string>
+    <string name="employee_password_grayed">0000</string>
     <string name="apply_tips_dialog_title">Add Gratuity</string>
     <string name="apply_tips_dialog_subtotal_label">Subtotal</string>
     <string name="apply_tips_dialog_tax_label">Tax</string>

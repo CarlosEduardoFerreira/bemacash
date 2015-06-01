@@ -192,6 +192,35 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .build(JdbcFactory.getApiMethod(model));
     }
 
+    public static SingleSqlCommand updateEmployeeNoCreSQL(EmployeeModel model, IAppCommandContext appCommandContext) {
+        return _update(TABLE_NAME, appCommandContext)
+                .add(FIRST_NAME, model.firstName)
+                .add(LAST_NAME, model.lastName)
+                .add(FULLNAME, model.fullName()) //TODO delete when web team makes changes
+
+                .add(STREET, model.street)
+                .add(COMPLEMENTARY, model.complementary)
+                .add(CITY, model.city)
+                .add(STATE, model.state)
+                .add(COUNTRY, model.country)
+                .add(ZIP, model.zip)
+                .add(PHONE, model.phone)
+                .add(EMAIL, model.email)
+
+                .add(SEX, model.sexMale)
+
+                .add(HIRE_DATE, model.hireDate)
+                .add(FIRE_DATE, model.fireDate)
+                .add(STATUS, model.status)
+                .add(HOURLY_RATE, model.hRate)
+                .add(TIPS_ELIGIBLE, model.tipsEligible)
+                .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
+                .add(COMMISSION, model.commission)
+                .add(IS_SYNC, model.isSynced)
+                .where(GUID, model.guid)
+                .build(JdbcFactory.getApiMethod(model));
+    }
+
     public static String getLoginQuery() {
         return String.format(Locale.US,
                 "select * from %s where %s = ? and %s = ? and %s = ?",

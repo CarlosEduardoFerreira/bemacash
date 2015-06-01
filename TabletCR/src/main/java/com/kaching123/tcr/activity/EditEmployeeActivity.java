@@ -75,6 +75,8 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         if (model.isSynced) {
             login.setEnabled(false);
             password.setEnabled(false);
+            password.setText(getString(R.string.employee_password_grayed));
+            passwordConfirm.setText(getString(R.string.employee_password_grayed));
             passwordConfirm.setEnabled(false);
         }
     }

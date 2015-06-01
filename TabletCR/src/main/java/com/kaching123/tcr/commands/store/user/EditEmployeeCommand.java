@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.EmployeeJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeePermissionModel;
@@ -70,11 +71,17 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        model.isSynced = true;
+
         EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter) JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
-        BatchSqlCommand batch = batchUpdate(model)
-                .add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()))
-                .add(permissionJdbcConverter.disableAllSQL(model.guid, getAppCommandContext()));
+        BatchSqlCommand batch = batchUpdate(model);
+        if (model.isSynced) {
+            batch.add(EmployeeJdbcConverter.updateEmployeeNoCreSQL(model, getAppCommandContext()));
+        } else {
+            model.isSynced = true;
+            batch.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
+        }
+
+        batch.add(permissionJdbcConverter.disableAllSQL(model.guid, getAppCommandContext()));
         for (Permission p : permissions) {
             batch.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true), getAppCommandContext()));
         }
