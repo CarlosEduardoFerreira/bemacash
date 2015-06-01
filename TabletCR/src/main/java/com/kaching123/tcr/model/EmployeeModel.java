@@ -134,11 +134,15 @@ public class EmployeeModel implements IValueModel, Serializable{
     @Override
     public ContentValues toValues() {
         ContentValues v = new ContentValues();
+
         v.put(ShopStore.EmployeeTable.GUID, guid);
         v.put(EmployeeTable.FIRST_NAME, firstName);
         v.put(EmployeeTable.LAST_NAME, lastName);
+
+
         v.put(ShopStore.EmployeeTable.LOGIN, login);
         v.put(ShopStore.EmployeeTable.PASSWORD, password);
+
         v.put(ShopStore.EmployeeTable.STREET, street);
         v.put(ShopStore.EmployeeTable.COMPLEMENTARY, complementary);
         v.put(ShopStore.EmployeeTable.CITY, city);

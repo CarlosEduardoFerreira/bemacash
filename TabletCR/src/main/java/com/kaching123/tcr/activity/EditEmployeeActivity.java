@@ -284,6 +284,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     protected void callCommand(final EmployeeModel model, ArrayList<Permission> permissions) {
         StartEmployeeCommand.start(this);
         EditEmployeeCommand.start(EditEmployeeActivity.this, model, permissions, editEmployeeCallback);
+
     }
 
     @OptionsItem

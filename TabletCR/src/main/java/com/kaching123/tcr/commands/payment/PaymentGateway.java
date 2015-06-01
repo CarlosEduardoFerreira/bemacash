@@ -44,6 +44,10 @@ public enum PaymentGateway {
         return this == BLACKSTONE || this == PAYPAL || this == PAX
                 || this == PAX_EBT_CASH || this == PAX_EBT_FOODSTAMP || this == PAX_DEBIT;
     }
+    public boolean isEbt ()
+    {
+        return this == PAX_EBT_CASH || this == PAX_EBT_FOODSTAMP;
+    }
 
 
 
