@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:layout_width="wrap_content" />
 
-    <com.kaching123.tcr.component.AddonsContainerView_
+    <com.kaching123.tcr.component.NoOptionsContainerView_
         android:layout_margin="12dp"
         android:id="@+id/optionals"
         android:layout_height="match_parent"
