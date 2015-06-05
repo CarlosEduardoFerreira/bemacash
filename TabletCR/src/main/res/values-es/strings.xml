@@ -349,11 +349,11 @@
     <string name="printer_refund_total">Total (incluyendo impuesto)</string>
     <string name="printer_signature_subtitle">Recibo firmado</string>
     <string name="printer_date">Fecha</string>
-    <string name="printer_card_name">Nombre en Tarjeta</string>
+    <string name="printer_card_name">Tipo de Tarjeta</string>
     <string name="printer_auth_number">Autorizaci\u00F3n:</string>
-    <string name="printer_shifted_number">Numero desplazado </string>
+    <string name="printer_shifted_number">Numero de Cuenta: </string>
     <string name="printer_amount">Monto</string>
-    <string name="printer_signature_line">Firma del cliente</string>
+    <string name="printer_signature_line">Firma del cliente: _______________________________</string>
     <string name="printer_signature_customer_copy">Copia del Cliente</string>
     <string name="printer_signature_merchant_copy">Copia del Comerciante</string>
     <string name="printer_terminal_id">Identificaci\u00F3n del Termina\'</string>

@@ -1,6 +1,9 @@
 package com.kaching123.tcr.commands.device;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.DhcpInfo;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.format.Formatter;
@@ -15,6 +18,8 @@ import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
@@ -111,6 +116,32 @@ public class FindPaxCommand extends PublicGroundyTask {
     }
 
     public String logLocalIpAddresses() {
+        if (isWifi())
+            return getWifiIp();
+        else {
+            return getDHCPIp();
+        }
+    }
+
+    private String getDHCPIp() {
+        WifiManager wifi = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+        DhcpInfo dhcpInfo = wifi.getDhcpInfo();
+        String ipFull = Formatter.formatIpAddress(dhcpInfo.ipAddress);
+        String[] dots = ipFull.split("\\.");
+        String ip = dots[0] + "." + dots[1] + "." + dots[2] + ".";
+        return ip;
+    }
+
+    private boolean isWifi() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isWiFi = activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+        return isWiFi;
+    }
+
+    public String getWifiIp() {
         WifiManager wm = (WifiManager) getContext().getSystemService(getContext().WIFI_SERVICE);
         String ipFull = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
         String[] dots = ipFull.split("\\.");
@@ -175,8 +206,7 @@ public class FindPaxCommand extends PublicGroundyTask {
         }
 
         @OnFailure(FindPaxCommand.class)
-        public void onFailure()
-        {
+        public void onFailure() {
             handleFailure();
         }
 
@@ -184,7 +214,7 @@ public class FindPaxCommand extends PublicGroundyTask {
 
         protected abstract void handleAddPax(PaxModel info);
 
-        protected abstract void handleFailure( );
+        protected abstract void handleFailure();
     }
 
 }

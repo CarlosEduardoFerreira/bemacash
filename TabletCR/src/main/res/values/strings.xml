@@ -419,9 +419,9 @@
     <string name="printer_debit_subtitle">Debit Details Receipt</string>
     <string name="printer_ebt_cash_subtitle">EBT Details Receipt</string>
     <string name="printer_date">Date:</string>
-    <string name="printer_card_name">Card name:</string>
+    <string name="printer_card_name">Card Type:</string>
     <string name="printer_auth_number">Authorization:</string>
-    <string name="printer_shifted_number">Shifted number:</string>
+    <string name="printer_shifted_number">Account Number:</string>
     <string name="printer_amount">Amount:</string>
     <string name="printer_cashback">CashBack:</string>
     <string name="printer_ebt_cash">EBT CASH:</string>

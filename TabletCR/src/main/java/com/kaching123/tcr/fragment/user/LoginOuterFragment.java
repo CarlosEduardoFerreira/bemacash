@@ -1,14 +1,12 @@
 package com.kaching123.tcr.fragment.user;
 
 import android.app.Dialog;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.SuperBaseDialogFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -16,16 +14,22 @@ import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginFragment.OnDismissListener;
 import com.kaching123.tcr.fragment.user.LoginFragment.OnLoginCompleteListener;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
+
 /**
  * Created by vkompaniets on 07.03.14.
  */
-@EFragment (R.layout.login_outer_fragment)
+@EFragment(R.layout.login_outer_fragment)
 public class LoginOuterFragment extends SuperBaseDialogFragment {
 
     private static final String DIALOG_NAME = LoginOuterFragment.class.getSimpleName();
+    private final String VER = "Ver: ";
 
     @ViewById
-    protected TextView registerSerialLabel;
+    protected TextView registerSerialLabel, versionName;
 
     @FragmentArg
     protected Mode mode;
@@ -54,6 +58,19 @@ public class LoginOuterFragment extends SuperBaseDialogFragment {
     @AfterViews
     protected void onIniView() {
         registerSerialLabel.setText(getString(R.string.dashboard_register_serial, getApp().getRegisterSerial()));
+        versionName.setText(getVersionName());
+    }
+
+    private String getVersionName() {
+        PackageManager manager = getActivity().getPackageManager();
+        PackageInfo info = null;
+        try {
+            info = manager.getPackageInfo(getActivity().getPackageName(), 0);
+            return VER + info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public void setOnLoginCompleteListener(OnLoginCompleteListener onLoginCompleteListener) {
@@ -69,8 +86,6 @@ public class LoginOuterFragment extends SuperBaseDialogFragment {
         fragment.setOnLoginCompleteListener(listener);
         DialogUtil.show(activity, DIALOG_NAME, fragment);
     }
-
-
 
 
 }
