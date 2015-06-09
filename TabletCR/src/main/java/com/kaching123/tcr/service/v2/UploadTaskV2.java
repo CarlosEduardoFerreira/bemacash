@@ -55,7 +55,7 @@ public class UploadTaskV2 {
         this.employee = employeeModel;
     }
 
-    public boolean webApiUpload(ContentResolver cr, Context context) {
+    public boolean webApiUpload(ContentResolver cr, Context context) throws TransactionNotFinalizedException {
         if (TcrApplication.get().isTrainingMode())
             return true;
 
@@ -94,8 +94,8 @@ public class UploadTaskV2 {
                                 batch.add(BatchSqlCommand.fromJson(subJson));
                             }
                         } catch (JSONException e) {
-//                            throw new IllegalArgumentException("can't parse command: " + subJson, e);
                             Logger.e("can't parse command: " + subJson, e);
+                            throw new IllegalArgumentException("can't parse command: " + subJson, e);
                             // TODO send log
                         }
                     }
@@ -103,8 +103,8 @@ public class UploadTaskV2 {
                         //need to delete start and end transaction
                         cr.update(URI_SQL_COMMAND_NO_NOTIFY, sentValues, SqlCommandTable.ID + " = ? OR " + SqlCommandTable.ID + " = ?", new String[]{String.valueOf(id), String.valueOf(endTransactionId)});
                     } else if (batch == null || endTransactionId == 0) {
-//                        throw new TransactionNotFinalizedException("transaction is not finalized!");
                         Logger.e("transaction is not finalized!");
+                        throw new TransactionNotFinalizedException("transaction is not finalized!");
                     } else {
                         String transactionCmd = batch.toJson();
                         Logger.d("TRANSACTION_RESULT: %s", transactionCmd);

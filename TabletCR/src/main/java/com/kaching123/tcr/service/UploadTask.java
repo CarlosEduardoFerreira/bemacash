@@ -127,19 +127,19 @@ public class UploadTask implements Runnable {
             }
             if (isV1CommandsSent) {
                 boolean uploadEmployeeError = !uploadTaskV2Adapter.employeeUpload(cr, service);
-                errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr, service) && uploadEmployeeError;
+                errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr, service) && !uploadEmployeeError;
             }
             cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
         }
-//        catch (TransactionNotFinalizedException e) {
-//            if (isManual)
-//                Logger.e("UploadTask: transaction not finalized!", e);
-//            else
-//                Logger.w("UploadTask: transaction not finalized yet", e);
-//            NotificationHelper.removeUploadNotification(service);
-//            fireCompleteEvent(service, false);
-//            return;
-//        }
+        catch (UploadTaskV2.TransactionNotFinalizedException e) {
+            if (isManual)
+                Logger.e("UploadTask: transaction not finalized!", e);
+            else
+                Logger.w("UploadTask: transaction not finalized yet", e);
+            NotificationHelper.removeUploadNotification(service);
+            fireCompleteEvent(service, false);
+            return;
+        }
         catch (Exception e) {
             Logger.e("UploadTask error", e);
             errorsOccurred = true;
