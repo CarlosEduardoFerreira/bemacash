@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -97,11 +98,21 @@ public class SyncSettingsFragment extends PreferenceFragment {
             }
             if (AutoUpdateService.ACTION_NO_UPDATE.equals(intent.getAction())) {
                 SyncWaitDialogFragment.hide(getActivity());
-                int targetBuildNumber = intent.getIntExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0);
+
+                int targetBuildNumber = intent.getIntExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0) == 0 ? getCurrentBuildNumber() : intent.getIntExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0);
                 Toast.makeText(getActivity(), String.format(getString(R.string.str_no_app_update), targetBuildNumber), Toast.LENGTH_LONG).show();
             }
         }
     };
+
+    private int getCurrentBuildNumber() {
+        try {
+            return getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     private void updateEmployeeSyncStatus() {
         ContentResolver cr = getActivity().getContentResolver();
