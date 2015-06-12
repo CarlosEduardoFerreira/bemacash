@@ -1,5 +1,6 @@
 package com.kaching123.tcr.fragment.settings;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.preference.PreferenceFragment;
 import android.widget.Toast;
 
+import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -38,11 +40,13 @@ public class SyncSettingsFragment extends PreferenceFragment {
     private static final IntentFilter intentFilter = new IntentFilter();
     protected static final Uri URI_EMPLOYEE_SYNCED = ShopProvider.getNoNotifyContentUri(ShopStore.EmployeeTable.URI_CONTENT);
 
+    private ManualCheckUpdateListener listener;
     static {
         intentFilter.addAction(UploadTask.ACTION_UPLOAD_COMPLETED);
         intentFilter.addAction(SyncCommand.ACTION_SYNC_COMPLETED);
         intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED);
         intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED);
+        intentFilter.addAction(AutoUpdateService.ACTION_NO_UPDATE);
     }
 
     @App
@@ -85,6 +89,11 @@ public class SyncSettingsFragment extends PreferenceFragment {
             if (UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction())) {
 
             }
+            if (AutoUpdateService.ACTION_NO_UPDATE.equals(intent.getAction())) {
+                SyncWaitDialogFragment.hide(getActivity());
+                int targetBuildNumber = intent.getIntExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0);
+                Toast.makeText(getActivity(), String.format(getString(R.string.str_no_app_update), targetBuildNumber), Toast.LENGTH_LONG).show();
+            }
         }
     };
 
@@ -125,6 +134,20 @@ public class SyncSettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+        Preference button = (Preference) findPreference(getString(R.string.pref_update_manual));
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                listener.onCheckClick();
+                return true;
+            }
+        });
+
+    }
+
+    protected long getUpdateCheckTimer() {
+        return ((TcrApplication) getActivity().getApplicationContext()).getShopInfo().updateCheckTimer;
     }
 
     @OptionsItem
@@ -135,7 +158,25 @@ public class SyncSettingsFragment extends PreferenceFragment {
         OfflineCommandsService.startDownload(getActivity(), true);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            listener = (ManualCheckUpdateListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
     public static Fragment instance() {
         return SyncSettingsFragment_.builder().build();
+    }
+
+    public interface ManualCheckUpdateListener
+    {
+        void onCheckClick();
     }
 }

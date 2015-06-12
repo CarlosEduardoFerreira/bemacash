@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.UploadTask;
 import com.kaching123.tcr.store.ShopStore;
@@ -62,6 +63,7 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         intentFilter.addAction(UploadTask.ACTION_UPLOAD_STARTED);
         intentFilter.addAction(UploadTask.ACTION_INVALID_UPLOAD_TRANSACTION);
         intentFilter.addAction(SyncCommand.ACTION_SYNC_PROGRESS);
+        intentFilter.addAction(SuperBaseActivity.ACTION_APK_DOWNLOAD_PROGRESS);
     }
 
     @StringRes(R.string.sync_wait_msg_tmpl2)
@@ -91,8 +93,7 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
                     if (table.contains(SYNC_LOCAL)) {
                         table = table.substring(6);
                         dataLabel = SYNC_LOCAL + getString(TABLE_NAMES.get(table));
-                    }
-                    else
+                    } else
                         dataLabel = getString(TABLE_NAMES.get(table));
 
                 if (pages == 0 && progress == 0) {
@@ -100,6 +101,10 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
                 } else {
                     progressMsg.setText(String.format(Locale.US, waitMsgTmpl, dataLabel, progress, pages));
                 }
+            }
+            if (SuperBaseActivity.ACTION_APK_DOWNLOAD_PROGRESS.equals(intent.getAction())) {
+                int progress = intent.getIntExtra(SuperBaseActivity.EXTRA_PROGRESS, 0);
+                progressMsg.setText(String.format(getString(R.string.str_download_progress), progress) + "%");
             }
         }
     };

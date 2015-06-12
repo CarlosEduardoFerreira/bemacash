@@ -30,7 +30,7 @@ import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 299)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 300)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -63,6 +63,33 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String UPDATE_TIME = DEFAULT_UPDATE_TIME;
 
+    }
+
+    @Table(ApkUpdate.TABLE_NAME)
+    public static interface ApkUpdate extends IBemaSyncTable{
+        @URI
+        String URI_CONTENT = "apk_update";
+        String TABLE_NAME = "apk_update";
+
+        @Unique
+        @NotNull
+        @Column(type = Column.Type.TEXT)
+        String GUID = "guid";
+
+        @Column(type = Type.TEXT)
+        String URL = "url";
+
+        @Column(type = Type.TEXT)
+        String VERSION = "version";
+
+        @Column(type = Type.INTEGER)
+        String SCHEDULE_TIME = "scheduleTime";
+
+        @Column(type = Type.TEXT)
+        String PRIORITY = "priority";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String APROVE = "aprove";
     }
 
     @Table(BillPayment.TABLE_NAME)

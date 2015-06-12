@@ -1,6 +1,7 @@
 package com.kaching123.tcr.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,12 +10,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ViewById;
-import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
+import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.fragment.settings.AboutFragment;
 import com.kaching123.tcr.fragment.settings.DataUsageStatFragment;
 import com.kaching123.tcr.fragment.settings.DisplayFragment;
@@ -27,6 +26,10 @@ import com.kaching123.tcr.fragment.settings.TrainingModeSettingsFragment;
 import com.kaching123.tcr.fragment.settings.USBMsrFragment;
 import com.kaching123.tcr.model.Permission;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +39,7 @@ import java.util.Set;
  * Created by gdubina on 07/11/13.
  */
 @EActivity(R.layout.settings_activity)
-public class SettingsActivity extends SuperBaseActivity {
+public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -80,7 +83,7 @@ public class SettingsActivity extends SuperBaseActivity {
 
     private void updateDetails(int pos) {
         Fragment fragment = null;
-        switch(pos){
+        switch (pos) {
             case 0:
                 fragment = SyncSettingsFragment.instance();
                 break;
@@ -115,6 +118,13 @@ public class SettingsActivity extends SuperBaseActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.settings_details, fragment).commit();
     }
 
+    @Override
+    public void onCheckClick() {
+        SyncWaitDialogFragment.show(SettingsActivity.this, getString(R.string.pref_check_update_wait));
+        stopService(new Intent(SettingsActivity.this, AutoUpdateService.class));
+        startCheckUpdateService(true);
+    }
+
 
     private class NavigationAdapter extends ObjectsArrayAdapter<NavigationItem> {
 
@@ -134,7 +144,7 @@ public class SettingsActivity extends SuperBaseActivity {
 
         @Override
         protected View bindView(View v, int position, NavigationItem item) {
-            UiHolder holder = (UiHolder)v.getTag();
+            UiHolder holder = (UiHolder) v.getTag();
             holder.text1.setText(item.title);
             holder.text2.setText(item.subTitle);
             return v;

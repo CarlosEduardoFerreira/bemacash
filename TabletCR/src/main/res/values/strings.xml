@@ -140,8 +140,10 @@
     <string name="pref_sync_title">Database syncing</string>
     <string name="pref_sync_summary">Setup sync time</string>
     <string name="pref_sync_list_title">Database synchronization time</string>
+    <string name="pref_app_update_check">Check for app updates</string>
     <string name="pref_sync_now">Sync now</string>
     <string name="pref_sync_wait">Synchronizing...</string>
+    <string name="pref_check_update_wait">Checking...</string>
     <string name="pref_pax_title">PAX pinpad settings</string>
     <string name="pref_pax_summary">Setup PAX pinpad</string>
     <string name="pref_printer_title">Printer settings</string>
@@ -204,6 +206,8 @@
     <string name="btn_simulate">Simulate</string>
     <string name="btn_manual">Manual</string>
     <string name="btn_ok">Ok</string>
+    <string name="btn_yes">Yes</string>
+    <string name="btn_no">No</string>
     <string name="btn_retry">Retry</string>
     <string name="btn_abort">Abort</string>
     <string name="btn_continue">Continue</string>
@@ -237,6 +241,7 @@
     <string name="refund_process_title">Returning...</string>
     <string name="dlg_process_refund_msg">Would you like to proceed refund with a different tender method?</string>
     <string name="dlg_process_refund_title">Refund</string>
+    <string name="dlg_process_software_update_title">Software Update</string>
     <string name="dlg_void_title">Void order</string>
     <string name="dlg_void_fail_title">Void Fail</string>
     <string name="dlg_void_msg">Are you sure you want to void order?</string>
@@ -507,6 +512,7 @@
     <string name="print_order_power_by_backstone">Blackstone</string>
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
+    <string name="apk_update_dialog_title">Would you like to update to version %d now?</string>
     <string name="pax_connect_wait_dialog_title">Connecting Pax...</string>
     <string name="pax_wait_dialog_title">Searching Pax...</string>
     <string name="pax_not_found_message">Pax not found</string>
@@ -671,6 +677,11 @@
     <string name="employee_status_label">Status:</string>
     <string name="employee_status_label_active">Active</string>
     <string name="employee_status_label_blocked">Blocked</string>
+    <string name="apk_update_require_label_major">Major</string>
+    <string name="apk_update_require_label_critical">Critical</string>
+    <string name="apk_update_require_label_timer">Timer</string>
+    <string name="apk_update_require_label_minor">Minor</string>
+    <string name="apk_update_require_label_ignore">Ignore</string>
     <string name="employee_tips_add_success_msg">Tips added</string>
     <string name="employee_tips_split_success_msg">Tips splitted among %d employees</string>
     <string name="employee_tips_add_failed_msg">Failed to add tips</string>
@@ -744,6 +755,7 @@
     <string name="permission_training_mode">Training Mode</string>
     <string name="permission_warranty_expiration_override">Warranty Expiration Override</string>
     <string name="permission_cash_drawer_money">Cash Drawer Money</string>
+    <string name="permission_software_update">Software Update</string>
     <string name="permission_group_sales_module">Sales Module</string>
     <string name="permission_group_table_management">Table Management</string>
     <string name="permission_group_dashboard">Dashboard</string>
@@ -1536,5 +1548,9 @@
     <string name="title_activity_my">MyActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="str_download_progress">Downloading Progress...%d</string>
+    <string name="str_start_download">Start downloading...</string>
+    <string name="str_apk_download_fail">Apk file not existed, please try again.</string>
+    <string name="str_no_app_update">Current build: %d is the latest one.</string>
 
 </resources>

@@ -4,11 +4,21 @@ package com.kaching123.tcr.fragment.user;
  * Created by hamst_000 on 08/11/13.
  */
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.text.method.SingleLineTransformationMethod;
 import android.view.KeyEvent;
@@ -23,13 +33,12 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
+import com.kaching123.tcr.AutoUpdateApk;
+import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.UpdateObserver;
 import com.kaching123.tcr.activity.DashboardActivity;
 import com.kaching123.tcr.activity.SignupActivity;
 import com.kaching123.tcr.commands.store.user.LocalLoginCommand;
@@ -47,8 +56,21 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickList
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.EmployeePermissionsModel;
+import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.receiver.NetworkStateListener;
 import com.kaching123.tcr.util.ScreenUtils;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Observable;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 @EFragment(R.layout.login_fragment)
 public class LoginFragment extends SuperBaseDialogFragment {
@@ -73,11 +95,14 @@ public class LoginFragment extends SuperBaseDialogFragment {
     @FragmentArg
     protected Mode mode;
 
+    private FragmentActivity mActivity;
+
     private OnDismissListener onDismissListener;
 
     private OnLoginCompleteListener onLoginCompleteListener;
     private LoginCommandCallback loginCommandCallback = new LoginCommandCallback();
     private LocalLoginCommandCallback localLoginCommandCallback = new LocalLoginCommandCallback();
+
 
     public enum Mode {
         LOGIN, UNLOCK, SWITCH
@@ -253,6 +278,7 @@ public class LoginFragment extends SuperBaseDialogFragment {
             SyncWaitDialogFragment.hide(getActivity());
 
             onLogin(employee, null);
+
         }
 
         @Override
@@ -368,7 +394,7 @@ public class LoginFragment extends SuperBaseDialogFragment {
         }
     }
 
-    private void sendDevLog(){
+    private void sendDevLog() {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_email));
         SendLogCommand.start(
                 getActivity(),

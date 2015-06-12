@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
 
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -223,6 +224,11 @@
 
         <service
             android:name=".service.SerialPortScannerService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name=".AutoUpdateService"
             android:enabled="true"
             android:exported="true" >
         </service>

@@ -11,13 +11,12 @@ import android.util.Base64;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 import com.kaching123.display.SerialPortScanner;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EApplication;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.RestCommand.PlainTextResponse;
 import com.kaching123.tcr.commands.rest.sync.AuthResponse;
 import com.kaching123.tcr.commands.rest.sync.DBVersionResponse;
+import com.kaching123.tcr.commands.rest.sync.GetAPKUpdates;
 import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;
 import com.kaching123.tcr.commands.rest.sync.GetCurrentTimestampResponse;
 import com.kaching123.tcr.commands.rest.sync.GetPagedArrayResponse;
@@ -25,7 +24,6 @@ import com.kaching123.tcr.commands.rest.sync.GetPrepaidOrderIdResponse;
 import com.kaching123.tcr.commands.rest.sync.GetResponse;
 import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter.BarcodePrefixes;
-import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
 import com.kaching123.tcr.model.EmployeeModel;
@@ -139,7 +137,6 @@ public class TcrApplication extends Application {
 
         lazyInstantiateShopPref();
         initPref();
-
     }
 
     public synchronized SyncOpenHelper getSyncOpenHelper() {
@@ -221,7 +218,8 @@ public class TcrApplication extends Application {
                     _decimal(shopPref.defaultStoreCommission().getOr(null)),
                     shopPref.offlinePeriodHours().getOr(0),
                     shopPref.printerTwoCopiesReceipt().getOr(false),
-                    shopPref.maxItemsCount().getOr(0));
+                    shopPref.maxItemsCount().getOr(0),
+                    shopPref.updateCheckTimer().getOr(0));
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -501,6 +499,7 @@ public class TcrApplication extends Application {
                 .offlinePeriodHours().put(info.offlinePeriodHours)
                 .printerTwoCopiesReceipt().put(info.printerTwoCopiesReceipt)
                 .maxItemsCount().put(info.maxItemsCount)
+                .updateCheckTimer().put(info.updateCheckTimer)
                 .apply();
 
         setUsers();
@@ -614,6 +613,46 @@ public class TcrApplication extends Application {
         return shopPref.paxSerial().get();
     }
 
+    public void setUpdateApprove(boolean approve) {
+        shopPref.updateApprove().put(approve);
+    }
+
+    public boolean getUpdateApprove() {
+        return shopPref.updateApprove().get();
+    }
+
+    public void setUpdateURL(String url) {
+        shopPref.updateUrl().put(url);
+    }
+
+    public String getUpdateURL() {
+        return shopPref.updateUrl().get();
+    }
+
+    public void setUpdateRequire(String require) {
+        shopPref.updateRequire().put(require);
+    }
+
+    public String getUpdateRequire() {
+        return shopPref.updateRequire().get();
+    }
+
+    public void setUpdateTime(long time) {
+        shopPref.updateTime().put(time);
+    }
+
+    public long getUpdateTime() {
+        return shopPref.updateTime().getOr(0);
+    }
+
+    public void setLastUpdateTime(long time) {
+        shopPref.lastUpdateTime().put(time);
+    }
+
+    public long getLastUpdateTime() {
+        return shopPref.lastUpdateTime().getOr(0);
+    }
+
     public void setPaxTipsEnabled(boolean isPaxTipsEnabled) {
         shopPref.paxTipsEnabled().put(isPaxTipsEnabled);
     }
@@ -712,6 +751,14 @@ public class TcrApplication extends Application {
 
     public int getPaxTimeOut() {
         return shopPref.paxTimeOut().getOr(0);
+    }
+
+    public void setUpdateFilePath(String path) {
+        shopPref.updateFilePath().put(path);
+    }
+
+    public String getUpdateFilePath() {
+        return shopPref.updateFilePath().get();
     }
 
     public void setLastUserName(String name) {

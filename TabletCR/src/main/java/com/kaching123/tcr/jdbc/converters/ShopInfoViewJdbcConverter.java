@@ -87,6 +87,8 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String SHOP_STATUS = "STATUS";
 
+    public static final String UPDATE_CHECK_TIMER = "UPDATE_CHECK_TIMER";
+
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
@@ -141,8 +143,9 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBigDecimal(DEFAULT_STORE_COMMISSION),
                 rs.getInt(OFFLINE_PERIOD),
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
-                rs.getLong(MAX_ITEMS_COUNT)
-                );
+                rs.getLong(MAX_ITEMS_COUNT),
+                rs.getLong(UPDATE_CHECK_TIMER)
+        );
     }
 
     public static ShopInfo read(JdbcJSONObject rs) throws JSONException {
@@ -199,7 +202,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getInt(OFFLINE_PERIOD),
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
                 //TODO delete
-                rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE));
+                rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE),
+                rs.getLong(UPDATE_CHECK_TIMER));
     }
 
     public static final class ShopInfo {
@@ -272,6 +276,8 @@ public class ShopInfoViewJdbcConverter {
 
         public final long maxItemsCount;
 
+        public final long updateCheckTimer;
+
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
@@ -319,7 +325,8 @@ public class ShopInfoViewJdbcConverter {
                         BigDecimal defaultStoreCommission,
                         int offlinePeriodHours,
                         boolean printerTwoCopiesReceipt,
-                        long maxItemsCount) {
+                        long maxItemsCount,
+                        long updateCheckTimer) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -380,6 +387,7 @@ public class ShopInfoViewJdbcConverter {
             this.printerTwoCopiesReceipt = printerTwoCopiesReceipt;
 
             this.maxItemsCount = maxItemsCount;
+            this.updateCheckTimer = updateCheckTimer;
         }
 
     }

@@ -933,7 +933,7 @@ public class SyncCommand implements Runnable {
         public final long time;
         public final String guid;
 
-        private MaxUpdateTime(long time, String guid) {
+        public MaxUpdateTime(long time, String guid) {
             this.time = time;
             this.guid = guid;
         }

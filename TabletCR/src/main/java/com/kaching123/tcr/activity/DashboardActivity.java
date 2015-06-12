@@ -22,11 +22,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crittercism.app.Crittercism;
 import com.getbase.android.db.cursors.FluentCursor;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -252,7 +254,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
+        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 
@@ -395,7 +397,9 @@ public class DashboardActivity extends SuperBaseActivity {
     private void onLogin() {
         //checkDeviceSettings();
         onLogin(false);
+        startCheckUpdateService(false);
     }
+
 
     private void onLogin(boolean tempLogin) {
         setTitle();
@@ -619,6 +623,7 @@ public class DashboardActivity extends SuperBaseActivity {
         need2StopCollectData();
         setOperatorName();
         showLoginFragment();
+        stopService(new Intent(this, AutoUpdateService.class));
     }
 
     private void restoreSystemScreenOffTimeout() {

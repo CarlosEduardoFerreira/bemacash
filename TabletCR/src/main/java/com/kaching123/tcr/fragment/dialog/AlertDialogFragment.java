@@ -8,11 +8,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kaching123.tcr.R;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
-import com.kaching123.tcr.R;
 
 /**
  * Created by gdubina on 22/11/13.
@@ -28,7 +29,7 @@ public class AlertDialogFragment extends StyledDialogFragment {
         public final int level;
         final boolean hasNegativeBtn;
 
-        DialogType(int level, boolean hasNegativeBtn){
+        DialogType(int level, boolean hasNegativeBtn) {
             this.level = level;
             this.hasNegativeBtn = hasNegativeBtn;
         }
@@ -51,10 +52,16 @@ public class AlertDialogFragment extends StyledDialogFragment {
     protected int positiveButtonTitleId;
 
     @FragmentArg
+    protected int negativeButtonTitleId;
+
+    @FragmentArg
     protected String errorMsg;
 
     @FragmentArg
     protected DialogType dialogType;
+
+    @FragmentArg
+    protected boolean hideImage;
 
     private OnDialogClickListener onPositiveListener;
     private OnDialogClickListener onNegativeListener;
@@ -65,9 +72,9 @@ public class AlertDialogFragment extends StyledDialogFragment {
         setCancelable(false);
         textView.setGravity(dialogType == DialogType.CONFIRM || dialogType == DialogType.CONFIRM_NONE ? Gravity.LEFT : Gravity.CENTER);
         textView.setText(errorMsg);
-        if(dialogType == DialogType.CONFIRM_NONE){
+        if (dialogType == DialogType.CONFIRM_NONE || hideImage) {
             icon.setVisibility(View.GONE);
-        }else{
+        } else {
             icon.setVisibility(View.VISIBLE);
             icon.setImageLevel(dialogType.level);
         }
@@ -93,7 +100,7 @@ public class AlertDialogFragment extends StyledDialogFragment {
 
     @Override
     protected int getNegativeButtonTitle() {
-        return R.string.btn_cancel;
+        return negativeButtonTitleId == 0 ? R.string.btn_cancel : negativeButtonTitleId;
     }
 
     @Override
@@ -140,8 +147,17 @@ public class AlertDialogFragment extends StyledDialogFragment {
         return this;
     }
 
+    public static void hide(FragmentActivity activity) {
+
+        DialogUtil.hide(activity, DIALOG_NAME);
+    }
+
     public static void show(FragmentActivity activity, DialogType type, int titleId, String msg, int positiveTitleId, OnDialogClickListener positiveListener, OnDialogClickListener negativeListener, OnDialogClickListener skipListener) {
         DialogUtil.show(activity, DIALOG_NAME, AlertDialogFragment_.builder().titleId(titleId).errorMsg(msg).positiveButtonTitleId(positiveTitleId).dialogType(type).build()).setOnPositiveListener(positiveListener).setOnNegativeListener(negativeListener).setOnSkipListener(skipListener);
+    }
+
+    public static void show(FragmentActivity activity, DialogType type, int titleId, String msg, int positiveTitleId, int negativeTitleId, boolean hideImage,OnDialogClickListener positiveListener, OnDialogClickListener negativeListener, OnDialogClickListener skipListener) {
+        DialogUtil.show(activity, DIALOG_NAME, AlertDialogFragment_.builder().titleId(titleId).errorMsg(msg).positiveButtonTitleId(positiveTitleId).negativeButtonTitleId(negativeTitleId).hideImage(hideImage).dialogType(type).build()).setOnPositiveListener(positiveListener).setOnNegativeListener(negativeListener).setOnSkipListener(skipListener);
     }
 
     public static void show(FragmentActivity activity, DialogType type, int titleId, String msg, int positiveTitleId, OnDialogClickListener positiveListener) {

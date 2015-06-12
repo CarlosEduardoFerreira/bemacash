@@ -106,6 +106,8 @@ public interface ShopPref {
 
     long offlineStartTime();
 
+    long updateCheckTimer();
+
     long maxItemsCount();
 
     /**
@@ -239,4 +241,16 @@ public interface ShopPref {
     int paxTimeOut();
 
     String usbMSRName();
+
+    String updateUrl();
+
+    String updateFilePath();
+
+    String updateRequire();
+
+    long updateTime();
+
+    long lastUpdateTime();
+
+    boolean updateApprove();
 }

@@ -10,4 +10,7 @@
         android:entryValues="@array/sync_time_values"
         android:dialogTitle="@string/pref_sync_summary" />
 
+    <Preference
+        android:key="@string/pref_update_manual"
+        android:title="@string/pref_app_update_check" />
 </PreferenceScreen>

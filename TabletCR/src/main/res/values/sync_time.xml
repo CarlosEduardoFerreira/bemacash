@@ -2,6 +2,7 @@
 <resources>
     <string name="pref_sync_time_key">pref_sync_time</string>
     <string name="pref_drawer_key">pref_drawer</string>
+    <string name="pref_update_manual">pref_update_manual</string>
 
     <integer name="sync_time_entries_def_val">60</integer>
     <integer name="drawer_pin_high_entries_def">1</integer>
