@@ -26,6 +26,7 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
 
     @Override
     protected void doQuery(ArrayList<ContentProviderOperation> operations) {
+        // inserting update into local db
         operations.add(ContentProviderOperation.newUpdate(URI_EMPLOYEE)
                 .withValues(model.toValues())
                 .withSelection(EmployeeTable.GUID + " = ?", new String[]{model.guid})
@@ -71,7 +72,7 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-
+        // create sql for uploading.
         EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter) JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
         BatchSqlCommand batch = batchUpdate(model);
         if (model.isSynced) {

@@ -256,7 +256,8 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         super.bindModel();
         String passwordText = password.getText().toString().trim();
         if (!TextUtils.isEmpty(passwordText)) {
-            model.password = LoginFragment.md5(passwordText);
+            if (!model.isSynced)
+                model.password = LoginFragment.md5(passwordText);
         }
     }
 

@@ -11,6 +11,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.kaching123.tcr.model.Permission;
+
 import java.util.Observable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,7 +40,7 @@ public class AutoUpdateService extends Service implements UpdateObserver.UpdateO
     public static final long HOURS = 60 * MINUTES;
     public static final long DAYS = 24 * HOURS;
 
-    private static long UPDATE_INTERVAL = 1 * MINUTES;    // how often to check
+    private static long UPDATE_INTERVAL = 180 * MINUTES;    // how often to check
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -91,15 +93,16 @@ public class AutoUpdateService extends Service implements UpdateObserver.UpdateO
     @Override
     public void onUpdate(Observable observable, Object o) {
         String update_status = (String) o;
-        if (update_status == AutoUpdateApk.AUTOUPDATE_GOT_UPDATE) {
-            intent = new Intent(ACTION_APK_UPDATE);
-            intent.putExtra(ARG_BUILD_NUMBER, ((AutoUpdateApk) observable).getUpdateBuildNumber());
-            LocalBroadcastManager.getInstance(AutoUpdateService.this).sendBroadcast(intent);
-        } else if (update_status == AutoUpdateApk.AUTOUPDATE_NO_UPDATE) {
-            intent = new Intent(ACTION_NO_UPDATE);
-            intent.putExtra(ARG_BUILD_NUMBER, ((AutoUpdateApk) observable).getUpdateBuildNumber());
-            LocalBroadcastManager.getInstance(AutoUpdateService.this).sendBroadcast(intent);
-        }
+        if (isUpdatePermitted())
+            if (update_status == AutoUpdateApk.AUTOUPDATE_GOT_UPDATE) {
+                intent = new Intent(ACTION_APK_UPDATE);
+                intent.putExtra(ARG_BUILD_NUMBER, ((AutoUpdateApk) observable).getUpdateBuildNumber());
+                LocalBroadcastManager.getInstance(AutoUpdateService.this).sendBroadcast(intent);
+            } else if (update_status == AutoUpdateApk.AUTOUPDATE_NO_UPDATE) {
+                intent = new Intent(ACTION_NO_UPDATE);
+                intent.putExtra(ARG_BUILD_NUMBER, ((AutoUpdateApk) observable).getUpdateBuildNumber());
+                LocalBroadcastManager.getInstance(AutoUpdateService.this).sendBroadcast(intent);
+            }
     }
 
     public void callUpdateCheck(boolean force) {
@@ -130,5 +133,9 @@ public class AutoUpdateService extends Service implements UpdateObserver.UpdateO
     public void stopReceiver() {
         AutoUpdateService.this.unregisterReceiver(connectivity_receiver);
         updateHandler.removeCallbacks(task);
+    }
+
+    protected boolean isUpdatePermitted() {
+        return ((TcrApplication) AutoUpdateService.this.getApplicationContext()).getOperatorPermissions().contains(Permission.SOFTWARE_UPDATE);
     }
 }

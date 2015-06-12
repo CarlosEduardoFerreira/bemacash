@@ -4,17 +4,9 @@ package com.kaching123.tcr.fragment.user;
  * Created by hamst_000 on 08/11/13.
  */
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -33,12 +25,9 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import com.kaching123.tcr.AutoUpdateApk;
 import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.UpdateObserver;
 import com.kaching123.tcr.activity.DashboardActivity;
 import com.kaching123.tcr.activity.SignupActivity;
 import com.kaching123.tcr.commands.store.user.LocalLoginCommand;
@@ -56,7 +45,6 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickList
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.EmployeePermissionsModel;
-import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.receiver.NetworkStateListener;
 import com.kaching123.tcr.util.ScreenUtils;
 
@@ -65,12 +53,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Observable;
-import java.util.zip.CRC32;
-import java.util.zip.Checksum;
 
 @EFragment(R.layout.login_fragment)
 public class LoginFragment extends SuperBaseDialogFragment {
@@ -451,6 +433,8 @@ public class LoginFragment extends SuperBaseDialogFragment {
                 onLoginCompleteListener.onLoginComplete();
             }
 
+            startCheckUpdateService();
+
             delayedDismiss();
         }
 
@@ -458,6 +442,17 @@ public class LoginFragment extends SuperBaseDialogFragment {
         protected void onLoginError() {
             showError(R.string.error_message_login);
         }
+    }
+
+    protected void startCheckUpdateService() {
+        Intent intent = new Intent(getActivity(), AutoUpdateService.class);
+        intent.putExtra(AutoUpdateService.ARG_TIMER, getUpdateCheckTimer());
+        intent.putExtra(AutoUpdateService.ARG_MANUAL_CHECK, false);
+        getActivity().startService(intent);
+    }
+
+    protected long getUpdateCheckTimer() {
+        return getApp().getShopInfo().updateCheckTimer;
     }
 
     private void instantDismiss() {

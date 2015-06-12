@@ -19,6 +19,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
+import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.UploadTask;
@@ -153,6 +154,9 @@ public class SyncSettingsFragment extends PreferenceFragment {
         });
 
         Preference button = (Preference) findPreference(getString(R.string.pref_update_manual));
+        button.setEnabled(isUpdatePermitted());
+        if (!isUpdatePermitted())
+            getPreferenceScreen().removePreference(button);
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -165,6 +169,10 @@ public class SyncSettingsFragment extends PreferenceFragment {
 
     protected long getUpdateCheckTimer() {
         return ((TcrApplication) getActivity().getApplicationContext()).getShopInfo().updateCheckTimer;
+    }
+
+    protected boolean isUpdatePermitted() {
+        return ((TcrApplication) getActivity().getApplicationContext()).getOperatorPermissions().contains(Permission.SOFTWARE_UPDATE);
     }
 
     @OptionsItem

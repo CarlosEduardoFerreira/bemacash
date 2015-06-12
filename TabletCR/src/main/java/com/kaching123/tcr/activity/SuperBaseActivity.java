@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kaching123.tcr.AutoUpdateApk;
 import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -142,7 +141,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
 
         @Override
         protected void onhandleFailure() {
-            Toast.makeText(SuperBaseActivity.this,getString(R.string.str_apk_download_fail), Toast.LENGTH_LONG).show();
+            Toast.makeText(SuperBaseActivity.this, getString(R.string.str_apk_download_fail), Toast.LENGTH_LONG).show();
             SyncWaitDialogFragment.hide(SuperBaseActivity.this);
         }
 
@@ -223,16 +222,14 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
 //        }
     }
 
-    protected void startCheckUpdateService(boolean force)
-    {
+    protected void startCheckUpdateService(boolean force) {
         Intent intent = new Intent(this, AutoUpdateService.class);
         intent.putExtra(AutoUpdateService.ARG_TIMER, getUpdateCheckTimer());
         intent.putExtra(AutoUpdateService.ARG_MANUAL_CHECK, force);
         startService(intent);
     }
 
-    protected long getUpdateCheckTimer()
-    {
+    protected long getUpdateCheckTimer() {
         return getApp().getShopInfo().updateCheckTimer;
     }
 
@@ -314,6 +311,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 LoginOuterFragment.show(SuperBaseActivity.this, Mode.UNLOCK);
+                stopService(new Intent(SuperBaseActivity.this, AutoUpdateService.class));
                 return true;
             }
         });
@@ -441,7 +439,6 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
             return false;
         }
     }
-
 
 
 }

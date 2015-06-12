@@ -266,7 +266,7 @@ public class ShopOpenHelper extends BaseOpenHelper {
             }
         } catch (SQLiteConstraintException e) {
             Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
-            throw e;
+//            throw e;
         } finally {
             if (cursor != null)
                 cursor.close();
