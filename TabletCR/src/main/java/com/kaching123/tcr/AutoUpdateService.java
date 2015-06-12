@@ -97,6 +97,7 @@ public class AutoUpdateService extends Service implements UpdateObserver.UpdateO
             LocalBroadcastManager.getInstance(AutoUpdateService.this).sendBroadcast(intent);
         } else if (update_status == AutoUpdateApk.AUTOUPDATE_NO_UPDATE) {
             intent = new Intent(ACTION_NO_UPDATE);
+            intent.putExtra(ARG_BUILD_NUMBER, ((AutoUpdateApk) observable).getUpdateBuildNumber());
             LocalBroadcastManager.getInstance(AutoUpdateService.this).sendBroadcast(intent);
         }
     }

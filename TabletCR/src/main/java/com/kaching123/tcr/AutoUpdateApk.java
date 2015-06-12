@@ -210,6 +210,7 @@ public class AutoUpdateApk extends Observable {
                 setChanged();
                 notifyObservers(AUTOUPDATE_GOT_UPDATE);
             } else {
+                setChanged();
                 notifyObservers(AUTOUPDATE_NO_UPDATE);
                 Logger.d("no new apk updates return from server");
             }
