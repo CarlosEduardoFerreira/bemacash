@@ -41,6 +41,7 @@ public class SyncSettingsFragment extends PreferenceFragment {
     protected static final Uri URI_EMPLOYEE_SYNCED = ShopProvider.getNoNotifyContentUri(ShopStore.EmployeeTable.URI_CONTENT);
 
     private ManualCheckUpdateListener listener;
+
     static {
         intentFilter.addAction(UploadTask.ACTION_UPLOAD_COMPLETED);
         intentFilter.addAction(SyncCommand.ACTION_SYNC_COMPLETED);
@@ -79,6 +80,11 @@ public class SyncSettingsFragment extends PreferenceFragment {
                 } else {
                     AlertDialogFragment.showAlert(getActivity(), R.string.sync_error_title, getString(R.string.sync_error_message));
                 }
+                Intent ii = new Intent(getActivity(), AutoUpdateService.class);
+                ii.putExtra(AutoUpdateService.ARG_TIMER, getUpdateCheckTimer());
+                ii.putExtra(AutoUpdateService.ARG_MANUAL_CHECK, false);
+                getActivity().stopService(ii);
+                getActivity().startService(ii);
             }
             if (UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction())) {
                 if (intent.getBooleanExtra(UploadTaskV2.EXTRA_SUCCESS, false))
@@ -171,12 +177,12 @@ public class SyncSettingsFragment extends PreferenceFragment {
                     + " must implement OnHeadlineSelectedListener");
         }
     }
+
     public static Fragment instance() {
         return SyncSettingsFragment_.builder().build();
     }
 
-    public interface ManualCheckUpdateListener
-    {
+    public interface ManualCheckUpdateListener {
         void onCheckClick();
     }
 }
