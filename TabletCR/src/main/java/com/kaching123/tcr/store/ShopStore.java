@@ -71,7 +71,6 @@ public abstract class ShopStore {
         String URI_CONTENT = "apk_update";
         String TABLE_NAME = "apk_update";
 
-        @Unique
         @NotNull
         @Column(type = Column.Type.TEXT)
         String GUID = "guid";

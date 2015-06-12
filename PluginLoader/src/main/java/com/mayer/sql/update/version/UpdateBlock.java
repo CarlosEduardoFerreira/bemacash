@@ -186,7 +186,7 @@ class UpdateBlock {
 
     private static final String SQL_ADD_COLUMN_EMPLOYEE_TABLE = "ALTER TABLE employee ADD COLUMN is_sync INTEGER DEFAULT(1);";
 
-    private static final String SQL_CREATE_APK_UPDATE_TABLE = "CREATE TABLE customer (guid TEXT PRIMARY KEY, url TEXT NOT NULL, version TEXT NOT NULL, scheduleTime INTEGER, priority TEXT NOT NULL, aprove INTEGER DEFAULT(0), update_time INTEGER DEFAULT(0), update_time INTEGER, )";
+    private static final String SQL_CREATE_APK_UPDATE_TABLE = "CREATE TABLE apk_update (guid TEXT NOT NULL, url TEXT, version TEXT, scheduleTime INTEGER, priority TEXT, aprove INTEGER DEFAULT(0), update_time INTEGER, is_deleted INTEGER DEFAULT(0) )";
 
     static void update5_9to6_1(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_APK_UPDATE_TABLE);
