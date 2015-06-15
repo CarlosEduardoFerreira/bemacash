@@ -75,7 +75,7 @@ public class SetTrainingModeCommand extends PublicGroundyTask {
 
     private void syncData() {
         try {
-            new SyncCommand(getContext(), true).syncNow(getApp().getOperator(), getApp().getShopId());
+            new SyncCommand(getContext(), true).syncNow(getApp().getOperator());
         } catch (OfflineException e) {
             Logger.e("SetTrainingMode: failed to sync!", e);
         } catch (Exception e) {

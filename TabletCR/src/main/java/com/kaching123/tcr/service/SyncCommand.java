@@ -97,6 +97,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import retrofit.RetrofitError;
 
@@ -174,7 +175,7 @@ public class SyncCommand implements Runnable {
 
         getApp().lockOnTrainingMode();
         try {
-            count = syncNow(getApp().getOperator(), getApp().getShopId());
+            count = syncNow(getApp().getOperator());
         } catch (SyncException e) {
             error = getErrorString(e.localTable);
         } catch (DBVersionCheckException e) {
@@ -206,14 +207,14 @@ public class SyncCommand implements Runnable {
 
     private static Handler handler = new Handler();
 
-    public int syncNow(final EmployeeModel employee, final long shopId) throws SyncException, DBVersionCheckException, OfflineException, SyncInconsistentException {
+    public int syncNow(final EmployeeModel employee) throws SyncException, DBVersionCheckException, OfflineException, SyncInconsistentException {
         if (!getApp().isTrainingMode() && !Util.isNetworkAvailable(service)) {
             Logger.e("SyncCommand: NO CONNECTION");
             setOfflineMode(true);
             throw new OfflineException();
         }
         try {
-            int result = syncNowInner(employee, shopId);
+            int result = syncNowInner(employee);
             setOfflineMode(false);
             return result;
         } catch (SyncException e) {
@@ -254,12 +255,23 @@ public class SyncCommand implements Runnable {
         }
     }
 
-    private int syncNowInner(final EmployeeModel employee, final long shopId) throws SyncException, DBVersionCheckException, SyncInconsistentException {
+    private int syncNowInner(final EmployeeModel employee) throws SyncException, DBVersionCheckException, SyncInconsistentException {
         if (getApp().isTrainingMode()) {
             syncPAXMerchantInfo();
             syncWireless(service);
             return 0;
         }
+
+        boolean wasTipsEnabled = getApp().isTipsEnabled();
+        String oldAutoSettlementTime = getApp().getAutoSettlementTime();
+
+        int salesHistoryLimit = syncShopInfo(employee);
+
+        checkAutoSettlement(wasTipsEnabled, oldAutoSettlementTime);
+        syncPAXMerchantInfo();
+
+        //go to the blackstone api to refresh cache
+        syncWireless(service);
 
         int count = 0;
         // download date from our amazon web server - start
@@ -269,93 +281,98 @@ public class SyncCommand implements Runnable {
 
         SyncApi api = getApp().getRestAdapter().create(SyncApi.class);
         SyncApi2 api2 = app.getRestAdapter().create(SyncApi2.class);
+        getApp().lockOnSalesHistory();
         try {
-            int retriesCount = FINALIZE_SYNC_RETRIES;
-            do {
-                long serverLastTimestamp = getServerCurrentTimestamp(api, employee);
-                Logger.e("SyncCommand.syncNowInner(): attempt #" + (FINALIZE_SYNC_RETRIES - retriesCount + 1) + "; serverLastTimestamp: " + serverLastTimestamp);
-                serverHasBeenUpdated = false;
-                count += syncSingleTable2(service, api2, RegisterTable.URI_CONTENT, RegisterTable.TABLE_NAME, RegisterTable.ID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, PrinterAliasTable.URI_CONTENT, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, CustomerTable.URI_CONTENT, CustomerTable.TABLE_NAME, CustomerTable.GUID, employee, serverLastTimestamp);
+            try {
+                getApp().setSalesHistoryLimit(salesHistoryLimit);
 
-                //employee
-                count += syncSingleTable2(service, api2, EmployeeTable.URI_CONTENT, EmployeeTable.TABLE_NAME, EmployeeTable.GUID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, EmployeePermissionTable.URI_CONTENT, EmployeePermissionTable.TABLE_NAME, EmployeePermissionTable.PERMISSION_ID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, EmployeeTimesheetTable.URI_CONTENT, EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetTable.GUID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, ShiftTable.URI_CONTENT, ShiftTable.TABLE_NAME, ShiftTable.GUID, employee, serverLastTimestamp);
+                int retriesCount = FINALIZE_SYNC_RETRIES;
+                do {
+                    long serverLastTimestamp = getServerCurrentTimestamp(api, employee);
+                    Logger.e("SyncCommand.syncNowInner(): attempt #" + (FINALIZE_SYNC_RETRIES - retriesCount + 1) + "; serverLastTimestamp: " + serverLastTimestamp);
+                    serverHasBeenUpdated = false;
+                    count += syncSingleTable2(service, api2, RegisterTable.TABLE_NAME, RegisterTable.ID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, CustomerTable.TABLE_NAME, CustomerTable.GUID, employee, serverLastTimestamp);
 
-                count += syncSingleTable2(service, api2, CashDrawerMovementTable.URI_CONTENT, CashDrawerMovementTable.TABLE_NAME, CashDrawerMovementTable.GUID, employee, serverLastTimestamp);
+                    //employee
+                    count += syncSingleTable2(service, api2, EmployeeTable.TABLE_NAME, EmployeeTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, EmployeePermissionTable.TABLE_NAME, EmployeePermissionTable.PERMISSION_ID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, ShiftTable.TABLE_NAME, ShiftTable.GUID, employee, serverLastTimestamp);
 
-                //inventory
-                count += syncSingleTable2(service, api2, TaxGroupTable.URI_CONTENT, TaxGroupTable.TABLE_NAME, TaxGroupTable.GUID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, DepartmentTable.URI_CONTENT, DepartmentTable.TABLE_NAME, DepartmentTable.GUID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, CategoryTable.URI_CONTENT, CategoryTable.TABLE_NAME, CategoryTable.GUID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, ItemTable.URI_CONTENT, ItemTable.TABLE_NAME, ItemTable.GUID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, ModifierTable.URI_CONTENT, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID, employee, serverLastTimestamp);
-                count += syncSingleTable2(service, api2, ItemMovementTable.URI_CONTENT, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, CashDrawerMovementTable.TABLE_NAME, CashDrawerMovementTable.GUID, employee, serverLastTimestamp);
 
-                //sale
-                count += syncSingleTable2(service, api2, BillPaymentDescriptionTable.URI_CONTENT, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, employee, serverLastTimestamp);
+                    //inventory
+                    count += syncSingleTable2(service, api2, TaxGroupTable.TABLE_NAME, TaxGroupTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, DepartmentTable.TABLE_NAME, DepartmentTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, CategoryTable.TABLE_NAME, CategoryTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, ItemTable.TABLE_NAME, ItemTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, employee, serverLastTimestamp);
 
-                count += syncTableWithChildren2(service, api2,
-                        SaleOrderTable.URI_CONTENT, SaleOrderTable.TABLE_NAME,
-                        SaleOrderTable.GUID, SaleOrderTable.PARENT_ID,
-                        employee, serverLastTimestamp);
+                    //sale
+                    count += syncSingleTable2(service, api2, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, employee, serverLastTimestamp);
 
-                count += syncTableWithChildren2(service, api2,
-                        SaleItemTable.URI_CONTENT, SaleItemTable.TABLE_NAME,
-                        SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID,
-                        employee, serverLastTimestamp);
+                    count += syncTableWithChildren2(service, api2,
+                            SaleOrderTable.TABLE_NAME,
+                            SaleOrderTable.GUID, SaleOrderTable.PARENT_ID,
+                            employee, serverLastTimestamp);
 
-                count += syncSingleTable2(service, api2, SaleAddonTable.URI_CONTENT, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, employee, serverLastTimestamp);
+                    count += syncTableWithChildren2(service, api2,
+                            SaleItemTable.TABLE_NAME,
+                            SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID,
+                            employee, serverLastTimestamp);
 
-                count += syncTableWithChildren2(service, api2,
-                        PaymentTransactionTable.URI_CONTENT, PaymentTransactionTable.TABLE_NAME,
-                        PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID,
-                        employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, employee, serverLastTimestamp);
 
+                    count += syncTableWithChildren2(service, api2,
+                            PaymentTransactionTable.TABLE_NAME,
+                            PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID,
+                            employee, serverLastTimestamp);
 
-                count += syncSingleTable2(service, api2, CreditReceiptTable.URI_CONTENT, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID, employee, serverLastTimestamp);
-                count += syncTableWithChildren2(service, api2,
-                        EmployeeTipsTable.URI_CONTENT, EmployeeTipsTable.TABLE_NAME,
-                        EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
-                        employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID, employee, serverLastTimestamp);
 
-                count += syncSingleTable2(service, api2, EmployeeCommissionsTable.URI_CONTENT, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, employee, serverLastTimestamp);
+                    count += syncTableWithChildren2(service, api2,
+                            EmployeeTipsTable.TABLE_NAME,
+                            EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
+                            employee, serverLastTimestamp);
 
-                //inventory depended from sale
-                count += syncSingleTable2(service, api2, UnitTable.URI_CONTENT, UnitTable.TABLE_NAME, UnitTable.ID, employee, serverLastTimestamp);
-                //end
-            } while (serverHasBeenUpdated && --retriesCount > 0);
+                    count += syncSingleTable2(service, api2, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID, employee, serverLastTimestamp);
+                    count += syncTableWithChildren2(service, api2,
+                            EmployeeTipsTable.TABLE_NAME,
+                            EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
+                            employee, serverLastTimestamp);
 
-            if (serverHasBeenUpdated) {
-                Logger.e("SyncCommand failed, couldn't finalize sync, server's data has been modified");
-                throw new SyncInconsistentException();
+                    count += syncSingleTable2(service, api2, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, employee, serverLastTimestamp);
+
+                    //inventory depended from sale
+                    count += syncSingleTable2(service, api2, UnitTable.TABLE_NAME, UnitTable.ID, employee, serverLastTimestamp);
+                    //end
+                } while (serverHasBeenUpdated && --retriesCount > 0);
+
+                if (serverHasBeenUpdated) {
+                    Logger.e("SyncCommand failed, couldn't finalize sync, server's data has been modified");
+                    throw new SyncInconsistentException();
+                }
+
+                //write data from extra db to main db on success, in transaction, making rows alive
+                localSync();
+            } finally {
+                syncOpenHelper.close();
             }
-
-            //write data from extra db to main db on success, in transaction, making rows alive
-            localSync();
         } finally {
-            syncOpenHelper.close();
+            getApp().unlockOnSalesHistory();
         }
-
-        boolean wasTipsEnabled = getApp().isTipsEnabled();
-        String oldAutoSettlementTime = getApp().getAutoSettlementTime();
-
-        syncShopInfo(employee);
-
-        checkAutoSettlement(wasTipsEnabled, oldAutoSettlementTime);
-        syncPAXMerchantInfo();
-
         // download date from our amazon web server - end
-
-        //go to the blackstone api to refresh cache
-        syncWireless(service);
 
         sendSyncSuccessful(api, employee);
 
         return count;
+    }
+
+    private static long getSalesHistoryLimitDate(int salesHistoryLimit) {
+        return System.currentTimeMillis() - (TimeUnit.DAYS.toMillis(salesHistoryLimit));
     }
 
     private void sendSyncSuccessful(SyncApi api, EmployeeModel employee) {
@@ -492,17 +509,17 @@ public class SyncCommand implements Runnable {
         }
     }
 
-    private int syncTableWithChildren2(Context context, SyncApi2 api, String localUriPath, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
-        int count = syncSingleTable2(context, api, localUriPath, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime);
-        count += syncSingleTable2(context, api, localUriPath, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime);
+    private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
+        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime);
+        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime);
         return count;
     }
 
-    private int syncSingleTable2(Context context, SyncApi2 api, String localUriPath, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
-        return syncSingleTable2(context, api, localUriPath, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime);
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
+        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime);
     }
 
-    private int syncSingleTable2(Context context, SyncApi2 api, String localUriPath, String localTable, String guidColumn, EmployeeModel employeeModel,
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel,
                                  boolean supportParentChildRelations,
                                  String parentIdColumn,
                                  boolean isChild,
@@ -693,11 +710,13 @@ public class SyncCommand implements Runnable {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private void syncShopInfo(EmployeeModel employeeModel) throws SyncException {
+    private int syncShopInfo(EmployeeModel employeeModel) throws SyncException {
         TcrApplication app = TcrApplication.get();
         SyncApi2 api = app.getRestAdapter().create(SyncApi2.class);
 
         fireEvent(service, null, service.getString(R.string.sync_shop_info), 0, 0);
+
+        int salesHistoryLimit;
         try {
             GetResponse resp = makeShopInfoRequest(api, app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employeeModel, app));
             if (resp == null || !resp.isSuccess()) {
@@ -708,21 +727,24 @@ public class SyncCommand implements Runnable {
             syncBarcodePrefix(entity.getJSONArray("BARCODE_PREFIXES"));
             syncPrepaidTaxes(entity.getJSONArray("PREPAID_ITEM_TAXES"));
             syncActivationCarriers(entity.getJSONArray("ACTIVATION_CARRIERS"));
-            syncShop(entity.getJSONObject("SHOP"));
+            salesHistoryLimit = syncShop(entity.getJSONObject("SHOP"));
         } catch (Exception e) {
             Logger.e("Can't sync shop info", e);
             throw new SyncException();
         }
+        return salesHistoryLimit;
     }
 
-    private void syncShop(JdbcJSONObject shop) throws SyncException {
+    private int syncShop(JdbcJSONObject shop) throws SyncException {
         if (shop == null) {
             Logger.e("can't parse shop", new RuntimeException());
             throw new SyncException();
         }
         ShopInfo info;
+        int salesHistoryLimit;
         try {
             info = ShopInfoViewJdbcConverter.read(shop);
+            salesHistoryLimit = ShopInfoViewJdbcConverter.getSalesHistoryLimit(shop);
         } catch (JSONException e) {
             Logger.e("can't parse shop", e);
             throw new SyncException();
@@ -730,6 +752,7 @@ public class SyncCommand implements Runnable {
         boolean oldTipsEnabled = getApp().isTipsEnabled();
         getApp().saveShopInfo(info);
         checkTipsEnabled(oldTipsEnabled, info.tipsEnabled);
+        return salesHistoryLimit;
     }
 
     private void checkTipsEnabled(boolean oldTipsEnabled, final boolean newTipsEnabled) {

@@ -113,6 +113,7 @@ public class TcrApplication extends Application {
 
     private static final ReentrantLock trainingModeLock = new ReentrantLock();
     private static final ReentrantLock offlineModeLock = new ReentrantLock(true);
+    private static final ReentrantLock salesHistoryLock = new ReentrantLock();
 
     private Boolean isNetworkConnected;
 
@@ -445,6 +446,22 @@ public class TcrApplication extends Application {
         if (TextUtils.isEmpty(registerSerial))
             Logger.e("[CREDS] TcrApplication.getRegisterSerial(): NO REGISTER SERIAL! registerSerial: " + registerSerial, new RuntimeException());
         return registerSerial;
+    }
+
+    public void lockOnSalesHistory() {
+        salesHistoryLock.lock();
+    }
+
+    public void unlockOnSalesHistory() {
+        salesHistoryLock.unlock();
+    }
+
+    public void setSalesHistoryLimit(int salesHistoryLimit) {
+        shopPref.salesHistoryLimit().put(salesHistoryLimit);
+    }
+
+    public int getSalesHistoryLimit() {
+        return shopPref.salesHistoryLimit().get();
     }
 
     public void saveShopInfo(ShopInfo info) {

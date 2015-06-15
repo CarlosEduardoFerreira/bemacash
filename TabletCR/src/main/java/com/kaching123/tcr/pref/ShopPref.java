@@ -110,6 +110,8 @@ public interface ShopPref {
 
     long maxItemsCount();
 
+    int salesHistoryLimit();
+
     /**
      * user **
      */

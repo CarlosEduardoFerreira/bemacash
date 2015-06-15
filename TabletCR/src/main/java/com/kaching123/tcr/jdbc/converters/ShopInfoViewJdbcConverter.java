@@ -9,6 +9,7 @@ import org.json.JSONException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
@@ -16,8 +17,6 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
  * Created by hamsterksu on 28.11.13.
  */
 public class ShopInfoViewJdbcConverter {
-
-    public static final String VIEW_NAME = "SHOP_INFO_VIEW";
 
     public static final String ID = "ID";
     public static final String NAME = "NAME";
@@ -89,6 +88,10 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String UPDATE_CHECK_TIMER = "UPDATE_CHECK_TIMER";
 
+
+    public static final String SALES_HISTORY_LIMIT = "SALES_HISTORY_LIMIT";
+
+    private static final int MAX_SALES_HISTORY_LIMIT = 7 * 6; /*6 weeks in days*/
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
@@ -204,6 +207,11 @@ public class ShopInfoViewJdbcConverter {
                 //TODO delete
                 rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE),
                 rs.getLong(UPDATE_CHECK_TIMER));
+    }
+
+    public static int getSalesHistoryLimit(JdbcJSONObject rs) {
+        //TODO remove opt
+        return rs.optInt(SALES_HISTORY_LIMIT, MAX_SALES_HISTORY_LIMIT);
     }
 
     public static final class ShopInfo {

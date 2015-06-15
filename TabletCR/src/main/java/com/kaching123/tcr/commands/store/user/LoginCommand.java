@@ -236,7 +236,7 @@ public class LoginCommand extends GroundyTask {
 
     private Error syncData(EmployeeModel employeeModel) {
         try {
-            new SyncCommand(getContext(), true).syncNow(employeeModel, employeeModel.shopId);
+            new SyncCommand(getContext(), true).syncNow(employeeModel);
         } catch (SyncException e) {
             Logger.e("Login.sync error", e);
             return Error.SYNC_FAILED;
