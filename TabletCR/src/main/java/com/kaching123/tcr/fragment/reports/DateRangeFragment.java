@@ -84,7 +84,7 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
 
     protected void showDateTimePicker(final Date date) {
         dateTimePickerCalendar.setTimeInMillis(date.getTime());
-        DateTimePickerFragment.show(getActivity(), date, new OnDateTimeSetListener() {
+        DateTimePickerFragment.show(getActivity(), date, getMinFromDate(), new OnDateTimeSetListener() {
             @Override
             public boolean onDateTimeSet(Date dateTime) {
                 dateTimePickerCalendar.setTime(dateTime);
@@ -140,6 +140,22 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
         toEdit.setText(periodDateFormat.format(toDate).toUpperCase());
     }
 
+    protected boolean supportMinFromDate() {
+        return false;
+    }
+
+    protected Date getMinFromDate() {
+        if (!supportMinFromDate())
+            return null;
+        long minFromDateTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(getApp().getSalesHistoryLimit());
+        dateTimePickerCalendar.setTimeInMillis(minFromDateTime);
+        dateTimePickerCalendar.set(Calendar.HOUR_OF_DAY, 00);
+        dateTimePickerCalendar.set(Calendar.MINUTE, 00);
+        dateTimePickerCalendar.set(Calendar.SECOND, 00);
+        dateTimePickerCalendar.set(Calendar.MILLISECOND, 0);
+        return dateTimePickerCalendar.getTime();
+    }
+
     protected boolean validatePeriodDates(Date date, Date newDate) {
         boolean isFromDate = date == this.fromDate;
         Date fromDate = isFromDate ? newDate : this.fromDate;
@@ -151,6 +167,7 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
 
         final boolean inDays = isPeriodInDays(fromDate, toDate);
         final int periodsCount = Math.round((toDate.getTime() - fromDate.getTime()) / (inDays ? DAY_IN_MILLIS : HOUR_IN_MILLIS) + 0.5f);
+
         int maxPeriod = getMaxPeriod();
         if (periodsCount > maxPeriod) {
             AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(inDays ? R.string.reports_error_period_too_large_days : R.string.reports_error_period_too_large_hrs, maxPeriod));

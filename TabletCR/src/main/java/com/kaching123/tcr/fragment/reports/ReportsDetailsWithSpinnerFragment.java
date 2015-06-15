@@ -64,6 +64,11 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
         loadData();
     }
 
+    @Override
+    protected boolean supportMinFromDate() {
+        return true;
+    }
+
     protected abstract int getSpinnerLabel();
 
     protected void showSpinner() {

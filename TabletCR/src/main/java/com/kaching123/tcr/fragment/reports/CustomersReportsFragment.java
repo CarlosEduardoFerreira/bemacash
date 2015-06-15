@@ -61,6 +61,11 @@ public class CustomersReportsFragment extends DateRangeFragment {
         loadData();
     }
 
+    @Override
+    protected boolean supportMinFromDate() {
+        return true;
+    }
+
     private Fragment createBodyFragment() {
         Fragment fragment = SalesByCustomersFragment.instance(fromDate.getTime(), toDate.getTime());
         fragmentInterface = (IDetailsFragment) fragment;

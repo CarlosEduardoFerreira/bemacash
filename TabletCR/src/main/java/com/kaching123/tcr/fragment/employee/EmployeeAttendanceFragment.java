@@ -69,6 +69,11 @@ public class EmployeeAttendanceFragment extends DateRangeFragment implements Loa
     }
 
     @Override
+    protected boolean supportMinFromDate() {
+        return true;
+    }
+
+    @Override
     protected void loadData() {
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -219,7 +224,7 @@ public class EmployeeAttendanceFragment extends DateRangeFragment implements Loa
         } else {
             date = new Date(time);
         }
-        DateTimePickerFragment.show(getActivity(), date, new OnDateTimeSetListener() {
+        DateTimePickerFragment.show(getActivity(), date, getMinFromDate(), new OnDateTimeSetListener() {
             @Override
             public boolean onDateTimeSet(Date datetime) {
                 if(in && outTime > 0 && datetime.getTime() > outTime){

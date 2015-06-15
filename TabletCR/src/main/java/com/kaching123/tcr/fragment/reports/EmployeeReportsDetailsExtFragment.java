@@ -71,6 +71,11 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
                 fromDate.setTime(addTimeToDate(fromDate, toDate, Calendar.MONTH, -1));
                 break;
         }
+
+        Date minFromDate = getMinFromDate();
+        if (fromDate.getTime() < minFromDate.getTime())
+            fromDate.setTime(minFromDate.getTime());
+
         setPeriodDates();
         loadData();
     }
@@ -88,6 +93,9 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
                     toDate.setTime(addTimeToDate(toDate, newDate, Calendar.DATE, 7));
                 }else{
                     fromDate.setTime(addTimeToDate(fromDate, newDate , Calendar.DATE, -7));
+                    Date minFromDate = getMinFromDate();
+                    if (fromDate.getTime() < minFromDate.getTime())
+                        fromDate.setTime(minFromDate.getTime());
                 }
                 break;
             case MONTH:
@@ -95,6 +103,9 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
                     toDate.setTime(addTimeToDate(toDate, newDate, Calendar.MONTH, 1));
                 }else{
                     fromDate.setTime(addTimeToDate(fromDate, newDate , Calendar.MONTH, -1));
+                    Date minFromDate = getMinFromDate();
+                    if (fromDate.getTime() < minFromDate.getTime())
+                        fromDate.setTime(minFromDate.getTime());
                 }
                 break;
         }
@@ -106,6 +117,7 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
 
         final boolean inDays = isPeriodInDays(fromDate, toDate);
         final int periodsCount = Math.round((toDate.getTime() - fromDate.getTime()) / (inDays ? DAY_IN_MILLIS : HOUR_IN_MILLIS) + 0.5f);
+
         int maxPeriod = getMaxPeriod();
         if (periodsCount > maxPeriod + 1) {
             AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(inDays ? R.string.reports_error_period_too_large_days : R.string.reports_error_period_too_large_hrs, maxPeriod));

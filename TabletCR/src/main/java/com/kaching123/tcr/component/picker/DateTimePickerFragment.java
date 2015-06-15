@@ -31,6 +31,9 @@ public class DateTimePickerFragment extends StyledDialogFragment {
     @FragmentArg
     protected Date dateTime;
 
+    @FragmentArg
+    protected Date minDate;
+
     private Calendar calendar = Calendar.getInstance();
 
     private OnDateTimeSetListener listener;
@@ -42,6 +45,8 @@ public class DateTimePickerFragment extends StyledDialogFragment {
                 getResources().getDimensionPixelOffset(R.dimen.datetime_picker_dlg_width),
                 getDialog().getWindow().getAttributes().height);
         calendar.setTime(dateTime);
+        if (minDate != null)
+            datePicker.setMinDate(minDate.getTime());
         datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), null);
         timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
         timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
@@ -89,8 +94,12 @@ public class DateTimePickerFragment extends StyledDialogFragment {
         this.listener = listener;
     }
 
-    public static void show(FragmentActivity activity, Date dateTime, OnDateTimeSetListener  listener){
+    public static void show(FragmentActivity activity, Date dateTime, OnDateTimeSetListener listener){
         DialogUtil.show(activity, DIALOG_NAME, DateTimePickerFragment_.builder().dateTime(dateTime).build()).setListener(listener);
+    }
+
+    public static void show(FragmentActivity activity, Date dateTime, Date minDate, OnDateTimeSetListener listener){
+        DialogUtil.show(activity, DIALOG_NAME, DateTimePickerFragment_.builder().dateTime(dateTime).minDate(minDate).build()).setListener(listener);
     }
 
     public static interface OnDateTimeSetListener{

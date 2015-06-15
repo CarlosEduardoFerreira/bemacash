@@ -124,6 +124,11 @@ public class ReportsFragment extends DateRangeFragment {
         return ReportsFragment_.builder()/*.mode(mode)*/.build();
     }
 
+    @Override
+    protected boolean supportMinFromDate() {
+        return true;
+    }
+
     public long getSelectedRegisterId() {
         int selectedRegisterPos = modeEntitiesSpinner.getSelectedItemPosition();
         long resisterId = 0;
