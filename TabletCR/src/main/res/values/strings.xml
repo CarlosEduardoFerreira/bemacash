@@ -1550,7 +1550,7 @@
     <string name="action_settings">Settings</string>
     <string name="str_download_progress">Downloading Progress...%d</string>
     <string name="str_start_download">Start downloading...</string>
-    <string name="str_apk_download_fail">Apk file not existed, please try again.</string>
+    <string name="str_apk_download_fail">Apk file path not valid. Try again</string>
     <string name="str_no_app_update">Current build: %d is the latest one.</string>
 
 </resources>

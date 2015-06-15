@@ -78,10 +78,8 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
             login.setBackgroundColor(getResources().getColor(R.color.password_gray));
 
             password.setEnabled(false);
-            password.setText(getString(R.string.employee_password_grayed));
             password.setBackgroundColor(getResources().getColor(R.color.password_gray));
 
-            passwordConfirm.setText(getString(R.string.employee_password_grayed));
             passwordConfirm.setEnabled(false);
             passwordConfirm.setBackgroundColor(getResources().getColor(R.color.password_gray));
         }
@@ -256,8 +254,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         super.bindModel();
         String passwordText = password.getText().toString().trim();
         if (!TextUtils.isEmpty(passwordText)) {
-            if (!model.isSynced)
-                model.password = LoginFragment.md5(passwordText);
+            model.password = LoginFragment.md5(passwordText);
         }
     }
 
