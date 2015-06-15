@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
@@ -242,7 +243,7 @@ public class ShopProviderExt extends ShopProvider {
         return values.size() == 1 && values.containsKey(SaleOrderTable.KITCHEN_PRINT_STATUS);
     }
 
-    @Override
+    /*@Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         String saleOrderGuid = null;
         if (selectionArgs != null && selectionArgs.length == 1) {
@@ -263,7 +264,7 @@ public class ShopProviderExt extends ShopProvider {
             }
         }
         return count;
-    }
+    }*/
 
     private String getUriPath(Uri uri) {
         if (uri == null || uri.getPath() == null)

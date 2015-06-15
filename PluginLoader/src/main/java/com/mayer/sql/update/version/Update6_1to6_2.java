@@ -58,6 +58,44 @@ public class Update6_1to6_2 implements IUpdateContainer {
     private static final String SQL_COPY_BP_DESCRIPTION = "INSERT INTO bp_description(guid, description, type, is_voided, is_failed, order_id, sale_order_id, is_deleted, update_time, is_draft) SELECT guid, description, type, is_voided, is_failed, order_id, sale_order_id, is_deleted, update_time, is_draft FROM bp_description_tmp;";
     private static final String SQL_DROP_TEMP_BP_DESCRIPTION = "DROP TABLE bp_description_tmp;";
 
+    public static final String SQL_CREATE_EMPLOYEE_TIPS_SHIFT = "create index idx_employee_tips_shift on employee_tips( shift_id)";
+    public static final String SQL_CREATE_EMPLOYEE_TIPS_CASHIER = "create index idx_employee_tips_cashier on employee_tips( employee_id)";
+    public static final String SQL_CREATE_EMPLOYEE_TIPS_ORDER = "create index idx_employee_tips_order on employee_tips( order_id)";
+    public static final String SQL_CREATE_EMPLOYEE_TIPS_PAYMENT = "create index idx_employee_tips_payment on employee_tips( payment_transaction_id)";
+    public static final String SQL_CREATE_EMPLOYEE_TIPS_PARENT = "create index idx_employee_tips_parent on employee_tips( parent_guid)";
+    public static final String SQL_CREATE_EMPLOYEE_COMMISSIONS_SHIFT = "create index idx_employee_commissions_shift on employee_commissions( shift_id)";
+    public static final String SQL_CREATE_EMPLOYEE_COMMISSIONS_CASHIER = "create index idx_employee_commissions_cashier on employee_commissions( employee_id)";
+    public static final String SQL_CREATE_EMPLOYEE_COMMISSIONS_ORDER = "create index idx_employee_commissions_order on employee_commissions( order_id)";
+    public static final String SQL_CREATE_PAYMENT_TRANSACTION_ORDER_GUID = "create index idx_payment_transaction_order_guid on payment_transaction( order_guid)";
+    public static final String SQL_CREATE_PAYMENT_TRANSACTION_PARENT = "create index idx_payment_transaction_parent on payment_transaction( parent_guid)";
+    public static final String SQL_CREATE_PAYMENT_TRANSACTION_STATUS = "create index idx_payment_transaction_status on payment_transaction( status)";
+    public static final String SQL_CREATE_PAYMENT_TRANSACTION_TYPE = "create index idx_payment_transaction_type on payment_transaction( unitsLabel)";
+    public static final String SQL_CREATE_PAYMENT_TRANSACTION_OPERATOR = "create index idx_payment_transaction_operator on payment_transaction( operator_id)";
+    public static final String SQL_CREATE_PAYMENT_TRANSACTION_SHIFT = "create index idx_payment_transaction_shift on payment_transaction( shift_guid)";
+    public static final String SQL_CREATE_SALE_ORDER_CREATE_TIME = "create index idx_sale_order_create_time on sale_order( create_time)";
+    public static final String SQL_CREATE_SALE_ORDER_OPERATOR = "create index idx_sale_order_operator on sale_order( operator_guid)";
+    public static final String SQL_CREATE_SALE_ORDER_CUSTOMER = "create index idx_sale_order_customer on sale_order( customer_guid)";
+    public static final String SQL_CREATE_SALE_ORDER_REGISTER = "create index idx_sale_order_register on sale_order( register_id)";
+    public static final String SQL_CREATE_SALE_ORDER_SHIFT = "create index idx_sale_order_shift on sale_order( shift_guid)";
+    public static final String SQL_CREATE_SALE_ORDER_STATUS = "create index idx_sale_order_status on sale_order( status)";
+    public static final String SQL_CREATE_SALE_ORDER_PARENT = "create index idx_sale_order_parent on sale_order( parent_id)";
+    public static final String SQL_CREATE_SALE_ORDER_ITEM_ORDER = "create index idx_sale_order_item_order on sale_order_item( order_id)";
+    public static final String SQL_CREATE_SALE_ORDER_ITEM_ITEM_GUID = "create index idx_sale_order_item_item_guid on sale_order_item( item_id)";
+    public static final String SQL_CREATE_SALE_ORDER_ITEM_PARENT = "create index idx_sale_order_item_parent on sale_order_item( parent_guid)";
+    public static final String SQL_CREATE_SALE_ORDER_ITEM_ADDON_ITEM_GUID = "create index idx_sale_order_item_addon_item_guid on sale_order_item_addon( item_guid)";
+    public static final String SQL_CREATE_SALE_ORDER_ITEM_ADDON_ADDON_GUID = "create index idx_sale_order_item_addon_addon_guid on sale_order_item_addon( addon_id)";
+    public static final String SQL_CREATE_UNIT_ITEM = "create index idx_unit_item on unit( item_id)";
+    public static final String SQL_CREATE_UNIT_SALE_ITEM = "create index idx_unit_sale_item on unit( sale_order_item_id)";
+    public static final String SQL_CREATE_UNIT_CHILD_SALE_ITEM = "create index idx_unit_child_sale_item on unit( child_order_item_id)";
+
+
+    public static final String SQL_DROP_PREPAID_ORDER_VIEW = "drop view if exists prepaid_order_view";
+    public static final String SQL_DROP_SO_ITEMS_VIEW = "drop view if exists so_items_view";
+    public static final String SQL_DROP_SO_SALE_REPORTS_ITEMS_VIEW = "drop view if exists so_sale_reports_items_view";
+    public static final String SQL_CREATE_PREPAID_ORDER_VIEW = "CREATE VIEW prepaid_order_view AS SELECT  sale_order_table.guid as sale_order_table_guid, sale_order_table.order_type as sale_order_table_order_type, sale_item_table.sale_order_item_id as sale_item_table_sale_order_item_id, bill_payment_description_table.guid as bill_payment_description_table_guid, bill_payment_description_table.description as bill_payment_description_table_description, bill_payment_description_table.type as bill_payment_description_table_type, bill_payment_description_table.is_voided as bill_payment_description_table_is_voided, bill_payment_description_table.is_failed as bill_payment_description_table_is_failed, bill_payment_description_table.order_id as bill_payment_description_table_order_id, bill_payment_description_table.sale_order_id as bill_payment_description_table_sale_order_id, bill_payment_description_table.is_deleted as bill_payment_description_table_is_deleted, bill_payment_description_table.update_time as bill_payment_description_table_update_time, bill_payment_description_table.is_draft as bill_payment_description_table_is_draft FROM sale_order AS sale_order_table LEFT OUTER JOIN sale_order_item AS sale_item_table ON sale_item_table.order_id = sale_order_table.guid and sale_item_table.is_deleted = 0 LEFT OUTER JOIN bp_description AS bill_payment_description_table ON bill_payment_description_table.guid = sale_item_table.item_id and bill_payment_description_table.is_deleted = 0 where sale_order_table.is_deleted = 0";
+    public static final String SQL_CREATE_SO_ITEMS_VIEW = "CREATE VIEW so_items_view AS SELECT  sale_item_table.sale_order_item_id as sale_item_table_sale_order_item_id, sale_item_table.order_id as sale_item_table_order_id, sale_item_table.item_id as sale_item_table_item_id, sale_item_table.quantity as sale_item_table_quantity, sale_item_table.kitchen_printed_qty as sale_item_table_kitchen_printed_qty, sale_item_table.price as sale_item_table_price, sale_item_table.price_type as sale_item_table_price_type, sale_item_table.discountable as sale_item_table_discountable, sale_item_table.discount as sale_item_table_discount, sale_item_table.discount_type as sale_item_table_discount_type, sale_item_table.taxable as sale_item_table_taxable, sale_item_table.tax as sale_item_table_tax, sale_item_table.sequence as sale_item_table_sequence, sale_item_table.parent_guid as sale_item_table_parent_guid, sale_item_table.final_gross_price as sale_item_table_final_gross_price, sale_item_table.final_tax as sale_item_table_final_tax, sale_item_table.final_discount as sale_item_table_final_discount, sale_item_table.tmp_refund_quantity as sale_item_table_tmp_refund_quantity, sale_item_table.notes as sale_item_table_notes, sale_item_table.has_notes as sale_item_table_has_notes, sale_item_table.is_deleted as sale_item_table_is_deleted, sale_item_table.update_time as sale_item_table_update_time, sale_item_table.is_draft as sale_item_table_is_draft, sale_order_table.discount as sale_order_table_discount, sale_order_table.discount_type as sale_order_table_discount_type, sale_order_table.taxable as sale_order_table_taxable, sale_order_table.order_type as sale_order_table_order_type, sale_order_table.transaction_fee as sale_order_table_transaction_fee, item_table.guid as item_table_guid, item_table.category_id as item_table_category_id, item_table.description as item_table_description, item_table.code as item_table_code, item_table.ean_code as item_table_ean_code, item_table.product_code as item_table_product_code, item_table.price_type as item_table_price_type, item_table.serializable as item_table_serializable, item_table.sale_price as item_table_sale_price, item_table.units_label as item_table_units_label, item_table.stock_tracking as item_table_stock_tracking, item_table.active_status as item_table_active_status, item_table.discountable as item_table_discountable, item_table.discount as item_table_discount, item_table.discount_type as item_table_discount_type, item_table.taxable as item_table_taxable, item_table.cost as item_table_cost, item_table.minimum_qty as item_table_minimum_qty, item_table.recommended_qty as item_table_recommended_qty, item_table.UPDATE_QTY_FLAG as item_table_UPDATE_QTY_FLAG, item_table.tax_group_guid as item_table_tax_group_guid, item_table.tmp_available_qty as item_table_tmp_available_qty, item_table.order_num as item_table_order_num, item_table.default_modifier_guid as item_table_default_modifier_guid, item_table.printer_alias_guid as item_table_printer_alias_guid, item_table.button_view as item_table_button_view, item_table.has_notes as item_table_has_notes, item_table.code_type as item_table_code_type, item_table.eligible_for_commission as item_table_eligible_for_commission, item_table.commission as item_table_commission, item_table.is_deleted as item_table_is_deleted, item_table.update_time as item_table_update_time, item_table.is_draft as item_table_is_draft, bill_payment_description_table.guid as bill_payment_description_table_guid, bill_payment_description_table.description as bill_payment_description_table_description, bill_payment_description_table.type as bill_payment_description_table_type, bill_payment_description_table.is_voided as bill_payment_description_table_is_voided, bill_payment_description_table.is_failed as bill_payment_description_table_is_failed, bill_payment_description_table.order_id as bill_payment_description_table_order_id, bill_payment_description_table.sale_order_id as bill_payment_description_table_sale_order_id, bill_payment_description_table.is_deleted as bill_payment_description_table_is_deleted, bill_payment_description_table.update_time as bill_payment_description_table_update_time, bill_payment_description_table.is_draft as bill_payment_description_table_is_draft, sale_addon_table.guid as sale_addon_table_guid, sale_addon_table.addon_id as sale_addon_table_addon_id, sale_addon_table.item_guid as sale_addon_table_item_guid, sale_addon_table.extra_cost as sale_addon_table_extra_cost, sale_addon_table.addon_type as sale_addon_table_addon_type, sale_addon_table.is_deleted as sale_addon_table_is_deleted, sale_addon_table.update_time as sale_addon_table_update_time, sale_addon_table.is_draft as sale_addon_table_is_draft, modifier_table.title as modifier_table_title FROM sale_order_item AS sale_item_table JOIN sale_order AS sale_order_table ON sale_order_table.guid = sale_item_table.order_id and sale_order_table.is_deleted = 0 LEFT OUTER JOIN item AS item_table ON item_table.guid = sale_item_table.item_id LEFT OUTER JOIN bp_description AS bill_payment_description_table ON bill_payment_description_table.guid = sale_item_table.item_id LEFT OUTER JOIN sale_order_item_addon AS sale_addon_table ON sale_addon_table.item_guid = sale_item_table.sale_order_item_id and sale_addon_table.is_deleted = 0 LEFT OUTER JOIN items_modifier AS modifier_table ON modifier_table.modifier_guid = sale_addon_table.addon_id and modifier_table.is_deleted = 0 where sale_item_table.is_deleted = 0";
+    public static final String SQL_CREATE_SO_SALE_REPORTS_ITEMS_VIEW = "CREATE VIEW so_sale_reports_items_view AS SELECT  sale_item_table.sale_order_item_id as sale_item_table_sale_order_item_id, sale_item_table.order_id as sale_item_table_order_id, sale_item_table.item_id as sale_item_table_item_id, sale_item_table.quantity as sale_item_table_quantity, sale_item_table.kitchen_printed_qty as sale_item_table_kitchen_printed_qty, sale_item_table.price as sale_item_table_price, sale_item_table.price_type as sale_item_table_price_type, sale_item_table.discountable as sale_item_table_discountable, sale_item_table.discount as sale_item_table_discount, sale_item_table.discount_type as sale_item_table_discount_type, sale_item_table.taxable as sale_item_table_taxable, sale_item_table.tax as sale_item_table_tax, sale_item_table.sequence as sale_item_table_sequence, sale_item_table.parent_guid as sale_item_table_parent_guid, sale_item_table.final_gross_price as sale_item_table_final_gross_price, sale_item_table.final_tax as sale_item_table_final_tax, sale_item_table.final_discount as sale_item_table_final_discount, sale_item_table.tmp_refund_quantity as sale_item_table_tmp_refund_quantity, sale_item_table.notes as sale_item_table_notes, sale_item_table.has_notes as sale_item_table_has_notes, sale_item_table.is_deleted as sale_item_table_is_deleted, sale_item_table.update_time as sale_item_table_update_time, sale_item_table.is_draft as sale_item_table_is_draft, sale_order_table.shift_guid as sale_order_table_shift_guid, sale_order_table.status as sale_order_table_status, sale_order_table.taxable as sale_order_table_taxable, sale_order_table.discount as sale_order_table_discount, sale_order_table.discount_type as sale_order_table_discount_type, sale_order_table.create_time as sale_order_table_create_time, sale_order_table.register_id as sale_order_table_register_id, sale_order_table.order_type as sale_order_table_order_type, sale_order_table.transaction_fee as sale_order_table_transaction_fee, item_table.description as item_table_description, item_table.ean_code as item_table_ean_code, item_table.product_code as item_table_product_code, item_table.cost as item_table_cost, item_table.category_id as item_table_category_id, category_table.title as category_table_title, category_table.department_guid as category_table_department_guid, department_table.title as department_table_title, bill_payment_description_table.guid as bill_payment_description_table_guid, bill_payment_description_table.description as bill_payment_description_table_description, bill_payment_description_table.type as bill_payment_description_table_type, bill_payment_description_table.is_voided as bill_payment_description_table_is_voided, bill_payment_description_table.is_failed as bill_payment_description_table_is_failed, bill_payment_description_table.order_id as bill_payment_description_table_order_id, bill_payment_description_table.sale_order_id as bill_payment_description_table_sale_order_id, bill_payment_description_table.is_deleted as bill_payment_description_table_is_deleted, bill_payment_description_table.update_time as bill_payment_description_table_update_time, bill_payment_description_table.is_draft as bill_payment_description_table_is_draft FROM sale_order_item AS sale_item_table JOIN sale_order AS sale_order_table ON sale_order_table.guid = sale_item_table.order_id and sale_order_table.is_deleted = 0 LEFT OUTER JOIN item AS item_table ON item_table.guid = sale_item_table.item_id LEFT OUTER JOIN category AS category_table ON category_table.guid = item_table.category_id LEFT OUTER JOIN department AS department_table ON department_table.guid = category_table.department_guid LEFT OUTER JOIN bp_description AS bill_payment_description_table ON bill_payment_description_table.guid = sale_item_table.item_id where sale_item_table.is_deleted = 0";
+
     static void update6_1to6_2(SQLiteDatabase db){
 
         db.execSQL(SQL_RENAME_UNIT);
@@ -126,6 +164,36 @@ public class Update6_1to6_2 implements IUpdateContainer {
         db.execSQL(SQL_COPY_UNIT);
         db.execSQL(SQL_DROP_TEMP_UNIT);
 
+        db.execSQL(SQL_CREATE_UNIT_ITEM);
+        db.execSQL(SQL_CREATE_UNIT_SALE_ITEM);
+        db.execSQL(SQL_CREATE_UNIT_CHILD_SALE_ITEM);
+        db.execSQL(SQL_CREATE_SALE_ORDER_CREATE_TIME);
+        db.execSQL(SQL_CREATE_SALE_ORDER_OPERATOR);
+        db.execSQL(SQL_CREATE_SALE_ORDER_CUSTOMER);
+        db.execSQL(SQL_CREATE_SALE_ORDER_REGISTER);
+        db.execSQL(SQL_CREATE_SALE_ORDER_SHIFT);
+        db.execSQL(SQL_CREATE_SALE_ORDER_STATUS);
+        db.execSQL(SQL_CREATE_SALE_ORDER_PARENT);
+        db.execSQL(SQL_CREATE_SALE_ORDER_ITEM_ORDER);
+        db.execSQL(SQL_CREATE_SALE_ORDER_ITEM_ITEM_GUID);
+        db.execSQL(SQL_CREATE_SALE_ORDER_ITEM_PARENT);
+        db.execSQL(SQL_CREATE_SALE_ORDER_ITEM_ADDON_ITEM_GUID);
+        db.execSQL(SQL_CREATE_SALE_ORDER_ITEM_ADDON_ADDON_GUID);
+        db.execSQL(SQL_CREATE_PAYMENT_TRANSACTION_ORDER_GUID);
+        db.execSQL(SQL_CREATE_PAYMENT_TRANSACTION_PARENT);
+        db.execSQL(SQL_CREATE_PAYMENT_TRANSACTION_STATUS);
+        db.execSQL(SQL_CREATE_PAYMENT_TRANSACTION_TYPE);
+        db.execSQL(SQL_CREATE_PAYMENT_TRANSACTION_OPERATOR);
+        db.execSQL(SQL_CREATE_PAYMENT_TRANSACTION_SHIFT);
+        db.execSQL(SQL_CREATE_EMPLOYEE_TIPS_SHIFT);
+        db.execSQL(SQL_CREATE_EMPLOYEE_TIPS_CASHIER);
+        db.execSQL(SQL_CREATE_EMPLOYEE_TIPS_ORDER);
+        db.execSQL(SQL_CREATE_EMPLOYEE_TIPS_PAYMENT);
+        db.execSQL(SQL_CREATE_EMPLOYEE_TIPS_PARENT);
+        db.execSQL(SQL_CREATE_EMPLOYEE_COMMISSIONS_SHIFT);
+        db.execSQL(SQL_CREATE_EMPLOYEE_COMMISSIONS_CASHIER);
+        db.execSQL(SQL_CREATE_EMPLOYEE_COMMISSIONS_ORDER);
+
         db.execSQL(SQL_ADD_COLUMN_BP_DESCRIPTION);
         db.execSQL(SQL_SET_COLUMN_BP_DESCRIPTION);
         db.execSQL(SQL_DELETE_INVALID_ROWS_BP_DESCRIPTION);
@@ -135,6 +203,13 @@ public class Update6_1to6_2 implements IUpdateContainer {
         db.execSQL(SQL_CREATE_BP_DESCRIPTION_ORDER);
         db.execSQL(SQL_COPY_BP_DESCRIPTION);
         db.execSQL(SQL_DROP_TEMP_BP_DESCRIPTION);
+
+        db.execSQL(SQL_DROP_PREPAID_ORDER_VIEW);
+        db.execSQL(SQL_DROP_SO_ITEMS_VIEW);
+        db.execSQL(SQL_DROP_SO_SALE_REPORTS_ITEMS_VIEW);
+        db.execSQL(SQL_CREATE_PREPAID_ORDER_VIEW);
+        db.execSQL(SQL_CREATE_SO_ITEMS_VIEW);
+        db.execSQL(SQL_CREATE_SO_SALE_REPORTS_ITEMS_VIEW);
     }
 
     @Override
