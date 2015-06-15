@@ -1299,6 +1299,7 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER)
         String PREPAID_ORDER_ID = "order_id";
 
+        @NotNull
         @Column(type = Type.TEXT)
         String ORDER_ID = "sale_order_id";
     }
@@ -1660,6 +1661,59 @@ public abstract class ShopStore {
     /**
      * views *
      */
+
+    @RawQuery(OldSaleOrdersQuery.QUERY_NAME)
+    public static interface OldSaleOrdersQuery {
+
+        String QUERY_NAME = "old_sale_orders_query";
+
+        @URI
+        String CONTENT_PATH = "old_sale_orders_query";
+
+        String SALES = "sales";
+        String TIPS = "tips";
+        String REFUNDS = "refunds";
+
+        @SqlQuery
+        String QUERY = "select " + SALES + "." + SaleOrderTable.GUID
+                + " from " + SaleOrderTable.TABLE_NAME + " as " + SALES
+                + " left join " + EmployeeTipsTable.TABLE_NAME + " as " + TIPS
+                + " on " + SALES + "." + SaleOrderTable.GUID + " = " + TIPS + "." + EmployeeTipsTable.ORDER_ID + " and " + TIPS + "." + EmployeeTipsTable.PARENT_GUID + " is null"
+                + " left join " + SaleOrderTable.TABLE_NAME + " as " + REFUNDS
+                + " on " + SALES + "." + SaleOrderTable.GUID + " = " + REFUNDS + "." + SaleOrderTable.PARENT_ID
+                + " where " + SALES + "." + SaleOrderTable.PARENT_ID + " is null and " + SALES + "." + SaleOrderTable.CREATE_TIME + " < ? "
+                + " and ("+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " IS NULL OR "+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " < ?)"
+                + " group by " + SALES + "." + SaleOrderTable.GUID
+                + " having " + REFUNDS + "." + SaleOrderTable.CREATE_TIME + " is null OR max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") < ?";
+
+    }
+
+    @RawQuery(OldMovementGroupsQuery.QUERY_NAME)
+    public static interface OldMovementGroupsQuery {
+
+        String QUERY_NAME = "old_movement_groups_query";
+
+        @URI
+        String CONTENT_PATH = "old_movement_groups_query";
+
+        String ITEM_GUID = "t_item_guid";
+        String UPDATE_QTY_FLAG = "t_update_qty_flag";
+
+        @SqlQuery
+        String QUERY = "select distinct " + UPDATE_QTY_FLAG + " from ("
+                + " select " + ItemMovementTable.ITEM_GUID + " as " + ITEM_GUID + ", " + ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " as " + UPDATE_QTY_FLAG
+                + " from " + ItemMovementTable.TABLE_NAME
+                + " group by " + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
+                + " having max(" + ItemMovementTable.CREATE_TIME + ") < ?"
+                + ")"
+                + " left join " + ItemTable.TABLE_NAME
+                + " on " + ITEM_GUID + " = " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " and " + ItemTable.TABLE_NAME + "." + ItemTable.STOCK_TRACKING + " = 1"
+                + " left join " + ItemMovementTable.TABLE_NAME
+                + " on " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID
+                + " and " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + ">= ?"
+                + " where " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " is null or " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID + " is not null";
+
+    }
 
     @SimpleView(CustomerView.VIEW_NAME)
     public static interface CustomerView {
