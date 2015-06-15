@@ -430,7 +430,8 @@ public abstract class ShopStore {
     @PrimaryKey(columns = {ItemMovementTable.GUID, ItemMovementTable.ITEM_GUID})
     @Indexes({
             @Index(name = "item", columns = ItemMovementTable.ITEM_GUID),
-            @Index(name = "mvn_flag", columns = ItemMovementTable.ITEM_UPDATE_QTY_FLAG)
+            @Index(name = "mvn_flag", columns = ItemMovementTable.ITEM_UPDATE_QTY_FLAG),
+            @Index(name = "create_time", columns = ItemMovementTable.CREATE_TIME)
     })
     public static interface ItemMovementTable extends IBemaSyncTable {
 
@@ -1698,10 +1699,11 @@ public abstract class ShopStore {
 
         String ITEM_GUID = "t_item_guid";
         String UPDATE_QTY_FLAG = "t_update_qty_flag";
+        String CREATE_TIME = "t_create_time";
 
         @SqlQuery
         String QUERY = "select distinct " + UPDATE_QTY_FLAG + " from ("
-                + " select " + ItemMovementTable.ITEM_GUID + " as " + ITEM_GUID + ", " + ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " as " + UPDATE_QTY_FLAG
+                + " select " + ItemMovementTable.ITEM_GUID + " as " + ITEM_GUID + ", " + ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " as " + UPDATE_QTY_FLAG + ", max(" + ItemMovementTable.CREATE_TIME + ") as " + CREATE_TIME
                 + " from " + ItemMovementTable.TABLE_NAME
                 + " group by " + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
                 + " having max(" + ItemMovementTable.CREATE_TIME + ") < ?"
@@ -1710,7 +1712,8 @@ public abstract class ShopStore {
                 + " on " + ITEM_GUID + " = " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " and " + ItemTable.TABLE_NAME + "." + ItemTable.STOCK_TRACKING + " = 1"
                 + " left join " + ItemMovementTable.TABLE_NAME
                 + " on " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID
-                + " and " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + ">= ?"
+                + " and " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " != " + UPDATE_QTY_FLAG
+                + " and " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + " > " + CREATE_TIME
                 + " where " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " is null or " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID + " is not null";
 
     }

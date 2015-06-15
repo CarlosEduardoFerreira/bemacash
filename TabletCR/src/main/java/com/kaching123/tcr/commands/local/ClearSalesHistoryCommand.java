@@ -35,7 +35,6 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
     private static final Uri OLD_MOVEMENT_GROUPS_URI = ShopProvider.contentUri(OldMovementGroupsQuery.CONTENT_PATH);
 
     private static final Uri SALE_ORDERS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(SaleOrderTable.URI_CONTENT);
-    private static final Uri UNITS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(UnitTable.URI_CONTENT);
     private static final Uri ITEM_MOVEMENTS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(ItemMovementTable.URI_CONTENT);
     private static final Uri SALE_ORDERS_URI = ShopProvider.contentUri(SaleOrderTable.URI_CONTENT);
     private static final Uri UNITS_URI = ShopProvider.contentUri(UnitTable.URI_CONTENT);
@@ -54,16 +53,12 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
             Logger.d("ClearSalesHistoryCommand: min date: " + new Date(minCreateTime));
 
             ShopProviderExt.callMethod(getContext(), Method.METHOD_CREATE_TRIGGER_UNLINK_OLD_REFUND_UNITS, null, null);
+            //TODO: what to do with old active orders? remove?
+            ShopProviderExt.callMethod(getContext(), Method.METHOD_CREATE_TRIGGER_FIX_SALE_UNITS, null, null);
 
             ShopProviderExt.callMethod(getContext(), Method.TRANSACTION_START, null, null);
             Logger.d("ClearSalesHistoryCommand: start transaction");
             try {
-                int updateCount = ProviderAction.update(UNITS_NO_NOTIFY_URI)
-                        .value(UnitTable.SALE_ORDER_ID, null)
-                        .where(UnitTable.SALE_ORDER_ID + " IS NOT NULL AND " + UnitTable.STATUS + " != ?", _enum(Status.SOLD))
-                        .perform(getContext());
-                Logger.d("ClearSalesHistoryCommand: units invalid link to sale order fixed, count: " + updateCount);
-
                 Cursor c = ProviderAction.query(OLD_SALE_ORDERS_URI)
                         .where("",
                                 minCreateTime,
@@ -84,22 +79,23 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                 c.close();
 
                 c = ProviderAction.query(OLD_MOVEMENT_GROUPS_URI)
-                        .where("",
-                                minCreateTime,
-                                minCreateTime)
+                        .where("", minCreateTime)
                         .perform(getContext());
-                Logger.d("ClearSalesHistoryCommand: old item movements loaded, count: " + c.getCount());
+                Logger.d("ClearSalesHistoryCommand: old item movement groups loaded, count: " + c.getCount());
 
+                int totalCount = 0;
                 while (c.moveToNext()) {
                     String updateQtyFlag = c.getString(0);
                     Logger.d("ClearSalesHistoryCommand: trying to remove movement group, flag: " + updateQtyFlag);
 
-                    ProviderAction.delete(ITEM_MOVEMENTS_NO_NOTIFY_URI)
+                    int count = ProviderAction.delete(ITEM_MOVEMENTS_NO_NOTIFY_URI)
                             .where(ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " = ?", updateQtyFlag)
                             .perform(getContext());
-                    Logger.d("ClearSalesHistoryCommand: movement group removed");
+                    totalCount += count;
+                    Logger.d("ClearSalesHistoryCommand: group movements removed: " + count);
                 }
                 c.close();
+                Logger.d("ClearSalesHistoryCommand: totally movements removed: " + totalCount);
 
                 ShopProviderExt.callMethod(getContext(), Method.TRANSACTION_COMMIT, null, null);
                 Logger.d("ClearSalesHistoryCommand: commit transaction");
@@ -109,8 +105,8 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
             }
 
             //TODO: keep? execute after sales history db migration? execute seldom - when a lot of data removed or time passed
-            boolean vacuumResult = ShopProviderExt.callMethod(getContext(), Method.METHOD_VACUUM, null, null);
-            Logger.d("ClearSalesHistoryCommand: vacuum succeeded: " + vacuumResult);
+            /*boolean vacuumResult = ShopProviderExt.callMethod(getContext(), Method.METHOD_VACUUM, null, null);
+            Logger.d("ClearSalesHistoryCommand: vacuum succeeded: " + vacuumResult);*/
 
             getContext().getContentResolver().notifyChange(UNITS_URI, null);
             getContext().getContentResolver().notifyChange(SALE_ORDERS_URI, null);

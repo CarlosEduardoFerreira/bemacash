@@ -239,6 +239,7 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
 
         operations.add(ContentProviderOperation.newUpdate(URI_UNIT)
                 .withValue(UnitTable.STATUS, _enum(Status.SOLD))
+                .withValue(UnitTable.CHILD_ORDER_ID, null)
                 .withSelection(UnitTable.SALE_ORDER_ID + " = ? AND " + UnitTable.STATUS + " <> ?", new String[]{order.guid, String.valueOf(Unit.Status.SOLD.ordinal())})
                 .build());
 

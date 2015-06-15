@@ -13,9 +13,9 @@ import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
-import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
@@ -47,7 +47,8 @@ public class ShopOpenHelper extends BaseOpenHelper {
     private static final String SQL_DETACH_DB = "DETACH DATABASE " + EXTRA_DB_ALIAS + ";";
     private static final String SQL_CLEAR_TABLE_IN_DB = "DELETE FROM " + EXTRA_DB_ALIAS + ".%s;";
 
-    private static final String TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS = "trigger_on_delete_refund_order";
+    private static final String TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS = "trigger_unlink_old_refund_units";
+    private static final String TRIGGER_NAME_FIX_SALE_ORDER_UNITS = "trigger_fix_sale_order_units";
 
     private TrainingShopOpenHelper trainingShopOpenHelper;
     public static String ACTION_SYNC_PROGRESS = "com.kaching123.tcr.service.ACTION_SYNC_PROGRESS";
@@ -198,6 +199,19 @@ public class ShopOpenHelper extends BaseOpenHelper {
                 + " BEGIN "
                 + " UPDATE " + UnitTable.TABLE_NAME + " SET " + UnitTable.CHILD_ORDER_ID + " =  NULL "
                 + " WHERE " + UnitTable.CHILD_ORDER_ID + " = OLD." + SaleOrderTable.GUID
+                + ";END;");
+    }
+
+    public void createTriggerFixSaleOrderUnits() {
+        SQLiteDatabase db = super.getWritableDatabase();
+        db.execSQL("CREATE TRIGGER IF NOT EXISTS " + TRIGGER_NAME_FIX_SALE_ORDER_UNITS + " BEFORE DELETE ON " + SaleOrderTable.TABLE_NAME
+                + " FOR EACH ROW "
+                + " WHEN OLD." + SaleOrderTable.PARENT_ID + " IS NULL "
+                + " AND OLD." + SaleOrderTable.STATUS + " = " + _enum(OrderStatus.COMPLETED)
+                + " BEGIN "
+                + " UPDATE " + UnitTable.TABLE_NAME + " SET " + UnitTable.SALE_ORDER_ID + " =  NULL "
+                + " WHERE " + UnitTable.SALE_ORDER_ID + " = OLD." + SaleOrderTable.GUID
+                + " AND " + UnitTable.STATUS + " != " + _enum(Status.SOLD)
                 + ";END;");
     }
 

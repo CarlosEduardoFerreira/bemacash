@@ -49,6 +49,7 @@ public class ShopProviderExt extends ShopProvider {
         public static final String METHOD_COPY_TABLE_FROM_SYNC_DB = "method_copy_table_from_sync_db";
         public static final String METHOD_CLEAR_TABLE_IN_SYNC_DB = "method_clear_table_in_sync_db";
         public static final String METHOD_CREATE_TRIGGER_UNLINK_OLD_REFUND_UNITS = "method_create_trigger_unlink_old_refund_units";
+        public static final String METHOD_CREATE_TRIGGER_FIX_SALE_UNITS = "method_create_trigger_fix_sale_units";
 
         public static final String TRANSACTION_START = "method_transaction_start";
         public static final String TRANSACTION_COMMIT = "method_transaction_commit";
@@ -137,6 +138,8 @@ public class ShopProviderExt extends ShopProvider {
             ((ShopOpenHelper) dbHelper).clearTableInExtraDatabase(arg);
         } else if (Method.METHOD_CREATE_TRIGGER_UNLINK_OLD_REFUND_UNITS.equalsIgnoreCase(method)) {
             ((ShopOpenHelper)dbHelper).createTriggerUnlinkOldRefundUnits();
+        } else if (Method.METHOD_CREATE_TRIGGER_FIX_SALE_UNITS.equalsIgnoreCase(method)) {
+            ((ShopOpenHelper)dbHelper).createTriggerFixSaleOrderUnits();
         } else if (Method.METHOD_VACUUM.equalsIgnoreCase(method)) {
             boolean result = ((ShopOpenHelper)dbHelper).vacuum();
             resultBundle = new Bundle();

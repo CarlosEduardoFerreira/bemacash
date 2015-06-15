@@ -126,6 +126,7 @@ public class UnitsJdbcConverter extends JdbcConverter<Unit> {
     public SingleSqlCommand setSold(String orderId, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
                 .add(STATUS, Status.SOLD)
+                .add(CHILD_ORDER_ID, (String) null)
                 .where(SALE_ORDER_ID, orderId)
                 .build(JdbcFactory.getApiMethod(Unit.class));
     }
