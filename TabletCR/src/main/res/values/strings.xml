@@ -959,7 +959,8 @@
     <!-- <string name="report_sales_by_tender_types_gift">GIFT CARD</string> -->
     <string name="report_sales_by_tender_types_check">CHECK</string>
     <string name="report_sales_by_tender_types_credit_receipt">CREDIT RECEIPT</string>
--->    <string name="report_sales_by_tender_types_credit">CREDIT CARD</string>
+    -->
+    <string name="report_sales_by_tender_types_credit">CREDIT CARD</string>
     <string name="report_sales_by_tender_types_offline_credit">OFFLINE CREDIT</string>
     <string name="report_sales_by_tender_types_ebt_cash">EBT CASH</string>
     <string name="report_sales_by_tender_types_ebt_foodstamp">EBT FOODSTAMP</string>
@@ -1552,8 +1553,6 @@
     <string name="str_start_download">Start downloading...</string>
     <string name="str_apk_download_fail">Apk file path not valid. Try again</string>
     <string name="str_no_app_update">Current build: %d is the latest one.</string>
-
-    <string name="custom_service">CUSTOMER SERVICE</string>
 
     <string name="truncate_wait_message">Truncating database</string>
     <string name="truncate_failed_message">Database truncation failed</string>
