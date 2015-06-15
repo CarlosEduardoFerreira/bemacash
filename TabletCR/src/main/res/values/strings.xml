@@ -1553,4 +1553,8 @@
     <string name="str_apk_download_fail">Apk file path not valid. Try again</string>
     <string name="str_no_app_update">Current build: %d is the latest one.</string>
 
+    <string name="custom_service">CUSTOMER SERVICE</string>
+
+    <string name="truncate_wait_message">Truncating database</string>
+    <string name="truncate_failed_message">Database truncation failed</string>
 </resources>

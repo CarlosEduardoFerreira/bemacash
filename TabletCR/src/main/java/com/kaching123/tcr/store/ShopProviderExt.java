@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
@@ -49,11 +48,14 @@ public class ShopProviderExt extends ShopProvider {
         public static final String METHOD_DETACH_SYNC_DB = "method_detach_sync_db";
         public static final String METHOD_COPY_TABLE_FROM_SYNC_DB = "method_copy_table_from_sync_db";
         public static final String METHOD_CLEAR_TABLE_IN_SYNC_DB = "method_clear_table_in_sync_db";
+        public static final String METHOD_CREATE_TRIGGER_UNLINK_OLD_REFUND_UNITS = "method_create_trigger_unlink_old_refund_units";
 
         public static final String TRANSACTION_START = "method_transaction_start";
         public static final String TRANSACTION_COMMIT = "method_transaction_commit";
         public static final String TRANSACTION_END = "method_transaction_end";
         public static final String TRANSACTION_YIELD = "method_transaction_yield";
+
+        public static final String METHOD_VACUUM = "method_vacuum";
     }
 
     private static final String ARG_METHOD_RESULT = "arg_method_result";
@@ -133,6 +135,12 @@ public class ShopProviderExt extends ShopProvider {
             ((ShopOpenHelper) dbHelper).copyTableFromExtraDatabase(arg, getContext());
         } else if (Method.METHOD_CLEAR_TABLE_IN_SYNC_DB.equals(method) && !TextUtils.isEmpty(arg)) {
             ((ShopOpenHelper) dbHelper).clearTableInExtraDatabase(arg);
+        } else if (Method.METHOD_CREATE_TRIGGER_UNLINK_OLD_REFUND_UNITS.equalsIgnoreCase(method)) {
+            ((ShopOpenHelper)dbHelper).createTriggerUnlinkOldRefundUnits();
+        } else if (Method.METHOD_VACUUM.equalsIgnoreCase(method)) {
+            boolean result = ((ShopOpenHelper)dbHelper).vacuum();
+            resultBundle = new Bundle();
+            resultBundle.putBoolean(ARG_METHOD_RESULT, result);
         }
         return resultBundle;
     }

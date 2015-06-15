@@ -38,6 +38,8 @@ import com.kaching123.tcr.commands.device.OpenDrawerCommand.BaseOpenDrawerCallba
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.device.WaitForCloseDrawerCommand;
 import com.kaching123.tcr.commands.device.WaitForCloseDrawerCommand.BaseWaitForCloseDrawerCallback;
+import com.kaching123.tcr.commands.local.ClearSalesHistoryCommand;
+import com.kaching123.tcr.commands.local.ClearSalesHistoryCommand.BaseClearSalesHistoryCallback;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand.BasePrintCallback;
 import com.kaching123.tcr.commands.print.pos.PrintDropPayoutCommand;
@@ -1543,7 +1545,27 @@ public class DashboardActivity extends SuperBaseActivity {
         @Override
         protected void onShiftClosed() {
             WaitDialogFragment.hide(DashboardActivity.this);
-            showPrintXReportDialog();
+            WaitDialogFragment.show(DashboardActivity.this, getString(R.string.truncate_wait_message));
+            ClearSalesHistoryCommand.start(DashboardActivity.this, new BaseClearSalesHistoryCallback() {
+                @Override
+                protected void onSuccess() {
+                    if (isFinishing() || isDestroyed())
+                        return;
+
+                    WaitDialogFragment.hide(DashboardActivity.this);
+                    showPrintXReportDialog();
+                }
+
+                @Override
+                protected void onFailure() {
+                    if (isFinishing() || isDestroyed())
+                        return;
+
+                    WaitDialogFragment.hide(DashboardActivity.this);
+                    Toast.makeText(DashboardActivity.this, R.string.truncate_failed_message, Toast.LENGTH_SHORT).show();
+                    showPrintXReportDialog();
+                }
+            });
         }
 
         @Override

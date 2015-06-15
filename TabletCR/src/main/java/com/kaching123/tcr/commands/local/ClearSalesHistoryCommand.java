@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
@@ -20,6 +21,7 @@ import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
@@ -41,17 +43,26 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
+        Logger.d("ClearSalesHistoryCommand: start");
         getApp().lockOnSalesHistory();
+        Logger.d("ClearSalesHistoryCommand: locked");
         try {
             //TODO: refactor?
             int limitDays = getApp().getSalesHistoryLimit();
+            Logger.d("ClearSalesHistoryCommand: limit: " + limitDays + " days");
             long minCreateTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(limitDays);
+            Logger.d("ClearSalesHistoryCommand: min date: " + new Date(minCreateTime));
+
+            ShopProviderExt.callMethod(getContext(), Method.METHOD_CREATE_TRIGGER_UNLINK_OLD_REFUND_UNITS, null, null);
 
             ShopProviderExt.callMethod(getContext(), Method.TRANSACTION_START, null, null);
+            Logger.d("ClearSalesHistoryCommand: start transaction");
             try {
-                ProviderAction.update(UNITS_NO_NOTIFY_URI)
+                int updateCount = ProviderAction.update(UNITS_NO_NOTIFY_URI)
                         .value(UnitTable.SALE_ORDER_ID, null)
-                        .where(UnitTable.SALE_ORDER_ID + " IS NOT NULL AND " + UnitTable.STATUS + " != ?", _enum(Status.SOLD));
+                        .where(UnitTable.SALE_ORDER_ID + " IS NOT NULL AND " + UnitTable.STATUS + " != ?", _enum(Status.SOLD))
+                        .perform(getContext());
+                Logger.d("ClearSalesHistoryCommand: units invalid link to sale order fixed, count: " + updateCount);
 
                 Cursor c = ProviderAction.query(OLD_SALE_ORDERS_URI)
                         .where("",
@@ -59,17 +70,16 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                                 minCreateTime,
                                 minCreateTime)
                         .perform(getContext());
+                Logger.d("ClearSalesHistoryCommand: old sale orders loaded, count: " + c.getCount());
 
                 while (c.moveToNext()) {
                     String orderGuid = c.getString(0);
-
-                    ProviderAction.update(UNITS_NO_NOTIFY_URI)
-                            .value(UnitTable.CHILD_ORDER_ID, null)
-                            .where(UnitTable.CHILD_ORDER_ID + " = ? AND " + UnitTable.STATUS + " != ?", orderGuid, _enum(Status.SOLD));
+                    Logger.d("ClearSalesHistoryCommand: trying to remove order, guid: " + orderGuid);
 
                     ProviderAction.delete(SALE_ORDERS_NO_NOTIFY_URI)
                             .where(SaleOrderTable.GUID + " = ?", orderGuid)
                             .perform(getContext());
+                    Logger.d("ClearSalesHistoryCommand: order removed");
                 }
                 c.close();
 
@@ -78,32 +88,44 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                                 minCreateTime,
                                 minCreateTime)
                         .perform(getContext());
+                Logger.d("ClearSalesHistoryCommand: old item movements loaded, count: " + c.getCount());
 
                 while (c.moveToNext()) {
                     String updateQtyFlag = c.getString(0);
+                    Logger.d("ClearSalesHistoryCommand: trying to remove movement group, flag: " + updateQtyFlag);
 
                     ProviderAction.delete(ITEM_MOVEMENTS_NO_NOTIFY_URI)
                             .where(ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " = ?", updateQtyFlag)
                             .perform(getContext());
+                    Logger.d("ClearSalesHistoryCommand: movement group removed");
                 }
                 c.close();
 
                 ShopProviderExt.callMethod(getContext(), Method.TRANSACTION_COMMIT, null, null);
+                Logger.d("ClearSalesHistoryCommand: commit transaction");
             } finally {
                 ShopProviderExt.callMethod(getContext(), Method.TRANSACTION_END, null, null);
+                Logger.d("ClearSalesHistoryCommand: end transaction");
             }
+
+            //TODO: keep? execute after sales history db migration? execute seldom - when a lot of data removed or time passed
+            boolean vacuumResult = ShopProviderExt.callMethod(getContext(), Method.METHOD_VACUUM, null, null);
+            Logger.d("ClearSalesHistoryCommand: vacuum succeeded: " + vacuumResult);
 
             getContext().getContentResolver().notifyChange(UNITS_URI, null);
             getContext().getContentResolver().notifyChange(SALE_ORDERS_URI, null);
             getContext().getContentResolver().notifyChange(ITEM_MOVEMENTS_URI, null);
+            Logger.d("ClearSalesHistoryCommand: ui notified");
         } finally {
             getApp().unlockOnSalesHistory();
+            Logger.d("ClearSalesHistoryCommand: unlocked");
         }
 
+        Logger.d("ClearSalesHistoryCommand: end");
         return succeeded();
     }
 
-    private static void start(Context context, BaseClearSalesHistoryCallback callback) {
+    public static void start(Context context, BaseClearSalesHistoryCallback callback) {
         Groundy.create(ClearSalesHistoryCommand.class).callback(callback).queueUsing(context);
     }
 

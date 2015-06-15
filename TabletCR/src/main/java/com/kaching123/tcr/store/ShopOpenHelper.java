@@ -15,6 +15,10 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
+import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.Unit.Status;
+import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
+import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.mayer.sql.update.version.IUpdateContainer;
 
 import java.io.File;
@@ -26,6 +30,8 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 /**
  * Created by pkabakov on 23.04.2014.
@@ -40,6 +46,8 @@ public class ShopOpenHelper extends BaseOpenHelper {
     private static final String SQL_COPY_TABLE_FROM_DB = "INSERT OR REPLACE INTO %s SELECT * FROM " + EXTRA_DB_ALIAS + ".%s;";
     private static final String SQL_DETACH_DB = "DETACH DATABASE " + EXTRA_DB_ALIAS + ";";
     private static final String SQL_CLEAR_TABLE_IN_DB = "DELETE FROM " + EXTRA_DB_ALIAS + ".%s;";
+
+    private static final String TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS = "trigger_on_delete_refund_order";
 
     private TrainingShopOpenHelper trainingShopOpenHelper;
     public static String ACTION_SYNC_PROGRESS = "com.kaching123.tcr.service.ACTION_SYNC_PROGRESS";
@@ -180,6 +188,27 @@ public class ShopOpenHelper extends BaseOpenHelper {
         } finally {
             cursor.close();
         }
+    }
+
+    public void createTriggerUnlinkOldRefundUnits() {
+        SQLiteDatabase db = super.getWritableDatabase();
+        db.execSQL("CREATE TRIGGER IF NOT EXISTS " + TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS + " BEFORE DELETE ON " + SaleOrderTable.TABLE_NAME
+                + " FOR EACH ROW "
+                + " WHEN OLD." + SaleOrderTable.PARENT_ID + " IS NOT NULL "
+                + " BEGIN "
+                + " UPDATE " + UnitTable.TABLE_NAME + " SET " + UnitTable.CHILD_ORDER_ID + " =  NULL "
+                + " WHERE " + UnitTable.CHILD_ORDER_ID + " = OLD." + SaleOrderTable.GUID
+                + ";END;");
+    }
+
+    public boolean vacuum() {
+        SQLiteDatabase db = super.getWritableDatabase();
+        try {
+            db.execSQL("VACUUM");
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     public boolean clearTrainingDatabase() {
