@@ -72,9 +72,7 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
                 break;
         }
 
-        Date minFromDate = getMinFromDate();
-        if (fromDate.getTime() < minFromDate.getTime())
-            fromDate.setTime(minFromDate.getTime());
+        checkAndFixFromDate(fromDate);
 
         setPeriodDates();
         loadData();
@@ -93,9 +91,8 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
                     toDate.setTime(addTimeToDate(toDate, newDate, Calendar.DATE, 7));
                 }else{
                     fromDate.setTime(addTimeToDate(fromDate, newDate , Calendar.DATE, -7));
-                    Date minFromDate = getMinFromDate();
-                    if (fromDate.getTime() < minFromDate.getTime())
-                        fromDate.setTime(minFromDate.getTime());
+
+                    checkAndFixFromDate(fromDate);
                 }
                 break;
             case MONTH:
@@ -103,9 +100,8 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
                     toDate.setTime(addTimeToDate(toDate, newDate, Calendar.MONTH, 1));
                 }else{
                     fromDate.setTime(addTimeToDate(fromDate, newDate , Calendar.MONTH, -1));
-                    Date minFromDate = getMinFromDate();
-                    if (fromDate.getTime() < minFromDate.getTime())
-                        fromDate.setTime(minFromDate.getTime());
+
+                    checkAndFixFromDate(fromDate);
                 }
                 break;
         }
@@ -148,6 +144,11 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
         return c2.getTimeInMillis();
     }
 
+    private void checkAndFixFromDate(Date fromDate) {
+        Date minFromDate = getMinFromDate();
+        if (fromDate.getTime() < minFromDate.getTime())
+            fromDate.setTime(minFromDate.getTime());
+    }
 
     public static EmployeeReportsDetailsExtFragment instance(ReportType reportType) {
         return EmployeeReportsDetailsExtFragment_.builder().type(reportType).build();

@@ -68,6 +68,11 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     }
 
     @Override
+    protected boolean supportMinFromDate() {
+        return type != ReportType.SHIFTS_REPORT;
+    }
+
+    @Override
     protected Fragment createBodyFragment() {
         Fragment fragment = null;
         showSpinner();

@@ -65,6 +65,11 @@ public class EmployeeReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     }
 
     @Override
+    protected boolean supportMinFromDate() {
+        return type != ReportType.EMPLOYEE_ATTENDANCE;
+    }
+
+    @Override
     protected int getSpinnerLabel() {
         return R.string.reports_mode_entity_employee;
     }

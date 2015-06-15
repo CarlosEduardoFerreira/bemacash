@@ -147,6 +147,7 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
     protected Date getMinFromDate() {
         if (!supportMinFromDate())
             return null;
+
         long minFromDateTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(getApp().getSalesHistoryLimit());
         dateTimePickerCalendar.setTimeInMillis(minFromDateTime);
         dateTimePickerCalendar.set(Calendar.HOUR_OF_DAY, 00);

@@ -93,6 +93,7 @@ public class CreditReceiptFilterFragment extends DateRangeFragment implements IK
         getActivity().getSupportLoaderManager().initLoader(CASHIER_LOADER_ID, null, cashierAdapter);
     }
 
+    @Override
     protected Date initFromDate(Calendar dateTimePickerCalendar) {
         dateTimePickerCalendar.setTimeInMillis(new Date().getTime());
         dateTimePickerCalendar.set(Calendar.HOUR_OF_DAY, 00);

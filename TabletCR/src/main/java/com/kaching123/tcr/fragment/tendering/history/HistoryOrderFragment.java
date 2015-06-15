@@ -289,6 +289,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
         getLoaderManager().initLoader(CASHIER_LOADER_ID, null, this);
     }
 
+    @Override
     protected Date initFromDate(Calendar dateTimePickerCalendar) {
         dateTimePickerCalendar.setTimeInMillis(new Date().getTime());
         dateTimePickerCalendar.set(Calendar.HOUR_OF_DAY, 00);
