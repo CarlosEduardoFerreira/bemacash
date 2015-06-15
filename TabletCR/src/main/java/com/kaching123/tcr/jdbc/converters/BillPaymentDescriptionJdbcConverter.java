@@ -30,6 +30,7 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
     private static final String IS_VOIDED = "IS_VOIDED";
     private static final String TRANSACTION_ID = "TRANSACTION_ID";
     private static final String IS_FAILED = "IS_FAILED";
+    private static final String ORDER_ID = "ORDER_ID";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -39,7 +40,8 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
                 _enum(PrepaidType.class, rs.getString(TYPE), null),
                 rs.getLong(TRANSACTION_ID),
                 rs.getBoolean(IS_VOIDED),
-                rs.getBoolean(IS_FAILED)
+                rs.getBoolean(IS_FAILED),
+                rs.getString(ORDER_ID)
         ).toValues();
     }
 
@@ -51,7 +53,8 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
                 _enum(PrepaidType.class, rs.getString(TYPE), null),
                 rs.getLong(TRANSACTION_ID),
                 rs.getBoolean(IS_VOIDED),
-                rs.getBoolean(IS_FAILED)
+                rs.getBoolean(IS_FAILED),
+                rs.getString(ORDER_ID)
         );
     }
 

@@ -155,7 +155,7 @@ public class VoidOrderCommand extends SOAPWebCommand<VoidOrderRequest> {
         if (ignore)
             return null;
 
-        BillPaymentDescriptionModel model = new BillPaymentDescriptionModel(prepaidOrderGuid, null, null, 0L, true, false);
+        BillPaymentDescriptionModel model = new BillPaymentDescriptionModel(prepaidOrderGuid, null, null, 0L, true, false, null);
         return JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext());
     }
 }

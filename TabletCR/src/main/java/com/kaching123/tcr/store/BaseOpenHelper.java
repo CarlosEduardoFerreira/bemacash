@@ -112,8 +112,7 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
             updater.onUpdate(db);
             if (oldVersion == IUpdateContainer.VERSION5 && newVersion == IUpdateContainer.VERSION5_1) {
                 TcrApplication.get().getShopPref().prepaidVersionId().put(null);
-            }
-            if (oldVersion != IUpdateContainer.VERSION5_3 && newVersion == IUpdateContainer.VERSION5_3) {
+            } else if (oldVersion < IUpdateContainer.VERSION5_3 && newVersion >= IUpdateContainer.VERSION5_3) {
                 TcrApplication.get().getShopPref().prepaidVersionId().put(null);
             }
             if (oldVersion != IUpdateContainer.VERSION5_4 && newVersion == IUpdateContainer.VERSION5_4) {
@@ -138,8 +137,12 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
             if (newVersion == IUpdateContainer.VERSION5_9) {
                 TcrApplication.get().getShopPref().prepaidVersionId().put(null);
             }
-            //build 163+
+            //build 167+
             if (newVersion == IUpdateContainer.VERSION6_1) {
+                TcrApplication.get().getShopPref().prepaidVersionId().put(null);
+            }
+            //build 170+
+            if (newVersion == IUpdateContainer.VERSION6_2) {
                 TcrApplication.get().getShopPref().prepaidVersionId().put(null);
             }
             Logger.d("BaseOpenHelper.onUpgrade(): database was successfully updated");

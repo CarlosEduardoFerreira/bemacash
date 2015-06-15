@@ -17,22 +17,24 @@ public class BillPaymentDescriptionModel implements IValueModel{
     public boolean isVoided;
     public long orderId;
     public boolean isFailed;
+    public String saleOrderId;
 
     public BillPaymentDescriptionModel(String guid) {
         this.guid = guid;
     }
 
-    public BillPaymentDescriptionModel(String guid, String description, PrepaidType type, long orderId) {
-        this(guid, description, type, orderId, false, false);
+    public BillPaymentDescriptionModel(String guid, String description, PrepaidType type, long orderId, String saleOrderId) {
+        this(guid, description, type, orderId, false, false, saleOrderId);
     }
 
-    public BillPaymentDescriptionModel(String guid, String description, PrepaidType type, long orderId, boolean isVoided, boolean isFailed) {
+    public BillPaymentDescriptionModel(String guid, String description, PrepaidType type, long orderId, boolean isVoided, boolean isFailed, String saleOrderId) {
         this.guid = guid;
         this.description = description;
         this.type = type;
         this.orderId = orderId;
         this.isVoided = isVoided;
         this.isFailed = isFailed;
+        this.saleOrderId = saleOrderId;
     }
 
     @Override
@@ -47,8 +49,9 @@ public class BillPaymentDescriptionModel implements IValueModel{
         values.put(BillPaymentDescriptionTable.DESCRIPTION, description);
         _putEnum(values, BillPaymentDescriptionTable.TYPE, type);
         values.put(BillPaymentDescriptionTable.IS_VOIDED, isVoided);
-        values.put(BillPaymentDescriptionTable.ORDER_ID, orderId);
+        values.put(BillPaymentDescriptionTable.PREPAID_ORDER_ID, orderId);
         values.put(BillPaymentDescriptionTable.IS_FAILED, isFailed);
+        values.put(BillPaymentDescriptionTable.ORDER_ID, saleOrderId);
         return values;
     }
 

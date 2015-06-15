@@ -174,7 +174,9 @@ public class SqlUpdateVersionMatcher {
         UPDATE5_8TO5_9(new Update5_8to5_9()),
         UPDATE5_8TO6_1(new Update5_8to6_1()),
 
-        UPDATE5_9TO6_1(new Update5_9to6_1());
+        UPDATE5_9TO6_1(new Update5_9to6_1()),
+
+        UPDATE6_1TO6_2(new Update6_1to6_2());
 
 
         private IUpdateContainer container;

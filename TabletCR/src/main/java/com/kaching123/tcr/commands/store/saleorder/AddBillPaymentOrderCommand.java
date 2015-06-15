@@ -74,13 +74,14 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
 
         String prepaidGuid = UUID.randomUUID().toString();
 
-        Long prepaidOrderId = getPrepaidOrderId(prepaidGuid, prepaidDescription, prepaidType);
+        orderModel = createSaleOrder((BigDecimal) getArgs().getSerializable(ARG_TRANSACTION_FEE));
+
+        Long prepaidOrderId = getPrepaidOrderId(prepaidGuid, prepaidDescription, prepaidType, orderModel.guid);
         if (prepaidOrderId == null) {
             return failed();
         }
 
-        prepaidModel = new BillPaymentDescriptionModel(prepaidGuid, prepaidDescription, prepaidType, prepaidOrderId);
-        orderModel = createSaleOrder((BigDecimal) getArgs().getSerializable(ARG_TRANSACTION_FEE));
+        prepaidModel = new BillPaymentDescriptionModel(prepaidGuid, prepaidDescription, prepaidType, prepaidOrderId, orderModel.guid);
 
         itemModel = new SaleOrderItemModel(
                 UUID.randomUUID().toString(),
@@ -107,13 +108,13 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
         return succeeded().add(EXTRA_ORDER_GUID, orderModel.guid).add(EXTRA_PREPAID_ORDER_ID, prepaidOrderId);
     }
 
-    private Long getPrepaidOrderId(String guid, String description, PrepaidType type) {
+    private Long getPrepaidOrderId(String guid, String description, PrepaidType type, String orderGuid) {
         if (getApp().isTrainingMode()) {
             return getPrepaidOrderIdLocal();
         }
 
         try {
-            JSONObject req = getPrepaidOrderIdRequest(getApp(), description, type, guid);
+            JSONObject req = getPrepaidOrderIdRequest(getApp(), description, type, guid, orderGuid);
             Logger.d("AddBillPaymentOrderCommand.getPrepaidOrderId(): req: " + req.toString());
             SyncApi api = getApp().getRestAdapter().create(SyncApi.class);
             GetPrepaidOrderIdResponse resp = api.getPrepaidOrderId(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(getApp().getOperator(), getApp()), req);
@@ -131,19 +132,20 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
         return null;
     }
 
-    public static JSONObject getPrepaidOrderIdRequest(TcrApplication app, String description, PrepaidType type, String guid) throws JSONException {
+    public static JSONObject getPrepaidOrderIdRequest(TcrApplication app, String description, PrepaidType type, String guid, String orderGuid) throws JSONException {
         JSONObject request = new JSONObject();
         request.put("shop_id", app.getShopId());
         request.put("description", description);
         request.put("type", type);
         request.put("guid", guid);
+        request.put("order_id", orderGuid);
         return request;
     }
 
     private Long getPrepaidOrderIdLocal() {
         Long orderId = _wrap(ProviderAction
                         .query(URI_BILL_DESC)
-                        .projection("max(" + BillPaymentDescriptionTable.ORDER_ID + ")")
+                        .projection("max(" + BillPaymentDescriptionTable.PREPAID_ORDER_ID + ")")
                         .perform(getContext()),
                 new Function<Cursor, Long>() {
                     @Override

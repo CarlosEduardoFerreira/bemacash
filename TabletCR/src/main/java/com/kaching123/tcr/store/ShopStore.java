@@ -30,7 +30,7 @@ import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 300)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 301)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -226,7 +226,7 @@ public abstract class ShopStore {
     static {
         applyForeignKeys(UnitTable.TABLE_NAME,
                 foreignKey(UnitTable.ITEM_ID, ItemTable.TABLE_NAME, ItemTable.GUID),
-                foreignKey(UnitTable.SALE_ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID),
+                foreignKey(UnitTable.SALE_ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true),
                 foreignKey(UnitTable.CHILD_ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID)
         );
     }
@@ -601,7 +601,7 @@ public abstract class ShopStore {
                 foreignKey(SaleOrderTable.SHIFT_GUID, ShiftTable.TABLE_NAME, ShiftTable.GUID),
                 foreignKey(SaleOrderTable.CUSTOMER_GUID, CustomerTable.TABLE_NAME, CustomerTable.GUID),
                 foreignKey(SaleOrderTable.REGISTER_ID, RegisterTable.TABLE_NAME, RegisterTable.ID),
-                foreignKey(SaleOrderTable.PARENT_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID)
+                foreignKey(SaleOrderTable.PARENT_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true)
         );
 
         applyTmpFields(SaleOrderTable.TABLE_NAME,
@@ -692,7 +692,7 @@ public abstract class ShopStore {
 
     static {
         applyForeignKeys(SaleItemTable.TABLE_NAME,
-                foreignKey(SaleItemTable.ORDER_GUID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID),
+                foreignKey(SaleItemTable.ORDER_GUID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true),
                 foreignKey(SaleItemTable.PARENT_GUID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID)
         );
 
@@ -737,7 +737,7 @@ public abstract class ShopStore {
     static {
         applyForeignKeys(SaleAddonTable.TABLE_NAME,
                 foreignKey(SaleAddonTable.ADDON_GUID, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID),
-                foreignKey(SaleAddonTable.ITEM_GUID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID)
+                foreignKey(SaleAddonTable.ITEM_GUID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, true)
         );
     }
 
@@ -1169,7 +1169,7 @@ public abstract class ShopStore {
 
     static {
         applyForeignKeys(PaymentTransactionTable.TABLE_NAME,
-                foreignKey(PaymentTransactionTable.ORDER_GUID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID),
+                foreignKey(PaymentTransactionTable.ORDER_GUID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true),
                 foreignKey(PaymentTransactionTable.PARENT_GUID, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID),
                 foreignKey(PaymentTransactionTable.OPERATOR_GUID, EmployeeTable.TABLE_NAME, EmployeeTable.GUID),
                 foreignKey(PaymentTransactionTable.SHIFT_GUID, ShiftTable.TABLE_NAME, ShiftTable.GUID)
@@ -1269,6 +1269,7 @@ public abstract class ShopStore {
     }
 
     @Table(BillPaymentDescriptionTable.TABLE_NAME)
+    @Index(name = "order", columns = BillPaymentDescriptionTable.ORDER_ID)
     public static interface BillPaymentDescriptionTable extends IBemaSyncTable {
         @URI
         String URI_CONTENT = "bp_description";
@@ -1296,7 +1297,15 @@ public abstract class ShopStore {
         String IS_FAILED = "is_failed";
 
         @Column(type = Type.INTEGER)
-        String ORDER_ID = "order_id";
+        String PREPAID_ORDER_ID = "order_id";
+
+        @Column(type = Type.TEXT)
+        String ORDER_ID = "sale_order_id";
+    }
+    static {
+        applyForeignKeys(BillPaymentDescriptionTable.TABLE_NAME,
+                foreignKey(BillPaymentDescriptionTable.ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true)
+        );
     }
 
     @Table(CustomerTable.TABLE_NAME)
@@ -1569,7 +1578,7 @@ public abstract class ShopStore {
                 foreignKey(EmployeeTipsTable.PARENT_GUID, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID),
                 foreignKey(EmployeeTipsTable.EMPLOYEE_ID, EmployeeTable.TABLE_NAME, EmployeeTable.GUID),
                 foreignKey(EmployeeTipsTable.SHIFT_ID, ShiftTable.TABLE_NAME, ShiftTable.GUID),
-                foreignKey(EmployeeTipsTable.ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID),
+                foreignKey(EmployeeTipsTable.ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true),
                 foreignKey(EmployeeTipsTable.PAYMENT_TRANSACTION_ID, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID)
         );
     }
@@ -1644,7 +1653,7 @@ public abstract class ShopStore {
         applyForeignKeys(EmployeeCommissionsTable.TABLE_NAME,
                 foreignKey(EmployeeCommissionsTable.EMPLOYEE_ID, EmployeeTable.TABLE_NAME, EmployeeTable.GUID),
                 foreignKey(EmployeeCommissionsTable.SHIFT_ID, ShiftTable.TABLE_NAME, ShiftTable.GUID),
-                foreignKey(EmployeeCommissionsTable.ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID)
+                foreignKey(EmployeeCommissionsTable.ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true)
         );
     }
 

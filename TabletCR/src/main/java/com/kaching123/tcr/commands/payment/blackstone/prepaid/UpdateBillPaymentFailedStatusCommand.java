@@ -32,7 +32,7 @@ public class UpdateBillPaymentFailedStatusCommand extends AsyncCommand {
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>(1);
         operations.add(ContentProviderOperation.newUpdate(URI_BILL_PAYMENT_DESCRIPTION)
-                .withSelection(BillPaymentDescriptionTable.ORDER_ID + " = ?", new String[]{String.valueOf(prepaidOrderId)})
+                .withSelection(BillPaymentDescriptionTable.PREPAID_ORDER_ID + " = ?", new String[]{String.valueOf(prepaidOrderId)})
                 .withValue(BillPaymentDescriptionTable.IS_FAILED, 1)
                 .build());
         return operations;

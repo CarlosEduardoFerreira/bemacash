@@ -24,6 +24,7 @@ public class ShopSchemaEx {
     private static final String CREATE_INDEX_STATEMENT_PREFIX = "create index";
     private static final String CREATE_VIEW_STATEMENT_PREFIX = "CREATE VIEW";
     private static final String FOREIGN_KEY_STATEMENT_FORMAT = "FOREIGN KEY(%1$s) REFERENCES %2$s(%3$s)";
+    private static final String FOREIGN_KEY_STATEMENT_CASCADE_DELETE = " ON DELETE CASCADE";
     private static final String DROP_TABLE_STATEMENT_FORMAT = "drop table if exists %s";
     private static final String DROP_VIEW_STATEMENT_FORMAT = "drop view if exists %s";
     private static final String SELECT_TABLE_NAMES_STATEMENT = "SELECT name FROM sqlite_master WHERE type='table'";
@@ -312,7 +313,10 @@ public class ShopSchemaEx {
     }
 
     private static String generateForeignKeyStatement(ForeignKey foreignKey) {
-        return String.format(Locale.US, FOREIGN_KEY_STATEMENT_FORMAT, foreignKey.childKey, foreignKey.parentTable, foreignKey.parentKey);
+        String foreignKeyStatement = String.format(Locale.US, FOREIGN_KEY_STATEMENT_FORMAT, foreignKey.childKey, foreignKey.parentTable, foreignKey.parentKey);
+        if (foreignKey.enableCascadeDelete)
+            foreignKeyStatement = foreignKeyStatement + FOREIGN_KEY_STATEMENT_CASCADE_DELETE;
+        return foreignKeyStatement;
     }
 
     private static String appendCreateForeignKeyStatement(String createTableStatement, String createForeignKeyStatement) {
@@ -377,15 +381,21 @@ public class ShopSchemaEx {
         public final String childKey;
         public final String parentTable;
         public final String parentKey;
+        public final boolean enableCascadeDelete;
 
         public static ForeignKey foreignKey(String childKey, String parentTable, String parentKey) {
-            return new ForeignKey(childKey, parentTable, parentKey);
+            return new ForeignKey(childKey, parentTable, parentKey, false);
         }
 
-        private ForeignKey(String childKey, String parentTable, String parentKey) {
+        public static ForeignKey foreignKey(String childKey, String parentTable, String parentKey, boolean enableCascadeDelete) {
+            return new ForeignKey(childKey, parentTable, parentKey, enableCascadeDelete);
+        }
+
+        private ForeignKey(String childKey, String parentTable, String parentKey, boolean enableCascadeDelete) {
             this.childKey = childKey;
             this.parentTable = parentTable;
             this.parentKey = parentKey;
+            this.enableCascadeDelete = enableCascadeDelete;
         }
     }
 
