@@ -1,5 +1,7 @@
 package com.kaching123.tcr.commands.rest.sync;
 
+import android.text.TextUtils;
+
 import com.kaching123.tcr.service.SyncCommand.MaxUpdateTime;
 
 import org.json.JSONException;
@@ -36,9 +38,13 @@ public class Sync2GetRequestBuilder {
         }else{
             from.put("date", Sync2Util.formatMillisec(new Date(updateTime.time)));
 
-            JSONObject whereId = new JSONObject();
-            whereId.put(guidColumn, updateTime.guid);
-            from.put("id", whereId);
+            if (TextUtils.isEmpty(updateTime.guid)) {
+                from.put("id", JSONObject.NULL);
+            } else {
+                JSONObject whereId = new JSONObject();
+                whereId.put(guidColumn, updateTime.guid);
+                from.put("id", whereId);
+            }
         }
 
         request.put("from", from);

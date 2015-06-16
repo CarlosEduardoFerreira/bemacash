@@ -9,6 +9,8 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
 import com.kaching123.tcr.store.ShopProviderExt.Method;
+import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
+import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.OldMovementGroupsQuery;
 import com.kaching123.tcr.store.ShopStore.OldSaleOrdersQuery;
@@ -34,10 +36,16 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
     private static final Uri OLD_MOVEMENT_GROUPS_URI = ShopProvider.contentUri(OldMovementGroupsQuery.CONTENT_PATH);
 
     private static final Uri SALE_ORDERS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(SaleOrderTable.URI_CONTENT);
+    private static final Uri TIPS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(EmployeeTipsTable.URI_CONTENT);
+    private static final Uri BILL_PAYMENTS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(BillPaymentDescriptionTable.URI_CONTENT);
     private static final Uri ITEM_MOVEMENTS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(ItemMovementTable.URI_CONTENT);
+
     private static final Uri SALE_ORDERS_URI = ShopProvider.contentUri(SaleOrderTable.URI_CONTENT);
     private static final Uri UNITS_URI = ShopProvider.contentUri(UnitTable.URI_CONTENT);
+    private static final Uri TIPS_URI = ShopProvider.contentUri(EmployeeTipsTable.URI_CONTENT);
+    private static final Uri BILL_PAYMENTS_URI = ShopProvider.contentUri(BillPaymentDescriptionTable.URI_CONTENT);
     private static final Uri ITEM_MOVEMENTS_URI = ShopProvider.contentUri(ItemMovementTable.URI_CONTENT);
+
 
     @Override
     protected TaskResult doInBackground() {
@@ -77,6 +85,19 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                 }
                 c.close();
 
+                Logger.d("ClearSalesHistoryCommand: trying to remove tips without orders");
+                int count = ProviderAction.delete(TIPS_NO_NOTIFY_URI)
+                        .where(EmployeeTipsTable.ORDER_ID + " is null ")
+                        .where(EmployeeTipsTable.CREATE_TIME + " < ? ", minCreateTime)
+                        .perform(getContext());
+                Logger.d("ClearSalesHistoryCommand: tips without orders removed: " + count);
+
+                Logger.d("ClearSalesHistoryCommand: trying to remove prepaids without orders");
+                count = ProviderAction.delete(BILL_PAYMENTS_NO_NOTIFY_URI)
+                        .where(BillPaymentDescriptionTable.ORDER_ID + " is null ")
+                        .perform(getContext());
+                Logger.d("ClearSalesHistoryCommand: prepaids without orders removed: " + count);
+
                 c = ProviderAction.query(OLD_MOVEMENT_GROUPS_URI)
                         .where("", minCreateTime)
                         .perform(getContext());
@@ -87,7 +108,7 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                     String updateQtyFlag = c.getString(0);
                     Logger.d("ClearSalesHistoryCommand: trying to remove movement group, flag: " + updateQtyFlag);
 
-                    int count = ProviderAction.delete(ITEM_MOVEMENTS_NO_NOTIFY_URI)
+                    count = ProviderAction.delete(ITEM_MOVEMENTS_NO_NOTIFY_URI)
                             .where(ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " = ?", updateQtyFlag)
                             .perform(getContext());
                     totalCount += count;
@@ -110,6 +131,8 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
             getContext().getContentResolver().notifyChange(UNITS_URI, null);
             getContext().getContentResolver().notifyChange(SALE_ORDERS_URI, null);
             getContext().getContentResolver().notifyChange(ITEM_MOVEMENTS_URI, null);
+            getContext().getContentResolver().notifyChange(TIPS_URI, null);
+            getContext().getContentResolver().notifyChange(BILL_PAYMENTS_URI, null);
             Logger.d("ClearSalesHistoryCommand: ui notified");
         } finally {
             getApp().unlockOnSalesHistory();

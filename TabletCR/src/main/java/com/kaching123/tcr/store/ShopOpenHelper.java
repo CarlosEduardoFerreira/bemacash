@@ -13,10 +13,9 @@ import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
-import com.kaching123.tcr.model.Unit.Status;
+import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.mayer.sql.update.version.IUpdateContainer;
@@ -277,8 +276,7 @@ public class ShopOpenHelper extends BaseOpenHelper {
                 long rowId = db.insertWithOnConflict(tableName, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 if (pages != 0)
                     fireEvent(context, tableName, null, pages, currentPage);
-                if (rowId == -1L)
-                    throw new SQLiteException();
+                insertValuesFromExtraDatabase(db, tableName, values);
             }
         } catch (SQLiteConstraintException e) {
             Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
@@ -296,6 +294,95 @@ public class ShopOpenHelper extends BaseOpenHelper {
         intent.putExtra(EXTRA_PAGES, pages);
         intent.putExtra(EXTRA_PROGRESS, progress);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private void insertValuesFromExtraDatabase(SQLiteDatabase db, String tableName, ContentValues values) {
+        try {
+            long rowId = db.insertWithOnConflict(tableName, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            if (rowId == -1L)
+                throw new SQLiteException();
+        } catch (SQLiteConstraintException e) {
+            Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
+            if (UnitTable.TABLE_NAME.equals(tableName)) {
+                if (tryFixUnit(db, values)) {
+                    tryInsertUnit(db, values);
+                    return;
+                }
+            }
+            throw e;
+        }
+    }
+
+    private boolean tryFixUnit(SQLiteDatabase db, ContentValues values) {
+        Unit.Status status = Unit.Status.values()[values.getAsInteger(UnitTable.STATUS)];
+        String saleOrderId = values.getAsString(UnitTable.SALE_ORDER_ID);
+        String childOrderId = values.getAsString(UnitTable.CHILD_ORDER_ID);
+
+        //unit doesn't belong to any order
+        if (TextUtils.isEmpty(saleOrderId) && TextUtils.isEmpty(childOrderId)) {
+            Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): failed to fix unit, not referring to any order; values: " + values);
+            return false;
+        }
+
+        //unit is sold
+        if (status == Unit.Status.SOLD) {
+            //check which order is missing
+            Cursor c = db.query(SaleOrderTable.TABLE_NAME, new String[]{"1"},
+                    SaleOrderTable.GUID + " = ?", new String[]{saleOrderId}, null, null, null);
+            boolean hasSaleOrder = c.getCount() > 0;
+            c.close();
+
+            if (hasSaleOrder) {
+                if (TextUtils.isEmpty(childOrderId)) {
+                    Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): failed to fix unit, sold but not referring to any missing order; values: " + values);
+                    return false;
+                }
+                values.putNull(UnitTable.CHILD_ORDER_ID);
+                return true;
+            }
+
+            values.clear();
+            return true;
+        }
+        //unit is active
+        if (TextUtils.isEmpty(childOrderId)) {
+            Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): failed to fix unit, it belongs to active order; values: " + values);
+            return false;
+        }
+        //unit is refund
+        if (TextUtils.isEmpty(saleOrderId)) {
+            values.putNull(UnitTable.CHILD_ORDER_ID);
+            return true;
+        }
+        //unit is active or refunded
+        //TODO: active orders should be loaded separately from the server(before orders)
+        //check if sale order is missing
+        Cursor c = db.query(SaleOrderTable.TABLE_NAME, new String[]{"1"},
+                SaleOrderTable.GUID + " = ?", new String[]{saleOrderId}, null, null, null);
+        boolean hasSaleOrder = c.getCount() > 0;
+
+        if (hasSaleOrder) {
+            values.putNull(UnitTable.CHILD_ORDER_ID);
+            return true;
+        }
+
+        values.putNull(UnitTable.SALE_ORDER_ID);
+        values.putNull(UnitTable.CHILD_ORDER_ID);
+        return true;
+    }
+
+    private void tryInsertUnit(SQLiteDatabase db, ContentValues values) {
+        if (values == null || values.size() == 0)
+            return;
+
+        try {
+            long rowId = db.insertWithOnConflict(UnitTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            if (rowId == -1L)
+                throw new SQLiteException();
+        } catch (SQLiteConstraintException e) {
+            Logger.e("ShopOpenHelper.tryInsertUnit(): constraint violation; values: " + values);
+            throw e;
+        }
     }
 
     public void clearTableInExtraDatabase(String tableName) {

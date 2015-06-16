@@ -289,7 +289,8 @@ public class SyncCommand implements Runnable {
                 int retriesCount = FINALIZE_SYNC_RETRIES;
                 do {
                     long serverLastTimestamp = getServerCurrentTimestamp(api, employee);
-                    Logger.e("SyncCommand.syncNowInner(): attempt #" + (FINALIZE_SYNC_RETRIES - retriesCount + 1) + "; serverLastTimestamp: " + serverLastTimestamp);
+                    long minUpdateTime = serverLastTimestamp - TimeUnit.DAYS.toMillis(salesHistoryLimit);
+                    Logger.e("SyncCommand.syncNowInner(): attempt #" + (FINALIZE_SYNC_RETRIES - retriesCount + 1) + "; serverLastTimestamp: " + serverLastTimestamp + "; minUpdateTime: " + minUpdateTime);
                     serverHasBeenUpdated = false;
                     count += syncSingleTable2(service, api2, RegisterTable.TABLE_NAME, RegisterTable.ID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID, employee, serverLastTimestamp);
@@ -313,24 +314,32 @@ public class SyncCommand implements Runnable {
 
                     //sale
 
+                    //TODO: check child-parent update time updates
                     count += syncTableWithChildren2(service, api2,
                             SaleOrderTable.TABLE_NAME,
                             SaleOrderTable.GUID, SaleOrderTable.PARENT_ID,
-                            employee, serverLastTimestamp);
+                            employee, serverLastTimestamp, minUpdateTime);
 
-                    count += syncSingleTable2(service, api2, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, employee, serverLastTimestamp, minUpdateTime);
 
                     count += syncTableWithChildren2(service, api2,
                             SaleItemTable.TABLE_NAME,
                             SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID,
-                            employee, serverLastTimestamp);
+                            employee, serverLastTimestamp, minUpdateTime);
 
-                    count += syncSingleTable2(service, api2, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, employee, serverLastTimestamp, minUpdateTime);
 
                     count += syncTableWithChildren2(service, api2,
                             PaymentTransactionTable.TABLE_NAME,
                             PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID,
-                            employee, serverLastTimestamp);
+                            employee, serverLastTimestamp, minUpdateTime);
+
+                    count += syncSingleTable2(service, api2, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID, employee, serverLastTimestamp);
+
+                    count += syncTableWithChildren2(service, api2,
+                            EmployeeTipsTable.TABLE_NAME,
+                            EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
+                            employee, serverLastTimestamp, minUpdateTime);
 
                     count += syncSingleTable2(service, api2, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID, employee, serverLastTimestamp);
 
@@ -339,14 +348,10 @@ public class SyncCommand implements Runnable {
                             EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
                             employee, serverLastTimestamp);
 
-                    count += syncSingleTable2(service, api2, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID, employee, serverLastTimestamp);
-                    count += syncTableWithChildren2(service, api2,
-                            EmployeeTipsTable.TABLE_NAME,
-                            EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
-                            employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, employee, serverLastTimestamp, minUpdateTime);
 
-                    count += syncSingleTable2(service, api2, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, employee, serverLastTimestamp);
-
+                    //TODO: order updates should trigger unit updates
+                    //TODO: old sold units should not be synced - add minUpdateTime param
                     //inventory depended from sale
                     count += syncSingleTable2(service, api2, UnitTable.TABLE_NAME, UnitTable.ID, employee, serverLastTimestamp);
                     //end
@@ -512,20 +517,32 @@ public class SyncCommand implements Runnable {
     }
 
     private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
-        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime);
-        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime);
+        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, 0L, false);
+        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, 0L, false);
+        return count;
+    }
+
+    private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime) throws SyncException {
+        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, minUpdateTime, true);
+        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, minUpdateTime, true);
         return count;
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
-        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime);
+        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, 0L, false);
+    }
+
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime) throws SyncException {
+        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true);
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel,
                                  boolean supportParentChildRelations,
                                  String parentIdColumn,
                                  boolean isChild,
-                                 long serverLastUpdateTime) throws SyncException {
+                                 long serverLastUpdateTime,
+                                 long minUpdateTime,
+                                 boolean limitHistory) throws SyncException {
 
         fireEvent(context, localTable);
         TcrApplication app = TcrApplication.get();
@@ -543,7 +560,14 @@ public class SyncCommand implements Runnable {
         int pages = -1;
         while (hasNext) {
             step++;
+
             MaxUpdateTime updateTime = getMaxTimeSingleTable(context, syncOpenHelper, localTable, guidColumn, parentIdColumn, isChild);
+
+            if (limitHistory) {
+                if (updateTime == null || updateTime.time < minUpdateTime)
+                    updateTime = new MaxUpdateTime(minUpdateTime, null);
+            }
+
             try {
                 JdbcConverter converter = JdbcFactory.getConverter(localTable);
                 GetPagedArrayResponse resp = makeRequest(api, app.emailApiKey,
