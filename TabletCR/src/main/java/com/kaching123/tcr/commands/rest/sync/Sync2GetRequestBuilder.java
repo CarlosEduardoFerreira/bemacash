@@ -61,4 +61,36 @@ public class Sync2GetRequestBuilder {
         return request;
     }
 
+    public static JSONObject getHistoryLimitRequest(long limitDate, MaxUpdateTime updateTime, String guidColumn, int limit) throws JSONException {
+        JSONObject request = new JSONObject();
+
+        request.put("limit_date", Sync2Util.formatMillisec(new Date(limitDate)));
+
+        JSONObject from = new JSONObject();
+
+        if(updateTime == null || updateTime.time == 0) {
+            from.put("update_time", JSONObject.NULL);
+            from.put("id", JSONObject.NULL);
+        }else{
+            from.put("update_time", Sync2Util.formatMillisec(new Date(updateTime.time)));
+
+            JSONObject whereId = new JSONObject();
+            whereId.put(guidColumn, updateTime.guid);
+            from.put("id", whereId);
+        }
+
+        request.put("from", from);
+
+        request.put("limit", limit);
+        return request;
+    }
+
+    public static JSONObject getOldActiveOrdersRequest(long limitDate) throws JSONException {
+        JSONObject request = new JSONObject();
+
+        request.put("limit_date", Sync2Util.formatMillisec(new Date(limitDate)));
+
+        return request;
+    }
+
 }

@@ -13,9 +13,9 @@ import com.kaching123.tcr.Logger;
  */
 public class SyncOpenHelper extends BaseOpenHelper {
 
-    //TODO: check db lifecycle
-
     private static final String DB_NAME_PREFIX = "sync_";
+
+    private static final String SQL_CLEAR_TABLE = "DELETE FROM %s;";
 
     protected static String getDbName() {
         return DB_NAME_PREFIX + BaseOpenHelper.getDbName();
@@ -51,12 +51,29 @@ public class SyncOpenHelper extends BaseOpenHelper {
         ShopSchemaEx.onCreate(db, true, true);
     }
 
+    public synchronized void beginTransaction() {
+        getWritableDatabase().beginTransaction();
+    }
+
+    public synchronized void setTransactionSuccessful() {
+        getWritableDatabase().setTransactionSuccessful();
+    }
+
+    public synchronized void endTransaction() {
+        getWritableDatabase().endTransaction();
+    }
+
     public synchronized boolean insert(String tableName, ContentValues[] valuesArray) {
+        return insert(tableName, valuesArray, true);
+    }
+
+    public synchronized boolean insert(String tableName, ContentValues[] valuesArray, boolean inTransaction) {
         if (TextUtils.isEmpty(tableName) || valuesArray == null || valuesArray.length == 0)
             return false;
 
         SQLiteDatabase db = getWritableDatabase();
-        db.beginTransaction();
+        if (inTransaction)
+            db.beginTransaction();
         try {
             for (ContentValues values : valuesArray) {
                 long id = db.insertWithOnConflict(tableName, null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -69,10 +86,17 @@ public class SyncOpenHelper extends BaseOpenHelper {
         } catch (Exception e) {
             Logger.e("SyncOpenHelper.insert(): tableName: " + tableName + " error", e);
         } finally {
-            db.setTransactionSuccessful();
-            db.endTransaction();
+            if (inTransaction) {
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            }
         }
         return false;
+    }
+
+    public synchronized void clearTable(String tableName) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(String.format(SQL_CLEAR_TABLE, tableName));
     }
 
     public synchronized Cursor getMaxUpdateTime(String[] selectionArgs) {

@@ -49,6 +49,7 @@ import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.notification.NotificationHelper;
 import com.kaching123.tcr.processor.PrepaidUpdateProcessor;
 import com.kaching123.tcr.processor.PrepaidUpdateProcessor.IUpdateCallback;
+import com.kaching123.tcr.service.response.SyncOldActiveOrdersResponseHandler;
 import com.kaching123.tcr.service.response.SyncResponseHandler.HandlerResult;
 import com.kaching123.tcr.service.response.SyncSingleResponseHandler;
 import com.kaching123.tcr.store.ShopProvider;
@@ -310,36 +311,39 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, CategoryTable.TABLE_NAME, CategoryTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ItemTable.TABLE_NAME, ItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID, employee, serverLastTimestamp);
-                    count += syncSingleTable2(service, api2, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, employee, serverLastTimestamp);
+
+                    count += syncSingleTable2(service, api2, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, employee, serverLastTimestamp, minUpdateTime, true);
 
                     //sale
 
-                    //TODO: check child-parent update time updates
+                    syncOldActiveOrders(service, api2, employee, minUpdateTime);
+
+                    //TODO: test child-parent update time updates
                     count += syncTableWithChildren2(service, api2,
                             SaleOrderTable.TABLE_NAME,
                             SaleOrderTable.GUID, SaleOrderTable.PARENT_ID,
-                            employee, serverLastTimestamp, minUpdateTime);
+                            employee, serverLastTimestamp, minUpdateTime, false);
 
-                    count += syncSingleTable2(service, api2, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, employee, serverLastTimestamp, minUpdateTime);
+                    count += syncSingleTable2(service, api2, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, employee, serverLastTimestamp, minUpdateTime, false);
 
                     count += syncTableWithChildren2(service, api2,
                             SaleItemTable.TABLE_NAME,
                             SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID,
-                            employee, serverLastTimestamp, minUpdateTime);
+                            employee, serverLastTimestamp, minUpdateTime, false);
 
-                    count += syncSingleTable2(service, api2, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, employee, serverLastTimestamp, minUpdateTime);
+                    count += syncSingleTable2(service, api2, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, employee, serverLastTimestamp, minUpdateTime, false);
 
                     count += syncTableWithChildren2(service, api2,
                             PaymentTransactionTable.TABLE_NAME,
                             PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID,
-                            employee, serverLastTimestamp, minUpdateTime);
+                            employee, serverLastTimestamp, minUpdateTime, false);
 
                     count += syncSingleTable2(service, api2, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID, employee, serverLastTimestamp);
 
                     count += syncTableWithChildren2(service, api2,
                             EmployeeTipsTable.TABLE_NAME,
                             EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
-                            employee, serverLastTimestamp, minUpdateTime);
+                            employee, serverLastTimestamp, minUpdateTime, false);
 
                     count += syncSingleTable2(service, api2, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID, employee, serverLastTimestamp);
 
@@ -348,12 +352,12 @@ public class SyncCommand implements Runnable {
                             EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
                             employee, serverLastTimestamp);
 
-                    count += syncSingleTable2(service, api2, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, employee, serverLastTimestamp, minUpdateTime);
+                    count += syncSingleTable2(service, api2, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, employee, serverLastTimestamp, minUpdateTime, false);
 
-                    //TODO: order updates should trigger unit updates
-                    //TODO: old sold units should not be synced - add minUpdateTime param
+                    //TODO: test - order updates should trigger unit updates
+                    //TODO: old sold units should not be synced - add new call
                     //inventory depended from sale
-                    count += syncSingleTable2(service, api2, UnitTable.TABLE_NAME, UnitTable.ID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, UnitTable.TABLE_NAME, UnitTable.ID, employee, serverLastTimestamp, minUpdateTime, true);
                     //end
                 } while (serverHasBeenUpdated && --retriesCount > 0);
 
@@ -517,23 +521,23 @@ public class SyncCommand implements Runnable {
     }
 
     private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
-        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, 0L, false);
-        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, 0L, false);
+        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, 0L, false, false);
+        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, 0L, false, false);
         return count;
     }
 
-    private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime) throws SyncException {
-        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, minUpdateTime, true);
-        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, minUpdateTime, true);
+    private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException {
+        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep);
+        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep);
         return count;
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
-        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, 0L, false);
+        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, 0L, false, false);
     }
 
-    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime) throws SyncException {
-        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true);
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException {
+        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep);
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel,
@@ -542,7 +546,8 @@ public class SyncCommand implements Runnable {
                                  boolean isChild,
                                  long serverLastUpdateTime,
                                  long minUpdateTime,
-                                 boolean limitHistory) throws SyncException {
+                                 boolean limitHistory,
+                                 boolean fillHistoryGep) throws SyncException {
 
         fireEvent(context, localTable);
         TcrApplication app = TcrApplication.get();
@@ -564,21 +569,16 @@ public class SyncCommand implements Runnable {
             MaxUpdateTime updateTime = getMaxTimeSingleTable(context, syncOpenHelper, localTable, guidColumn, parentIdColumn, isChild);
 
             if (limitHistory) {
-                if (updateTime == null || updateTime.time < minUpdateTime)
+                if (!fillHistoryGep && (updateTime == null || updateTime.time < minUpdateTime)) {
+                    /*if (updateTime != null)
+                        syncOpenHelper.clearTable(localTable);*/
                     updateTime = new MaxUpdateTime(minUpdateTime, null);
+                }
             }
 
             try {
                 JdbcConverter converter = JdbcFactory.getConverter(localTable);
-                GetPagedArrayResponse resp = makeRequest(api, app.emailApiKey,
-                        SyncUploadRequestBuilder.getReqCredentials(employeeModel, app),
-                        Sync2GetRequestBuilder.getRequestFull(
-                                converter.getTableName(),
-                                updateTime,
-                                converter.getGuidColumn(),
-                                supportParentChildRelations ? converter.getParentGuidColumn() : null,
-                                isChild,
-                                PAGE_ROWS));
+                GetPagedArrayResponse resp = getResponse(api, employeeModel, localTable, supportParentChildRelations, isChild, app, minUpdateTime, updateTime, converter, fillHistoryGep);
                 Logger.d("Resp = %s", resp);
                 if (resp == null || !resp.isSuccess()) {
                     throw new SyncException(localTable);
@@ -603,6 +603,68 @@ public class SyncCommand implements Runnable {
         }
 
         return size;
+    }
+
+    private void syncOldActiveOrders(Context context, SyncApi2 api, EmployeeModel employeeModel,
+                                 long minUpdateTime) throws SyncException {
+        //TODO: fire specific event?
+        fireEvent(context, SaleOrderTable.TABLE_NAME);
+        TcrApplication app = TcrApplication.get();
+
+        try {
+            GetArrayResponse resp = makeOldActiveOrdersRequest(api, app.emailApiKey,
+                    SyncUploadRequestBuilder.getReqCredentials(employeeModel, app),
+                    Sync2GetRequestBuilder.getOldActiveOrdersRequest(minUpdateTime));
+            Logger.d("Resp = %s", resp);
+            if (resp == null || !resp.isSuccess()) {
+                throw new SyncException(SaleOrderTable.TABLE_NAME);
+            }
+            //TODO: handle result?
+            boolean hasData = new SyncOldActiveOrdersResponseHandler(syncOpenHelper).handleResponse(resp);
+            if (hasData) {
+                fireEvent(context, SaleOrderTable.TABLE_NAME, 1, 1);
+            }
+        } catch (Exception e) {
+            Logger.e("sync old active orders exception", e);
+            throw new SyncException(SaleOrderTable.TABLE_NAME);
+        }
+    }
+
+    private GetPagedArrayResponse getResponse(SyncApi2 api, EmployeeModel employeeModel, String localTable, boolean supportParentChildRelations, boolean isChild, TcrApplication app,
+                                              long minUpdateTime, MaxUpdateTime updateTime, JdbcConverter converter, boolean fillHistoryGep) throws JSONException, SyncException {
+        JSONObject credentials = SyncUploadRequestBuilder.getReqCredentials(employeeModel, app);
+
+        if (fillHistoryGep && (updateTime == null || updateTime.time < minUpdateTime)) {
+            if (UnitTable.TABLE_NAME.equals(localTable)) {
+                return makeUnitsRequest(api, app.emailApiKey,
+                        credentials,
+                        Sync2GetRequestBuilder.getHistoryLimitRequest(
+                                minUpdateTime,
+                                updateTime,
+                                converter.getGuidColumn(),
+                                PAGE_ROWS));
+            }
+            if (ItemMovementTable.TABLE_NAME.equals(localTable)) {
+                return makeMovementsRequest(api, app.emailApiKey,
+                        credentials,
+                        Sync2GetRequestBuilder.getHistoryLimitRequest(
+                                minUpdateTime,
+                                updateTime,
+                                converter.getGuidColumn(),
+                                PAGE_ROWS));
+            }
+            throw new IllegalArgumentException("history limit is not supported for table: " + localTable);
+        }
+
+        return makeRequest(api, app.emailApiKey,
+                            credentials,
+                            Sync2GetRequestBuilder.getRequestFull(
+                                    converter.getTableName(),
+                                    updateTime,
+                                    converter.getGuidColumn(),
+                                    supportParentChildRelations ? converter.getParentGuidColumn() : null,
+                                    isChild,
+                                    PAGE_ROWS));
     }
 
     private int syncLocalSingleTable(Context context, String localTable) throws SyncException {
@@ -632,6 +694,42 @@ public class SyncCommand implements Runnable {
         while (retry++ < 5) {
             try {
                 return api.download(apiKey, credentials, entity);
+            } catch (RetrofitError e) {
+                Logger.e("attempt: " + retry, e);
+            }
+        }
+        throw new SyncException();
+    }
+
+    private GetPagedArrayResponse makeUnitsRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
+        int retry = 0;
+        while(retry++ < 5) {
+            try {
+                return api.downloadUnitsLimited(apiKey, credentials, entity);
+            } catch (RetrofitError e) {
+                Logger.e("attempt: " + retry, e);
+            }
+        }
+        throw new SyncException();
+    }
+
+    private GetPagedArrayResponse makeMovementsRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
+        int retry = 0;
+        while(retry++ < 5) {
+            try {
+                return api.downloadMovementGroups(apiKey, credentials, entity);
+            } catch (RetrofitError e) {
+                Logger.e("attempt: " + retry, e);
+            }
+        }
+        throw new SyncException();
+    }
+
+    private GetArrayResponse makeOldActiveOrdersRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
+        int retry = 0;
+        while(retry++ < 5) {
+            try {
+                return api.downloadOldActiveOrders(apiKey, credentials, entity);
             } catch (RetrofitError e) {
                 Logger.e("attempt: " + retry, e);
             }
@@ -989,15 +1087,22 @@ public class SyncCommand implements Runnable {
     }
 
     private static MaxUpdateTime getMaxTimeSingleTable(Context context, SyncOpenHelper syncOpenHelper, String tableName, String id, String parentIdColumn, boolean isChild) {
-        if (parentIdColumn == null) {
-            return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeQuery.URI_CONTENT, new String[]{tableName, id}, true);
-        }
-        return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeParentRelationsQuery.URI_CONTENT, new String[]{tableName, id, parentIdColumn, isChild ? "not null" : "null"}, true);
+        return getMaxTimeSingleTable(context, syncOpenHelper, tableName, id, parentIdColumn, isChild, false);
     }
 
-    private static MaxUpdateTime getMaxTime(Context context, SyncOpenHelper syncOpenHelper, String contentUri, String[] args, boolean needGuid) {
-        MaxUpdateTime mainMaxUpdateTime = getMaxTime(context, syncOpenHelper, contentUri, args, needGuid, false);
-        MaxUpdateTime syncMaxUpdateTime = getMaxTime(context, syncOpenHelper, contentUri, args, needGuid, true);
+    private static MaxUpdateTime getMaxTimeSingleTable(Context context, SyncOpenHelper syncOpenHelper, String tableName, String id, String parentIdColumn, boolean isChild, boolean fromMainDatabaseOnly) {
+        if (parentIdColumn == null) {
+            return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeQuery.URI_CONTENT, new String[]{tableName, id}, true, fromMainDatabaseOnly);
+        }
+        return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeParentRelationsQuery.URI_CONTENT, new String[]{tableName, id, parentIdColumn, isChild ? "not null" : "null"}, true, fromMainDatabaseOnly);
+    }
+
+    private static MaxUpdateTime getMaxTime(Context context, SyncOpenHelper syncOpenHelper, String contentUri, String[] args, boolean needGuid, boolean fromMainDatabaseOnly) {
+        MaxUpdateTime mainMaxUpdateTime = getMaxTimeInner(context, syncOpenHelper, contentUri, args, needGuid, false);
+        if (fromMainDatabaseOnly)
+            return mainMaxUpdateTime;
+
+        MaxUpdateTime syncMaxUpdateTime = getMaxTimeInner(context, syncOpenHelper, contentUri, args, needGuid, true);
         MaxUpdateTime maxUpdateTime = mainMaxUpdateTime;
         if (mainMaxUpdateTime == null)
             maxUpdateTime = syncMaxUpdateTime;
@@ -1006,7 +1111,7 @@ public class SyncCommand implements Runnable {
         return maxUpdateTime;
     }
 
-    private static MaxUpdateTime getMaxTime(Context context, SyncOpenHelper syncOpenHelper, String contentUri, String[] args, boolean needGuid, boolean fromSyncDatabase) {
+    private static MaxUpdateTime getMaxTimeInner(Context context, SyncOpenHelper syncOpenHelper, String contentUri, String[] args, boolean needGuid, boolean fromSyncDatabase) {
         Cursor c;
         if (!fromSyncDatabase) {
             c = context.getContentResolver().query(

@@ -28,6 +28,19 @@ public interface SyncApi2 {
     GetPagedArrayResponse download(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials, @Field("entity") JSONObject entity);
 
     @FormUrlEncoded
+    @POST("/apiv2/data/download_unitslimited")
+    GetPagedArrayResponse downloadUnitsLimited(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials, @Field("entity") JSONObject entity);
+
+    @FormUrlEncoded
+    @POST("/apiv2/data/download_movementgroups")
+    GetPagedArrayResponse downloadMovementGroups(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials, @Field("entity") JSONObject entity);
+
+    //apiv2/data/download_oldactiveorders
+    @FormUrlEncoded
+    @POST("/apiv2/data/download_oldactiveorders")
+    GetArrayResponse downloadOldActiveOrders(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials, @Field("entity") JSONObject entity);
+   
+    @FormUrlEncoded
     @POST("/apiv2/data/download_shopinfo")
     GetResponse downloadShopInfo(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials);
 }
