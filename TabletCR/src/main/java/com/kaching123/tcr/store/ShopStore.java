@@ -1728,17 +1728,14 @@ public abstract class ShopStore {
         String CREATE_TIME = "t_create_time";
 
         @SqlQuery
-        String QUERY = "select distinct " + UPDATE_QTY_FLAG + " from ("
-                + " select " + ItemMovementTable.ITEM_GUID + " as " + ITEM_GUID + ", " + ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " as " + UPDATE_QTY_FLAG + ", max(" + ItemMovementTable.CREATE_TIME + ") as " + CREATE_TIME
+        String QUERY = "select " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
                 + " from " + ItemMovementTable.TABLE_NAME
-                + " group by " + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
-                + " having max(" + ItemMovementTable.CREATE_TIME + ") < ?"
-                + ")"
-                + " left join " + ItemMovementTable.TABLE_NAME
-                + " on " + ITEM_GUID + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID
-                + " and " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " != " + UPDATE_QTY_FLAG
-                + " and " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + " > " + CREATE_TIME
-                + " where " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID + " is not null";
+                + " left join " + ItemTable.TABLE_NAME
+                + " on " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID
+                + " and " + ItemTable.TABLE_NAME + "." + ItemTable.UPDATE_QTY_FLAG + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
+                + " where " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " is null "
+                + " group by " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
+                + " having max("+ ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + ") < ?";
 
     }
 
