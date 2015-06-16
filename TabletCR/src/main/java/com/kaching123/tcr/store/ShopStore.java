@@ -1734,13 +1734,11 @@ public abstract class ShopStore {
                 + " group by " + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
                 + " having max(" + ItemMovementTable.CREATE_TIME + ") < ?"
                 + ")"
-                + " left join " + ItemTable.TABLE_NAME
-                + " on " + ITEM_GUID + " = " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " and " + ItemTable.TABLE_NAME + "." + ItemTable.STOCK_TRACKING + " = 1"
                 + " left join " + ItemMovementTable.TABLE_NAME
-                + " on " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID
+                + " on " + ITEM_GUID + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID
                 + " and " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " != " + UPDATE_QTY_FLAG
                 + " and " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + " > " + CREATE_TIME
-                + " where " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " is null or " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID + " is not null";
+                + " where " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID + " is not null";
 
     }
 

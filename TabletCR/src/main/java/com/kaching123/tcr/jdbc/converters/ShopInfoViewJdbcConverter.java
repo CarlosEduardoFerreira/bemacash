@@ -90,8 +90,6 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String MAX_HISTORY_RANGE = "MAX_HISTORY_RANGE";
 
-    private static final int MAX_SALES_HISTORY_LIMIT = 7 * 6; /*6 weeks in days*/
-
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
                 rs.getLong(ID),

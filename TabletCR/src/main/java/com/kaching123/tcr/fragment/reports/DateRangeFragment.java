@@ -154,6 +154,7 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
         dateTimePickerCalendar.set(Calendar.MINUTE, 00);
         dateTimePickerCalendar.set(Calendar.SECOND, 00);
         dateTimePickerCalendar.set(Calendar.MILLISECOND, 0);
+        dateTimePickerCalendar.add(Calendar.DATE, 1);
         return dateTimePickerCalendar.getTime();
     }
 
