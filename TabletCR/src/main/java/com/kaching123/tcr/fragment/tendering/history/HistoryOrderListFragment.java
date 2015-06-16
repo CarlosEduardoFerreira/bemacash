@@ -1,11 +1,16 @@
 package com.kaching123.tcr.fragment.tendering.history;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -28,6 +33,7 @@ import com.kaching123.tcr.model.SaleOrderTipsViewModel.TenderType;
 import com.kaching123.tcr.model.SaleOrderTipsViewModel.TransactionsState;
 import com.kaching123.tcr.model.SaleOrderViewModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
+import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.CustomerTable;
@@ -91,6 +97,8 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     private Calendar calendar = Calendar.getInstance();
 
+    private boolean firstLoad;
+
     protected void setFilterValues(Date from, Date to, String cashierGUID, String customerGUID,
                                    TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum) {
         this.from = from;
@@ -111,6 +119,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @AfterViews
     protected void init() {
+        firstLoad = true;
         isTipsEnabled = ((TcrApplication) getActivity().getApplicationContext()).isTipsEnabled();
         setListAdapter(adapter = new HistoryOrderAdapter(getActivity(), isTipsEnabled));
         getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -136,6 +145,21 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         transactionsStatusDivider.setVisibility(isTipsEnabled ? View.VISIBLE : View.GONE);
         gratuityHeader.setVisibility(isTipsEnabled ? View.VISIBLE : View.GONE);
         transactionsStatusHeader.setVisibility(isTipsEnabled ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!firstLoad && from != null)
+            getLoaderManager().restartLoader(0, null, this);
+        firstLoad = false;
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(syncGapReceiver, new IntentFilter(SyncCommand.ACTION_SYNC_GAP));
+    }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncGapReceiver);
+        super.onPause();
     }
 
     @Override
@@ -360,6 +384,18 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
 
     }
+
+    private BroadcastReceiver syncGapReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (from == null)
+                return;
+            Logger.d("[SYNC GAP] History Order List Fragment: restart orders loader");
+            getLoaderManager().restartLoader(0, null, HistoryOrderListFragment.this);
+        }
+
+    };
 
 
 }

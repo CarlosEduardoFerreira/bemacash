@@ -112,6 +112,10 @@ public interface ShopPref {
 
     int salesHistoryLimit();
 
+    long lastSuccessfulSyncTime();
+
+    boolean salesSyncGapOccurred();
+
     /**
      * user **
      */

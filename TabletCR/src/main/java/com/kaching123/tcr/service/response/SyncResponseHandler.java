@@ -43,14 +43,14 @@ public abstract class SyncResponseHandler {
         JdbcJSONObject data = response.getEntity();
         if(data == null){
             Logger.d("Empty response");
-            return new HandlerResult(false, false);
+            return new HandlerResult(0, false);
         }
 
         ArrayList<ContentValues> values = parseResponseArray(data);
         if (values.size() != 0) {
             saveResult(values);
         }
-        return new HandlerResult(values.size() > 0, serverHasBeenUpdated);
+        return new HandlerResult(values.size(), serverHasBeenUpdated);
     }
 
     public HandlerResult handleResponse(GetArrayResponse response) throws JSONException {
@@ -58,14 +58,14 @@ public abstract class SyncResponseHandler {
         JdbcJSONArray data = response.getEntity();
         if(data == null){
             Logger.d("Empty response");
-            return new HandlerResult(false, false);
+            return new HandlerResult(0, false);
         }
 
         ArrayList<ContentValues> values = parseResponseArray(data);
         if (values.size() != 0) {
             saveResult(values);
         }
-        return new HandlerResult(values.size() > 0, serverHasBeenUpdated);
+        return new HandlerResult(values.size(), serverHasBeenUpdated);
     }
 
     public ArrayList<ContentValues> parseResponse(GetArrayResponse response) throws JSONException {
@@ -134,11 +134,11 @@ public abstract class SyncResponseHandler {
 
     public static class HandlerResult {
 
-        public final boolean hasData;
+        public final int dataCount;
         public final boolean serverHasBeenUpdated;
 
-        public HandlerResult(boolean hasData, boolean serverHasBeenUpdated) {
-            this.hasData = hasData;
+        public HandlerResult(int dataCount, boolean serverHasBeenUpdated) {
+            this.dataCount = dataCount;
             this.serverHasBeenUpdated = serverHasBeenUpdated;
         }
 

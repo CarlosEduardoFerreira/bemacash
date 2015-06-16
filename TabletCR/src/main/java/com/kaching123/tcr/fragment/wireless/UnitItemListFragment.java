@@ -2,12 +2,17 @@ package com.kaching123.tcr.fragment.wireless;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -34,6 +39,7 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.model.converter.UnitViewFunction;
+import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.UnitsView2;
 import com.kaching123.tcr.store.ShopStore.UnitsView;
@@ -74,6 +80,8 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
     @ViewById
     protected EditText usbScannerInput;
 
+    private boolean firstLoad;
+
     @AfterTextChange
     protected void usbScannerInputAfterTextChanged(Editable s) {
         String newline = System.getProperty("line.separator");
@@ -110,8 +118,25 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
         return inflater.inflate(R.layout.wireless_list_fragment, container, false);
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!firstLoad && model != null)
+            getLoaderManager().restartLoader(0, null, this);
+        firstLoad = false;
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(syncGapReceiver, new IntentFilter(SyncCommand.ACTION_SYNC_GAP));
+    }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncGapReceiver);
+        super.onPause();
+    }
+
     @AfterViews
     protected void init() {
+        firstLoad = true;
         setListAdapter(adapter = new UnitItemAdapter(getActivity()));
         getListView().setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
@@ -304,4 +329,17 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
             }
         }, 501);
     }
+
+    private BroadcastReceiver syncGapReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (model == null)
+                return;
+
+            Logger.d("[SYNC GAP] Unit Item List Fragment: restart units loader");
+            getLoaderManager().restartLoader(0, null, UnitItemListFragment.this);
+        }
+
+    };
 }

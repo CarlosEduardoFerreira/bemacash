@@ -37,7 +37,6 @@ public class SyncOldActiveOrdersResponseHandler {
     private static final String PAYMENT_TRANSACTIONS = "PAYMENT_TRANSACTIONS";
     private static final String BILL_PAYMENTS_DESCRIPTIONS = "BILL_PAYMENTS_DESCRIPTIONS";
     private static final String RECEIVED_TIPS = "RECEIVED_TIPS";
-    private static final String UNITS = "UNITS";
 
     private final SyncOpenHelper syncOpenHelper;
 
@@ -106,13 +105,6 @@ public class SyncOldActiveOrdersResponseHandler {
                 }
             }
 
-            JdbcJSONArray units = rs.isNull(UNITS) ? null : rs.getJSONArray(UNITS);
-            if (units != null) {
-                ArrayList<ContentValues> unitValues = parseResponseArray(units, JdbcFactory.getConverter(UnitTable.TABLE_NAME));
-                if (unitValues.size() != 0) {
-                    saveResult(UnitTable.TABLE_NAME, unitValues);
-                }
-            }
         }
         return values;
     }

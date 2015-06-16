@@ -1,11 +1,15 @@
 package com.kaching123.tcr.fragment.saleorder;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -36,6 +40,7 @@ import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.SaleOrderFunction;
+import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 
@@ -85,8 +90,19 @@ public class HoldFragmentDialog extends StyledDialogFragment {
         printBox.setVisibility(hasKitchenPrintable && hasOrderTitle && getApp().getShopInfo().printOnholdOrders ? View.VISIBLE : View.GONE);
         iniTitle();
         initListView();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         getLoaderManager().restartLoader(0, null, loaderCallback);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(syncGapReceiver, new IntentFilter(SyncCommand.ACTION_SYNC_GAP));
+    }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncGapReceiver);
+        super.onPause();
     }
 
     private void iniTitle() {
@@ -292,4 +308,14 @@ public class HoldFragmentDialog extends StyledDialogFragment {
     public static void hide(FragmentActivity activity) {
         DialogUtil.hide(activity, DIALOG_NAME);
     }
+
+    private BroadcastReceiver syncGapReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Logger.d("[SYNC GAP] Hold Fragment: restart orders on hold count loader");
+            getLoaderManager().restartLoader(0, null, loaderCallback);
+        }
+
+    };
 }

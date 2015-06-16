@@ -263,6 +263,8 @@ public class TcrApplication extends Application {
     public void clearDbRelatedPreferences() {
         getShopPref().prepaidVersionId().put(null);
         setPaxTipsEnabled(false);
+        setLastSuccessfulSyncTime(null);
+        setSalesSyncGapOccurred(false);
     }
 
     private String cut4Symbols(String s) {
@@ -761,6 +763,24 @@ public class TcrApplication extends Application {
         }
         return offlineStartTime;
     }
+
+    public void setLastSuccessfulSyncTime(Long lastSuccsessfulSyncTime) {
+        shopPref.lastSuccessfulSyncTime().put(lastSuccsessfulSyncTime == null ? 0L : lastSuccsessfulSyncTime);
+    }
+
+    public Long getLastSuccessfulSyncTime() {
+        long lastSuccsessfulSyncTime = shopPref.lastSuccessfulSyncTime().getOr(0L);
+        return lastSuccsessfulSyncTime == 0L ? null : lastSuccsessfulSyncTime;
+    }
+
+    public boolean isSalesSyncGapOccurred() {
+        return shopPref.salesSyncGapOccurred().getOr(false);
+    }
+
+    public void setSalesSyncGapOccurred(boolean value) {
+        shopPref.salesSyncGapOccurred().put(value);
+    }
+
 
     private long getOfflinePeriod() {
         int offlinePeriodHours = shopPref.offlinePeriodHours().getOr(0);

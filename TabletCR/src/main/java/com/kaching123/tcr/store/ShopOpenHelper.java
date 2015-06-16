@@ -30,8 +30,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._enum;
-
 /**
  * Created by pkabakov on 23.04.2014.
  */
@@ -261,29 +259,47 @@ public class ShopOpenHelper extends BaseOpenHelper {
     }
 
     public void copyTableFromExtraDatabase(String tableName, Context context) {
+        copyTableFromExtraDatabase(tableName, null, false);
+    }
+
+    public void copyUpdateTableFromExtraDatabase(String tableName, String idColumn) {
+        copyTableFromExtraDatabase(tableName, idColumn, true);
+    }
+
+    public void copyTableFromExtraDatabase(String tableName, String idColumn, boolean insertUpdate) {
         SQLiteDatabase db = getWritableDatabase();
 
         Cursor cursor = db.query(EXTRA_DB_ALIAS + '.' + tableName, null, null, null, null, null, null);
         ContentValues values = new ContentValues();
-        int pages = (PAGE_ROWS + cursor.getCount()) / PAGE_ROWS;
-        int steps = 0;
         try {
             while (cursor.moveToNext()) {
-                steps++;
-                int currentPage = steps / PAGE_ROWS;
                 values.clear();
                 DatabaseUtils.cursorRowToContentValues(cursor, values);
-                long rowId = db.insertWithOnConflict(tableName, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-                if (pages != 0)
-                    fireEvent(context, tableName, null, pages, currentPage);
-                insertValuesFromExtraDatabase(db, tableName, values);
+
+                if (!insertUpdate)
+                    insertValuesFromExtraDatabase(db, tableName, values);
+                else
+                    insertUpdateValuesFromExtraDatabase(db, tableName, idColumn, values);
             }
-        } catch (SQLiteConstraintException e) {
-            Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
-//            throw e;
         } finally {
             if (cursor != null)
                 cursor.close();
+        }
+    }
+
+    private void insertUpdateValuesFromExtraDatabase(SQLiteDatabase db, String tableName, String idColumn, ContentValues values) {
+        try {
+            String idValue = values.getAsString(idColumn);
+            values.remove(idColumn);
+            int updated = db.update(tableName, values, idColumn + " = ?", new String[]{idValue});
+
+            if (updated == 0) {
+                values.put(idColumn, idValue);
+                db.insertOrThrow(tableName, null, values);
+            }
+        } catch (SQLiteConstraintException e) {
+            Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
+            throw e;
         }
     }
 
@@ -365,7 +381,8 @@ public class ShopOpenHelper extends BaseOpenHelper {
             values.putNull(UnitTable.CHILD_ORDER_ID);
             return true;
         }
-
+        //should be refund unit
+        //active orders should be loaded separately from the server(before orders)
         values.putNull(UnitTable.SALE_ORDER_ID);
         values.putNull(UnitTable.CHILD_ORDER_ID);
         return true;

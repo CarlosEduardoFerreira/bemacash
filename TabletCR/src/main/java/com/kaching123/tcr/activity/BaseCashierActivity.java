@@ -1,7 +1,11 @@
 package com.kaching123.tcr.activity;
 
 import android.app.ActionBar;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -16,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -123,6 +128,7 @@ import com.kaching123.tcr.service.DisplayService.Command;
 import com.kaching123.tcr.service.DisplayService.DisplayBinder;
 import com.kaching123.tcr.service.DisplayService.DisplayListener;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
+import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
@@ -401,6 +407,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(syncGapReceiver, new IntentFilter(SyncCommand.ACTION_SYNC_GAP));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(syncGapReceiver);
+        super.onPause();
     }
 
     protected boolean isSPMSRSet() {
@@ -1024,8 +1042,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         makeScannerInputFocus();
     }
 
-    protected void makeScannerInputFocus()
-    {
+    protected void makeScannerInputFocus() {
 
     }
 
@@ -2146,7 +2163,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-//    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+    //    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
 //
 //        @Override
 //        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
@@ -2198,6 +2215,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //            updateTitle(null);
 //        }
 //    }
+
+    private BroadcastReceiver syncGapReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Logger.d("[SYNC GAP] Cashier Activity: restart orders on hold count loader");
+            getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
+        }
+
+    };
 
     private static class SaleOrderItemModelWrapper {
         private final SaleOrderItemModel model;

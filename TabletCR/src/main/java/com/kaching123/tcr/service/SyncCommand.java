@@ -108,13 +108,14 @@ public class SyncCommand implements Runnable {
 
     private static final int FINALIZE_SYNC_RETRIES = 3;
 
-    public static String ACTION_SYNC_PROGRESS = "com.kaching123.tcr.service.ACTION_SYNC_PROGRESS";
-    public static String ACTION_SYNC_COMPLETED = "com.kaching123.tcr.service.ACTION_SYNC_COMPLETED";
-    public static String EXTRA_TABLE = "table";
-    public static String EXTRA_PAGES = "pages";
-    public static String EXTRA_PROGRESS = "progress";
-    public static String EXTRA_DATA_LABEL = "data_label";
-    public static String EXTRA_SUCCESS = "success";
+    public static final String ACTION_SYNC_PROGRESS = "com.kaching123.tcr.service.ACTION_SYNC_PROGRESS";
+    public static final String ACTION_SYNC_COMPLETED = "com.kaching123.tcr.service.ACTION_SYNC_COMPLETED";
+    public static final String ACTION_SYNC_GAP = "action_sync_gap";
+    public static final String EXTRA_TABLE = "table";
+    public static final String EXTRA_PAGES = "pages";
+    public static final String EXTRA_PROGRESS = "progress";
+    public static final String EXTRA_DATA_LABEL = "data_label";
+    public static final String EXTRA_SUCCESS = "success";
 
     private static final String[] TABLES_URIS = new String[]{
             RegisterTable.URI_CONTENT,
@@ -285,12 +286,23 @@ public class SyncCommand implements Runnable {
         getApp().lockOnSalesHistory();
         try {
             try {
+                long serverLastTimestamp = getServerCurrentTimestamp(api, employee);
+                long minUpdateTime = serverLastTimestamp - TimeUnit.DAYS.toMillis(salesHistoryLimit);
+
+                if (salesHistoryLimit > getApp().getSalesHistoryLimit()) {
+                    Long lastSuccessfulSyncTime = getApp().getLastSuccessfulSyncTime();
+                    long oldMinUpdateTime = serverLastTimestamp - TimeUnit.DAYS.toMillis(getApp().getSalesHistoryLimit());
+                    if (lastSuccessfulSyncTime != null && lastSuccessfulSyncTime < oldMinUpdateTime)
+                        getApp().setLastSuccessfulSyncTime(null);
+                }
+
                 getApp().setSalesHistoryLimit(salesHistoryLimit);
 
                 int retriesCount = FINALIZE_SYNC_RETRIES;
                 do {
-                    long serverLastTimestamp = getServerCurrentTimestamp(api, employee);
-                    long minUpdateTime = serverLastTimestamp - TimeUnit.DAYS.toMillis(salesHistoryLimit);
+                    if (retriesCount != FINALIZE_SYNC_RETRIES)
+                        serverLastTimestamp = getServerCurrentTimestamp(api, employee);
+
                     Logger.e("SyncCommand.syncNowInner(): attempt #" + (FINALIZE_SYNC_RETRIES - retriesCount + 1) + "; serverLastTimestamp: " + serverLastTimestamp + "; minUpdateTime: " + minUpdateTime);
                     serverHasBeenUpdated = false;
                     count += syncSingleTable2(service, api2, RegisterTable.TABLE_NAME, RegisterTable.ID, employee, serverLastTimestamp);
@@ -312,9 +324,31 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, ItemTable.TABLE_NAME, ItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID, employee, serverLastTimestamp);
 
+                    //between iterations shouldn't be any gaps
+                    boolean firstIteration = retriesCount == FINALIZE_SYNC_RETRIES;
+                    Long lastSuccessfulSyncTime = getApp().getLastSuccessfulSyncTime();
+                    boolean lastSyncStillActual = lastSuccessfulSyncTime != null && lastSuccessfulSyncTime >= minUpdateTime;
+
+                    //TODO: check sync gap? only for this table
+                    if (firstIteration && !lastSyncStillActual && checkIsSyncGep(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, null, false)
+                            && checkIsOldSyncCache(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, null, false)) {
+                        clearSyncCache(syncOpenHelper, new String[]{ItemMovementTable.TABLE_NAME});
+                    }
+
                     count += syncSingleTable2(service, api2, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, employee, serverLastTimestamp, minUpdateTime, true);
 
                     //sale
+
+                    boolean isSalesSyncGep = false;
+                    if (firstIteration && !lastSyncStillActual) {
+                        isSalesSyncGep = checkIsSalesSyncGep(syncOpenHelper, minUpdateTime);
+                    }
+                    if (isSalesSyncGep) {
+                        if (checkIsSalesOldSyncCache(syncOpenHelper, minUpdateTime))
+                            clearSalesSyncCache(syncOpenHelper);
+
+                        getApp().setSalesSyncGapOccurred(true);
+                    }
 
                     syncOldActiveOrders(service, api2, employee, minUpdateTime);
 
@@ -368,6 +402,14 @@ public class SyncCommand implements Runnable {
 
                 //write data from extra db to main db on success, in transaction, making rows alive
                 localSync();
+
+                getApp().setLastSuccessfulSyncTime(serverLastTimestamp);
+
+                if (getApp().isSalesSyncGapOccurred()) {
+                    notifySyncGep();
+                    getApp().setSalesSyncGapOccurred(false);
+                }
+
             } finally {
                 syncOpenHelper.close();
             }
@@ -381,9 +423,115 @@ public class SyncCommand implements Runnable {
         return count;
     }
 
-    private static long getSalesHistoryLimitDate(int salesHistoryLimit) {
-        return System.currentTimeMillis() - (TimeUnit.DAYS.toMillis(salesHistoryLimit));
+    private void notifySyncGep() {
+        Logger.d("[SYNC GAP] notify");
+        Intent intent = new Intent(ACTION_SYNC_GAP);
+        LocalBroadcastManager.getInstance(service).sendBroadcast(intent);
     }
+
+
+    private boolean checkIsSalesSyncGep(SyncOpenHelper syncOpenHelper, long minUpdateTime) {
+        //TODO: write query?
+        //TODO: improve - old active orders
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, SaleOrderTable.PARENT_ID, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, SaleOrderTable.PARENT_ID, true))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, null, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID, true))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, null, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID, true))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID, true))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, null, false))
+            return true;
+        //TODO: improve - old sold units
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, UnitTable.TABLE_NAME, UnitTable.ID, null, false))
+            return true;
+        return false;
+    }
+
+    private boolean checkIsSyncGep(SyncOpenHelper syncOpenHelper, long minUpdateTime, String tableName, String guidColumn, String parentIdColumn, boolean isChild) {
+        MaxUpdateTime maxUpdateTime = getMaxTimeSingleTable(service, syncOpenHelper, tableName, guidColumn, parentIdColumn, isChild);
+        return maxUpdateTime == null || (maxUpdateTime.time < minUpdateTime);
+    }
+
+    private boolean checkIsSalesOldSyncCache(SyncOpenHelper syncOpenHelper, long minUpdateTime) {
+        //TODO: improve
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, SaleOrderTable.TABLE_NAME, SaleOrderTable.PARENT_ID, false))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, SaleOrderTable.TABLE_NAME, SaleOrderTable.PARENT_ID, true))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, BillPaymentDescriptionTable.TABLE_NAME, null, false))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, SaleItemTable.TABLE_NAME, SaleItemTable.PARENT_GUID, false))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, SaleItemTable.TABLE_NAME, SaleItemTable.PARENT_GUID, true))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, SaleAddonTable.TABLE_NAME, null, false))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.PARENT_GUID, false))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.PARENT_GUID, true))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.PARENT_GUID, false))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.PARENT_GUID, true))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, EmployeeCommissionsTable.TABLE_NAME, null, false))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, UnitTable.TABLE_NAME, null, false))
+            return true;
+        return false;
+    }
+
+    private boolean checkIsOldSyncCache(SyncOpenHelper syncOpenHelper, long minUpdateTime, String tableName, String parentIdColumn, boolean isChild) {
+        Long minCacheUpdateTime = getMinCacheUpdateTime(syncOpenHelper, tableName, parentIdColumn, isChild);
+        return minCacheUpdateTime != null && (minCacheUpdateTime < minUpdateTime);
+    }
+
+    private void clearSalesSyncCache(SyncOpenHelper syncOpenHelper) {
+        //TODO: clear only old data?
+        clearSyncCache(syncOpenHelper, new String[]{SaleOrderTable.TABLE_NAME,
+                BillPaymentDescriptionTable.TABLE_NAME,
+                SaleItemTable.TABLE_NAME,
+                SaleAddonTable.TABLE_NAME,
+                PaymentTransactionTable.TABLE_NAME,
+                EmployeeTipsTable.TABLE_NAME,
+                EmployeeCommissionsTable.TABLE_NAME,
+                UnitTable.TABLE_NAME});
+    }
+
+    private void clearSyncCache(SyncOpenHelper syncOpenHelper, String[] tableNames) {
+        syncOpenHelper.clearTables(tableNames);
+    }
+
+    private Long getMinCacheUpdateTime(SyncOpenHelper syncOpenHelper, String tableName, String parentIdColumn, boolean isChild) {
+        Cursor c;
+        if (TextUtils.isEmpty(parentIdColumn))
+            c = syncOpenHelper.getMinUpdateTime(tableName);
+        else
+            c = syncOpenHelper.getMinUpdateParentTime(tableName, parentIdColumn, isChild);
+
+        Long minCacheUpdateTime = null;
+        if (c.moveToFirst())
+            minCacheUpdateTime = c.getLong(0);
+
+        c.close();
+
+        return minCacheUpdateTime;
+    }
+
 
     private void sendSyncSuccessful(SyncApi api, EmployeeModel employee) {
         try {
@@ -446,21 +594,23 @@ public class SyncCommand implements Runnable {
 
                 //sale
 
-                count += syncLocalSingleTable(service, SaleOrderTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true);
 
-                count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, true);
 
-                count += syncLocalSingleTable(service, SaleItemTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, true);
 
-                count += syncLocalSingleTable(service, SaleAddonTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, true);
 
-                count += syncLocalSingleTable(service, PaymentTransactionTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, true);
 
 
                 count += syncLocalSingleTable(service, CreditReceiptTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, EmployeeTipsTable.TABLE_NAME);
 
-                count += syncLocalSingleTable(service, EmployeeCommissionsTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID, true);
+
+                count += syncLocalSingleTable(service, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, true);
+
 
                 //inventory depended from sale
                 count += syncLocalSingleTable(service, UnitTable.TABLE_NAME);
@@ -570,8 +720,6 @@ public class SyncCommand implements Runnable {
 
             if (limitHistory) {
                 if (!fillHistoryGep && (updateTime == null || updateTime.time < minUpdateTime)) {
-                    /*if (updateTime != null)
-                        syncOpenHelper.clearTable(localTable);*/
                     updateTime = new MaxUpdateTime(minUpdateTime, null);
                 }
             }
@@ -587,7 +735,8 @@ public class SyncCommand implements Runnable {
                     pages = (resp.rows + PAGE_ROWS - 1) / PAGE_ROWS;
                 }
                 HandlerResult handlerResult = handler.handleResponse(resp);
-                if (handlerResult.hasData) {
+                size += handlerResult.dataCount;
+                if (handlerResult.dataCount > 0) {
                     //int pages = resp.rows / PAGE_ROWS + (resp.rows % PAGE_ROWS > 0 ? 1 : 0);
                     fireEvent(context, localTable, pages, step);
                 }
@@ -595,7 +744,7 @@ public class SyncCommand implements Runnable {
                     Logger.w("SyncCommand.syncSingleTable2(): server data has been updated; table: " + localTable);
                     serverHasBeenUpdated = true;
                 }
-                hasNext = handlerResult.hasData;
+                hasNext = handlerResult.dataCount > 0;
             } catch (Exception e) {
                 Logger.e("sync table " + localTable + " exception", e);
                 throw new SyncException(localTable);
@@ -668,11 +817,14 @@ public class SyncCommand implements Runnable {
     }
 
     private int syncLocalSingleTable(Context context, String localTable) throws SyncException {
+        return syncLocalSingleTable(context, localTable, null, false);
+    }
 
-        //TODO: fire spec event?
-        fireEvent(context, SyncWaitDialogFragment.SYNC_LOCAL + localTable);
-
-        ShopProviderExt.callMethod(context, Method.METHOD_COPY_TABLE_FROM_SYNC_DB, localTable, null);
+    private int syncLocalSingleTable(Context context, String localTable, String idColumn, boolean insertUpdate) throws SyncException {
+        if (!insertUpdate)
+            ShopProviderExt.copyTableFromSyncDb(context, localTable);
+        else
+            ShopProviderExt.copyUpdateTableFromSyncDb(context, localTable, idColumn);
         if (!isManual)
             ShopProviderExt.callMethod(service, Method.TRANSACTION_YIELD, null, null);
 
@@ -680,11 +832,6 @@ public class SyncCommand implements Runnable {
         ShopProviderExt.callMethod(context, Method.METHOD_CLEAR_TABLE_IN_SYNC_DB, localTable, null);
         if (!isManual)
             ShopProviderExt.callMethod(service, Method.TRANSACTION_YIELD, null, null);
-
-        /*if (count != 0) {
-            //TODO: fire spec event?
-            //fireEvent(context, localTable, pages, step);
-        }*/
 
         return 0;
     }

@@ -8,6 +8,8 @@ import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
 
+import java.util.Locale;
+
 /**
  * Created by pkabakov on 25.09.2014.
  */
@@ -16,6 +18,9 @@ public class SyncOpenHelper extends BaseOpenHelper {
     private static final String DB_NAME_PREFIX = "sync_";
 
     private static final String SQL_CLEAR_TABLE = "DELETE FROM %s;";
+
+    private static final String MIN_UPDATE_TIME_QUERY = "select " + ShopStore.DEFAULT_UPDATE_TIME + " from %1$s where " + ShopStore.DEFAULT_UPDATE_TIME + " is not null order by " + ShopStore.DEFAULT_UPDATE_TIME + " limit 1";
+    private static final String MIN_UPDATE_TIME_PARENT_RELATIONS_QUERY = "select " + ShopStore.DEFAULT_UPDATE_TIME + " from %1$s where " + ShopStore.DEFAULT_UPDATE_TIME + " is not null and %2$s is %3$s order by " + ShopStore.DEFAULT_UPDATE_TIME + " limit 1";
 
     protected static String getDbName() {
         return DB_NAME_PREFIX + BaseOpenHelper.getDbName();
@@ -94,9 +99,18 @@ public class SyncOpenHelper extends BaseOpenHelper {
         return false;
     }
 
-    public synchronized void clearTable(String tableName) {
+    public synchronized void clearTables(String[] tableNames) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL(String.format(SQL_CLEAR_TABLE, tableName));
+        db.beginTransaction();
+        try {
+            for (String tableName: tableNames) {
+                db.delete(tableName, null, null);
+            }
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public synchronized Cursor getMaxUpdateTime(String[] selectionArgs) {
@@ -105,5 +119,15 @@ public class SyncOpenHelper extends BaseOpenHelper {
 
     public synchronized Cursor getMaxUpdateParentTime(String[] selectionArgs) {
         return ProviderQueryHelper.getMaxUpdateParentTime(this, selectionArgs);
+    }
+
+    public synchronized Cursor getMinUpdateTime(String tableName) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.rawQuery(String.format(Locale.US, MIN_UPDATE_TIME_QUERY, new String[]{tableName}), null);
+    }
+
+    public synchronized Cursor getMinUpdateParentTime(String tableName, String parentIdColumn, boolean isChild) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.rawQuery(String.format(Locale.US, MIN_UPDATE_TIME_PARENT_RELATIONS_QUERY, new String[]{tableName, parentIdColumn, isChild ? " not null " : " null "}), null);
     }
 }

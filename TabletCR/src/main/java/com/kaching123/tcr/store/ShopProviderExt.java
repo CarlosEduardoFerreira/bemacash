@@ -55,6 +55,7 @@ public class ShopProviderExt extends ShopProvider {
         public static final String METHOD_ATTACH_SYNC_DB = "method_attach_sync_db";
         public static final String METHOD_DETACH_SYNC_DB = "method_detach_sync_db";
         public static final String METHOD_COPY_TABLE_FROM_SYNC_DB = "method_copy_table_from_sync_db";
+        public static final String METHOD_COPY_UPDATE_TABLE_FROM_SYNC_DB = "method_copy_update_table_from_sync_db";
         public static final String METHOD_CLEAR_TABLE_IN_SYNC_DB = "method_clear_table_in_sync_db";
 
         public static final String TRANSACTION_START = "method_transaction_start";
@@ -67,9 +68,23 @@ public class ShopProviderExt extends ShopProvider {
 
     private static final String ARG_METHOD_RESULT = "arg_method_result";
 
+    private static final String KEY_TABLE_NAME = "KEY_TABLE_NAME";
+    private static final String KEY_ID_COLUMN = "KEY_ID_COLUMN";
+
     public static boolean callMethod(Context context, String method, String arg, Bundle extras) {
         Bundle resultBundle = context.getContentResolver().call(ShopProvider.BASE_URI, method, arg, extras);
         return resultBundle == null ? false : resultBundle.getBoolean(ShopProviderExt.ARG_METHOD_RESULT);
+    }
+
+    public static void copyTableFromSyncDb(Context context, String tableName) {
+        callMethod(context, Method.METHOD_COPY_TABLE_FROM_SYNC_DB, tableName, null);
+    }
+
+    public static void copyUpdateTableFromSyncDb(Context context, String tableName, String idColumn) {
+        Bundle extras = new Bundle();
+        extras.putString(KEY_TABLE_NAME, tableName);
+        extras.putString(KEY_ID_COLUMN, idColumn);
+        callMethod(context, Method.METHOD_COPY_UPDATE_TABLE_FROM_SYNC_DB, null, extras);
     }
 
     private RecalcItemMovementTable itemMovementHelper;
@@ -140,10 +155,12 @@ public class ShopProviderExt extends ShopProvider {
             ((ShopOpenHelper) dbHelper).detachExtraDatabase();
         } else if (Method.METHOD_COPY_TABLE_FROM_SYNC_DB.equals(method) && !TextUtils.isEmpty(arg)) {
             ((ShopOpenHelper) dbHelper).copyTableFromExtraDatabase(arg, getContext());
+        } else if (Method.METHOD_COPY_UPDATE_TABLE_FROM_SYNC_DB.equals(method) && extras != null && !extras.isEmpty()) {
+            ((ShopOpenHelper) dbHelper).copyUpdateTableFromExtraDatabase(extras.getString(KEY_TABLE_NAME), extras.getString(KEY_ID_COLUMN));
         } else if (Method.METHOD_CLEAR_TABLE_IN_SYNC_DB.equals(method) && !TextUtils.isEmpty(arg)) {
             ((ShopOpenHelper) dbHelper).clearTableInExtraDatabase(arg);
         } else if (Method.METHOD_VACUUM.equalsIgnoreCase(method)) {
-            boolean result = ((ShopOpenHelper)dbHelper).vacuum();
+            boolean result = ((ShopOpenHelper) dbHelper).vacuum();
             resultBundle = new Bundle();
             resultBundle.putBoolean(ARG_METHOD_RESULT, result);
         }
