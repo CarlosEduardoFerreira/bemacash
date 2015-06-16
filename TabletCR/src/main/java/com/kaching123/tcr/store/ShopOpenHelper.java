@@ -47,9 +47,6 @@ public class ShopOpenHelper extends BaseOpenHelper {
     private static final String SQL_DETACH_DB = "DETACH DATABASE " + EXTRA_DB_ALIAS + ";";
     private static final String SQL_CLEAR_TABLE_IN_DB = "DELETE FROM " + EXTRA_DB_ALIAS + ".%s;";
 
-    private static final String TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS = "trigger_unlink_old_refund_units";
-    private static final String TRIGGER_NAME_FIX_SALE_ORDER_UNITS = "trigger_fix_sale_order_units";
-
     private TrainingShopOpenHelper trainingShopOpenHelper;
     public static String ACTION_SYNC_PROGRESS = "com.kaching123.tcr.service.ACTION_SYNC_PROGRESS";
     public static String EXTRA_TABLE = "table";
@@ -189,30 +186,6 @@ public class ShopOpenHelper extends BaseOpenHelper {
         } finally {
             cursor.close();
         }
-    }
-
-    public void createTriggerUnlinkOldRefundUnits() {
-        SQLiteDatabase db = super.getWritableDatabase();
-        db.execSQL("CREATE TRIGGER IF NOT EXISTS " + TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS + " BEFORE DELETE ON " + SaleOrderTable.TABLE_NAME
-                + " FOR EACH ROW "
-                + " WHEN OLD." + SaleOrderTable.PARENT_ID + " IS NOT NULL "
-                + " BEGIN "
-                + " UPDATE " + UnitTable.TABLE_NAME + " SET " + UnitTable.CHILD_ORDER_ID + " =  NULL "
-                + " WHERE " + UnitTable.CHILD_ORDER_ID + " = OLD." + SaleOrderTable.GUID
-                + ";END;");
-    }
-
-    public void createTriggerFixSaleOrderUnits() {
-        SQLiteDatabase db = super.getWritableDatabase();
-        db.execSQL("CREATE TRIGGER IF NOT EXISTS " + TRIGGER_NAME_FIX_SALE_ORDER_UNITS + " BEFORE DELETE ON " + SaleOrderTable.TABLE_NAME
-                + " FOR EACH ROW "
-                + " WHEN OLD." + SaleOrderTable.PARENT_ID + " IS NULL "
-                + " AND OLD." + SaleOrderTable.STATUS + " = " + _enum(OrderStatus.COMPLETED)
-                + " BEGIN "
-                + " UPDATE " + UnitTable.TABLE_NAME + " SET " + UnitTable.SALE_ORDER_ID + " =  NULL "
-                + " WHERE " + UnitTable.SALE_ORDER_ID + " = OLD." + SaleOrderTable.GUID
-                + " AND " + UnitTable.STATUS + " != " + _enum(Status.SOLD)
-                + ";END;");
     }
 
     public boolean vacuum() {

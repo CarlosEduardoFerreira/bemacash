@@ -97,6 +97,15 @@ public class Update6_1to6_2 implements IUpdateContainer {
     private static final String SQL_CREATE_SO_SALE_REPORTS_ITEMS_VIEW = "CREATE VIEW so_sale_reports_items_view AS SELECT  sale_item_table.sale_order_item_id as sale_item_table_sale_order_item_id, sale_item_table.order_id as sale_item_table_order_id, sale_item_table.item_id as sale_item_table_item_id, sale_item_table.quantity as sale_item_table_quantity, sale_item_table.kitchen_printed_qty as sale_item_table_kitchen_printed_qty, sale_item_table.price as sale_item_table_price, sale_item_table.price_type as sale_item_table_price_type, sale_item_table.discountable as sale_item_table_discountable, sale_item_table.discount as sale_item_table_discount, sale_item_table.discount_type as sale_item_table_discount_type, sale_item_table.taxable as sale_item_table_taxable, sale_item_table.tax as sale_item_table_tax, sale_item_table.sequence as sale_item_table_sequence, sale_item_table.parent_guid as sale_item_table_parent_guid, sale_item_table.final_gross_price as sale_item_table_final_gross_price, sale_item_table.final_tax as sale_item_table_final_tax, sale_item_table.final_discount as sale_item_table_final_discount, sale_item_table.tmp_refund_quantity as sale_item_table_tmp_refund_quantity, sale_item_table.notes as sale_item_table_notes, sale_item_table.has_notes as sale_item_table_has_notes, sale_item_table.is_deleted as sale_item_table_is_deleted, sale_item_table.update_time as sale_item_table_update_time, sale_item_table.is_draft as sale_item_table_is_draft, sale_order_table.shift_guid as sale_order_table_shift_guid, sale_order_table.status as sale_order_table_status, sale_order_table.taxable as sale_order_table_taxable, sale_order_table.discount as sale_order_table_discount, sale_order_table.discount_type as sale_order_table_discount_type, sale_order_table.create_time as sale_order_table_create_time, sale_order_table.register_id as sale_order_table_register_id, sale_order_table.order_type as sale_order_table_order_type, sale_order_table.transaction_fee as sale_order_table_transaction_fee, item_table.description as item_table_description, item_table.ean_code as item_table_ean_code, item_table.product_code as item_table_product_code, item_table.cost as item_table_cost, item_table.category_id as item_table_category_id, category_table.title as category_table_title, category_table.department_guid as category_table_department_guid, department_table.title as department_table_title, bill_payment_description_table.guid as bill_payment_description_table_guid, bill_payment_description_table.description as bill_payment_description_table_description, bill_payment_description_table.type as bill_payment_description_table_type, bill_payment_description_table.is_voided as bill_payment_description_table_is_voided, bill_payment_description_table.is_failed as bill_payment_description_table_is_failed, bill_payment_description_table.order_id as bill_payment_description_table_order_id, bill_payment_description_table.sale_order_id as bill_payment_description_table_sale_order_id, bill_payment_description_table.is_deleted as bill_payment_description_table_is_deleted, bill_payment_description_table.update_time as bill_payment_description_table_update_time, bill_payment_description_table.is_draft as bill_payment_description_table_is_draft FROM sale_order_item AS sale_item_table JOIN sale_order AS sale_order_table ON sale_order_table.guid = sale_item_table.order_id and sale_order_table.is_deleted = 0 LEFT OUTER JOIN item AS item_table ON item_table.guid = sale_item_table.item_id LEFT OUTER JOIN category AS category_table ON category_table.guid = item_table.category_id LEFT OUTER JOIN department AS department_table ON department_table.guid = category_table.department_guid LEFT OUTER JOIN bp_description AS bill_payment_description_table ON bill_payment_description_table.guid = sale_item_table.item_id where sale_item_table.is_deleted = 0";
 
     private static final String SQL_CREATE_ITEM_MOVEMENT_CREATE_TIME = "create index idx_item_movement_create_time on item_movement(create_time)";
+
+    private static final String SQL_CREATE_TRIGGER_UNLINK_OLD_REFUND_UNITS = "CREATE TRIGGER IF NOT EXISTS trigger_unlink_old_refund_units BEFORE DELETE ON sale_order FOR EACH ROW " +
+            " WHEN OLD.parent_id IS NOT NULL " +
+            " BEGIN  UPDATE unit SET child_order_item_id =  NULL  WHERE child_order_item_id = OLD.guid;END";
+
+    private static final String SQL_CREATE_TRIGGER_FIX_SALE_ORDER_UNITS = "CREATE TRIGGER IF NOT EXISTS trigger_fix_sale_order_units BEFORE DELETE ON sale_order FOR EACH ROW" +
+            " WHEN OLD.parent_id IS NULL AND OLD.status = 1 " +
+            "BEGIN  UPDATE unit SET sale_order_item_id =  NULL  WHERE sale_order_item_id = OLD.guid AND status != 3;END";
+
     static void update6_1to6_2(SQLiteDatabase db){
 
         db.execSQL(SQL_RENAME_UNIT);
@@ -205,6 +214,11 @@ public class Update6_1to6_2 implements IUpdateContainer {
         db.execSQL(SQL_COPY_BP_DESCRIPTION);
         db.execSQL(SQL_DROP_TEMP_BP_DESCRIPTION);
 
+        db.execSQL(SQL_CREATE_ITEM_MOVEMENT_CREATE_TIME);
+
+        db.execSQL(SQL_CREATE_TRIGGER_UNLINK_OLD_REFUND_UNITS);
+        db.execSQL(SQL_CREATE_TRIGGER_FIX_SALE_ORDER_UNITS);
+
         db.execSQL(SQL_DROP_PREPAID_ORDER_VIEW);
         db.execSQL(SQL_DROP_SO_ITEMS_VIEW);
         db.execSQL(SQL_DROP_SO_SALE_REPORTS_ITEMS_VIEW);
@@ -212,7 +226,7 @@ public class Update6_1to6_2 implements IUpdateContainer {
         db.execSQL(SQL_CREATE_SO_ITEMS_VIEW);
         db.execSQL(SQL_CREATE_SO_SALE_REPORTS_ITEMS_VIEW);
 
-        db.execSQL(SQL_CREATE_ITEM_MOVEMENT_CREATE_TIME);
+
     }
 
     @Override

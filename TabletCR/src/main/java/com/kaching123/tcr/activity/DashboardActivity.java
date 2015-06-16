@@ -1545,6 +1545,12 @@ public class DashboardActivity extends SuperBaseActivity {
         @Override
         protected void onShiftClosed() {
             WaitDialogFragment.hide(DashboardActivity.this);
+
+            if (getApp().isTrainingMode()) {
+                showPrintXReportDialog();
+                return;
+            }
+
             WaitDialogFragment.show(DashboardActivity.this, getString(R.string.truncate_wait_message));
             ClearSalesHistoryCommand.start(DashboardActivity.this, new BaseClearSalesHistoryCallback() {
                 @Override

@@ -24,11 +24,18 @@ import com.annotatedsql.annotation.sql.SqlQuery;
 import com.annotatedsql.annotation.sql.StaticWhere;
 import com.annotatedsql.annotation.sql.Table;
 import com.annotatedsql.annotation.sql.Unique;
+import com.kaching123.tcr.model.OrderStatus;
+import com.kaching123.tcr.model.Unit.Status;
+import com.kaching123.tcr.store.ShopSchemaEx.Trigger.Action;
+import com.kaching123.tcr.store.ShopSchemaEx.Trigger.Time;
 import com.kaching123.tcr.BuildConfig;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
+import static com.kaching123.tcr.store.ShopSchemaEx.Trigger.trigger;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
+import static com.kaching123.tcr.store.ShopSchemaEx.applyTriggers;
 
 @Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 301)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
@@ -594,7 +601,11 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String TRANSACTION_FEE = "transaction_fee";
+
     }
+
+    public static final String TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS = "trigger_unlink_old_refund_units";
+    public static final String TRIGGER_NAME_FIX_SALE_ORDER_UNITS = "trigger_fix_sale_order_units";
 
     static {
         applyForeignKeys(SaleOrderTable.TABLE_NAME,
@@ -609,6 +620,16 @@ public abstract class ShopStore {
                 SaleOrderTable.TML_TOTAL_PRICE,
                 SaleOrderTable.TML_TOTAL_DISCOUNT,
                 SaleOrderTable.TML_TOTAL_TAX);
+
+        applyTriggers(
+                trigger(TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS, Time.BEFORE, Action.DELETE, SaleOrderTable.TABLE_NAME,
+                        " OLD." + SaleOrderTable.PARENT_ID + " IS NOT NULL ",
+                        " UPDATE " + UnitTable.TABLE_NAME + " SET " + UnitTable.CHILD_ORDER_ID + " =  NULL " + " WHERE " + UnitTable.CHILD_ORDER_ID + " = OLD." + SaleOrderTable.GUID),
+                trigger(TRIGGER_NAME_FIX_SALE_ORDER_UNITS, Time.BEFORE, Action.DELETE, SaleOrderTable.TABLE_NAME,
+                        " OLD." + SaleOrderTable.PARENT_ID + " IS NULL " + " AND OLD." + SaleOrderTable.STATUS + " = " + _enum(OrderStatus.COMPLETED),
+                        " UPDATE " + UnitTable.TABLE_NAME + " SET " + UnitTable.SALE_ORDER_ID + " =  NULL "
+                                + " WHERE " + UnitTable.SALE_ORDER_ID + " = OLD." + SaleOrderTable.GUID
+                                + " AND " + UnitTable.STATUS + " != " + _enum(Status.SOLD)));
     }
 
     @Table(SaleItemTable.TABLE_NAME)
@@ -1300,7 +1321,6 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER)
         String PREPAID_ORDER_ID = "order_id";
 
-        @NotNull
         @Column(type = Type.TEXT)
         String ORDER_ID = "sale_order_id";
     }
@@ -1675,6 +1695,8 @@ public abstract class ShopStore {
         String TIPS = "tips";
         String REFUNDS = "refunds";
 
+        final static int ORDER_STATUS_ACTIVE = 0;
+
         @SqlQuery
         String QUERY = "select " + SALES + "." + SaleOrderTable.GUID
                 + " from " + SaleOrderTable.TABLE_NAME + " as " + SALES
@@ -1682,10 +1704,14 @@ public abstract class ShopStore {
                 + " on " + SALES + "." + SaleOrderTable.GUID + " = " + TIPS + "." + EmployeeTipsTable.ORDER_ID + " and " + TIPS + "." + EmployeeTipsTable.PARENT_GUID + " is null"
                 + " left join " + SaleOrderTable.TABLE_NAME + " as " + REFUNDS
                 + " on " + SALES + "." + SaleOrderTable.GUID + " = " + REFUNDS + "." + SaleOrderTable.PARENT_ID
+                + " left join " + UnitTable.TABLE_NAME
+                + " on " + SALES + "." + SaleOrderTable.STATUS + " = " + ORDER_STATUS_ACTIVE
+                + " and " + UnitTable.TABLE_NAME + "." + UnitTable.SALE_ORDER_ID + " = " + SALES + "." + SaleOrderTable.GUID
                 + " where " + SALES + "." + SaleOrderTable.PARENT_ID + " is null and " + SALES + "." + SaleOrderTable.CREATE_TIME + " < ? "
                 + " and ("+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " IS NULL OR "+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " < ?)"
                 + " group by " + SALES + "." + SaleOrderTable.GUID
-                + " having " + REFUNDS + "." + SaleOrderTable.CREATE_TIME + " is null OR max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") < ?";
+                + " having (" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + " is null OR max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") < ?)"
+                + " and " + UnitTable.TABLE_NAME + "." + UnitTable.ID + " is null";
 
     }
 

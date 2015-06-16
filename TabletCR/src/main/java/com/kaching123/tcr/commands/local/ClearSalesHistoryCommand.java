@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
 import com.kaching123.tcr.store.ShopProviderExt.Method;
@@ -42,6 +41,9 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
+        if (getApp().isTrainingMode())
+            return succeeded();
+
         Logger.d("ClearSalesHistoryCommand: start");
         getApp().lockOnSalesHistory();
         Logger.d("ClearSalesHistoryCommand: locked");
@@ -51,10 +53,6 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
             Logger.d("ClearSalesHistoryCommand: limit: " + limitDays + " days");
             long minCreateTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(limitDays);
             Logger.d("ClearSalesHistoryCommand: min date: " + new Date(minCreateTime));
-
-            ShopProviderExt.callMethod(getContext(), Method.METHOD_CREATE_TRIGGER_UNLINK_OLD_REFUND_UNITS, null, null);
-            //TODO: what to do with old active orders? remove?
-            ShopProviderExt.callMethod(getContext(), Method.METHOD_CREATE_TRIGGER_FIX_SALE_UNITS, null, null);
 
             ShopProviderExt.callMethod(getContext(), Method.TRANSACTION_START, null, null);
             Logger.d("ClearSalesHistoryCommand: start transaction");
@@ -67,6 +65,7 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                         .perform(getContext());
                 Logger.d("ClearSalesHistoryCommand: old sale orders loaded, count: " + c.getCount());
 
+                //TODO: improve - add butch deletion?
                 while (c.moveToNext()) {
                     String orderGuid = c.getString(0);
                     Logger.d("ClearSalesHistoryCommand: trying to remove order, guid: " + orderGuid);

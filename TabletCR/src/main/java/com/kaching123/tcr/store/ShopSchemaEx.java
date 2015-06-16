@@ -27,8 +27,10 @@ public class ShopSchemaEx {
     private static final String FOREIGN_KEY_STATEMENT_CASCADE_DELETE = " ON DELETE CASCADE";
     private static final String DROP_TABLE_STATEMENT_FORMAT = "drop table if exists %s";
     private static final String DROP_VIEW_STATEMENT_FORMAT = "drop view if exists %s";
+    private static final String DROP_TRIGGER_STATEMENT_FORMAT = "drop trigger if exists %s";
     private static final String SELECT_TABLE_NAMES_STATEMENT = "SELECT name FROM sqlite_master WHERE type='table'";
     private static final String SELECT_VIEW_NAMES_STATEMENT = "SELECT name FROM sqlite_master WHERE type='view'";
+    private static final String SELECT_TRIGGER_NAMES_STATEMENT = "SELECT name FROM sqlite_master WHERE type='trigger'";
     private static final String AUTOINCREMENT_STATEMENT = "AUTOINCREMENT";
 
     private static final String ANDROID_METADATA_TABLE_NAME = "android_metadata";
@@ -47,7 +49,7 @@ public class ShopSchemaEx {
         CREATE_FOREIGN_KEY_STATEMENTS.put(childTable, new Table(childTable, foreignKeys));
     }
 
-    private static HashMap<String, List<String>> TMP_FIELDS = new HashMap<String, List<String>>();
+    private static final HashMap<String, List<String>> TMP_FIELDS = new HashMap<String, List<String>>();
 
     public static void applyTmpFields(String tableName, String... fields){
         if (TextUtils.isEmpty(tableName))
@@ -58,6 +60,15 @@ public class ShopSchemaEx {
             throw new IllegalStateException("temp fields already applied to the table " + tableName + "!");
 
         TMP_FIELDS.put(tableName, Arrays.asList(fields));
+    }
+
+    private static final ArrayList<Trigger> TRIGGERS = new ArrayList<Trigger>();
+
+    public static void applyTriggers(Trigger... triggers) {
+        if (triggers == null || triggers.length == 0)
+            throw new IllegalArgumentException("triggers cannot be empty or null!");
+
+        TRIGGERS.addAll(Arrays.asList(triggers));
     }
 
     public static void onCreate(final SQLiteDatabase db) {
@@ -114,6 +125,10 @@ public class ShopSchemaEx {
         if (isSyncDatabase)
             return;
 
+        for (Trigger trigger: TRIGGERS) {
+            db.execSQL(getCreateTriggerStatement(trigger));
+        }
+
         for (String sqlCreateStatement : createViewStatements) {
             db.execSQL(sqlCreateStatement);
         }
@@ -128,6 +143,7 @@ public class ShopSchemaEx {
 
         ArrayList<Table> dropTables = new ArrayList<Table>();
         List<String> dropViewStatements = new ArrayList<String>();
+        List<String> dropTriggerStatements = new ArrayList<String>();
 
         Cursor c = db.rawQuery(SELECT_TABLE_NAMES_STATEMENT, null);
         while (c.moveToNext()) {
@@ -152,6 +168,18 @@ public class ShopSchemaEx {
         }
         c.close();
 
+        c = db.rawQuery(SELECT_TRIGGER_NAMES_STATEMENT, null);
+        while (c.moveToNext()) {
+            String triggerName = c.getString(0);
+            dropTriggerStatements.add(getDropTriggerStatement(triggerName));
+        }
+        c.close();
+
+
+        for (String sqlDropTriggerStatement : dropTriggerStatements) {
+            db.execSQL(sqlDropTriggerStatement);
+        }
+
         sortCreateTables(dropTables);
 
         int count = dropTables.size();
@@ -160,8 +188,8 @@ public class ShopSchemaEx {
             db.execSQL(getDropTableStatement(table));
         }
 
-        for (String sqlDropStatement : dropViewStatements) {
-            db.execSQL(sqlDropStatement);
+        for (String sqlDropViewStatement : dropViewStatements) {
+            db.execSQL(sqlDropViewStatement);
         }
     }
 
@@ -191,8 +219,21 @@ public class ShopSchemaEx {
         return String.format(Locale.US, DROP_VIEW_STATEMENT_FORMAT, viewName);
     }
 
+    private static String getDropTriggerStatement(String triggerName) {
+        return String.format(Locale.US, DROP_TRIGGER_STATEMENT_FORMAT, triggerName);
+    }
+
     private static String getTableName(String createTableStatement) {
         return createTableStatement.substring(CREATE_TABLE_STATEMENT_PREFIX.length() + 1, createTableStatement.indexOf('('));
+    }
+
+    private static String getCreateTriggerStatement(Trigger trigger) {
+        return "CREATE TRIGGER IF NOT EXISTS " + trigger.name + " " + trigger.time + " " + trigger.action + " ON " + trigger.tableName
+                + " FOR EACH ROW "
+                + (TextUtils.isEmpty(trigger.when) ? "" : " WHEN " + trigger.when)
+                + " BEGIN "
+                + trigger.body
+                + ";END";
     }
 
     private static String getCreateTableStatement(Table table, boolean isSyncDatabase) {
@@ -397,6 +438,62 @@ public class ShopSchemaEx {
             this.parentKey = parentKey;
             this.enableCascadeDelete = enableCascadeDelete;
         }
+    }
+
+    public static class Trigger {
+
+        public final String name;
+        public final Time time;
+        public final Action action;
+        public final String tableName;
+        public final String when;
+        public final String body;
+
+        private Trigger(String name, Time time, Action action, String tableName, String when, String body) {
+            this.name = name;
+            this.time = time;
+            this.action = action;
+            this.tableName = tableName;
+            this.when = when;
+            this.body = body;
+        }
+
+        public static Trigger trigger(String name, Time time, Action action, String tableName, String when, String body) {
+            return new Trigger(name, time, action, tableName, when, body);
+        }
+
+        public enum Time {
+            BEFORE("BEFORE"), AFTER("AFTER");
+
+            private final String name;
+
+            private Time(String s) {
+                name = s;
+            }
+
+            @Override
+            public String toString(){
+                return name;
+            }
+        }
+
+        public enum Action {
+            DELETE("DELETE"), INSERT("INSERT");
+
+            private final String name;
+
+            private Action(String s) {
+                name = s;
+            }
+
+            @Override
+            public String toString(){
+                return name;
+            }
+        }
+
+
+
     }
 
 }

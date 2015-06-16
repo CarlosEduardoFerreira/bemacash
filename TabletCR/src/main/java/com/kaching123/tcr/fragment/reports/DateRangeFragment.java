@@ -145,7 +145,7 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
     }
 
     protected Date getMinFromDate() {
-        if (!supportMinFromDate())
+        if (!supportMinFromDate() || getApp().isTrainingMode())
             return null;
 
         long minFromDateTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(getApp().getSalesHistoryLimit());

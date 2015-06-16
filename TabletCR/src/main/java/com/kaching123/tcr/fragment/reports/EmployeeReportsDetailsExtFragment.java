@@ -146,6 +146,8 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
 
     private void checkAndFixFromDate(Date fromDate) {
         Date minFromDate = getMinFromDate();
+        if (minFromDate == null)
+            return;
         if (fromDate.getTime() < minFromDate.getTime())
             fromDate.setTime(minFromDate.getTime());
     }
