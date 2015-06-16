@@ -198,7 +198,7 @@ public abstract class ShopStore {
     })
     public static interface UnitTable extends IBemaSyncTable {
 
-        @URI
+        @URI(altNotify = {UnitsView.URI_CONTENT})
         String URI_CONTENT = "unit";
 
         String TABLE_NAME = "unit";
@@ -531,7 +531,7 @@ public abstract class ShopStore {
     })
     public static interface SaleOrderTable extends IBemaSyncTable {
 
-        @URI(altNotify = {SaleOrderItemsView.URI_CONTENT, SaleOrderTipsQuery.URI_CONTENT})
+        @URI(altNotify = {SaleOrderItemsView.URI_CONTENT, SaleOrderTipsQuery.URI_CONTENT, UnitsView.URI_CONTENT})
         String URI_CONTENT = "sale_order";
 
         String TABLE_NAME = "sale_order";
