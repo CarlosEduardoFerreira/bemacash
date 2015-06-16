@@ -26,6 +26,8 @@ import com.annotatedsql.annotation.sql.Table;
 import com.annotatedsql.annotation.sql.Unique;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Unit.Status;
+import com.kaching123.tcr.store.ShopSchema2.CustomerView2;
+import com.kaching123.tcr.store.ShopSchema2.CustomerView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchemaEx.Trigger.Action;
 import com.kaching123.tcr.store.ShopSchemaEx.Trigger.Time;
 import com.kaching123.tcr.BuildConfig;
@@ -1682,6 +1684,22 @@ public abstract class ShopStore {
     /**
      * views *
      */
+
+    @SimpleView(UnitsView.VIEW_NAME)
+    public static interface UnitsView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "units_view";
+
+        String VIEW_NAME = "units_view";
+
+        @From(UnitTable.TABLE_NAME)
+        String TABLE_UNIT = "unit_table";
+
+        @Columns(SaleOrderTable.CREATE_TIME)
+        @Join(type = Join.Type.LEFT, joinTable = SaleOrderTable.TABLE_NAME, joinColumn = SaleOrderTable.GUID, onTableAlias = TABLE_UNIT, onColumn = UnitTable.SALE_ORDER_ID)
+        String TABLE_SALE_ORDER = "sale_order_table";
+    }
 
     public static interface OldSaleOrdersQuery {
 

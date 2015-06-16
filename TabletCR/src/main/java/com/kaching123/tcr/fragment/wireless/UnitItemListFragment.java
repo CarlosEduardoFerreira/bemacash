@@ -25,15 +25,18 @@ import android.widget.RelativeLayout;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.wireless.ApplyMultipleWarrantyCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelListener;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.wireless.WarrantyFragment.IWarrantyListener;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.Unit;
-import com.kaching123.tcr.model.converter.UnitFunction;
+import com.kaching123.tcr.model.Unit.Status;
+import com.kaching123.tcr.model.converter.UnitViewFunction;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopSchema2.UnitsView2;
+import com.kaching123.tcr.store.ShopStore.UnitsView;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -43,6 +46,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -52,7 +56,7 @@ import java.util.List;
 @OptionsMenu(R.menu.unit_fragment)
 public class UnitItemListFragment extends ListFragment implements LoaderCallbacks<List<Unit>>, BarcodeReceiver {
 
-    private static final Uri URI_UNITS = ShopProvider.getContentUri(ShopStore.UnitTable.URI_CONTENT);
+    private static final Uri URI_UNITS = ShopProvider.getContentUri(UnitsView.URI_CONTENT);
 
     protected UnitItemAdapter adapter;
 
@@ -81,6 +85,8 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
             s.clear();
         }
     }
+
+    private Calendar calendar = Calendar.getInstance();
 
     public UnitItemListFragment setCallback(IUnitCallback callback) {
         this.callback = callback;
@@ -200,12 +206,17 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
 
     @Override
     public Loader<List<Unit>> onCreateLoader(int loaderId, Bundle args) {
+        long minCreateTime = TcrApplication.get().getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
         CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_UNITS);
-        loader.where(ShopStore.UnitTable.ITEM_ID + " = ?", model.guid);
+        loader.where(UnitsView2.UnitTable.ITEM_ID + " = ?", model.guid);
         if (status != null) {
-            loader.where(ShopStore.UnitTable.STATUS + " = ?", status.ordinal());
+            loader.where(UnitsView2.UnitTable.STATUS + " = ?", status.ordinal());
+            if (status == Status.SOLD)
+                loader.where(UnitsView2.SaleOrderTable.CREATE_TIME + " >= ? ", minCreateTime);
+        } else {
+            loader.where("( " + UnitsView2.UnitTable.STATUS + " != " + Status.SOLD.ordinal() + " or " + UnitsView2.SaleOrderTable.CREATE_TIME + " >= " + minCreateTime + " )");
         }
-        return loader.orderBy(ShopStore.UnitTable.UPDATE_TIME + " desc ").transform(new UnitFunction()).build(getActivity());
+        return loader.orderBy(UnitsView2.UnitTable.UPDATE_TIME + " desc ").transform(new UnitViewFunction()).build(getActivity());
     }
 
     @Override
