@@ -30,8 +30,6 @@ import java.util.ArrayList;
 @EFragment
 public class VoidPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialogBase {
 
-    private static final Uri CUSTOMERS_URI = ShopProvider.getContentUri(CustomerView.URI_CONTENT);
-
     private static final String DIALOG_NAME = VoidPrintAndFinishFragmentDialog.class.getSimpleName();
 
     @FragmentArg

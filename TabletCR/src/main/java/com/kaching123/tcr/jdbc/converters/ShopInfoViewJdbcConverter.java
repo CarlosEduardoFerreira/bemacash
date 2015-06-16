@@ -9,7 +9,6 @@ import org.json.JSONException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
@@ -89,7 +88,7 @@ public class ShopInfoViewJdbcConverter {
     public static final String UPDATE_CHECK_TIMER = "UPDATE_CHECK_TIMER";
 
 
-    public static final String SALES_HISTORY_LIMIT = "SALES_HISTORY_LIMIT";
+    public static final String MAX_HISTORY_RANGE = "MAX_HISTORY_RANGE";
 
     private static final int MAX_SALES_HISTORY_LIMIT = 7 * 6; /*6 weeks in days*/
 
@@ -209,9 +208,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getLong(UPDATE_CHECK_TIMER));
     }
 
-    public static int getSalesHistoryLimit(JdbcJSONObject rs) {
-        //TODO remove opt
-        return rs.optInt(SALES_HISTORY_LIMIT, MAX_SALES_HISTORY_LIMIT);
+    public static int getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException  {
+        return rs.getInt(MAX_HISTORY_RANGE);
     }
 
     public static final class ShopInfo {

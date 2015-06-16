@@ -312,12 +312,13 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, employee, serverLastTimestamp);
 
                     //sale
-                    count += syncSingleTable2(service, api2, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, employee, serverLastTimestamp);
 
                     count += syncTableWithChildren2(service, api2,
                             SaleOrderTable.TABLE_NAME,
                             SaleOrderTable.GUID, SaleOrderTable.PARENT_ID,
                             employee, serverLastTimestamp);
+
+                    count += syncSingleTable2(service, api2, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, employee, serverLastTimestamp);
 
                     count += syncTableWithChildren2(service, api2,
                             SaleItemTable.TABLE_NAME,
@@ -435,9 +436,10 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, ItemMovementTable.TABLE_NAME);
 
                 //sale
-                count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME);
 
                 count += syncLocalSingleTable(service, SaleOrderTable.TABLE_NAME);
+
+                count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME);
 
                 count += syncLocalSingleTable(service, SaleItemTable.TABLE_NAME);
 

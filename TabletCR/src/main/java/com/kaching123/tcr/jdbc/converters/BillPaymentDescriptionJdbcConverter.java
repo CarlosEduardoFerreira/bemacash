@@ -88,4 +88,11 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
                 .build(JdbcFactory.getApiMethod(BillPaymentDescriptionModel.class));
     }
 
+    public SingleSqlCommand updateOrderIdSQL(BillPaymentDescriptionModel model, IAppCommandContext appCommandContext) {
+        return _update(TABLE_NAME, appCommandContext)
+                .add(ORDER_ID, model.saleOrderId)
+                .where(ID, model.guid)
+                .build(JdbcFactory.getApiMethod(model));
+    }
+
 }

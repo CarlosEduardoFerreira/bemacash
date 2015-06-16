@@ -14,6 +14,7 @@ import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.BillPaymentDescriptionJdbcConverter;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel.PrepaidType;
 import com.kaching123.tcr.model.OrderType;
@@ -21,6 +22,7 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
@@ -74,12 +76,12 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
 
         String prepaidGuid = UUID.randomUUID().toString();
 
-        orderModel = createSaleOrder((BigDecimal) getArgs().getSerializable(ARG_TRANSACTION_FEE));
-
-        Long prepaidOrderId = getPrepaidOrderId(prepaidGuid, prepaidDescription, prepaidType, orderModel.guid);
+        Long prepaidOrderId = getPrepaidOrderId(prepaidGuid, prepaidDescription, prepaidType);
         if (prepaidOrderId == null) {
             return failed();
         }
+
+        orderModel = createSaleOrder((BigDecimal) getArgs().getSerializable(ARG_TRANSACTION_FEE));
 
         prepaidModel = new BillPaymentDescriptionModel(prepaidGuid, prepaidDescription, prepaidType, prepaidOrderId, orderModel.guid);
 
@@ -108,13 +110,13 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
         return succeeded().add(EXTRA_ORDER_GUID, orderModel.guid).add(EXTRA_PREPAID_ORDER_ID, prepaidOrderId);
     }
 
-    private Long getPrepaidOrderId(String guid, String description, PrepaidType type, String orderGuid) {
+    private Long getPrepaidOrderId(String guid, String description, PrepaidType type) {
         if (getApp().isTrainingMode()) {
             return getPrepaidOrderIdLocal();
         }
 
         try {
-            JSONObject req = getPrepaidOrderIdRequest(getApp(), description, type, guid, orderGuid);
+            JSONObject req = getPrepaidOrderIdRequest(getApp(), description, type, guid);
             Logger.d("AddBillPaymentOrderCommand.getPrepaidOrderId(): req: " + req.toString());
             SyncApi api = getApp().getRestAdapter().create(SyncApi.class);
             GetPrepaidOrderIdResponse resp = api.getPrepaidOrderId(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(getApp().getOperator(), getApp()), req);
@@ -132,13 +134,12 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
         return null;
     }
 
-    public static JSONObject getPrepaidOrderIdRequest(TcrApplication app, String description, PrepaidType type, String guid, String orderGuid) throws JSONException {
+    public static JSONObject getPrepaidOrderIdRequest(TcrApplication app, String description, PrepaidType type, String guid) throws JSONException {
         JSONObject request = new JSONObject();
         request.put("shop_id", app.getShopId());
         request.put("description", description);
         request.put("type", type);
         request.put("guid", guid);
-        request.put("order_id", orderGuid);
         return request;
     }
 
@@ -168,12 +169,12 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 
-        operations.add(ContentProviderOperation.newInsert(URI_BILL_DESC)
-                .withValues(prepaidModel.toValues())
-                .build());
-
         operations.add(ContentProviderOperation.newInsert(URI_ORDER)
                 .withValues(orderModel.toValues())
+                .build());
+
+        operations.add(ContentProviderOperation.newInsert(URI_BILL_DESC)
+                .withValues(prepaidModel.toValues())
                 .build());
 
         operations.add(ContentProviderOperation.newInsert(URI_ITEM)
@@ -187,6 +188,7 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
     protected ISqlCommand createSqlCommand() {
         return batchInsert(orderModel)
                 .add(JdbcFactory.getConverter(orderModel).insertSQL(orderModel, getAppCommandContext()))
+                .add(((BillPaymentDescriptionJdbcConverter)JdbcFactory.getConverter(prepaidModel)).updateOrderIdSQL(prepaidModel, getAppCommandContext()))
                 .add(JdbcFactory.getConverter(itemModel).insertSQL(itemModel, getAppCommandContext()));
     }
 
