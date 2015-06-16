@@ -11,12 +11,16 @@ import android.text.TextUtils;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.store.ShopStore.OldMovementGroupsQuery;
+import com.kaching123.tcr.store.ShopStore.OldSaleOrdersQuery;
 import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.helper.RecalcItemMovementTable;
 import com.kaching123.tcr.store.helper.RecalcSaleAddonTable;
 import com.kaching123.tcr.store.helper.RecalcSaleItemTable;
+
+import java.util.Locale;
 
 /*import com.kaching123.tcr.store.ShopStore.MaxUpdateTableChildTimeQuery;
 import com.kaching123.tcr.store.ShopStore.MaxUpdateTableParentTimeQuery;*/
@@ -27,6 +31,8 @@ import com.kaching123.tcr.store.ShopStore.MaxUpdateTableParentTimeQuery;*/
 public class ShopProviderExt extends ShopProvider {
 
     protected final static int MATCH_RAW_TABLE_QUERY = 0x666;
+    protected final static int MATCH_OLD_SALE_ORDERS_QUERY = 0x667;
+    protected final static int MATCH_OLD_MOVEMENT_GROUPS_QUERY = 0x668;
 
     final static String URI_PATH_RAW_TABLE_QUERY = "URI_RAW_TABLE_QUERY";
 
@@ -36,6 +42,8 @@ public class ShopProviderExt extends ShopProvider {
 
     static {
         matcher.addURI(AUTHORITY, URI_PATH_RAW_TABLE_QUERY + "/*", MATCH_RAW_TABLE_QUERY);
+        matcher.addURI(AUTHORITY, OldSaleOrdersQuery.CONTENT_PATH, MATCH_OLD_SALE_ORDERS_QUERY);
+        matcher.addURI(AUTHORITY, OldMovementGroupsQuery.CONTENT_PATH, MATCH_OLD_MOVEMENT_GROUPS_QUERY);
     }
 
     public static class Method {
@@ -154,6 +162,12 @@ public class ShopProviderExt extends ShopProvider {
                     UriBuilder.getGroupBy(uri),
                     null, sortOrder,
                     UriBuilder.getLimit(uri));
+        }
+        if (match == MATCH_OLD_SALE_ORDERS_QUERY) {
+            return dbHelper.getReadableDatabase().rawQuery(String.format(Locale.US, OldSaleOrdersQuery.QUERY, selectionArgs), null);
+        }
+        if (match == MATCH_OLD_MOVEMENT_GROUPS_QUERY) {
+            return dbHelper.getReadableDatabase().rawQuery(String.format(Locale.US, OldMovementGroupsQuery.QUERY, selectionArgs), null);
         }
 
         Cursor c = providerQueryHelper.query(uri, projection, selection, selectionArgs, sortOrder);

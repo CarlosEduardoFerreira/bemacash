@@ -80,6 +80,8 @@ public class TcrApplication extends Application {
     public static final long DEFAULT_OFFLINE_PERIOD = TimeUnit.HOURS.toMillis(192);
     public static final long OFFLINE_PERIOD_NEAR = TimeUnit.HOURS.toMillis(24);
 
+    private static final int DEFAULT_SALES_HISTORY_LIMIT = 42; //in days
+
     private static TcrApplication self;
 
     private PrepaidUser prepaidUser = new PrepaidUser();
@@ -461,7 +463,7 @@ public class TcrApplication extends Application {
     }
 
     public int getSalesHistoryLimit() {
-        return shopPref.salesHistoryLimit().get();
+        return shopPref.salesHistoryLimit().getOr(DEFAULT_SALES_HISTORY_LIMIT);
     }
 
     public void saveShopInfo(ShopInfo info) {

@@ -1,7 +1,9 @@
 package com.kaching123.tcr.component.picker;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
@@ -45,11 +47,27 @@ public class DateTimePickerFragment extends StyledDialogFragment {
                 getResources().getDimensionPixelOffset(R.dimen.datetime_picker_dlg_width),
                 getDialog().getWindow().getAttributes().height);
         calendar.setTime(dateTime);
-        if (minDate != null)
-            datePicker.setMinDate(minDate.getTime());
         datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), null);
+        if (minDate != null) {
+            datePicker.setMinDate(minDate.getTime());
+            fixDatePickerCalendarView(datePicker);
+        }
         timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
         timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
+    }
+
+    private void fixDatePickerCalendarView(DatePicker datePicker) {
+        CalendarView calendarView = datePicker.getCalendarView();
+        if (calendarView == null)
+            return;
+
+        long calendarViewDate = calendarView.getDate();
+        int calendarViewFirstDayOfWeek = calendarView.getFirstDayOfWeek();
+
+        calendarView.setDate(calendarViewDate + 1000L * 60 * 60 * 24 * 40, false, true);
+        calendarView.setFirstDayOfWeek((calendarViewFirstDayOfWeek + 1) % 7);
+        calendarView.setDate(calendarViewDate, false, true);
+        calendarView.setFirstDayOfWeek(calendarViewFirstDayOfWeek);
     }
 
     @Override

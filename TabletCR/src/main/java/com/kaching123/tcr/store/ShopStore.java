@@ -1683,21 +1683,14 @@ public abstract class ShopStore {
      * views *
      */
 
-    @RawQuery(OldSaleOrdersQuery.QUERY_NAME)
     public static interface OldSaleOrdersQuery {
 
-        String QUERY_NAME = "old_sale_orders_query";
-
-        @URI
         String CONTENT_PATH = "old_sale_orders_query";
 
         String SALES = "sales";
         String TIPS = "tips";
         String REFUNDS = "refunds";
 
-        final static int ORDER_STATUS_ACTIVE = 0;
-
-        @SqlQuery
         String QUERY = "select " + SALES + "." + SaleOrderTable.GUID
                 + " from " + SaleOrderTable.TABLE_NAME + " as " + SALES
                 + " left join " + EmployeeTipsTable.TABLE_NAME + " as " + TIPS
@@ -1705,29 +1698,24 @@ public abstract class ShopStore {
                 + " left join " + SaleOrderTable.TABLE_NAME + " as " + REFUNDS
                 + " on " + SALES + "." + SaleOrderTable.GUID + " = " + REFUNDS + "." + SaleOrderTable.PARENT_ID
                 + " left join " + UnitTable.TABLE_NAME
-                + " on " + SALES + "." + SaleOrderTable.STATUS + " = " + ORDER_STATUS_ACTIVE
+                + " on " + SALES + "." + SaleOrderTable.STATUS + " = " + OrderStatus.ACTIVE.ordinal()
                 + " and " + UnitTable.TABLE_NAME + "." + UnitTable.SALE_ORDER_ID + " = " + SALES + "." + SaleOrderTable.GUID
-                + " where " + SALES + "." + SaleOrderTable.PARENT_ID + " is null and " + SALES + "." + SaleOrderTable.CREATE_TIME + " < ? "
-                + " and ("+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " IS NULL OR "+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " < ?)"
+                + " where " + SALES + "." + SaleOrderTable.PARENT_ID + " is null and " + SALES + "." + SaleOrderTable.CREATE_TIME + " < %1$s "
+                + " and ("+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " IS NULL OR "+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " < %2$s)"
+                + " and " + UnitTable.TABLE_NAME + "." + UnitTable.ID + " is null"
                 + " group by " + SALES + "." + SaleOrderTable.GUID
-                + " having (" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + " is null OR max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") < ?)"
-                + " and " + UnitTable.TABLE_NAME + "." + UnitTable.ID + " is null";
+                + " having ( max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") is null OR max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") < %3$s)";
 
     }
 
-    @RawQuery(OldMovementGroupsQuery.QUERY_NAME)
     public static interface OldMovementGroupsQuery {
 
-        String QUERY_NAME = "old_movement_groups_query";
-
-        @URI
         String CONTENT_PATH = "old_movement_groups_query";
 
         String ITEM_GUID = "t_item_guid";
         String UPDATE_QTY_FLAG = "t_update_qty_flag";
         String CREATE_TIME = "t_create_time";
 
-        @SqlQuery
         String QUERY = "select " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
                 + " from " + ItemMovementTable.TABLE_NAME
                 + " left join " + ItemTable.TABLE_NAME
@@ -1735,7 +1723,7 @@ public abstract class ShopStore {
                 + " and " + ItemTable.TABLE_NAME + "." + ItemTable.UPDATE_QTY_FLAG + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
                 + " where " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " is null "
                 + " group by " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
-                + " having max("+ ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + ") < ?";
+                + " having max("+ ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + ") < %s";
 
     }
 
