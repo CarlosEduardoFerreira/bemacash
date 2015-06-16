@@ -148,14 +148,7 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
         if (!supportMinFromDate() || getApp().isTrainingMode())
             return null;
 
-        long minFromDateTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(getApp().getSalesHistoryLimit());
-        dateTimePickerCalendar.setTimeInMillis(minFromDateTime);
-        dateTimePickerCalendar.set(Calendar.HOUR_OF_DAY, 00);
-        dateTimePickerCalendar.set(Calendar.MINUTE, 00);
-        dateTimePickerCalendar.set(Calendar.SECOND, 00);
-        dateTimePickerCalendar.set(Calendar.MILLISECOND, 0);
-        dateTimePickerCalendar.add(Calendar.DATE, 1);
-        return dateTimePickerCalendar.getTime();
+        return getApp().getMinSalesHistoryLimitDateDayRounded(dateTimePickerCalendar);
     }
 
     protected boolean validatePeriodDates(Date date, Date newDate) {

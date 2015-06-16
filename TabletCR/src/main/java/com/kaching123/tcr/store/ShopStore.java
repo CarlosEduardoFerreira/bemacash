@@ -2126,7 +2126,7 @@ public abstract class ShopStore {
         @Join(joinTable = RegisterTable.TABLE_NAME, joinColumn = RegisterTable.ID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.REGISTER_ID)
         String TABLE_REGISTER = "register_table";
 
-        @Columns({EmployeeTipsTable.AMOUNT})
+        @Columns({EmployeeTipsTable.AMOUNT, EmployeeTipsTable.CREATE_TIME})
         @Join(type = Join.Type.LEFT, joinTable = EmployeeTipsTable.TABLE_NAME, joinColumn = EmployeeTipsTable.ORDER_ID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.GUID)
         String TABLE_TIPS = "tips_table";
 
@@ -2163,6 +2163,9 @@ public abstract class ShopStore {
         String ORDER_GUID = SaleOrderView.TABLE_SALE_ORDER + "_" + SaleOrderTable.GUID;
         String ORDER_STATUS = SaleOrderView.TABLE_SALE_ORDER + "_" + SaleOrderTable.STATUS;
 
+        String REFUNDS = "refunds";
+        String MAX_REFUND_CREATE_TIME = "max_refund_create_time";
+
         @SqlQuery
         String QUERY = "select * from ("
                 + "select " + SaleOrderView.VIEW_NAME + ".*, "
@@ -2176,13 +2179,18 @@ public abstract class ShopStore {
                 + "sum(case when " + PaymentTransactionTable.TABLE_NAME + "." + PaymentTransactionTable.GATEWAY + " in (" + EBT_GATEWAYS + ") then 1 else 0 end) as " + EBT_TRANSACTION_CNT + ", "
                 + "sum(case when " + PaymentTransactionTable.TABLE_NAME + "." + PaymentTransactionTable.GATEWAY + " in (" + OTHER_GATEWAYS + ") then 1 else 0 end) as " + OTHER_TRANSACTION_CNT
 
+                + " from ("
+                + " select " + SaleOrderView.VIEW_NAME + ".*, max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") as " + MAX_REFUND_CREATE_TIME
                 + " from " + SaleOrderView.VIEW_NAME
+                + " left join " + SaleOrderTable.TABLE_NAME + " as " + REFUNDS
+                + " on " + REFUNDS + "." + SaleOrderTable.PARENT_ID + " = " + ORDER_GUID
+                + " group by " + ORDER_GUID
+                + ") as " + SaleOrderView.VIEW_NAME
 
                 + " left join " + PaymentTransactionTable.TABLE_NAME
                 + " on " + ORDER_GUID + " = " + PaymentTransactionTable.TABLE_NAME + "." + PaymentTransactionTable.ORDER_GUID
                 + " and (" + PaymentTransactionTable.TABLE_NAME + "." + PaymentTransactionTable.STATUS + " = " + PAYMENT_TRANSACTION_STATUS_PREAUTHORIZED
                 + " or " + PaymentTransactionTable.TABLE_NAME + "." + PaymentTransactionTable.STATUS + " = " + PAYMENT_TRANSACTION_STATUS_SUCCESS + ")"
-//                + " and " + PaymentTransactionTable.TABLE_NAME + "." + PaymentTransactionTable.IS_PREAUTH + " = 1"
                 + " and " + PaymentTransactionTable.TABLE_NAME + "." + PaymentTransactionTable.IS_DELETED + " = 0"
 
                 + " where " + ORDER_STATUS + " = " + SALE_ORDER_STATUS_COMPLETED

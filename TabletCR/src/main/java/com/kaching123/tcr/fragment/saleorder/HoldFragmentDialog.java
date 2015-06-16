@@ -39,6 +39,7 @@ import com.kaching123.tcr.model.converter.SaleOrderFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -70,6 +71,8 @@ public class HoldFragmentDialog extends StyledDialogFragment {
     private IHoldListener listener;
     private OrdersNavigationAdapter adapter;
     private NavigationLoader loaderCallback = new NavigationLoader();
+
+    private Calendar calendar = Calendar.getInstance();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -191,10 +194,12 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
         @Override
         public Loader<List<SaleOrderModel>> onCreateLoader(int arg0, Bundle arg1) {
+            long minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
             return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
                     .where(ShopStore.SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid())
                     .where(ShopStore.SaleOrderTable.GUID + " <> ?", argOrderGuid == null ? "" : argOrderGuid)
                     .where(ShopStore.SaleOrderTable.STATUS + " = ? ", OrderStatus.ACTIVE.ordinal())
+                    .where(ShopStore.SaleOrderTable.CREATE_TIME + " >= ? ", minCreateTime)
                     .orderBy(ShopStore.SaleOrderTable.CREATE_TIME + " desc ")
                     .transform(new SaleOrderFunction() {
                         @Override

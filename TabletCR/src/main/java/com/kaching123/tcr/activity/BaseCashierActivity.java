@@ -142,6 +142,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -220,6 +221,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
 
     private HashSet<String> salesmanGuids = new HashSet<String>();
+
+    private Calendar calendar = Calendar.getInstance();
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -1648,12 +1651,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public Loader<OrdersStatInfo> onCreateLoader(int arg0, Bundle arg1) {
+            long minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(SaleOrderTable.URI_CONTENT))
                     .projection("count(" + SaleOrderTable.GUID + ")")
                     .where(SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid() == null ? "" : getApp().getOperatorGuid());
             if (!TextUtils.isEmpty(orderGuid))
                 builder.where(SaleOrderTable.GUID + " <> ?", orderGuid);
             builder.where(SaleOrderTable.STATUS + " = ? ", OrderStatus.ACTIVE.ordinal())
+                    .where(SaleOrderTable.CREATE_TIME + " >= ?", minCreateTime)
                     .orderBy(SaleOrderTable.UPDATE_TIME + " desc ");
 
             return builder
@@ -1914,11 +1919,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+            long minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
             return CursorLoaderBuilder.forUri(ORDER_URI)
                     .projection(SaleOrderTable.GUID)
                     .where(SaleOrderTable.GUID + " = ?", bundle.getString(ARG_ORDER_GUID))
                     .where(SaleOrderTable.STATUS + " = ?", OrderStatus.ACTIVE.ordinal())
                     .where(SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid())
+                    .where(SaleOrderTable.CREATE_TIME + " >= ?", minCreateTime)
                     .build(BaseCashierActivity.this);
         }
 

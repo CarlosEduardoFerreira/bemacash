@@ -49,6 +49,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -464,6 +466,22 @@ public class TcrApplication extends Application {
 
     public int getSalesHistoryLimit() {
         return shopPref.salesHistoryLimit().getOr(DEFAULT_SALES_HISTORY_LIMIT);
+    }
+
+    public long getMinSalesHistoryLimitDate() {
+        return System.currentTimeMillis() - TimeUnit.DAYS.toMillis(getSalesHistoryLimit());
+    }
+
+    public Date getMinSalesHistoryLimitDateDayRounded(Calendar localTimeCalendar) {
+        long minDateTime = getMinSalesHistoryLimitDate();
+
+        localTimeCalendar.setTimeInMillis(minDateTime);
+        localTimeCalendar.set(Calendar.HOUR_OF_DAY, 00);
+        localTimeCalendar.set(Calendar.MINUTE, 00);
+        localTimeCalendar.set(Calendar.SECOND, 00);
+        localTimeCalendar.set(Calendar.MILLISECOND, 0);
+        localTimeCalendar.add(Calendar.DATE, 1);
+        return localTimeCalendar.getTime();
     }
 
     public void saveShopInfo(ShopInfo info) {

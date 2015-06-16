@@ -29,6 +29,7 @@ import com.kaching123.tcr.model.SaleOrderTipsViewModel.TransactionsState;
 import com.kaching123.tcr.model.SaleOrderViewModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.CustomerTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.OperatorTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
@@ -44,6 +45,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -86,6 +88,8 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private ArrayList<String> seqNum;
 
     private boolean isTipsEnabled;
+
+    private Calendar calendar = Calendar.getInstance();
 
     protected void setFilterValues(Date from, Date to, String cashierGUID, String customerGUID,
                                    TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum) {
@@ -203,6 +207,9 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             }
         }
 
+        TcrApplication app = (TcrApplication) getActivity().getApplicationContext();
+        long minCreateTime = app.getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
+        loader.where("(" + SaleOrderTable.CREATE_TIME + " >= " + minCreateTime + " OR " + SaleOrderView2.TipsTable.CREATE_TIME + " >= " + minCreateTime + " OR " + SaleOrderTipsQuery.MAX_REFUND_CREATE_TIME + " >= " + minCreateTime + ")");
 
         return loader.orderBy(SaleOrderTable.CREATE_TIME + " desc ")
                 .transform(new SaleOrderTipsViewFunction()).build(getActivity());
