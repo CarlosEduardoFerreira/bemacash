@@ -16,6 +16,7 @@ import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
+import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.SyncOpenHelper;
 import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -36,6 +37,7 @@ public class SyncOldActiveOrdersResponseHandler {
     private static final String PAYMENT_TRANSACTIONS = "PAYMENT_TRANSACTIONS";
     private static final String BILL_PAYMENTS_DESCRIPTIONS = "BILL_PAYMENTS_DESCRIPTIONS";
     private static final String RECEIVED_TIPS = "RECEIVED_TIPS";
+    private static final String UNITS = "UNITS";
 
     private final SyncOpenHelper syncOpenHelper;
 
@@ -101,6 +103,14 @@ public class SyncOldActiveOrdersResponseHandler {
                 ArrayList<ContentValues> billPaymentValues = parseResponseArray(billPaymentDescriptions, JdbcFactory.getConverter(BillPaymentDescriptionTable.TABLE_NAME));
                 if (billPaymentValues.size() != 0) {
                     saveResult(BillPaymentDescriptionTable.TABLE_NAME, billPaymentValues);
+                }
+            }
+
+            JdbcJSONArray units = rs.isNull(UNITS) ? null : rs.getJSONArray(UNITS);
+            if (units != null) {
+                ArrayList<ContentValues> unitValues = parseResponseArray(units, JdbcFactory.getConverter(UnitTable.TABLE_NAME));
+                if (unitValues.size() != 0) {
+                    saveResult(UnitTable.TABLE_NAME, unitValues);
                 }
             }
         }
