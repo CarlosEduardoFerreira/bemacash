@@ -377,7 +377,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @Override
     public void onSearchByUnitFailed(String serialCode) {
-        boolean shouldSearchOnServer = !TextUtils.isEmpty(unitSerial);
+        boolean shouldSearchOnServer = !TextUtils.isEmpty(serialCode);
 
         if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode() || TcrApplication.get().getSalesHistoryLimit() == null)
             return;
