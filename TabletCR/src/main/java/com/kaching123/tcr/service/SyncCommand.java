@@ -279,7 +279,10 @@ public class SyncCommand implements Runnable {
         boolean wasTipsEnabled = getApp().isTipsEnabled();
         String oldAutoSettlementTime = getApp().getAutoSettlementTime();
 
-        int salesHistoryLimit = syncShopInfo(employee);
+        Integer salesHistoryLimit = syncShopInfo(employee);
+        if (salesHistoryLimit == null) {
+            Logger.w("SyncCommand.syncNowInner(): sales history limit is not set yet");
+        }
 
         checkAutoSettlement(wasTipsEnabled, oldAutoSettlementTime);
         syncPAXMerchantInfo();
@@ -299,10 +302,10 @@ public class SyncCommand implements Runnable {
         try {
             try {
                 long serverLastTimestamp = getServerCurrentTimestamp(api, employee);
-                long minUpdateTime = serverLastTimestamp - TimeUnit.DAYS.toMillis(salesHistoryLimit);
+                Long minUpdateTime = salesHistoryLimit == null ? null : serverLastTimestamp - TimeUnit.DAYS.toMillis(salesHistoryLimit);
 
                 Integer oldSalesHistoryLimit = getApp().getSalesHistoryLimit();
-                if (oldSalesHistoryLimit != null && salesHistoryLimit > oldSalesHistoryLimit) {
+                if (oldSalesHistoryLimit != null && salesHistoryLimit != null && salesHistoryLimit > oldSalesHistoryLimit) {
                     Long lastSuccessfulSyncTime = getApp().getLastSuccessfulSyncTime();
                     long oldMinUpdateTime = serverLastTimestamp - TimeUnit.DAYS.toMillis(oldSalesHistoryLimit);
                     if (lastSuccessfulSyncTime != null && lastSuccessfulSyncTime < oldMinUpdateTime)
@@ -311,14 +314,7 @@ public class SyncCommand implements Runnable {
 
                 getApp().setSalesHistoryLimit(salesHistoryLimit);
 
-                if (oldSalesHistoryLimit == null) {
-                    Logger.w("SyncCommand.syncNowInner(): sales history limit first set, notifying");
-                    notifySyncGep();
-                }
-
-                getApp().setSalesHistoryLimit(salesHistoryLimit);
-
-                if (oldSalesHistoryLimit == null) {
+                if (oldSalesHistoryLimit == null && salesHistoryLimit != null) {
                     Logger.w("SyncCommand.syncNowInner(): sales history limit first set, notifying");
                     notifySyncGep();
                 }
@@ -352,8 +348,7 @@ public class SyncCommand implements Runnable {
                     //between iterations shouldn't be any gaps
                     boolean firstIteration = retriesCount == FINALIZE_SYNC_RETRIES;
                     Long lastSuccessfulSyncTime = getApp().getLastSuccessfulSyncTime();
-                    boolean lastSyncStillActual = lastSuccessfulSyncTime != null && lastSuccessfulSyncTime >= minUpdateTime;
-
+                    boolean lastSyncStillActual = salesHistoryLimit == null || (lastSuccessfulSyncTime != null && lastSuccessfulSyncTime >= minUpdateTime);
                     //TODO: check sync gap? only for this table
                     if (firstIteration && !lastSyncStillActual
                             && checkIsSyncGep(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, null, false)
@@ -379,7 +374,8 @@ public class SyncCommand implements Runnable {
                         getApp().setSalesSyncGapOccurred(true);
                     }
 
-                    syncOldActiveOrders(service, api2, employee, minUpdateTime);
+                    if (salesHistoryLimit != null)
+                        syncOldActiveOrders(service, api2, employee, minUpdateTime);
 
                     //TODO: test child-parent update time updates
                     count += syncTableWithChildren2(service, api2,
@@ -655,7 +651,7 @@ public class SyncCommand implements Runnable {
         return currentServerTimestamp;
     }
 
-    private int localSync(long minUpdateTime) throws SyncException {
+    private int localSync(Long minUpdateTime) throws SyncException {
         int count = 0;
         long registerId = getApp().getRegisterId();
 
@@ -835,7 +831,7 @@ public class SyncCommand implements Runnable {
     }
 
 
-    private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException, SyncLockedException {
+    private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, Long minUpdateTime, boolean fillHistoryGep) throws SyncException, SyncLockedException {
         int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
         count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
         return count;
@@ -845,11 +841,11 @@ public class SyncCommand implements Runnable {
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, 0L, false, false, false, false);
     }
 
-    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException, SyncLockedException {
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, Long minUpdateTime, boolean fillHistoryGep) throws SyncException, SyncLockedException {
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
     }
 
-    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws SyncException, SyncLockedException {
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, Long minUpdateTime, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws SyncException, SyncLockedException {
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, isSyncGap, isFirstSync);
     }
 
@@ -858,7 +854,7 @@ public class SyncCommand implements Runnable {
                                  String parentIdColumn,
                                  boolean isChild,
                                  long serverLastUpdateTime,
-                                 long minUpdateTime,
+                                 Long minUpdateTime,
                                  boolean limitHistory,
                                  boolean fillHistoryGep,
                                  boolean isSyncGap,
@@ -883,7 +879,7 @@ public class SyncCommand implements Runnable {
 
             MaxUpdateTime updateTime = getMaxTimeSingleTable(context, syncOpenHelper, localTable, guidColumn, parentIdColumn, isChild);
 
-            if (limitHistory) {
+            if (limitHistory && minUpdateTime != null) {
                 if (!fillHistoryGep && (updateTime == null || updateTime.time < minUpdateTime)) {
                     updateTime = new MaxUpdateTime(minUpdateTime, null);
                 }
@@ -960,11 +956,10 @@ public class SyncCommand implements Runnable {
     }
 
     private GetPagedArrayResponse getResponse(SyncApi2 api, EmployeeModel employeeModel, String localTable, boolean supportParentChildRelations, boolean isChild, TcrApplication app,
-                                              long minUpdateTime, MaxUpdateTime updateTime, JdbcConverter converter, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws JSONException, SyncException {
+                                              Long minUpdateTime, MaxUpdateTime updateTime, JdbcConverter converter, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws JSONException, SyncException {
         JSONObject credentials = SyncUploadRequestBuilder.getReqCredentials(employeeModel, app);
 
-        if (fillHistoryGep && (updateTime == null || updateTime.time < minUpdateTime)) {
-            //TODO: check if first sync(no data in main db for sync tables(not shop or wireless)) - then load with spec request, in case of gap - load with usual request and update time
+        if (fillHistoryGep && minUpdateTime != null && (updateTime == null || updateTime.time < minUpdateTime)) {
             if (UnitTable.TABLE_NAME.equals(localTable)) {
                 if (!isSyncGap || isFirstSync)
                     return makeUnitsRequest(api, app.emailApiKey,
@@ -1164,13 +1159,13 @@ public class SyncCommand implements Runnable {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private int syncShopInfo(EmployeeModel employeeModel) throws SyncException, SyncLockedException {
+    private Integer syncShopInfo(EmployeeModel employeeModel) throws SyncException, SyncLockedException {
         TcrApplication app = TcrApplication.get();
         SyncApi2 api = app.getRestAdapter().create(SyncApi2.class);
 
         fireEvent(service, null, service.getString(R.string.sync_shop_info), 0, 0);
 
-        int salesHistoryLimit;
+        Integer salesHistoryLimit;
         try {
             GetResponse resp = makeShopInfoRequest(api, app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employeeModel, app));
             if (resp != null && resp.isSyncLockedError()) {
@@ -1196,13 +1191,13 @@ public class SyncCommand implements Runnable {
         return salesHistoryLimit;
     }
 
-    private int syncShop(JdbcJSONObject shop) throws SyncException {
+    private Integer syncShop(JdbcJSONObject shop) throws SyncException {
         if (shop == null) {
             Logger.e("can't parse shop", new RuntimeException());
             throw new SyncException();
         }
         ShopInfo info;
-        int salesHistoryLimit;
+        Integer salesHistoryLimit;
         try {
             info = ShopInfoViewJdbcConverter.read(shop);
             salesHistoryLimit = ShopInfoViewJdbcConverter.getSalesHistoryLimit(shop);

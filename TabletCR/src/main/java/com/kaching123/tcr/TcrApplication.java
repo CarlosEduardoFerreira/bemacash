@@ -461,8 +461,8 @@ public class TcrApplication extends Application {
         salesHistoryLock.unlock();
     }
 
-    public void setSalesHistoryLimit(int salesHistoryLimit) {
-        shopPref.salesHistoryLimit().put(salesHistoryLimit);
+    public void setSalesHistoryLimit(Integer salesHistoryLimit) {
+        shopPref.salesHistoryLimit().put(salesHistoryLimit == null ? 0 : salesHistoryLimit);
     }
 
     public Integer getSalesHistoryLimit() {
