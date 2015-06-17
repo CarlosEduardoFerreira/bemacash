@@ -357,7 +357,9 @@ public class ShopOpenHelper extends BaseOpenHelper {
                 return true;
             }
 
-            values.clear();
+            //insert sold unit without order ids - will de removed later
+            values.putNull(UnitTable.SALE_ORDER_ID);
+            values.putNull(UnitTable.CHILD_ORDER_ID);
             return true;
         }
         //unit is active

@@ -6,6 +6,8 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
 import com.kaching123.tcr.store.ShopProviderExt.Method;
@@ -39,6 +41,7 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
     private static final Uri TIPS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(EmployeeTipsTable.URI_CONTENT);
     private static final Uri BILL_PAYMENTS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(BillPaymentDescriptionTable.URI_CONTENT);
     private static final Uri ITEM_MOVEMENTS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(ItemMovementTable.URI_CONTENT);
+    private static final Uri UNITS_NO_NOTIFY_URI = ShopProvider.contentUriNoNotify(UnitTable.URI_CONTENT);
 
     private static final Uri SALE_ORDERS_URI = ShopProvider.contentUri(SaleOrderTable.URI_CONTENT);
     private static final Uri UNITS_URI = ShopProvider.contentUri(UnitTable.URI_CONTENT);
@@ -102,6 +105,13 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                         .where(BillPaymentDescriptionTable.ORDER_ID + " is null ")
                         .perform(getContext());
                 Logger.d("ClearSalesHistoryCommand: prepaids without orders removed: " + count);
+
+                Logger.d("ClearSalesHistoryCommand: trying to remove sold units without orders");
+                count = ProviderAction.delete(UNITS_NO_NOTIFY_URI)
+                        .where(UnitTable.STATUS + " = ?", Status.SOLD.ordinal())
+                        .where(UnitTable.SALE_ORDER_ID + " is null")
+                        .perform(getContext());
+                Logger.d("ClearSalesHistoryCommand: units without orders removed: " + count);
 
                 c = ProviderAction.query(OLD_MOVEMENT_GROUPS_URI)
                         .where("", minCreateTime)

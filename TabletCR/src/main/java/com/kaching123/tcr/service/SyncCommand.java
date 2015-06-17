@@ -344,7 +344,8 @@ public class SyncCommand implements Runnable {
                     boolean lastSyncStillActual = lastSuccessfulSyncTime != null && lastSuccessfulSyncTime >= minUpdateTime;
 
                     //TODO: check sync gap? only for this table
-                    if (firstIteration && !lastSyncStillActual && checkIsSyncGep(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, null, false)
+                    if (firstIteration && !lastSyncStillActual
+                            && checkIsSyncGep(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, null, false)
                             && checkIsOldSyncCache(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, null, false)) {
                         clearSyncCache(syncOpenHelper, new String[]{ItemMovementTable.TABLE_NAME});
                     }
@@ -357,7 +358,10 @@ public class SyncCommand implements Runnable {
                     if (firstIteration && !lastSyncStillActual) {
                         isSalesSyncGep = checkIsSalesSyncGep(syncOpenHelper, minUpdateTime);
                     }
+                    boolean isFirstSync = false;
                     if (isSalesSyncGep) {
+                        isFirstSync = isFirstSync(service);
+
                         if (checkIsSalesOldSyncCache(syncOpenHelper, minUpdateTime))
                             clearSalesSyncCache(syncOpenHelper);
 
@@ -398,12 +402,12 @@ public class SyncCommand implements Runnable {
                     count += syncTableWithChildren2(service, api2,
                             EmployeeTipsTable.TABLE_NAME,
                             EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
-                            employee, serverLastTimestamp);
+                            employee, serverLastTimestamp, minUpdateTime, false);
+
 
                     count += syncSingleTable2(service, api2, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, employee, serverLastTimestamp, minUpdateTime, false);
 
                     //TODO: test - order updates should trigger unit updates
-                    //TODO: old sold units should not be synced - add new call
                     //inventory depended from sale
                     count += syncSingleTable2(service, api2, UnitTable.TABLE_NAME, UnitTable.ID, employee, serverLastTimestamp, minUpdateTime, true);
                     //end
@@ -547,6 +551,66 @@ public class SyncCommand implements Runnable {
         return minCacheUpdateTime;
     }
 
+    private boolean isFirstSync(Context context) {
+        if (!isTableEmpty(context, RegisterTable.URI_CONTENT, RegisterTable.ID))
+            return false;
+        if (!isTableEmpty(context, PrinterAliasTable.URI_CONTENT, PrinterAliasTable.GUID))
+            return false;
+        if (!isTableEmpty(context, CustomerTable.URI_CONTENT, CustomerTable.GUID))
+            return false;
+        if (!isTableEmpty(context, EmployeeTable.URI_CONTENT, EmployeeTable.ID))
+            return false;
+        if (!isTableEmpty(context, EmployeePermissionTable.URI_CONTENT, EmployeePermissionTable.USER_GUID))
+            return false;
+        if (!isTableEmpty(context, EmployeeTimesheetTable.URI_CONTENT, EmployeeTimesheetTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShiftTable.URI_CONTENT, ShiftTable.GUID))
+            return false;
+        if (!isTableEmpty(context, CashDrawerMovementTable.URI_CONTENT, CashDrawerMovementTable.GUID))
+            return false;
+        if (!isTableEmpty(context, TaxGroupTable.URI_CONTENT, TaxGroupTable.ID))
+            return false;
+        if (!isTableEmpty(context, DepartmentTable.URI_CONTENT, DepartmentTable.ID))
+            return false;
+        if (!isTableEmpty(context, CategoryTable.URI_CONTENT, CategoryTable.ID))
+            return false;
+        if (!isTableEmpty(context, ItemTable.URI_CONTENT, ItemTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ModifierTable.URI_CONTENT, ModifierTable.MODIFIER_GUID))
+            return false;
+        if (!isTableEmpty(context, ItemMovementTable.URI_CONTENT, ItemMovementTable.ITEM_GUID))
+            return false;
+        if (!isTableEmpty(context, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID))
+            return false;
+        if (!isTableEmpty(context, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID))
+            return false;
+        if (!isTableEmpty(context, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID))
+            return false;
+        if (!isTableEmpty(context, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID))
+            return false;
+        if (!isTableEmpty(context, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID))
+            return false;
+        if (!isTableEmpty(context, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID))
+            return false;
+        if (!isTableEmpty(context, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID))
+            return false;
+        if (!isTableEmpty(context, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID))
+            return false;
+        if (!isTableEmpty(context, UnitTable.TABLE_NAME, UnitTable.ID))
+            return false;
+        return true;
+    }
+
+    private boolean isTableEmpty(Context context, String uriPath, String primaryKeyColumn) {
+        Cursor c = ProviderAction.query(ShopProviderExt.contentUri(uriPath))
+                .projection("count(" + primaryKeyColumn + ")")
+                .perform(context);
+        int count = 0;
+        if (c.moveToFirst())
+            count = c.getInt(0);
+        c.close();
+        return count == 0;
+    }
 
     private void sendSyncSuccessful(SyncApi api, EmployeeModel employee) {
         try {
@@ -685,24 +749,23 @@ public class SyncCommand implements Runnable {
         }
     }
 
-    private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
-        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, 0L, false, false);
-        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, 0L, false, false);
-        return count;
-    }
 
     private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException {
-        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep);
-        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep);
+        int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
+        count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
         return count;
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
-        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, 0L, false, false);
+        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, 0L, false, false, false, false);
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException {
-        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep);
+        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
+    }
+
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws SyncException {
+        return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, isSyncGap, isFirstSync);
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel,
@@ -712,7 +775,9 @@ public class SyncCommand implements Runnable {
                                  long serverLastUpdateTime,
                                  long minUpdateTime,
                                  boolean limitHistory,
-                                 boolean fillHistoryGep) throws SyncException {
+                                 boolean fillHistoryGep,
+                                 boolean isSyncGap,
+                                 boolean isFirstSync) throws SyncException {
 
         fireEvent(context, localTable);
         TcrApplication app = TcrApplication.get();
@@ -741,7 +806,8 @@ public class SyncCommand implements Runnable {
 
             try {
                 JdbcConverter converter = JdbcFactory.getConverter(localTable);
-                GetPagedArrayResponse resp = getResponse(api, employeeModel, localTable, supportParentChildRelations, isChild, app, minUpdateTime, updateTime, converter, fillHistoryGep);
+                GetPagedArrayResponse resp = getResponse(api, employeeModel, localTable, supportParentChildRelations, isChild, app, minUpdateTime, updateTime, converter,
+                        fillHistoryGep, isSyncGap, isFirstSync);
                 Logger.d("Resp = %s", resp);
                 if (resp == null || !resp.isSuccess()) {
                     throw new SyncException(localTable);
@@ -795,20 +861,21 @@ public class SyncCommand implements Runnable {
     }
 
     private GetPagedArrayResponse getResponse(SyncApi2 api, EmployeeModel employeeModel, String localTable, boolean supportParentChildRelations, boolean isChild, TcrApplication app,
-                                              long minUpdateTime, MaxUpdateTime updateTime, JdbcConverter converter, boolean fillHistoryGep) throws JSONException, SyncException {
+                                              long minUpdateTime, MaxUpdateTime updateTime, JdbcConverter converter, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws JSONException, SyncException {
         JSONObject credentials = SyncUploadRequestBuilder.getReqCredentials(employeeModel, app);
 
         if (fillHistoryGep && (updateTime == null || updateTime.time < minUpdateTime)) {
+            //TODO: check if first sync(no data in main db for sync tables(not shop or wireless)) - then load with spec request, in case of gap - load with usual request and update time
             if (UnitTable.TABLE_NAME.equals(localTable)) {
-                return makeUnitsRequest(api, app.emailApiKey,
-                        credentials,
-                        Sync2GetRequestBuilder.getHistoryLimitRequest(
-                                minUpdateTime,
-                                updateTime,
-                                converter.getGuidColumn(),
-                                PAGE_ROWS));
-            }
-            if (ItemMovementTable.TABLE_NAME.equals(localTable)) {
+                if (!isSyncGap || isFirstSync)
+                    return makeUnitsRequest(api, app.emailApiKey,
+                            credentials,
+                            Sync2GetRequestBuilder.getHistoryLimitRequest(
+                                    minUpdateTime,
+                                    updateTime,
+                                    converter.getGuidColumn(),
+                                    PAGE_ROWS));
+            } else if (ItemMovementTable.TABLE_NAME.equals(localTable)) {
                 return makeMovementsRequest(api, app.emailApiKey,
                         credentials,
                         Sync2GetRequestBuilder.getHistoryLimitRequest(
@@ -816,8 +883,9 @@ public class SyncCommand implements Runnable {
                                 updateTime,
                                 converter.getGuidColumn(),
                                 PAGE_ROWS));
+            } else {
+                throw new IllegalArgumentException("fill history limit gap feature is not supported for table: " + localTable);
             }
-            throw new IllegalArgumentException("history limit is not supported for table: " + localTable);
         }
 
         return makeRequest(api, app.emailApiKey,
