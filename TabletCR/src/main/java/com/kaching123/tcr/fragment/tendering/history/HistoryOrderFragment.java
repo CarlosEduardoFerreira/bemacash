@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -167,15 +169,25 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                     return;
 
                 hide();
-                sequences.clear();
+
+                ArrayList<String> sequences = new ArrayList<String>(order.size());
                 for (int i = 0; i < order.size(); i++) {
                     sequences.add(order.get(i).registerTitle + "-" + order.get(i).printSeqNum);
                 }
-                //TODO: refactor?
-                unitSerial = serialCode;
-                if (order.size() == 1) {
-                    orderNumber.setText(order.get(0).registerTitle + "-" + order.get(0).printSeqNum);
+
+                if (unitSerial != null && unitSerial.equals(serialCode)
+                        && HistoryOrderFragment.this.sequences.equals(sequences)) {
+                    return;
                 }
+
+                HistoryOrderFragment.this.sequences.clear();
+                HistoryOrderFragment.this.sequences.addAll(sequences);
+                unitSerial = serialCode;
+
+                orderNumber.setText(null);
+
+                setFilterFieldsEnabled(false);
+
                 requestFilter(true);
             }
 
@@ -194,10 +206,50 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
             public void handleCancel() {
             }
 
+            @Override
+            public void handleClear() {
+                if (getActivity() == null)
+                    return;
+
+                hide();
+
+                if (unitSerial == null) {
+                    return;
+                }
+
+                sequences.clear();
+                unitSerial = null;
+
+                setFilterFieldsEnabled(true);
+
+                requestFilter(true);
+            }
+
             private void hide() {
                 UnitsSearchFragment.hide(getActivity());
             }
         });
+    }
+
+    private void setFilterFieldsEnabled(boolean isEnabled) {
+        setFilterFieldsEnabled(isEnabled, false);
+    }
+
+    private void setFilterFieldsEnabled(boolean isEnabled, boolean excludeOrderNumber) {
+        merchant.setEnabled(isEnabled);
+        customer.setEnabled(isEnabled);
+        transactionsStatus.setEnabled(isEnabled);
+        if (!excludeOrderNumber) {
+            orderNumber.setEnabled(isEnabled);
+            keyboard.setEnabled(isEnabled);
+        }
+        fromEdit.setEnabled(isEnabled);
+        toEdit.setEnabled(isEnabled);
+        if (!excludeOrderNumber && isEnabled) {
+            keyboard.setDotEnabled(false);
+            keyboard.setMinusVisible(true);
+            orderNumber.requestFocus();
+        }
     }
 
     @Click
@@ -252,7 +304,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                     unitSerial,
                     isManual);
         }
-        unitSerial = null;
+
     }
 
     private Pair<String, String> getSeq(String s) {
@@ -292,6 +344,27 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                     return false;
                 }
                 return false;
+            }
+        });
+        orderNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Pair<String, String> seq = getSeq(s.toString());
+                if (!TextUtils.isEmpty(seq.first) && !TextUtils.isEmpty(seq.second)) {
+                    setFilterFieldsEnabled(false, true);
+                } else {
+                    setFilterFieldsEnabled(true, true);
+                }
             }
         });
         cashierAdapter = new CashierFilterSpinnerAdapter(getActivity());
@@ -334,11 +407,15 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     @Override
     public void attachMe2Keyboard(CustomEditBox v) {
         if (v == orderNumber) {
-            keyboard.setDotEnabled(false);
-            keyboard.setMinusVisible(true);
+            if (keyboard.isNumPadEnabled()) {
+                keyboard.setDotEnabled(false);
+                keyboard.setMinusVisible(true);
+            }
         } else {
-            keyboard.setDotEnabled(true);
-            keyboard.setMinusVisible(false);
+            if (keyboard.isNumPadEnabled()) {
+                keyboard.setDotEnabled(true);
+                keyboard.setMinusVisible(false);
+            }
         }
         keyboard.attachEditView(v);
     }
@@ -360,10 +437,17 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
     }
 
-    @Override
-    public void onLoadedFromServer(boolean isSearchByUnit) {
-        if (isSearchByUnit)
-            orderNumber.setText(null);
+    public void onLoadedFromServer(String unitSerial) {
+        boolean isSearchByUnitSerial = !TextUtils.isEmpty(unitSerial);
+        if (!isSearchByUnitSerial)
+            return;
+
+        sequences.clear();
+        this.unitSerial = unitSerial;
+
+        orderNumber.setText(null);
+
+        setFilterFieldsEnabled(false);
     }
 
     public void makeCreditReceiptNumFocus() {

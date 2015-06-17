@@ -92,6 +92,10 @@ public class KeyboardView extends FrameLayout {
         numMinus.setEnabled(false);
     }
 
+    public boolean isNumPadEnabled() {
+        return num0.isEnabled();
+    }
+
     public void setDotEnabled(boolean enabled) {
         numDot.setEnabled(enabled);
     }

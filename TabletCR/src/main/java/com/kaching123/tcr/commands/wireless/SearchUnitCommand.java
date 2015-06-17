@@ -123,6 +123,7 @@ public class SearchUnitCommand extends AsyncCommand  {
         }
 
         query = query.where(UnitTable.IS_DELETED + " = ?", 0);
+        query.orderBy(UnitTable.ID);
         return query;
     }
 

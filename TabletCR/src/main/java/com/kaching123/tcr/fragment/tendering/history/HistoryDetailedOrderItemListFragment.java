@@ -347,6 +347,11 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
 
             }
 
+            @Override
+            public void handleClear() {
+
+            }
+
             private void hide() {
                 UnitsSearchHistoryFragment.hide(getActivity());
             }

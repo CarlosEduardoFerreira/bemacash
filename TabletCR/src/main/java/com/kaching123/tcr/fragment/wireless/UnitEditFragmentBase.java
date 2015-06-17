@@ -277,7 +277,7 @@ public abstract class UnitEditFragmentBase extends StyledDialogFragment implemen
         etSerial.setText(barcode);
     }
 
-    private String validateForm() {
+    protected String validateForm() {
         String value = etSerial.getText().toString();
         return formatter.valid(new StringBuilder(value)) ? value : null;
     }

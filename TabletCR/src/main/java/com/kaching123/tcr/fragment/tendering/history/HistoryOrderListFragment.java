@@ -200,7 +200,17 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
                     .transform(new SaleOrderTipsViewFunction()).build(getActivity());
         }
 
-        if (isTipsEnabled) {
+        boolean isOrderSearch = registerTitle != null && !registerTitle.isEmpty()
+                && seqNum != null && !seqNum.isEmpty() && seqNum.get(0) != null;
+
+        boolean isOrderLoadedFromServerByUnit = !isOrderSearch && !TextUtils.isEmpty(unitSerial);
+        if (isOrderLoadedFromServerByUnit) {
+            loader.where("0");
+
+            return loader.transform(new SaleOrderTipsViewFunction()).build(getActivity());
+        }
+
+        if (!isOrderSearch && isTipsEnabled) {
             if (TransactionsState.OPEN.equals(transactionsState)) {
                 loader.where(SaleOrderTipsQuery.HAS_OPENED_TRANSACTIONS + " = 1 ");
             } else if (TransactionsState.CLOSED.equals(transactionsState)) {
@@ -208,15 +218,15 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             }
         }
 
-        if (!TextUtils.isEmpty(cashierGUID) && !CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(cashierGUID)) {
+        if (!isOrderSearch && !TextUtils.isEmpty(cashierGUID) && !CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(cashierGUID)) {
             loader.where(SaleOrderTable.OPERATOR_GUID + " = ?", cashierGUID);
         }
 
-        if (!TextUtils.isEmpty(customerGUID) && !CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(customerGUID)) {
+        if (!isOrderSearch && !TextUtils.isEmpty(customerGUID) && !CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(customerGUID)) {
             loader.where(SaleOrderTable.CUSTOMER_GUID + " = ?", customerGUID);
         }
 
-        if (from != null && to != null) {
+        if (!isOrderSearch && from != null && to != null) {
             loader.where(SaleOrderTable.CREATE_TIME + " >= ? and " + SaleOrderTable.CREATE_TIME + " <= ?", from.getTime(), to.getTime());
         }
 
@@ -292,16 +302,6 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
         final String registerTitle = this.registerTitle == null || this.registerTitle.isEmpty() ? null : this.registerTitle.get(0);
         final String printSeqNum = this.seqNum == null || this.seqNum.isEmpty() ? null : this.seqNum.get(0);
-        final String employeeGuid = CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(this.cashierGUID) ? null : this.cashierGUID;
-        final String customerGuid = CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(this.customerGUID) ? null : this.customerGUID;
-        final Boolean isStatusOpened;
-        if (isTipsEnabled && transactionsState != null && !transactionsState.equals(TransactionsState.NA)) {
-            isStatusOpened = TransactionsState.OPEN.equals(transactionsState);
-        } else {
-            isStatusOpened = null;
-        }
-        final Date from = this.from;
-        final Date to = this.to;
         final String unitSerial = this.unitSerial;
         handler.post(new Runnable() {
             @Override
@@ -313,7 +313,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
                     @Override
                     public boolean onClick() {
                         WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
-                        DownloadOldOrdersCommand.start(getActivity(), registerTitle, printSeqNum, employeeGuid, customerGuid, isStatusOpened, from, to, unitSerial, downloadOrderCallback);
+                        DownloadOldOrdersCommand.start(getActivity(), registerTitle, printSeqNum, unitSerial, downloadOrderCallback);
                         return true;
                     }
                 });
@@ -334,12 +334,8 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private boolean isSearchingOrderFilters() {
         return loadedOrderGuids == null &&
                 (!TextUtils.isEmpty(this.unitSerial) || (
-                (registerTitle != null && !registerTitle.isEmpty()
-                    && seqNum != null && !seqNum.isEmpty() && seqNum.get(0) != null)
-                    && from != null && to != null
-                    && (TextUtils.isEmpty(cashierGUID) || cashierGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
-                    && (TextUtils.isEmpty(customerGUID) || customerGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
-                    && (!isTipsEnabled || transactionsState == null || transactionsState.equals(TransactionsState.NA))));
+                registerTitle != null && !registerTitle.isEmpty()
+                    && seqNum != null && !seqNum.isEmpty() && seqNum.get(0) != null));
     }
 
     private Pair<BigDecimal, BigDecimal> getPriceRange(List<SaleOrderTipsViewModel> saleOrderModels) {
@@ -377,29 +373,18 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     }
 
     @Override
-    public void onSearchByUnitFailed(String serialCode) {
+    public void onSearchByUnitFailed(final String serialCode) {
         boolean shouldSearchOnServer = !TextUtils.isEmpty(serialCode);
 
         if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode() || TcrApplication.get().getSalesHistoryLimit() == null)
             return;
 
-        final String employeeGuid = CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(this.cashierGUID) ? null : this.cashierGUID;
-        final String customerGuid = CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(this.customerGUID) ? null : this.customerGUID;
-        final Boolean isStatusOpened;
-        if (isTipsEnabled && transactionsState != null && !transactionsState.equals(TransactionsState.NA)) {
-            isStatusOpened = TransactionsState.OPEN.equals(transactionsState);
-        } else {
-            isStatusOpened = null;
-        }
-        final Date from = this.from;
-        final Date to = this.to;
-        final String unitSerial = serialCode;
 
         AlertDialogFragment.showConfirmation(getActivity(), R.string.order_searching_title, getString(R.string.order_searching_message), new OnDialogClickListener() {
             @Override
             public boolean onClick() {
                 WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
-                DownloadOldOrdersCommand.start(getActivity(), null, null, employeeGuid, customerGuid, isStatusOpened, from, to, unitSerial, downloadOrderCallback);
+                DownloadOldOrdersCommand.start(getActivity(), null, null, serialCode, downloadOrderCallback);
                 return true;
             }
         });
@@ -420,7 +405,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
         void onItemClicked(String guid, BigDecimal totalAmount, Date dateText, String cashierText, String numText, OrderType type, boolean isTipped);
 
-        void onLoadedFromServer(boolean isSearchByUnit);
+        void onLoadedFromServer(String unitSerial);
     }
 
     private class SaleOrderTipsViewFunction extends ListConverterFunction<SaleOrderTipsViewModel> {
@@ -521,12 +506,12 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private BaseDownloadOldOrdersCommandCallback downloadOrderCallback = new BaseDownloadOldOrdersCommandCallback() {
 
         @Override
-        protected void onSuccess(String[] guids, boolean isSearchByUnit) {
+        protected void onSuccess(String[] guids, String unitSerial) {
             if (getActivity() == null)
                 return;
 
             for (ILoader loader : loaderCallback) {
-                loader.onLoadedFromServer(isSearchByUnit);
+                loader.onLoadedFromServer(unitSerial);
             }
 
             WaitDialogFragment.hide(getActivity());

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputFilter.LengthFilter;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -78,7 +79,9 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
                 etSerial.setSelection(etSerial.getText().length());
             }
         });
-        etSerial.setText(predefSerial == null? "" : predefSerial);
+        etSerial.setText(predefSerial == null ? "" : predefSerial);
+        if (predefSerial != null)
+            etSerial.setSelection(etSerial.getText().length());
     }
 
     @Override
@@ -87,8 +90,20 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
     }
 
     @Override
+    protected String validateForm() {
+        String value = etSerial.getText().toString();
+        if (!TextUtils.isEmpty(predefSerial) && TextUtils.isEmpty(value))
+            return value;
+        return super.validateForm();
+    }
+
+    @Override
     protected boolean onSubmitForm() {
         final String serialCode = etSerial.getText().toString();
+        if (TextUtils.isEmpty(serialCode)) {
+            callback.handleClear();
+            return true;
+        }
         SearchUnitCommand.start(getActivity(), serialCode, null, null, true, new SearchUnitCommand.UnitCallback() {
 
             @Override
@@ -150,5 +165,7 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
         void handleError(String serialCode, String message);
 
         void handleCancel();
+
+        void handleClear();
     }
 }

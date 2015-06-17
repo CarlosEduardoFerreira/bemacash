@@ -401,7 +401,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     }
 
     @Override
-    public void onLoadedFromServer(boolean isSearchByUnit) {
+    public void onLoadedFromServer(String unitSerial) {
     }
 
     @Override

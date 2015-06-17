@@ -21,7 +21,7 @@ import java.util.Date;
 public class DownloadOldOrdersCommand extends PublicGroundyTask {
 
     private static final String EXTRA_GUIDS = "extra_guids";
-    private static final String EXTRA_SEARCH_BY_UNIT = "extra_search_by_unit";
+    private static final String EXTRA_UNIT_SERIAL = "extra_unit_serial";
     private static final String EXTRA_ERROR = "extra_error";
 
     private static final String ARG_REGISTER_TITLE = "arg_register_title";
@@ -57,8 +57,6 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
         to = (Date) getArgs().getSerializable(ARG_TO_DATE);
         unitSerial = getStringArg(ARG_UNIT_SERIAL);
 
-        boolean isSearchByUnit = !TextUtils.isEmpty(unitSerial);
-
         Logger.d("[SYNC HISTORY]DownloadOldOrdersCommand: setting loading orders flag");
         getApp().setLoadingOldOrders(true);
         Logger.d("[SYNC HISTORY]DownloadOldOrdersCommand: loading orders flag set");
@@ -88,7 +86,7 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
 
                 String[] guids = new DownloadOldOrdersResponseHandler(getContext()).handleOrdersResponse(resp);
 
-                return succeeded().add(EXTRA_GUIDS, guids).add(EXTRA_SEARCH_BY_UNIT, isSearchByUnit);
+                return succeeded().add(EXTRA_GUIDS, guids).add(EXTRA_UNIT_SERIAL, unitSerial);
             } catch (Exception e) {
                 Logger.e("DownloadOldOrdersCommand: failed", e);
                 return failed();
@@ -124,15 +122,21 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
         if (!TextUtils.isEmpty(customerGuid)) {
             request.put("customer_id", customerGuid);
         }
-        //payment_status = 'opened' | 'closed'
         if (isStatusOpened != null) {
             request.put("payment_status", isStatusOpened ? "opened" : "closed");
         }
 
-        request.put("from", Sync2Util.formatMillisec(from));
-        request.put("to", Sync2Util.formatMillisec(to));
+        if (from != null && to != null) {
+            request.put("from", Sync2Util.formatMillisec(from));
+            request.put("to", Sync2Util.formatMillisec(to));
+        }
 
         return request;
+    }
+
+    public static void start(Context context, String registerTitle, String printSeqNum, String unitSerial,
+                             BaseDownloadOldOrdersCommandCallback callback) {
+        start(context, registerTitle, printSeqNum, null, null, null, null, null, unitSerial, callback);
     }
 
     public static void start(Context context, String registerTitle, String printSeqNum, String employeeGuid, String customerGuid, Boolean isStatusOpened, Date from, Date to, String unitSerial,
@@ -152,8 +156,8 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
     public static abstract class BaseDownloadOldOrdersCommandCallback {
 
         @OnSuccess(DownloadOldOrdersCommand.class)
-        public void handleSuccess(@Param(EXTRA_GUIDS) String[] guids, @Param(EXTRA_SEARCH_BY_UNIT) boolean isSearchByUnit) {
-            onSuccess(guids, isSearchByUnit);
+        public void handleSuccess(@Param(EXTRA_GUIDS) String[] guids, @Param(EXTRA_UNIT_SERIAL) String unitSerial) {
+            onSuccess(guids, unitSerial);
         }
 
         @OnFailure(DownloadOldOrdersCommand.class)
@@ -174,7 +178,7 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
             }
         }
 
-        protected abstract void onSuccess(String[] guids, boolean isSearchByUnit);
+        protected abstract void onSuccess(String[] guids, String unitSerial);
 
         protected abstract void onNotFoundError();
 
