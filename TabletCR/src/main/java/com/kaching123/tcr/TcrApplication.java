@@ -263,6 +263,7 @@ public class TcrApplication extends Application {
         setPaxTipsEnabled(false);
         setLastSuccessfulSyncTime(null);
         setSalesSyncGapOccurred(false);
+        setInvalidOrdersFound(false);
     }
 
     private String cut4Symbols(String s) {

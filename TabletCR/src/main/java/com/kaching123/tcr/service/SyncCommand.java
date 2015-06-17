@@ -789,6 +789,7 @@ public class SyncCommand implements Runnable {
                 }
                 inBuilder.append(')');
 
+                //TODO: add check - old active order?
                 count += ProviderAction.update(ShopProvider.contentUri(UnitTable.URI_CONTENT))
                         .value(UnitTable.SALE_ORDER_ID, null)
                         .where(UnitTable.SALE_ORDER_ID + inBuilder.toString(), orderGuids.toArray(new String[orderGuids.size()]))
