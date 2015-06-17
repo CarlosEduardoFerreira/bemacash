@@ -44,17 +44,18 @@ public class UnitsSearchHistoryFragment extends UnitsSearchFragment {
 
     @Override
     protected boolean onSubmitForm() {
-        SearchUnitCommand.start(getActivity(), etSerial.getText().toString(), itemId, orderId, new SearchUnitCommand.UnitCallback() {
+        final String serialCode = etSerial.getText().toString();
+        SearchUnitCommand.start(getActivity(), serialCode, itemId, orderId, new SearchUnitCommand.UnitCallback() {
 
             @Override
             protected void handleSuccess(ArrayList<Unit> units, ArrayList<SaleOrderViewModel> order) {
                 units.get(0).status = selectedStatus;
-                callback.handleSuccess(units, order);
+                callback.handleSuccess(serialCode, units, order);
             }
 
             @Override
             protected void handleError(String message) {
-                callback.handleError(message);
+                callback.handleError(serialCode, message);
             }
         });
         return true;

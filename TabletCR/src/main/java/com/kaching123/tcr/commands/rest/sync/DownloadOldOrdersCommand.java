@@ -21,13 +21,13 @@ import java.util.Date;
 public class DownloadOldOrdersCommand extends PublicGroundyTask {
 
     private static final String EXTRA_GUIDS = "extra_guids";
-    private static final String EXTRA_NOT_FOUND = "extra_not_found";
+    private static final String EXTRA_ERROR = "extra_error";
 
-    private static final String ARG_REGISTER_TITLE = "ARG_REGISTER_TITLE";
+    private static final String ARG_REGISTER_TITLE = "arg_register_title";
     private static final String ARG_PRINT_SEQ_NUM = "arg_print_seq_num";
-    private static final String ARG_FROM_DATE = "ARG_FROM_DATE";
-    private static final String ARG_TO_DATE = "ARG_TO_DATE";
-    private static final String ARG_UNIT_SERIAL = "ARG_UNIT_SERIAL";
+    private static final String ARG_FROM_DATE = "arg_from_date";
+    private static final String ARG_TO_DATE = "arg_to_date";
+    private static final String ARG_UNIT_SERIAL = "arg_unit_serial";
 
     private String registerTitle;
     private String printSeqNum;
@@ -35,9 +35,12 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
     private Date to;
     private String unitSerial;
 
+    public static enum Error {
+        NOT_FOUND, SYNC_LOCKED
+    }
+
     @Override
     protected TaskResult doInBackground() {
-        //TODO: add check is history limit activated?
         registerTitle = getStringArg(ARG_REGISTER_TITLE);
         printSeqNum = getStringArg(ARG_PRINT_SEQ_NUM);
         from = (Date) getArgs().getSerializable(ARG_FROM_DATE);
@@ -57,10 +60,9 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
                         getEntity(registerTitle, printSeqNum, from, to, unitSerial));
                 Logger.d("DownloadOldOrdersCommand: response: " + resp);
 
-                //TODO: handle?
-                /*if (resp != null && resp.isSyncLockedError()) {
-                    throw new SyncLockedException();
-                }*/
+                if (resp != null && resp.isSyncLockedError()) {
+                    return failed().add(EXTRA_ERROR, Error.SYNC_LOCKED);
+                }
 
                 if (resp == null || !resp.isSuccess()) {
                     Logger.e("DownloadOldOrdersCommand: failed, response: " + resp);
@@ -69,10 +71,9 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
 
                 if (resp.getEntity() == null || resp.getEntity().length() == 0) {
                     Logger.e("DownloadOldOrdersCommand: empty response: " + resp);
-                    return failed().add(EXTRA_NOT_FOUND, true);
+                    return failed().add(EXTRA_ERROR, Error.NOT_FOUND);
                 }
 
-                //TODO: check that it was loaded with one request(atomic)
                 String[] guids = new DownloadOldOrdersResponseHandler(getContext()).handleOrdersResponse(resp);
 
                 return succeeded().add(EXTRA_GUIDS, guids);
@@ -100,11 +101,11 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
 
         if (!TextUtils.isEmpty(unitSerial)) {
             request.put("unit_serial", unitSerial);
-            return request;
+        } else {
+            request.put("register", registerTitle);
+            request.put("print_num", printSeqNum);
         }
 
-        request.put("register", registerTitle);
-        request.put("print_num", printSeqNum);
         request.put("from", Sync2Util.formatMillisec(from));
         request.put("to", Sync2Util.formatMillisec(to));
 
@@ -125,17 +126,28 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
         }
 
         @OnFailure(DownloadOldOrdersCommand.class)
-        public void handleFailure(@Param(EXTRA_NOT_FOUND) Boolean notFound) {
-            if (notFound != null && notFound) {
-                onNotFoundError();
+        public void handleFailure(@Param(EXTRA_ERROR) Error error) {
+            if (error == null) {
+                onFailure();
                 return;
             }
-            onFailure();
+            switch (error) {
+                case NOT_FOUND:
+                    onNotFoundError();
+                    break;
+                case SYNC_LOCKED:
+                    onSyncLockedError();
+                    break;
+                default:
+                    onFailure();
+            }
         }
 
         protected abstract void onSuccess(String[] guids);
 
         protected abstract void onNotFoundError();
+
+        protected abstract void onSyncLockedError();
 
         protected abstract void onFailure();
     }

@@ -93,12 +93,12 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
 
             @Override
             protected void handleSuccess(ArrayList<Unit> unit, ArrayList<SaleOrderViewModel> order) {
-                callback.handleSuccess(unit, order);
+                callback.handleSuccess(serialCode, unit, order);
             }
 
             @Override
             protected void handleError(String message) {
-                callback.handleError(message);
+                callback.handleError(serialCode, message);
             }
         });
         return true;
@@ -145,9 +145,9 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
 
     public interface UnitCallback {
 
-        void handleSuccess(ArrayList<Unit> unit, ArrayList<SaleOrderViewModel> order);
+        void handleSuccess(String serialCode, ArrayList<Unit> unit, ArrayList<SaleOrderViewModel> order);
 
-        void handleError(String message);
+        void handleError(String serialCode, String message);
 
         void handleCancel();
     }

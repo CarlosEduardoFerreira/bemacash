@@ -162,13 +162,16 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
 
             @Override
-            public void handleSuccess(ArrayList<Unit> unit, ArrayList<SaleOrderViewModel> order) {
+            public void handleSuccess(String serialCode, ArrayList<Unit> unit, ArrayList<SaleOrderViewModel> order) {
+                if (getActivity() == null)
+                    return;
+
                 hide();
                 sequences.clear();
                 for (int i = 0; i < order.size(); i++) {
                     sequences.add(order.get(i).registerTitle + "-" + order.get(i).printSeqNum);
                 }
-                unitSerial = unit.get(0).serialCode;
+                unitSerial = serialCode;
                 if (order.size() == 1) {
                     orderNumber.setText(order.get(0).registerTitle + "-" + order.get(0).printSeqNum);
                 }
@@ -176,10 +179,14 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
             }
 
             @Override
-            public void handleError(String message) {
-                //TODO: get serial and pass to list fragment - show prompt
-                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+            public void handleError(String serialCode, String message) {
+                if (getActivity() == null)
+                    return;
+
+                Toast.makeText(getActivity(), R.string.unit_history_serial_not_found, Toast.LENGTH_LONG).show();
                 hide();
+
+                callback.onSearchByUnitFailed(serialCode);
             }
 
             @Override

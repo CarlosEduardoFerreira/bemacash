@@ -89,6 +89,16 @@ public abstract class RestCommand extends PublicGroundyTask {
         }
     }
 
+    public static class IntegerResponse extends Response {
+
+        public Integer entity;
+
+        public IntegerResponse(String status, String message, Integer entity) {
+            super(status, message);
+            this.entity = entity;
+        }
+    }
+
     @Override
     protected TaskResult doInBackground() {
         Response response = execute(getRestApi(), getApp().emailApiKey);

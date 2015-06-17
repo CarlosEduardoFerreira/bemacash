@@ -287,7 +287,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         if (getActivity() == null)
             return;
 
-        if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode())
+        if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode() || TcrApplication.get().getSalesHistoryLimit() == null)
             return;
 
         final String registerTitle = this.registerTitle.get(0);
@@ -323,7 +323,11 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     }
 
     private boolean isSearchingOrderFilters() {
-        return loadedOrderGuids == null &&
+        return isSearchingOrderFilters(false, this.unitSerial);
+    }
+
+    private boolean isSearchingOrderFilters(boolean ignoreLoader, String unitSerial) {
+        return (loadedOrderGuids == null || ignoreLoader) &&
                 ((registerTitle != null && !registerTitle.isEmpty()
                     && seqNum != null && !seqNum.isEmpty() && seqNum.get(0) != null)
                     || !TextUtils.isEmpty(unitSerial))
@@ -365,6 +369,27 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         Logger.d("We are up to filter the list with %s, %s, %s, %s, %s, %s", from, to, cashierGUID, customerGUID, registerNum, seqNum);
         isSearchingOrder = isManual;
         setFilterValues(from, to, cashierGUID, customerGUID, transactionsState, registerNum, seqNum, unitSerial);
+    }
+
+    @Override
+    public void onSearchByUnitFailed(String serialCode) {
+        boolean shouldSearchOnServer = isSearchingOrderFilters(true, serialCode);
+
+        if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode() || TcrApplication.get().getSalesHistoryLimit() == null)
+            return;
+
+        final Date from = this.from;
+        final Date to = this.to;
+        final String unitSerial = serialCode;
+
+        AlertDialogFragment.showConfirmation(getActivity(), R.string.order_searching_title, getString(R.string.order_searching_message), new OnDialogClickListener() {
+            @Override
+            public boolean onClick() {
+                WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
+                DownloadOldOrdersCommand.start(getActivity(), null, null, from, to, unitSerial, downloadOrderCallback);
+                return true;
+            }
+        });
     }
 
     @OptionsItem
@@ -488,7 +513,6 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
                 return;
 
             WaitDialogFragment.hide(getActivity());
-            //TODO: remember order ids, restart loader
             loadedOrderGuids = guids;
             getLoaderManager().restartLoader(0, null, HistoryOrderListFragment.this);
         }
@@ -500,6 +524,15 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
             WaitDialogFragment.hide(getActivity());
             AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.order_searching_error_message_not_found));
+        }
+
+        @Override
+        protected void onSyncLockedError() {
+            if (getActivity() == null)
+                return;
+
+            WaitDialogFragment.hide(getActivity());
+            AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.error_message_sync_locked));
         }
 
         @Override

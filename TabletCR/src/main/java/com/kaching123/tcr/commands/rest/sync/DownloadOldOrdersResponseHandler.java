@@ -8,6 +8,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
 import com.kaching123.tcr.model.IValueModel;
 import com.kaching123.tcr.service.response.BaseOrdersResponseHandler;
 import com.kaching123.tcr.store.ShopProvider;
@@ -75,16 +76,29 @@ public class DownloadOldOrdersResponseHandler extends BaseOrdersResponseHandler 
     }
 
     @Override
+    protected ContentValues parseItem(JdbcJSONObject rs, JdbcConverter converter) throws JSONException {
+        ContentValues values = super.parseItem(rs, converter);
+
+        if (converter instanceof SaleOrdersJdbcConverter &&
+                (!values.containsKey(SaleOrderTable.PARENT_ID) || TextUtils.isEmpty(values.getAsString(SaleOrderTable.PARENT_ID)))) {
+            orderGuids.add(values.getAsString(SaleOrderTable.GUID));
+        }
+
+        return values;
+    }
+
+    @Override
+    protected boolean supportUpdateTimeFlag() {
+        return false;
+    }
+
+    @Override
     protected void saveResult(String localTableName, String idColumn, ArrayList<ContentValues> result) {
         ShopProviderExt.insertUpdateValues(context, localTableName, idColumn, result.toArray(new ContentValues[result.size()]));
     }
 
     @Override
     protected void saveResult(String localTableName, String idColumn, ContentValues result) {
-        if (SaleOrderTable.TABLE_NAME.equals(localTableName)
-                && (!result.containsKey(SaleOrderTable.PARENT_ID) || TextUtils.isEmpty(result.getAsString(SaleOrderTable.PARENT_ID)))) {
-            orderGuids.add(result.getAsString(SaleOrderTable.GUID));
-        }
         ShopProviderExt.insertUpdateValues(context, localTableName, idColumn, new ContentValues[]{result});
     }
 }

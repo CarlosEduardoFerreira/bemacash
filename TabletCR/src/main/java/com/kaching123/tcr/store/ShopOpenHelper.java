@@ -290,7 +290,6 @@ public class ShopOpenHelper extends BaseOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         for (ContentValues values: valuesArray) {
-            values.remove(ShopStore.DEFAULT_UPDATE_TIME);
             insertUpdateValuesFromExtraDatabase(db, tableName, idColumn, values);
         }
 

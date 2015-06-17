@@ -12,4 +12,6 @@ public interface IFilterRequestListener {
 
     void onFilterRequested(Date from, Date to, String cashierGUID, String customerGUID,
                            TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum, String unitSerial, boolean isManual);
+
+    void onSearchByUnitFailed(String serialCode);
 }

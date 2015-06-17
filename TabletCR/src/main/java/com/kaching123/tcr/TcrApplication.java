@@ -16,7 +16,6 @@ import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.RestCommand.PlainTextResponse;
 import com.kaching123.tcr.commands.rest.sync.AuthResponse;
 import com.kaching123.tcr.commands.rest.sync.DBVersionResponse;
-import com.kaching123.tcr.commands.rest.sync.GetAPKUpdates;
 import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;
 import com.kaching123.tcr.commands.rest.sync.GetCurrentTimestampResponse;
 import com.kaching123.tcr.commands.rest.sync.GetPagedArrayResponse;
@@ -999,6 +998,8 @@ public class TcrApplication extends Application {
                     return new GetPrepaidOrderIdResponse(response.getString("status"), response.getString("message"), response.getString("data"));
                 } else if (type == GetCurrentTimestampResponse.class) {
                     return new GetCurrentTimestampResponse(response.getString("status"), response.getString("message"), response.getString("data"));
+                } else if (type == RestCommand.IntegerResponse.class) {
+                    return new RestCommand.IntegerResponse(response.getString("status"), response.getString("message"), response.isNull("data") ? null : response.getInt("data"));
                 } else {
                     throw new ConversionException("Can't parse response. Unknown type: " + type);
                 }

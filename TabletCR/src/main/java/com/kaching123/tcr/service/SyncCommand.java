@@ -18,6 +18,7 @@ import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSetAutomaticB
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackUpdateAutomaticHourToCloseBatchCommand;
 import com.kaching123.tcr.commands.payment.pax.PaxMIDownloadCommand;
 import com.kaching123.tcr.commands.rest.RestCommand;
+import com.kaching123.tcr.commands.rest.RestCommand.IntegerResponse;
 import com.kaching123.tcr.commands.rest.sync.DBVersionCheckCommand;
 import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;
 import com.kaching123.tcr.commands.rest.sync.GetCurrentTimestampResponse;
@@ -445,6 +446,10 @@ public class SyncCommand implements Runnable {
                 }
 
                 //TODO: check that sales limit setting hasn't changed - else throw exception
+                if (salesHistoryLimit != null) {
+                    checkServerSalesHistoryLimit(api, employee, salesHistoryLimit);
+                }
+
                 //write data from extra db to main db on success, in transaction, making rows alive
                 localSync(minUpdateTime);
 
@@ -470,12 +475,23 @@ public class SyncCommand implements Runnable {
         return count;
     }
 
+    private void checkServerSalesHistoryLimit(SyncApi api, EmployeeModel employee, int salesHistoryLimit) throws SyncException, SyncLockedException {
+        Integer serverSalesHistoryLimit = getServerSalesHistoryLimit(api, employee);
+        if (serverSalesHistoryLimit == null) {
+            Logger.e("SyncCommand: server sales history limit check failed - value is not set on the server, or empty response");
+            throw new SyncLockedException();
+        }
+        if (salesHistoryLimit != serverSalesHistoryLimit) {
+            Logger.e("SyncCommand: server sales history limit check failed - value had been changed on the server");
+            throw new SyncLockedException();
+        }
+    }
+
     private void checkIsLoadingOldOrders() throws SyncInterruptedException {
         Logger.d("[SYNC HISTORY]SyncCommand: checking loading orders flag");
         if (!getApp().isLoadingOldOrders())
             return;
 
-        //TODO: add specific exception
         throw new SyncInterruptedException("download sync interrupted (loading old orders)");
     }
 
@@ -679,6 +695,31 @@ public class SyncCommand implements Runnable {
             throw new SyncException();
         }
         return currentServerTimestamp;
+    }
+
+    private Integer getServerSalesHistoryLimit(SyncApi api, EmployeeModel employee) throws SyncException, SyncLockedException {
+        IntegerResponse response;
+        try {
+            response = api.getMaxHistoryLimit(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employee, getApp()));
+        } catch (Exception e) {
+            Logger.e("SyncCommand.getServerSalesHistoryLimit(): failed", e);
+            throw new SyncException();
+        }
+        Logger.d("SyncCommand.getServerSalesHistoryLimit(): response: " + response);
+
+        if (response != null && response.isSyncLockedError()) {
+            throw new SyncLockedException();
+        }
+
+        if (response == null || !response.isSuccess()) {
+            Logger.e("SyncCommand.getServerSalesHistoryLimit(): failed, response: " + response);
+            throw new SyncException();
+        }
+
+        if (response.entity == null) {
+            Logger.w("SyncCommand.getServerSalesHistoryLimit(): empty response");
+        }
+        return response.entity;
     }
 
     private int localSync(Long minUpdateTime) throws SyncException, SyncInterruptedException {

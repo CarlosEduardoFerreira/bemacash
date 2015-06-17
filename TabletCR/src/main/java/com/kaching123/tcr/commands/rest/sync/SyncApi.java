@@ -1,6 +1,7 @@
 package com.kaching123.tcr.commands.rest.sync;
 
 import com.kaching123.tcr.commands.rest.RestCommand;
+import com.kaching123.tcr.commands.rest.RestCommand.IntegerResponse;
 import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
 
 import org.json.JSONObject;
@@ -46,5 +47,10 @@ public interface SyncApi {
     @FormUrlEncoded
     @POST("/apiv2/data/set_register_last_update")
     RestCommand.Response setRegisterLastUpdate(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials);
+    //apiv2/service/get_max_history_limit
+
+    @FormUrlEncoded
+    @POST("/apiv2/service/get_max_history_limit")
+    IntegerResponse getMaxHistoryLimit(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials);
 
 }

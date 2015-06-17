@@ -50,6 +50,7 @@ public class SyncOldActiveOrdersResponseHandler extends BaseOrdersResponseHandle
 
         syncOpenHelper.beginTransaction();
         try {
+            //TODO: improve?
             boolean hasData = parseResponse(data);
 
             syncOpenHelper.setTransactionSuccessful();
@@ -61,7 +62,7 @@ public class SyncOldActiveOrdersResponseHandler extends BaseOrdersResponseHandle
     }
 
     @Override
-    protected void saveResult(String localTableName, String contentPath, ArrayList<ContentValues> result) {
+    protected void saveResult(String localTableName, String idColumn, ArrayList<ContentValues> result) {
         boolean success = syncOpenHelper.insert(localTableName, result.toArray(new ContentValues[result.size()]), false);
         if (!success) {
             throw new RuntimeException("some data was not saved");
@@ -69,7 +70,7 @@ public class SyncOldActiveOrdersResponseHandler extends BaseOrdersResponseHandle
     }
 
     @Override
-    protected void saveResult(String localTableName, String contentPath, ContentValues result) {
+    protected void saveResult(String localTableName, String idColumn, ContentValues result) {
         boolean success = syncOpenHelper.insert(localTableName, new ContentValues[]{result}, false);
         if (!success) {
             throw new RuntimeException("some data was not saved");

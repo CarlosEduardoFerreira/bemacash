@@ -286,7 +286,7 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
 
         UnitsSearchHistoryFragment.show(getActivity(), orderId, itemId, new UnitsSearchFragment.UnitCallback() {
             @Override
-            public void handleSuccess(ArrayList<Unit> unitList, ArrayList<SaleOrderViewModel> orderList) {
+            public void handleSuccess(String serialCode, ArrayList<Unit> unitList, ArrayList<SaleOrderViewModel> orderList) {
                 final Unit unit = unitList.get(0);
                 SaleOrderViewModel order = orderList.get(0);
                 final List<Unit> units = scannedUnits.get(itemId);
@@ -337,7 +337,7 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
             }
 
             @Override
-            public void handleError(String message) {
+            public void handleError(String serialCode, String message) {
                 Toast.makeText(getActivity(), R.string.unit_history_serial_not_found, Toast.LENGTH_LONG).show();
                 hide();
             }

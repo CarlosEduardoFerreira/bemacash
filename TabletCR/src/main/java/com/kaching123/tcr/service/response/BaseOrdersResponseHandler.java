@@ -64,7 +64,6 @@ public abstract class BaseOrdersResponseHandler {
             SaleAddonTable.URI_CONTENT,
             PaymentTransactionTable.URI_CONTENT,
             BillPaymentDescriptionTable.URI_CONTENT,
-            //CreditReceiptTable.URI_CONTENT,
             EmployeeTipsTable.URI_CONTENT,
             EmployeeCommissionsTable.URI_CONTENT
     };
@@ -83,9 +82,8 @@ public abstract class BaseOrdersResponseHandler {
     protected boolean parseSaleOrderArray(JdbcJSONArray data) throws JSONException {
         for (int i = 0; i < data.length(); i++) {
             JdbcJSONObject rs = data.getJSONObject(i);
-            ContentValues value = parseItem(rs, JdbcFactory.getConverter(SaleOrderTable.TABLE_NAME));
-
-            saveResult(SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, value);
+            saveResult(SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID,
+                    parseItem(rs, JdbcFactory.getConverter(SaleOrderTable.TABLE_NAME)));
 
             JdbcJSONArray saleOrderItems = rs.isNull(SALE_ORDER_ITEMS) ? null : rs.getJSONArray(SALE_ORDER_ITEMS);
             if (saleOrderItems != null) {
@@ -124,8 +122,7 @@ public abstract class BaseOrdersResponseHandler {
                 }
             }
 
-            //TODO: check refund units
-            //TODO: check - could update existing unit(active)
+            //TODO: improve units response - only in one order
             JdbcJSONArray units = rs.isNull(UNITS) ? null : rs.getJSONArray(UNITS);
             if (units != null) {
                 ArrayList<ContentValues> unitsValues = parseResponseArray(units, JdbcFactory.getConverter(UnitTable.TABLE_NAME));
@@ -146,9 +143,8 @@ public abstract class BaseOrdersResponseHandler {
     protected void parseSaleOrderItemArray(JdbcJSONArray data) throws JSONException {
         for (int i = 0; i < data.length(); i++) {
             JdbcJSONObject rs = data.getJSONObject(i);
-            ContentValues values = parseItem(rs, JdbcFactory.getConverter(SaleItemTable.TABLE_NAME));
-
-            saveResult(SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, values);
+            saveResult(SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID,
+                    parseItem(rs, JdbcFactory.getConverter(SaleItemTable.TABLE_NAME)));
 
             JdbcJSONArray saleOrderItemAddons = rs.isNull(SALE_ORDER_ITEM_ADDONS) ? null : rs.getJSONArray(SALE_ORDER_ITEM_ADDONS);
             if (saleOrderItemAddons != null) {
@@ -173,7 +169,7 @@ public abstract class BaseOrdersResponseHandler {
     protected ContentValues parseItem(JdbcJSONObject rs, JdbcConverter converter) throws JSONException {
         IValueModel valuesModel = converter.toValues(rs);
         ContentValues v = valuesModel.toValues();
-        if(converter.supportUpdateTimeFlag()) {
+        if(supportUpdateTimeFlag() && converter.supportUpdateTimeFlag()) {
             v.put(ShopStore.DEFAULT_UPDATE_TIME, rs.getTimestamp(JdbcBuilder.FIELD_UPDATE_TIME).getTime());
         }
         if (converter.supportDeleteFlag()) {
@@ -185,8 +181,12 @@ public abstract class BaseOrdersResponseHandler {
         return v;
     }
 
-    protected abstract void saveResult(String localTableName, String contentPath, ArrayList<ContentValues> result);
+    protected boolean supportUpdateTimeFlag() {
+        return true;
+    }
 
-    protected abstract void saveResult(String localTableName, String contentPath, ContentValues result);
+    protected abstract void saveResult(String localTableName, String idColumn, ArrayList<ContentValues> result);
+
+    protected abstract void saveResult(String localTableName, String idColumn, ContentValues result);
 
 }
