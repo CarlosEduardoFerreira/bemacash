@@ -57,8 +57,13 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
         Logger.d("ClearSalesHistoryCommand: locked");
         try {
             //TODO: refactor?
-            int limitDays = getApp().getSalesHistoryLimit();
+            Integer limitDays = getApp().getSalesHistoryLimit();
             Logger.d("ClearSalesHistoryCommand: limit: " + limitDays + " days");
+            if (limitDays == null) {
+                Logger.w("ClearSalesHistoryCommand: limit not set - command skipped");
+                return succeeded();
+            }
+
             long minCreateTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(limitDays);
             Logger.d("ClearSalesHistoryCommand: min date: " + new Date(minCreateTime));
 

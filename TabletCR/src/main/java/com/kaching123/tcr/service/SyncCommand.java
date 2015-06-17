@@ -95,6 +95,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -289,14 +290,27 @@ public class SyncCommand implements Runnable {
                 long serverLastTimestamp = getServerCurrentTimestamp(api, employee);
                 long minUpdateTime = serverLastTimestamp - TimeUnit.DAYS.toMillis(salesHistoryLimit);
 
-                if (salesHistoryLimit > getApp().getSalesHistoryLimit()) {
+                Integer oldSalesHistoryLimit = getApp().getSalesHistoryLimit();
+                if (oldSalesHistoryLimit != null && salesHistoryLimit > oldSalesHistoryLimit) {
                     Long lastSuccessfulSyncTime = getApp().getLastSuccessfulSyncTime();
-                    long oldMinUpdateTime = serverLastTimestamp - TimeUnit.DAYS.toMillis(getApp().getSalesHistoryLimit());
+                    long oldMinUpdateTime = serverLastTimestamp - TimeUnit.DAYS.toMillis(oldSalesHistoryLimit);
                     if (lastSuccessfulSyncTime != null && lastSuccessfulSyncTime < oldMinUpdateTime)
                         getApp().setLastSuccessfulSyncTime(null);
                 }
 
                 getApp().setSalesHistoryLimit(salesHistoryLimit);
+
+                if (oldSalesHistoryLimit == null) {
+                    Logger.w("SyncCommand.syncNowInner(): sales history limit first set, notifying");
+                    notifySyncGep();
+                }
+
+                getApp().setSalesHistoryLimit(salesHistoryLimit);
+
+                if (oldSalesHistoryLimit == null) {
+                    Logger.w("SyncCommand.syncNowInner(): sales history limit first set, notifying");
+                    notifySyncGep();
+                }
 
                 int retriesCount = FINALIZE_SYNC_RETRIES;
                 do {
@@ -424,7 +438,7 @@ public class SyncCommand implements Runnable {
     }
 
     private void notifySyncGep() {
-        Logger.d("[SYNC GAP] notify");
+        Logger.w("[SYNC GAP] notify");
         Intent intent = new Intent(ACTION_SYNC_GAP);
         LocalBroadcastManager.getInstance(service).sendBroadcast(intent);
     }
@@ -513,6 +527,7 @@ public class SyncCommand implements Runnable {
     }
 
     private void clearSyncCache(SyncOpenHelper syncOpenHelper, String[] tableNames) {
+        Logger.w("[SYNC GAP] clearing sync cache, tables: " + Arrays.toString(tableNames));
         syncOpenHelper.clearTables(tableNames);
     }
 
@@ -806,14 +821,14 @@ public class SyncCommand implements Runnable {
         }
 
         return makeRequest(api, app.emailApiKey,
-                            credentials,
-                            Sync2GetRequestBuilder.getRequestFull(
-                                    converter.getTableName(),
-                                    updateTime,
-                                    converter.getGuidColumn(),
-                                    supportParentChildRelations ? converter.getParentGuidColumn() : null,
-                                    isChild,
-                                    PAGE_ROWS));
+                credentials,
+                Sync2GetRequestBuilder.getRequestFull(
+                        converter.getTableName(),
+                        updateTime,
+                        converter.getGuidColumn(),
+                        supportParentChildRelations ? converter.getParentGuidColumn() : null,
+                        isChild,
+                        PAGE_ROWS));
     }
 
     private int syncLocalSingleTable(Context context, String localTable) throws SyncException {

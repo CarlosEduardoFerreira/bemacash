@@ -45,6 +45,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -210,12 +211,15 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
         @Override
         public Loader<List<SaleOrderModel>> onCreateLoader(int arg0, Bundle arg1) {
-            long minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
-            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
+            CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
                     .where(ShopStore.SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid())
                     .where(ShopStore.SaleOrderTable.GUID + " <> ?", argOrderGuid == null ? "" : argOrderGuid)
-                    .where(ShopStore.SaleOrderTable.STATUS + " = ? ", OrderStatus.ACTIVE.ordinal())
-                    .where(ShopStore.SaleOrderTable.CREATE_TIME + " >= ? ", minCreateTime)
+                    .where(ShopStore.SaleOrderTable.STATUS + " = ? ", OrderStatus.ACTIVE.ordinal());
+
+            Date minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar);
+            if (minCreateTime != null)
+                builder.where(ShopStore.SaleOrderTable.CREATE_TIME + " >= ? ", minCreateTime.getTime());
+            return builder
                     .orderBy(ShopStore.SaleOrderTable.CREATE_TIME + " desc ")
                     .transform(new SaleOrderFunction() {
                         @Override

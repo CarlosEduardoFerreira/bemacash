@@ -6,6 +6,8 @@ import android.widget.EditText;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
+
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.picker.DateTimePickerFragment;
 import com.kaching123.tcr.component.picker.DateTimePickerFragment.OnDateTimeSetListener;
@@ -169,6 +171,10 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
             cropPeriodDates(fromDate, toDate, inDays, isFromDate, maxPeriod);
         }
 
+        //TODO: show error message?
+        //TODO: improve - period lost
+        checkAndFixMinDate(fromDate, toDate);
+
         return true;
     }
 
@@ -181,5 +187,21 @@ public abstract class DateRangeFragment extends SuperBaseFragment {
             toDate.setTime(fromDate.getTime() + (maxPeriod - 1) * (inDays ? DAY_IN_MILLIS : HOUR_IN_MILLIS));
         else
             fromDate.setTime(toDate.getTime() - (maxPeriod - 1) * (inDays ? DAY_IN_MILLIS : HOUR_IN_MILLIS));
+    }
+
+    protected void checkAndFixMinDate(Date fromDate, Date toDate) {
+        Date minFromDate = getMinFromDate();
+        if (minFromDate == null)
+            return;
+
+        if (fromDate.getTime() < minFromDate.getTime()) {
+            Logger.w("DateRangeFragment: set date is out of sales history limit - fixing");
+            fromDate.setTime(minFromDate.getTime());
+
+            if (toDate.before(fromDate)) {
+                toDate.setTime(fromDate.getTime());
+            }
+        }
+
     }
 }

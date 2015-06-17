@@ -82,8 +82,6 @@ public class TcrApplication extends Application {
     public static final long DEFAULT_OFFLINE_PERIOD = TimeUnit.HOURS.toMillis(192);
     public static final long OFFLINE_PERIOD_NEAR = TimeUnit.HOURS.toMillis(24);
 
-    private static final int DEFAULT_SALES_HISTORY_LIMIT = 42; //in days
-
     private static TcrApplication self;
 
     private PrepaidUser prepaidUser = new PrepaidUser();
@@ -466,16 +464,25 @@ public class TcrApplication extends Application {
         shopPref.salesHistoryLimit().put(salesHistoryLimit);
     }
 
-    public int getSalesHistoryLimit() {
-        return shopPref.salesHistoryLimit().getOr(DEFAULT_SALES_HISTORY_LIMIT);
+    public Integer getSalesHistoryLimit() {
+        int salesHistoryLimit = shopPref.salesHistoryLimit().getOr(0);
+        if (salesHistoryLimit == 0) {
+            Logger.w("TcrApplication: sales history limit is not set yet");
+        }
+        return salesHistoryLimit == 0 ? null : salesHistoryLimit;
     }
 
-    public long getMinSalesHistoryLimitDate() {
+    public Long getMinSalesHistoryLimitDate() {
+        Integer salesHistoryLimit = getSalesHistoryLimit();
+        if (salesHistoryLimit == null)
+            return null;
         return System.currentTimeMillis() - TimeUnit.DAYS.toMillis(getSalesHistoryLimit());
     }
 
     public Date getMinSalesHistoryLimitDateDayRounded(Calendar localTimeCalendar) {
-        long minDateTime = getMinSalesHistoryLimitDate();
+        Long minDateTime = getMinSalesHistoryLimitDate();
+        if (minDateTime == null)
+            return null;
 
         localTimeCalendar.setTimeInMillis(minDateTime);
         localTimeCalendar.set(Calendar.HOUR_OF_DAY, 00);
@@ -780,6 +787,7 @@ public class TcrApplication extends Application {
     public void setSalesSyncGapOccurred(boolean value) {
         shopPref.salesSyncGapOccurred().put(value);
     }
+
 
 
     private long getOfflinePeriod() {

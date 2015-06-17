@@ -53,6 +53,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -231,15 +232,15 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
 
     @Override
     public Loader<List<Unit>> onCreateLoader(int loaderId, Bundle args) {
-        long minCreateTime = TcrApplication.get().getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
+        Date minCreateTime = TcrApplication.get().getMinSalesHistoryLimitDateDayRounded(calendar);
         CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_UNITS);
         loader.where(UnitsView2.UnitTable.ITEM_ID + " = ?", model.guid);
         if (status != null) {
             loader.where(UnitsView2.UnitTable.STATUS + " = ?", status.ordinal());
-            if (status == Status.SOLD)
-                loader.where(UnitsView2.SaleOrderTable.CREATE_TIME + " >= ? ", minCreateTime);
-        } else {
-            loader.where("( " + UnitsView2.UnitTable.STATUS + " != " + Status.SOLD.ordinal() + " or " + UnitsView2.SaleOrderTable.CREATE_TIME + " >= " + minCreateTime + " )");
+            if (minCreateTime != null && status == Status.SOLD)
+                loader.where(UnitsView2.SaleOrderTable.CREATE_TIME + " >= ? ", minCreateTime.getTime());
+        } else if (minCreateTime != null) {
+            loader.where("( " + UnitsView2.UnitTable.STATUS + " != " + Status.SOLD.ordinal() + " or " + UnitsView2.SaleOrderTable.CREATE_TIME + " >= " + minCreateTime.getTime() + " )");
         }
         return loader.orderBy(UnitsView2.UnitTable.UPDATE_TIME + " desc ").transform(new UnitViewFunction()).build(getActivity());
     }

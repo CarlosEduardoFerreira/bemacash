@@ -1668,14 +1668,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public Loader<OrdersStatInfo> onCreateLoader(int arg0, Bundle arg1) {
-            long minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(SaleOrderTable.URI_CONTENT))
                     .projection("count(" + SaleOrderTable.GUID + ")")
                     .where(SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid() == null ? "" : getApp().getOperatorGuid());
             if (!TextUtils.isEmpty(orderGuid))
                 builder.where(SaleOrderTable.GUID + " <> ?", orderGuid);
+            Date minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar);
+            if (minCreateTime != null)
+                builder.where(SaleOrderTable.CREATE_TIME + " >= ?", minCreateTime.getTime());
             builder.where(SaleOrderTable.STATUS + " = ? ", OrderStatus.ACTIVE.ordinal())
-                    .where(SaleOrderTable.CREATE_TIME + " >= ?", minCreateTime)
                     .orderBy(SaleOrderTable.UPDATE_TIME + " desc ");
 
             return builder
@@ -1936,14 +1937,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            long minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
-            return CursorLoaderBuilder.forUri(ORDER_URI)
+            CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ORDER_URI)
                     .projection(SaleOrderTable.GUID)
                     .where(SaleOrderTable.GUID + " = ?", bundle.getString(ARG_ORDER_GUID))
                     .where(SaleOrderTable.STATUS + " = ?", OrderStatus.ACTIVE.ordinal())
-                    .where(SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid())
-                    .where(SaleOrderTable.CREATE_TIME + " >= ?", minCreateTime)
-                    .build(BaseCashierActivity.this);
+                    .where(SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid());
+            Date minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar);
+            if (minCreateTime != null)
+                builder.where(SaleOrderTable.CREATE_TIME + " >= ?", minCreateTime.getTime());
+            return builder.build(BaseCashierActivity.this);
         }
 
         @Override

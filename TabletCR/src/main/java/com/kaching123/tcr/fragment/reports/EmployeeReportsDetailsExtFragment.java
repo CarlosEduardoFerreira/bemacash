@@ -72,7 +72,8 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
                 break;
         }
 
-        checkAndFixFromDate(fromDate);
+        //TODO: improve - period lost
+        checkAndFixMinDate(fromDate, toDate);
 
         setPeriodDates();
         loadData();
@@ -91,8 +92,6 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
                     toDate.setTime(addTimeToDate(toDate, newDate, Calendar.DATE, 7));
                 }else{
                     fromDate.setTime(addTimeToDate(fromDate, newDate , Calendar.DATE, -7));
-
-                    checkAndFixFromDate(fromDate);
                 }
                 break;
             case MONTH:
@@ -100,8 +99,6 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
                     toDate.setTime(addTimeToDate(toDate, newDate, Calendar.MONTH, 1));
                 }else{
                     fromDate.setTime(addTimeToDate(fromDate, newDate , Calendar.MONTH, -1));
-
-                    checkAndFixFromDate(fromDate);
                 }
                 break;
         }
@@ -119,6 +116,11 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
             AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(inDays ? R.string.reports_error_period_too_large_days : R.string.reports_error_period_too_large_hrs, maxPeriod));
             cropPeriodDates(fromDate, toDate, inDays, isFromDate, maxPeriod);
         }
+
+        //TODO: show error message?
+        //TODO: improve - period lost
+        checkAndFixMinDate(fromDate, toDate);
+
         return true;
     }
 
@@ -142,14 +144,6 @@ public class EmployeeReportsDetailsExtFragment extends EmployeeReportsDetailsFra
         }
 
         return c2.getTimeInMillis();
-    }
-
-    private void checkAndFixFromDate(Date fromDate) {
-        Date minFromDate = getMinFromDate();
-        if (minFromDate == null)
-            return;
-        if (fromDate.getTime() < minFromDate.getTime())
-            fromDate.setTime(minFromDate.getTime());
     }
 
     public static EmployeeReportsDetailsExtFragment instance(ReportType reportType) {

@@ -232,8 +232,9 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         }
 
         TcrApplication app = (TcrApplication) getActivity().getApplicationContext();
-        long minCreateTime = app.getMinSalesHistoryLimitDateDayRounded(calendar).getTime();
-        loader.where("(" + SaleOrderTable.CREATE_TIME + " >= " + minCreateTime + " OR " + SaleOrderView2.TipsTable.CREATE_TIME + " >= " + minCreateTime + " OR " + SaleOrderTipsQuery.MAX_REFUND_CREATE_TIME + " >= " + minCreateTime + ")");
+        Date  minCreateTime = app.getMinSalesHistoryLimitDateDayRounded(calendar);
+        if (minCreateTime != null)
+            loader.where("(" + SaleOrderTable.CREATE_TIME + " >= " + minCreateTime.getTime() + " OR " + SaleOrderView2.TipsTable.CREATE_TIME + " >= " + minCreateTime.getTime() + " OR " + SaleOrderTipsQuery.MAX_REFUND_CREATE_TIME + " >= " + minCreateTime.getTime() + ")");
 
         return loader.orderBy(SaleOrderTable.CREATE_TIME + " desc ")
                 .transform(new SaleOrderTipsViewFunction()).build(getActivity());
