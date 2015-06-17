@@ -544,7 +544,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
                 return;
 
             WaitDialogFragment.hide(getActivity());
-            AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.error_message_sync_locked));
+            AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.order_searching_error_message_sync_locked));
         }
 
         @Override
