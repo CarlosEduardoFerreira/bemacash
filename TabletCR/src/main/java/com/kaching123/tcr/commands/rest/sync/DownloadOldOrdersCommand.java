@@ -25,12 +25,18 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
 
     private static final String ARG_REGISTER_TITLE = "arg_register_title";
     private static final String ARG_PRINT_SEQ_NUM = "arg_print_seq_num";
+    private static final String ARG_EMPLOYEE_GUID = "arg_employee_guid";
+    private static final String ARG_CUSTOMER_GUID = "arg_customer_guid";
+    private static final String ARG_STATUS_OPENED = "arg_status_opened";
     private static final String ARG_FROM_DATE = "arg_from_date";
     private static final String ARG_TO_DATE = "arg_to_date";
     private static final String ARG_UNIT_SERIAL = "arg_unit_serial";
 
     private String registerTitle;
     private String printSeqNum;
+    private String employeeGuid;
+    private String customerGuid;
+    private Boolean isStatusOpened;
     private Date from;
     private Date to;
     private String unitSerial;
@@ -43,6 +49,9 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
     protected TaskResult doInBackground() {
         registerTitle = getStringArg(ARG_REGISTER_TITLE);
         printSeqNum = getStringArg(ARG_PRINT_SEQ_NUM);
+        employeeGuid = getStringArg(ARG_EMPLOYEE_GUID);
+        customerGuid = getStringArg(ARG_CUSTOMER_GUID);
+        isStatusOpened = (Boolean) getArgs().getSerializable(ARG_STATUS_OPENED);
         from = (Date) getArgs().getSerializable(ARG_FROM_DATE);
         to = (Date) getArgs().getSerializable(ARG_TO_DATE);
         unitSerial = getStringArg(ARG_UNIT_SERIAL);
@@ -57,7 +66,7 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
                 Logger.d("[SYNC HISTORY]DownloadOldOrdersCommand: history lock acquired");
 
                 GetArrayResponse resp = getApi().downloadOldOrders(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(getApp().getOperator(), getApp()),
-                        getEntity(registerTitle, printSeqNum, from, to, unitSerial));
+                        getEntity(registerTitle, printSeqNum, employeeGuid, customerGuid, isStatusOpened, from, to, unitSerial));
                 Logger.d("DownloadOldOrdersCommand: response: " + resp);
 
                 if (resp != null && resp.isSyncLockedError()) {
@@ -96,7 +105,7 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
         return getApp().getRestAdapter().create(SyncApi2.class);
     }
 
-    private JSONObject getEntity(String registerTitle, String printSeqNum, Date from, Date to, String unitSerial) throws JSONException {
+    private JSONObject getEntity(String registerTitle, String printSeqNum, String employeeGuid, String customerGuid, Boolean isStatusOpened, Date from, Date to, String unitSerial) throws JSONException {
         JSONObject request = new JSONObject();
 
         if (!TextUtils.isEmpty(unitSerial)) {
@@ -106,14 +115,33 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
             request.put("print_num", printSeqNum);
         }
 
+        if (!TextUtils.isEmpty(employeeGuid)) {
+            request.put("employee_id", employeeGuid);
+        }
+        if (!TextUtils.isEmpty(customerGuid)) {
+            request.put("customer_id", customerGuid);
+        }
+        //payment_status = 'opened' | 'closed'
+        if (isStatusOpened != null) {
+            request.put("payment_status", isStatusOpened ? "opened" : "closed");
+        }
+
         request.put("from", Sync2Util.formatMillisec(from));
         request.put("to", Sync2Util.formatMillisec(to));
 
         return request;
     }
 
-    public static void start(Context context, String registerTitle, String printSeqNum, Date from, Date to, String unitSerial, BaseDownloadOldOrdersCommandCallback callback) {
-        create(DownloadOldOrdersCommand.class).arg(ARG_REGISTER_TITLE, registerTitle).arg(ARG_PRINT_SEQ_NUM, printSeqNum).arg(ARG_FROM_DATE, from).arg(ARG_TO_DATE, to)
+    public static void start(Context context, String registerTitle, String printSeqNum, String employeeGuid, String customerGuid, Boolean isStatusOpened, Date from, Date to, String unitSerial,
+                             BaseDownloadOldOrdersCommandCallback callback) {
+        create(DownloadOldOrdersCommand.class)
+                .arg(ARG_REGISTER_TITLE, registerTitle)
+                .arg(ARG_PRINT_SEQ_NUM, printSeqNum)
+                .arg(ARG_EMPLOYEE_GUID, employeeGuid)
+                .arg(ARG_CUSTOMER_GUID, customerGuid)
+                .arg(ARG_STATUS_OPENED, isStatusOpened)
+                .arg(ARG_FROM_DATE, from)
+                .arg(ARG_TO_DATE, to)
                 .arg(ARG_UNIT_SERIAL, unitSerial)
                 .callback(callback).queueUsing(context);
     }

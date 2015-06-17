@@ -290,8 +290,16 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode() || TcrApplication.get().getSalesHistoryLimit() == null)
             return;
 
-        final String registerTitle = this.registerTitle.get(0);
-        final String printSeqNum = this.seqNum.get(0);
+        final String registerTitle = this.registerTitle == null || this.registerTitle.isEmpty() ? null : this.registerTitle.get(0);
+        final String printSeqNum = this.seqNum == null || this.seqNum.isEmpty() ? null : this.seqNum.get(0);
+        final String employeeGuid = CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(this.cashierGUID) ? null : this.cashierGUID;
+        final String customerGuid = CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(this.customerGUID) ? null : this.customerGUID;
+        final Boolean isStatusOpened;
+        if (isTipsEnabled && transactionsState != null && !transactionsState.equals(TransactionsState.NA)) {
+            isStatusOpened = TransactionsState.OPEN.equals(transactionsState);
+        } else {
+            isStatusOpened = null;
+        }
         final Date from = this.from;
         final Date to = this.to;
         final String unitSerial = this.unitSerial;
@@ -305,7 +313,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
                     @Override
                     public boolean onClick() {
                         WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
-                        DownloadOldOrdersCommand.start(getActivity(), registerTitle, printSeqNum, from, to, unitSerial, downloadOrderCallback);
+                        DownloadOldOrdersCommand.start(getActivity(), registerTitle, printSeqNum, employeeGuid, customerGuid, isStatusOpened, from, to, unitSerial, downloadOrderCallback);
                         return true;
                     }
                 });
@@ -323,18 +331,14 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     }
 
     private boolean isSearchingOrderFilters() {
-        return isSearchingOrderFilters(false, this.unitSerial);
-    }
-
-    private boolean isSearchingOrderFilters(boolean ignoreLoader, String unitSerial) {
-        return (loadedOrderGuids == null || ignoreLoader) &&
-                ((registerTitle != null && !registerTitle.isEmpty()
+        return loadedOrderGuids == null &&
+                (!TextUtils.isEmpty(this.unitSerial) || (
+                (registerTitle != null && !registerTitle.isEmpty()
                     && seqNum != null && !seqNum.isEmpty() && seqNum.get(0) != null)
-                    || !TextUtils.isEmpty(unitSerial))
                     && from != null && to != null
                     && (TextUtils.isEmpty(cashierGUID) || cashierGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
                     && (TextUtils.isEmpty(customerGUID) || customerGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
-                    && (!isTipsEnabled || transactionsState == null || transactionsState.equals(TransactionsState.NA));
+                    && (!isTipsEnabled || transactionsState == null || transactionsState.equals(TransactionsState.NA))));
     }
 
     private Pair<BigDecimal, BigDecimal> getPriceRange(List<SaleOrderTipsViewModel> saleOrderModels) {
@@ -373,11 +377,19 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @Override
     public void onSearchByUnitFailed(String serialCode) {
-        boolean shouldSearchOnServer = isSearchingOrderFilters(true, serialCode);
+        boolean shouldSearchOnServer = !TextUtils.isEmpty(unitSerial);
 
         if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode() || TcrApplication.get().getSalesHistoryLimit() == null)
             return;
 
+        final String employeeGuid = CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(this.cashierGUID) ? null : this.cashierGUID;
+        final String customerGuid = CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID.equals(this.customerGUID) ? null : this.customerGUID;
+        final Boolean isStatusOpened;
+        if (isTipsEnabled && transactionsState != null && !transactionsState.equals(TransactionsState.NA)) {
+            isStatusOpened = TransactionsState.OPEN.equals(transactionsState);
+        } else {
+            isStatusOpened = null;
+        }
         final Date from = this.from;
         final Date to = this.to;
         final String unitSerial = serialCode;
@@ -386,7 +398,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             @Override
             public boolean onClick() {
                 WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
-                DownloadOldOrdersCommand.start(getActivity(), null, null, from, to, unitSerial, downloadOrderCallback);
+                DownloadOldOrdersCommand.start(getActivity(), null, null, employeeGuid, customerGuid, isStatusOpened, from, to, unitSerial, downloadOrderCallback);
                 return true;
             }
         });

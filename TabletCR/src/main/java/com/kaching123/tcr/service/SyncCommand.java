@@ -707,6 +707,7 @@ public class SyncCommand implements Runnable {
         Logger.d("SyncCommand.getServerSalesHistoryLimit(): response: " + response);
 
         if (response != null && response.isSyncLockedError()) {
+            Logger.e("SyncCommand.getServerSalesHistoryLimit(): failed, response: " + response);
             throw new SyncLockedException();
         }
 

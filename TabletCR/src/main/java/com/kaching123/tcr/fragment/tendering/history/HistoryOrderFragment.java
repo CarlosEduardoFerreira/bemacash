@@ -171,6 +171,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                 for (int i = 0; i < order.size(); i++) {
                     sequences.add(order.get(i).registerTitle + "-" + order.get(i).printSeqNum);
                 }
+                //TODO: refactor?
                 unitSerial = serialCode;
                 if (order.size() == 1) {
                     orderNumber.setText(order.get(0).registerTitle + "-" + order.get(0).printSeqNum);
