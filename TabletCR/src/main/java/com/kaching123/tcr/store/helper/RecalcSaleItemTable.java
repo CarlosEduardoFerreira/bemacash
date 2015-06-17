@@ -37,6 +37,8 @@ public class RecalcSaleItemTable extends ProviderHelper {
 
     private static final Uri SALE_ITEM_SYNCED_URI = ShopProvider.contentUri(RecalcSaleItemTableView.URI_CONTENT);
 
+    private static final int BULK_UPDATE_SIZE = 1000;
+
     //private static final Uri SALE_ITEM_RAW_QUERY_URI = ShopProviderExt.getRawTableQueryUri(SaleItemTable.TABLE_NAME);
 
     public RecalcSaleItemTable(Context context, SQLiteOpenHelper dbHelper) {
@@ -56,7 +58,11 @@ public class RecalcSaleItemTable extends ProviderHelper {
                         null, null,
                         null
                 );
-        handleCursor(c);
+        if (c.getCount() == 0) {
+            c.close();
+            return;
+        }
+        handleCursor(c, true);
     }
 
     public void bulkRecalcSaleItemTable(ContentValues[] saleItems) {
@@ -120,9 +126,14 @@ public class RecalcSaleItemTable extends ProviderHelper {
             v.put(SaleOrderTable.TML_TOTAL_TAX, _decimal(cost.totalTax));
             v.put(SaleOrderTable.TML_TOTAL_DISCOUNT, _decimal(cost.totalDiscount));
             values.add(v);
+            if (values.size() == BULK_UPDATE_SIZE) {
+                bulkUpdate(SaleOrderTable.TABLE_NAME, values, SaleOrderTable.GUID);
+                values.clear();
+            }
         }
         result.close();
-        bulkUpdate(SaleOrderTable.TABLE_NAME, values, SaleOrderTable.GUID);
+        if (!values.isEmpty())
+            bulkUpdate(SaleOrderTable.TABLE_NAME, values, SaleOrderTable.GUID);
     }
 
     public void recalculateOrderTotalPrice(final String orderGuid) {
@@ -175,46 +186,17 @@ public class RecalcSaleItemTable extends ProviderHelper {
                 .whereIn(SaleItemTable.PARENT_GUID, saleItemsGuids)
                 .orderBy(SaleItemTable.PARENT_GUID)
                 .perform(getContext());
-
-        handleCursor(c);
+        if (c.getCount() == 0) {
+            c.close();
+            return;
+        }
+        handleCursor(c, false);
     }
 
-    private void handleCursor(Cursor c) {
-        Logger.d("RecalcSaleItemTable. handleCursor size = %d", c.getCount());
-        /*HashMap<String, BigDecimal> returnedQtys = new HashMap<String, BigDecimal>();
-        while (c.moveToNext()) {
-            String saleItemGuid = c.getString(0);
-            BigDecimal returnedQty = _decimalQty(c, 1);//should be negative, it's returned qty
-            BigDecimal old = returnedQtys.get(saleItemGuid);
-            if (old != null) {
-                returnedQty = old.add(returnedQty);
-            }
-            returnedQtys.put(saleItemGuid, returnedQty);
-        }
-        c.close();*/
+    private void handleCursor(Cursor c, boolean fromSync) {
+        Logger.d("RecalcSaleItemTable. handleCursor: from sync: " + fromSync + "; size = %d", c.getCount());
+
         RefundQuantityCursorWrapper returnedQtys = new RefundQuantityCursorWrapper(c);
-
-        // no need to know old values.
-
-        /*c = ProviderAction.query(SALE_ITEM_URI)
-                .projection(SaleItemTable.SALE_ITEM_GUID, SaleItemTable.QUANTITY)
-                .whereIn(SaleItemTable.SALE_ITEM_GUID, saleItemsGuids)
-                .perform(getContext());
-
-        ArrayList<ContentValues> values = new ArrayList<ContentValues>(c.getCount());
-        while (c.moveToNext()) {
-            String saleItemGuid = c.getString(0);
-            BigDecimal qty = _decimalQty(c, 1);
-            BigDecimal returnedQty = returnedQtys.get(saleItemGuid);//should be negative, it's returned qty
-            if (returnedQty == null) {
-                continue;
-            }
-            ContentValues v = new ContentValues(2);
-            v.put(SaleItemTable.SALE_ITEM_GUID, saleItemGuid);
-            v.put(SaleItemTable.TMP_REFUND_QUANTITY, _decimalQty(returnedQty));
-            values.add(v);
-        }
-        c.close();*/
 
         ArrayList<ContentValues> values = new ArrayList<ContentValues>(c.getCount());
         RefundQuantity availableQuantity;
@@ -223,11 +205,18 @@ public class RecalcSaleItemTable extends ProviderHelper {
             v.put(SaleItemTable.SALE_ITEM_GUID, availableQuantity.saleItemGuid);
             v.put(SaleItemTable.TMP_REFUND_QUANTITY, _decimalQty(availableQuantity.refundQty));
             values.add(v);
+            if (fromSync && values.size() == BULK_UPDATE_SIZE) {
+                Logger.d("RecalcSaleItemTable. handleCursor.bulkUpdate: from sync: " + fromSync + ";  size = %d", values.size());
+                bulkUpdate(SaleItemTable.TABLE_NAME, values, SaleItemTable.SALE_ITEM_GUID);
+                values.clear();
+            }
         }
         returnedQtys.close();
 
-        Logger.d("RecalcSaleItemTable. handleCursor.bulkUpdate size = %d", values.size());
-        bulkUpdate(SaleItemTable.TABLE_NAME, values, SaleItemTable.SALE_ITEM_GUID);
+        if (!values.isEmpty()) {
+            Logger.d("RecalcSaleItemTable. handleCursor.bulkUpdate: from sync: " + fromSync + ";  size = %d", values.size());
+            bulkUpdate(SaleItemTable.TABLE_NAME, values, SaleItemTable.SALE_ITEM_GUID);
+        }
     }
 
     public void recalculateSaleItemsAvailableQty(String saleItemsGuid) {

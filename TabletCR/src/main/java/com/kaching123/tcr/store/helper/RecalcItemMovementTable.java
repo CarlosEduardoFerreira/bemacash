@@ -31,6 +31,8 @@ public class RecalcItemMovementTable extends ProviderHelper {
     private static final Uri ITEM_MOVEMENT_SYNCED_URI = ShopProvider.contentUri(RecalcItemMovementTableView.URI_CONTENT);
     private static final Uri ITEM_MOVEMENT_4ITEM_SYNCED_URI = ShopProvider.contentUri(RecalcItemMovementForItemTableView.URI_CONTENT);
 
+    private static final int BULK_UPDATE_SIZE = 1000;
+
     public RecalcItemMovementTable(Context context, SQLiteOpenHelper dbHelper) {
         super(context, dbHelper);
     }
@@ -42,7 +44,11 @@ public class RecalcItemMovementTable extends ProviderHelper {
                 null,
                 null, null,
                 null);
-        handleCursor(c);
+        if (c.getCount() == 0) {
+            c.close();
+            return;
+        }
+        handleCursor(c, true);
     }
 
     public void bulkRecalcAvailableItemMovementTable(ContentValues[] movements) {
@@ -92,7 +98,11 @@ public class RecalcItemMovementTable extends ProviderHelper {
                 .where(ItemMovementTable.MANUAL + " = ?", 1)
                 .perform(getContext());*/
 
-        handleCursor(c);
+        if (c.getCount() == 0) {
+            c.close();
+            return;
+        }
+        handleCursor(c, false);
     }
 
     void recalculateMovementAvailableQty(HashSet<String> movementFlags) {
@@ -111,29 +121,21 @@ public class RecalcItemMovementTable extends ProviderHelper {
                 .whereIn(ItemMovementTable.ITEM_UPDATE_QTY_FLAG, movementFlags)
                 .orderBy(ItemMovementTable.ITEM_UPDATE_QTY_FLAG)
                 .perform(getContext());
-        handleCursor(c);
+        if (c.getCount() == 0) {
+            c.close();
+            return;
+        }
+        handleCursor(c, false);
     }
 
-    private void handleCursor(Cursor c) {
-        Logger.d("RecalcItemMovementTable. handleCursor = %d", c.getCount());
-        /*HashMap<String, BigDecimal> result = new HashMap<String, BigDecimal>();
-        while (c.moveToNext()) {
-            String flag = c.getString(0);
-            BigDecimal availableQty = _decimalQty(c.getString(1));
-            Logger.d("RecalcItemMovementTable. handleCursor: %s = %s", flag, c.getString(1));
-            BigDecimal old = result.get(flag);
-            if (old == null) {
-                result.put(flag, availableQty);
-            } else {
-                result.put(flag, old.add(availableQty));
-            }
-        }
-        c.close();*/
+    private void handleCursor(Cursor c, boolean fromSync) {
+        Logger.d("RecalcItemMovementTable. handleCursor: fromSync: " + fromSync + "; size = %d", c.getCount());
+
         AvailableQuantityCursorWrapper result = new AvailableQuantityCursorWrapper(c);
 
         ArrayList<ContentValues> values = new ArrayList<ContentValues>();
-
         ArrayList<ContentValues> itemsValues = new ArrayList<ContentValues>();
+
         AvailableQuantity availableQuantity;
         while ((availableQuantity = result.getNextAvailableQuantity()) != null) {
             //Logger.d("recalculateMovementAvailableQty2 %s = %s", e.getKey(), e.getValue());
@@ -141,7 +143,7 @@ public class RecalcItemMovementTable extends ProviderHelper {
             String key = availableQuantity.flag;
             String decimal = _decimalQty(availableQuantity.availableQty);
 
-            Logger.d("RecalcItemMovementTable. handleCursor: update %s = %s", key, decimal);
+            Logger.d("RecalcItemMovementTable. handleCursor: fromSync: " + fromSync + "; update %s = %s", key, decimal);
             ContentValues v = new ContentValues(2);
             v.put(ItemMovementTable.ITEM_UPDATE_QTY_FLAG, key);
             v.put(ItemMovementTable.TMP_AVAILABLE_QTY, decimal);
@@ -150,20 +152,35 @@ public class RecalcItemMovementTable extends ProviderHelper {
             ContentValues vi = new ContentValues(2);
             vi.put(ItemTable.UPDATE_QTY_FLAG, key);
             vi.put(ItemTable.TMP_AVAILABLE_QTY, decimal);
-
             itemsValues.add(vi);
+
+            if (fromSync && (values.size() == BULK_UPDATE_SIZE || itemsValues.size() == BULK_UPDATE_SIZE)) {
+                Logger.d("RecalcItemMovementTable. handleCursor.ItemMovementTable: fromSync: " + fromSync + "; %d", values.size());
+                //update start of group
+                bulkUpdate(ItemMovementTable.TABLE_NAME, values, ItemMovementTable.ITEM_UPDATE_QTY_FLAG,
+                        ItemMovementTable.MANUAL + " = ?", new String[]{"1"});
+                values.clear();
+
+                Logger.d("RecalcItemMovementTable. handleCursor.ItemTable: fromSync: " + fromSync + "; %d", itemsValues.size());
+                //update item QTY
+                bulkUpdate(ItemTable.TABLE_NAME, itemsValues, ItemTable.UPDATE_QTY_FLAG, null, null);
+                Logger.d("RecalcItemMovementTable. handleCursor fromSync: " + fromSync + " end");
+                itemsValues.clear();
+            }
         }
         result.close();
 
-        Logger.d("RecalcItemMovementTable. handleCursor.ItemMovementTable: %d", values.size());
-        //update start of group
-        bulkUpdate(ItemMovementTable.TABLE_NAME, values, ItemMovementTable.ITEM_UPDATE_QTY_FLAG,
-                ItemMovementTable.MANUAL + " = ?", new String[]{"1"});
+        if (!values.isEmpty() || !itemsValues.isEmpty()) {
+            Logger.d("RecalcItemMovementTable. handleCursor.ItemMovementTable: fromSync: " + fromSync + "; %d", values.size());
+            //update start of group
+            bulkUpdate(ItemMovementTable.TABLE_NAME, values, ItemMovementTable.ITEM_UPDATE_QTY_FLAG,
+                    ItemMovementTable.MANUAL + " = ?", new String[]{"1"});
 
-        Logger.d("RecalcItemMovementTable. handleCursor.ItemTable: %d", itemsValues.size());
-        //update item QTY
-        bulkUpdate(ItemTable.TABLE_NAME, itemsValues, ItemTable.UPDATE_QTY_FLAG, null, null);
-        Logger.d("RecalcItemMovementTable. handleCursor end");
+            Logger.d("RecalcItemMovementTable. handleCursor.ItemTable: fromSync: " + fromSync + "; %d", itemsValues.size());
+            //update item QTY
+            bulkUpdate(ItemTable.TABLE_NAME, itemsValues, ItemTable.UPDATE_QTY_FLAG, null, null);
+            Logger.d("RecalcItemMovementTable. handleCursor fromSync: " + fromSync + "  end");
+        }
     }
 
     public static class AvailableQuantity {
