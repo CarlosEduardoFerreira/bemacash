@@ -297,8 +297,8 @@ public class ShopOpenHelper extends BaseOpenHelper {
 
     private void insertUpdateValuesFromExtraDatabase(SQLiteDatabase db, String tableName, String idColumn, ContentValues values) {
         boolean hasData = true;
+        String idValue = values.getAsString(idColumn);
         try {
-            String idValue = values.getAsString(idColumn);
             values.remove(idColumn);
             int updated = db.update(tableName, values, idColumn + " = ?", new String[]{idValue});
 
@@ -308,8 +308,9 @@ public class ShopOpenHelper extends BaseOpenHelper {
                 db.insertOrThrow(tableName, null, values);
             }
         } catch (SQLiteConstraintException e) {
-            Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
+            Logger.e("ShopOpenHelper.insertUpdateValuesFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
             if (UnitTable.TABLE_NAME.equals(tableName)) {
+                values.put(idColumn, idValue);
                 if (tryFixUnit(db, values)) {
                     tryInsertUpdateUnit(db, values, hasData);
                     return;
