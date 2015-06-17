@@ -75,6 +75,7 @@ import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.MaxUpdateTableTimeParentRelationsQuery;
 import com.kaching123.tcr.store.ShopStore.MaxUpdateTableTimeQuery;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
+import com.kaching123.tcr.store.ShopStore.OldActiveUnitOrdersQuery;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.RegisterTable;
@@ -198,7 +199,7 @@ public class SyncCommand implements Runnable {
             isSyncLocked = true;
         } catch (SyncInterruptedException e) {
             error = service.getString(R.string.error_message_sync_interrupted);
-        }catch (Exception e) {
+        } catch (Exception e) {
             //TODO: handle sub commands exceptions
             error = getErrorString(null);
         } finally {
@@ -247,11 +248,11 @@ public class SyncCommand implements Runnable {
             Logger.e("SyncCommand failed", e);
             setOfflineMode(true);
             throw e;
-        }  catch (SyncInterruptedException e) {
+        } catch (SyncInterruptedException e) {
             Logger.e("SyncCommand failed", e);
             setOfflineMode(true);
             throw e;
-        }catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             Logger.e("SyncCommand failed", e);
             setOfflineMode(true);
             throw e;
@@ -365,7 +366,6 @@ public class SyncCommand implements Runnable {
                     Long lastSuccessfulSyncTime = getApp().getLastSuccessfulSyncTime();
                     boolean lastSyncStillActual = salesHistoryLimit == null || (lastSuccessfulSyncTime != null && lastSuccessfulSyncTime >= minUpdateTime);
 
-
                     if (firstIteration && !lastSyncStillActual
                             && checkIsSyncGep(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, null, false)
                             && checkIsOldSyncCache(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, null, false)) {
@@ -396,7 +396,6 @@ public class SyncCommand implements Runnable {
                         syncOldActiveOrders(service, api2, employee, minUpdateTime);
                         checkIsLoadingOldOrders();
                     }
-
 
                     count += syncTableWithChildren2(service, api2,
                             SaleOrderTable.TABLE_NAME,
@@ -822,7 +821,7 @@ public class SyncCommand implements Runnable {
     }
 
     private ArrayList<String> getInvalidOldActiveUnitOrders(long minUpdateTime) {
-        Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.OldActiveUnitOrdersQuery.CONTENT_PATH))
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(OldActiveUnitOrdersQuery.CONTENT_PATH))
                 .where("", minUpdateTime)
                 .perform(service);
 
@@ -910,7 +909,6 @@ public class SyncCommand implements Runnable {
         }
     }
 
-
     private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, Long minUpdateTime, boolean fillHistoryGep) throws SyncException, SyncLockedException, SyncInterruptedException {
         int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
         count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
@@ -939,7 +937,6 @@ public class SyncCommand implements Runnable {
                                  boolean fillHistoryGep,
                                  boolean isSyncGap,
                                  boolean isFirstSync) throws SyncException, SyncLockedException, SyncInterruptedException {
-
 
         fireEvent(context, localTable);
         TcrApplication app = TcrApplication.get();
@@ -1023,7 +1020,6 @@ public class SyncCommand implements Runnable {
             if (resp == null || !resp.isSuccess()) {
                 throw new SyncException(SaleOrderTable.TABLE_NAME);
             }
-
             boolean hasData = new SyncOldActiveOrdersResponseHandler(syncOpenHelper).handleResponse(resp);
             if (hasData) {
                 fireEvent(context, SaleOrderTable.TABLE_NAME, 1, 1);
@@ -1032,7 +1028,7 @@ public class SyncCommand implements Runnable {
             throw e;
         } catch (SyncException e) {
             throw e;
-        }catch (Exception e) {
+        } catch (Exception e) {
             Logger.e("sync old active orders exception", e);
             throw new SyncException(SaleOrderTable.TABLE_NAME);
         }
@@ -1270,7 +1266,7 @@ public class SyncCommand implements Runnable {
             throw e;
         } catch (SyncLockedException e) {
             throw e;
-        }catch (Exception e) {
+        } catch (Exception e) {
             Logger.e("Can't sync shop info", e);
             throw new SyncException();
         }
