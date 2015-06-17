@@ -122,12 +122,12 @@ public class SyncOpenHelper extends BaseOpenHelper {
     }
 
     public synchronized Cursor getMinUpdateTime(String tableName) {
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery(String.format(Locale.US, MIN_UPDATE_TIME_QUERY, new String[]{tableName}), null);
     }
 
     public synchronized Cursor getMinUpdateParentTime(String tableName, String parentIdColumn, boolean isChild) {
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery(String.format(Locale.US, MIN_UPDATE_TIME_PARENT_RELATIONS_QUERY, new String[]{tableName, parentIdColumn, isChild ? " not null " : " null "}), null);
     }
 }

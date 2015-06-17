@@ -476,7 +476,7 @@ public class TcrApplication extends Application {
         Integer salesHistoryLimit = getSalesHistoryLimit();
         if (salesHistoryLimit == null)
             return null;
-        return System.currentTimeMillis() - TimeUnit.DAYS.toMillis(getSalesHistoryLimit());
+        return System.currentTimeMillis() - TimeUnit.DAYS.toMillis(salesHistoryLimit);
     }
 
     public Date getMinSalesHistoryLimitDateDayRounded(Calendar localTimeCalendar) {
@@ -788,6 +788,13 @@ public class TcrApplication extends Application {
         shopPref.salesSyncGapOccurred().put(value);
     }
 
+    public boolean isInvalidOrdersFound() {
+        return shopPref.invalidOrdersFound().getOr(false);
+    }
+
+    public void setInvalidOrdersFound(boolean value) {
+        shopPref.invalidOrdersFound().put(value);
+    }
 
 
     private long getOfflinePeriod() {

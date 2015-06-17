@@ -139,6 +139,9 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                 Logger.d("ClearSalesHistoryCommand: end transaction");
             }
 
+            getApp().setInvalidOrdersFound(false);
+            Logger.w("[INVALID ORDERS] ClearSalesHistoryCommand: invalid old active unit orders flag cleared");
+
             //TODO: keep? execute after sales history db migration? execute seldom - when a lot of data removed or time passed
             /*boolean vacuumResult = ShopProviderExt.callMethod(getContext(), Method.METHOD_VACUUM, null, null);
             Logger.d("ClearSalesHistoryCommand: vacuum succeeded: " + vacuumResult);*/

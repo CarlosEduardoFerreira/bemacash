@@ -1745,6 +1745,24 @@ public abstract class ShopStore {
 
     }
 
+    public static interface OldActiveUnitOrdersQuery {
+
+        String CONTENT_PATH = "old_active_unit_orders_query";
+
+        String QUERY = "SELECT "+ SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.GUID
+                + " FROM " + SaleOrderTable.TABLE_NAME
+                + " join " + UnitTable.TABLE_NAME
+                + " on " + UnitTable.TABLE_NAME + "." + UnitTable.SALE_ORDER_ID + " = " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.GUID
+                + " join " + SaleItemTable.TABLE_NAME + " on " + SaleItemTable.TABLE_NAME + "." + SaleItemTable.ORDER_GUID + " = " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.GUID
+                + " and " + SaleItemTable.TABLE_NAME + "." + SaleItemTable.ITEM_GUID + " = " + UnitTable.TABLE_NAME + "." + UnitTable.ITEM_ID
+                + " where " +  SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.STATUS + " = " + OrderStatus.ACTIVE.ordinal()
+                + " and " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.UPDATE_IS_DRAFT + " = 0"
+                + " and " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.UPDATE_TIME + " < %s"
+                + " group by " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.GUID
+                + " having max(" + SaleItemTable.TABLE_NAME + "." + SaleItemTable.UPDATE_TIME + ") not null";
+
+    }
+
     @SimpleView(CustomerView.VIEW_NAME)
     public static interface CustomerView {
 

@@ -116,6 +116,8 @@ public interface ShopPref {
 
     boolean salesSyncGapOccurred();
 
+    boolean invalidOrdersFound();
+
     /**
      * user **
      */

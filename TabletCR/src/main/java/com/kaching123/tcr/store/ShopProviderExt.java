@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.store.ShopStore.OldActiveUnitOrdersQuery;
 import com.kaching123.tcr.store.ShopStore.OldMovementGroupsQuery;
 import com.kaching123.tcr.store.ShopStore.OldSaleOrdersQuery;
 import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
@@ -33,6 +34,7 @@ public class ShopProviderExt extends ShopProvider {
     protected final static int MATCH_RAW_TABLE_QUERY = 0x666;
     protected final static int MATCH_OLD_SALE_ORDERS_QUERY = 0x667;
     protected final static int MATCH_OLD_MOVEMENT_GROUPS_QUERY = 0x668;
+    protected final static int MATCH_OLD_ACTIVE_UNIT_ORDERS_QUERY = 0x669;
 
     final static String URI_PATH_RAW_TABLE_QUERY = "URI_RAW_TABLE_QUERY";
 
@@ -44,6 +46,7 @@ public class ShopProviderExt extends ShopProvider {
         matcher.addURI(AUTHORITY, URI_PATH_RAW_TABLE_QUERY + "/*", MATCH_RAW_TABLE_QUERY);
         matcher.addURI(AUTHORITY, OldSaleOrdersQuery.CONTENT_PATH, MATCH_OLD_SALE_ORDERS_QUERY);
         matcher.addURI(AUTHORITY, OldMovementGroupsQuery.CONTENT_PATH, MATCH_OLD_MOVEMENT_GROUPS_QUERY);
+        matcher.addURI(AUTHORITY, OldActiveUnitOrdersQuery.CONTENT_PATH, MATCH_OLD_ACTIVE_UNIT_ORDERS_QUERY);
     }
 
     public static class Method {
@@ -185,6 +188,9 @@ public class ShopProviderExt extends ShopProvider {
         }
         if (match == MATCH_OLD_MOVEMENT_GROUPS_QUERY) {
             return dbHelper.getReadableDatabase().rawQuery(String.format(Locale.US, OldMovementGroupsQuery.QUERY, selectionArgs), null);
+        }
+        if (match == MATCH_OLD_ACTIVE_UNIT_ORDERS_QUERY) {
+            return dbHelper.getReadableDatabase().rawQuery(String.format(Locale.US, OldActiveUnitOrdersQuery.QUERY, selectionArgs), null);
         }
 
         Cursor c = providerQueryHelper.query(uri, projection, selection, selectionArgs, sortOrder);

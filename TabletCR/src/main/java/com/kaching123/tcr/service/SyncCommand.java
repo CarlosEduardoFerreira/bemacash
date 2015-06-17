@@ -109,6 +109,8 @@ public class SyncCommand implements Runnable {
 
     private static final int FINALIZE_SYNC_RETRIES = 3;
 
+    private static final int MAX_QUERY_PARAMETERS_COUNT = 999;
+
     public static final String ACTION_SYNC_PROGRESS = "com.kaching123.tcr.service.ACTION_SYNC_PROGRESS";
     public static final String ACTION_SYNC_COMPLETED = "com.kaching123.tcr.service.ACTION_SYNC_COMPLETED";
     public static final String ACTION_SYNC_GAP = "action_sync_gap";
@@ -428,7 +430,7 @@ public class SyncCommand implements Runnable {
                 }
 
                 //write data from extra db to main db on success, in transaction, making rows alive
-                localSync();
+                localSync(minUpdateTime);
 
                 getApp().setLastSuccessfulSyncTime(serverLastTimestamp);
 
@@ -653,7 +655,7 @@ public class SyncCommand implements Runnable {
         return currentServerTimestamp;
     }
 
-    private int localSync() throws SyncException {
+    private int localSync(long minUpdateTime) throws SyncException {
         int count = 0;
         long registerId = getApp().getRegisterId();
 
@@ -708,6 +710,19 @@ public class SyncCommand implements Runnable {
 
                 //inventory depended from sale
                 count += syncLocalSingleTable(service, UnitTable.TABLE_NAME);
+
+                if (getApp().isSalesSyncGapOccurred() || getApp().isInvalidOrdersFound()) {
+                    ArrayList<String> invalidOldActiveUnitOrders = getInvalidOldActiveUnitOrders(minUpdateTime);
+                    boolean hasInvalidOrders = invalidOldActiveUnitOrders != null && !invalidOldActiveUnitOrders.isEmpty();
+
+                    if (getApp().isSalesSyncGapOccurred() && hasInvalidOrders) {
+                        getApp().setInvalidOrdersFound(true);
+                        Logger.w("[INVALID ORDERS] invalid old active unit orders found - flag set ");
+                    }
+
+                    if (hasInvalidOrders)
+                        fixInvalidOldActiveUnitOrders(invalidOldActiveUnitOrders);
+                }
                 //end
 
                 executeHook(RegisterTable.URI_CONTENT, RegisterTable.ID, registerId <= 0 ? null : String.valueOf(registerId), registerHookListener);
@@ -729,6 +744,60 @@ public class SyncCommand implements Runnable {
         employeePermissionsHookListener.onFinish();
 
         return count;
+    }
+
+    private ArrayList<String> getInvalidOldActiveUnitOrders(long minUpdateTime) {
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.OldActiveUnitOrdersQuery.CONTENT_PATH))
+                .where("", minUpdateTime)
+                .perform(service);
+
+        if (c.getCount() == 0) {
+            c.close();
+            return null;
+        }
+
+        ArrayList<String> invalidOrderGuids = new ArrayList<String>(c.getCount());
+        while(c.moveToNext()) {
+            String orderGuid = c.getString(0);
+            invalidOrderGuids.add(orderGuid);
+        }
+        c.close();
+
+        Logger.w("[INVALID ORDERS] invalid old active unit orders found: " + invalidOrderGuids);
+
+        return invalidOrderGuids;
+    }
+
+    private void fixInvalidOldActiveUnitOrders(ArrayList<String> invalidOldActiveUnitOrders) {
+        if (invalidOldActiveUnitOrders == null || invalidOldActiveUnitOrders.isEmpty())
+            return;
+
+        ArrayList<String> orderGuids = new ArrayList<String>();
+        int pos = 0;
+        int count = 0;
+        StringBuilder inBuilder = new StringBuilder();
+        for (String orderGuid: invalidOldActiveUnitOrders) {
+            orderGuids.add(orderGuid);
+
+            if (orderGuids.size() == MAX_QUERY_PARAMETERS_COUNT || pos++ == invalidOldActiveUnitOrders.size()) {
+                inBuilder.setLength(0);
+                inBuilder.append(" in (");
+                for (int i = 0; i < orderGuids.size(); i++) {
+                    if (i > 0)
+                        inBuilder.append(',');
+                    inBuilder.append('?');
+                }
+                inBuilder.append(')');
+
+                count += ProviderAction.update(ShopProvider.contentUri(UnitTable.URI_CONTENT))
+                        .value(UnitTable.SALE_ORDER_ID, null)
+                        .where(UnitTable.SALE_ORDER_ID + inBuilder.toString(), orderGuids.toArray(new String[orderGuids.size()]))
+                        .perform(service);
+
+                orderGuids.clear();
+            }
+        }
+        Logger.w("[INVALID ORDERS] invalid old active unit orders fixed, units unlinked: " + count);
     }
 
     private void executeHook(String uriPath, String guidColumn, String hookGuid, HookListener hookListener) {
