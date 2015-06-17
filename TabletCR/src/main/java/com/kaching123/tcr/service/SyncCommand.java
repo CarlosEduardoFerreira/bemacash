@@ -349,7 +349,8 @@ public class SyncCommand implements Runnable {
                     boolean firstIteration = retriesCount == FINALIZE_SYNC_RETRIES;
                     Long lastSuccessfulSyncTime = getApp().getLastSuccessfulSyncTime();
                     boolean lastSyncStillActual = salesHistoryLimit == null || (lastSuccessfulSyncTime != null && lastSuccessfulSyncTime >= minUpdateTime);
-                    //TODO: check sync gap? only for this table
+
+
                     if (firstIteration && !lastSyncStillActual
                             && checkIsSyncGep(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID, null, false)
                             && checkIsOldSyncCache(syncOpenHelper, minUpdateTime, ItemMovementTable.TABLE_NAME, null, false)) {
@@ -377,7 +378,7 @@ public class SyncCommand implements Runnable {
                     if (salesHistoryLimit != null)
                         syncOldActiveOrders(service, api2, employee, minUpdateTime);
 
-                    //TODO: test child-parent update time updates
+
                     count += syncTableWithChildren2(service, api2,
                             SaleOrderTable.TABLE_NAME,
                             SaleOrderTable.GUID, SaleOrderTable.PARENT_ID,
@@ -414,7 +415,7 @@ public class SyncCommand implements Runnable {
 
                     count += syncSingleTable2(service, api2, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, employee, serverLastTimestamp, minUpdateTime, false);
 
-                    //TODO: test - order updates should trigger unit updates
+
                     //inventory depended from sale
                     count += syncSingleTable2(service, api2, UnitTable.TABLE_NAME, UnitTable.ID, employee, serverLastTimestamp, minUpdateTime, true);
                     //end
@@ -456,8 +457,8 @@ public class SyncCommand implements Runnable {
 
 
     private boolean checkIsSalesSyncGep(SyncOpenHelper syncOpenHelper, long minUpdateTime) {
-        //TODO: write query?
-        //TODO: improve - old active orders
+
+
         if (checkIsSyncGep(syncOpenHelper, minUpdateTime, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, SaleOrderTable.PARENT_ID, false))
             return true;
         if (checkIsSyncGep(syncOpenHelper, minUpdateTime, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, SaleOrderTable.PARENT_ID, true))
@@ -480,7 +481,6 @@ public class SyncCommand implements Runnable {
             return true;
         if (checkIsSyncGep(syncOpenHelper, minUpdateTime, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, null, false))
             return true;
-        //TODO: improve - old sold units
         if (checkIsSyncGep(syncOpenHelper, minUpdateTime, UnitTable.TABLE_NAME, UnitTable.ID, null, false))
             return true;
         return false;
@@ -940,7 +940,7 @@ public class SyncCommand implements Runnable {
             if (resp == null || !resp.isSuccess()) {
                 throw new SyncException(SaleOrderTable.TABLE_NAME);
             }
-            //TODO: handle result?
+
             boolean hasData = new SyncOldActiveOrdersResponseHandler(syncOpenHelper).handleResponse(resp);
             if (hasData) {
                 fireEvent(context, SaleOrderTable.TABLE_NAME, 1, 1);
@@ -959,7 +959,8 @@ public class SyncCommand implements Runnable {
                                               Long minUpdateTime, MaxUpdateTime updateTime, JdbcConverter converter, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws JSONException, SyncException {
         JSONObject credentials = SyncUploadRequestBuilder.getReqCredentials(employeeModel, app);
 
-        if (fillHistoryGep && minUpdateTime != null && (updateTime == null || updateTime.time < minUpdateTime)) {
+        if (fillHistoryGep && minUpdateTime != null
+                && (updateTime == null || updateTime.time < minUpdateTime)) {
             if (UnitTable.TABLE_NAME.equals(localTable)) {
                 if (!isSyncGap || isFirstSync)
                     return makeUnitsRequest(api, app.emailApiKey,

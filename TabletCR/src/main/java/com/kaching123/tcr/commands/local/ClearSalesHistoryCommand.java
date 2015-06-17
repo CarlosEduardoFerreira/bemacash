@@ -59,7 +59,6 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
         getApp().lockOnSalesHistory();
         Logger.d("ClearSalesHistoryCommand: locked");
         try {
-            //TODO: refactor?
             Integer limitDays = getApp().getSalesHistoryLimit();
             Logger.d("ClearSalesHistoryCommand: limit: " + limitDays + " days");
             if (limitDays == null) {
@@ -139,12 +138,10 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                 Logger.d("ClearSalesHistoryCommand: end transaction");
             }
 
-            getApp().setInvalidOrdersFound(false);
-            Logger.w("[INVALID ORDERS] ClearSalesHistoryCommand: invalid old active unit orders flag cleared");
-
-            //TODO: keep? execute after sales history db migration? execute seldom - when a lot of data removed or time passed
-            /*boolean vacuumResult = ShopProviderExt.callMethod(getContext(), Method.METHOD_VACUUM, null, null);
-            Logger.d("ClearSalesHistoryCommand: vacuum succeeded: " + vacuumResult);*/
+            if (getApp().isInvalidOrdersFound()) {
+                getApp().setInvalidOrdersFound(false);
+                Logger.w("[INVALID ORDERS] ClearSalesHistoryCommand: invalid old active unit orders flag cleared");
+            }
 
             getContext().getContentResolver().notifyChange(UNITS_URI, null);
             getContext().getContentResolver().notifyChange(SALE_ORDERS_URI, null);

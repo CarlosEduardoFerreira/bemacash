@@ -40,7 +40,6 @@ public class ShopOpenHelper extends BaseOpenHelper {
 
     private static final String EXTRA_DB_ALIAS = "\'extraDb\'";
     private static final String SQL_ATTACH_DB = "ATTACH DATABASE \'%s\' AS " + EXTRA_DB_ALIAS + ";";
-    private static final String SQL_COPY_TABLE_FROM_DB = "INSERT OR REPLACE INTO %s SELECT * FROM " + EXTRA_DB_ALIAS + ".%s;";
     private static final String SQL_DETACH_DB = "DETACH DATABASE " + EXTRA_DB_ALIAS + ";";
     private static final String SQL_CLEAR_TABLE_IN_DB = "DELETE FROM " + EXTRA_DB_ALIAS + ".%s;";
 
