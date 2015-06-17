@@ -1709,7 +1709,8 @@ public abstract class ShopStore {
         String TIPS = "tips";
         String REFUNDS = "refunds";
 
-        String QUERY = "select " + SALES + "." + SaleOrderTable.GUID
+        String QUERY = "select * from ("
+                + "select " + SALES + "." + SaleOrderTable.GUID
                 + " from " + SaleOrderTable.TABLE_NAME + " as " + SALES
                 + " left join " + EmployeeTipsTable.TABLE_NAME + " as " + TIPS
                 + " on " + SALES + "." + SaleOrderTable.GUID + " = " + TIPS + "." + EmployeeTipsTable.ORDER_ID + " and " + TIPS + "." + EmployeeTipsTable.PARENT_GUID + " is null"
@@ -1722,7 +1723,8 @@ public abstract class ShopStore {
                 + " and ("+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " IS NULL OR "+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " < %2$s)"
                 + " and " + UnitTable.TABLE_NAME + "." + UnitTable.ID + " is null"
                 + " group by " + SALES + "." + SaleOrderTable.GUID
-                + " having ( max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") is null OR max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") < %3$s)";
+                + " having ( max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") is null OR max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") < %3$s)"
+                + ") limit %4$s";
 
     }
 
@@ -1734,14 +1736,16 @@ public abstract class ShopStore {
         String UPDATE_QTY_FLAG = "t_update_qty_flag";
         String CREATE_TIME = "t_create_time";
 
-        String QUERY = "select " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
+        String QUERY =  "select * from ("
+                + "select " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
                 + " from " + ItemMovementTable.TABLE_NAME
                 + " left join " + ItemTable.TABLE_NAME
                 + " on " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_GUID
                 + " and " + ItemTable.TABLE_NAME + "." + ItemTable.UPDATE_QTY_FLAG + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
                 + " where " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " is null "
                 + " group by " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
-                + " having max("+ ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + ") < %s";
+                + " having max("+ ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + ") < %1$s"
+                + ") limit %2$s";
 
     }
 
