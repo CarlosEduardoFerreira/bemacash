@@ -75,8 +75,7 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
             Logger.d("ClearSalesHistoryCommand: start transaction");
             try {
                 Cursor c;
-                //TODO: improve - get size of cursor
-                ArrayList<String> orderGuids = new ArrayList<String>();
+                ArrayList<String> orderGuids = null;
                 StringBuilder inBuilder = new StringBuilder();
                 do {
                     c = ProviderAction.query(OLD_SALE_ORDERS_URI)
@@ -93,6 +92,9 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                         break;
                     }
 
+                    if (orderGuids == null)
+                        orderGuids = new ArrayList<String>(c.getCount());
+
                     while (c.moveToNext()) {
                         orderGuids.add(c.getString(0));
                     }
@@ -104,7 +106,7 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                     Logger.d("ClearSalesHistoryCommand: orders removed: " + deleted);
 
                     orderGuids.clear();
-                } while (c.getCount() > 0);
+                } while (c.getCount() == MAX_PARAMETERS_COUNT);
                 inBuilder.setLength(0);
 
                 Logger.d("ClearSalesHistoryCommand: trying to remove tips without orders");
@@ -128,8 +130,7 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                 Logger.d("ClearSalesHistoryCommand: units without orders removed: " + count);
 
                 int totalCount = 0;
-				//TODO: use one collection?
-                ArrayList<String> updateQtyFlags = new ArrayList<String>();
+                ArrayList<String> updateQtyFlags = null;
                 do {
                     c = ProviderAction.query(OLD_MOVEMENT_GROUPS_URI)
                             .where("", minCreateTime, MAX_PARAMETERS_COUNT)
@@ -141,6 +142,9 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                         break;
                     }
 
+                    if (updateQtyFlags == null)
+                        updateQtyFlags = new ArrayList<String>(c.getCount());
+
                     while (c.moveToNext()) {
                         updateQtyFlags.add(c.getString(0));
                     }
@@ -150,11 +154,10 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                             .where(ItemMovementTable.ITEM_UPDATE_QTY_FLAG + getWhereIn(updateQtyFlags.size(), inBuilder), updateQtyFlags.toArray(new String[updateQtyFlags.size()]))
                             .perform(getContext());
                     totalCount += deleted;
-                    Logger.d("ClearSalesHistoryCommand: group movements removed: " + count);
+                    Logger.d("ClearSalesHistoryCommand: group movements removed: " + c.getCount());
 
                     updateQtyFlags.clear();
-                } while (c.getCount() > 0);
-
+                } while (c.getCount() == MAX_PARAMETERS_COUNT);
                 Logger.d("ClearSalesHistoryCommand: totally movements removed: " + totalCount);
 
                 ShopProviderExt.callMethod(getContext(), Method.TRANSACTION_COMMIT, null, null);
@@ -187,12 +190,12 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
     private static String getWhereIn(int count, StringBuilder inBuilder) {
         inBuilder.setLength(0);
         inBuilder.append(" in (");
-        for (int j = 0; j < count; j++) {
-            if (j > 0)
+        for (int i = 0; i < count; i++) {
+            if (i > 0)
                 inBuilder.append(',');
             inBuilder.append('?');
         }
-        inBuilder.append(")");
+        inBuilder.append(')');
         return inBuilder.toString();
     }
 
