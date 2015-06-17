@@ -207,7 +207,10 @@ public class ShopInfoViewJdbcConverter {
     }
 
     public static int getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException  {
-        return rs.getInt(MAX_HISTORY_RANGE);
+        int salesHistoryLimit = rs.getInt(MAX_HISTORY_RANGE);
+        if (salesHistoryLimit <= 0)
+            throw new JSONException("not valid value for sales history limit: " + salesHistoryLimit);
+        return salesHistoryLimit;
     }
 
     public static final class ShopInfo {
