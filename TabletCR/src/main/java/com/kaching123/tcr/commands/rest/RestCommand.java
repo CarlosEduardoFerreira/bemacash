@@ -1,5 +1,8 @@
 package com.kaching123.tcr.commands.rest;
 
+import android.text.TextUtils;
+
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -15,6 +18,8 @@ public abstract class RestCommand extends PublicGroundyTask {
 
         private static final String STATUS_ERROR = "error";
         private static final String STATUS_SUCCESS = "success";
+
+        private static final String STATUS_ERROR_SYNC_LOCKED = "700";
 
         public String status;
         public String message;
@@ -33,6 +38,10 @@ public abstract class RestCommand extends PublicGroundyTask {
         }
         public boolean isCredentialsFial() {
             return "400".equals(status);
+        }
+
+        public boolean isSyncLockedError() {
+            return STATUS_ERROR_SYNC_LOCKED.equals(status);
         }
 
         @Override

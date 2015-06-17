@@ -17,6 +17,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSetAutomaticBatchCloseCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackUpdateAutomaticHourToCloseBatchCommand;
 import com.kaching123.tcr.commands.payment.pax.PaxMIDownloadCommand;
+import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.sync.DBVersionCheckCommand;
 import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;
 import com.kaching123.tcr.commands.rest.sync.GetCurrentTimestampResponse;
@@ -27,7 +28,6 @@ import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncApi2;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
 import com.kaching123.tcr.commands.support.SendLogCommand;
-import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter.BarcodePrefixes;
@@ -117,6 +117,7 @@ public class SyncCommand implements Runnable {
     public static final String EXTRA_PROGRESS = "progress";
     public static final String EXTRA_DATA_LABEL = "data_label";
     public static final String EXTRA_SUCCESS = "success";
+    public static final String EXTRA_SYNC_LOCKED = "sync_locked";
 
     private static final String[] TABLES_URIS = new String[]{
             RegisterTable.URI_CONTENT,
@@ -175,6 +176,7 @@ public class SyncCommand implements Runnable {
         int count = 0;
         String error = null;
         boolean isOffline = false;
+        boolean isSyncLocked = false;
 
         getApp().lockOnTrainingMode();
         try {
@@ -188,6 +190,9 @@ public class SyncCommand implements Runnable {
             isOffline = true;
         } catch (SyncInconsistentException e) {
             error = service.getString(R.string.error_message_sync_inconsistent);
+        } catch (SyncLockedException e) {
+            error = service.getString(R.string.error_message_sync_locked);
+            isSyncLocked = true;
         } catch (Exception e) {
             //TODO: handle sub commands exceptions
             error = getErrorString(null);
@@ -204,13 +209,13 @@ public class SyncCommand implements Runnable {
         } else {
             NotificationHelper.removeSyncNotification(service);
         }
-        fireCompleteEvent(service, !failure);
+        fireCompleteEvent(service, !failure, isSyncLocked);
         Logger.d("SyncCommand end");
     }
 
     private static Handler handler = new Handler();
 
-    public int syncNow(final EmployeeModel employee) throws SyncException, DBVersionCheckException, OfflineException, SyncInconsistentException {
+    public int syncNow(final EmployeeModel employee) throws SyncException, DBVersionCheckException, OfflineException, SyncInconsistentException,SyncLockedException {
         if (!getApp().isTrainingMode() && !Util.isNetworkAvailable(service)) {
             Logger.e("SyncCommand: NO CONNECTION");
             setOfflineMode(true);
@@ -232,6 +237,10 @@ public class SyncCommand implements Runnable {
             Logger.e("SyncCommand failed", e);
             //we have retrieved the data
             setOfflineMode(false);
+            throw e;
+        } catch (SyncLockedException e) {
+            Logger.e("SyncCommand failed", e);
+            setOfflineMode(true);
             throw e;
         } catch (RuntimeException e) {
             Logger.e("SyncCommand failed", e);
@@ -258,7 +267,7 @@ public class SyncCommand implements Runnable {
         }
     }
 
-    private int syncNowInner(final EmployeeModel employee) throws SyncException, DBVersionCheckException, SyncInconsistentException {
+    private int syncNowInner(final EmployeeModel employee) throws SyncException, DBVersionCheckException, SyncInconsistentException, SyncLockedException {
         if (getApp().isTrainingMode()) {
             syncPAXMerchantInfo();
             syncWireless(service);
@@ -614,13 +623,16 @@ public class SyncCommand implements Runnable {
 
     private void sendSyncSuccessful(SyncApi api, EmployeeModel employee) {
         try {
-            api.setRegisterLastUpdate(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employee, getApp()));
+            RestCommand.Response resp = api.setRegisterLastUpdate(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employee, getApp()));
+            if (resp == null || !resp.isSuccess()) {
+                Logger.e("SyncCommand.sendSyncSuccessful(): failed, response: " + resp);
+            }
         } catch (Exception e) {
             Logger.e("SyncCommand.sendSyncSuccessful(): failed", e);
         }
     }
 
-    private long getServerCurrentTimestamp(SyncApi api, EmployeeModel employee) throws SyncException {
+    private long getServerCurrentTimestamp(SyncApi api, EmployeeModel employee) throws SyncException,SyncLockedException {
         Long currentServerTimestamp;
         GetCurrentTimestampResponse response;
         try {
@@ -630,6 +642,9 @@ public class SyncCommand implements Runnable {
             throw new SyncException();
         }
         Logger.d("SyncCommand.getServerCurrentTimestamp(): response: " + (response == null ? null : response.entity));
+        if (response != null && response.isSyncLockedError()) {
+            throw new SyncLockedException();
+        }
         currentServerTimestamp = response == null ? null : response.getCurrentTimestamp();
         if (currentServerTimestamp == null) {
             Logger.e("SyncCommand.getServerCurrentTimestamp(): failed, empty response");
@@ -750,21 +765,21 @@ public class SyncCommand implements Runnable {
     }
 
 
-    private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException {
+    private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException, SyncLockedException {
         int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
         count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
         return count;
     }
 
-    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException {
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException, SyncLockedException {
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, 0L, false, false, false, false);
     }
 
-    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException {
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep) throws SyncException, SyncLockedException {
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
     }
 
-    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws SyncException {
+    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, long minUpdateTime, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws SyncException, SyncLockedException {
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, isSyncGap, isFirstSync);
     }
 
@@ -777,7 +792,7 @@ public class SyncCommand implements Runnable {
                                  boolean limitHistory,
                                  boolean fillHistoryGep,
                                  boolean isSyncGap,
-                                 boolean isFirstSync) throws SyncException {
+                                 boolean isFirstSync) throws SyncException, SyncLockedException {
 
         fireEvent(context, localTable);
         TcrApplication app = TcrApplication.get();
@@ -809,6 +824,9 @@ public class SyncCommand implements Runnable {
                 GetPagedArrayResponse resp = getResponse(api, employeeModel, localTable, supportParentChildRelations, isChild, app, minUpdateTime, updateTime, converter,
                         fillHistoryGep, isSyncGap, isFirstSync);
                 Logger.d("Resp = %s", resp);
+                if (resp != null && resp.isSyncLockedError()) {
+                    throw new SyncLockedException();
+                }
                 if (resp == null || !resp.isSuccess()) {
                     throw new SyncException(localTable);
                 }
@@ -826,6 +844,10 @@ public class SyncCommand implements Runnable {
                     serverHasBeenUpdated = true;
                 }
                 hasNext = handlerResult.dataCount > 0;
+            } catch (SyncLockedException e) {
+                throw e;
+            } catch (SyncException e) {
+                throw e;
             } catch (Exception e) {
                 Logger.e("sync table " + localTable + " exception", e);
                 throw new SyncException(localTable);
@@ -836,7 +858,7 @@ public class SyncCommand implements Runnable {
     }
 
     private void syncOldActiveOrders(Context context, SyncApi2 api, EmployeeModel employeeModel,
-                                 long minUpdateTime) throws SyncException {
+                                     long minUpdateTime) throws SyncException, SyncLockedException {
         //TODO: fire specific event?
         fireEvent(context, SaleOrderTable.TABLE_NAME);
         TcrApplication app = TcrApplication.get();
@@ -846,6 +868,9 @@ public class SyncCommand implements Runnable {
                     SyncUploadRequestBuilder.getReqCredentials(employeeModel, app),
                     Sync2GetRequestBuilder.getOldActiveOrdersRequest(minUpdateTime));
             Logger.d("Resp = %s", resp);
+            if (resp != null && resp.isSyncLockedError()) {
+                throw new SyncLockedException();
+            }
             if (resp == null || !resp.isSuccess()) {
                 throw new SyncException(SaleOrderTable.TABLE_NAME);
             }
@@ -854,7 +879,11 @@ public class SyncCommand implements Runnable {
             if (hasData) {
                 fireEvent(context, SaleOrderTable.TABLE_NAME, 1, 1);
             }
-        } catch (Exception e) {
+        } catch (SyncLockedException e) {
+            throw e;
+        } catch (SyncException e) {
+            throw e;
+        }catch (Exception e) {
             Logger.e("sync old active orders exception", e);
             throw new SyncException(SaleOrderTable.TABLE_NAME);
         }
@@ -933,7 +962,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeUnitsRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.downloadUnitsLimited(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -945,7 +974,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeMovementsRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.downloadMovementGroups(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -957,7 +986,7 @@ public class SyncCommand implements Runnable {
 
     private GetArrayResponse makeOldActiveOrdersRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.downloadOldActiveOrders(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -1055,16 +1084,17 @@ public class SyncCommand implements Runnable {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private void fireCompleteEvent(Context context, boolean success) {
+    private void fireCompleteEvent(Context context, boolean success, boolean isSyncLocked) {
         if (!isManual)
             return;
 
         Intent intent = new Intent(ACTION_SYNC_COMPLETED);
         intent.putExtra(EXTRA_SUCCESS, success);
+        intent.putExtra(EXTRA_SYNC_LOCKED, isSyncLocked);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private int syncShopInfo(EmployeeModel employeeModel) throws SyncException {
+    private int syncShopInfo(EmployeeModel employeeModel) throws SyncException, SyncLockedException {
         TcrApplication app = TcrApplication.get();
         SyncApi2 api = app.getRestAdapter().create(SyncApi2.class);
 
@@ -1073,6 +1103,9 @@ public class SyncCommand implements Runnable {
         int salesHistoryLimit;
         try {
             GetResponse resp = makeShopInfoRequest(api, app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employeeModel, app));
+            if (resp != null && resp.isSyncLockedError()) {
+                throw new SyncLockedException();
+            }
             if (resp == null || !resp.isSuccess()) {
                 Logger.e("can't parse shop", new RuntimeException());
                 throw new SyncException();
@@ -1082,7 +1115,11 @@ public class SyncCommand implements Runnable {
             syncPrepaidTaxes(entity.getJSONArray("PREPAID_ITEM_TAXES"));
             syncActivationCarriers(entity.getJSONArray("ACTIVATION_CARRIERS"));
             salesHistoryLimit = syncShop(entity.getJSONObject("SHOP"));
-        } catch (Exception e) {
+        } catch (SyncException e) {
+            throw e;
+        } catch (SyncLockedException e) {
+            throw e;
+        }catch (Exception e) {
             Logger.e("Can't sync shop info", e);
             throw new SyncException();
         }
@@ -1443,6 +1480,10 @@ public class SyncCommand implements Runnable {
     }
 
     public static class SyncInconsistentException extends Exception {
+
+    }
+
+    public static class SyncLockedException extends Exception {
 
     }
 

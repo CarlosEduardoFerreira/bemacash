@@ -633,6 +633,7 @@
     <string name="error_message_offline">You are offline, please check your Internet connection and try again</string>
     <string name="error_message_sync_inconsistent">Couldn\'t finalize synchronization, please try again later</string>
     <string name="error_message_login_offline_failed">Unable to log in. Please, connect your tablet to the Internet and try again</string>
+    <string name="error_message_sync_locked">Synchronization is currently not available, please try again later</string>
     <string name="btn_logout">Logout</string>
     <string name="inventory_navigation_filter_all">All</string>
     <string name="inventory_navigation_filter_near_the_end">Low inventory items</string>

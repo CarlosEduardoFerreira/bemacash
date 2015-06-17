@@ -100,8 +100,12 @@ public class OfflineCommandsService extends Service {
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                if (uploadTaskV2Adapter.employeeUpload(cr, OfflineCommandsService.this))
-                    cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+                try {
+                    if (uploadTaskV2Adapter.employeeUpload(cr, OfflineCommandsService.this))
+                        cr.delete(URI_SQL_COMMAND_NO_NOTIFY, ShopStore.SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+                } catch (SyncCommand.SyncLockedException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

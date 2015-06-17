@@ -18,6 +18,7 @@ import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.OfflineCommandsService;
+import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.SqlCommandTable;
 
@@ -55,7 +56,7 @@ public class UploadTaskV2 {
         this.employee = employeeModel;
     }
 
-    public boolean webApiUpload(ContentResolver cr, Context context) throws TransactionNotFinalizedException {
+    public boolean webApiUpload(ContentResolver cr, Context context) throws TransactionNotFinalizedException, SyncCommand.SyncLockedException {
         if (TcrApplication.get().isTrainingMode())
             return true;
 
@@ -132,7 +133,7 @@ public class UploadTaskV2 {
         return !errorsOccurred;
     }
 
-    public boolean employeeUpload(ContentResolver cr, Context context) {
+    public boolean employeeUpload(ContentResolver cr, Context context) throws SyncCommand.SyncLockedException {
         if (TcrApplication.get().isTrainingMode())
             return true;
 
@@ -218,7 +219,7 @@ public class UploadTaskV2 {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private boolean try2Upload(ContentResolver cr, ArrayList<UploadCommand> commands, Context context) {
+    private boolean try2Upload(ContentResolver cr, ArrayList<UploadCommand> commands, Context context) throws SyncCommand.SyncLockedException {
         TcrApplication app = TcrApplication.get();
         EmployeeModel employeeModel = app.getOperator() == null ? employee : app.getOperator();
         if (employeeModel == null) {
@@ -237,6 +238,9 @@ public class UploadTaskV2 {
                 return false;
             }
             Logger.d("[UploadWeb] resp: %s", resp);
+            if (resp.isSyncLockedError()) {
+                throw new SyncCommand.SyncLockedException();
+            }
             long skippId = -1L;
             if (!resp.isSuccess()) {
                 //JSONArray requestArray = req.getJSONArray("req");
@@ -271,6 +275,9 @@ public class UploadTaskV2 {
                 cr.applyBatch(ShopProvider.AUTHORITY, operations);
             }
             return true;
+        } catch (SyncCommand.SyncLockedException e) {
+            Logger.e("[UploadWeb] error: sync is locked", e);
+            throw e;
         } catch (Exception e) {
             // TODO find out where does login catch this exception
             Logger.e("[UploadWeb] error", e);

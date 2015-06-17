@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand;
 import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand.EndUncompletedTransactionsResult;
+import com.kaching123.tcr.commands.rest.RestCommand;
+import com.kaching123.tcr.service.SyncCommand.SyncLockedException;
 import com.kaching123.tcr.commands.rest.sync.DBVersionCheckCommand;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
@@ -115,6 +118,7 @@ public class UploadTask implements Runnable {
 
         ShopPref_ pref = TcrApplication.get().getShopPref();
         boolean errorsOccurred = false;
+        String errorMessage = null;
         boolean isV1CommandsSent = pref.isV1CommandsSent().getOr(false);
         TcrApplication.get().lockOnTrainingMode();
         try {
@@ -139,6 +143,10 @@ public class UploadTask implements Runnable {
             NotificationHelper.removeUploadNotification(service);
             fireCompleteEvent(service, false);
             return;
+        }catch (SyncLockedException e) {
+            Logger.e("UploadTask: sync is currently locked", e);
+            errorsOccurred = true;
+            errorMessage = service.getString(R.string.error_message_sync_locked);
         }
         catch (Exception e) {
             Logger.e("UploadTask error", e);
@@ -148,10 +156,11 @@ public class UploadTask implements Runnable {
         }
 
         if (errorsOccurred) {
-            if (isManual) {
+            if (TextUtils.isEmpty(errorMessage))
                 NotificationHelper.showUploadErrorNotification(service);
-                onUploadFailure();
-            }
+            else
+                NotificationHelper.showUploadErrorNotification(service, errorMessage);
+            onUploadFailure();
             SendLogCommand.start(service);
         } else {
             NotificationHelper.removeUploadNotification(service);
@@ -166,7 +175,10 @@ public class UploadTask implements Runnable {
         TcrApplication app = TcrApplication.get();
         SyncApi api = app.getRestAdapter().create(SyncApi.class);
         try {
-            api.setRegisterLastUpdate(app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(app.getOperator(), app));
+            RestCommand.Response resp = api.setRegisterLastUpdate(app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(app.getOperator(), app));
+            if (resp == null || !resp.isSuccess()) {
+                Logger.e("UploadTask.sendSyncSuccessful(): failed, response: " + resp);
+            }
         } catch (Exception e) {
             Logger.e("UploadTask.sendSyncSuccessful(): failed", e);
         }

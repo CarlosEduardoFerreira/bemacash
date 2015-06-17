@@ -51,7 +51,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 //i think we should use command because it will be check subscription titledDate too
 public class LoginCommand extends GroundyTask {
 
-    public static enum Error {LOGIN_FAILED, SYNC_OUTDATED, SYNC_FAILED, REGISTER_CHECK_FAILED, EMPLOYEE_NOT_ACTIVE, OFFLINE, SYNC_INCONSISTENT, LOGIN_OFFLINE_FAILED}
+    public static enum Error {LOGIN_FAILED, SYNC_OUTDATED, SYNC_FAILED, REGISTER_CHECK_FAILED, EMPLOYEE_NOT_ACTIVE, OFFLINE, SYNC_INCONSISTENT, LOGIN_OFFLINE_FAILED, SYNC_LOCKED}
 
     public static enum Mode {
         LOGIN, SWITCH
@@ -86,7 +86,11 @@ public class LoginCommand extends GroundyTask {
         boolean isEmployeeSuccessUpload = true;
         if (lastUserName != null) {
             uploadTaskV2Adapter = new UploadTaskV2(loginLocal(lastUserName, lastUserPassword));
-            isEmployeeSuccessUpload = doEmployeeUpload();
+            try {
+                isEmployeeSuccessUpload = doEmployeeUpload();
+            } catch (SyncCommand.SyncLockedException e) {
+                e.printStackTrace();
+            }
         }
 
         if (mode == Mode.LOGIN && !isTrainingMode && !isOffline) {
@@ -203,7 +207,7 @@ public class LoginCommand extends GroundyTask {
         return false;
     }
 
-    private boolean doEmployeeUpload() {
+    private boolean doEmployeeUpload() throws SyncCommand.SyncLockedException {
         Logger.d("[OfflineService] doUpload: isManual = false");
 //        executor.submit(new UploadTask(this, false, true));
         ContentResolver cr = getContext().getContentResolver();
@@ -249,6 +253,9 @@ public class LoginCommand extends GroundyTask {
         } catch (SyncInconsistentException e) {
             Logger.e("Login.sync error", e);
             return Error.SYNC_INCONSISTENT;
+        } catch (SyncCommand.SyncLockedException e) {
+            Logger.e("Login.sync error", e);
+            return Error.SYNC_LOCKED;
         } catch (Exception e) {
             Logger.e("Login.sync error", e);
             return Error.SYNC_FAILED;
@@ -405,6 +412,9 @@ public class LoginCommand extends GroundyTask {
                 case LOGIN_OFFLINE_FAILED:
                     onLoginOfflineFailed();
                     break;
+                case SYNC_LOCKED:
+                    onSyncLocked();
+                    break;
                 default:
                     onLoginError();
             }
@@ -429,6 +439,8 @@ public class LoginCommand extends GroundyTask {
         protected abstract void onSyncInconsistent();
 
         protected abstract void onLoginOfflineFailed();
+
+        protected abstract void onSyncLocked();
     }
 
     private static class RemoteLoginResult {

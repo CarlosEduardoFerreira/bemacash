@@ -72,6 +72,7 @@ public class SyncSettingsFragment extends PreferenceFragment {
                 SyncWaitDialogFragment.hide(getActivity());
 
                 boolean success = intent.getBooleanExtra(SyncCommand.EXTRA_SUCCESS, false);
+                boolean isSyncLockedError = intent.getBooleanExtra(SyncCommand.EXTRA_SYNC_LOCKED, false);
                 if (success && isUploadSuccess) {
                     AlertDialogFragment.showComplete(getActivity(), R.string.sync_success_title, getString(R.string.sync_success_message));
 
@@ -79,6 +80,8 @@ public class SyncSettingsFragment extends PreferenceFragment {
                         app.setTipsEnabledWasChanged(false);
                         Toast.makeText(getActivity(), app.isTipsEnabled() ? R.string.warning_message_tips_enabled : R.string.warning_message_tips_disabled, Toast.LENGTH_LONG).show();
                     }
+                } else if (isSyncLockedError) {
+                    AlertDialogFragment.showAlert(getActivity(), R.string.sync_error_title, getString(R.string.error_message_sync_locked));
                 } else {
                     AlertDialogFragment.showAlert(getActivity(), R.string.sync_error_title, getString(R.string.sync_error_message));
                 }
