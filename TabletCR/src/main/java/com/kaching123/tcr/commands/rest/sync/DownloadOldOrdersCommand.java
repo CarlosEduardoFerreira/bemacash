@@ -21,6 +21,7 @@ import java.util.Date;
 public class DownloadOldOrdersCommand extends PublicGroundyTask {
 
     private static final String EXTRA_GUIDS = "extra_guids";
+    private static final String EXTRA_SEARCH_BY_UNIT = "extra_search_by_unit";
     private static final String EXTRA_ERROR = "extra_error";
 
     private static final String ARG_REGISTER_TITLE = "arg_register_title";
@@ -56,6 +57,8 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
         to = (Date) getArgs().getSerializable(ARG_TO_DATE);
         unitSerial = getStringArg(ARG_UNIT_SERIAL);
 
+        boolean isSearchByUnit = !TextUtils.isEmpty(unitSerial);
+
         Logger.d("[SYNC HISTORY]DownloadOldOrdersCommand: setting loading orders flag");
         getApp().setLoadingOldOrders(true);
         Logger.d("[SYNC HISTORY]DownloadOldOrdersCommand: loading orders flag set");
@@ -85,7 +88,7 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
 
                 String[] guids = new DownloadOldOrdersResponseHandler(getContext()).handleOrdersResponse(resp);
 
-                return succeeded().add(EXTRA_GUIDS, guids);
+                return succeeded().add(EXTRA_GUIDS, guids).add(EXTRA_SEARCH_BY_UNIT, isSearchByUnit);
             } catch (Exception e) {
                 Logger.e("DownloadOldOrdersCommand: failed", e);
                 return failed();
@@ -149,8 +152,8 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
     public static abstract class BaseDownloadOldOrdersCommandCallback {
 
         @OnSuccess(DownloadOldOrdersCommand.class)
-        public void handleSuccess(@Param(EXTRA_GUIDS) String[] guids) {
-            onSuccess(guids);
+        public void handleSuccess(@Param(EXTRA_GUIDS) String[] guids, @Param(EXTRA_SEARCH_BY_UNIT) boolean isSearchByUnit) {
+            onSuccess(guids, isSearchByUnit);
         }
 
         @OnFailure(DownloadOldOrdersCommand.class)
@@ -171,7 +174,7 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
             }
         }
 
-        protected abstract void onSuccess(String[] guids);
+        protected abstract void onSuccess(String[] guids, boolean isSearchByUnit);
 
         protected abstract void onNotFoundError();
 

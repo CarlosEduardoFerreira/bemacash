@@ -89,7 +89,7 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
     @Override
     protected boolean onSubmitForm() {
         final String serialCode = etSerial.getText().toString();
-        SearchUnitCommand.start(getActivity(), serialCode, null, null, new SearchUnitCommand.UnitCallback() {
+        SearchUnitCommand.start(getActivity(), serialCode, null, null, true, new SearchUnitCommand.UnitCallback() {
 
             @Override
             protected void handleSuccess(ArrayList<Unit> unit, ArrayList<SaleOrderViewModel> order) {

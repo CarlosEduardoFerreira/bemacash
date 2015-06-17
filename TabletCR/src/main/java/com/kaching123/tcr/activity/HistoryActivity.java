@@ -401,8 +401,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     }
 
     @Override
-    public void onSearchFinish() {
-        historyFragment.makeCreditReceiptNumFocus();
+    public void onLoadedFromServer(boolean isSearchByUnit) {
     }
 
     @Override

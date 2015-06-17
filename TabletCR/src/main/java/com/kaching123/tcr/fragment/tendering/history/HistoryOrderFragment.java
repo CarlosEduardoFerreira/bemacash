@@ -361,8 +361,9 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     }
 
     @Override
-    public void onSearchFinish() {
-
+    public void onLoadedFromServer(boolean isSearchByUnit) {
+        if (isSearchByUnit)
+            orderNumber.setText(null);
     }
 
     public void makeCreditReceiptNumFocus() {

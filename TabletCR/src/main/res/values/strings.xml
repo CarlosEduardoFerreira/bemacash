@@ -1562,7 +1562,7 @@
     <string name="order_searching_title">Order not found</string>
     <string name="order_searching_message">Order was not found in actual orders. Do you want to search on the server?</string>
     <string name="order_searching_error_message">Attempt to search failed</string>
-    <string name="order_searching_error_message_not_found">Order was not found on the server</string>
+    <string name="order_searching_error_message_not_found">Order was not found on the server\u0020</string>
     <string name="order_searching_error_message_sync_locked">Searching on the server is currently not available, please try again later</string>
 
 </resources>

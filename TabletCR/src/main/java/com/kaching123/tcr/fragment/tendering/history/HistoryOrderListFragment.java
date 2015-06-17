@@ -324,9 +324,10 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         for (ILoader loader : loaderCallback) {
             loader.onLoad(adapter.getCount(), priceRange.first, priceRange.second);
         }*/
+        /*Pair<BigDecimal, BigDecimal> priceRange = getPriceRange(saleOrderModels);
         for (ILoader loader : loaderCallback) {
-            loader.onSearchFinish();
-        }
+            loader.onLoad(adapter.getCount(), priceRange.first, priceRange.second);
+        }*/
 
     }
 
@@ -419,7 +420,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
         void onItemClicked(String guid, BigDecimal totalAmount, Date dateText, String cashierText, String numText, OrderType type, boolean isTipped);
 
-        void onSearchFinish();
+        void onLoadedFromServer(boolean isSearchByUnit);
     }
 
     private class SaleOrderTipsViewFunction extends ListConverterFunction<SaleOrderTipsViewModel> {
@@ -520,9 +521,13 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private BaseDownloadOldOrdersCommandCallback downloadOrderCallback = new BaseDownloadOldOrdersCommandCallback() {
 
         @Override
-        protected void onSuccess(String[] guids) {
+        protected void onSuccess(String[] guids, boolean isSearchByUnit) {
             if (getActivity() == null)
                 return;
+
+            for (ILoader loader : loaderCallback) {
+                loader.onLoadedFromServer(isSearchByUnit);
+            }
 
             WaitDialogFragment.hide(getActivity());
             loadedOrderGuids = guids;
