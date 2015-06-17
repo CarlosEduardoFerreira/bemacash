@@ -634,6 +634,7 @@
     <string name="error_message_sync_inconsistent">Couldn\'t finalize synchronization, please try again later</string>
     <string name="error_message_login_offline_failed">Unable to log in. Please, connect your tablet to the Internet and try again</string>
     <string name="error_message_sync_locked">Synchronization is currently not available, please try again later</string>
+    <string name="error_message_sync_interrupted">Couldn\'t finalize synchronization, please try again later</string>
     <string name="btn_logout">Logout</string>
     <string name="inventory_navigation_filter_all">All</string>
     <string name="inventory_navigation_filter_near_the_end">Low inventory items</string>
@@ -1557,4 +1558,9 @@
 
     <string name="truncate_wait_message">Truncating database</string>
     <string name="truncate_failed_message">Database truncation failed</string>
+
+    <string name="order_searching_title">Order not found</string>
+    <string name="order_searching_message">Order was not found in actual orders. Do you want to search on the server?</string>
+    <string name="order_searching_error_message">Attempt to search failed</string>
+    <string name="order_searching_error_message_not_found">Order was not found on the server</string>
 </resources>

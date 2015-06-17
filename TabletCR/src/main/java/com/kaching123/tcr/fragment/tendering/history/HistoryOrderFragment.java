@@ -169,7 +169,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                 if (order.size() == 1) {
                     orderNumber.setText(order.get(0).registerTitle + "-" + order.get(0).printSeqNum);
                 }
-                filterClicked();
+                requestFilter();
             }
 
             @Override
@@ -190,6 +190,14 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
     @Click
     public void filterClicked() {
+        requestFilter(true);
+    }
+
+    private void requestFilter() {
+        requestFilter(false);
+    }
+
+    private void requestFilter(boolean isManual) {
         // http://194.79.22.58:8080/browse/ACR-211
 //        if (!toValue.hasFocus())
 //            onToTextChanges(toValue.getText());
@@ -210,7 +218,8 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                     customerGuid,
                     transactionsState,
                     new ArrayList<String>(Arrays.asList(seq.first)),
-                    new ArrayList<String>(Arrays.asList(seq.second)));
+                    new ArrayList<String>(Arrays.asList(seq.second)),
+                    isManual);
         } else {
             ArrayList<String> regs = new ArrayList<String>();
             ArrayList<String> seqs = new ArrayList<String>();
@@ -226,7 +235,8 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                     customerGuid,
                     transactionsState,
                     regs,
-                    seqs);
+                    seqs,
+                    isManual);
         }
     }
 
@@ -251,7 +261,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
         orderNumber.setEditListener(new CustomEditBox.IEditListener() {
             @Override
             public boolean onChanged(String text) {
-                filterClicked();
+                requestFilter(true);
                 return false;
             }
         });
@@ -370,7 +380,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
     public HistoryOrderFragment setCallback(IFilterRequestListener callback) {
         this.callback = callback;
-        filterClicked();
+        requestFilter();
         return this;
     }
 

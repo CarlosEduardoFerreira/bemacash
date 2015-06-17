@@ -35,10 +35,13 @@ public interface SyncApi2 {
     @POST("/apiv2/data/download_movementgroups")
     GetPagedArrayResponse downloadMovementGroups(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials, @Field("entity") JSONObject entity);
 
-    //apiv2/data/download_oldactiveorders
     @FormUrlEncoded
     @POST("/apiv2/data/download_oldactiveorders")
     GetArrayResponse downloadOldActiveOrders(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials, @Field("entity") JSONObject entity);
+
+    @FormUrlEncoded
+    @POST("/apiv2/data/download_oldorders")
+    GetArrayResponse downloadOldOrders(@Field("api_key") String apiKey, @Field("credentials") JSONObject credentials, @Field("entity") JSONObject entity);
    
     @FormUrlEncoded
     @POST("/apiv2/data/download_shopinfo")

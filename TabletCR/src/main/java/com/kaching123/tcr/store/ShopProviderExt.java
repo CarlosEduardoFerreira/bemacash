@@ -60,6 +60,7 @@ public class ShopProviderExt extends ShopProvider {
         public static final String METHOD_COPY_TABLE_FROM_SYNC_DB = "method_copy_table_from_sync_db";
         public static final String METHOD_COPY_UPDATE_TABLE_FROM_SYNC_DB = "method_copy_update_table_from_sync_db";
         public static final String METHOD_CLEAR_TABLE_IN_SYNC_DB = "method_clear_table_in_sync_db";
+        public static final String METHOD_INSERT_UPDATE = "method_insert_update";
 
         public static final String TRANSACTION_START = "method_transaction_start";
         public static final String TRANSACTION_COMMIT = "method_transaction_commit";
@@ -73,6 +74,7 @@ public class ShopProviderExt extends ShopProvider {
 
     private static final String KEY_TABLE_NAME = "KEY_TABLE_NAME";
     private static final String KEY_ID_COLUMN = "KEY_ID_COLUMN";
+    private static final String KEY_VALUES_ARRAY = "KEY_VALUES_ARRAY";
 
     public static boolean callMethod(Context context, String method, String arg, Bundle extras) {
         Bundle resultBundle = context.getContentResolver().call(ShopProvider.BASE_URI, method, arg, extras);
@@ -88,6 +90,14 @@ public class ShopProviderExt extends ShopProvider {
         extras.putString(KEY_TABLE_NAME, tableName);
         extras.putString(KEY_ID_COLUMN, idColumn);
         callMethod(context, Method.METHOD_COPY_UPDATE_TABLE_FROM_SYNC_DB, null, extras);
+    }
+
+    public static void insertUpdateValues(Context context, String tableName, String idColumn, ContentValues[] valuesArray) {
+        Bundle extras = new Bundle();
+        extras.putString(KEY_TABLE_NAME, tableName);
+        extras.putString(KEY_ID_COLUMN, idColumn);
+        extras.putParcelableArray(KEY_VALUES_ARRAY, valuesArray);
+        callMethod(context, Method.METHOD_INSERT_UPDATE, null, extras);
     }
 
     private RecalcItemMovementTable itemMovementHelper;
@@ -166,6 +176,8 @@ public class ShopProviderExt extends ShopProvider {
             boolean result = ((ShopOpenHelper) dbHelper).vacuum();
             resultBundle = new Bundle();
             resultBundle.putBoolean(ARG_METHOD_RESULT, result);
+        } else if (Method.METHOD_INSERT_UPDATE.equalsIgnoreCase(method) && extras != null && !extras.isEmpty()) {
+            ((ShopOpenHelper) dbHelper).insertUpdateValues(extras.getString(KEY_TABLE_NAME), extras.getString(KEY_ID_COLUMN), (ContentValues[]) extras.getParcelableArray(KEY_VALUES_ARRAY));
         }
         return resultBundle;
     }

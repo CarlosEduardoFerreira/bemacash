@@ -797,6 +797,13 @@ public class TcrApplication extends Application {
         shopPref.invalidOrdersFound().put(value);
     }
 
+    public boolean isLoadingOldOrders() {
+        return shopPref.loadingOldOrders().getOr(false);
+    }
+
+    public void setLoadingOldOrders(boolean value) {
+        shopPref.loadingOldOrders().put(value);
+    }
 
     private long getOfflinePeriod() {
         int offlinePeriodHours = shopPref.offlinePeriodHours().getOr(0);

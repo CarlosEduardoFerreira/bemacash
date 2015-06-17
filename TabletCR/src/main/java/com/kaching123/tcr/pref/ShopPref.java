@@ -118,6 +118,8 @@ public interface ShopPref {
 
     boolean invalidOrdersFound();
 
+    boolean loadingOldOrders();
+
     /**
      * user **
      */

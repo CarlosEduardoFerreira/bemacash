@@ -27,6 +27,7 @@ import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.SyncCommand.OfflineException;
 import com.kaching123.tcr.service.SyncCommand.SyncException;
 import com.kaching123.tcr.service.SyncCommand.SyncInconsistentException;
+import com.kaching123.tcr.service.SyncCommand.SyncInterruptedException;
 import com.kaching123.tcr.service.v2.UploadTaskV2;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
@@ -51,8 +52,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 //i think we should use command because it will be check subscription titledDate too
 public class LoginCommand extends GroundyTask {
 
-    public static enum Error {LOGIN_FAILED, SYNC_OUTDATED, SYNC_FAILED, REGISTER_CHECK_FAILED, EMPLOYEE_NOT_ACTIVE, OFFLINE, SYNC_INCONSISTENT, LOGIN_OFFLINE_FAILED, SYNC_LOCKED}
-
+    public static enum Error {LOGIN_FAILED, SYNC_OUTDATED, SYNC_FAILED, REGISTER_CHECK_FAILED, EMPLOYEE_NOT_ACTIVE, OFFLINE, SYNC_INCONSISTENT, LOGIN_OFFLINE_FAILED, SYNC_LOCKED, SYNC_INTERRUPTED}
     public static enum Mode {
         LOGIN, SWITCH
     }
@@ -256,6 +256,9 @@ public class LoginCommand extends GroundyTask {
         } catch (SyncCommand.SyncLockedException e) {
             Logger.e("Login.sync error", e);
             return Error.SYNC_LOCKED;
+        } catch (SyncInterruptedException e) {
+            Logger.e("Login.sync error", e);
+            return Error.SYNC_INTERRUPTED;
         } catch (Exception e) {
             Logger.e("Login.sync error", e);
             return Error.SYNC_FAILED;
@@ -415,6 +418,9 @@ public class LoginCommand extends GroundyTask {
                 case SYNC_LOCKED:
                     onSyncLocked();
                     break;
+                case SYNC_INTERRUPTED:
+                    onSyncInterrupted();
+                    break;
                 default:
                     onLoginError();
             }
@@ -441,6 +447,8 @@ public class LoginCommand extends GroundyTask {
         protected abstract void onLoginOfflineFailed();
 
         protected abstract void onSyncLocked();
+
+        protected abstract void onSyncInterrupted();
     }
 
     private static class RemoteLoginResult {

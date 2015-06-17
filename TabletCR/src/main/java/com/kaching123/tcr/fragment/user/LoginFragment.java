@@ -379,6 +379,11 @@ public class LoginFragment extends SuperBaseDialogFragment {
         protected void onSyncLocked() {
             showError(R.string.error_message_sync_locked);
         }
+
+        @Override
+        protected void onSyncInterrupted() {
+            showError(R.string.error_message_sync_interrupted);
+        }
     }
 
     private void sendDevLog() {

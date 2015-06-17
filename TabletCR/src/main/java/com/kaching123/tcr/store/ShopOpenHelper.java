@@ -265,7 +265,7 @@ public class ShopOpenHelper extends BaseOpenHelper {
         copyTableFromExtraDatabase(tableName, idColumn, true);
     }
 
-    public void copyTableFromExtraDatabase(String tableName, String idColumn, boolean insertUpdate) {
+    private void copyTableFromExtraDatabase(String tableName, String idColumn, boolean insertUpdate) {
         SQLiteDatabase db = getWritableDatabase();
 
         Cursor cursor = db.query(EXTRA_DB_ALIAS + '.' + tableName, null, null, null, null, null, null);
@@ -286,18 +286,36 @@ public class ShopOpenHelper extends BaseOpenHelper {
         }
     }
 
+    public void insertUpdateValues(String tableName, String idColumn, ContentValues[] valuesArray) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        for (ContentValues values: valuesArray) {
+            values.remove(ShopStore.DEFAULT_UPDATE_TIME);
+            insertUpdateValuesFromExtraDatabase(db, tableName, idColumn, values);
+        }
+
+    }
+
     private void insertUpdateValuesFromExtraDatabase(SQLiteDatabase db, String tableName, String idColumn, ContentValues values) {
+        boolean hasData = true;
         try {
             String idValue = values.getAsString(idColumn);
             values.remove(idColumn);
             int updated = db.update(tableName, values, idColumn + " = ?", new String[]{idValue});
 
             if (updated == 0) {
+                hasData = false;
                 values.put(idColumn, idValue);
                 db.insertOrThrow(tableName, null, values);
             }
         } catch (SQLiteConstraintException e) {
             Logger.e("ShopOpenHelper.copyTableFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
+            if (UnitTable.TABLE_NAME.equals(tableName)) {
+                if (tryFixUnit(db, values)) {
+                    tryInsertUpdateUnit(db, values, hasData);
+                    return;
+                }
+            }
             throw e;
         }
     }
@@ -390,15 +408,36 @@ public class ShopOpenHelper extends BaseOpenHelper {
     }
 
     private void tryInsertUnit(SQLiteDatabase db, ContentValues values) {
-        if (values == null || values.size() == 0)
-            return;
-
         try {
             long rowId = db.insertWithOnConflict(UnitTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
             if (rowId == -1L)
                 throw new SQLiteException();
         } catch (SQLiteConstraintException e) {
             Logger.e("ShopOpenHelper.tryInsertUnit(): constraint violation; values: " + values);
+            throw e;
+        }
+    }
+
+    private void tryInsertUpdateUnit(SQLiteDatabase db, ContentValues values, Boolean hasData) {
+        try {
+            String idValue = null;
+            int updated = 0;
+            if (hasData == null || hasData) {
+                idValue = values.getAsString(UnitTable.ID);
+                values.remove(UnitTable.ID);
+                updated = db.update(UnitTable.TABLE_NAME, values, UnitTable.ID + " = ?", new String[]{idValue});
+            }
+            if (hasData != null && hasData && updated == 0) {
+                throw new SQLiteException();
+            }
+
+            if ((hasData == null && updated == 0) || (hasData != null && !hasData)) {
+                if (idValue != null)
+                    values.put(UnitTable.ID, idValue);
+                db.insertOrThrow(UnitTable.TABLE_NAME, null, values);
+            }
+        } catch (SQLiteConstraintException e) {
+            Logger.e("ShopOpenHelper.tryInsertUpdateUnit(): constraint violation; values: " + values);
             throw e;
         }
     }

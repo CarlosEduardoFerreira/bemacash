@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -25,6 +26,11 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.CashierActivity;
 import com.kaching123.tcr.activity.QuickServiceActivity;
+import com.kaching123.tcr.commands.rest.sync.DownloadOldOrdersCommand;
+import com.kaching123.tcr.commands.rest.sync.DownloadOldOrdersCommand.BaseDownloadOldOrdersCommandCallback;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
+import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.filter.CashierFilterSpinnerAdapter;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.OrderType;
@@ -98,6 +104,9 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private Calendar calendar = Calendar.getInstance();
 
     private boolean firstLoad;
+    private boolean isSearchingOrder;
+
+    private static final Handler handler = new Handler();
 
     protected void setFilterValues(Date from, Date to, String cashierGUID, String customerGUID,
                                    TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum) {
@@ -120,6 +129,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     @AfterViews
     protected void init() {
         firstLoad = true;
+        isSearchingOrder = false;
         isTipsEnabled = ((TcrApplication) getActivity().getApplicationContext()).isTipsEnabled();
         setListAdapter(adapter = new HistoryOrderAdapter(getActivity(), isTipsEnabled));
         getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -159,6 +169,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     @Override
     public void onPause() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncGapReceiver);
+        isSearchingOrder = false;
         super.onPause();
     }
 
@@ -243,6 +254,41 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     @Override
     public void onLoadFinished(Loader<List<SaleOrderTipsViewModel>> listLoader, List<SaleOrderTipsViewModel> saleOrderModels) {
         adapter.changeCursor(saleOrderModels);
+
+        boolean shouldSearchOnServer = false;
+        if (isSearchingOrder) {
+            isSearchingOrder = false;
+            if ((saleOrderModels == null || saleOrderModels.isEmpty()) && isSearchingOrderFilters())
+                shouldSearchOnServer = true;
+        }
+
+        if (getActivity() == null)
+            return;
+
+        if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode())
+            return;
+
+        final String registerTitle = this.registerTitle.get(0);
+        final String printSeqNum = this.seqNum.get(0);
+        final Date from = this.from;
+        final Date to = this.to;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() == null)
+                    return;
+
+                AlertDialogFragment.showConfirmation(getActivity(), R.string.order_searching_title, getString(R.string.order_searching_message), new OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
+                        DownloadOldOrdersCommand.start(getActivity(), registerTitle, printSeqNum, from, to, downloadOrderCallback);
+                        return true;
+                    }
+                });
+            }
+        });
+
         /*Pair<BigDecimal, BigDecimal> priceRange = getPriceRange(saleOrderModels);
         for (ILoader loader : loaderCallback) {
             loader.onLoad(adapter.getCount(), priceRange.first, priceRange.second);
@@ -251,6 +297,15 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             loader.onSearchFinish();
         }
 
+    }
+
+    private boolean isSearchingOrderFilters() {
+        return registerTitle != null && !registerTitle.isEmpty()
+                && seqNum != null && !seqNum.isEmpty() && seqNum.get(0) != null
+                && from != null && to != null
+                && (TextUtils.isEmpty(cashierGUID) || cashierGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
+                && (TextUtils.isEmpty(customerGUID) || customerGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
+                && (!isTipsEnabled || transactionsState == null || transactionsState.equals(TransactionsState.NA));
     }
 
     private Pair<BigDecimal, BigDecimal> getPriceRange(List<SaleOrderTipsViewModel> saleOrderModels) {
@@ -281,8 +336,9 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @Override
     public void onFilterRequested(Date from, Date to, String cashierGUID, String customerGUID,
-                                  TransactionsState transactionsState, ArrayList<String> registerNum, ArrayList<String> seqNum) {
+                                  TransactionsState transactionsState, ArrayList<String> registerNum, ArrayList<String> seqNum, boolean isManual) {
         Logger.d("We are up to filter the list with %s, %s, %s, %s, %s, %s", from, to, cashierGUID, customerGUID, registerNum, seqNum);
+        isSearchingOrder = isManual;
         setFilterValues(from, to, cashierGUID, customerGUID, transactionsState, registerNum, seqNum);
     }
 
@@ -398,5 +454,35 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     };
 
+
+    private BaseDownloadOldOrdersCommandCallback downloadOrderCallback = new BaseDownloadOldOrdersCommandCallback() {
+
+        @Override
+        protected void onSuccess(String[] guids) {
+            if (getActivity() == null)
+                return;
+
+            WaitDialogFragment.hide(getActivity());
+            //TODO: remember order ids, restart loader
+        }
+
+        @Override
+        protected void onNotFoundError() {
+            if (getActivity() == null)
+                return;
+
+            WaitDialogFragment.hide(getActivity());
+            AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.order_searching_error_message_not_found));
+        }
+
+        @Override
+        protected void onFailure() {
+            if (getActivity() == null)
+                return;
+
+            WaitDialogFragment.hide(getActivity());
+            AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.order_searching_error_message));
+        }
+    };
 
 }

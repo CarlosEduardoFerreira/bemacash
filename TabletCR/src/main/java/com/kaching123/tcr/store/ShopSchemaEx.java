@@ -49,6 +49,23 @@ public class ShopSchemaEx {
         CREATE_FOREIGN_KEY_STATEMENTS.put(childTable, new Table(childTable, foreignKeys));
     }
 
+    public static boolean hasCascadeDeleteTrigger(String tableName) {
+        ShopStore.init();
+
+        if (!CREATE_FOREIGN_KEY_STATEMENTS.containsKey(tableName))
+            return false;
+
+        Table table = CREATE_FOREIGN_KEY_STATEMENTS.get(tableName);
+        if (table.foreignKeys == null || table.foreignKeys.isEmpty())
+            return false;
+
+        for (ForeignKey key: table.foreignKeys) {
+            if (key.enableCascadeDelete)
+                return true;
+        }
+        return false;
+    }
+
     private static final HashMap<String, List<String>> TMP_FIELDS = new HashMap<String, List<String>>();
 
     public static void applyTmpFields(String tableName, String... fields){
