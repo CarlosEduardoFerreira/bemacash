@@ -98,6 +98,9 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private TransactionsState transactionsState;
     private ArrayList<String> registerTitle;
     private ArrayList<String> seqNum;
+    private String unitSerial;
+
+    private String[] loadedOrderGuids;
 
     private boolean isTipsEnabled;
 
@@ -109,7 +112,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private static final Handler handler = new Handler();
 
     protected void setFilterValues(Date from, Date to, String cashierGUID, String customerGUID,
-                                   TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum) {
+                                   TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum, String unitSerial) {
         this.from = from;
         this.to = to;
         this.cashierGUID = cashierGUID;
@@ -117,6 +120,9 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         this.transactionsState = transactionsState;
         this.registerTitle = registerTitle;
         this.seqNum = seqNum;
+        this.unitSerial = unitSerial;
+
+        this.loadedOrderGuids = null;
 
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -130,6 +136,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     protected void init() {
         firstLoad = true;
         isSearchingOrder = false;
+        loadedOrderGuids = null;
         isTipsEnabled = ((TcrApplication) getActivity().getApplicationContext()).isTipsEnabled();
         setListAdapter(adapter = new HistoryOrderAdapter(getActivity(), isTipsEnabled));
         getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -170,6 +177,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     public void onPause() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncGapReceiver);
         isSearchingOrder = false;
+        loadedOrderGuids = null;
         super.onPause();
     }
 
@@ -177,6 +185,20 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     public Loader<List<SaleOrderTipsViewModel>> onCreateLoader(int loaderId, Bundle args) {
         Logger.d("onCreateLoader");
         CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_ORDERS_WITH_TIPS);
+
+        if (loadedOrderGuids != null) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < loadedOrderGuids.length; i++) {
+                if (i > 0)
+                    sb.append(',');
+                sb.append('?');
+            }
+
+            loader.where(SaleOrderTable.GUID + " IN (" + sb.toString() + ")", loadedOrderGuids);
+
+            return loader.orderBy(SaleOrderTable.CREATE_TIME + " desc ")
+                    .transform(new SaleOrderTipsViewFunction()).build(getActivity());
+        }
 
         if (isTipsEnabled) {
             if (TransactionsState.OPEN.equals(transactionsState)) {
@@ -272,6 +294,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         final String printSeqNum = this.seqNum.get(0);
         final Date from = this.from;
         final Date to = this.to;
+        final String unitSerial = this.unitSerial;
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -282,7 +305,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
                     @Override
                     public boolean onClick() {
                         WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
-                        DownloadOldOrdersCommand.start(getActivity(), registerTitle, printSeqNum, from, to, downloadOrderCallback);
+                        DownloadOldOrdersCommand.start(getActivity(), registerTitle, printSeqNum, from, to, unitSerial, downloadOrderCallback);
                         return true;
                     }
                 });
@@ -300,12 +323,14 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     }
 
     private boolean isSearchingOrderFilters() {
-        return registerTitle != null && !registerTitle.isEmpty()
-                && seqNum != null && !seqNum.isEmpty() && seqNum.get(0) != null
-                && from != null && to != null
-                && (TextUtils.isEmpty(cashierGUID) || cashierGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
-                && (TextUtils.isEmpty(customerGUID) || customerGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
-                && (!isTipsEnabled || transactionsState == null || transactionsState.equals(TransactionsState.NA));
+        return loadedOrderGuids == null &&
+                ((registerTitle != null && !registerTitle.isEmpty()
+                    && seqNum != null && !seqNum.isEmpty() && seqNum.get(0) != null)
+                    || !TextUtils.isEmpty(unitSerial))
+                    && from != null && to != null
+                    && (TextUtils.isEmpty(cashierGUID) || cashierGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
+                    && (TextUtils.isEmpty(customerGUID) || customerGUID.equals(CashierFilterSpinnerAdapter.DEFAULT_ITEM_GUID))
+                    && (!isTipsEnabled || transactionsState == null || transactionsState.equals(TransactionsState.NA));
     }
 
     private Pair<BigDecimal, BigDecimal> getPriceRange(List<SaleOrderTipsViewModel> saleOrderModels) {
@@ -336,10 +361,10 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @Override
     public void onFilterRequested(Date from, Date to, String cashierGUID, String customerGUID,
-                                  TransactionsState transactionsState, ArrayList<String> registerNum, ArrayList<String> seqNum, boolean isManual) {
+                                  TransactionsState transactionsState, ArrayList<String> registerNum, ArrayList<String> seqNum, String unitSerial, boolean isManual) {
         Logger.d("We are up to filter the list with %s, %s, %s, %s, %s, %s", from, to, cashierGUID, customerGUID, registerNum, seqNum);
         isSearchingOrder = isManual;
-        setFilterValues(from, to, cashierGUID, customerGUID, transactionsState, registerNum, seqNum);
+        setFilterValues(from, to, cashierGUID, customerGUID, transactionsState, registerNum, seqNum, unitSerial);
     }
 
     @OptionsItem
@@ -464,6 +489,8 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
             WaitDialogFragment.hide(getActivity());
             //TODO: remember order ids, restart loader
+            loadedOrderGuids = guids;
+            getLoaderManager().restartLoader(0, null, HistoryOrderListFragment.this);
         }
 
         @Override

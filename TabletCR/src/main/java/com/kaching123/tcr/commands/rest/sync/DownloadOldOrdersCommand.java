@@ -1,6 +1,7 @@
 package com.kaching123.tcr.commands.rest.sync;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
 import com.telly.groundy.PublicGroundyTask;
@@ -26,11 +27,13 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
     private static final String ARG_PRINT_SEQ_NUM = "arg_print_seq_num";
     private static final String ARG_FROM_DATE = "ARG_FROM_DATE";
     private static final String ARG_TO_DATE = "ARG_TO_DATE";
+    private static final String ARG_UNIT_SERIAL = "ARG_UNIT_SERIAL";
 
     private String registerTitle;
     private String printSeqNum;
     private Date from;
     private Date to;
+    private String unitSerial;
 
     @Override
     protected TaskResult doInBackground() {
@@ -39,6 +42,7 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
         printSeqNum = getStringArg(ARG_PRINT_SEQ_NUM);
         from = (Date) getArgs().getSerializable(ARG_FROM_DATE);
         to = (Date) getArgs().getSerializable(ARG_TO_DATE);
+        unitSerial = getStringArg(ARG_UNIT_SERIAL);
 
         Logger.d("[SYNC HISTORY]DownloadOldOrdersCommand: setting loading orders flag");
         getApp().setLoadingOldOrders(true);
@@ -50,7 +54,7 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
                 Logger.d("[SYNC HISTORY]DownloadOldOrdersCommand: history lock acquired");
 
                 GetArrayResponse resp = getApi().downloadOldOrders(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(getApp().getOperator(), getApp()),
-                        getEntity(registerTitle, printSeqNum, from, to));
+                        getEntity(registerTitle, printSeqNum, from, to, unitSerial));
                 Logger.d("DownloadOldOrdersCommand: response: " + resp);
 
                 //TODO: handle?
@@ -91,8 +95,13 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
         return getApp().getRestAdapter().create(SyncApi2.class);
     }
 
-    private JSONObject getEntity(String registerTitle, String printSeqNum, Date from, Date to) throws JSONException {
+    private JSONObject getEntity(String registerTitle, String printSeqNum, Date from, Date to, String unitSerial) throws JSONException {
         JSONObject request = new JSONObject();
+
+        if (!TextUtils.isEmpty(unitSerial)) {
+            request.put("unit_serial", unitSerial);
+            return request;
+        }
 
         request.put("register", registerTitle);
         request.put("print_num", printSeqNum);
@@ -102,8 +111,9 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
         return request;
     }
 
-    public static void start(Context context, String registerTitle, String printSeqNum, Date from, Date to, BaseDownloadOldOrdersCommandCallback callback) {
+    public static void start(Context context, String registerTitle, String printSeqNum, Date from, Date to, String unitSerial, BaseDownloadOldOrdersCommandCallback callback) {
         create(DownloadOldOrdersCommand.class).arg(ARG_REGISTER_TITLE, registerTitle).arg(ARG_PRINT_SEQ_NUM, printSeqNum).arg(ARG_FROM_DATE, from).arg(ARG_TO_DATE, to)
+                .arg(ARG_UNIT_SERIAL, unitSerial)
                 .callback(callback).queueUsing(context);
     }
 

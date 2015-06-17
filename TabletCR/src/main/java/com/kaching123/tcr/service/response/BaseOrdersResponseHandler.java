@@ -36,7 +36,9 @@ import com.kaching123.tcr.store.SyncOpenHelper;
 import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -52,6 +54,7 @@ public abstract class BaseOrdersResponseHandler {
     private static final String RECEIVED_TIPS = "RECEIVED_TIPS";
     private static final String COMMISSIONS = "COMMISSIONS";
     private static final String UNITS = "UNITS";
+    private static final String RETURNS = "RETURNS";
 
     public static final String[] TABLES_URIS = new String[] {
             UnitTable.URI_CONTENT,
@@ -121,12 +124,19 @@ public abstract class BaseOrdersResponseHandler {
                 }
             }
 
+            //TODO: check refund units
+            //TODO: check - could update existing unit(active)
             JdbcJSONArray units = rs.isNull(UNITS) ? null : rs.getJSONArray(UNITS);
             if (units != null) {
                 ArrayList<ContentValues> unitsValues = parseResponseArray(units, JdbcFactory.getConverter(UnitTable.TABLE_NAME));
                 if (unitsValues.size() != 0) {
                     saveResult(UnitTable.TABLE_NAME, UnitTable.ID, unitsValues);
                 }
+            }
+
+            JdbcJSONArray refunds = rs.isNull(RETURNS) ? null : rs.getJSONArray(RETURNS);
+            if (refunds != null) {
+                parseSaleOrderArray(refunds);
             }
 
         }

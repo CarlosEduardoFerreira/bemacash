@@ -108,6 +108,8 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
     private boolean isShown = true;
 
+    private String unitSerial;
+
     public void setOrderNumber(String orderNumber) {
         String orderNumberFilted = orderNumber.replace("\n", "").replace("\r", "");
         if (this.orderNumber != null && orderNumberFilted != null)
@@ -142,7 +144,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
     @OptionsItem
     protected void actionUnitSelected() {
-        onBarcodeReceived(null);
+        onBarcodeReceived();
     }
 
     public void onHide() {
@@ -155,8 +157,8 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
         unitAction.setVisible(getApp().getShopPref().acceptSerializableItems().get());
     }
 
-    public void onBarcodeReceived(String barcode) {
-        UnitsSearchFragment.show(getActivity(), barcode, new UnitsSearchFragment.UnitCallback() {
+    public void onBarcodeReceived() {
+        UnitsSearchFragment.show(getActivity(), null, new UnitsSearchFragment.UnitCallback() {
 
 
             @Override
@@ -166,14 +168,16 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                 for (int i = 0; i < order.size(); i++) {
                     sequences.add(order.get(i).registerTitle + "-" + order.get(i).printSeqNum);
                 }
+                unitSerial = unit.get(0).serialCode;
                 if (order.size() == 1) {
                     orderNumber.setText(order.get(0).registerTitle + "-" + order.get(0).printSeqNum);
                 }
-                requestFilter();
+                requestFilter(true);
             }
 
             @Override
             public void handleError(String message) {
+                //TODO: get serial and pass to list fragment - show prompt
                 Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
                 hide();
             }
@@ -219,6 +223,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                     transactionsState,
                     new ArrayList<String>(Arrays.asList(seq.first)),
                     new ArrayList<String>(Arrays.asList(seq.second)),
+                    unitSerial,
                     isManual);
         } else {
             ArrayList<String> regs = new ArrayList<String>();
@@ -236,8 +241,10 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                     transactionsState,
                     regs,
                     seqs,
+                    unitSerial,
                     isManual);
         }
+        unitSerial = null;
     }
 
     private Pair<String, String> getSeq(String s) {

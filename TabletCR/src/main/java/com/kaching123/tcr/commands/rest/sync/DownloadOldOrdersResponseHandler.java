@@ -53,7 +53,6 @@ public class DownloadOldOrdersResponseHandler extends BaseOrdersResponseHandler 
 
         ShopProviderExt.callMethod(context, Method.TRANSACTION_START, null, null);
         try {
-            //TODO: parse and save refund orders
             boolean hasData = parseResponse(data);
 
             markRecordsAsLive();

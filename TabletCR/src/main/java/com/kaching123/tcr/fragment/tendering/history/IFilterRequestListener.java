@@ -11,5 +11,5 @@ import java.util.Date;
 public interface IFilterRequestListener {
 
     void onFilterRequested(Date from, Date to, String cashierGUID, String customerGUID,
-                           TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum, boolean isManual);
+                           TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum, String unitSerial, boolean isManual);
 }
