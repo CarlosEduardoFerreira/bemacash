@@ -49,7 +49,7 @@ public class Update6_1to6_2 implements IUpdateContainer {
     private static final String SQL_DROP_TEMP_UNIT = "DROP TABLE unit_tmp;";
 
     private static final String SQL_ADD_COLUMN_BP_DESCRIPTION = "ALTER TABLE bp_description ADD COLUMN sale_order_id TEXT";
-    private static final String SQL_SET_COLUMN_BP_DESCRIPTION = "update bp_description set sale_order_id = (select sale_order_item.order_id from sale_order_item where sale_order_item.item_id = bp_description.guid)";
+    private static final String SQL_SET_COLUMN_BP_DESCRIPTION = "update bp_description set sale_order_id = (select sale_order_item.order_id from sale_order_item where sale_order_item.item_id = bp_description.guid and sale_order_item.parent_guid is null)";
 
     private static final String SQL_RENAME_BP_DESCRIPTION = "ALTER TABLE bp_description RENAME TO bp_description_tmp;";
     private static final String SQL_CREATE_BP_DESCRIPTION = "CREATE TABLE bp_description( guid TEXT PRIMARY KEY NOT NULL, description TEXT NOT NULL, type INTEGER, is_voided INTEGER NOT NULL DEFAULT (0), is_failed INTEGER NOT NULL DEFAULT (0), order_id INTEGER, sale_order_id TEXT NOT NULL, is_deleted INTEGER DEFAULT (0), update_time INTEGER, is_draft INTEGER DEFAULT (0),FOREIGN KEY(sale_order_id) REFERENCES sale_order(guid) ON DELETE CASCADE)";
