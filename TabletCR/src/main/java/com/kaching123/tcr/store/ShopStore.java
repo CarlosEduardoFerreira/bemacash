@@ -1681,6 +1681,27 @@ public abstract class ShopStore {
         );
     }
 
+    @Table(UpdateTimeTable.TABLE_NAME)
+    public static interface UpdateTimeTable {
+
+        @URI
+        String URI_CONTENT = "update_time";
+
+        String TABLE_NAME = "update_time";
+
+        @PrimaryKey
+        @Column(type = Column.Type.INTEGER)
+        String TABLE_ID = "table_id";
+
+        @NotNull
+        @Column(type = Column.Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Column.Type.INTEGER)
+        String UPDATE_TIME = "update_time";
+    }
+
     /**
      * views *
      */

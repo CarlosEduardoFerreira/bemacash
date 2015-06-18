@@ -16,9 +16,13 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.service.SyncCommand.MaxUpdateTime;
+import com.kaching123.tcr.service.SyncCommand.Table;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
+import com.kaching123.tcr.store.ShopStore.UpdateTimeTable;
 import com.mayer.sql.update.version.IUpdateContainer;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +33,8 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 /**
  * Created by pkabakov on 23.04.2014.
@@ -257,8 +263,8 @@ public class ShopOpenHelper extends BaseOpenHelper {
         db.execSQL(String.format(SQL_DETACH_DB));
     }
 
-    public void copyTableFromExtraDatabase(String tableName, String parentIdColumn) {
-        copyTableFromExtraDatabase(tableName, null, parentIdColumn, false);
+    public void copyTableFromExtraDatabase(String tableName, String idColumn, String parentIdColumn) {
+        copyTableFromExtraDatabase(tableName, idColumn, parentIdColumn, false);
     }
 
     public void copyUpdateTableFromExtraDatabase(String tableName, String idColumn, String parentIdColumn) {
@@ -268,22 +274,86 @@ public class ShopOpenHelper extends BaseOpenHelper {
     private void copyTableFromExtraDatabase(String tableName, String idColumn, String parentIdColumn, boolean insertUpdate) {
         SQLiteDatabase db = getWritableDatabase();
 
-        Cursor cursor = db.query(EXTRA_DB_ALIAS + '.' + tableName, null, null, null, null, null, parentIdColumn);
+        boolean hasChildren = !TextUtils.isEmpty(parentIdColumn);
+
+        String orderBy;
+        if (!hasChildren) {
+            orderBy = ShopStore.DEFAULT_UPDATE_TIME + ", " + idColumn;
+        } else {
+            orderBy = parentIdColumn + " is not null, " + ShopStore.DEFAULT_UPDATE_TIME + ", " + idColumn;
+        }
+
+        Cursor cursor = db.query(EXTRA_DB_ALIAS + '.' + tableName,
+                null,
+                null, null,
+                null, null,
+                orderBy);
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return;
+        }
+
         ContentValues values = new ContentValues();
+
+        Boolean lastIsParent = null;
+        Long lastUpdateTime = null;
+        String lastGuid = null;
         try {
             while (cursor.moveToNext()) {
                 values.clear();
                 DatabaseUtils.cursorRowToContentValues(cursor, values);
+
+                if (hasChildren) {
+                    boolean isParent = TextUtils.isEmpty(values.getAsString(parentIdColumn));
+                    if (lastIsParent != null && lastIsParent && !isParent) {
+                        saveMaxUpdateTime(db, tableName, true, lastUpdateTime, lastGuid);
+                    }
+
+                    lastIsParent = isParent;
+                }
+
+                lastUpdateTime = values.getAsLong(ShopStore.DEFAULT_UPDATE_TIME);
+                lastGuid = values.getAsString(idColumn);
 
                 if (!insertUpdate)
                     insertValuesFromExtraDatabase(db, tableName, values);
                 else
                     insertUpdateValuesFromExtraDatabase(db, tableName, idColumn, values);
             }
+
+            if (!hasChildren || lastIsParent) {
+                saveMaxUpdateTime(db, tableName, true, lastUpdateTime, lastGuid);
+            } else {
+                saveMaxUpdateTime(db, tableName, false, lastUpdateTime, lastGuid);
+            }
         } finally {
             if (cursor != null)
                 cursor.close();
         }
+    }
+
+    private void saveMaxUpdateTime(SQLiteDatabase db, String tableName, boolean isParent, long updateTime, String guid) {
+        Table table = Table.getTable(tableName, isParent);
+
+        ContentValues values = new ContentValues();
+        values.put(UpdateTimeTable.UPDATE_TIME, updateTime);
+        values.put(UpdateTimeTable.GUID, guid);
+
+        int updated = db.update(UpdateTimeTable.TABLE_NAME, values,
+                UpdateTimeTable.TABLE_ID + " = ?"
+                        + " AND (" + UpdateTimeTable.UPDATE_TIME + " < ?"
+                        + " OR (" + UpdateTimeTable.UPDATE_TIME + " = ? AND " + UpdateTimeTable.GUID + " < ?))",
+                new String[]{String.valueOf(_enum(table)), String.valueOf(updateTime), String.valueOf(updateTime), guid});
+
+        if (updated != 0) {
+            return;
+        }
+
+        values.put(UpdateTimeTable.TABLE_ID, _enum(table));
+
+        long rowId = db.insertOrThrow(UpdateTimeTable.TABLE_NAME, null, values);
+        if (rowId == -1L)
+            throw new SQLiteException();
     }
 
     public void insertUpdateValues(String tableName, String idColumn, ContentValues[] valuesArray) {

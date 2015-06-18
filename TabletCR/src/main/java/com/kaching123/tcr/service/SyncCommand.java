@@ -85,6 +85,7 @@ import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
+import com.kaching123.tcr.store.ShopStore.UpdateTimeTable;
 import com.kaching123.tcr.store.ShopStore.WirelessTable;
 import com.kaching123.tcr.store.SyncOpenHelper;
 import com.kaching123.tcr.util.JdbcJSONArray;
@@ -104,6 +105,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import retrofit.RetrofitError;
+
+import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 public class SyncCommand implements Runnable {
 
@@ -436,7 +439,7 @@ public class SyncCommand implements Runnable {
                     throw new SyncInconsistentException();
                 }
 
-                //TODO: check that sales limit setting hasn't changed - else throw exception
+                //check that sales limit setting hasn't changed
                 if (salesHistoryLimit != null) {
                     checkServerSalesHistoryLimit(api, employee, salesHistoryLimit);
                 }
@@ -731,49 +734,50 @@ public class SyncCommand implements Runnable {
             try {
                 checkIsLoadingOldOrders();
 
-                count += syncLocalSingleTable(service, RegisterTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, PrinterAliasTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, CustomerTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, RegisterTable.TABLE_NAME, RegisterTable.ID);
+                count += syncLocalSingleTable(service, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID);
+                count += syncLocalSingleTable(service, CustomerTable.TABLE_NAME, CustomerTable.GUID);
 
                 //employee
-                count += syncLocalSingleTable(service, EmployeeTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, EmployeePermissionTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, EmployeeTimesheetTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, ShiftTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, EmployeeTable.TABLE_NAME, EmployeeTable.GUID);
+                //TODO: check
+                count += syncLocalSingleTable(service, EmployeePermissionTable.TABLE_NAME, EmployeePermissionTable.PERMISSION_ID);
+                count += syncLocalSingleTable(service, EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetTable.GUID);
+                count += syncLocalSingleTable(service, ShiftTable.TABLE_NAME, ShiftTable.GUID);
 
-                count += syncLocalSingleTable(service, CashDrawerMovementTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, CashDrawerMovementTable.TABLE_NAME, CashDrawerMovementTable.GUID);
 
                 //inventory
-                count += syncLocalSingleTable(service, TaxGroupTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, DepartmentTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, CategoryTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, ItemTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, ModifierTable.TABLE_NAME);
-                count += syncLocalSingleTable(service, ItemMovementTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, TaxGroupTable.TABLE_NAME, TaxGroupTable.GUID);
+                count += syncLocalSingleTable(service, DepartmentTable.TABLE_NAME, DepartmentTable.GUID);
+                count += syncLocalSingleTable(service, CategoryTable.TABLE_NAME, CategoryTable.GUID);
+                count += syncLocalSingleTable(service, ItemTable.TABLE_NAME, ItemTable.GUID);
+                count += syncLocalSingleTable(service, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID);
+                count += syncLocalSingleTable(service, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID);
 
                 //sale
 
 
                 count += syncLocalSingleTable(service, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, SaleOrderTable.PARENT_ID, true);
 
-                count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID);
+                count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, true);
 
                 count += syncLocalSingleTable(service, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID, true);
 
-                count += syncLocalSingleTable(service, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID);
+                count += syncLocalSingleTable(service, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, true);
 
                 count += syncLocalSingleTable(service, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID, true);
 
 
-                count += syncLocalSingleTable(service, CreditReceiptTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID);
 
                 count += syncLocalSingleTable(service, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID, true);
 
-                count += syncLocalSingleTable(service, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID);
+                count += syncLocalSingleTable(service, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, true);
 
 
                 //inventory depended from sale
-                count += syncLocalSingleTable(service, UnitTable.TABLE_NAME);
+                count += syncLocalSingleTable(service, UnitTable.TABLE_NAME, UnitTable.ID);
 
                 if (getApp().isSalesSyncGapOccurred() || getApp().isInvalidOrdersFound()) {
                     ArrayList<String> invalidOldActiveUnitOrders = getInvalidOldActiveUnitOrders(minUpdateTime);
@@ -1067,17 +1071,17 @@ public class SyncCommand implements Runnable {
                         PAGE_ROWS));
     }
 
-    private int syncLocalSingleTable(Context context, String localTable) throws SyncException, SyncInterruptedException {
-        return syncLocalSingleTable(context, localTable, null, null, false);
+    private int syncLocalSingleTable(Context context, String localTable, String idColumn) throws SyncException, SyncInterruptedException {
+        return syncLocalSingleTable(context, localTable, idColumn, null, false);
     }
 
-    private int syncLocalSingleTable(Context context, String localTable, String idColumn) throws SyncException, SyncInterruptedException {
-        return syncLocalSingleTable(context, localTable, idColumn, null, true);
+    private int syncLocalSingleTable(Context context, String localTable, String idColumn, boolean insertUpdate) throws SyncException, SyncInterruptedException {
+        return syncLocalSingleTable(context, localTable, idColumn, null, insertUpdate);
     }
 
     private int syncLocalSingleTable(Context context, String localTable, String idColumn, String parentIdColumn, boolean insertUpdate) throws SyncException, SyncInterruptedException {
         if (!insertUpdate)
-            ShopProviderExt.copyTableFromSyncDb(context, localTable, parentIdColumn);
+            ShopProviderExt.copyTableFromSyncDb(context, localTable, idColumn, parentIdColumn);
         else
             ShopProviderExt.copyUpdateTableFromSyncDb(context, localTable, idColumn, parentIdColumn);
         if (!isManual)
@@ -1492,22 +1496,26 @@ public class SyncCommand implements Runnable {
         public final long time;
         public final String guid;
 
-        private MaxUpdateTime(long time, String guid) {
+        public MaxUpdateTime(long time, String guid) {
             this.time = time;
             this.guid = guid;
         }
     }
 
     private static MaxUpdateTime getMaxTimeSingleTable(Context context, SyncOpenHelper syncOpenHelper, String tableName, String id, String parentIdColumn, boolean isChild) {
-        if (parentIdColumn == null) {
-            return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeQuery.URI_CONTENT, new String[]{tableName, id}, true);
+        boolean hasChildren = parentIdColumn != null;
+        String[] args;
+        if (!hasChildren) {
+            args = new String[]{tableName, id};
+        } else {
+            args = new String[]{tableName, id, parentIdColumn, isChild ? "not null" : "null"};
         }
-        return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeParentRelationsQuery.URI_CONTENT, new String[]{tableName, id, parentIdColumn, isChild ? "not null" : "null"}, true);
-    }
+        Table table = Table.getTable(tableName, !isChild);
 
-    private static MaxUpdateTime getMaxTime(Context context, SyncOpenHelper syncOpenHelper, String contentUri, String[] args, boolean needGuid) {
-        MaxUpdateTime mainMaxUpdateTime = getMaxTimeInner(context, syncOpenHelper, contentUri, args, needGuid, false);
-        MaxUpdateTime syncMaxUpdateTime = getMaxTimeInner(context, syncOpenHelper, contentUri, args, needGuid, true);
+
+
+        MaxUpdateTime mainMaxUpdateTime = getMaxTimeInner(context, table);
+        MaxUpdateTime syncMaxUpdateTime = getMaxTimeSyncInner(syncOpenHelper, hasChildren, args);
         MaxUpdateTime maxUpdateTime = mainMaxUpdateTime;
         if (mainMaxUpdateTime == null)
             maxUpdateTime = syncMaxUpdateTime;
@@ -1516,22 +1524,26 @@ public class SyncCommand implements Runnable {
         return maxUpdateTime;
     }
 
-    private static MaxUpdateTime getMaxTimeInner(Context context, SyncOpenHelper syncOpenHelper, String contentUri, String[] args, boolean needGuid, boolean fromSyncDatabase) {
-        Cursor c;
-        if (!fromSyncDatabase) {
-            c = context.getContentResolver().query(
-                    ShopProvider.contentUri(contentUri),
-                    null,
-                    null,
-                    args,
-                    null);
-        } else {
-            c = contentUri.equals(MaxUpdateTableTimeQuery.URI_CONTENT) ? syncOpenHelper.getMaxUpdateTime(args) : syncOpenHelper.getMaxUpdateParentTime(args);
-        }
+    private static MaxUpdateTime getMaxTimeSyncInner(SyncOpenHelper syncOpenHelper, boolean hasChildren, String[] args) {
+        Cursor c = !hasChildren ? syncOpenHelper.getMaxUpdateTime(args) : syncOpenHelper.getMaxUpdateParentTime(args);
 
         MaxUpdateTime time = null;
         if (c.moveToFirst()) {
-            time = new MaxUpdateTime(c.getLong(0), needGuid ? c.getString(1) : null);
+            time = new MaxUpdateTime(c.getLong(0), c.getString(1));
+        }
+        c.close();
+        return time;
+    }
+
+    private static MaxUpdateTime getMaxTimeInner(Context context, Table table) {
+        Cursor c = context.getContentResolver().query(
+                    ShopProvider.contentUri(UpdateTimeTable.URI_CONTENT),
+                    new String[]{UpdateTimeTable.UPDATE_TIME, UpdateTimeTable.GUID},
+                    UpdateTimeTable.TABLE_ID + " = ?", new String[]{String.valueOf(_enum(table))},
+                    null);
+        MaxUpdateTime time = null;
+        if (c.moveToFirst()) {
+            time = new MaxUpdateTime(c.getLong(0), c.getString(1));
         }
         c.close();
         return time;
@@ -1647,4 +1659,52 @@ public class SyncCommand implements Runnable {
 
         abstract void onFinish();
     }
+
+    public enum Table {
+        //NOTE: don't change order - stored as int in db
+        REGISTER(RegisterTable.TABLE_NAME, true),
+        PRINTER_ALIAS(PrinterAliasTable.TABLE_NAME, true),
+        CASH_DRAWER_MOVEMENT(CashDrawerMovementTable.TABLE_NAME, true),
+        CUSTOMER(CustomerTable.TABLE_NAME, true),
+        EMPLOYEE(EmployeeTable.TABLE_NAME, true),
+        EMPLOYEE_PERMISSION(EmployeePermissionTable.TABLE_NAME, true),
+        EMPLOYEE_TIMESHEET(EmployeeTimesheetTable.TABLE_NAME, true),
+        SHIFT(ShiftTable.TABLE_NAME, true),
+        TAX_GROUP(TaxGroupTable.TABLE_NAME, true),
+        DEPARTMENT(DepartmentTable.TABLE_NAME, true),
+        CATEGORY(CategoryTable.TABLE_NAME, true),
+        ITEM(ItemTable.TABLE_NAME, true),
+        MODIFIER(ModifierTable.TABLE_NAME, true),
+        ITEM_MOVEMENT(ItemMovementTable.TABLE_NAME, true),
+        UNIT(UnitTable.TABLE_NAME, true),
+        SALE_ORDER(SaleOrderTable.TABLE_NAME, true),
+        REFUND_ORDER(SaleOrderTable.TABLE_NAME, false),
+        SALE_ITEM(SaleItemTable.TABLE_NAME, true),
+        REFUND_ITEM(SaleItemTable.TABLE_NAME, false),
+        SALE_ADDON(SaleAddonTable.TABLE_NAME, true),
+        PAYMENT_TRANSACTION(PaymentTransactionTable.TABLE_NAME, true),
+        REFUND_PAYMENT_TRANSACTION(PaymentTransactionTable.TABLE_NAME, false),
+        BILL_PAYMENT_DESCRIPTION(BillPaymentDescriptionTable.TABLE_NAME, true),
+        CREDIT_RECEIPT(CreditReceiptTable.TABLE_NAME, true),
+        EMPLOYEE_TIPS(EmployeeTipsTable.TABLE_NAME, true),
+        REFUND_EMPLOYEE_TIPS(EmployeeTipsTable.TABLE_NAME, false),
+        EMPLOYEE_COMMISSIONS(EmployeeCommissionsTable.TABLE_NAME, true);
+
+        public final String tableName;
+        public final boolean isParent;
+
+        Table(String tableName, boolean isParent) {
+            this.tableName = tableName;
+            this.isParent = isParent;
+        }
+
+        public static Table getTable(String tableName, boolean isParent) {
+            for (Table table: Table.values()) {
+                if (table.tableName.equals(tableName) && table.isParent == isParent)
+                    return table;
+            }
+            throw new IllegalArgumentException("unknown sync table: tableName: " + tableName + ", isParent: " + isParent);
+        }
+    }
+
 }

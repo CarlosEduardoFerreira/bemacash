@@ -108,6 +108,36 @@ public class Update6_1to6_2 implements IUpdateContainer {
             " WHEN OLD.parent_id IS NULL AND OLD.status = 1 " +
             "BEGIN  UPDATE unit SET sale_order_item_id =  NULL  WHERE sale_order_item_id = OLD.guid AND status != 3;END";
 
+    private static final String SQL_CREATE_UPDATE_TIME = "create table update_time( table_id INTEGER PRIMARY KEY, guid TEXT NOT NULL, update_time INTEGER NOT NULL)";
+
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_REGISTER = "insert into update_time(table_id, update_time, guid) select 0,  update_time, _id from register where update_time is not null order by update_time DESC, _id DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_PRINTER_ALIAS = "insert into update_time(table_id, update_time, guid) select 1,  update_time, guid from printer_alias_table where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_CUSTOMER = "insert into update_time(table_id, update_time, guid) select 3,  update_time, guid from customer where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE = "insert into update_time(table_id, update_time, guid) select 4,  update_time, guid from employee where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE_PERMISSION = "insert into update_time(table_id, update_time, guid) select 5,  update_time, permission_id from employee_permission where update_time is not null order by update_time DESC, permission_id DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE_TIMESHEET = "insert into update_time(table_id, update_time, guid) select 6,  update_time, guid from employee_timesheet where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_SHIFT = "insert into update_time(table_id, update_time, guid) select 7,  update_time, guid from shift where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_CASH_DRAWER_MOVEMENT = "insert into update_time(table_id, update_time, guid) select 2,  update_time, guid from cashdrawer_tr where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_TAX_GROUP = "insert into update_time(table_id, update_time, guid) select 8,  update_time, guid from tax_group where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_DEPARTMENT = "insert into update_time(table_id, update_time, guid) select 9,  update_time, guid from department where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_CATEGORY = "insert into update_time(table_id, update_time, guid) select 10,  update_time, guid from category where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_ITEM = "insert into update_time(table_id, update_time, guid) select 11,  update_time, guid from item where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_MODIFIER = "insert into update_time(table_id, update_time, guid) select 12,  update_time, modifier_guid from items_modifier where update_time is not null order by update_time DESC, modifier_guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_ITEM_MOVEMENT = "insert into update_time(table_id, update_time, guid) select 13,  update_time, guid from item_movement where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_SALE_ORDER = "insert into update_time(table_id, update_time, guid) select 15,  update_time, guid from sale_order where update_time is not null and parent_id is null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_REFUND_ORDER = "insert into update_time(table_id, update_time, guid) select 16,  update_time, guid from sale_order where update_time is not null and parent_id is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_BILL_PAYMENT_DESCRIPTION = "insert into update_time(table_id, update_time, guid) select 22,  update_time, guid from bp_description where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_SALE_ITEM = "insert into update_time(table_id, update_time, guid) select 17,  update_time, sale_order_item_id from sale_order_item where update_time is not null and parent_guid is null order by update_time DESC, sale_order_item_id DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_REFUND_ITEM = "insert into update_time(table_id, update_time, guid) select 18,  update_time, sale_order_item_id from sale_order_item where update_time is not null and parent_guid is not null order by update_time DESC, sale_order_item_id DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_SALE_ADDON = "insert into update_time(table_id, update_time, guid) select 19,  update_time, guid from sale_order_item_addon where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_PAYMENT_TRANSACTION = "insert into update_time(table_id, update_time, guid) select 20,  update_time, guid from payment_transaction where update_time is not null and parent_guid is null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_REFUND_PAYMENT_TRANSACTION = "insert into update_time(table_id, update_time, guid) select 21,  update_time, guid from payment_transaction where update_time is not null and parent_guid is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_CREDIT_RECEIPT = "insert into update_time(table_id, update_time, guid) select 23,  update_time, guid from credit_receipt_table where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE_TIPS = "insert into update_time(table_id, update_time, guid) select 24,  update_time, guid from employee_tips where update_time is not null and parent_guid is null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_REFUND_EMPLOYEE_TIPS = "insert into update_time(table_id, update_time, guid) select 25,  update_time, guid from employee_tips where update_time is not null and parent_guid is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE_COMMISSIONS = "insert into update_time(table_id, update_time, guid) select 26,  update_time, guid from employee_commissions where update_time is not null order by update_time DESC, guid DESC limit 1";
+    private static final String SQL_INSERT_SELECT_UPDATE_TIME_UNIT = "insert into update_time(table_id, update_time, guid) select 14,  update_time, _id from unit where update_time is not null order by update_time DESC, _id DESC limit 1";
+
     static void update6_1to6_2(SQLiteDatabase db){
 
         db.execSQL(SQL_RENAME_UNIT);
@@ -228,6 +258,36 @@ public class Update6_1to6_2 implements IUpdateContainer {
         db.execSQL(SQL_CREATE_SO_SALE_REPORTS_ITEMS_VIEW);
         db.execSQL(SQL_CREATE_SO_VIEW);
         db.execSQL(SQL_CREATE_UNITS_VIEW);
+
+        db.execSQL(SQL_CREATE_UPDATE_TIME);
+
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_REGISTER);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_PRINTER_ALIAS);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_CUSTOMER);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE_PERMISSION);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE_TIMESHEET);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_SHIFT);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_CASH_DRAWER_MOVEMENT);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_TAX_GROUP);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_DEPARTMENT);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_CATEGORY);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_ITEM);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_MODIFIER);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_ITEM_MOVEMENT);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_SALE_ORDER);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_REFUND_ORDER);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_BILL_PAYMENT_DESCRIPTION);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_SALE_ITEM);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_REFUND_ITEM);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_SALE_ADDON);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_PAYMENT_TRANSACTION);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_REFUND_PAYMENT_TRANSACTION);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_CREDIT_RECEIPT);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE_TIPS);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_REFUND_EMPLOYEE_TIPS);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_EMPLOYEE_COMMISSIONS);
+        db.execSQL(SQL_INSERT_SELECT_UPDATE_TIME_UNIT);
     }
 
     @Override
