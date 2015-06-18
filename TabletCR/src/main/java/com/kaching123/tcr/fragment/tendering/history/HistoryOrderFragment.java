@@ -114,7 +114,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
     public void setOrderNumber(String orderNumber) {
         String orderNumberFilted = orderNumber.replace("\n", "").replace("\r", "");
-        if (this.orderNumber != null && orderNumberFilted != null)
+        if (this.orderNumber != null && orderNumber != null && this.orderNumber.isEnabled())
             this.orderNumber.setText(orderNumberFilted);
 
         Logger.d("HistoryOrderFragment setOrderNumber: " + ",Thread, " + Thread.currentThread().getId());

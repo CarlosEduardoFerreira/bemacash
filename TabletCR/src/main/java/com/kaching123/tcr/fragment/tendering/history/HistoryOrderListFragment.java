@@ -109,6 +109,8 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private boolean firstLoad;
     private boolean isSearchingOrder;
 
+    private boolean ordersLoadedFromServer;
+
     private static final Handler handler = new Handler();
 
     protected void setFilterValues(Date from, Date to, String cashierGUID, String customerGUID,
@@ -296,6 +298,16 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
         if (getActivity() == null)
             return;
+
+        if (ordersLoadedFromServer) {
+            ordersLoadedFromServer = false;
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    WaitDialogFragment.hide(getActivity());
+                }
+            });
+        }
 
         if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode() || TcrApplication.get().getSalesHistoryLimit() == null)
             return;
@@ -514,7 +526,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
                 loader.onLoadedFromServer(unitSerial);
             }
 
-            WaitDialogFragment.hide(getActivity());
+            ordersLoadedFromServer = true;
             loadedOrderGuids = guids;
             getLoaderManager().restartLoader(0, null, HistoryOrderListFragment.this);
         }
