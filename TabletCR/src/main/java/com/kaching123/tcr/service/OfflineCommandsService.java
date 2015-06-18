@@ -45,7 +45,7 @@ public class OfflineCommandsService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        uploadTaskV2Adapter = new UploadTaskV2(this);
+        uploadTaskV2Adapter = new UploadTaskV2();
     }
 
     @Override

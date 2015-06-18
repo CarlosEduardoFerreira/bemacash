@@ -45,15 +45,15 @@ public class UploadTask implements Runnable {
     private UploadTaskV2 uploadTaskV2Adapter;
     private UploadTaskV1 uploadTaskV1Adapter;
 
-    private OfflineCommandsService service;
+    private Context context;
 
     private final boolean isManual;
 
-    public UploadTask(OfflineCommandsService service, boolean isManual) {
-        this.service = service;
+    public UploadTask(Context context, boolean isManual) {
+        this.context = context;
         this.isManual = isManual;
-        uploadTaskV1Adapter = new UploadTaskV1(service);
-        uploadTaskV2Adapter = new UploadTaskV2(service);
+        uploadTaskV1Adapter = new UploadTaskV1();
+        uploadTaskV2Adapter = new UploadTaskV2();
     }
 
     private void fireStartEvent(Context context) {
@@ -89,7 +89,7 @@ public class UploadTask implements Runnable {
 
     @Override
     public void run() {
-        Logger.d("UploadTask START");
+        Logger.d("UploadTask STARTED");
         if (!TcrApplication.get().isUserLogin()) {
             if (isManual)
                 Logger.e("UploadTask skip task: NO USER");
@@ -98,77 +98,93 @@ public class UploadTask implements Runnable {
             return;
         }
 
-        fireStartEvent(service);
+        execute(true, true);
+    }
 
-        if (isManual) {
-            EndUncompletedTransactionsResult result = new EndUncompletedTransactionsCommand().sync(service);
-            if (result.hadInvalidUploadTransaction) {
-                Logger.e("UploadTask: manual upload, had invalid upload transactions");
-                fireInvalidUploadTransactionEvent(service);
+    public ExecuteResult executeSync() {
+        Logger.d("UploadTask EXECUTED SYNCHRONOUSLY");
+        return execute(false, false);
+    }
+
+    private ExecuteResult execute(final boolean fireEvents, final boolean lockOnTrainingMode) {
+        synchronized (UploadTask.class) {
+            Logger.d("UploadTask EXECUTE");
+
+            if (fireEvents)
+                fireStartEvent(context);
+
+            boolean hadInvalidUploadTransaction = false;
+            if (isManual) {
+                EndUncompletedTransactionsResult result = new EndUncompletedTransactionsCommand().sync(context);
+                if (hadInvalidUploadTransaction = result.hadInvalidUploadTransaction) {
+                    Logger.e("UploadTask: manual upload, had invalid upload transactions");
+                    if (fireEvents)
+                        fireInvalidUploadTransactionEvent(context);
+                }
             }
-        }
 
-        if (!Util.isNetworkAvailable(service)) {
-            Logger.e("UploadTask skip task: NO CONNECTION");
-            onUploadFailure();
-            return;
-        }
-
-        NotificationHelper.addUploadNotification(service);
-
-        ShopPref_ pref = TcrApplication.get().getShopPref();
-        boolean errorsOccurred = false;
-        String errorMessage = null;
-        boolean isV1CommandsSent = pref.isV1CommandsSent().getOr(false);
-        TcrApplication.get().lockOnTrainingMode();
-        try {
-            ContentResolver cr = service.getContentResolver();
-            if (!isV1CommandsSent) {
-                Logger.d("Send V1 commands");
-                errorsOccurred = !uploadTaskV1Adapter.webApiUpload(cr);
-                isV1CommandsSent = !errorsOccurred && uploadTaskV1Adapter.getV1CommandsCount() == 0;
-                pref.isV1CommandsSent().put(isV1CommandsSent);
+            if (!Util.isNetworkAvailable(context)) {
+                Logger.e("UploadTask error: NO CONNECTION");
+                onUploadFailure(fireEvents);
+                return new ExecuteResult(false, hadInvalidUploadTransaction);
             }
-            if (isV1CommandsSent) {
-                boolean uploadEmployeeError = !uploadTaskV2Adapter.employeeUpload(cr, service);
-                errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr, service) && !uploadEmployeeError;
+
+            NotificationHelper.addUploadNotification(context);
+
+            ShopPref_ pref = TcrApplication.get().getShopPref();
+            boolean errorsOccurred = false;
+            String errorMessage = null;
+            boolean isV1CommandsSent = pref.isV1CommandsSent().getOr(false);
+            if (lockOnTrainingMode)
+                TcrApplication.get().lockOnTrainingMode();
+            try {
+                ContentResolver cr = context.getContentResolver();
+                if (!isV1CommandsSent) {
+                    Logger.d("Send V1 commands");
+                    errorsOccurred = !uploadTaskV1Adapter.webApiUpload(cr);
+                    isV1CommandsSent = !errorsOccurred && uploadTaskV1Adapter.getV1CommandsCount(cr) == 0;
+                    pref.isV1CommandsSent().put(isV1CommandsSent);
+                }
+                if (isV1CommandsSent) {
+                    errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr, context);
+                }
+                cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+            } catch (UploadTaskV2.TransactionNotFinalizedException e) {
+                if (isManual)
+                    Logger.e("UploadTask: transaction not finalized!", e);
+                else
+                    Logger.w("UploadTask: transaction not finalized yet", e);
+                NotificationHelper.removeUploadNotification(context);
+                if (fireEvents)
+                    fireCompleteEvent(context, false);
+                return new ExecuteResult(false, hadInvalidUploadTransaction);
+            } catch (SyncLockedException e) {
+                Logger.e("UploadTask: sync is currently locked", e);
+                errorsOccurred = true;
+                errorMessage = context.getString(R.string.error_message_sync_locked);
+            } catch (Exception e) {
+                Logger.e("UploadTask error", e);
+                errorsOccurred = true;
+            } finally {
+                if (lockOnTrainingMode)
+                    TcrApplication.get().unlockOnTrainingMode();
             }
-            cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
-        }
-        catch (UploadTaskV2.TransactionNotFinalizedException e) {
-            if (isManual)
-                Logger.e("UploadTask: transaction not finalized!", e);
-            else
-                Logger.w("UploadTask: transaction not finalized yet", e);
-            NotificationHelper.removeUploadNotification(service);
-            fireCompleteEvent(service, false);
-            return;
-        }catch (SyncLockedException e) {
-            Logger.e("UploadTask: sync is currently locked", e);
-            errorsOccurred = true;
-            errorMessage = service.getString(R.string.error_message_sync_locked);
-        }
-        catch (Exception e) {
-            Logger.e("UploadTask error", e);
-            errorsOccurred = true;
-        } finally {
-            TcrApplication.get().unlockOnTrainingMode();
-        }
 
-        if (errorsOccurred) {
-            if (TextUtils.isEmpty(errorMessage))
-                NotificationHelper.showUploadErrorNotification(service);
-            else
-                NotificationHelper.showUploadErrorNotification(service, errorMessage);
-            onUploadFailure();
-            SendLogCommand.start(service);
-        } else {
-            NotificationHelper.removeUploadNotification(service);
-            onUploadSuccess();
-            sendSyncSuccessful();
+            if (errorsOccurred) {
+                if (TextUtils.isEmpty(errorMessage))
+                    NotificationHelper.showUploadErrorNotification(context);
+                else
+                    NotificationHelper.showUploadErrorNotification(context, errorMessage);
+                onUploadFailure(fireEvents);
+                SendLogCommand.start(context);
+            } else {
+                NotificationHelper.removeUploadNotification(context);
+                onUploadSuccess(fireEvents);
+                sendSyncSuccessful();
+            }
+            Logger.d("UploadTask END");
+            return new ExecuteResult(!errorsOccurred, hadInvalidUploadTransaction);
         }
-
-        Logger.d("UploadTask END");
     }
 
     private void sendSyncSuccessful() {
@@ -184,14 +200,16 @@ public class UploadTask implements Runnable {
         }
     }
 
-    private void onUploadSuccess() {
+    private void onUploadSuccess(boolean fireEvents) {
         setOfflineMode(false);
-        fireCompleteEvent(service, true);
+        if (fireEvents)
+            fireCompleteEvent(context, true);
     }
 
-    private void onUploadFailure() {
+    private void onUploadFailure(boolean fireEvents) {
         setOfflineMode(true);
-        fireCompleteEvent(service, false);
+        if (fireEvents)
+            fireCompleteEvent(context, false);
     }
 
     private void setOfflineMode(boolean isOfflineMode) {
@@ -202,7 +220,7 @@ public class UploadTask implements Runnable {
 
         TcrApplication.get().lockOnOfflineMode();
         try {
-            if (!isOfflineMode && !Util.isNetworkAvailable(service)) {
+            if (!isOfflineMode && !Util.isNetworkAvailable(context)) {
                 return;
             }
             if (!isOfflineMode || !TcrApplication.get().isOfflineMode())
@@ -225,7 +243,18 @@ public class UploadTask implements Runnable {
             default:
                 errorMessage = R.string.upload_notify_message_error_db_version_failed;
         }
-        return service.getString(errorMessage);
+        return context.getString(errorMessage);
+    }
+
+    public static class ExecuteResult {
+
+        public final boolean isSuccessful;
+        public final boolean hadInvalidUploadTransaction;
+
+        public ExecuteResult(boolean isSuccessful, boolean hadInvalidUploadTransaction) {
+            this.isSuccessful = isSuccessful;
+            this.hadInvalidUploadTransaction = hadInvalidUploadTransaction;
+        }
     }
 
 }

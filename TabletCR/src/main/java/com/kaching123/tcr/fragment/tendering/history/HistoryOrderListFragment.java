@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
@@ -132,9 +133,14 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         if (isManual && forceServerSearch) {
             String registerTitleString = this.registerTitle == null || this.registerTitle.isEmpty() ? null : this.registerTitle.get(0);
             String printSeqNum = this.seqNum == null || this.seqNum.isEmpty() ? null : this.seqNum.get(0);
-            WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
-            DownloadOldOrdersCommand.start(getActivity(), registerTitleString, printSeqNum, unitSerial, downloadOrderCallback);
+            startServerOrderSearch(registerTitleString, printSeqNum, unitSerial);
         }
+    }
+
+    private void startServerOrderSearch(String registerTitle, String printSeqNum, String unitSerial) {
+        Logger.d("[SERVER ORDER SEARCH]: startServerOrderSearch");
+        WaitDialogFragment.show(getActivity(), getString(R.string.order_searching_message_upload_started));
+        DownloadOldOrdersCommand.start(getActivity(), registerTitle, printSeqNum, unitSerial, downloadOrderCallback);
     }
 
     @Override
@@ -176,6 +182,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @Override
     public void onResume() {
+        Logger.d("[SERVER ORDER SEARCH]: onResume");
         super.onResume();
         if (!firstLoad && from != null)
             getLoaderManager().restartLoader(0, null, this);
@@ -185,6 +192,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @Override
     public void onPause() {
+        Logger.d("[SERVER ORDER SEARCH]: onPause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncGapReceiver);
         isSearchingOrder = false;
         loadedOrderGuids = null;
@@ -295,6 +303,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderTipsViewModel>> listLoader, List<SaleOrderTipsViewModel> saleOrderModels) {
+        Logger.d("[SERVER ORDER SEARCH]: onLoadFinished");
         adapter.changeCursor(saleOrderModels);
 
         boolean shouldSearchOnServer = false;
@@ -308,10 +317,18 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             return;
 
         if (ordersLoadedFromServer) {
+            Logger.d("[SERVER ORDER SEARCH]: onLoadFinished: should hide wait dialog");
             ordersLoadedFromServer = false;
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (getActivity() == null || !isResumed()) {
+                        if (getActivity() != null)
+                            ordersLoadedFromServer = true;
+                        Logger.d("[SERVER ORDER SEARCH]: onLoadFinished: should hide wait dialog - ignored, activity: " + getActivity() + "; isResumed: " + isResumed());
+                        return;
+                    }
+                    Logger.d("[SERVER ORDER SEARCH]: onLoadFinished: should hide wait dialog - hiding");
                     WaitDialogFragment.hide(getActivity());
                 }
             });
@@ -326,14 +343,13 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (getActivity() == null)
+                if (getActivity() == null || !isResumed())
                     return;
 
                 AlertDialogFragment.showConfirmation(getActivity(), R.string.order_searching_title, getString(R.string.order_searching_message), new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
-                        DownloadOldOrdersCommand.start(getActivity(), registerTitle, printSeqNum, unitSerial, downloadOrderCallback);
+                        startServerOrderSearch(registerTitle, printSeqNum, unitSerial);
                         return true;
                     }
                 });
@@ -403,8 +419,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         AlertDialogFragment.showConfirmation(getActivity(), R.string.order_searching_title, getString(R.string.order_searching_message), new OnDialogClickListener() {
             @Override
             public boolean onClick() {
-                WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
-                DownloadOldOrdersCommand.start(getActivity(), null, null, serialCode, downloadOrderCallback);
+                startServerOrderSearch(null, null, serialCode);
                 return true;
             }
         });
@@ -412,8 +427,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @Override
     public void onSearchOrderByUnitOnServer(String serialCode) {
-        WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
-        DownloadOldOrdersCommand.start(getActivity(), null, null, serialCode, downloadOrderCallback);
+        startServerOrderSearch(null, null, serialCode);
     }
 
     @OptionsItem
@@ -533,8 +547,11 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
         @Override
         protected void onSuccess(String[] guids, String unitSerial) {
-            if (getActivity() == null)
+            Logger.d("[SERVER ORDER SEARCH]: onSuccess: orders downloaded");
+            if (getActivity() == null) {
+                Logger.d("[SERVER ORDER SEARCH]: onSuccess: ignored - detached from activity");
                 return;
+            }
 
             ordersLoadedFromServer = true;
             loadedOrderGuids = guids;
@@ -551,8 +568,11 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
         @Override
         protected void onNotFoundError() {
-            if (getActivity() == null)
+            Logger.d("[SERVER ORDER SEARCH]: onNotFoundError");
+            if (getActivity() == null) {
+                Logger.d("[SERVER ORDER SEARCH]: onNotFoundError: ignored - detached from activity");
                 return;
+            }
 
             WaitDialogFragment.hide(getActivity());
             AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.order_searching_error_message_not_found));
@@ -560,20 +580,54 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
         @Override
         protected void onSyncLockedError() {
-            if (getActivity() == null)
+            Logger.d("[SERVER ORDER SEARCH]: onSyncLockedError");
+            if (getActivity() == null) {
+                Logger.d("[SERVER ORDER SEARCH]: onSyncLockedError: ignored - detached from activity");
                 return;
+            }
 
             WaitDialogFragment.hide(getActivity());
             AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.order_searching_error_message_sync_locked));
         }
 
         @Override
-        protected void onFailure() {
-            if (getActivity() == null)
+        protected void onUploadError() {
+            Logger.d("[SERVER ORDER SEARCH]: onUploadError");
+            if (getActivity() == null) {
+                Logger.d("[SERVER ORDER SEARCH]: onUploadError: ignored - detached from activity");
                 return;
+            }
+
+            WaitDialogFragment.hide(getActivity());
+            AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.order_searching_error_message_upload));
+        }
+
+        @Override
+        protected void onFailure() {
+            Logger.d("[SERVER ORDER SEARCH]: onFailure");
+            if (getActivity() == null) {
+                Logger.d("[SERVER ORDER SEARCH]: onFailure: ignored - detached from activity");
+                return;
+            }
 
             WaitDialogFragment.hide(getActivity());
             AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.order_searching_error_message));
+        }
+
+        @Override
+        protected void onUploadEnd(boolean isSuccessful, boolean hadInvalidUploadTransaction) {
+            Logger.d("[SERVER ORDER SEARCH]: onUploadEnd: isSuccessful: " + isSuccessful + "; hadInvalidUploadTransaction: " + hadInvalidUploadTransaction);
+            if (getActivity() == null) {
+                Logger.d("[SERVER ORDER SEARCH]: onUploadEnd: ignored - detached from activity");
+                return;
+            }
+
+            if (hadInvalidUploadTransaction)
+                Toast.makeText(getActivity(), getActivity().getString(R.string.warning_message_incomplete_order), Toast.LENGTH_SHORT).show();
+
+            if (isSuccessful) {
+                WaitDialogFragment.show(getActivity(), getActivity().getString(R.string.loading_message));
+            }
         }
     };
 

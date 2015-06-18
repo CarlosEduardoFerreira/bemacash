@@ -2,6 +2,7 @@ package com.kaching123.tcr.service.v1;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -13,7 +14,6 @@ import com.kaching123.tcr.commands.rest.sync.v1.SyncUploadRequestBuilderV1;
 import com.kaching123.tcr.commands.rest.sync.v1.SyncUploadRequestBuilderV1.UploadCommandV1;
 import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
 import com.kaching123.tcr.model.EmployeeModel;
-import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.SqlCommandTable;
 
@@ -33,13 +33,6 @@ public class UploadTaskV1 {
 
     static {
         sentValues.put(SqlCommandTable.IS_SENT, 1);
-    }
-
-
-    private OfflineCommandsService service;
-
-    public UploadTaskV1(OfflineCommandsService service) {
-        this.service = service;
     }
 
     public boolean webApiUpload(ContentResolver cr) {
@@ -128,8 +121,8 @@ public class UploadTaskV1 {
         }
     }
 
-    public int getV1CommandsCount() {
-        Cursor c = service.getContentResolver().query(URI_SQL_COMMAND_NO_NOTIFY,
+    public int getV1CommandsCount(ContentResolver cr) {
+        Cursor c = cr.query(URI_SQL_COMMAND_NO_NOTIFY,
                 new String[]{SqlCommandTable.ID, SqlCommandTable.SQL_COMMAND},
                 SqlCommandTable.IS_SENT + " = ? and " + SqlCommandTable.API_VERSION + " = ?", new String[]{"0", "1"},
                 null);

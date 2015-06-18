@@ -1563,6 +1563,9 @@
     <string name="order_searching_message">Order not found in the local database. Do you want to search it on the back office?</string>    <string name="order_searching_error_message">Attempt to search failed</string>
     <string name="order_searching_error_message_not_found">Order was not found on the server\u0020</string>
     <string name="order_searching_error_message_sync_locked">Searching on the server is currently not available, please try again later</string>
+    <string name="order_searching_error_message_upload">Attempt to search failed: upload data error</string>
+
+    <string name="order_searching_message_upload_started">Uploading data...</string>
 
     <string name="server_search_checkbox">oForce search on back office</string>
 </resources>

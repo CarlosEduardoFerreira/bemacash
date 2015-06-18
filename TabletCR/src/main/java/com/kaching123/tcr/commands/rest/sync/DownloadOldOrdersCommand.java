@@ -1,11 +1,15 @@
 package com.kaching123.tcr.commands.rest.sync;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.service.UploadTask;
+import com.kaching123.tcr.service.UploadTask.ExecuteResult;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnCallback;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
@@ -33,6 +37,11 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
     private static final String ARG_TO_DATE = "arg_to_date";
     private static final String ARG_UNIT_SERIAL = "arg_unit_serial";
 
+    private static final String CALLBACK_UPLOAD_END = "callback_upload_end";
+
+    private static final String EXTRA_UPLOAD_SUCCESSFUL = "extra_upload_successful";
+    private static final String EXTRA_UPLOAD_HAD_INVALID_TRANSACTION = "extra_upload_had_invalid_transaction";
+
     private String registerTitle;
     private String printSeqNum;
     private String employeeGuid;
@@ -43,7 +52,7 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
     private String unitSerial;
 
     public static enum Error {
-        NOT_FOUND, SYNC_LOCKED
+        NOT_FOUND, SYNC_LOCKED, UPLOAD
     }
 
     @Override
@@ -65,6 +74,21 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
             getApp().lockOnSalesHistory();
             try {
                 Logger.d("[SYNC HISTORY]DownloadOldOrdersCommand: history lock acquired");
+
+                UploadTask.ExecuteResult uploadResult = null;
+                try {
+                    uploadResult = new UploadTask(getContext(), true).executeSync();
+                } catch (Exception e) {
+                    Logger.e("[SYNC HISTORY]DownloadOldOrdersCommand: upload failed", e);
+                }
+
+                if (uploadResult != null) {
+                    fireUploadEnd(uploadResult);
+                }
+
+                if (uploadResult == null || !uploadResult.isSuccessful) {
+                    return failed().add(EXTRA_ERROR, Error.UPLOAD);
+                }
 
                 GetArrayResponse resp = getApi().downloadOldOrders(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(getApp().getOperator(), getApp()),
                         getEntity(registerTitle, printSeqNum, employeeGuid, customerGuid, isStatusOpened, from, to, unitSerial));
@@ -134,6 +158,13 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
         return request;
     }
 
+    private void fireUploadEnd(ExecuteResult uploadResult) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(EXTRA_UPLOAD_SUCCESSFUL, uploadResult.isSuccessful);
+        bundle.putBoolean(EXTRA_UPLOAD_HAD_INVALID_TRANSACTION, uploadResult.hadInvalidUploadTransaction);
+        callback(CALLBACK_UPLOAD_END, bundle);
+    }
+
     public static void start(Context context, String registerTitle, String printSeqNum, String unitSerial,
                              BaseDownloadOldOrdersCommandCallback callback) {
         start(context, registerTitle, printSeqNum, null, null, null, null, null, unitSerial, callback);
@@ -173,9 +204,17 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
                 case SYNC_LOCKED:
                     onSyncLockedError();
                     break;
+                case UPLOAD:
+                    onUploadError();
+                    break;
                 default:
                     onFailure();
             }
+        }
+
+        @OnCallback(value = DownloadOldOrdersCommand.class, name = DownloadOldOrdersCommand.CALLBACK_UPLOAD_END)
+        public void handleUploadEnd(@Param(EXTRA_UPLOAD_SUCCESSFUL) boolean isSuccessful, @Param(EXTRA_UPLOAD_HAD_INVALID_TRANSACTION) boolean hadInvalidUploadTransaction) {
+            onUploadEnd(isSuccessful, hadInvalidUploadTransaction);
         }
 
         protected abstract void onSuccess(String[] guids, String unitSerial);
@@ -184,7 +223,11 @@ public class DownloadOldOrdersCommand extends PublicGroundyTask {
 
         protected abstract void onSyncLockedError();
 
+        protected abstract void onUploadError();
+
         protected abstract void onFailure();
+
+        protected abstract void onUploadEnd(boolean isSuccessful, boolean hadInvalidUploadTransaction);
     }
 
 }

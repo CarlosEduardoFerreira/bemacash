@@ -17,7 +17,6 @@ import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder.UploadComm
 import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
-import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.SqlCommandTable;
@@ -46,10 +45,8 @@ public class UploadTaskV2 {
         sentValues.put(SqlCommandTable.IS_SENT, 1);
     }
 
-    private OfflineCommandsService service;
+    public UploadTaskV2() {
 
-    public UploadTaskV2(OfflineCommandsService service) {
-        this.service = service;
     }
 
     public UploadTaskV2(EmployeeModel employeeModel) {
