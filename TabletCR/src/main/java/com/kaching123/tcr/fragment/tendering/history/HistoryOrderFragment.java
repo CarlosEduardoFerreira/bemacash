@@ -437,10 +437,11 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
     }
 
-    public void onLoadedFromServer(String unitSerial) {
+    @Override
+    public boolean onLoadedFromServer(String unitSerial) {
         boolean isSearchByUnitSerial = !TextUtils.isEmpty(unitSerial);
         if (!isSearchByUnitSerial)
-            return;
+            return false;
 
         sequences.clear();
         this.unitSerial = unitSerial;
@@ -448,6 +449,10 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
         orderNumber.setText(null);
 
         setFilterFieldsEnabled(false);
+
+        requestFilter();
+
+        return true;
     }
 
     public void makeCreditReceiptNumFocus() {

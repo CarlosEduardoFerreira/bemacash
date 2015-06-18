@@ -114,7 +114,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private static final Handler handler = new Handler();
 
     protected void setFilterValues(Date from, Date to, String cashierGUID, String customerGUID,
-                                   TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum, String unitSerial) {
+                                   TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum, String unitSerial, boolean isManual) {
         this.from = from;
         this.to = to;
         this.cashierGUID = cashierGUID;
@@ -124,7 +124,8 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         this.seqNum = seqNum;
         this.unitSerial = unitSerial;
 
-        this.loadedOrderGuids = null;
+        if (isManual)
+            this.loadedOrderGuids = null;
 
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -381,7 +382,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
                                   TransactionsState transactionsState, ArrayList<String> registerNum, ArrayList<String> seqNum, String unitSerial, boolean isManual) {
         Logger.d("We are up to filter the list with %s, %s, %s, %s, %s, %s", from, to, cashierGUID, customerGUID, registerNum, seqNum);
         isSearchingOrder = isManual;
-        setFilterValues(from, to, cashierGUID, customerGUID, transactionsState, registerNum, seqNum, unitSerial);
+        setFilterValues(from, to, cashierGUID, customerGUID, transactionsState, registerNum, seqNum, unitSerial, isManual);
     }
 
     @Override
@@ -417,7 +418,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
         void onItemClicked(String guid, BigDecimal totalAmount, Date dateText, String cashierText, String numText, OrderType type, boolean isTipped);
 
-        void onLoadedFromServer(String unitSerial);
+        boolean onLoadedFromServer(String unitSerial);
     }
 
     private class SaleOrderTipsViewFunction extends ListConverterFunction<SaleOrderTipsViewModel> {
@@ -522,12 +523,16 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             if (getActivity() == null)
                 return;
 
-            for (ILoader loader : loaderCallback) {
-                loader.onLoadedFromServer(unitSerial);
-            }
-
             ordersLoadedFromServer = true;
             loadedOrderGuids = guids;
+
+            boolean handled = false;
+            for (ILoader loader : loaderCallback) {
+                handled |= loader.onLoadedFromServer(unitSerial);
+            }
+            if (handled)
+                return;
+
             getLoaderManager().restartLoader(0, null, HistoryOrderListFragment.this);
         }
 
