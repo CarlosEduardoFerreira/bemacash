@@ -164,22 +164,36 @@
 
     </LinearLayout>
 
-    <Button
-        style="@style/LocalizableButton.Blue"
-        android:text="@string/button_search"
+    <LinearLayout
+        android:id="@+id/filter_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textSize="28sp"
-        android:id="@+id/filter"
         android:layout_marginTop="6dp"
         android:layout_below="@+id/above_holder"
-        android:layout_gravity="center"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/filter_btn"/>
+        android:orientation="vertical">
+
+        <CheckBox
+            android:id="@+id/server_search_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/server_search_checkbox"/>
+
+        <Button
+            style="@style/LocalizableButton.Blue"
+            android:text="@string/button_search"
+            android:textSize="28sp"
+            android:id="@+id/filter"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/filter_btn"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/below_holder"
-        android:layout_below="@id/filter"
+        android:layout_below="@id/filter_container"
         android:layout_marginTop="2dp"
         android:layout_alignParentLeft="true"
         android:layout_height="wrap_content"
@@ -189,7 +203,7 @@
             android:layout_gravity="bottom"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
-            android:id="@+id/keyboard" />
+            android:id="@+id/keyboard"/>
 
     </LinearLayout>
 

@@ -33,6 +33,9 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
     @FragmentArg
     protected String predefSerial;
 
+    @FragmentArg
+    protected Boolean forceServerSearch;
+
     public void setCallback(UnitCallback callback) {
         this.callback = callback;
     }
@@ -104,6 +107,10 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
             callback.handleClear();
             return true;
         }
+        if (forceServerSearch != null && forceServerSearch) {
+            callback.handleServerSearch(serialCode);
+            return true;
+        }
         etSerial.setEnabled(false);
         enablePositiveButtons(false);
         SearchUnitCommand.start(getActivity(), serialCode, null, null, true, new SearchUnitCommand.UnitCallback() {
@@ -135,10 +142,11 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
         return false;
     }
 
-    public static void show(FragmentActivity activity, String predefSerial, UnitCallback callback) {
+    public static void show(FragmentActivity activity, String predefSerial, boolean forceServerSearch, UnitCallback callback) {
         DialogUtil.show(activity, DIALOG_NAME, UnitsSearchFragment_
                 .builder()
                 .predefSerial(predefSerial)
+                .forceServerSearch(forceServerSearch)
                 .build())
                 .setCallback(callback);
     }
@@ -173,5 +181,7 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
         void handleCancel();
 
         void handleClear();
+
+        void handleServerSearch(String serialCode);
     }
 }

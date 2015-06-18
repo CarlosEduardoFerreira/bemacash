@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,6 +78,9 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
     @ViewById
     protected KeyboardView keyboard;
+
+    @ViewById
+    protected CheckBox serverSearchCheckbox;
 
 
     @ViewById
@@ -160,7 +164,8 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     }
 
     public void onBarcodeReceived() {
-        UnitsSearchFragment.show(getActivity(), null, new UnitsSearchFragment.UnitCallback() {
+        boolean forceServerSearch = serverSearchCheckbox.isChecked();
+        UnitsSearchFragment.show(getActivity(), unitSerial, forceServerSearch, new UnitsSearchFragment.UnitCallback() {
 
 
             @Override
@@ -187,6 +192,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                 orderNumber.setText(null);
 
                 setFilterFieldsEnabled(false);
+                setServerSearchCheckboxEnabled(true);
 
                 requestFilter(true);
             }
@@ -199,7 +205,7 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                 Toast.makeText(getActivity(), R.string.unit_history_serial_not_found, Toast.LENGTH_LONG).show();
                 hide();
 
-                callback.onSearchByUnitFailed(serialCode);
+                callback.onSearchOrderByUnitFailed(serialCode);
             }
 
             @Override
@@ -221,8 +227,19 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
                 unitSerial = null;
 
                 setFilterFieldsEnabled(true);
+                setServerSearchCheckboxEnabled(false);
 
                 requestFilter(true);
+            }
+
+            @Override
+            public void handleServerSearch(String serialCode) {
+                if (getActivity() == null)
+                    return;
+
+                hide();
+
+                callback.onSearchOrderByUnitOnServer(serialCode);
             }
 
             private void hide() {
@@ -252,6 +269,12 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
         }
     }
 
+    private void setServerSearchCheckboxEnabled(boolean isEnabled) {
+        serverSearchCheckbox.setEnabled(isEnabled);
+        if (!isEnabled)
+            serverSearchCheckbox.setChecked(false);
+    }
+
     @Click
     public void filterClicked() {
         requestFilter(true);
@@ -272,38 +295,42 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
         TransactionsState transactionsState = (TransactionsState) transactionsStatus.getSelectedItem();
         /*BigDecimal min = TextUtils.isEmpty(fromValue.getText()) ? null : new BigDecimal(String.valueOf(fromValue.getText()));
         BigDecimal max = TextUtils.isEmpty(toValue.getText()) ? null : new BigDecimal(String.valueOf(toValue.getText()));*/
+        boolean forceServerSearch = serverSearchCheckbox.isChecked();
 
         String creditReceipt = orderNumber.getText().toString();
+        ArrayList<String> regs;
+        ArrayList<String> seqs;
         if (!TextUtils.isEmpty(creditReceipt)) {
             Pair<String, String> seq = getSeq(creditReceipt);
-            callback.onFilterRequested(fromDate,
-                    toDate,
-                    cashierGuid,
-                    customerGuid,
-                    transactionsState,
-                    new ArrayList<String>(Arrays.asList(seq.first)),
-                    new ArrayList<String>(Arrays.asList(seq.second)),
-                    unitSerial,
-                    isManual);
+            regs = new ArrayList<String>(Arrays.asList(seq.first));
+            seqs = new ArrayList<String>(Arrays.asList(seq.second));
         } else {
-            ArrayList<String> regs = new ArrayList<String>();
-            ArrayList<String> seqs = new ArrayList<String>();
+            regs = new ArrayList<String>();
+            seqs = new ArrayList<String>();
 
             for (String s : sequences) {
                 Pair<String, String> seq = getSeq(s);
                 regs.add(seq.first);
                 seqs.add(seq.second);
             }
-            callback.onFilterRequested(fromDate,
-                    toDate,
-                    cashierGuid,
-                    customerGuid,
-                    transactionsState,
-                    regs,
-                    seqs,
-                    unitSerial,
-                    isManual);
         }
+
+        if (isManual && !forceServerSearch
+                && regs.isEmpty() && seqs.isEmpty() && !TextUtils.isEmpty(unitSerial)) {
+            onBarcodeReceived();
+            return;
+        }
+
+        callback.onFilterRequested(fromDate,
+                toDate,
+                cashierGuid,
+                customerGuid,
+                transactionsState,
+                regs,
+                seqs,
+                unitSerial,
+                isManual,
+                forceServerSearch);
 
     }
 
@@ -359,16 +386,26 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
 
             @Override
             public void afterTextChanged(Editable s) {
-                Pair<String, String> seq = getSeq(s.toString());
-                if (!TextUtils.isEmpty(seq.first) && !TextUtils.isEmpty(seq.second)) {
+                Boolean ignore = (Boolean) orderNumber.getTag();
+                if (ignore != null && ignore) {
+                    orderNumber.setTag(null);
+                    return;
+                }
+                Pair<String, String> seq = TextUtils.isEmpty(s) ? null : getSeq(s.toString());
+                if (seq != null && !TextUtils.isEmpty(seq.first) && !TextUtils.isEmpty(seq.second)) {
                     setFilterFieldsEnabled(false, true);
+                    setServerSearchCheckboxEnabled(true);
                 } else {
                     setFilterFieldsEnabled(true, true);
+                    setServerSearchCheckboxEnabled(false);
                 }
             }
         });
         cashierAdapter = new CashierFilterSpinnerAdapter(getActivity());
         merchant.setAdapter(cashierAdapter);
+
+        serverSearchCheckbox.setVisibility(getApp().isTrainingMode() ? View.GONE : View.VISIBLE);
+        setServerSearchCheckboxEnabled(false);
 
         boolean isTipsEnabled = getApp().isTipsEnabled();
         transactionsStatusContainer.setVisibility(isTipsEnabled ? View.VISIBLE : View.GONE);
@@ -446,9 +483,11 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
         sequences.clear();
         this.unitSerial = unitSerial;
 
+        orderNumber.setTag(true);
         orderNumber.setText(null);
 
         setFilterFieldsEnabled(false);
+        setServerSearchCheckboxEnabled(true);
 
         requestFilter();
 

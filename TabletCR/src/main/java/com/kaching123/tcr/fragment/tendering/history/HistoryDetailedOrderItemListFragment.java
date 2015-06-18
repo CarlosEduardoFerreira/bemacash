@@ -352,6 +352,11 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
 
             }
 
+            @Override
+            public void handleServerSearch(String serialCode) {
+
+            }
+
             private void hide() {
                 UnitsSearchHistoryFragment.hide(getActivity());
             }

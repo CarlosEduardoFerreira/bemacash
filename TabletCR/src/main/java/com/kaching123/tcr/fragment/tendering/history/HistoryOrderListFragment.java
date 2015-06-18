@@ -114,7 +114,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     private static final Handler handler = new Handler();
 
     protected void setFilterValues(Date from, Date to, String cashierGUID, String customerGUID,
-                                   TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum, String unitSerial, boolean isManual) {
+                                   TransactionsState transactionsState, ArrayList<String> registerTitle, ArrayList<String> seqNum, String unitSerial, boolean isManual, boolean forceServerSearch) {
         this.from = from;
         this.to = to;
         this.cashierGUID = cashierGUID;
@@ -128,6 +128,13 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             this.loadedOrderGuids = null;
 
         getLoaderManager().restartLoader(0, null, this);
+
+        if (isManual && forceServerSearch) {
+            String registerTitleString = this.registerTitle == null || this.registerTitle.isEmpty() ? null : this.registerTitle.get(0);
+            String printSeqNum = this.seqNum == null || this.seqNum.isEmpty() ? null : this.seqNum.get(0);
+            WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
+            DownloadOldOrdersCommand.start(getActivity(), registerTitleString, printSeqNum, unitSerial, downloadOrderCallback);
+        }
     }
 
     @Override
@@ -310,7 +317,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             });
         }
 
-        if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode() || TcrApplication.get().getSalesHistoryLimit() == null)
+        if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode())
             return;
 
         final String registerTitle = this.registerTitle == null || this.registerTitle.isEmpty() ? null : this.registerTitle.get(0);
@@ -379,17 +386,17 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
 
     @Override
     public void onFilterRequested(Date from, Date to, String cashierGUID, String customerGUID,
-                                  TransactionsState transactionsState, ArrayList<String> registerNum, ArrayList<String> seqNum, String unitSerial, boolean isManual) {
+                                  TransactionsState transactionsState, ArrayList<String> registerNum, ArrayList<String> seqNum, String unitSerial, boolean isManual, boolean forceServerSearch) {
         Logger.d("We are up to filter the list with %s, %s, %s, %s, %s, %s", from, to, cashierGUID, customerGUID, registerNum, seqNum);
-        isSearchingOrder = isManual;
-        setFilterValues(from, to, cashierGUID, customerGUID, transactionsState, registerNum, seqNum, unitSerial, isManual);
+        isSearchingOrder = isManual && !forceServerSearch;
+        setFilterValues(from, to, cashierGUID, customerGUID, transactionsState, registerNum, seqNum, unitSerial, isManual, forceServerSearch);
     }
 
     @Override
-    public void onSearchByUnitFailed(final String serialCode) {
+    public void onSearchOrderByUnitFailed(final String serialCode) {
         boolean shouldSearchOnServer = !TextUtils.isEmpty(serialCode);
 
-        if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode() || TcrApplication.get().getSalesHistoryLimit() == null)
+        if (!shouldSearchOnServer || TcrApplication.get().isTrainingMode())
             return;
 
 
@@ -401,6 +408,12 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onSearchOrderByUnitOnServer(String serialCode) {
+        WaitDialogFragment.show(getActivity(), getString(R.string.loading_message));
+        DownloadOldOrdersCommand.start(getActivity(), null, null, serialCode, downloadOrderCallback);
     }
 
     @OptionsItem
