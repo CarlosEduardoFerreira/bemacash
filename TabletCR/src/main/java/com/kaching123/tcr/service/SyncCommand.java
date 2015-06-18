@@ -423,14 +423,6 @@ public class SyncCommand implements Runnable {
                             EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
                             employee, serverLastTimestamp, minUpdateTime, false);
 
-                    count += syncSingleTable2(service, api2, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID, employee, serverLastTimestamp);
-
-                    count += syncTableWithChildren2(service, api2,
-                            EmployeeTipsTable.TABLE_NAME,
-                            EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID,
-                            employee, serverLastTimestamp, minUpdateTime, false);
-
-
                     count += syncSingleTable2(service, api2, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, employee, serverLastTimestamp, minUpdateTime, false);
 
 
@@ -675,7 +667,7 @@ public class SyncCommand implements Runnable {
         }
     }
 
-    private long getServerCurrentTimestamp(SyncApi api, EmployeeModel employee) throws SyncException,SyncLockedException {
+    private long getServerCurrentTimestamp(SyncApi api, EmployeeModel employee) throws SyncException, SyncLockedException {
         Long currentServerTimestamp;
         GetCurrentTimestampResponse response;
         try {
@@ -761,22 +753,23 @@ public class SyncCommand implements Runnable {
 
                 //sale
 
-                count += syncLocalSingleTable(service, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true);
 
-                count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, true);
+                count += syncLocalSingleTable(service, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, SaleOrderTable.PARENT_ID, true);
 
-                count += syncLocalSingleTable(service, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, true);
+                count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID);
 
-                count += syncLocalSingleTable(service, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, true);
+                count += syncLocalSingleTable(service, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID, true);
 
-                count += syncLocalSingleTable(service, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, true);
+                count += syncLocalSingleTable(service, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID);
+
+                count += syncLocalSingleTable(service, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID, true);
 
 
                 count += syncLocalSingleTable(service, CreditReceiptTable.TABLE_NAME);
 
-                count += syncLocalSingleTable(service, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID, true);
+                count += syncLocalSingleTable(service, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID, true);
 
-                count += syncLocalSingleTable(service, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, true);
+                count += syncLocalSingleTable(service, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID);
 
 
                 //inventory depended from sale
@@ -854,7 +847,7 @@ public class SyncCommand implements Runnable {
         for (String orderGuid: invalidOldActiveUnitOrders) {
             orderGuids.add(orderGuid);
 
-            if (orderGuids.size() == MAX_QUERY_PARAMETERS_COUNT || pos++ == invalidOldActiveUnitOrders.size()) {
+            if (orderGuids.size() == MAX_QUERY_PARAMETERS_COUNT || pos++ == (invalidOldActiveUnitOrders.size() - 1)) {
                 inBuilder.setLength(0);
                 inBuilder.append(" in (");
                 for (int i = 0; i < orderGuids.size(); i++) {
@@ -1075,14 +1068,18 @@ public class SyncCommand implements Runnable {
     }
 
     private int syncLocalSingleTable(Context context, String localTable) throws SyncException, SyncInterruptedException {
-        return syncLocalSingleTable(context, localTable, null, false);
+        return syncLocalSingleTable(context, localTable, null, null, false);
     }
 
-    private int syncLocalSingleTable(Context context, String localTable, String idColumn, boolean insertUpdate) throws SyncException, SyncInterruptedException {
+    private int syncLocalSingleTable(Context context, String localTable, String idColumn) throws SyncException, SyncInterruptedException {
+        return syncLocalSingleTable(context, localTable, idColumn, null, true);
+    }
+
+    private int syncLocalSingleTable(Context context, String localTable, String idColumn, String parentIdColumn, boolean insertUpdate) throws SyncException, SyncInterruptedException {
         if (!insertUpdate)
-            ShopProviderExt.copyTableFromSyncDb(context, localTable);
+            ShopProviderExt.copyTableFromSyncDb(context, localTable, parentIdColumn);
         else
-            ShopProviderExt.copyUpdateTableFromSyncDb(context, localTable, idColumn);
+            ShopProviderExt.copyUpdateTableFromSyncDb(context, localTable, idColumn, parentIdColumn);
         if (!isManual)
             ShopProviderExt.callMethod(service, Method.TRANSACTION_YIELD, null, null);
         checkIsLoadingOldOrders();
@@ -1495,28 +1492,21 @@ public class SyncCommand implements Runnable {
         public final long time;
         public final String guid;
 
-        public MaxUpdateTime(long time, String guid) {
+        private MaxUpdateTime(long time, String guid) {
             this.time = time;
             this.guid = guid;
         }
     }
 
     private static MaxUpdateTime getMaxTimeSingleTable(Context context, SyncOpenHelper syncOpenHelper, String tableName, String id, String parentIdColumn, boolean isChild) {
-        return getMaxTimeSingleTable(context, syncOpenHelper, tableName, id, parentIdColumn, isChild, false);
-    }
-
-    private static MaxUpdateTime getMaxTimeSingleTable(Context context, SyncOpenHelper syncOpenHelper, String tableName, String id, String parentIdColumn, boolean isChild, boolean fromMainDatabaseOnly) {
         if (parentIdColumn == null) {
-            return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeQuery.URI_CONTENT, new String[]{tableName, id}, true, fromMainDatabaseOnly);
+            return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeQuery.URI_CONTENT, new String[]{tableName, id}, true);
         }
-        return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeParentRelationsQuery.URI_CONTENT, new String[]{tableName, id, parentIdColumn, isChild ? "not null" : "null"}, true, fromMainDatabaseOnly);
+        return getMaxTime(context, syncOpenHelper, MaxUpdateTableTimeParentRelationsQuery.URI_CONTENT, new String[]{tableName, id, parentIdColumn, isChild ? "not null" : "null"}, true);
     }
 
-    private static MaxUpdateTime getMaxTime(Context context, SyncOpenHelper syncOpenHelper, String contentUri, String[] args, boolean needGuid, boolean fromMainDatabaseOnly) {
+    private static MaxUpdateTime getMaxTime(Context context, SyncOpenHelper syncOpenHelper, String contentUri, String[] args, boolean needGuid) {
         MaxUpdateTime mainMaxUpdateTime = getMaxTimeInner(context, syncOpenHelper, contentUri, args, needGuid, false);
-        if (fromMainDatabaseOnly)
-            return mainMaxUpdateTime;
-
         MaxUpdateTime syncMaxUpdateTime = getMaxTimeInner(context, syncOpenHelper, contentUri, args, needGuid, true);
         MaxUpdateTime maxUpdateTime = mainMaxUpdateTime;
         if (mainMaxUpdateTime == null)

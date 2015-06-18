@@ -257,18 +257,18 @@ public class ShopOpenHelper extends BaseOpenHelper {
         db.execSQL(String.format(SQL_DETACH_DB));
     }
 
-    public void copyTableFromExtraDatabase(String tableName, Context context) {
-        copyTableFromExtraDatabase(tableName, null, false);
+    public void copyTableFromExtraDatabase(String tableName, String parentIdColumn) {
+        copyTableFromExtraDatabase(tableName, null, parentIdColumn, false);
     }
 
-    public void copyUpdateTableFromExtraDatabase(String tableName, String idColumn) {
-        copyTableFromExtraDatabase(tableName, idColumn, true);
+    public void copyUpdateTableFromExtraDatabase(String tableName, String idColumn, String parentIdColumn) {
+        copyTableFromExtraDatabase(tableName, idColumn, parentIdColumn, true);
     }
 
-    private void copyTableFromExtraDatabase(String tableName, String idColumn, boolean insertUpdate) {
+    private void copyTableFromExtraDatabase(String tableName, String idColumn, String parentIdColumn, boolean insertUpdate) {
         SQLiteDatabase db = getWritableDatabase();
 
-        Cursor cursor = db.query(EXTRA_DB_ALIAS + '.' + tableName, null, null, null, null, null, null);
+        Cursor cursor = db.query(EXTRA_DB_ALIAS + '.' + tableName, null, null, null, null, null, parentIdColumn);
         ContentValues values = new ContentValues();
         try {
             while (cursor.moveToNext()) {
