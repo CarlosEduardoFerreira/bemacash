@@ -104,15 +104,21 @@ public class UnitsSearchFragment extends UnitEditFragmentBase {
             callback.handleClear();
             return true;
         }
+        etSerial.setEnabled(false);
+        enablePositiveButtons(false);
         SearchUnitCommand.start(getActivity(), serialCode, null, null, true, new SearchUnitCommand.UnitCallback() {
 
             @Override
             protected void handleSuccess(ArrayList<Unit> unit, ArrayList<SaleOrderViewModel> order) {
+                etSerial.setEnabled(true);
+                enablePositiveButtons(true);
                 callback.handleSuccess(serialCode, unit, order);
             }
 
             @Override
             protected void handleError(String message) {
+                etSerial.setEnabled(true);
+                enablePositiveButtons(true);
                 callback.handleError(serialCode, message);
             }
         });
