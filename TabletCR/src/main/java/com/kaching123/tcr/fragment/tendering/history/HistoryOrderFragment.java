@@ -494,11 +494,6 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
         return true;
     }
 
-    public void makeCreditReceiptNumFocus() {
-        orderNumber.setFocusableInTouchMode(true);
-        orderNumber.requestFocus();
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return CursorLoaderBuilder.forUri(CASHIER_URI)

@@ -1567,5 +1567,5 @@
 
     <string name="order_searching_message_upload_started">Uploading data...</string>
 
-    <string name="server_search_checkbox">oForce search on back office</string>
+    <string name="server_search_checkbox">Force search on back office</string>
 </resources>
