@@ -5,15 +5,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
+import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.print.digital.SendDigitalReportsCommand;
 import com.kaching123.tcr.commands.print.pos.PrintReportsCommand;
 import com.kaching123.tcr.commands.store.export.ExportReportsCommand;
@@ -26,6 +28,7 @@ import com.kaching123.tcr.fragment.filemanager.FileChooserFragment.Type;
 import com.kaching123.tcr.fragment.reports.sub.ItemManualMovementFragment;
 import com.kaching123.tcr.fragment.reports.sub.ReturnedItemsFragment;
 import com.kaching123.tcr.fragment.reports.sub.SalesByDepartmentsFragment;
+import com.kaching123.tcr.fragment.reports.sub.SalesByDropsAndPayoutsFragment;
 import com.kaching123.tcr.fragment.reports.sub.SalesByItemsFragment;
 import com.kaching123.tcr.fragment.reports.sub.SalesByItemsReportFragment;
 import com.kaching123.tcr.fragment.reports.sub.SalesByTenderTypesFragment;
@@ -35,6 +38,10 @@ import com.kaching123.tcr.fragment.reports.sub.ShiftsReportFragment;
 import com.kaching123.tcr.fragment.reports.sub.SoldOrdersFragment;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.RegisterModel;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,6 +57,8 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     private static final int LOADER_REGISTERS_ID = 0;
 
     private RegistersAdapter registersAdapter;
+
+    private TypeAdapter typeAdapter;
 
     private IDetailsFragment fragmentInterface;
 
@@ -150,6 +159,13 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
                 fragment = f;
                 break;
             }
+            case DROPS_AND_PAYOUTS: {
+                SalesByDropsAndPayoutsFragment f = SalesByDropsAndPayoutsFragment.instance(fromDate.getTime(), toDate.getTime(), 0L, getSelectedType());
+                fragmentInterface = f;
+                fragment = f;
+                showCashDrawReport();
+                break;
+            }
         }
         return fragment;
     }
@@ -162,12 +178,49 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     }
 
     @Override
+    protected TypeAdapter getTypesAdapter() {
+        if (typeAdapter == null)
+            typeAdapter = new TypeAdapter(getActivity());
+        ArrayList<String> list = new ArrayList<String>();
+        list.add(getString(R.string.report_type_title_drops));
+        list.add(getString(R.string.report_type_title_payouts));
+        typeAdapter.changeCursor(list);
+        return typeAdapter;
+    }
+
+    class TypeAdapter extends ObjectsCursorAdapter<String> {
+
+        public TypeAdapter(Context context) {
+            super(context);
+        }
+
+        protected View newDropDownView(int position, ViewGroup parent) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.spinner_dropdown_item, parent, false);
+            return view;
+        }
+
+        @Override
+        protected View newView(int position, ViewGroup parent) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.spinner_item_light, parent, false);
+            return view;
+        }
+
+        @Override
+        protected View bindView(View view, int position, String typeName) {
+            ((TextView) view).setText(typeName);
+            return view;
+        }
+
+    }
+
+    @Override
     protected void loadData() {
         long start = fromDate.getTime();
         long end = toDate.getTime();
 
+        long type = typeSpinner.getSelectedItemPosition();
         long resisterId = getSelectedRegisterId();
-        fragmentInterface.updateData(start, end, resisterId);
+        fragmentInterface.updateData(start, end, resisterId, type);
     }
 
     @Override
@@ -232,6 +285,11 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         return resisterId;
     }
 
+    private long getSelectedType() {
+        int selectedType = typeSpinner.getSelectedItemPosition();
+        return selectedType;
+    }
+
     private LoaderManager.LoaderCallbacks<List<RegisterModel>> registersLoader = new RegistersLoader() {
 
         @Override
@@ -258,7 +316,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     }
 
     public static interface IDetailsFragment {
-        void updateData(long startTime, long endTime, long resisterId);
+        void updateData(long startTime, long endTime, long resisterId, long type);
     }
 
     public class ExportCallback extends ExportCommandBaseCallback {

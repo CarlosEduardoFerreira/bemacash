@@ -7,12 +7,13 @@ import android.support.v4.content.Loader;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.reports.RegisterReportsDetailsFragment.IDetailsFragment;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,6 +36,9 @@ public abstract class SalesBaseFragment<T> extends Fragment implements LoaderCal
     @FragmentArg
     protected long resisterId;
 
+    @FragmentArg
+    protected long type;
+
     @ViewById
     protected TextView total;
 
@@ -52,10 +56,12 @@ public abstract class SalesBaseFragment<T> extends Fragment implements LoaderCal
     protected abstract ObjectsCursorAdapter<T> createAdapter();
 
     @Override
-    public void updateData(long startTime, long endTime, long resisterId) {
+    public void updateData(long startTime, long endTime, long resisterId, long type) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.resisterId = resisterId;
+        if (type != -1)
+            this.type = type;
         if (getActivity() != null) {
             getLoaderManager().restartLoader(0, null, this).forceLoad();
         }

@@ -32,10 +32,10 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
     protected static final int MAX_PERIODS_COUNT = 31;
 
     @ViewById
-    protected TextView modeEntitiesLabel;
+    protected TextView modeEntitiesLabel, cashDrawerTypeLabel;
 
     @ViewById
-    protected Spinner modeEntitiesSpinner;
+    protected Spinner modeEntitiesSpinner, typeSpinner;
 
     @FragmentArg
     protected ReportType type;
@@ -57,6 +57,19 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
             }
         });
 
+        typeSpinner.setAdapter(getTypesAdapter());
+        typeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                loadData();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        hideCashDrawReport();
         Fragment fragment = createBodyFragment();
         if (fragment != null) {
             getChildFragmentManager().beginTransaction().replace(R.id.details_body, fragment).commit();
@@ -81,12 +94,24 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
         modeEntitiesLabel.setVisibility(View.GONE);
     }
 
+    protected void showCashDrawReport() {
+        cashDrawerTypeLabel.setVisibility(View.VISIBLE);
+        typeSpinner.setVisibility(View.VISIBLE);
+    }
+
+    protected void hideCashDrawReport() {
+        cashDrawerTypeLabel.setVisibility(View.GONE);
+        typeSpinner.setVisibility(View.GONE);
+    }
+
     @Override
     protected int getMaxPeriod() {
         return MAX_PERIODS_COUNT;
     }
 
     protected abstract BaseAdapter getRegistersAdapter();
+
+    protected abstract BaseAdapter getTypesAdapter();
 
     protected abstract Fragment createBodyFragment();
 

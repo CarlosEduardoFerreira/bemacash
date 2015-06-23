@@ -9,9 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
@@ -19,6 +16,10 @@ import com.kaching123.tcr.fragment.reports.EmployeeReportsDetailsFragment.IDetai
 import com.kaching123.tcr.reports.PayrollReportQuery;
 import com.kaching123.tcr.reports.PayrollReportQuery.EmployeePayrollInfo;
 import com.kaching123.tcr.util.DateUtils;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +30,7 @@ import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 /**
  * Created by vkompaniets on 04.02.14.
  */
-@EFragment (R.layout.reports_payroll_fragment)
+@EFragment(R.layout.reports_payroll_fragment)
 public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo> implements IDetailsFragment {
 
     @FragmentArg
@@ -45,10 +46,10 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        isCommissionEnabled = ((TcrApplication)getActivity().getApplicationContext()).isCommissionsEnabled();
+        isCommissionEnabled = ((TcrApplication) getActivity().getApplicationContext()).isCommissionsEnabled();
 
         super.onActivityCreated(savedInstanceState);
-        int visibility =  isCommissionEnabled ? View.VISIBLE : View.GONE;
+        int visibility = isCommissionEnabled ? View.VISIBLE : View.GONE;
         commissionHeader.setVisibility(visibility);
         commissionColumn.setVisibility(visibility);
     }
@@ -56,8 +57,9 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
     @Override
     public void updateData(long startTime, long endTime, String employeeGuid) {
         this.employeeGuid = employeeGuid;
-        super.updateData(startTime, endTime, 0);
+        super.updateData(startTime, endTime, 0, -1);
     }
+
     @Override
     protected ObjectsCursorAdapter<EmployeePayrollInfo> createAdapter() {
         return new PayrollAdapter(getActivity());
@@ -65,7 +67,7 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
 
     @Override
     public Loader<List<EmployeePayrollInfo>> onCreateLoader(int i, Bundle bundle) {
-        return new AsyncTaskLoader<List<EmployeePayrollInfo>>(getActivity()){
+        return new AsyncTaskLoader<List<EmployeePayrollInfo>>(getActivity()) {
 
             @Override
             public List<EmployeePayrollInfo> loadInBackground() {
@@ -75,7 +77,7 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
         };
     }
 
-    private class PayrollAdapter extends ObjectsCursorAdapter<EmployeePayrollInfo>{
+    private class PayrollAdapter extends ObjectsCursorAdapter<EmployeePayrollInfo> {
 
         public PayrollAdapter(Context context) {
             super(context);
@@ -86,11 +88,11 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
             View convertView = LayoutInflater.from(getContext()).inflate(R.layout.reports_payroll_item_view, null, false);
 
             ViewHolder holder = new ViewHolder(
-                    (TextView)convertView.findViewById(R.id.employee_name),
-                    (TextView)convertView.findViewById(R.id.total_hours),
-                    (TextView)convertView.findViewById(R.id.hourly_rate),
-                    (TextView)convertView.findViewById(R.id.total_due),
-                    (TextView)convertView.findViewById(R.id.commission)
+                    (TextView) convertView.findViewById(R.id.employee_name),
+                    (TextView) convertView.findViewById(R.id.total_hours),
+                    (TextView) convertView.findViewById(R.id.hourly_rate),
+                    (TextView) convertView.findViewById(R.id.total_due),
+                    (TextView) convertView.findViewById(R.id.commission)
             );
 
             convertView.setTag(holder);
@@ -101,24 +103,24 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
         protected View bindView(View convertView, int position, EmployeePayrollInfo item) {
             ViewHolder holder = (ViewHolder) convertView.getTag();
 
-            if(item == null)
+            if (item == null)
                 return convertView;
 
             holder.name.setText(item.name);
             holder.totalHrs.setText(DateUtils.formatMins(item.totalMins));
             showPrice(holder.hRate, item.hRate);
             showPrice(holder.totalDue, isCommissionEnabled ? item.totalDue.add(item.commission) : item.totalDue);
-            if (isCommissionEnabled){
+            if (isCommissionEnabled) {
                 holder.commission.setVisibility(View.VISIBLE);
                 showPrice(holder.commission, item.commission);
-            }else{
+            } else {
                 holder.commission.setVisibility(View.GONE);
             }
 
             return convertView;
         }
 
-        private class ViewHolder{
+        private class ViewHolder {
             TextView name;
             TextView totalHrs;
             TextView hRate;
