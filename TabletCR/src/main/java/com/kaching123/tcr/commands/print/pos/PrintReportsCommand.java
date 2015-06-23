@@ -20,6 +20,8 @@ public class PrintReportsCommand extends BasePrintCommand<PosReportsPrinter> {
     private static final String ARG_REGISTER_GUID = "ARG_REGISTER_GUID";
     private static final String ARG_EMPLOYEE_GUID = "ARG_EMPLOYEE_GUID";
     private static final String ARG_REPORT_TYPE = "ARG_REPORT_TYPE";
+    private static final String ARG_CASH_DRAWER_TYPE = "ARG_CASH_DRAWER_TYPE";
+    private static final String ARG_EMPLOYEE_NAME = "ARG_EMPLOYEE_NAME";
 
     @Override
     protected PosReportsPrinter createTextPrinter() {
@@ -31,24 +33,36 @@ public class PrintReportsCommand extends BasePrintCommand<PosReportsPrinter> {
         long startTime = getLongArg(ARG_START_TIME);
         long endTime = getLongArg(ARG_END_TIME);
         long resisterId = getLongArg(ARG_REGISTER_GUID);
-        String employeeGuid = getStringArg(ARG_EMPLOYEE_GUID);
-        ReportType reportType = (ReportType)getArgs().getSerializable(ARG_REPORT_TYPE);
+        String employeeGuid = null;
+        if (getStringArg(ARG_EMPLOYEE_GUID) != null)
+            employeeGuid = getStringArg(ARG_EMPLOYEE_GUID);
+        int type = getIntArg(ARG_CASH_DRAWER_TYPE);
+        String name = getStringArg(ARG_EMPLOYEE_NAME);
+        ReportType reportType = (ReportType) getArgs().getSerializable(ARG_REPORT_TYPE);
 
-        PrintReportsProcessor processor = SaleReportsProcessor.print(getContext(), reportType, startTime, endTime, resisterId, employeeGuid, getAppCommandContext());
-        if(processor != null){
+        PrintReportsProcessor processor = null;
+        if (reportType != ReportType.DROPS_AND_PAYOUTS)
+            processor = SaleReportsProcessor.print(getContext(), reportType, startTime, endTime, resisterId, employeeGuid, getAppCommandContext());
+        else
+            processor = SaleReportsProcessor.print(getContext(), reportType, startTime, endTime, resisterId, employeeGuid, name, getAppCommandContext(), type);
+        if (processor != null) {
             processor.print(getContext(), getApp(), printer);
         }
     }
 
-    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, ReportType reportType, long start, long end, long resisterId, BasePrintCallback callback){
+    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, ReportType reportType, long start, long end, long resisterId, BasePrintCallback callback) {
         create(PrintReportsCommand.class).arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning).arg(ARG_SEARCH_BY_MAC, searchByMac).arg(ARG_REPORT_TYPE, reportType).arg(ARG_START_TIME, start).arg(ARG_END_TIME, end).arg(ARG_REGISTER_GUID, resisterId).callback(callback).queueUsing(context);
     }
 
-    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, ReportType reportType, long start, long end, String employeeGuid, BasePrintCallback callback){
+    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, ReportType reportType, long start, long end, String managerGuid, int type, String name, BasePrintCallback callback) {
+        create(PrintReportsCommand.class).arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning).arg(ARG_SEARCH_BY_MAC, searchByMac).arg(ARG_REPORT_TYPE, reportType).arg(ARG_START_TIME, start).arg(ARG_EMPLOYEE_NAME, name).arg(ARG_CASH_DRAWER_TYPE, type).arg(ARG_END_TIME, end).arg(ARG_EMPLOYEE_GUID, managerGuid).callback(callback).queueUsing(context);
+    }
+
+    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, ReportType reportType, long start, long end, String employeeGuid, BasePrintCallback callback) {
         create(PrintReportsCommand.class).arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning).arg(ARG_SEARCH_BY_MAC, searchByMac).arg(ARG_REPORT_TYPE, reportType).arg(ARG_START_TIME, start).arg(ARG_END_TIME, end).arg(ARG_EMPLOYEE_GUID, employeeGuid).callback(callback).queueUsing(context);
     }
 
-    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, ReportType reportType, BasePrintCallback callback){
+    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, ReportType reportType, BasePrintCallback callback) {
         create(PrintReportsCommand.class).arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning).arg(ARG_SEARCH_BY_MAC, searchByMac).arg(ARG_REPORT_TYPE, reportType).callback(callback).queueUsing(context);
     }
 

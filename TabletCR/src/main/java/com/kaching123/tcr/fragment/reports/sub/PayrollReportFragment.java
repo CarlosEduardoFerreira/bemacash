@@ -57,7 +57,7 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
     @Override
     public void updateData(long startTime, long endTime, String employeeGuid) {
         this.employeeGuid = employeeGuid;
-        super.updateData(startTime, endTime, 0, -1);
+        super.updateData(startTime, endTime, 0, -1, null);
     }
 
     @Override

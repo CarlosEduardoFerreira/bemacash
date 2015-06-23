@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
@@ -36,6 +37,7 @@ import com.kaching123.tcr.fragment.reports.sub.SalesItemsTop10QtyFragment;
 import com.kaching123.tcr.fragment.reports.sub.SalesItemsTop10RevenuesFragment;
 import com.kaching123.tcr.fragment.reports.sub.ShiftsReportFragment;
 import com.kaching123.tcr.fragment.reports.sub.SoldOrdersFragment;
+import com.kaching123.tcr.model.EmployeeForReportsModel;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.RegisterModel;
 
@@ -56,7 +58,11 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
 
     private static final int LOADER_REGISTERS_ID = 0;
 
+    private static final int LOADER_EMPLOYEE_ID = 1;
+
     private RegistersAdapter registersAdapter;
+
+    private EmployeesAdapter employeesAdapter;
 
     private TypeAdapter typeAdapter;
 
@@ -68,7 +74,10 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        getLoaderManager().restartLoader(LOADER_REGISTERS_ID, null, registersLoader);
+        if (type != ReportType.DROPS_AND_PAYOUTS)
+            getLoaderManager().restartLoader(LOADER_REGISTERS_ID, null, registersLoader);
+        else
+            getLoaderManager().restartLoader(LOADER_EMPLOYEE_ID, null, employeesLoader);
     }
 
     @Override
@@ -171,10 +180,16 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     }
 
     @Override
-    protected RegistersAdapter getRegistersAdapter() {
-        if (registersAdapter == null)
-            registersAdapter = new RegistersAdapter(getActivity());
-        return registersAdapter;
+    protected BaseAdapter getRegistersAdapter() {
+        if (type != ReportType.DROPS_AND_PAYOUTS) {
+            if (registersAdapter == null)
+                registersAdapter = new RegistersAdapter(getActivity());
+            return registersAdapter;
+        } else {
+            if (employeesAdapter == null)
+                employeesAdapter = new EmployeesAdapter(getActivity());
+            return employeesAdapter;
+        }
     }
 
     @Override
@@ -218,15 +233,20 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         long start = fromDate.getTime();
         long end = toDate.getTime();
 
-        long type = typeSpinner.getSelectedItemPosition();
+        int type = typeSpinner.getSelectedItemPosition();
         long resisterId = getSelectedRegisterId();
-        fragmentInterface.updateData(start, end, resisterId, type);
+        String managerGuid = getSelectedManagerGuid();
+        fragmentInterface.updateData(start, end, resisterId, type, managerGuid);
     }
 
     @Override
     protected void print(boolean ignorePaperEnd, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_dialog_title));
-        PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintCallback());
+        int selectedMoveType = typeSpinner.getSelectedItemPosition();
+        if (type != ReportType.DROPS_AND_PAYOUTS)
+            PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintCallback());
+        else
+            PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedManagerGuid(), selectedMoveType, getSelectedEmployeeName(), new PrintCallback());
     }
 
     @Override
@@ -262,7 +282,11 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     @OptionsItem
     protected void actionEmailSelected() {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_email));
-        SendDigitalReportsCommand.start(getActivity(), type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintDigitalSaleByItemsReportCallback());
+        if (type != ReportType.DROPS_AND_PAYOUTS)
+            SendDigitalReportsCommand.start(getActivity(), type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintDigitalSaleByItemsReportCallback());
+        else
+            SendDigitalReportsCommand.start(getActivity(), type, fromDate.getTime(), toDate.getTime(), getSelectedManagerGuid(), typeSpinner.getSelectedItemPosition(), getSelectedEmployeeName(), new PrintDigitalSaleByItemsReportCallback());
+
     }
 
     @OptionsItem
@@ -277,6 +301,8 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     }
 
     private long getSelectedRegisterId() {
+        if (type == ReportType.DROPS_AND_PAYOUTS)
+            return 0;
         int selectedRegisterPos = modeEntitiesSpinner.getSelectedItemPosition();
         long resisterId = 0;
         if (selectedRegisterPos != -1) {
@@ -285,7 +311,29 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         return resisterId;
     }
 
-    private long getSelectedType() {
+    private String getSelectedManagerGuid() {
+        if (type != ReportType.DROPS_AND_PAYOUTS)
+            return null;
+        int selectedManagerPos = modeEntitiesSpinner.getSelectedItemPosition();
+        String managerGuid = null;
+        if (selectedManagerPos != -1) {
+            managerGuid = employeesAdapter.getItem(selectedManagerPos).guid;
+        }
+        return managerGuid;
+    }
+
+    private String getSelectedEmployeeName() {
+        if (type != ReportType.DROPS_AND_PAYOUTS)
+            return null;
+        int selectedManagerPos = modeEntitiesSpinner.getSelectedItemPosition();
+        String employeeName = null;
+        if (selectedManagerPos != -1) {
+            employeeName = employeesAdapter.getItem(selectedManagerPos).fullName();
+        }
+        return employeeName;
+    }
+
+    private int getSelectedType() {
         int selectedType = typeSpinner.getSelectedItemPosition();
         return selectedType;
     }
@@ -302,7 +350,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
 
         @Override
         public void onLoaderReset(Loader<List<RegisterModel>> loader) {
-            getRegistersAdapter().changeCursor(null);
+            registersAdapter.changeCursor(null);
         }
 
         @Override
@@ -311,12 +359,46 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         }
     };
 
+    private LoaderManager.LoaderCallbacks<List<EmployeeForReportsModel>> employeesLoader = new MangerNamesLoader() {
+
+        @Override
+        public void onLoadFinished(Loader<List<EmployeeForReportsModel>> loader, List<EmployeeForReportsModel> data) {
+            ArrayList<EmployeeForReportsModel> arrayList = new ArrayList<EmployeeForReportsModel>(data.size() + 1);
+            arrayList.add(new EmployeeForReportsModel(null, null, null, getString(R.string.register_label_all)));
+            for (EmployeeForReportsModel model : data) {
+                if (isEmployeeLogin(model.login))
+                    arrayList.add(model);
+            }
+            employeesAdapter.changeCursor((List) arrayList);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<EmployeeForReportsModel>> loader) {
+            employeesAdapter.changeCursor(null);
+        }
+
+        @Override
+        protected Context getLoaderContext() {
+            return getActivity();
+        }
+    };
+
+
+    private boolean isEmployeeLogin(String login) {
+        try {
+            Integer.parseInt(login);
+            return true;
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+    }
+
     public static RegisterReportsDetailsFragment instance(ReportType reportType) {
         return RegisterReportsDetailsFragment_.builder().type(reportType).build();
     }
 
     public static interface IDetailsFragment {
-        void updateData(long startTime, long endTime, long resisterId, long type);
+        void updateData(long startTime, long endTime, long resisterId, int type, String managerGuid);
     }
 
     public class ExportCallback extends ExportCommandBaseCallback {

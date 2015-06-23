@@ -38,12 +38,12 @@ public class SalesByDropsAndPayoutsFragment extends SalesBaseFragment<SalesByDro
         return new AsyncTaskLoader<List<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState>>(getActivity()) {
             @Override
             public List<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState> loadInBackground() {
-                Collection<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState> deps = new SalesByDropsAndPayoutsReportQuery().getItems(resisterId, getContext(), type, startTime, endTime);
+                Collection<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState> deps = new SalesByDropsAndPayoutsReportQuery().getItems(managerGuid, getContext(), type, startTime, endTime);
                 ArrayList<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState> result = new ArrayList<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState>();
                 totalValue = BigDecimal.ZERO;
                 for (SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState d : deps) {
                     result.add(d);
-                    totalValue.add(d.amount);
+                    totalValue = totalValue.add(d.amount);
                 }
                 return (List) result;
             }
@@ -99,7 +99,7 @@ public class SalesByDropsAndPayoutsFragment extends SalesBaseFragment<SalesByDro
         }
     }
 
-    public static SalesByDropsAndPayoutsFragment instance(long startTime, long endTime, long resisterId, long type) {
+    public static SalesByDropsAndPayoutsFragment instance(long startTime, long endTime, long resisterId, int type) {
         return SalesByDropsAndPayoutsFragment_.builder().startTime(startTime).endTime(endTime).resisterId(resisterId).type(type).build();
     }
 }

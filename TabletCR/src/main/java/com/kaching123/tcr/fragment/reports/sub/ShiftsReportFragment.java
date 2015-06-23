@@ -85,7 +85,7 @@ public class ShiftsReportFragment extends SuperBaseFragment implements IDetailsF
     }
 
     @Override
-    public void updateData(long startTime, long endTime, long registerId, long type) {
+    public void updateData(long startTime, long endTime, long registerId, int type, String managerGuid) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.registerId = registerId;

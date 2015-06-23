@@ -23,6 +23,8 @@ public class SendDigitalReportsCommand extends BaseSendEmailCommand {
     private static final String ARG_REGISTER_GUID = "ARG_REGISTER_GUID";
     private static final String ARG_REPORT_TYPE = "ARG_REPORT_TYPE";
     private static final String ARG_EMPLOYEE_GUID = "ARG_EMPLOYEE_GUID";
+    private static final String ARG_CASH_DRAWER_TYPE = "ARG_EMPLOYEE_GUID";
+    private static final String ARG_EMPLOYEE_NAME = "ARG_EMPLOYEE_NAME";
 
     @Override
     protected Response execute(SyncApi restApi, String apiKey) {
@@ -33,10 +35,16 @@ public class SendDigitalReportsCommand extends BaseSendEmailCommand {
         long startTime = getLongArg(ARG_START_TIME);
         long endTime = getLongArg(ARG_END_TIME);
         long resisterId = getLongArg(ARG_REGISTER_GUID);
+        int type = getIntArg(ARG_CASH_DRAWER_TYPE);
+        String name = getStringArg(ARG_EMPLOYEE_NAME);
+
         String employeeGuid = getStringArg(ARG_EMPLOYEE_GUID);
         ReportType reportType = (ReportType) getArgs().getSerializable(ARG_REPORT_TYPE);
-
-        PrintReportsProcessor processor = SaleReportsProcessor.print(getContext(), reportType, startTime, endTime, resisterId, employeeGuid, getAppCommandContext());
+        PrintReportsProcessor processor = null;
+        if (reportType != ReportType.DROPS_AND_PAYOUTS)
+            processor = SaleReportsProcessor.print(getContext(), reportType, startTime, endTime, resisterId, employeeGuid, getAppCommandContext());
+        else
+            processor = SaleReportsProcessor.print(getContext(), reportType, startTime, endTime, resisterId, employeeGuid, name, getAppCommandContext(), type);
         if (processor == null) {
             return Response.responseFailed();
         }
@@ -56,6 +64,10 @@ public class SendDigitalReportsCommand extends BaseSendEmailCommand {
 
     public static void start(Context context, ReportType reportType, long start, long end, String employeeGuid, BaseSendDigitalReportsCallback callback) {
         create(SendDigitalReportsCommand.class).arg(ARG_REPORT_TYPE, reportType).arg(ARG_START_TIME, start).arg(ARG_END_TIME, end).arg(ARG_EMPLOYEE_GUID, employeeGuid).callback(callback).queueUsing(context);
+    }
+
+    public static void start(Context context, ReportType reportType, long start, long end, String employeeGuid, long type, String name, BaseSendDigitalReportsCallback callback) {
+        create(SendDigitalReportsCommand.class).arg(ARG_REPORT_TYPE, reportType).arg(ARG_START_TIME, start).arg(ARG_END_TIME, end).arg(ARG_EMPLOYEE_GUID, employeeGuid).arg(ARG_EMPLOYEE_NAME, name).arg(ARG_CASH_DRAWER_TYPE, type).callback(callback).queueUsing(context);
     }
 
     public static void start(Context context, ReportType reportType, BaseSendDigitalReportsCallback callback) {

@@ -5,17 +5,17 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.CustomSwitch;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.util.KeyboardUtils;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 
@@ -49,6 +49,7 @@ public class CashDrawerMovementEditFragment extends DecimalEditFragment {
 
     @AfterViews
     protected void initViews() {
+        movementType = MovementType.PAYOUT;
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -85,7 +86,7 @@ public class CashDrawerMovementEditFragment extends DecimalEditFragment {
         BigDecimal value = getDecimalValue();
         BigDecimal maxValue = getMaxValue();
         return value != null && (maxValue == null || value.compareTo(maxValue) != 1)
-                && (cashInDrawer == null || value.compareTo(cashInDrawer) != 1)  ? value : null;
+                && (cashInDrawer == null || value.compareTo(cashInDrawer) != 1) ? value : null;
     }
 
     @Override

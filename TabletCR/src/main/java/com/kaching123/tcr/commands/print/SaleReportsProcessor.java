@@ -11,6 +11,7 @@ import com.kaching123.tcr.function.SalesByCustomersWrapFunction;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SalesByCustomerModel;
+import com.kaching123.tcr.print.printer.PosReportsPrinter;
 import com.kaching123.tcr.print.processor.PrintReportsProcessor;
 import com.kaching123.tcr.reports.ClockInOutReportQuery;
 import com.kaching123.tcr.reports.ClockInOutReportQuery.EmployeeInfo;
@@ -33,6 +34,7 @@ import com.kaching123.tcr.reports.SalesByCustomersReportQuery;
 import com.kaching123.tcr.reports.SalesByDepartmentsReportQuery;
 import com.kaching123.tcr.reports.SalesByDepartmentsReportQuery.CategoryStat;
 import com.kaching123.tcr.reports.SalesByDepartmentsReportQuery.DepartmentStatistics;
+import com.kaching123.tcr.reports.SalesByDropsAndPayoutsReportQuery;
 import com.kaching123.tcr.reports.SalesByItemsReportQuery;
 import com.kaching123.tcr.reports.SalesByItemsReportQuery.ReportItemInfo;
 import com.kaching123.tcr.reports.SalesByTenderTypeQuery;
@@ -102,6 +104,56 @@ public final class SaleReportsProcessor {
         }
 
         return null;
+    }
+
+    public static PrintReportsProcessor print(Context context, ReportType reportType, long startTime, long endTime, long resisterId, String employeeGuid, String name, IAppCommandContext appCommandContext, int type) {
+
+        return printDropsAndPayouts(context, startTime, endTime, employeeGuid, name, appCommandContext, type);
+    }
+
+    private static PrintReportsProcessor printDropsAndPayouts(final Context context, long startTime, long endTime, String employeeGuid, final String name, IAppCommandContext appCommandContext, int type) {
+        final Collection<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState> items = new SalesByDropsAndPayoutsReportQuery().getItems(employeeGuid, context, type, startTime, endTime);
+
+        return new PrintReportsProcessor<SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState>(context.getString(R.string.report_type_drops_and_payouts), items, new Date(startTime), new Date(endTime), appCommandContext) {
+
+            @Override
+            protected void printTableHeader(IReportsPrinter printer) {
+                if (name == null)
+                    printer.add(context.getString(R.string.register_label_all));
+                else
+                    printer.add(name);
+            }
+
+            @Override
+            protected BigDecimal printItem(IReportsPrinter printer, SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState item) {
+                if (item == null)
+                    return null;
+
+                if (item.type == 0)
+                    printer.add(context.getString(R.string.report_type_title_drops));
+                else
+                    printer.add(context.getString(R.string.report_type_title_payouts));
+                printer.startBody();
+
+                printer.add((PosReportsPrinter.superShortDateFormat.format(new Date(Long.parseLong(item.date)))).toString(), item.amount);
+                if (item.comment != null)
+                    printer.add(context.getString(R.string.report_sales_by_drops_and_payments_header_comment, item.comment));
+                printer.emptyLine();
+                return null;
+            }
+
+            @Override
+            protected void printTotal(IReportsPrinter printer, String totalLabel, BigDecimal total) {
+                BigDecimal totalAmount = BigDecimal.ZERO;
+
+                for (SalesByDropsAndPayoutsReportQuery.DropsAndPayoutsState item : items) {
+                    totalAmount = totalAmount.add(item.amount);
+                }
+                printer.startBody();
+                printer.addWithTab(context.getString(R.string.reports_employee_tips_print_total), totalAmount);
+                printer.endBody();
+            }
+        };
     }
 
     private static PrintReportsProcessor printEmployeeTips(final Context context, long startTime, long endTime, String employeeGuid, IAppCommandContext appCommandContext) {
