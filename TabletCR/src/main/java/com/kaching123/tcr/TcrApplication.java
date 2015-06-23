@@ -39,6 +39,8 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.kaching123.tcr.util.OrgJsonConverter;
 import com.squareup.okhttp.OkHttpClient;
 
+import com.google.gson.Gson;
+
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EApplication;
 import org.apache.commons.codec.Charsets;
@@ -221,6 +223,7 @@ public class TcrApplication extends Application {
                     shopPref.offlinePeriodHours().getOr(0),
                     shopPref.printerTwoCopiesReceipt().getOr(false),
                     shopPref.maxItemsCount().getOr(0),
+                    shopPref.printDropOrPayout().getOr(true),
                     shopPref.updateCheckTimer().getOr(0));
         }
         barcodePrefixes = new BarcodePrefixes(
@@ -545,6 +548,7 @@ public class TcrApplication extends Application {
                 .offlinePeriodHours().put(info.offlinePeriodHours)
                 .printerTwoCopiesReceipt().put(info.printerTwoCopiesReceipt)
                 .maxItemsCount().put(info.maxItemsCount)
+                .printDropOrPayout().put(info.printDropOrPayout)
                 .updateCheckTimer().put(info.updateCheckTimer)
                 .apply();
 
@@ -838,6 +842,10 @@ public class TcrApplication extends Application {
 
     public String getUpdateFilePath() {
         return shopPref.updateFilePath().get();
+    }
+
+    public boolean getPrintDropOrPayout() {
+        return shopPref.printDropOrPayout().getOr(true);
     }
 
     public void setLastUserName(String name) {

@@ -248,6 +248,8 @@ public interface ShopPref {
 
     String lastUserPassword();
 
+    boolean printDropOrPayout();
+
     int paxTimeOut();
 
     String usbMSRName();

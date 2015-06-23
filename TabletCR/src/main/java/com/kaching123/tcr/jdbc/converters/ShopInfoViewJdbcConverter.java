@@ -90,6 +90,8 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String MAX_HISTORY_RANGE = "MAX_HISTORY_RANGE";
 
+    public static final String PRINT_DROP_OR_PAYOUT = "PRINT_DROP_OR_PAYOUT";
+
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
                 rs.getLong(ID),
@@ -144,6 +146,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getInt(OFFLINE_PERIOD),
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
                 rs.getLong(MAX_ITEMS_COUNT),
+                rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER)
         );
     }
@@ -203,6 +206,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
                 //TODO delete
                 rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE),
+                rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER));
     }
 
@@ -285,6 +289,8 @@ public class ShopInfoViewJdbcConverter {
 
         public final long updateCheckTimer;
 
+        public final boolean printDropOrPayout;
+
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
@@ -333,6 +339,7 @@ public class ShopInfoViewJdbcConverter {
                         int offlinePeriodHours,
                         boolean printerTwoCopiesReceipt,
                         long maxItemsCount,
+                        boolean printDropOrPayout,
                         long updateCheckTimer) {
             this.id = id;
             this.name = name;
@@ -394,6 +401,8 @@ public class ShopInfoViewJdbcConverter {
             this.printerTwoCopiesReceipt = printerTwoCopiesReceipt;
 
             this.maxItemsCount = maxItemsCount;
+
+            this.printDropOrPayout = printDropOrPayout;
             this.updateCheckTimer = updateCheckTimer;
         }
 

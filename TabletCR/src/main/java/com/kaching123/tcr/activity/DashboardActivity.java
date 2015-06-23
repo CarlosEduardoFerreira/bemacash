@@ -100,10 +100,15 @@ import com.kaching123.tcr.util.ScreenUtils;
 import com.telly.groundy.TaskHandler;
 
 import org.androidannotations.annotations.AfterTextChange;
+import com.google.common.base.Optional;
+import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
@@ -1521,8 +1526,17 @@ public class DashboardActivity extends SuperBaseActivity {
     }
 
     private void printDropAndPayout(boolean skipPaperWarning, boolean searchByMac) {
-        WaitDialogFragment.show(this, getString(R.string.wait_printing));
-        PrintDropPayoutCommand.start(this, null, skipPaperWarning, searchByMac, printDropPayoutCallback);
+        boolean printDropOrPayout = getPrintDropOrPayout();
+        if (printDropOrPayout)
+        {
+            WaitDialogFragment.show(this, getString(R.string.wait_printing));
+            PrintDropPayoutCommand.start(this, null, skipPaperWarning, searchByMac, printDropPayoutCallback);
+        }
+
+    }
+
+    private boolean getPrintDropOrPayout() {
+        return getApp().getPrintDropOrPayout();
     }
 
     private class StartShiftCallback extends StartShiftCommand.BaseStartShiftCallback {
