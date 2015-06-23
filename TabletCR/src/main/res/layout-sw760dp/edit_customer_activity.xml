@@ -98,7 +98,7 @@
                         <FrameLayout style="@style/EditItem.Table.LabelLayout">
 
                             <TextView
-                                style="@style/EditItem.Table.Label.Required"
+                                style="@style/EditItem.Table.Label"
                                 android:text="@string/customer_label_sex" />
                         </FrameLayout>
 
