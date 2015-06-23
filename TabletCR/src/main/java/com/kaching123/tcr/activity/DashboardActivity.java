@@ -119,6 +119,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
@@ -680,12 +681,12 @@ public class DashboardActivity extends SuperBaseActivity {
 
     @Click
     protected void noSaleButtonClicked() {
-        try2OpenDrawer(false, noSaleOpenDrowerCallback);
+        try2OpenDrawer(false, noSaleOpenDrowerCallback, false);
     }
 
     @Click
     protected void dropsAndPayoutsButtonClicked() {
-        try2OpenDrawer(false, movementsOpenDrawerCallback);
+        try2OpenDrawer(false, movementsOpenDrawerCallback, false);
     }
 
     @Click
@@ -726,27 +727,27 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            startShiftAction();
+                            startShiftAction(true);
                             return true;
                         }
                     });
             return;
         }
 
-        startShiftAction();
+        startShiftAction(false);
     }
 
-    private void startShiftAction() {
+    private void startShiftAction(boolean needSync) {
         if (!isShiftOpened) {
             showOpenAmountDialog();
         } else {
-            try2OpenDrawer(false, openDrawerCallback);
+            try2OpenDrawer(false, openDrawerCallback, needSync);
         }
     }
 
-    private void try2OpenDrawer(boolean searchByMac, BaseOpenDrawerCallback callback) {
+    private void try2OpenDrawer(boolean searchByMac, BaseOpenDrawerCallback callback, boolean needSync) {
         WaitDialogFragment.show(this, getString(R.string.wait_message_open_drawer));
-        OpenDrawerCommand.start(DashboardActivity.this, searchByMac, callback);
+        OpenDrawerCommand.start(DashboardActivity.this, searchByMac, callback, needSync);
     }
 
     @Click
@@ -783,14 +784,14 @@ public class DashboardActivity extends SuperBaseActivity {
         CustomersActivity.start(this);
     }
 
-    private void onCloseAmountEntered(boolean skipDrawer, BigDecimal value) {
+    private void onCloseAmountEntered(boolean skipDrawer, BigDecimal value, boolean needSync) {
         closeAmount = value;
 
         if (skipDrawer) {
-            waitForCloseDrawerCallback.onDrawerClosed();
+            waitForCloseDrawerCallback.onDrawerClosed(false);
         } else {
             showCloseDrawerDialog(true);
-            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, waitForCloseDrawerCallback);
+            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, needSync, waitForCloseDrawerCallback);
         }
     }
 
@@ -815,21 +816,21 @@ public class DashboardActivity extends SuperBaseActivity {
             @Override
             public void onBack() {
                 closeDrawerCommandHandler.cancel(DashboardActivity.this, 0, null);
-                showCloseAmountDialog(false, closeAmount);
+                showCloseAmountDialog(false, closeAmount, false);
             }
         });
     }
 
-    private void showCloseAmountDialog(boolean skipDrawer) {
-        showCloseAmountDialog(skipDrawer, null);
+    private void showCloseAmountDialog(boolean skipDrawer, boolean needSync) {
+        showCloseAmountDialog(skipDrawer, null, needSync);
     }
 
-    private void showCloseAmountDialog(boolean skipDrawer, BigDecimal closeAmount) {
+    private void showCloseAmountDialog(boolean skipDrawer, BigDecimal closeAmount, boolean needSync) {
         this.closeAmount = null;
-        CloseAmountFragment.show(this, skipDrawer, closeAmount, new CloseAmountFragment.OnEditAmountListener() {
+        CloseAmountFragment.show(this, skipDrawer, closeAmount, needSync, new CloseAmountFragment.OnEditAmountListener() {
             @Override
-            public void onConfirm(boolean skipDrawer, BigDecimal value) {
-                onCloseAmountEntered(skipDrawer, value);
+            public void onConfirm(boolean skipDrawer, BigDecimal value, boolean needSync) {
+                onCloseAmountEntered(skipDrawer, value, needSync);
             }
 
             @Override
@@ -850,10 +851,10 @@ public class DashboardActivity extends SuperBaseActivity {
             public void onPutCash(boolean ignoreDrawable, BigDecimal value) {
                 openAmount = value;
                 if (ignoreDrawable) {
-                    waitForCloseDrawerCallback.onDrawerClosed();
+                    waitForCloseDrawerCallback.onDrawerClosed(false);
                 } else {
                     showPutCashDialog();
-                    closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, waitForCloseDrawerCallback);
+                    closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this,false, waitForCloseDrawerCallback);
                 }
             }
 
@@ -874,7 +875,7 @@ public class DashboardActivity extends SuperBaseActivity {
             public void onConfirm(BigDecimal value, String comment, MovementType movementType) {
                 AddCashDrawerMovementCommand.start(DashboardActivity.this, null, salesStatisticsModel.shiftModel.guid, movementType, value, comment);
                 PutCashFragment.show(DashboardActivity.this, false);
-                WaitForCloseDrawerCommand.start(DashboardActivity.this, movementWaitForCloseDrawerCallback);
+                WaitForCloseDrawerCommand.start(DashboardActivity.this, false, movementWaitForCloseDrawerCallback);
             }
         });
     }
@@ -1232,7 +1233,9 @@ public class DashboardActivity extends SuperBaseActivity {
     public class WaitForCloseDrawerCallback extends BaseWaitForCloseDrawerCallback {
 
         @Override
-        protected void onDrawerClosed() {
+        protected void onDrawerClosed(boolean needSync) {
+            if(needSync)
+                OfflineCommandsService.startUpload(DashboardActivity.this);
             if (isShiftOpened) {
                 CloseDrawerFragment.hide(DashboardActivity.this);
                 CloseAmountFragment.hide(DashboardActivity.this);
@@ -1250,7 +1253,7 @@ public class DashboardActivity extends SuperBaseActivity {
         private void handleCancelBtn() {
             if (isShiftOpened) {
                 CloseDrawerFragment.hide(DashboardActivity.this);
-                showCloseAmountDialog(false, closeAmount);
+                showCloseAmountDialog(false, closeAmount, false);
             } else {
                 PutCashFragment.hide(DashboardActivity.this);
                 showOpenAmountDialog();
@@ -1258,7 +1261,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         private void handleTryAgainBtn() {
-            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, this);
+            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this,false, this);
         }
 
         @Override
@@ -1293,7 +1296,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            onDrawerClosed();
+                            onDrawerClosed(false);
                             return true;
                         }
                     }
@@ -1315,7 +1318,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            try2OpenDrawer(true, openDrawerCallback);
+                            try2OpenDrawer(true, openDrawerCallback, false);
                             return true;
                         }
                     }
@@ -1323,14 +1326,14 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         @Override
-        public void onDrawerOpened() {
-            onDrawerOpened(false);
+        public void onDrawerOpened(boolean needSync) {
+            onDrawerOpened(false, needSync);
         }
 
-        private void onDrawerOpened(boolean skipDrawer) {
+        private void onDrawerOpened(boolean skipDrawer, boolean needSync) {
             WaitDialogFragment.hide(DashboardActivity.this);
             if (isShiftOpened) {
-                showCloseAmountDialog(skipDrawer);
+                showCloseAmountDialog(skipDrawer, needSync);
             }
         }
 
@@ -1340,7 +1343,7 @@ public class DashboardActivity extends SuperBaseActivity {
             AlertDialogFragment.showAlertWithSkip(DashboardActivity.this, R.string.open_drawer_error_title, getString(PrintCallbackHelper.getPrinterErrorMessage(error)), new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            try2OpenDrawer(false, openDrawerCallback);
+                            try2OpenDrawer(false, openDrawerCallback, false);
                             return true;
                         }
                     },
@@ -1368,7 +1371,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            try2OpenDrawer(true, noSaleOpenDrowerCallback);
+                            try2OpenDrawer(true, noSaleOpenDrowerCallback,false);
                             return true;
                         }
                     }
@@ -1376,7 +1379,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         @Override
-        protected void onDrawerOpened() {
+        protected void onDrawerOpened(boolean needSync) {
             WaitDialogFragment.hide(DashboardActivity.this);
         }
 
@@ -1400,7 +1403,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            try2OpenDrawer(true, movementsOpenDrawerCallback);
+                            try2OpenDrawer(true, movementsOpenDrawerCallback, false);
                             return true;
                         }
                     }
@@ -1408,7 +1411,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         @Override
-        protected void onDrawerOpened() {
+        protected void onDrawerOpened(boolean needsync) {
             WaitDialogFragment.hide(DashboardActivity.this);
 
             showCashDrawerMovementEditDialog();
@@ -1423,7 +1426,7 @@ public class DashboardActivity extends SuperBaseActivity {
                         @Override
                         public boolean onClick() {
                             WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_open_drawer));
-                            OpenDrawerCommand.start(DashboardActivity.this, false, movementsOpenDrawerCallback);
+                            OpenDrawerCommand.start(DashboardActivity.this, false, movementsOpenDrawerCallback, false);
                             return true;
                         }
                     },
@@ -1440,7 +1443,7 @@ public class DashboardActivity extends SuperBaseActivity {
     private class MovementWaitForCloseDrawerCallback extends BaseWaitForCloseDrawerCallback {
 
         @Override
-        protected void onDrawerClosed() {
+        protected void onDrawerClosed(boolean needSync) {
             PutCashFragment.hide(DashboardActivity.this);
             printDropAndPayout(false, false);
         }
@@ -1465,7 +1468,7 @@ public class DashboardActivity extends SuperBaseActivity {
                         @Override
                         public boolean onClick() {
                             PutCashFragment.show(DashboardActivity.this, true);
-                            WaitForCloseDrawerCommand.start(DashboardActivity.this, movementWaitForCloseDrawerCallback);
+                            WaitForCloseDrawerCommand.start(DashboardActivity.this, false, movementWaitForCloseDrawerCallback);
                             return true;
                         }
                     },

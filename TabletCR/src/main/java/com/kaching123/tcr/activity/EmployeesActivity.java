@@ -58,6 +58,13 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringArrayRes;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringArrayRes;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -166,7 +173,7 @@ public class EmployeesActivity extends SuperBaseActivity {
 
     private void try2OpenDrawer(boolean searchByMac) {
         WaitDialogFragment.show(EmployeesActivity.this, getString(R.string.wait_message_open_drawer));
-        OpenDrawerCommand.start(EmployeesActivity.this, searchByMac, openDrawerCallback);
+        OpenDrawerCommand.start(EmployeesActivity.this, searchByMac, openDrawerCallback, false);
     }
 
     @Override
@@ -361,10 +368,10 @@ public class EmployeesActivity extends SuperBaseActivity {
         }
 
         @Override
-        protected void onDrawerOpened() {
+        protected void onDrawerOpened(boolean needSync) {
             WaitDialogFragment.hide(EmployeesActivity.this);
             PutCashFragment.show(EmployeesActivity.this, true);
-            WaitForCloseDrawerCommand.start(EmployeesActivity.this, waitForCloseDrawerCallback);
+            WaitForCloseDrawerCommand.start(EmployeesActivity.this, needSync,waitForCloseDrawerCallback);
         }
 
         @Override
@@ -390,7 +397,7 @@ public class EmployeesActivity extends SuperBaseActivity {
 
     private BaseWaitForCloseDrawerCallback waitForCloseDrawerCallback = new BaseWaitForCloseDrawerCallback() {
         @Override
-        protected void onDrawerClosed() {
+        protected void onDrawerClosed(boolean needSync) {
             PutCashFragment.hide(EmployeesActivity.this);
             addTips();
         }
@@ -414,7 +421,7 @@ public class EmployeesActivity extends SuperBaseActivity {
                         @Override
                         public boolean onClick() {
                             PutCashFragment.show(EmployeesActivity.this, true);
-                            WaitForCloseDrawerCommand.start(EmployeesActivity.this, waitForCloseDrawerCallback);
+                            WaitForCloseDrawerCommand.start(EmployeesActivity.this, false, waitForCloseDrawerCallback);
                             return true;
                         }
                     },
