@@ -430,7 +430,7 @@ public class SyncCommand implements Runnable {
 
 
                     //inventory depended from sale
-                    count += syncSingleTable2(service, api2, UnitTable.TABLE_NAME, UnitTable.ID, employee, serverLastTimestamp, minUpdateTime, true);
+                    count += syncSingleTable2(service, api2, UnitTable.TABLE_NAME, UnitTable.ID, employee, serverLastTimestamp, minUpdateTime, true, isSalesSyncGep, isFirstSync);
                     //end
                 } while (serverHasBeenUpdated && --retriesCount > 0);
 
@@ -1099,7 +1099,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while (retry++ < 5) {
+        while(retry++ < 5) {
             try {
                 return api.download(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -1111,7 +1111,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeUnitsRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while (retry++ < 5) {
+        while(retry++ < 5) {
             try {
                 return api.downloadUnitsLimited(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -1123,7 +1123,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeMovementsRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while (retry++ < 5) {
+        while(retry++ < 5) {
             try {
                 return api.downloadMovementGroups(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -1135,7 +1135,7 @@ public class SyncCommand implements Runnable {
 
     private GetArrayResponse makeOldActiveOrdersRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while (retry++ < 5) {
+        while(retry++ < 5) {
             try {
                 return api.downloadOldActiveOrders(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -1147,7 +1147,7 @@ public class SyncCommand implements Runnable {
 
     private GetResponse makeShopInfoRequest(SyncApi2 api, String apiKey, JSONObject credentials) throws JSONException, SyncException {
         int retry = 0;
-        while (retry++ < 5) {
+        while(retry++ < 5) {
             try {
                 return api.downloadShopInfo(apiKey, credentials);
             } catch (RetrofitError e) {
@@ -1537,10 +1537,10 @@ public class SyncCommand implements Runnable {
 
     private static MaxUpdateTime getMaxTimeInner(Context context, Table table) {
         Cursor c = context.getContentResolver().query(
-                    ShopProvider.contentUri(UpdateTimeTable.URI_CONTENT),
-                    new String[]{UpdateTimeTable.UPDATE_TIME, UpdateTimeTable.GUID},
-                    UpdateTimeTable.TABLE_ID + " = ?", new String[]{String.valueOf(_enum(table))},
-                    null);
+                ShopProvider.contentUri(UpdateTimeTable.URI_CONTENT),
+                new String[]{UpdateTimeTable.UPDATE_TIME, UpdateTimeTable.GUID},
+                UpdateTimeTable.TABLE_ID + " = ?", new String[]{String.valueOf(_enum(table))},
+                null);
         MaxUpdateTime time = null;
         if (c.moveToFirst()) {
             time = new MaxUpdateTime(c.getLong(0), c.getString(1));
