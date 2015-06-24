@@ -13,12 +13,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidLongDistanceActivity;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
@@ -28,8 +22,14 @@ import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.websvc.api.prepaid.BillerLoadFormDetails;
 import com.kaching123.tcr.websvc.api.prepaid.BillerLoadRecord;
 import com.kaching123.tcr.websvc.api.prepaid.Category;
-import com.kaching123.tcr.websvc.api.prepaid.MasterBiller;
 import com.kaching123.tcr.websvc.api.prepaid.PaymentOption;
+
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 
@@ -100,6 +100,8 @@ public class PrepaidBillPaymentAdditionalDataFragment extends PrepaidLongDistanc
         pcCallback.headMessage(PrepaidLongDistanceHeadFragment.ENTER_ADDITIONAL_DATA);
         initialEditView();
         setTotalView();
+        if (!billerData.formFlag.equals(Y))
+            complete();
     }
 
     private void setTotalView() {
