@@ -169,7 +169,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
                 if (response.getDetails().getBalanceCash() != null)
                     transaction.balance = (new BigDecimal(response.getDetails().getBalanceCash()));
                 if (response.getDetails().getBalanceFS() != null)
-                    transaction.balance = (new BigDecimal(response.getDetails().getBalanceFS()));
+                    transaction.balance = transaction.balance.compareTo((new BigDecimal(response.getDetails().getBalanceFS()))) > 0 ? transaction.balance : (new BigDecimal(response.getDetails().getBalanceFS()));
                 PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                 operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
                         .withValues(transactionModel.toValues())
