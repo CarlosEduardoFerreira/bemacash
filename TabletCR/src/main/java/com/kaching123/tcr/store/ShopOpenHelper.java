@@ -263,15 +263,15 @@ public class ShopOpenHelper extends BaseOpenHelper {
         db.execSQL(String.format(SQL_DETACH_DB));
     }
 
-    public void copyTableFromExtraDatabase(String tableName, String idColumn, String parentIdColumn) {
-        copyTableFromExtraDatabase(tableName, idColumn, parentIdColumn, false);
+    public void copyTableFromExtraDatabase(Context context,String tableName, String idColumn, String parentIdColumn) {
+        copyTableFromExtraDatabase(context, tableName, idColumn, parentIdColumn, false);
     }
 
-    public void copyUpdateTableFromExtraDatabase(String tableName, String idColumn, String parentIdColumn) {
-        copyTableFromExtraDatabase(tableName, idColumn, parentIdColumn, true);
+    public void copyUpdateTableFromExtraDatabase(Context context,String tableName, String idColumn, String parentIdColumn) {
+        copyTableFromExtraDatabase(context, tableName, idColumn, parentIdColumn, true);
     }
 
-    private void copyTableFromExtraDatabase(String tableName, String idColumn, String parentIdColumn, boolean insertUpdate) {
+    private void copyTableFromExtraDatabase(Context context, String tableName, String idColumn, String parentIdColumn, boolean insertUpdate) {
         SQLiteDatabase db = getWritableDatabase();
 
         boolean hasChildren = !TextUtils.isEmpty(parentIdColumn);
@@ -298,11 +298,17 @@ public class ShopOpenHelper extends BaseOpenHelper {
         Boolean lastIsParent = null;
         Long lastUpdateTime = null;
         String lastGuid = null;
+
+        int pages = (PAGE_ROWS + cursor.getCount()) / PAGE_ROWS;
+        int steps = 0;
+
         try {
             while (cursor.moveToNext()) {
+                steps++;
+                int currentPage = steps / PAGE_ROWS;
                 values.clear();
                 DatabaseUtils.cursorRowToContentValues(cursor, values);
-
+                fireEvent(context, tableName, null, pages, currentPage);
                 if (hasChildren) {
                     boolean isParent = TextUtils.isEmpty(values.getAsString(parentIdColumn));
                     if (lastIsParent != null && lastIsParent && !isParent) {
