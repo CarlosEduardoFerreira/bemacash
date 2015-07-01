@@ -28,9 +28,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
@@ -39,6 +36,7 @@ import com.kaching123.tcr.commands.store.inventory.AddCategoryCommand;
 import com.kaching123.tcr.commands.store.inventory.AddCategoryCommand.BaseAddCategoryCallback;
 import com.kaching123.tcr.commands.store.inventory.EditCategoryCommand;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
@@ -51,6 +49,10 @@ import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersBaseAdapter;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -160,7 +162,8 @@ public class CategoriesDialog extends StyledDialogFragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         if (shopType == ViewType.QUICK_SERVICE) {
@@ -248,13 +251,13 @@ public class CategoriesDialog extends StyledDialogFragment {
 
         LinkedHashMap<String, Integer> imageHeadersMap = new LinkedHashMap<String, Integer>();
         ArrayList<String> sortedImages = new ArrayList<String>();
-        for (Entry<String, LinkedHashSet<String>> entry: categoryGroupsMap.entrySet()) {
+        for (Entry<String, LinkedHashSet<String>> entry : categoryGroupsMap.entrySet()) {
             LinkedHashSet<String> imagesSet = entry.getValue();
             int filteredCount = 0;
-            for (String image: imagesSet){
+            for (String image : imagesSet) {
                 //if (imageFiles.contains(image)) {
-                    filteredCount++;
-                    sortedImages.add(image);
+                filteredCount++;
+                sortedImages.add(image);
                 //}
             }
             imageHeadersMap.put(entry.getKey(), filteredCount);
@@ -313,6 +316,10 @@ public class CategoriesDialog extends StyledDialogFragment {
     private CategoryModel bindModel(CategoryModel model) {
         String title = this.title.getText().toString().trim();
         Cursor c = (Cursor) this.departmentSpinner.getSelectedItem();
+        if (c == null || c.getString(c.getColumnIndex(DepartmentTable.GUID)) == null) {
+            AlertDialogFragment.showAlert(getActivity(), R.string.error_empty_department, getString(R.string.category_create_error_msg));
+            return null;
+        }
         String departmentGuid = c.getString(c.getColumnIndex(DepartmentTable.GUID));
         String image = imageAdapter == null ? null : imageAdapter.getSelectedItem();
         boolean isCommissionEligible = commissionsEligible.isChecked();
@@ -332,12 +339,12 @@ public class CategoriesDialog extends StyledDialogFragment {
 
     private boolean fieldsValid() {
         final String categoryName = this.title.getText().toString().trim();
-        if (TextUtils.isEmpty(categoryName)){
+        if (TextUtils.isEmpty(categoryName)) {
             Toast.makeText(getActivity(), R.string.categories_dialog_title_empty_msg, Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (!categoryNameUnique(categoryName)){
+        if (!categoryNameUnique(categoryName)) {
             Toast.makeText(getActivity(), R.string.categories_dialog_title_exists_msg, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -356,7 +363,7 @@ public class CategoriesDialog extends StyledDialogFragment {
         if (categoriesInDepartment == null)
             return true;
 
-        for (String n : categoriesInDepartment){
+        for (String n : categoriesInDepartment) {
             if (name.equalsIgnoreCase(n))
                 return false;
         }
@@ -454,7 +461,7 @@ public class CategoriesDialog extends StyledDialogFragment {
         private int translatePosition(int position) {
             int viewPosition = position;
             int adapterPosition = 0;
-            for (Integer count: imageHeadersMap.values()) {
+            for (Integer count : imageHeadersMap.values()) {
 
                 viewPosition += numColumns;
 
@@ -500,7 +507,7 @@ public class CategoriesDialog extends StyledDialogFragment {
                 return convertView;
 
             int drawableResourceId = 0;
-            if(!TextUtils.isEmpty(i)){
+            if (!TextUtils.isEmpty(i)) {
                 drawableResourceId = getContext().getResources().getIdentifier(i, "drawable", getContext().getPackageName());
             }
             holder.image.setImageResource(drawableResourceId == 0 ? R.drawable.categories_placeholder : drawableResourceId);
@@ -533,7 +540,7 @@ public class CategoriesDialog extends StyledDialogFragment {
                 return null;
 
             int i = 0;
-            for (String header: imageHeadersMap.keySet()) {
+            for (String header : imageHeadersMap.keySet()) {
                 if (i == position)
                     return header;
                 i++;
@@ -547,7 +554,7 @@ public class CategoriesDialog extends StyledDialogFragment {
                 return 0;
 
             int i = 0;
-            for (Integer count: imageHeadersMap.values()) {
+            for (Integer count : imageHeadersMap.values()) {
                 if (i == position)
                     return count;
                 i++;
@@ -572,7 +579,7 @@ public class CategoriesDialog extends StyledDialogFragment {
         }
 
         private View newHeaderView(int position, ViewGroup viewGroup) {
-            View view =  LayoutInflater.from(getContext()).inflate(R.layout.category_group_header, viewGroup, false);
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.category_group_header, viewGroup, false);
             HeaderViewHolder holder = new HeaderViewHolder();
             holder.label = (TextView) view.findViewById(R.id.label);
             view.setTag(holder);

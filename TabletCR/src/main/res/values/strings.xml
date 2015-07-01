@@ -525,6 +525,7 @@
     <string name="wait_message_clock_out">Clock-Out</string>
     <string name="wait_message_save_employee">Saving Employee</string>
     <string name="error_dialog_title">Error</string>
+    <string name="error_empty_department">Warning</string>
     <string name="warning_dialog_title">Warning</string>
     <string name="warning_delete_employee">Please goto back office to delete the employee</string>
     <string name="warning_transaction_upload_fail">Sale transaction upload fail, please check the credentials.</string>
@@ -786,6 +787,7 @@
     <string name="employee_edit_email_not_valid_error">Email is not valid</string>
     <string name="employee_edit_wait_msg">Saving...</string>
     <string name="employee_edit_error_msg">Can\'t save employee. Please try again!</string>
+    <string name="category_create_error_msg">Can\'t create category. Please add a department!</string>
     <string name="employee_edit_error_already_exists_msg">Employee with %s login already exists.\nPlease change login!</string>
     <string name="employee_edit_error_email_already_exists_msg">Employee with %s email already exists.\nPlease change email!</string>
     <string name="employee_delete_dialog_title">Delete employee</string>
