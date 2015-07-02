@@ -12,8 +12,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.DashboardActivity;
+import com.kaching123.tcr.commands.support.SendLogCommand;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.service.SyncCommand.MaxUpdateTime;
@@ -385,6 +389,7 @@ public class ShopOpenHelper extends BaseOpenHelper {
             }
         } catch (SQLiteConstraintException e) {
             Logger.e("ShopOpenHelper.insertUpdateValuesFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
+            SendLogCommand.start(mContext);
             if (UnitTable.TABLE_NAME.equals(tableName)) {
                 values.put(idColumn, idValue);
                 if (tryFixUnit(db, values)) {
@@ -392,7 +397,7 @@ public class ShopOpenHelper extends BaseOpenHelper {
                     return;
                 }
             }
-            throw e;
+//            throw e;
         }
     }
 
