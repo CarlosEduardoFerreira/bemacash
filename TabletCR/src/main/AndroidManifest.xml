@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.kaching123.tcr"
-          android:versionCode="172"
-          android:versionName="2.52">
+          android:versionCode="173"
+          android:versionName="2.53">
 
     <uses-sdk
         android:minSdkVersion="15"
