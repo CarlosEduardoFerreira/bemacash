@@ -19,6 +19,7 @@ import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.TipsModel.PaymentType;
 import com.kaching123.tcr.model.XReportInfo;
+import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.PaymentTransactionView2;
 import com.kaching123.tcr.store.ShopSchema2.PaymentTransactionView2.PaymentTransactionTable;
@@ -228,10 +229,10 @@ public final class XReportQuery {
                 .perform(context);
 
         while (cur.moveToNext()) {
-            if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == 1)
+            if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == MovementType.DROP.getValue())
                 safeDrops = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
-            else if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == 0)
-                payOuts = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+            else if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == MovementType.PAYOUT.getValue())
+                payOuts = payOuts.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
         }
         cur.close();
         return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack);
@@ -406,10 +407,10 @@ public final class XReportQuery {
                 .perform(context);
 
         while (cur.moveToNext()) {
-            if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == 1)
+            if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == MovementType.DROP.getValue() )
                 safeDrops = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
-            else if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == 0)
-                payOuts = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+            else if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == MovementType.PAYOUT.getValue())
+                payOuts = payOuts.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
         }
         cur.close();
 
