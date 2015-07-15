@@ -252,6 +252,12 @@ public class BasePosTextPrinter implements IPrinter {
             left = "";
         if (fixedRight == null)
             fixedRight = "";
+        if ( rightBlockLen > maxLen)
+        {
+            rightBlockLen = maxLen;
+            fixedRight = fixedRight.substring(0,maxLen);
+
+        }
 
         StringBuilder printTitle = new StringBuilder(left);
         int maxTitleLen = maxLen - rightBlockLen;

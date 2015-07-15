@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Optional;
@@ -438,14 +439,21 @@ public final class XReportQuery {
 
     private static BigDecimal getLastShiftDailyOpenAmount(Context context, String shiftGuid) {
         BigDecimal openAmount = BigDecimal.ZERO;
-        Cursor c = ProviderAction.query(URI_SHIFT)
-                .where(ShiftTable.GUID + " = ?", shiftGuid)
-                .perform(context);
+        try {
+            Cursor c = ProviderAction.query(URI_SHIFT)
+                    .where(ShiftTable.GUID + " = ?", shiftGuid)
+                    .perform(context);
 
-        if (c.moveToNext()) {
-            openAmount = _decimal(c.getString(c.getColumnIndex(ShiftTable.OPEN_AMOUNT)));
+            if (c.moveToNext()) {
+                openAmount = _decimal(c.getString(c.getColumnIndex(ShiftTable.OPEN_AMOUNT)));
+            }
+            c.close();
         }
-        c.close();
+        catch (Exception e)
+        {
+            //Log.d("XRepQ", e.getMessage());
+        }
+
 
         return openAmount;
     }
