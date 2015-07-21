@@ -450,6 +450,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     }
                 }
         );
+
+        if(model.priceType == PriceType.UNIT_PRICE){// and if scale connected
+
+        }
     }
 
     protected void tryToAddCheckPriceType(final ItemExModel model,
