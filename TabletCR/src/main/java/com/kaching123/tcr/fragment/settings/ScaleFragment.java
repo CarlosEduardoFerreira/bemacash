@@ -61,7 +61,7 @@ public class ScaleFragment extends SuperBaseFragment {
 
     @OptionsItem
     protected void actionSearchSelected() {
-        FindDeviceFragment.show(getActivity(), findDisplayListener, FindDeviceFragment.Mode.USBMSR);
+        FindDeviceFragment.show(getActivity(), findDisplayListener, FindDeviceFragment.Mode.SCALE);
     }
 
     private FindDeviceFragment.FindDeviceListener findDisplayListener = new FindDeviceFragment.FindDeviceListener() {

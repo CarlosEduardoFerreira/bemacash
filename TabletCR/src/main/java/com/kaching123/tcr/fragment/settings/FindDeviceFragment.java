@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bematechus.bemaUtils.PortInfo;
+import com.kaching123.display.SB8010A.BemaScale;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -74,7 +76,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
     protected Mode mode;
 
     public enum Mode {
-        DISPLAY, SCANNER, USBMSR
+        DISPLAY, SCANNER, USBMSR, SCALE
     }
 
     public static void show(FragmentActivity activity, FindDeviceListener findDeviceListener, Mode mode) {
@@ -128,6 +130,9 @@ public class FindDeviceFragment extends StyledDialogFragment {
         } else if (mode == Mode.USBMSR) {
             progressLabel.setText(R.string.find_msr_progress);
             emptyView.setText(R.string.find_msr_empty);
+        } else if (mode == Mode.SCALE) {
+            progressLabel.setText(R.string.find_scale_progress);
+            emptyView.setText(R.string.find_scale_empty);
         }
 
         adapter = new DeviceAdapter(getActivity());
@@ -143,6 +148,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
             storeScanner(device);
         } else if (mode == Mode.USBMSR) {
             storeUsbMsr(device);
+        } else if (mode == Mode.USBMSR) {
+            storeScale(device);
         }
 
         if (findDeviceListener != null)
@@ -201,6 +208,10 @@ public class FindDeviceFragment extends StyledDialogFragment {
         getApp().getShopPref().usbMSRName().put(usbMsr.getAddress());
     }
 
+    private void storeScale(DeviceModel scale) {
+        getApp().getShopPref().scaleAddress().put(scale.getAddress());
+    }
+
     private class GetDevicesTask extends AsyncTask<Void, Void, Collection<DeviceModel>> {
 
         private static final String DISPLAY_DEVICE_NAME_CONSTRAINT = "LCI Display";
@@ -240,6 +251,9 @@ public class FindDeviceFragment extends StyledDialogFragment {
                     break;
                 case USBMSR:
                     devices = getUsbMsrDevices();
+                    break;
+                case SCALE:
+                    devices = getScaleDevice();
                     break;
                 default:
                     break;
@@ -283,6 +297,19 @@ public class FindDeviceFragment extends StyledDialogFragment {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
             if (checkUsb(USB_MSR_VID, USB_MSR_PID))
                 devices.add(new DeviceModel(USB_MSR_NAME, USB_MSR_NAME));
+            return devices;
+        }
+
+        private Set<DeviceModel> getScaleDevice() {
+            Set<DeviceModel> devices = new HashSet<DeviceModel>();
+            for(int i = 1; i <= 2; i++) {
+                String portName = "COM" + i;
+                PortInfo info = BemaScale.scalePortInfo();
+                info.setPortName(portName);
+                BemaScale scale = new BemaScale(info);
+                if(scale.open() >= 0)
+                    devices.add(new DeviceModel(portName, portName));
+            }
             return devices;
         }
 
