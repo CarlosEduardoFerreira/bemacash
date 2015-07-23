@@ -512,6 +512,8 @@
     <string name="print_order_power_by_backstone">Blackstone</string>
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
+    <string name="lottery_wait_dialog_title">Please wait...</string>
+    <string name="lottery_fail_message">Fails to catch lottery</string>
     <string name="apk_update_dialog_title">Would you like to update to version %d now?</string>
     <string name="pax_connect_wait_dialog_title">Connecting Pax...</string>
     <string name="pax_wait_dialog_title">Searching Pax...</string>

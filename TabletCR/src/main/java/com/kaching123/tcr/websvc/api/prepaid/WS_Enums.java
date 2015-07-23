@@ -39,5 +39,103 @@ public class WS_Enums {
                 return Soap12;
             return null;
         }
+
+        public enum TypeOfTender{
+            Cash(0),
+            Credit(1),
+            Debit(2),
+            Ebt(3),
+            Ath(4),
+            UnspecifiedCard(5),
+            Unknown(6);
+
+            private int code;
+
+            TypeOfTender(int code){
+                this.code = code;
+            }
+
+            public int getCode(){
+                return code;
+            }
+
+            public static TypeOfTender fromString(String str)
+            {
+                if (str.equals("Cash"))
+                    return Cash;
+                if (str.equals("Credit"))
+                    return Credit;
+                if (str.equals("Debit"))
+                    return Debit;
+                if (str.equals("Ebt"))
+                    return Ebt;
+                if (str.equals("Ath"))
+                    return Ath;
+                if (str.equals("UnspecifiedCard"))
+                    return UnspecifiedCard;
+                if (str.equals("Unknown"))
+                    return Unknown;
+                return null;
+            }
+        }
+        public enum TransactionType{
+            Sale(0),
+            Refund(1);
+
+            private int code;
+
+            TransactionType(int code){
+                this.code = code;
+            }
+
+            public int getCode(){
+                return code;
+            }
+
+            public static TransactionType fromString(String str)
+            {
+                if (str.equals("Sale"))
+                    return Sale;
+                if (str.equals("Refund"))
+                    return Refund;
+                return null;
+            }
+        }
+        public enum ResponseStatus{
+            Success(0),
+            AuthenticationFailed(1),
+            MissingParameters(2),
+            InvalidParameters(3),
+            ServerError(4),
+            Unknown(5);
+
+            private int code;
+
+            ResponseStatus(int code){
+                this.code = code;
+            }
+
+            public int getCode(){
+                return code;
+            }
+
+            public static ResponseStatus fromString(String str)
+            {
+                if (str.equals("Success"))
+                    return Success;
+                if (str.equals("AuthenticationFailed"))
+                    return AuthenticationFailed;
+                if (str.equals("MissingParameters"))
+                    return MissingParameters;
+                if (str.equals("InvalidParameters"))
+                    return InvalidParameters;
+                if (str.equals("ServerError"))
+                    return ServerError;
+                if (str.equals("Unknown"))
+                    return Unknown;
+                return null;
+            }
+        }
     }
+
 }

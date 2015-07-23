@@ -141,7 +141,83 @@ public class Broker {
         }
         return null;
     }
+    public void GetIVULotoDataAsync(String mID,String tID,String password,long transactionId,String signatureValue,Receipt receipt) throws Exception{
+        if (this.eventHandler == null)
+            throw new Exception("Async Methods Requires IWsdl2CodeEvents");
+        GetIVULotoDataAsync(mID, tID, password, transactionId, signatureValue, receipt, null);
+    }
 
+    public void GetIVULotoDataAsync(final String mID,final String tID,final String password,final long transactionId,final String signatureValue,final Receipt receipt,final List<HeaderProperty> headers) throws Exception{
+
+        new AsyncTask<Void, Void, IVULotoDataResponse>(){
+            @Override
+            protected void onPreExecute() {
+                eventHandler.Wsdl2CodeStartedRequest();
+            };
+            @Override
+            protected IVULotoDataResponse doInBackground(Void... params) {
+                return GetIVULotoData(mID, tID, password, transactionId, signatureValue, receipt, headers);
+            }
+            @Override
+            protected void onPostExecute(IVULotoDataResponse result)
+            {
+                eventHandler.Wsdl2CodeEndedRequest();
+                if (result != null){
+                    eventHandler.Wsdl2CodeFinished("GetIVULotoData", result);
+                }
+            }
+        }.execute();
+    }
+
+    public IVULotoDataResponse GetIVULotoData(String mID,String tID,String password,long transactionId,String signatureValue,Receipt receipt){
+        return GetIVULotoData(mID, tID, password, transactionId, signatureValue, receipt, null);
+    }
+
+    public IVULotoDataResponse GetIVULotoData(String mID,String tID,String password,long transactionId,String signatureValue,Receipt receipt,List<HeaderProperty> headers){
+        SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        soapEnvelope.implicitTypes = true;
+        soapEnvelope.dotNet = true;
+        SoapObject soapReq = new SoapObject("http://services.bstonecorp.com/TransactionBroker/Broker","GetIVULotoData");
+        soapEnvelope.addMapping("http://services.bstonecorp.com/TransactionBroker/Broker","receipt",new Receipt().getClass());
+        MarshalFloat marshalFloat = new MarshalFloat();
+        marshalFloat.register(soapEnvelope);
+        soapReq.addProperty("MID",mID);
+        soapReq.addProperty("TID",tID);
+        soapReq.addProperty("Password",password);
+        soapReq.addProperty("TransactionId",transactionId);
+        soapReq.addProperty("SignatureValue",signatureValue);
+        soapReq.addProperty("receipt",receipt);
+        soapEnvelope.setOutputSoapObject(soapReq);
+        HttpTransportSE httpTransport = new HttpTransportSE(url,timeOut);
+        try{
+            if (headers!=null){
+                httpTransport.call("http://services.bstonecorp.com/TransactionBroker/Broker/GetIVULotoData", soapEnvelope,headers);
+            }else{
+                httpTransport.call("http://services.bstonecorp.com/TransactionBroker/Broker/GetIVULotoData", soapEnvelope);
+            }
+            Object retObj = soapEnvelope.bodyIn;
+            if (retObj instanceof SoapFault){
+                SoapFault fault = (SoapFault)retObj;
+                Exception ex = new Exception(fault.faultstring);
+                if (eventHandler != null)
+                    eventHandler.Wsdl2CodeFinishedWithException(ex);
+            }else{
+                SoapObject result=(SoapObject)retObj;
+                if (result.getPropertyCount() > 0){
+                    Object obj = result.getProperty(0);
+                    SoapObject j = (SoapObject)obj;
+                    IVULotoDataResponse resultVariable =  new IVULotoDataResponse (j);
+                    return resultVariable;
+
+                }
+            }
+        }catch (Exception e) {
+            if (eventHandler != null)
+                eventHandler.Wsdl2CodeFinishedWithException(e);
+            e.printStackTrace();
+        }
+        return null;
+    }
     public void GetSinglePINAsync(String mID,String tID,String password,String cashier,String productMaincode,double productDenomination,long orderID,int profileID,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");

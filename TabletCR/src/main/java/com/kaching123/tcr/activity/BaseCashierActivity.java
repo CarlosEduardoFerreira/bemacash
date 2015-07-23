@@ -49,6 +49,7 @@ import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.commands.local.EndTransactionCommand;
 import com.kaching123.tcr.commands.local.StartTransactionCommand;
+import com.kaching123.tcr.commands.payment.GetIVULotoDataCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackRefundCommand;
@@ -115,14 +116,17 @@ import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.payment.GetIVULotoDataRequest;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.processor.MoneybackProcessor;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.processor.PaxBalanceProcessor;
 import com.kaching123.tcr.processor.PaymentProcessor;
 import com.kaching123.tcr.processor.PaymentProcessor.IPaymentProcessor;
+import com.kaching123.tcr.processor.PrepaidProcessor;
 import com.kaching123.tcr.service.DisplayService;
 import com.kaching123.tcr.service.DisplayService.Command;
 import com.kaching123.tcr.service.DisplayService.DisplayBinder;
@@ -134,6 +138,9 @@ import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.util.DateUtils;
 import com.kaching123.tcr.util.KeyboardUtils;
+import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
+import com.kaching123.tcr.websvc.api.prepaid.Receipt;
+import com.kaching123.tcr.websvc.api.prepaid.WS_Enums;
 import com.telly.groundy.annotations.OnCancel;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
@@ -147,6 +154,8 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1338,10 +1347,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
                         @Override
                         public void onSuccess() {
+
                             EndTransactionCommand.start(BaseCashierActivity.this, true);
                             isPaying = false;
                             completeOrder();
                             checkOfflineMode();
+
                         }
 
                         @Override

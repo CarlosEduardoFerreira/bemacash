@@ -50,6 +50,7 @@ public class AutoUpdateService extends Service implements UpdateObserver.UpdateO
     @Override
     public void onCreate() {
         super.onCreate();
+        Logger.d("AutoUpdateService onCreate");
         executor = Executors.newSingleThreadExecutor();
         AutoUpdateService.this.registerReceiver(connectivity_receiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -57,6 +58,7 @@ public class AutoUpdateService extends Service implements UpdateObserver.UpdateO
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Logger.d("AutoUpdateService onStartCommand");
         timer = intent.getLongExtra(ARG_TIMER, 0);
         force = intent.getBooleanExtra(ARG_MANUAL_CHECK, false);
         autoUpdateApk = new AutoUpdateApk(AutoUpdateService.this, timer == 0 ? UPDATE_INTERVAL : timer * MINUTES, task);

@@ -7,6 +7,7 @@ import android.net.Uri;
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler2;
+import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.Unit;
@@ -46,6 +47,15 @@ public final class OrderTotalPriceCursorQuery {
         BigDecimal transactionFee = getTransactionFee(orderGuid, context);
 //        BigDecimal cashBackAmount = getCashBackAmount(orderGuid, context);
         calculate(context, orderGuid, null, items, tips, handler, transactionFee);
+    }
+
+    public static void loadSync(Context context, String orderGuid, LotteryHandler lotteryHandler) {
+        assert lotteryHandler != null;
+        List<SaleOrderItemViewModel> items = loadItems(context, orderGuid);
+        List<PaymentTransactionModel> payments = ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
+        BigDecimal tips = loadTips(context, orderGuid);
+        BigDecimal transactionFee = getTransactionFee(orderGuid, context);
+        calculateForLottery(context, orderGuid, null, items, tips, lotteryHandler, transactionFee, payments);
     }
 
 //    private static BigDecimal getCashBackAmount(String orderGuid, Context context) {
@@ -97,6 +107,32 @@ public final class OrderTotalPriceCursorQuery {
         List<SaleOrderItemViewModel> items = loadItems(context, orderGuid);
         BigDecimal tips = loadTips(context, orderGuid);
         OrderTotalPriceCalculator.calculate(items, tips, handler2);
+    }
+
+    private static void calculateForLottery(Context context, String orderGuid, String childOrderGuid,
+                                            List<SaleOrderItemViewModel> items, BigDecimal tips, LotteryHandler handler, BigDecimal transactionFee, List<PaymentTransactionModel> payments) {
+        BigDecimal totalSubtotal = BigDecimal.ZERO;
+        BigDecimal totalDiscount = BigDecimal.ZERO;
+        BigDecimal totalTax = BigDecimal.ZERO;
+        BigDecimal totalCashBack = BigDecimal.ZERO;
+
+        for (PaymentTransactionModel p : payments) {
+            totalCashBack = totalCashBack.add(p.cashBack.negate());
+        }
+
+        for (SaleOrderItemViewModel item : items) {
+            final SaleOrderItemModel itemModel = item.itemModel;
+            final BigDecimal itemQty = item.getQty();
+            final BigDecimal itemSubtotal = getSubTotal(itemQty, itemModel.finalGrossPrice);
+            final BigDecimal itemDiscount = getSubTotal(itemQty, itemModel.finalDiscount);
+            final BigDecimal itemTax = getSubTotal(itemQty, itemModel.finalTax);
+
+            totalSubtotal = totalSubtotal.add(itemSubtotal);
+            totalDiscount = totalDiscount.add(itemDiscount);
+            totalTax = totalTax.add(itemTax);
+        }
+
+        handler.handleTotal(totalSubtotal, totalDiscount, totalTax, tips, transactionFee, totalCashBack);
     }
 
     private static void calculate(Context context, String orderGuid, String childOrderGuid,
@@ -151,6 +187,9 @@ public final class OrderTotalPriceCursorQuery {
         void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee);
     }
 
+    public static interface LotteryHandler {
+        void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee, BigDecimal totalCashBack);
+    }
 
     private static List<SaleOrderItemViewModel> loadItems(Context context, String orderGuid) {
         assert context != null;

@@ -5,10 +5,13 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
+import com.kaching123.tcr.commands.payment.GetIVULotoDataCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand.BasePrintCallback;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
@@ -27,14 +30,27 @@ import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
 import com.kaching123.tcr.fragment.tendering.PayChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
+import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.payment.GetIVULotoDataRequest;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
+import com.kaching123.tcr.processor.PrepaidProcessor;
+import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
+import com.kaching123.tcr.websvc.api.prepaid.Receipt;
+import com.kaching123.tcr.websvc.api.prepaid.WS_Enums;
+import com.telly.groundy.annotations.OnFailure;
+import com.telly.groundy.annotations.OnSuccess;
+import com.telly.groundy.annotations.Param;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -122,6 +138,63 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         if (kitchenPrintStatus != KitchenPrintStatus.PRINTED) {
             printItemsToKitchen(null, false, false, false);
         }
+
+        WaitDialogFragment.show(getActivity(), getString(R.string.lottery_wait_dialog_title));
+
+        OrderTotalPriceCursorQuery.loadSync(getActivity(), orderGuid, new OrderTotalPriceCursorQuery.LotteryHandler() {
+            @Override
+            public void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee, BigDecimal totalCashBack) {
+                BigDecimal mSubTotal = totalSubtotal.subtract(totalDiscount).add(transactionFee).add(totalCashBack);
+                BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
+                BigDecimal mTotal = totalOrderPrice.add(tipsAmount).add(transactionFee).add(totalCashBack);
+                GetIVULotoDataCommand.start(getActivity(), this, getIVULotoDataRequest(mSubTotal, mTotal));
+            }
+        });
+    }
+
+    private GetIVULotoDataRequest getIVULotoDataRequest(BigDecimal mSubTotal, BigDecimal mTotal) {
+
+        GetIVULotoDataRequest request = new GetIVULotoDataRequest();
+        request.MID = String.valueOf(getUser().getMid());
+        request.TID = String.valueOf(getUser().getTid());
+        request.Password = getUser().getPassword();
+        request.transactionId = PrepaidProcessor.generateId();
+        Receipt receipt = new Receipt();
+        receipt.merchantId = "51774932983";
+        receipt.terminalId = "POS00";
+        receipt.terminalPassword = "WCeMQVN3";
+        receipt.municipalTax = getTax().doubleValue();
+        receipt.stateTax = getTax().doubleValue();
+        receipt.subTotal = mSubTotal.doubleValue();
+        receipt.total = mTotal.doubleValue();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        Date date = new Date();
+        receipt.txDate = String.valueOf(dateFormat.format(date));
+        receipt.txType = WS_Enums.SoapProtocolVersion.TransactionType.Sale;
+        receipt.tenderType = WS_Enums.SoapProtocolVersion.TypeOfTender.Cash;
+        request.receipt = receipt;
+        return request;
+    }
+
+
+    private PrepaidUser getUser() {
+        return ((TcrApplication) getActivity().getApplicationContext()).getPrepaidUser();
+    }
+
+    private BigDecimal getTax() {
+        return ((TcrApplication) getActivity().getApplicationContext()).getTaxVat();
+    }
+
+    @OnSuccess(GetIVULotoDataCommand.class)
+    public void getTicketNumberSuccess(@Param(GetIVULotoDataCommand.ARG_RESULT) IVULotoDataResponse response) {
+        IVULotoDataResponse res = response;
+        WaitDialogFragment.hide(getActivity());
+    }
+
+    @OnFailure(GetIVULotoDataCommand.class)
+    public void getLotteryNumberFail() {
+        WaitDialogFragment.hide(getActivity());
+        Toast.makeText(getActivity(), getString(R.string.lottery_fail_message), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -180,10 +253,10 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             printOrder(false, false);
         } else if (signatureBox.isChecked() && !signatureOrderPrinted) {
             printSignatureOrder(false, false);
-        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT||gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
+        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
             printOrder(false, false);
             isPrinterTwoCopiesReceipt = false;
-        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT||gateWay == ReceiptType.EBT_CASH) && !debitOrEBTDetailsPrinted) {
+        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && !debitOrEBTDetailsPrinted) {
             printDebitorEBTDetails(false, false);
         } else {
             completeProcess();
