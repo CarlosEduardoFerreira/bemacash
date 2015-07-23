@@ -5,6 +5,7 @@ import android.util.Log;
 import com.kaching123.display.Action;
 import com.kaching123.display.DisplayPrinter;
 import com.kaching123.display.actions.PrintTextAction;
+import com.kaching123.display.actions.ResetDisplay;
 import com.kaching123.display.actions.SelectFirstDigitAction;
 
 import java.io.IOException;
@@ -56,7 +57,8 @@ public class DisplayPrinterWrapper implements IDisplayPrinterWrapper {
     @Override
     public void clear() {
         commands.add(new PrintTextAction(fill(MAX_TEXT_LEN, ' '), isSerialPortDisplay));
-        commands.add(new SelectFirstDigitAction());
+//        commands.add(new ResetDisplay(isSerialPortDisplay));
+        commands.add(new SelectFirstDigitAction(isSerialPortDisplay));
     }
 
     public void add(String text) {
