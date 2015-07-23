@@ -57,7 +57,6 @@ public class DisplayPrinterWrapper implements IDisplayPrinterWrapper {
     @Override
     public void clear() {
         commands.add(new PrintTextAction(fill(MAX_TEXT_LEN, ' '), isSerialPortDisplay));
-//        commands.add(new ResetDisplay(isSerialPortDisplay));
         commands.add(new SelectFirstDigitAction(isSerialPortDisplay));
     }
 
