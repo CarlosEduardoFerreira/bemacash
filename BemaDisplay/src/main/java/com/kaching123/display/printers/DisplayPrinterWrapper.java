@@ -5,7 +5,6 @@ import android.util.Log;
 import com.kaching123.display.Action;
 import com.kaching123.display.DisplayPrinter;
 import com.kaching123.display.actions.PrintTextAction;
-import com.kaching123.display.actions.ResetDisplay;
 import com.kaching123.display.actions.SelectFirstDigitAction;
 
 import java.io.IOException;
