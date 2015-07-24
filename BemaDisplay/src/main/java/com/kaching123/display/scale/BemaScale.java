@@ -1,4 +1,4 @@
-package com.kaching123.display.SB8010A;
+package com.kaching123.display.scale;
 
 import android.util.Log;
 

@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bematechus.bemaUtils.PortInfo;
-import com.kaching123.display.SB8010A.BemaScale;
+import com.kaching123.display.scale.BemaScale;
 import com.kaching123.tcr.BuildConfig;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -148,7 +150,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
             storeScanner(device);
         } else if (mode == Mode.USBMSR) {
             storeUsbMsr(device);
-        } else if (mode == Mode.USBMSR) {
+        } else if (mode == Mode.SCALE) {
             storeScale(device);
         }
 
@@ -254,6 +256,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
                     break;
                 case SCALE:
                     devices = getScaleDevice();
+//                    devices = getDevices(bluetoothDevices);
                     break;
                 default:
                     break;
@@ -278,12 +281,16 @@ public class FindDeviceFragment extends StyledDialogFragment {
             if (isAIO())
                 if (mode == Mode.DISPLAY)
                     devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
+                else if(mode == Mode.SCALE){
+                    devices.add(new DeviceModel("COM2","COM2"));
+                    devices.add(new DeviceModel("COM1","COM1"));
+                }
                 else {
                     devices.add(new DeviceModel(SEARIL_PORT_SCANNER_ADDRESS, SEARIL_PORT_SCANNER_NAME));
 //                    if (checkUsb(USB_SCANNER_VID, USB_SCANNER_PID))
 //                        devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
+                    devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
                 }
-            devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
             for (BluetoothDevice device : bluetoothDevices) {
                 if (useConstraint && !checkConstraint(device))
                     continue;
@@ -302,14 +309,19 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
         private Set<DeviceModel> getScaleDevice() {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
-            for(int i = 1; i <= 2; i++) {
-                String portName = "COM" + i;
-                PortInfo info = BemaScale.scalePortInfo();
-                info.setPortName(portName);
-                BemaScale scale = new BemaScale(info);
-                if(scale.open() >= 0)
-                    devices.add(new DeviceModel(portName, portName));
+//            for(int i = 1; i <= 2; i++) {
+//            }
+
+//            String portName = "COM" + i;
+            PortInfo info = BemaScale.scalePortInfo();
+//            info.setPortName(portName);
+            BemaScale scale = new BemaScale(info);
+            if(scale.open() >= 0) {
+                Logger.d("Scale Connected to " + info.getPortName());
+                devices.add(new DeviceModel(info.getPortName(), info.getPortName()));
             }
+
+            Logger.d("Scale test "+scale.readScale());
             return devices;
         }
 

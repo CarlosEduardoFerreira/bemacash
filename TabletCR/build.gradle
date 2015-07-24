@@ -116,6 +116,7 @@ configurations {
 }
 
 dependencies {
+    compile 'com.android.support:multidex:1.0.0'
     compile project(':BemaPos')
     compile project(':BemaDisplay')
     compile project(':android-support-v4-preferencefragment')
