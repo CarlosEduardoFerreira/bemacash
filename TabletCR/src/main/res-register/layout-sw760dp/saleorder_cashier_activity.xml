@@ -32,12 +32,11 @@
                     android:layout_height="match_parent"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
-                    android:paddingBottom="8dp"
                     android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="320dp">
+                        android:layout_height="300dp">
 
                         <fragment
                             android:id="@+id/total_cost_fragment"
@@ -51,6 +50,7 @@
                     <com.kaching123.tcr.component.CustomEditBox
                         android:hint="Search by code"
                         style="@style/CashierActivity.Barcode"
+                        android:textSize="20sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"
                         android:id="@+id/scanner_input"/>
