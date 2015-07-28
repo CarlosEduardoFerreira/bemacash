@@ -137,7 +137,7 @@ public final class SaleReportsProcessor {
 
                 printer.add((PosReportsPrinter.superShortDateFormat.format(new Date(Long.parseLong(item.date)))).toString(), item.amount);
                 if (item.comment != null)
-                    printer.add(context.getString(R.string.report_sales_by_drops_and_payments_header_comment, item.comment));
+                    printer.addComments(context.getString(R.string.comment), item.comment);
                 printer.emptyLine();
                 return null;
             }

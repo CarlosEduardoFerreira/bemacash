@@ -107,8 +107,8 @@ public class PrintDropPayoutProcessor {
         printer.add(employeeName);
         printer.drawLine();
         printer.add(context.getString(R.string.amount), amount);
-        if (comment != null){
-            printer.add(comment);
+        if (comment != null) {
+            printer.addComments(context.getString(R.string.comment), comment);
         }
     }
 

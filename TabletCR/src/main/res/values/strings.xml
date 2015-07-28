@@ -1401,6 +1401,7 @@
     <string name="safe_drop">SAFE DROP</string>
     <string name="payout">PAYOUT</string>
     <string name="amount">Amount</string>
+    <string name="comment">Comment:</string>
     <string name="sync_shop_info">shop</string>
     <string name="sync_recalc_data">local</string>
     <string name="kitchen_print_qty_update_failed">Items printed quantity not updated for printer \'%s\'</string>

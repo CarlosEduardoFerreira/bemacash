@@ -13,6 +13,7 @@ public interface IReportsPrinter extends IHeaderFooterPrinter {
     public void add(String title);
     public void add(String title, BigDecimal qty, BigDecimal price);
     public void add(String title, BigDecimal value);
+    public void addComments(String title, String comment);
     public void add(Date clockIn, Date clockOut, boolean isSameDay);
     public void add(Date date, String title, BigDecimal qty);
     public void add(String title, BigDecimal onHand, BigDecimal unitCost, BigDecimal totalCost, boolean active);
