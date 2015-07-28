@@ -145,6 +145,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             @Override
             public void onComplete() {
                 listener.onConfirmed();
+                dismiss();
             }
         });
     }
