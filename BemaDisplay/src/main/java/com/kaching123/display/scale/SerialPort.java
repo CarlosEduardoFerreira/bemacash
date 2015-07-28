@@ -40,7 +40,7 @@ public class SerialPort extends CommunicationPort {
     private int parity = 0;
     private int stopbits = 1;
     private int flowctl = 0;
-    private com.kaching123.display.SerialPort nativePort = null;
+    private android.serialport.SerialPort nativePort = null;
 
 
 
@@ -97,7 +97,7 @@ public class SerialPort extends CommunicationPort {
                 nativePort.close();
 
             }
-            nativePort = new com.kaching123.display.SerialPort(device, baud, dataBits,
+            nativePort = new android.serialport.SerialPort(device, baud, dataBits,
                     parity, stopBits, flow);
 
 

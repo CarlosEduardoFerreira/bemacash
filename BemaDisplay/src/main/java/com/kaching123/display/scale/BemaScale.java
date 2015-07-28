@@ -48,7 +48,7 @@ public class BemaScale {
         return port;
     }
 
-    public synchronized int open ()
+    public int open ()
     {
         if ( portInfo != null) {
             try {
@@ -75,14 +75,14 @@ public class BemaScale {
         return GENERIC_ERROR;
     }
 
-    public synchronized int open (PortInfo info)
+    public int open (PortInfo info)
     {
         portInfo = new PortInfo(info);
         return open();
     }
 
 
-    public synchronized int close ()
+    public int close ()
     {
         try
         {
@@ -98,7 +98,7 @@ public class BemaScale {
         return OK;
     }
 
-    public synchronized int write (final byte [] data)
+    public int write (final byte [] data)
     {
         int result = GENERIC_ERROR;
         if ( port != null && data != null)
@@ -117,7 +117,7 @@ public class BemaScale {
         return result;
     }
 
-    public synchronized int getStatus(){
+    public int getStatus(){
         if ( port != null)
             try {
                 if (port.write(REQ) > 0) {
@@ -148,7 +148,7 @@ public class BemaScale {
         return -1;
     }
 
-    public synchronized String readScale(){
+    public String readScale(){
         if ( port != null)
             try {
                 if (port.write(REQ) > 0) {

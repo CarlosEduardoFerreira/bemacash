@@ -33,9 +33,11 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.bemaUtils.PortInfo;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
+import com.kaching123.display.scale.BemaScale;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -118,6 +120,7 @@ import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
+import com.kaching123.tcr.pref.ShopPref;
 import com.kaching123.tcr.processor.MoneybackProcessor;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.processor.PaxBalanceProcessor;
@@ -229,6 +232,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private HashSet<String> salesmanGuids = new HashSet<String>();
 
     private Calendar calendar = Calendar.getInstance();
+    private BemaScale scale;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -400,6 +404,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onCreate(savedInstanceState);
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         alarmRingtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        PortInfo info = BemaScale.scalePortInfo();
+        info.setPortName(getApp().getShopPref().scaleName().get());
+        scale = new BemaScale(info);
+        scale.open();
+        Toast.makeText(this,scale.readScale(),Toast.LENGTH_SHORT).show();
 
         if (!isSPMSRSet()) {
             Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
@@ -434,7 +443,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
         boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
         if (!hasModifiers) {
-            tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
+            BigDecimal newQty = quantity;
+            if(scale != null && model.priceType == PriceType.UNIT_PRICE){
+                //Todo: finish get scale
+                newQty = new BigDecimal(scale.readScale());
+            }
+            tryToAddCheckPriceType(model, null, null, null, price, newQty, unit);
             return;
         }
         ModifyFragment.show(this,
@@ -450,10 +464,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     }
                 }
         );
-
-        if(model.priceType == PriceType.UNIT_PRICE){// and if scale connected
-
-        }
     }
 
     protected void tryToAddCheckPriceType(final ItemExModel model,
@@ -1907,6 +1917,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 return;
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
             //orderItemListFragment.needScrollToTheEnd();
+
         }
 
         @Override

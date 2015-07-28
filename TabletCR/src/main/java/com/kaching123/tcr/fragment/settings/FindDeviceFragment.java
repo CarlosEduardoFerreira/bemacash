@@ -211,7 +211,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
     }
 
     private void storeScale(DeviceModel scale) {
-        getApp().getShopPref().scaleAddress().put(scale.getAddress());
+        getApp().getShopPref().scaleName().put(scale.getName());
     }
 
     private class GetDevicesTask extends AsyncTask<Void, Void, Collection<DeviceModel>> {
@@ -309,19 +309,19 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
         private Set<DeviceModel> getScaleDevice() {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
-//            for(int i = 1; i <= 2; i++) {
-//            }
-
-//            String portName = "COM" + i;
-            PortInfo info = BemaScale.scalePortInfo();
-//            info.setPortName(portName);
-            BemaScale scale = new BemaScale(info);
-            if(scale.open() >= 0) {
-                Logger.d("Scale Connected to " + info.getPortName());
-                devices.add(new DeviceModel(info.getPortName(), info.getPortName()));
+            for(int i = 1; i <= 2; i++) {
+                String portName = "COM" + i;
+                PortInfo info = BemaScale.scalePortInfo();
+                info.setPortName(portName);
+                BemaScale scale = new BemaScale(info);
+                int state = scale.open();
+                Logger.d("state = "+state);
+                if( state >= 0) {
+                    Logger.d("Scale Connected to " + info.getPortName());
+                    devices.add(new DeviceModel(info.getPortName(), info.getPortName()));
+                }
             }
 
-            Logger.d("Scale test "+scale.readScale());
             return devices;
         }
 
