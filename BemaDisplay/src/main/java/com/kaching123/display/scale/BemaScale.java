@@ -135,9 +135,11 @@ public class BemaScale {
                             break;
                         bytesRead += ret;
                     }
-                    return Integer.parseInt(new String(Arrays.copyOfRange(bytes,11,13)));
+                    return Integer.parseInt(new String(Arrays.copyOfRange(bytes, 11, 13)));
                     //ToDo: Toast different error if necessary
                 }
+            } catch (NumberFormatException e){
+                e.printStackTrace();
             } catch (CommunicationException ex) {
                 Log.d(TAG, ex.getMessage());
             } catch (InterruptedException e) {

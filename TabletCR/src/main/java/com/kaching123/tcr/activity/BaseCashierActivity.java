@@ -1,9 +1,11 @@
 package com.kaching123.tcr.activity;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -69,9 +71,11 @@ import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand.BaseHoldOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
+import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand.BaseSuccessOrderCommandCallback;
+import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
@@ -89,11 +93,13 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickList
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment.OnEditPriceListener;
+import com.kaching123.tcr.fragment.edit.QtyEditFragment;
 import com.kaching123.tcr.fragment.edit.SaleOrderDiscountEditFragment;
 import com.kaching123.tcr.fragment.edit.TaxEditFragment;
 import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment.OnAddonsChangedListener;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.fragment.saleorder.HoldFragmentDialog;
+import com.kaching123.tcr.fragment.saleorder.ItemsAdapter;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHandlerHandler;
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
@@ -233,6 +239,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private Calendar calendar = Calendar.getInstance();
     private BemaScale scale;
+
+    private static final Handler handler = new Handler();
+    private boolean hasScale;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -407,8 +416,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         PortInfo info = BemaScale.scalePortInfo();
         info.setPortName(getApp().getShopPref().scaleName().get());
         scale = new BemaScale(info);
-        scale.open();
-        Toast.makeText(this,scale.readScale(),Toast.LENGTH_SHORT).show();
+        if (scale.open() >= 0)
+            hasScale = true;
+//        Toast.makeText(this, scale.readScale(), Toast.LENGTH_SHORT).show();
 
         if (!isSPMSRSet()) {
             Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
@@ -443,12 +453,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
         boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
         if (!hasModifiers) {
-            BigDecimal newQty = quantity;
-            if(scale != null && model.priceType == PriceType.UNIT_PRICE){
-                //Todo: finish get scale
-                newQty = new BigDecimal(scale.readScale());
-            }
-            tryToAddCheckPriceType(model, null, null, null, price, newQty, unit);
+//            if(scale != null && model.priceType == PriceType.UNIT_PRICE){
+//                if (scale.getStatus() == 0) {
+//                    BigDecimal newQty = new BigDecimal(scale.readScale());
+//                    tryToAddCheckPriceType(model, null, null, null, price, newQty, unit);
+//                    return;
+//                }
+//            }
+            tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
             return;
         }
         ModifyFragment.show(this,
@@ -1218,12 +1230,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             return;
 
         orderItemListFragment.setNeed2ScrollList(true);
-
         SaleOrderItemModel itemModel = new SaleOrderItemModel(
                 UUID.randomUUID().toString(),
                 this.orderGuid,
                 model.guid,
-                quantity == null ? BigDecimal.ONE : quantity,
+                quantity == null ? (model.priceType == PriceType.UNIT_PRICE && hasScale ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
                 BigDecimal.ZERO,
                 isCreateReturnOrder ? PriceType.OPEN : model.priceType,
                 price == null ? model.price : price,
@@ -1250,7 +1261,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             generateOrderId();
             return;
         }
-
+        addItemCallback.setName(model.description);
         AddItem2SaleOrderCommand.start(this,
                 addItemCallback,
                 itemModel,
@@ -1909,15 +1920,86 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         waitList.clear();
     }
 
-    public class AddItem2SaleOrderCallback extends BaseAddItem2SaleOrderCallback {
+    private UpdateQtySaleOrderItemCommand.BaseUpdateQtySaleOrderItemCallback updateQtySaleOrderItemCallback = new UpdateQtySaleOrderItemCommand.BaseUpdateQtySaleOrderItemCallback() {
 
         @Override
-        protected void onItemAdded(SaleOrderItemModel item) {
+        protected void onSuccess(String saleItemGuid) {
+            if (displayBinder != null)
+                displayBinder.startCommand(new DisplaySaleItemCommand(saleItemGuid));
+        }
+    };
+
+    public class AddItem2SaleOrderCallback extends BaseAddItem2SaleOrderCallback {
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        private String name;
+        protected AddItem2SaleOrderCallback(){
+            this.name = "";
+        }
+        protected AddItem2SaleOrderCallback(String name){
+            this.name = name;
+        }
+
+        @Override
+        protected void onItemAdded(final SaleOrderItemModel item) {
             if (isFinishing() || isDestroyed())
                 return;
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
             //orderItemListFragment.needScrollToTheEnd();
-
+            if(item.priceType == PriceType.UNIT_PRICE) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        BaseCashierActivity.this);
+                alertDialogBuilder.setTitle("Scale Warning");
+                Logger.d("Item Name = "+name);
+                alertDialogBuilder
+                        .setMessage(name + "Scale cannot get read, please cancel or type the quantity manually.")
+                        .setCancelable(false)
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                if(item.qty.equals(BigDecimal.ZERO))
+                                    RemoveSaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), orderItemListFragment);
+                                dialog.cancel();
+                                return;
+                            }
+                        })
+                        .setPositiveButton("Manually", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                QtyEditFragment.show(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType == PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
+                                    @Override
+                                    public void onConfirm(BigDecimal value) {
+                                        UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
+                                        return;
+                                    }
+                                });
+                            }
+                        });
+                final AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            if (scale.getStatus() == 0) {
+                                break;
+                            }
+                        }
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                BigDecimal newQty = new BigDecimal(scale.readScale());
+                                UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
+                                alertDialog.dismiss();
+                            }
+                        });
+                    }
+                }).start();
+            }
         }
 
         @Override
@@ -2084,8 +2166,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             AlertDialogFragment.showAlert(BaseCashierActivity.this, R.string.error_dialog_title, getString(R.string.error_something_wrong));
         }
     }
-
-    private static final Handler handler = new Handler();
 
     private class CheckOrderPaymentsLoader implements LoaderCallbacks<Cursor> {
 
