@@ -98,6 +98,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         boolean hasNewline = s.toString().contains(newline);
         if (hasNewline) {
             Logger.d("OrderItemListFragment usbScannerInputAfterTextChanged hasNewline: " + s.toString());
+            Toast.makeText(getActivity(), s.toString(), Toast.LENGTH_LONG).show();
             String result = s.toString().replace("\n", "").replace("\r", "");
             itemsListHandler.onBarcodeReceivedFromUSB(result);
             s.clear();
