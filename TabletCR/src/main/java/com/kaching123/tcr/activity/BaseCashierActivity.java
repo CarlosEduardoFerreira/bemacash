@@ -453,13 +453,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
         boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
         if (!hasModifiers) {
-//            if(scale != null && model.priceType == PriceType.UNIT_PRICE){
-//                if (scale.getStatus() == 0) {
-//                    BigDecimal newQty = new BigDecimal(scale.readScale());
-//                    tryToAddCheckPriceType(model, null, null, null, price, newQty, unit);
-//                    return;
-//                }
-//            }
+//            Logger.d("Item Name = "+model.description);
             tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
             return;
         }
@@ -1261,6 +1255,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             generateOrderId();
             return;
         }
+
+        Logger.d("Item Name = "+model.description);
         addItemCallback.setName(model.description);
         AddItem2SaleOrderCommand.start(this,
                 addItemCallback,
@@ -1956,10 +1952,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             if(item.priceType == PriceType.UNIT_PRICE) {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                         BaseCashierActivity.this);
-                alertDialogBuilder.setTitle("Scale Warning");
-                Logger.d("Item Name = "+name);
+                alertDialogBuilder.setTitle(name+"Weight Warning");
                 alertDialogBuilder
-                        .setMessage(name + "Scale cannot get read, please cancel or type the quantity manually.")
+                        .setMessage("Scale cannot get weight of "+name+", please cancel or type the quantity manually.")
                         .setCancelable(false)
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
