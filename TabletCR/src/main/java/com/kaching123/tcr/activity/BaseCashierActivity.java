@@ -35,11 +35,10 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bematechus.bemaUtils.PortInfo;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
-import com.kaching123.display.scale.BemaScale;
+import com.kaching123.tcr.service.ScaleService.ScaleBinder;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -99,7 +98,6 @@ import com.kaching123.tcr.fragment.edit.TaxEditFragment;
 import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment.OnAddonsChangedListener;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.fragment.saleorder.HoldFragmentDialog;
-import com.kaching123.tcr.fragment.saleorder.ItemsAdapter;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHandlerHandler;
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
@@ -126,7 +124,6 @@ import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
-import com.kaching123.tcr.pref.ShopPref;
 import com.kaching123.tcr.processor.MoneybackProcessor;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.processor.PaxBalanceProcessor;
@@ -137,6 +134,7 @@ import com.kaching123.tcr.service.DisplayService.Command;
 import com.kaching123.tcr.service.DisplayService.DisplayBinder;
 import com.kaching123.tcr.service.DisplayService.DisplayListener;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
+import com.kaching123.tcr.service.ScaleService;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
@@ -220,6 +218,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private Ringtone alarmRingtone;
 
     private DisplayBinder displayBinder;
+    private ScaleBinder scaleBinder;
 
     @Extra
     protected boolean isCreateReturnOrder;
@@ -238,10 +237,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private HashSet<String> salesmanGuids = new HashSet<String>();
 
     private Calendar calendar = Calendar.getInstance();
-    private BemaScale scale;
 
     private static final Handler handler = new Handler();
-    private boolean hasScale;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -269,6 +266,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onStart();
 
         bindToDisplayService();
+        bindToScaleService();
     }
 
     @Override
@@ -276,7 +274,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onStop();
 
         unbindFromDisplayService();
-
+        unbindFromScaleService();
         if (!isFinishing())
             return;
 
@@ -299,6 +297,37 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             unbindService(displayServiceConnection);
         }
     }
+
+    private void bindToScaleService() {
+        boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().scaleName().get()); //Serial Port?
+        if (displayConfigured) {
+            ScaleService.bind(this,scaleServiceConnection);
+        }
+    }
+
+    private void unbindFromScaleService() {
+        if (scaleBinder != null) {
+            scaleBinder = null;
+            unbindService(scaleServiceConnection);
+        }
+    }
+
+    private boolean scaleServiceBound;
+    private ScaleService scaleService;
+    protected ServiceConnection scaleServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            scaleServiceBound = false;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            ScaleBinder myBinder = (ScaleBinder) service;
+            scaleService = myBinder.getService();
+            scaleServiceBound = true;
+        }
+    };
 
     @Override
     public void startCommand(Command displayCommand) {
@@ -413,12 +442,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onCreate(savedInstanceState);
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         alarmRingtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
-        PortInfo info = BemaScale.scalePortInfo();
-        info.setPortName(getApp().getShopPref().scaleName().get());
-        scale = new BemaScale(info);
-        if (scale.open() >= 0)
-            hasScale = true;
-//        Toast.makeText(this, scale.readScale(), Toast.LENGTH_SHORT).show();
 
         if (!isSPMSRSet()) {
             Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
@@ -1228,7 +1251,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 UUID.randomUUID().toString(),
                 this.orderGuid,
                 model.guid,
-                quantity == null ? (model.priceType == PriceType.UNIT_PRICE && hasScale ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
+                quantity == null ? (model.priceType == PriceType.UNIT_PRICE && scaleServiceBound ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
                 BigDecimal.ZERO,
                 isCreateReturnOrder ? PriceType.OPEN : model.priceType,
                 price == null ? model.price : price,
@@ -1981,13 +2004,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     @Override
                     public void run() {
                         while (true) {
-                            if (scale.getStatus() == 0) {
+                            if (scaleService.getStatus() == 0) {
                                 break;
                             }
                         }
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                BigDecimal newQty = new BigDecimal(scale.readScale());
+                                BigDecimal newQty = new BigDecimal(scaleService.readScale());
                                 UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
                                 alertDialog.dismiss();
                             }
