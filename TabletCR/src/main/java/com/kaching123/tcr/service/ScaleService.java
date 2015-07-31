@@ -30,7 +30,6 @@ public class ScaleService extends Service {
         info.setPortName(TcrApplication.get().getShopPref().scaleName().get());
         scale = new BemaScale(info);
         open();
-        Toast.makeText(this,getStatus()+"",Toast.LENGTH_SHORT).show();
     }
 
     private void open() {

@@ -323,8 +323,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            ScaleBinder myBinder = (ScaleBinder) service;
-            scaleService = myBinder.getService();
+            scaleBinder = (ScaleBinder) service;
+            scaleService = scaleBinder.getService();
             scaleServiceBound = true;
         }
     };
@@ -1251,6 +1251,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 UUID.randomUUID().toString(),
                 this.orderGuid,
                 model.guid,
+                model.description,
                 quantity == null ? (model.priceType == PriceType.UNIT_PRICE && scaleServiceBound ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
                 BigDecimal.ZERO,
                 isCreateReturnOrder ? PriceType.OPEN : model.priceType,
@@ -1279,8 +1280,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             return;
         }
 
-        Logger.d("Item Name = "+model.description);
-        addItemCallback.setName(model.description);
         AddItem2SaleOrderCommand.start(this,
                 addItemCallback,
                 itemModel,
@@ -1950,22 +1949,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     public class AddItem2SaleOrderCallback extends BaseAddItem2SaleOrderCallback {
 
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        private String name;
-        protected AddItem2SaleOrderCallback(){
-            this.name = "";
-        }
-        protected AddItem2SaleOrderCallback(String name){
-            this.name = name;
-        }
-
         @Override
         protected void onItemAdded(final SaleOrderItemModel item) {
             if (isFinishing() || isDestroyed())
@@ -1973,50 +1956,55 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
             //orderItemListFragment.needScrollToTheEnd();
             if(item.priceType == PriceType.UNIT_PRICE) {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                        BaseCashierActivity.this);
-                alertDialogBuilder.setTitle(name+"Weight Warning");
-                alertDialogBuilder
-                        .setMessage("Scale cannot get weight of "+name+", please cancel or type the quantity manually.")
-                        .setCancelable(false)
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                if(item.qty.equals(BigDecimal.ZERO))
-                                    RemoveSaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), orderItemListFragment);
-                                dialog.cancel();
-                                return;
+                if (scaleService.getStatus() == 0) {
+                    BigDecimal newQty = new BigDecimal(scaleService.readScale());
+                    UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
+                    }else {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                            BaseCashierActivity.this);
+                    alertDialogBuilder.setTitle("Scale Warning");
+                    alertDialogBuilder
+                            .setMessage("Scale cannot get weight of " + item.description + ", please cancel or type the quantity manually.")
+                            .setCancelable(false)
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    if (item.qty.equals(BigDecimal.ZERO))
+                                        RemoveSaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), orderItemListFragment);
+                                    dialog.cancel();
+                                    return;
+                                }
+                            })
+                            .setPositiveButton("Manually", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    QtyEditFragment.showNotCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType == PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
+                                        @Override
+                                        public void onConfirm(BigDecimal value) {
+                                            UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
+                                            return;
+                                        }
+                                    });
+                                }
+                            });
+                    final AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                if (scaleService.getStatus() == 0) {
+                                    break;
+                                }
                             }
-                        })
-                        .setPositiveButton("Manually", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                QtyEditFragment.show(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType == PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
-                                    @Override
-                                    public void onConfirm(BigDecimal value) {
-                                        UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
-                                        return;
-                                    }
-                                });
-                            }
-                        });
-                final AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (true) {
-                            if (scaleService.getStatus() == 0) {
-                                break;
-                            }
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    BigDecimal newQty = new BigDecimal(scaleService.readScale());
+                                    UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
+                                    alertDialog.dismiss();
+                                }
+                            });
                         }
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                BigDecimal newQty = new BigDecimal(scaleService.readScale());
-                                UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
-                                alertDialog.dismiss();
-                            }
-                        });
-                    }
-                }).start();
+                    }).start();
+                }
             }
         }
 

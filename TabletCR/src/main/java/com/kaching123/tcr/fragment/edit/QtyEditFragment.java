@@ -4,6 +4,8 @@ import android.support.v4.app.FragmentActivity;
 import android.text.InputFilter;
 
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.QuantityFormatInputFilter;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -24,6 +26,9 @@ public class QtyEditFragment extends DecimalEditFragment{
 
     private OnEditQtyListener onEditQtyListener;
 
+    @FragmentArg
+    protected boolean isEnable;
+
     @Override
     protected int getDialogContentLayout() {
         return R.layout.edit_qty_dialog_fragment;
@@ -38,6 +43,9 @@ public class QtyEditFragment extends DecimalEditFragment{
     protected void attachViews() {
         super.attachViews();
         editText.setFilters(new InputFilter[]{new QuantityFormatInputFilter()});
+        getNegativeButton().setEnabled(isEnable);
+        if(!isEnable)
+            getNegativeButton().setText("");
     }
 
     @Override
@@ -66,7 +74,10 @@ public class QtyEditFragment extends DecimalEditFragment{
     }
 
     public static void show(FragmentActivity activity, String saleItemGuid, BigDecimal qty, boolean isInteger, OnEditQtyListener onEditQtyListener) {
-        DialogUtil.show(activity, DIALOG_NAME, QtyEditFragment_.builder().saleItemGuid(saleItemGuid).isInteger(isInteger).decimalValue(qty).build()).setOnEditQtyListener(onEditQtyListener);
+        DialogUtil.show(activity, DIALOG_NAME, QtyEditFragment_.builder().saleItemGuid(saleItemGuid).isInteger(isInteger).decimalValue(qty).isEnable(true).build()).setOnEditQtyListener(onEditQtyListener);
+    }
+    public static void showNotCancelable(FragmentActivity activity, String saleItemGuid, BigDecimal qty, boolean isInteger, OnEditQtyListener onEditQtyListener) {
+        DialogUtil.show(activity, DIALOG_NAME, QtyEditFragment_.builder().saleItemGuid(saleItemGuid).isInteger(isInteger).decimalValue(qty).isEnable(false).build()).setOnEditQtyListener(onEditQtyListener);
     }
 
     public static void hide(FragmentActivity activity) {
