@@ -7,6 +7,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.PrinterCommand;
@@ -38,9 +39,6 @@ import com.kaching123.tcr.processor.PrepaidProcessor;
 import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
 import com.kaching123.tcr.websvc.api.prepaid.Receipt;
 import com.kaching123.tcr.websvc.api.prepaid.WS_Enums;
-import com.telly.groundy.annotations.OnFailure;
-import com.telly.groundy.annotations.OnSuccess;
-import com.telly.groundy.annotations.Param;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
@@ -51,6 +49,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 
 
 /**
@@ -74,6 +73,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     @ViewById
     protected TextView change;
+
+    private IVULotoDataResponse response;
 
     @Override
     protected BigDecimal calcTotal() {
@@ -147,7 +148,23 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
                 BigDecimal mSubTotal = totalSubtotal.subtract(totalDiscount).add(transactionFee).add(totalCashBack);
                 BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
                 BigDecimal mTotal = totalOrderPrice.add(tipsAmount).add(transactionFee).add(totalCashBack);
-                GetIVULotoDataCommand.start(getActivity(), this, getIVULotoDataRequest(mSubTotal, mTotal));
+                GetIVULotoDataRequest request = getIVULotoDataRequest(mSubTotal, mTotal);
+                GetIVULotoDataCommand.start(getActivity(), request, new GetIVULotoDataCommand.IVULotoDataCallBack() {
+                    @Override
+                    protected void onSuccess(IVULotoDataResponse result) {
+                        Logger.d("PayPrintAndFinishFragmentDialog getTicketNumberSuccess");
+                        response = result;
+                        WaitDialogFragment.hide(getActivity());
+                    }
+
+                    @Override
+                    protected void onFailure() {
+                        Logger.d("PayPrintAndFinishFragmentDialog getLotteryNumberFail");
+                        response = new IVULotoDataResponse();
+                        WaitDialogFragment.hide(getActivity());
+                        Toast.makeText(getActivity(), getString(R.string.lottery_fail_message), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
     }
@@ -167,7 +184,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         receipt.stateTax = getTax().doubleValue();
         receipt.subTotal = mSubTotal.doubleValue();
         receipt.total = mTotal.doubleValue();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date date = new Date();
         receipt.txDate = String.valueOf(dateFormat.format(date));
         receipt.txType = WS_Enums.SoapProtocolVersion.TransactionType.Sale;
@@ -185,17 +203,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         return ((TcrApplication) getActivity().getApplicationContext()).getTaxVat();
     }
 
-    @OnSuccess(GetIVULotoDataCommand.class)
-    public void getTicketNumberSuccess(@Param(GetIVULotoDataCommand.ARG_RESULT) IVULotoDataResponse response) {
-        IVULotoDataResponse res = response;
-        WaitDialogFragment.hide(getActivity());
-    }
-
-    @OnFailure(GetIVULotoDataCommand.class)
-    public void getLotteryNumberFail() {
-        WaitDialogFragment.hide(getActivity());
-        Toast.makeText(getActivity(), getString(R.string.lottery_fail_message), Toast.LENGTH_LONG).show();
-    }
 
     @Override
     protected int getDialogContentLayout() {
@@ -210,7 +217,12 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, printOrderCallback);
+        PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, printOrderCallback, response, isIVULotoActivated());
+    }
+
+    protected boolean isIVULotoActivated()
+    {
+        return TcrApplication.get().getIVULotoActivated();
     }
 
     protected void sendDigitalOrder() {

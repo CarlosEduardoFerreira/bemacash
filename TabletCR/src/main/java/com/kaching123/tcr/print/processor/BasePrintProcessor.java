@@ -19,6 +19,7 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.util.PhoneUtil;
+import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     protected String taxTotal;
     protected ArrayList<PaymentTransactionModel> transactions;
     protected String amountTotal;
+    protected IVULotoDataResponse response;
+    protected boolean IVULotoActivated;
 
     private final IAppCommandContext appCommandContext;
 
@@ -96,6 +99,11 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         }
         if (!TextUtils.isEmpty(shopInfo.thanksPhrase)) {
             printerWrapper.footer(shopInfo.thanksPhrase);
+        }
+
+        if(IVULotoActivated)
+        {
+            printerWrapper.lotoTitle();
         }
     }
 

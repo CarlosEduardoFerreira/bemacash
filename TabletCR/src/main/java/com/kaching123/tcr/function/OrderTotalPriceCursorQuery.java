@@ -55,7 +55,7 @@ public final class OrderTotalPriceCursorQuery {
         List<PaymentTransactionModel> payments = ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
         BigDecimal tips = loadTips(context, orderGuid);
         BigDecimal transactionFee = getTransactionFee(orderGuid, context);
-        calculateForLottery(context, orderGuid, null, items, tips, lotteryHandler, transactionFee, payments);
+        calculateForLottery(context, null, items, tips, lotteryHandler, transactionFee, payments);
     }
 
 //    private static BigDecimal getCashBackAmount(String orderGuid, Context context) {
@@ -109,7 +109,7 @@ public final class OrderTotalPriceCursorQuery {
         OrderTotalPriceCalculator.calculate(items, tips, handler2);
     }
 
-    private static void calculateForLottery(Context context, String orderGuid, String childOrderGuid,
+    private static void calculateForLottery(Context context, String childOrderGuid,
                                             List<SaleOrderItemViewModel> items, BigDecimal tips, LotteryHandler handler, BigDecimal transactionFee, List<PaymentTransactionModel> payments) {
         BigDecimal totalSubtotal = BigDecimal.ZERO;
         BigDecimal totalDiscount = BigDecimal.ZERO;

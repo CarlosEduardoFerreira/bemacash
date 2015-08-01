@@ -12,6 +12,7 @@ public interface IHeaderFooterPrinter extends IPrinter {
     public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorName);
     public void footer(String label);
     public void footer(String label, boolean bold);
+    public void lotoTitle();
 
 
     public void subTitle(String string);

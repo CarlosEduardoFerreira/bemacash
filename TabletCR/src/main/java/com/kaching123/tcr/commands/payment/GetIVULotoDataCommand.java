@@ -7,6 +7,9 @@ import com.kaching123.tcr.websvc.api.prepaid.Broker;
 import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnFailure;
+import com.telly.groundy.annotations.OnSuccess;
+import com.telly.groundy.annotations.Param;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -20,7 +23,7 @@ public class GetIVULotoDataCommand extends SOAPWebCommand<GetIVULotoDataRequest>
 
     protected IVULotoDataResponse response;
 
-    public final static TaskHandler start(Context context, Object callback, GetIVULotoDataRequest request) {
+    public final static TaskHandler start(Context context, GetIVULotoDataRequest request, IVULotoDataCallBack callback) {
         return create(GetIVULotoDataCommand.class)
                 .callback(callback)
                 .arg(ARG_REQUEST, request)
@@ -53,5 +56,21 @@ public class GetIVULotoDataCommand extends SOAPWebCommand<GetIVULotoDataRequest>
     @Override
     protected GetIVULotoDataRequest getRequest() {
         return (GetIVULotoDataRequest) getArgs().getSerializable(ARG_REQUEST);
+    }
+
+    public static abstract class IVULotoDataCallBack {
+        @OnSuccess(GetIVULotoDataCommand.class)
+        public void handleSuccess(@Param(GetIVULotoDataCommand.ARG_RESULT) IVULotoDataResponse result) {
+            onSuccess(result);
+        }
+
+        @OnFailure(GetIVULotoDataCommand.class)
+        public void handleFailure() {
+            onFailure();
+        }
+
+        protected abstract void onSuccess(IVULotoDataResponse result);
+
+        protected abstract void onFailure();
     }
 }

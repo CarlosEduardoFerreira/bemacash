@@ -639,6 +639,22 @@ public class TcrApplication extends Application {
         return shopPref.SunpassActivated().get();
     }
 
+    public void setDirecTvPRActivated(boolean activated) {
+        shopPref.DirecTvPRActivated().put(activated);
+    }
+
+    public boolean getDirecTvPRActivated() {
+        return shopPref.DirecTvPRActivated().get();
+    }
+
+    public void setIVULotoActivated(boolean activated) {
+        shopPref.IVULotoActivated().put(activated);
+    }
+
+    public boolean getIVULotoActivated() {
+        return shopPref.IVULotoActivated().get();
+    }
+
     public void setBillPaymentActivated(boolean activated) {
         shopPref.BillPaymentActivated().put(activated);
     }
