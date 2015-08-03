@@ -1579,4 +1579,6 @@
     <string name="order_searching_message_upload_started">Uploading data...</string>
 
     <string name="server_search_checkbox">Force search on back office</string>
+    <string name="ivu_loto_receipt_foot_title">------------- PIDE TU RECIBO -----------</string>
+    <string name="ivu_loto_receipt_foot_instruction">----- CON EL IVULOTO TODOS GANAMOS -----</string>
 </resources>

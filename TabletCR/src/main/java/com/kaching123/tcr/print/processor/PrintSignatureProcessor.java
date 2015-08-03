@@ -42,7 +42,7 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
-        printFooter(app, printerWrapper);
+        printFooter(context, app, printerWrapper);
     }
 
     protected void printBody(Context context, TcrApplication app, ISignaturePrinter printerWrapper) {
@@ -134,7 +134,7 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
     }
 
     @Override
-    protected void printFooter(TcrApplication app, ISignaturePrinter printerWrapper) {
+    protected void printFooter(Context context, TcrApplication app, ISignaturePrinter printerWrapper) {
         ShopInfo shopInfo = app.getShopInfo();
         if (!TextUtils.isEmpty(shopInfo.footerMsg1)) {
             printerWrapper.subTitle(shopInfo.footerMsg1);

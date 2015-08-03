@@ -155,7 +155,7 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
     }
 
     @Override
-    public void lotoTitle() {
+    public void lotoTitle(String label) {
 
     }
 

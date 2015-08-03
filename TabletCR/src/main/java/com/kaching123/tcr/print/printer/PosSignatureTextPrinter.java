@@ -100,7 +100,7 @@ public class PosSignatureTextPrinter extends BasePosTextPrinter implements ISign
     }
 
     @Override
-    public void lotoTitle() {
+    public void lotoTitle(String label) {
 
     }
 

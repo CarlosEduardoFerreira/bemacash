@@ -207,8 +207,8 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     }
 
     @Override
-    public void lotoTitle() {
-//        stringBuilder.append(_styled("div", POWER_BY_STYLE)).append(label).append("</div>");
+    public void lotoTitle(String label) {
+        stringBuilder.append(_styled("div", POWER_BY_STYLE)).append(label).append("</div>");
     }
 
     public void powerBy(String label) {

@@ -62,12 +62,12 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
-        printFooter(app, printerWrapper);
+        printFooter(context, app, printerWrapper);
     }
 
     protected abstract void printBody(final Context context, final TcrApplication app, final T printerWrapper);
 
-    protected void printFooter(TcrApplication app, T printerWrapper) {
+    protected void printFooter(Context context, TcrApplication app, T printerWrapper) {
 
         if (title == null || title.equalsIgnoreCase("ARG_ORDER_TITLE"))
             printerWrapper.barcode(orderNumber);
@@ -103,7 +103,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 
         if(IVULotoActivated)
         {
-            printerWrapper.lotoTitle();
+            printerWrapper.lotoTitle(context.getString(R.string.wait_dialog_title));
         }
     }
 

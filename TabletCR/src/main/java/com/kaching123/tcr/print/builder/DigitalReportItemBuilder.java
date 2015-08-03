@@ -442,7 +442,7 @@ public class DigitalReportItemBuilder extends BaseDigitalBuilder implements IRep
     }
 
     @Override
-    public void lotoTitle() {
+    public void lotoTitle(String label) {
 
     }
 

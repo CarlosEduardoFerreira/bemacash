@@ -202,7 +202,7 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
     }
 
     @Override
-    public void lotoTitle() {
+    public void lotoTitle(String label) {
 
     }
 
