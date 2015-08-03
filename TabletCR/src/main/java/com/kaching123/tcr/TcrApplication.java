@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.provider.Settings.Secure;
+import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -72,7 +73,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 @EApplication
-public class TcrApplication extends Application {
+public class TcrApplication extends MultiDexApplication {
 
     public static final int BARCODE_MIN_LEN = 1;
     public static final int BARCODE_MAX_LEN = 13;
