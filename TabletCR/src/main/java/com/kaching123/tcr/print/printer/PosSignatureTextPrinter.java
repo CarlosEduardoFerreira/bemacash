@@ -105,6 +105,11 @@ public class PosSignatureTextPrinter extends BasePosTextPrinter implements ISign
     }
 
     @Override
+    public void lotoBody(String label) {
+
+    }
+
+    @Override
     public void subTitle(String label) {
         add(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, label)));
     }

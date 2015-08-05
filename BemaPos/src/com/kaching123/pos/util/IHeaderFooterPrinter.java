@@ -13,6 +13,7 @@ public interface IHeaderFooterPrinter extends IPrinter {
     public void footer(String label);
     public void footer(String label, boolean bold);
     public void lotoTitle(String label);
+    public void lotoBody(String label);
 
 
     public void subTitle(String string);

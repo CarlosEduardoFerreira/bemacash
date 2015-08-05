@@ -101,9 +101,20 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
             printerWrapper.footer(shopInfo.thanksPhrase);
         }
 
-        if(IVULotoActivated)
-        {
-            printerWrapper.lotoTitle(context.getString(R.string.wait_dialog_title));
+        if (!IVULotoActivated && response != null) {
+            printerWrapper.lotoTitle(context.getString(R.string.ivu_loto_receipt_foot_title));
+
+            printerWrapper.emptyLine();
+
+            printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_subtitle) + " " + response.iVULotoData.ivuLoto);
+            String[] dateStr = response.iVULotoData.drawDate.split("T");
+            String date = dateStr[0] == null ? response.iVULotoData.ivuLoto : dateStr[0];
+            printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_data) + " " + date);
+            printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_control_number) + " " + response.iVULotoData.controlNumber);
+
+            printerWrapper.emptyLine();
+
+            printerWrapper.lotoTitle(context.getString(R.string.ivu_loto_receipt_foot_instruction));
         }
     }
 

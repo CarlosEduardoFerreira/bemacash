@@ -76,6 +76,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     private IVULotoDataResponse response;
 
+    private final String IVU_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private final String TIME_ZONE_GMT = "GMT";
     @Override
     protected BigDecimal calcTotal() {
         BigDecimal totalValue = BigDecimal.ZERO;
@@ -184,8 +186,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         receipt.stateTax = getTax().doubleValue();
         receipt.subTotal = mSubTotal.doubleValue();
         receipt.total = mTotal.doubleValue();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        DateFormat dateFormat = new SimpleDateFormat(IVU_TIME_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_GMT));
         Date date = new Date();
         receipt.txDate = String.valueOf(dateFormat.format(date));
         receipt.txType = WS_Enums.SoapProtocolVersion.TransactionType.Sale;
@@ -220,13 +222,12 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, printOrderCallback, response, isIVULotoActivated());
     }
 
-    protected boolean isIVULotoActivated()
-    {
+    protected boolean isIVULotoActivated() {
         return TcrApplication.get().getIVULotoActivated();
     }
 
     protected void sendDigitalOrder() {
-        PayChooseCustomerDialog.show(getActivity(), orderGuid, transactions, new ChooseCustomerBaseDialog.emailSenderListener() {
+        PayChooseCustomerDialog.show(getActivity(), orderGuid, transactions, response, isIVULotoActivated(), new ChooseCustomerBaseDialog.emailSenderListener() {
             @Override
             public void onComplete() {
                 listener.onConfirmed();
