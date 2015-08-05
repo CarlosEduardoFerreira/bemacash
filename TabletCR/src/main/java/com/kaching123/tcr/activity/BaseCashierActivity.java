@@ -1992,7 +1992,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         @Override
                         public void run() {
                             while (true) {
-                                if (scaleService.getStatus() == 0 || !alertDialog.isShowing()) {
+                                if ((scaleService.getStatus() == 0 && !new BigDecimal(scaleService.readScale()).equals(BigDecimal.ZERO)) || !alertDialog.isShowing()) {
                                     break;
                                 }
                             }
