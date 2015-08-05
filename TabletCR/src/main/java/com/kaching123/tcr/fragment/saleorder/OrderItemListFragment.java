@@ -365,6 +365,19 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(position), OrderItemListFragment.this);
     }
 
+    public void doRemoceClickLine(String guid) {
+        getListView().closeOpenedItems();
+
+        if (adapter.getCount() == 1) {
+            if (itemsListHandler != null) {
+                itemsListHandler.onRemoveLastItem();
+            }
+            return;
+        }
+
+        RemoveSaleOrderItemCommand.start(getActivity(), guid, OrderItemListFragment.this);
+    }
+
     private void highlightedColumn(String saleItemGuid, Type type) {
         adapter.highlightedColumn(saleItemGuid, type);
         getView().postDelayed(new Runnable() {

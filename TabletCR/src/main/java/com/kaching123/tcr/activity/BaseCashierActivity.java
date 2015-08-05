@@ -1963,13 +1963,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                             BaseCashierActivity.this);
                     alertDialogBuilder.setTitle("Scale Warning");
+                    String header = scaleService.getStatus() < 0 ? "Scale is not present":"Scale cannot get weight of " + item.description;
                     alertDialogBuilder
-                            .setMessage("Scale cannot get weight of " + item.description + ", please cancel or type the quantity manually.")
+                            .setMessage(header + ", do you want to enter the quantity manually?")
                             .setCancelable(false)
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    if (item.qty.equals(BigDecimal.ZERO))
-                                        RemoveSaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), orderItemListFragment);
+                                    if (item.qty.equals(BigDecimal.ZERO)) {
+                                        orderItemListFragment.doRemoceClickLine(item.getGuid());
+                                    }
                                     dialog.cancel();
                                     return;
                                 }
@@ -1980,32 +1982,36 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                         @Override
                                         public void onConfirm(BigDecimal value) {
                                             UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
-                                            return;
                                         }
                                     });
+                                    return;
                                 }
                             });
                     final AlertDialog alertDialog = alertDialogBuilder.create();
-                    alertDialog.show();
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             while (true) {
-                                if (scaleService.getStatus() == 0) {
+                                if (scaleService.getStatus() == 0 || !alertDialog.isShowing()) {
                                     break;
                                 }
                             }
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    BigDecimal newQty = new BigDecimal(scaleService.readScale());
-                                    UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
-                                    alertDialog.dismiss();
-                                }
-                            });
+                            if(alertDialog.isShowing()) {
+                                runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        BigDecimal newQty = new BigDecimal(scaleService.readScale());
+                                        UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
+                                        alertDialog.dismiss();
+                                        return;
+                                    }
+                                });
+                            }
                         }
                     }).start();
+                    alertDialog.show();
                 }
             }
+            return;
         }
 
         @Override
