@@ -1,7 +1,10 @@
 package com.kaching123.tcr.fragment.edit;
 
+import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputFilter;
+import android.view.View;
+import android.widget.Button;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
@@ -9,6 +12,7 @@ import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.QuantityFormatInputFilter;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
+import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
 
 import java.math.BigDecimal;
 
@@ -28,6 +32,10 @@ public class QtyEditFragment extends DecimalEditFragment{
 
     @FragmentArg
     protected boolean isEnable;
+    private OrderItemListFragment orderItemListFragment;
+
+    public QtyEditFragment() {
+    }
 
     @Override
     protected int getDialogContentLayout() {
@@ -43,9 +51,15 @@ public class QtyEditFragment extends DecimalEditFragment{
     protected void attachViews() {
         super.attachViews();
         editText.setFilters(new InputFilter[]{new QuantityFormatInputFilter()});
-        getNegativeButton().setEnabled(isEnable);
+//        getNegativeButton().setEnabled(isEnable);
         if(!isEnable)
-            getNegativeButton().setText("");
+            getNegativeButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    orderItemListFragment.doRemoceClickLine(saleItemGuid);
+                    dismiss();
+                }
+            });
     }
 
     @Override
@@ -74,10 +88,13 @@ public class QtyEditFragment extends DecimalEditFragment{
     }
 
     public static void show(FragmentActivity activity, String saleItemGuid, BigDecimal qty, boolean isInteger, OnEditQtyListener onEditQtyListener) {
-        DialogUtil.show(activity, DIALOG_NAME, QtyEditFragment_.builder().saleItemGuid(saleItemGuid).isInteger(isInteger).decimalValue(qty).isEnable(true).build()).setOnEditQtyListener(onEditQtyListener);
+        QtyEditFragment fragment = QtyEditFragment_.builder().saleItemGuid(saleItemGuid).isInteger(isInteger).decimalValue(qty).isEnable(true).build();
+        DialogUtil.show(activity, DIALOG_NAME, fragment).setOnEditQtyListener(onEditQtyListener);
     }
-    public static void showNotCancelable(FragmentActivity activity, String saleItemGuid, BigDecimal qty, boolean isInteger, OnEditQtyListener onEditQtyListener) {
-        DialogUtil.show(activity, DIALOG_NAME, QtyEditFragment_.builder().saleItemGuid(saleItemGuid).isInteger(isInteger).decimalValue(qty).isEnable(false).build()).setOnEditQtyListener(onEditQtyListener);
+    public static void showCancelable(FragmentActivity activity, String saleItemGuid, BigDecimal qty, boolean isInteger, OnEditQtyListener onEditQtyListener, OrderItemListFragment orderItemListFragment) {
+        QtyEditFragment fragment = QtyEditFragment_.builder().saleItemGuid(saleItemGuid).isInteger(isInteger).decimalValue(qty).isEnable(false).build();
+        fragment.orderItemListFragment = orderItemListFragment;
+        DialogUtil.show(activity, DIALOG_NAME, fragment).setOnEditQtyListener(onEditQtyListener);
     }
 
     public static void hide(FragmentActivity activity) {

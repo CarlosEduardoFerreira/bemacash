@@ -1978,12 +1978,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             })
                             .setPositiveButton("Manually", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    QtyEditFragment.showNotCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType == PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
+                                    QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType == PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
                                         @Override
                                         public void onConfirm(BigDecimal value) {
                                             UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
                                         }
-                                    });
+                                    },orderItemListFragment);
                                     return;
                                 }
                             });
