@@ -54,10 +54,16 @@ public class ScaleService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(scale != null){
+            scale.close();
+        }
+        scale = null;
     }
 
     public String readScale() {
-        return scale.readScale();
+        if (scale != null)
+            return scale.readScale();
+        return "0.00";
     }
 
     public int getStatus(){

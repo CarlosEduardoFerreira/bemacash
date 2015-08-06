@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.kaching123.tcr"
-          android:versionCode="1"
+          android:versionCode="2"
           android:versionName="1.00">
 
     <uses-sdk

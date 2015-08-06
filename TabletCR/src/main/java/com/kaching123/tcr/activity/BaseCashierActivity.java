@@ -1991,17 +1991,20 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            while (true) {
-                                if ((scaleService.getStatus() == 0 && !new BigDecimal(scaleService.readScale()).equals(BigDecimal.ZERO)) || !alertDialog.isShowing()) {
+                            BigDecimal newQty = null;
+                            while (scaleService != null) {
+                                newQty = new BigDecimal(scaleService.readScale());
+                                if (newQty.compareTo(BigDecimal.ZERO) == 1 || !alertDialog.isShowing()) {
                                     break;
                                 }
                             }
                             if(alertDialog.isShowing()) {
+                                final BigDecimal finalNewQty = newQty;
                                 runOnUiThread(new Runnable() {
                                     public void run() {
-                                        BigDecimal newQty = new BigDecimal(scaleService.readScale());
-                                        UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
+                                        UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(finalNewQty), updateQtySaleOrderItemCallback);
                                         alertDialog.dismiss();
+//                                        Toast.makeText(BaseCashierActivity.this,"New qty = " + finalNewQty.toString(),Toast.LENGTH_SHORT).show();
                                         return;
                                     }
                                 });
