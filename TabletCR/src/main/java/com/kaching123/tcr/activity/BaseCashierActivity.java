@@ -27,6 +27,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -239,6 +240,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private Calendar calendar = Calendar.getInstance();
 
     private static final Handler handler = new Handler();
+    private long lastClickTime;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -442,7 +444,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onCreate(savedInstanceState);
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         alarmRingtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
-
+        lastClickTime = System.currentTimeMillis();
         if (!isSPMSRSet()) {
             Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
             if (frm == null) {
@@ -1245,6 +1247,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private void addItem(ItemExModel model, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, boolean checkDrawerState, Unit unit) {
         if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit))
             return;
+        if(model.priceType == PriceType.UNIT_PRICE && scaleServiceBound){
+            if(System.currentTimeMillis() - lastClickTime < 1000) {
+                lastClickTime = System.currentTimeMillis();
+                return;
+            }
+            lastClickTime = System.currentTimeMillis();
+        }
 
         orderItemListFragment.setNeed2ScrollList(true);
         SaleOrderItemModel itemModel = new SaleOrderItemModel(
