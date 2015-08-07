@@ -558,19 +558,34 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         }
     }
 
+    protected boolean saveItem() {
+        if (validateForm()) {
+            collectDataToModel(model);
+            callCommand(model);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+
     @Click
     protected void modifiersAddClicked() {
-        addModifierClicked(ModifierType.MODIFIER);
+        if(saveItem())
+            addModifierClicked(ModifierType.MODIFIER);
     }
 
     @Click
     protected void addonsAddClicked() {
-        addModifierClicked(ModifierType.ADDON);
+        if(saveItem())
+            addModifierClicked(ModifierType.ADDON);
     }
 
     @Click
     protected void optionsAddClicked() {
-        addModifierClicked(ModifierType.OPTIONAL);
+        if(saveItem())
+            addModifierClicked(ModifierType.OPTIONAL);
     }
 
     @Click
