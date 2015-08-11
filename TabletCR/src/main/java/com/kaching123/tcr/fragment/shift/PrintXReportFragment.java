@@ -7,10 +7,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.activity.XReportActivity;
@@ -27,6 +23,11 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 /**
  * Created by pkabakov on 06.12.13.
@@ -158,21 +159,25 @@ public class PrintXReportFragment extends StyledDialogFragment {
             return;
 
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_print_zreport));
-        PrintXReportCommand.start(getActivity(), shiftGuid, xReportType, ignorePaperEnd, searchByMac, new PrintXReportCallback());
+        PrintXReportCommand.start(getActivity(), shiftGuid, xReportType, ignorePaperEnd, searchByMac, new PrintXReportCallback(), getXreportSaleEnabled());
     }
 
     private void sendDigital() {
         if (getActivity() == null)
             return;
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_print_zreport));
-        SendDigitalXReportCommand.start(getActivity(), shiftGuid, xReportType, new SendDigitalXReportCallback());
+        SendDigitalXReportCommand.start(getActivity(), shiftGuid, xReportType, getXreportSaleEnabled(), new SendDigitalXReportCallback());
     }
 
     private void digitalPrint() {
         if (getActivity() == null)
             return;
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_print_zreport));
-        PrintDigitalXReportCommand.start(getActivity(), shiftGuid, xReportType, new PrintDigitalXReportCallback());
+        PrintDigitalXReportCommand.start(getActivity(), shiftGuid, xReportType, new PrintDigitalXReportCallback(), getXreportSaleEnabled());
+    }
+
+    private boolean getXreportSaleEnabled() {
+        return getApp().getShopPref().enableEreportDepartSale().get();
     }
 
     private void showOnScreen(Uri attachment) {

@@ -905,6 +905,7 @@
     <string name="xreport_discounts">Discounts:</string>
     <string name="xreport_returns">Returns:</string>
     <string name="xreport_net_sales">Net Sales:</string>
+    <string name="xreport_departments_sales">Departments:</string>
     <string name="xreport_gratuity">Gratuity:</string>
     <string name="xreport_tax">Tax:</string>
     <string name="xreport_transaction_fee">Transaction Fee:</string>

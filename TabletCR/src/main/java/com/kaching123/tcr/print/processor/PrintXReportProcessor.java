@@ -9,6 +9,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.XReportInfo;
+import com.kaching123.tcr.model.departsSale;
 import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
@@ -16,6 +17,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
 import static com.kaching123.tcr.print.processor.BasePrintProcessor.getCityStateZip;
 
@@ -26,13 +29,15 @@ public class PrintXReportProcessor {
 
     private XReportInfo report;
     private ReportType xReportType;
+    private boolean enableEreportDepartSale;
 
     private final IAppCommandContext appCommandContext;
 
-    public PrintXReportProcessor(XReportInfo report, ReportType xReportType, IAppCommandContext appCommandContext) {
+    public PrintXReportProcessor(XReportInfo report, ReportType xReportType, IAppCommandContext appCommandContext, boolean enableEreportDepartSale) {
         this.report = report;
         this.xReportType = xReportType;
         this.appCommandContext = appCommandContext;
+        this.enableEreportDepartSale = enableEreportDepartSale;
     }
 
     public void print(Context context, TcrApplication app, IXReportPrinter printer) {
@@ -124,6 +129,17 @@ public class PrintXReportProcessor {
         printer.pair(context.getString(R.string.xreport_gross_margin), report.grossMargin);
         printer.percent(report.grossMarginPercent);
         printer.emptyLine();
+
+        if (!enableEreportDepartSale) {
+            printer.subtitle(context.getString(R.string.xreport_departments_sales), true);
+            Iterator iter = report.departsSales.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry item = (Map.Entry) iter.next();
+                departsSale temp = (departsSale) item.getValue();
+                printer.pair(temp.departTitle, temp.sales);
+            }
+            printer.emptyLine();
+        }
 
         printer.subtitle(context.getString(R.string.xreport_tender_summary), true);
         printer.pair(context.getString(R.string.xreport_credit_card), report.tenderCreditCard);

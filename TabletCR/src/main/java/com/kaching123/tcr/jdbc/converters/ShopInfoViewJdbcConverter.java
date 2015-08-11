@@ -92,6 +92,8 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String PRINT_DROP_OR_PAYOUT = "PRINT_DROP_OR_PAYOUT";
 
+    public static final String ENABLE_XREPORT_DEPART_SALE = "ENABLE_XREPORT_DEPART_SALE";
+
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
                 rs.getLong(ID),
@@ -147,7 +149,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
                 rs.getLong(MAX_ITEMS_COUNT),
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
-                rs.getLong(UPDATE_CHECK_TIMER)
+                rs.getLong(UPDATE_CHECK_TIMER),
+                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE)
         );
     }
 
@@ -207,7 +210,8 @@ public class ShopInfoViewJdbcConverter {
                 //TODO delete
                 rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE),
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
-                rs.getLong(UPDATE_CHECK_TIMER));
+                rs.getLong(UPDATE_CHECK_TIMER),
+                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE));
     }
 
     public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException  {
@@ -291,6 +295,8 @@ public class ShopInfoViewJdbcConverter {
 
         public final boolean printDropOrPayout;
 
+        public final boolean enableEreportDepartSale;
+
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
@@ -340,7 +346,8 @@ public class ShopInfoViewJdbcConverter {
                         boolean printerTwoCopiesReceipt,
                         long maxItemsCount,
                         boolean printDropOrPayout,
-                        long updateCheckTimer) {
+                        long updateCheckTimer,
+                        boolean enableEreportDepartSale) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -404,6 +411,8 @@ public class ShopInfoViewJdbcConverter {
 
             this.printDropOrPayout = printDropOrPayout;
             this.updateCheckTimer = updateCheckTimer;
+
+            this.enableEreportDepartSale = enableEreportDepartSale;
         }
 
     }

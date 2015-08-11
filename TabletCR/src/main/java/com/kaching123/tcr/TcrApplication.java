@@ -224,7 +224,8 @@ public class TcrApplication extends Application {
                     shopPref.printerTwoCopiesReceipt().getOr(false),
                     shopPref.maxItemsCount().getOr(0),
                     shopPref.printDropOrPayout().getOr(true),
-                    shopPref.updateCheckTimer().getOr(0));
+                    shopPref.updateCheckTimer().getOr(0),
+                    shopPref.enableEreportDepartSale().getOr(false));
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -550,6 +551,7 @@ public class TcrApplication extends Application {
                 .maxItemsCount().put(info.maxItemsCount)
                 .printDropOrPayout().put(info.printDropOrPayout)
                 .updateCheckTimer().put(info.updateCheckTimer)
+                .enableEreportDepartSale().put(info.enableEreportDepartSale)
                 .apply();
 
         setUsers();

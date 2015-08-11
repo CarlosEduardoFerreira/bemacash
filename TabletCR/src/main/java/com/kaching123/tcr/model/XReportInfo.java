@@ -36,6 +36,7 @@ public class XReportInfo {
     public BigDecimal safeDrops = BigDecimal.ZERO;
     public BigDecimal payOuts = BigDecimal.ZERO;
     public BigDecimal cashBack = BigDecimal.ZERO;
+    public HashMap<String, departsSale> departsSales = new HashMap<String, departsSale>();
     /*public BigDecimal ccAmex;
     public BigDecimal ccVisa;
     public BigDecimal ccMasterCard;*/
@@ -53,7 +54,8 @@ public class XReportInfo {
                        BigDecimal cashSale,
                        BigDecimal safeDrops,
                        BigDecimal payOuts,
-                       BigDecimal cashBack) {
+                       BigDecimal cashBack,
+                       HashMap<String, departsSale> departsSales) {
         this.begin = begin;
         this.end = end;
         this.grossSales = grossSales;
@@ -82,5 +84,6 @@ public class XReportInfo {
         this.safeDrops = safeDrops;
         this.payOuts = payOuts;
         this.cashBack = cashBack;
+        this.departsSales = departsSales;
     }
 }

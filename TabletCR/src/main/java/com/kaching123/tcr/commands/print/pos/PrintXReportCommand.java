@@ -18,6 +18,7 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
     private static final String ARG_SHIFT_GUID = "ARG_SHIFT_GUID";
 
     private static final String ARG_XREPORT_TYPE = "ARG_XREPORT_TYPE";
+    private static final String ARG_XREPORT_ENABLE = "ARG_XREPORT_ENABLE";
 
     @Override
     protected IXReportPrinter createTextPrinter() {
@@ -37,16 +38,17 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
         } else {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
-        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext());
+        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE));
         processor.print(getContext(), getApp(), printer);
     }
 
-    public static void start(Context context, String shiftGuid, ReportType xReportType, boolean ignorePaperEnd, boolean searchByMac, BasePrintCallback callback) {
+    public static void start(Context context, String shiftGuid, ReportType xReportType, boolean ignorePaperEnd, boolean searchByMac, BasePrintCallback callback, boolean enableEreportDepartSale) {
         create(PrintXReportCommand.class)
                 .arg(ARG_SHIFT_GUID, shiftGuid)
                 .arg(ARG_SKIP_PAPER_WARNING, ignorePaperEnd)
                 .arg(ARG_SEARCH_BY_MAC, searchByMac)
                 .arg(ARG_XREPORT_TYPE, xReportType)
+                .arg(ARG_XREPORT_ENABLE,enableEreportDepartSale)
                 .callback(callback).queueUsing(context);
     }
 }
