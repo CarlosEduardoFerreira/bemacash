@@ -130,7 +130,7 @@ public class PrintXReportProcessor {
         printer.percent(report.grossMarginPercent);
         printer.emptyLine();
 
-        if (!enableEreportDepartSale) {
+        if (enableEreportDepartSale) {
             printer.subtitle(context.getString(R.string.xreport_departments_sales), true);
             Iterator iter = report.departsSales.entrySet().iterator();
             while (iter.hasNext()) {
