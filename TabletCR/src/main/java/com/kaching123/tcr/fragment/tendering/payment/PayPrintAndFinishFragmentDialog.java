@@ -78,6 +78,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     private final String IVU_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private final String TIME_ZONE_GMT = "GMT";
+
     @Override
     protected BigDecimal calcTotal() {
         BigDecimal totalValue = BigDecimal.ZERO;
@@ -138,10 +139,11 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             change.setText(getString(R.string.blackstone_pay_charge_finish, UiHelper.priceFormat(changeAmount)));
         }
 
-        if (kitchenPrintStatus != KitchenPrintStatus.PRINTED) {
-            printItemsToKitchen(null, false, false, false);
-        }
+        createSaleIVULoto();
 
+    }
+
+    private void createSaleIVULoto() {
         WaitDialogFragment.show(getActivity(), getString(R.string.lottery_wait_dialog_title));
 
         OrderTotalPriceCursorQuery.loadSync(getActivity(), orderGuid, new OrderTotalPriceCursorQuery.LotteryHandler() {
@@ -157,6 +159,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
                         Logger.d("PayPrintAndFinishFragmentDialog getTicketNumberSuccess");
                         response = result;
                         WaitDialogFragment.hide(getActivity());
+                        if (kitchenPrintStatus != KitchenPrintStatus.PRINTED) {
+                            printItemsToKitchen(null, false, false, false);
+                        }
                     }
 
                     @Override
@@ -165,6 +170,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
                         response = new IVULotoDataResponse();
                         WaitDialogFragment.hide(getActivity());
                         Toast.makeText(getActivity(), getString(R.string.lottery_fail_message), Toast.LENGTH_LONG).show();
+                        if (kitchenPrintStatus != KitchenPrintStatus.PRINTED) {
+                            printItemsToKitchen(null, false, false, false);
+                        }
                     }
                 });
             }
