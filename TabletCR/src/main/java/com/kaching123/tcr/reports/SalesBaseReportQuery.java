@@ -50,6 +50,38 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
         return getItems(context, startTime, endTime, registerId, OrderType.SALE);
     }
 
+    public Collection<T> getItems(Context context, long startTime, String shiftGuid) {
+        return getItems(context, startTime, shiftGuid, OrderType.SALE);
+    }
+
+    public Collection<T> getItems(Context context, long startTime, String shiftGuid, OrderType orderType) {
+
+        Query query = ProviderAction.query(URI_SALE_ITEMS);
+        if (startTime > 0)
+            query.where(SaleOrderTable.CREATE_TIME + " >= ? ", startTime);
+        if (isSale) {
+            query.where("(" + SaleOrderTable.STATUS + " = ? or " + SaleOrderTable.STATUS + " = ?)", OrderStatus.COMPLETED.ordinal(), OrderStatus.RETURN.ordinal());
+        } else {
+            query.where(SaleOrderTable.STATUS + " = ?", OrderStatus.RETURN.ordinal());
+        }
+        if (orderType != null) {
+            query.where(SaleOrderTable.ORDER_TYPE + " = ?", orderType.ordinal());
+        }
+
+        Cursor c = query.perform(context);
+
+        HashMap<String, SaleOrderInfo> ordersInfo = readCursor(c);
+        c.close();
+
+        SalesReportHandler handler2 = createHandler();
+
+        for (Entry<String, SaleOrderInfo> e : ordersInfo.entrySet()) {
+            XReportQuery.calculate(e.getValue(), handler2);
+        }
+
+        return handler2.getResult();
+    }
+
     public Collection<T> getItems(Context context, long startTime, long endTime, long registerId, OrderType orderType) {
 
         Query query = ProviderAction.query(URI_SALE_ITEMS)

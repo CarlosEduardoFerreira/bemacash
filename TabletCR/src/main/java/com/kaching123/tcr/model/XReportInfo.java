@@ -3,6 +3,7 @@ package com.kaching123.tcr.model;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 /**
  * Created by vkompaniets on 21.01.14.
@@ -36,7 +37,8 @@ public class XReportInfo {
     public BigDecimal safeDrops = BigDecimal.ZERO;
     public BigDecimal payOuts = BigDecimal.ZERO;
     public BigDecimal cashBack = BigDecimal.ZERO;
-    public HashMap<String, departsSale> departsSales = new HashMap<String, departsSale>();
+    public TreeMap<String, departsSale> departsSales = new TreeMap<String, departsSale>();
+    public BigDecimal totalValue;
     /*public BigDecimal ccAmex;
     public BigDecimal ccVisa;
     public BigDecimal ccMasterCard;*/
@@ -55,7 +57,8 @@ public class XReportInfo {
                        BigDecimal safeDrops,
                        BigDecimal payOuts,
                        BigDecimal cashBack,
-                       HashMap<String, departsSale> departsSales) {
+                       TreeMap<String, departsSale> departsSales,
+                       BigDecimal totalValue) {
         this.begin = begin;
         this.end = end;
         this.grossSales = grossSales;
@@ -85,5 +88,6 @@ public class XReportInfo {
         this.payOuts = payOuts;
         this.cashBack = cashBack;
         this.departsSales = departsSales;
+        this.totalValue = totalValue;
     }
 }

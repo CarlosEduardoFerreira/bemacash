@@ -131,12 +131,13 @@ public class PrintXReportProcessor {
         printer.emptyLine();
 
         if (enableEreportDepartSale) {
-            printer.subtitle(context.getString(R.string.xreport_departments_sales), true);
+            printer.boldPair(context.getString(R.string.xreport_departments_sales), report.totalValue, true);
             Iterator iter = report.departsSales.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry item = (Map.Entry) iter.next();
                 departsSale temp = (departsSale) item.getValue();
-                printer.pair(temp.departTitle, temp.sales);
+                if (temp.sales.compareTo(BigDecimal.ZERO) > 0)
+                    printer.pair(temp.departTitle, temp.sales);
             }
             printer.emptyLine();
         }
