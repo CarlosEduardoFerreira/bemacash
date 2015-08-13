@@ -42,6 +42,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     private String prepaidOrderGuid;
 
     private SyncResult[] removeSaleOrderItemResults;
+    private SaleOrderModel order;
 
     @Override
     protected TaskResult doCommand() {
@@ -64,6 +65,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
             int i = 0;
             while (c.moveToNext()) {
                 String saleItemGuid = c.getString(0);
+                order = new SaleOrderModel(c);
                 SyncResult subResult = new RemoveSaleOrderItemCommand().sync(getContext(), saleItemGuid, getAppCommandContext());
                 if (subResult == null)
                     return false;
@@ -83,7 +85,9 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
-
+//        if(order != null && order.orderStatus == OrderStatus.ACTIVE){
+//            return operations;
+//        }
         operations.add(ContentProviderOperation.newUpdate(URI_UNIT)
                 .withValue(UnitTable.SALE_ORDER_ID, null)
                 .withSelection(UnitTable.SALE_ORDER_ID + " = ?", new String[]{orderId})
@@ -115,7 +119,9 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         BatchSqlCommand batchSqlCommand = batchDelete(SaleOrderModel.class);
-
+        if(order != null && order.orderStatus == OrderStatus.ACTIVE){
+            return batchSqlCommand;
+        }
         UnitsJdbcConverter unitConverter = (UnitsJdbcConverter)JdbcFactory.getConverter(UnitTable.TABLE_NAME);
         batchSqlCommand.add(unitConverter.removeFromOrder(orderId, getAppCommandContext()));
 
