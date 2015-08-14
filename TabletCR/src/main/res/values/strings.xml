@@ -121,6 +121,8 @@
     <string name="pref_scale_empty">Scale is not configured</string>
     <string name="pref_scanner_search">Search</string>
     <string name="sync_notify_title">Syncing...</string>
+    <string name="pref_device_diagnose_title">Launch Diagnose</string>
+    <string name="pref_device_diagnose_subtitle">You can Launch Diagnose here</string>
     <string name="sync_notify_message">Syncing database</string>
     <string name="sync_notify_new_items">New data was downloaded: %d entity(s)</string>
     <string name="sync_err_unknown">Synchronization data error</string>
@@ -167,6 +169,8 @@
     <string name="pref_msr_header_summary">USB MSR settings</string>
     <string name="pref_swiper_header_title">Credit Card Swiper</string>
     <string name="pref_swiper_header_summary">Credit Card Swiper settings</string>
+    <string name="pref_devices_diagnose_title">Devices</string>
+    <string name="pref_devices_diagnose_summary">Launch Devices Diagnose</string>
     <string name="total_cost_subtotal_label">Subtotal:</string>
     <string name="total_cost_discount_label">Discount:</string>
     <string name="total_cost_tax_label">Tax total:</string>

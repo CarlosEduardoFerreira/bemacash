@@ -67,6 +67,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
                 new NavigationItem(getString(R.string.pref_msr_header_title), getString(R.string.pref_msr_header_summary)),
                 new NavigationItem(getString(R.string.pref_scale_header_title), getString(R.string.pref_scale_header_summary)),
+                new NavigationItem(getString(R.string.pref_devices_diagnose_title), getString(R.string.pref_devices_diagnose_summary)),
                 new NavigationItem(getString(R.string.pref_datausage_header_title), getString(R.string.pref_datausage_header_summary)),
                 new NavigationItem(getString(R.string.pref_training_mode_header_title), getString(R.string.pref_training_mode_header_summary)),
                 new NavigationItem(getString(R.string.pref_about_header_title), getString(R.string.pref_about_header_summary))

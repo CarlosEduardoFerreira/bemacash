@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:dslv="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="8dp">
+
+    <TextView
+        android:layout_marginTop="4dp"
+        style="@style/Settings.Fragments.SubTitle"
+        android:id="@+id/title_label"
+        android:text="@string/pref_device_diagnose_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_below="@id/title_label"
+        style="@style/Settings.Fragments.SubTitle2"
+        android:id="@+id/title_sublabel"
+        android:text="@string/pref_device_diagnose_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:layout_marginTop="9dp"
+        android:id="@+id/divider"
+        android:layout_below="@id/title_sublabel"
+        android:layout_marginBottom="8dp"
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:background="@color/settings_divider"/>
+
+
+    <com.mobeta.android.dslv.DragSortListView
+        android:id="@+id/list"
+        android:layout_below="@id/divider"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"
+        android:cacheColorHint="@android:color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        dslv:float_background_color="@color/categories_float_item_bg"
+        dslv:remove_enabled="true"
+        dslv:remove_mode="flingRemove"
+        dslv:drag_enabled="true"
+        dslv:drag_handle_id="@+id/drag"
+        dslv:drag_start_mode="onMove"/>
+
+    <TextView
+        android:visibility="gone"
+        android:text="@string/pref_scale_empty"
+        android:id="@+id/empty_item"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"/>
+
+</RelativeLayout>
