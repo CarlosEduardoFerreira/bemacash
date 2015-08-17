@@ -212,7 +212,7 @@ public final class XReportQuery {
         BigDecimal check = BigDecimal.ZERO;
         BigDecimal ebtCash = BigDecimal.ZERO;
         BigDecimal ebtFoodstamp = BigDecimal.ZERO;
-        BigDecimal debit = BigDecimal.ONE;
+        BigDecimal debit = BigDecimal.ZERO;
 
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
         while (c.moveToNext()) {
