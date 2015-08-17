@@ -16,6 +16,7 @@ import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.fragment.settings.AboutFragment;
 import com.kaching123.tcr.fragment.settings.DataUsageStatFragment;
+import com.kaching123.tcr.fragment.settings.DiagnoseFragment;
 import com.kaching123.tcr.fragment.settings.DisplayFragment;
 import com.kaching123.tcr.fragment.settings.DrawerSettingsFragment;
 import com.kaching123.tcr.fragment.settings.PaxListFragment;
@@ -112,12 +113,15 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 fragment = ScaleFragment.instance();
                 break;
             case 8:
-                fragment = DataUsageStatFragment.instance();
+                fragment = DiagnoseFragment.instance();
                 break;
             case 9:
-                fragment = TrainingModeSettingsFragment.instance();
+                fragment = DataUsageStatFragment.instance();
                 break;
             case 10:
+                fragment = TrainingModeSettingsFragment.instance();
+                break;
+            case 11:
                 fragment = AboutFragment.instance();
                 break;
         }

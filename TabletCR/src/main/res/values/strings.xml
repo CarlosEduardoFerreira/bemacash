@@ -119,6 +119,7 @@
     <string name="pref_scanner_empty">Scanner is not configured</string>
     <string name="pref_usb_msr_empty">USB MSR is not configured</string>
     <string name="pref_scale_empty">Scale is not configured</string>
+    <string name="pref_device_diagnose_empty">Devices is not configured</string>
     <string name="pref_scanner_search">Search</string>
     <string name="sync_notify_title">Syncing...</string>
     <string name="pref_device_diagnose_title">Launch Diagnose</string>
