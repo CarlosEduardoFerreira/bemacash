@@ -124,6 +124,14 @@ public final class XReportQuery {
 
         TreeMap<String, departsSale> departsSales = new TreeMap<String, departsSale>();
 
+        departsSale prepaidTotalSale = new departsSale("Prepaid", BigDecimal.ZERO);
+        ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, 0, shiftGuid, OrderType.PREPAID));
+        final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
+        for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
+            prepaidTotalSale.sales = prepaidTotalSale.sales.add(item.revenue);
+        }
+        departsSales.put(prepaidTotalSale.departTitle, prepaidTotalSale);
+
         Cursor c = ProviderAction.query(URI_SHIFT)
                 .where(ShiftTable.GUID + " = ?", shiftGuid)
                 .perform(context);
@@ -135,15 +143,7 @@ public final class XReportQuery {
         }
         c.close();
 
-        departsSale prepaidTotalSale = new departsSale("Prepaid", BigDecimal.ZERO);
-        ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
-        final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
-        for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
-            prepaidTotalSale.sales = prepaidTotalSale.sales.add(item.revenue);
-        }
-        departsSales.put(prepaidTotalSale.departTitle, prepaidTotalSale);
-
-        Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(),  shiftGuid);
+        Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, 0, shiftGuid);
         totalValue = BigDecimal.ZERO;
         for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
             departsSales.put(d.description, new departsSale(d.description, d.revenue));
@@ -212,7 +212,7 @@ public final class XReportQuery {
         BigDecimal check = BigDecimal.ZERO;
         BigDecimal ebtCash = BigDecimal.ZERO;
         BigDecimal ebtFoodstamp = BigDecimal.ZERO;
-        BigDecimal debit = BigDecimal.ZERO;
+        BigDecimal debit = BigDecimal.ONE;
 
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
         while (c.moveToNext()) {

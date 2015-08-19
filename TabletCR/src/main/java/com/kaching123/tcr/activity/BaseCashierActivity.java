@@ -1676,7 +1676,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             Date minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar);
             if (minCreateTime != null)
                 builder.where(SaleOrderTable.CREATE_TIME + " >= ?", minCreateTime.getTime());
-            builder.where(SaleOrderTable.STATUS + " = ? ", OrderStatus.ACTIVE.ordinal())
+            builder.where(SaleOrderTable.STATUS + " = ? ", OrderStatus.ONHOLD.ordinal())
                     .orderBy(SaleOrderTable.UPDATE_TIME + " desc ");
 
             return builder

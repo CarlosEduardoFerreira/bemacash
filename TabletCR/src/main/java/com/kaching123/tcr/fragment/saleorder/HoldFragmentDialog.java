@@ -214,7 +214,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
                     .where(ShopStore.SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid())
                     .where(ShopStore.SaleOrderTable.GUID + " <> ?", argOrderGuid == null ? "" : argOrderGuid)
-                    .where(ShopStore.SaleOrderTable.STATUS + " = ? ", OrderStatus.ACTIVE.ordinal());
+                    .where(ShopStore.SaleOrderTable.STATUS + " = ? ", OrderStatus.ONHOLD.ordinal());
 
             Date minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar);
             if (minCreateTime != null)
