@@ -106,11 +106,16 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 
             printerWrapper.emptyLine();
 
-            printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_subtitle) + " " + response.iVULotoData.ivuLoto);
-            String[] dateStr = response.iVULotoData.drawDate.split("T");
-            String date = dateStr[0] == null ? response.iVULotoData.ivuLoto : dateStr[0];
-            printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_data) + " " + date);
-            printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_control_number) + " " + response.iVULotoData.controlNumber);
+            if (response.iVULotoData.ivuLoto != null) {
+                printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_subtitle) + " " + response.iVULotoData.ivuLoto);
+                String[] dateStr = response.iVULotoData.drawDate.split("T");
+                String date = dateStr[0] == null ? response.iVULotoData.ivuLoto : dateStr[0];
+                printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_data) + " " + date);
+                printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_control_number) + " " + response.iVULotoData.controlNumber);
+            } else {
+                printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_fail_message));
+            }
+
 
             printerWrapper.emptyLine();
 

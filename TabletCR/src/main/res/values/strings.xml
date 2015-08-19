@@ -1584,4 +1584,6 @@
     <string name="ivu_loto_receipt_foot_subtitle">IVULOTO: </string>
     <string name="ivu_loto_receipt_foot_data">ST DRAMOO1: </string>
     <string name="ivu_loto_receipt_foot_control_number">CONTROL: </string>
+
+    <string name="ivu_loto_receipt_fail_message">Ivuloto no disponible</string>
 </resources>
