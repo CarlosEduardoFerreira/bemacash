@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
+import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -28,6 +30,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+
+import java.math.BigDecimal;
 
 /**
  * Created by long.jiao on 8/14/2015.
@@ -79,8 +83,6 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                         TestPrinterFragment.show(getActivity());
                         break;
                     case 4:
-                        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-                        bindToDisplayService();
                         FindDeviceFragment.show(getActivity(), findDisplayListener, FindDeviceFragment.Mode.DISPLAY);
                         break;
                 }
@@ -92,9 +94,18 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         public void onDeviceSelected() {
-            startCommand(new DisplayWelcomeMessageCommand());
-            unbindFromDisplayService();
-            WaitDialogFragment.hide(getActivity());
+            WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                return;
+                            }
+                        });
+                    }
+            }).start();
         }
 
     };
@@ -183,14 +194,30 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
     }
 
     private void unbindFromDisplayService() {
-        startCommand(new DisplayWelcomeMessageCommand());
-
         if (displayBinder != null) {
             displayBinder = null;
             getActivity().unbindService(displayServiceConnection);
         }
     }
 
+    private class BackgroundTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            bindToDisplayService();
+        }
+
+        @Override
+        protected void onPostExecute(Void none) {
+            unbindFromDisplayService();
+//            WaitDialogFragment.hide(getActivity());
+        }
+    }
 
 
 }
