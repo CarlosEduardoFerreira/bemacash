@@ -521,6 +521,7 @@
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
     <string name="apk_update_dialog_title">Would you like to update to version %d now?</string>
+    <string name="confirm_display_title">Have you see the message showing on Display now?</string>
     <string name="pax_connect_wait_dialog_title">Connecting Pax...</string>
     <string name="pax_wait_dialog_title">Searching Pax...</string>
     <string name="pax_not_found_message">Pax not found</string>

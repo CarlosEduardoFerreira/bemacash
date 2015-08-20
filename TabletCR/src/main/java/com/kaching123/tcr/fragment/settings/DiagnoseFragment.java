@@ -16,11 +16,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.ApkDownloadCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.service.DisplayService;
 import com.mobeta.android.dslv.DragSortListView;
@@ -94,18 +96,11 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         public void onDeviceSelected() {
-            WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-            new Thread(new Runnable() {
+//            WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+//            bindToDisplayService();
+            BackgroundTask task = new BackgroundTask();
+            task.execute();
 
-                @Override
-                public void run() {
-                        getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                return;
-                            }
-                        });
-                    }
-            }).start();
         }
 
     };
@@ -204,6 +199,17 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         protected Void doInBackground(Void... params) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    startCommand(new DisplayWelcomeMessageCommand());
+//                    getActivity().runOnUiThread(new Runnable() {
+//                        public void run() {
+//                            return;
+//                        }
+//                    });
+                }
+            }).start();
             return null;
         }
 
@@ -214,8 +220,30 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         protected void onPostExecute(Void none) {
-            unbindFromDisplayService();
-//            WaitDialogFragment.hide(getActivity());
+            AlertDialogFragment.show(getActivity(), AlertDialogFragment.DialogType.CONFIRM,
+                    R.string.btn_confirm,
+                    getString(R.string.confirm_display_title),
+                    R.string.btn_yes,
+                    R.string.btn_retry,
+                    true,
+                    new StyledDialogFragment.OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
+                            unbindFromDisplayService();
+                            return true;
+                        }
+                    },
+                    new StyledDialogFragment.OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
+                            unbindFromDisplayService();
+                            BackgroundTask task = new BackgroundTask();
+                            task.execute();
+                            return true;
+                        }
+                    },
+                    null
+            );
         }
     }
 
