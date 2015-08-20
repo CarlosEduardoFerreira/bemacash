@@ -220,6 +220,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         protected void onPostExecute(Void none) {
+            unbindFromDisplayService();
             AlertDialogFragment.show(getActivity(), AlertDialogFragment.DialogType.CONFIRM,
                     R.string.btn_confirm,
                     getString(R.string.confirm_display_title),
@@ -229,14 +230,12 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                     new StyledDialogFragment.OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            unbindFromDisplayService();
                             return true;
                         }
                     },
                     new StyledDialogFragment.OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            unbindFromDisplayService();
                             BackgroundTask task = new BackgroundTask();
                             task.execute();
                             return true;
