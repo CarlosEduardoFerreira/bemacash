@@ -159,11 +159,12 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 
         printerWrapper.emptyLine();
 
-        if (title == null || title.equalsIgnoreCase("ARG_ORDER_TITLE"))
-            printerWrapper.header(context.getString(R.string.printer_order_num), registerTitle, seqNum, new Date(createTime), operatorName != null ? operatorName : "");
-        else
-            printerWrapper.header("", "", 0, new Date(createTime), operatorName);
+//        if (title == null || title.equalsIgnoreCase("ARG_ORDER_TITLE"))
+//            printerWrapper.header(context.getString(R.string.printer_order_num), registerTitle, seqNum, new Date(createTime), operatorName != null ? operatorName : "");
+//        else
+//            printerWrapper.header("", "", 0, new Date(createTime), operatorName);
 
+        printerWrapper.header(context.getString(R.string.printer_order_num), registerTitle, seqNum, new Date(createTime),context.getString(R.string.printer_cashier) , operatorName != null ? operatorName : "");
         printMidTid(context, app, printerWrapper, orderType);
 
         if (title != null && !title.equalsIgnoreCase("ARG_ORDER_TITLE"))

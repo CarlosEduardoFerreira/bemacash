@@ -417,7 +417,8 @@
     <string name="printer_tips">Tips</string>
     <string name="printer_balance">EBT Balance</string>
     <string name="printer_order_num">Order</string>
-    <string name="printer_guest">Guest</string>
+    <string name="printer_guest">Guest:</string>
+    <string name="printer_cashier">Cashier:</string>
     <string name="printer_refund_total">Total (tax included)</string>
     <string name="printer_refund_tips">     Tips</string>
     <string name="printer_signature_subtitle">Signature Receipt</string>

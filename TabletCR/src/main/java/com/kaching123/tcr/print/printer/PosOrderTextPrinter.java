@@ -128,10 +128,10 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName) {
         if (orderPrefix != null && !orderPrefix.equalsIgnoreCase(""))
             add(new PrintLineAction(formatString_Header(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_DATE_LEN, orderPrefix + " " + registerTitle + "-" + orderSeqNum, dateFormat.format(date))));
-        add(new PrintLineAction(formatRightString(PRINTER_MAX_TEXT_LEN, operatorName)));
+        header(operatorTitle,operatorName);
     }
 
     @Override
