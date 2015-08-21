@@ -15,25 +15,20 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.ApkDownloadCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
-import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
-import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.service.DisplayService;
-import com.mobeta.android.dslv.DragSortListView;
+import com.kaching123.tcr.service.ScaleService;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
-
-import java.math.BigDecimal;
 
 /**
  * Created by long.jiao on 8/14/2015.
@@ -49,6 +44,23 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
     protected View emptyItem;
 
     private ArrayAdapter<String> adapter;
+    private ScaleService scaleService;
+    private boolean scaleServiceBound;
+    protected ServiceConnection scaleServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            scaleServiceBound = false;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            scaleBinder = (ScaleService.ScaleBinder) service;
+            scaleService = scaleBinder.getService();
+            scaleServiceBound = true;
+        }
+    };
+    private ScaleService.ScaleBinder scaleBinder;
 
     public static Fragment instance() {
         return DiagnoseFragment_.builder().build();
@@ -86,19 +98,32 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                         break;
                     case 4:
                         FindDeviceFragment.show(getActivity(), findDisplayListener, FindDeviceFragment.Mode.DISPLAY);
+                        task = new DisplayTask(itemPosition);
+                        break;
+                    case 7:
+                        FindDeviceFragment.show(getActivity(), findScaleListener, FindDeviceFragment.Mode.SCALE);
+                        task = new DisplayTask(itemPosition);
                         break;
                 }
             }
         });
     }
 
+    private FindDeviceFragment.FindDeviceListener findScaleListener = new FindDeviceFragment.FindDeviceListener() {
+
+        @Override
+        public void onDeviceSelected() {
+            bindToScaleService();
+            task.execute();
+        }
+
+    };
+
+    private DisplayTask task;
     private FindDeviceFragment.FindDeviceListener findDisplayListener = new FindDeviceFragment.FindDeviceListener() {
 
         @Override
         public void onDeviceSelected() {
-//            WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-//            bindToDisplayService();
-            BackgroundTask task = new BackgroundTask();
             task.execute();
 
         }
@@ -180,6 +205,8 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
     @Override
     public void onStop() {
         super.onStop();
+
+        unbindFromScaleService();
     }
 
     private void bindToDisplayService() {
@@ -195,35 +222,67 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
         }
     }
 
-    private class BackgroundTask extends AsyncTask<Void, Void, Void> {
+    private void bindToScaleService() {
+        boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().scaleName().get()); //Serial Port?
+        if (displayConfigured) {
+            ScaleService.bind(getActivity(), scaleServiceConnection);
+        }
+    }
+
+    private void unbindFromScaleService() {
+        if (scaleBinder != null) {
+            scaleBinder = null;
+            getActivity().unbindService(scaleServiceConnection);
+        }
+    }
+
+    private class DisplayTask extends AsyncTask<Void, Void, Void> {
+        int pos;
+        private String scaleRead;
+
+        public DisplayTask(int pos){
+            this.pos = pos;
+        }
 
         @Override
         protected Void doInBackground(Void... params) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+                if(pos == 4)
                     startCommand(new DisplayWelcomeMessageCommand());
-//                    getActivity().runOnUiThread(new Runnable() {
-//                        public void run() {
-//                            return;
-//                        }
-//                    });
+                else if(pos == 7){
+//                    scaleRead = scaleService.readScale();
+                    while(true){
+                        if(scaleService != null && scaleServiceBound){
+                            Logger.d(scaleServiceBound + " read = "+scaleService.readScale());
+                            scaleRead = scaleService.readScale();
+                            break;
+                        }
+                    }
                 }
-            }).start();
             return null;
         }
 
         @Override
         protected void onPreExecute() {
-            bindToDisplayService();
+            WaitDialogFragment.show(getActivity(),"Please wait...");
+            if (pos == 4)
+                bindToDisplayService();
+            else if(pos == 7){
+            }
         }
 
         @Override
         protected void onPostExecute(Void none) {
-            unbindFromDisplayService();
+            String confirmStr = null;
+            if (pos == 4) {
+                confirmStr = getString(R.string.confirm_display_title);
+                unbindFromDisplayService();
+            }
+            else if(pos == 7){
+                confirmStr = String.format(getString(R.string.confirm_scale_title),scaleRead);
+            }
             AlertDialogFragment.show(getActivity(), AlertDialogFragment.DialogType.CONFIRM,
                     R.string.btn_confirm,
-                    getString(R.string.confirm_display_title),
+                    confirmStr,
                     R.string.btn_yes,
                     R.string.btn_retry,
                     true,
@@ -236,13 +295,14 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                     new StyledDialogFragment.OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            BackgroundTask task = new BackgroundTask();
+                            task = new DisplayTask(pos);
                             task.execute();
                             return true;
                         }
                     },
                     null
             );
+            WaitDialogFragment.hide(getActivity());
         }
     }
 
