@@ -92,7 +92,7 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
 
     @Override
     public void add4Columns(String title, BigDecimal qty1, BigDecimal qty2, BigDecimal qty3) {
-        add(new PrintLineAction(format4ColumnsString(PRINTER_MAX_TEXT_LEN, 9, 9, 9, title, quantityFormat.format(qty1), quantityFormat.format(qty2), commaPriceFormat(qty3))));
+        add(new PrintLineAction(format4ColumnsString(PRINTER_MAX_TEXT_LEN, 9, 9, 9, title, quantityFormat.format(qty1), quantityFormat.format(qty2), quantityFormat.format(qty3))));
     }
 
     @Override
