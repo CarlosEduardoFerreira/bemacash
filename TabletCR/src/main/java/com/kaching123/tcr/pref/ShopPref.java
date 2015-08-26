@@ -269,4 +269,10 @@ public interface ShopPref {
     boolean DirecTvPRActivated();
 
     boolean IVULotoActivated();
+
+    int ivulotoMID();
+
+    String terminalID();
+
+    String terminalPassword();
 }

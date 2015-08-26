@@ -68,8 +68,6 @@ public class VoidPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDial
         return R.layout.void_complete;
     }
 
-    private IVULotoDataResponse response;
-
     @Override
     protected int getDialogTitle() {
         return isRefund ? R.string.refund_confirm_title : R.string.void_confirm_title;
@@ -85,79 +83,12 @@ public class VoidPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDial
         return this;
     }
 
-    private void createRefundIVULoto(){
-        WaitDialogFragment.show(getActivity(), getString(R.string.lottery_wait_dialog_title));
-
-        OrderTotalPriceCursorQuery.loadSync(getActivity(), orderGuid, new OrderTotalPriceCursorQuery.LotteryHandler() {
-            @Override
-            public void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee, BigDecimal totalCashBack) {
-                BigDecimal mSubTotal = totalSubtotal.subtract(totalDiscount).add(transactionFee).add(totalCashBack);
-                BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
-                BigDecimal mTotal = totalOrderPrice.add(tipsAmount).add(transactionFee).add(totalCashBack);
-                GetIVULotoDataRequest request = getIVULotoDataRequest(mSubTotal, mTotal);
-                GetIVULotoDataCommand.start(getActivity(), request, new GetIVULotoDataCommand.IVULotoDataCallBack() {
-                    @Override
-                    protected void onSuccess(IVULotoDataResponse result) {
-                        Logger.d("PayPrintAndFinishFragmentDialog getTicketNumberSuccess");
-                        response = result;
-                        WaitDialogFragment.hide(getActivity());
-                    }
-
-                    @Override
-                    protected void onFailure() {
-                        Logger.d("PayPrintAndFinishFragmentDialog getLotteryNumberFail");
-                        response = new IVULotoDataResponse();
-                        WaitDialogFragment.hide(getActivity());
-                        Toast.makeText(getActivity(), getString(R.string.lottery_fail_message), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        });
-    }
-    private final String IVU_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    private final String TIME_ZONE_GMT = "GMT";
-
-    private GetIVULotoDataRequest getIVULotoDataRequest(BigDecimal mSubTotal, BigDecimal mTotal) {
-
-        GetIVULotoDataRequest request = new GetIVULotoDataRequest();
-        request.MID = String.valueOf(getUser().getMid());
-        request.TID = String.valueOf(getUser().getTid());
-        request.Password = getUser().getPassword();
-        request.transactionId = PrepaidProcessor.generateId();
-        Receipt receipt = new Receipt();
-        receipt.merchantId = "51774932983";
-        receipt.terminalId = "POS00";
-        receipt.terminalPassword = "WCeMQVN3";
-        receipt.municipalTax = getTax().doubleValue();
-        receipt.stateTax = getTax().doubleValue();
-        receipt.subTotal = mSubTotal.doubleValue();
-        receipt.total = mTotal.doubleValue();
-        DateFormat dateFormat = new SimpleDateFormat(IVU_TIME_FORMAT);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_GMT));
-        Date date = new Date();
-        receipt.txDate = String.valueOf(dateFormat.format(date));
-        receipt.txType = WS_Enums.SoapProtocolVersion.TransactionType.Refund;
-        receipt.tenderType = WS_Enums.SoapProtocolVersion.TypeOfTender.Cash;
-        request.receipt = receipt;
-        return request;
-    }
-
-
-    private PrepaidUser getUser() {
-        return ((TcrApplication) getActivity().getApplicationContext()).getPrepaidUser();
-    }
-
-    private BigDecimal getTax() {
-        return ((TcrApplication) getActivity().getApplicationContext()).getTaxVat();
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setCancelable(false);
-
-        createRefundIVULoto();
     }
+
 
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {

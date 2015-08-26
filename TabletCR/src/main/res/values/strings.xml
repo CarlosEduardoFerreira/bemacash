@@ -1586,4 +1586,6 @@
     <string name="ivu_loto_receipt_foot_control_number">CONTROL: </string>
 
     <string name="ivu_loto_receipt_fail_message">Ivuloto no disponible</string>
+    <string name="ivu_loto_receipt_refund_fail_title">Refund Fail</string>
+    <string name="ivu_loto_receipt_refund_fail_message">Error: Refund Fail.</string>
 </resources>

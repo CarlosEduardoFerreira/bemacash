@@ -139,7 +139,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             change.setText(getString(R.string.blackstone_pay_charge_finish, UiHelper.priceFormat(changeAmount)));
         }
 
-        createSaleIVULoto();
+        if(isIVULotoActivated())
+            createSaleIVULoto();
 
     }
 
@@ -187,9 +188,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         request.Password = getUser().getPassword();
         request.transactionId = PrepaidProcessor.generateId();
         Receipt receipt = new Receipt();
-        receipt.merchantId = "51774932983";
-        receipt.terminalId = "POS00";
-        receipt.terminalPassword = "WCeMQVN3";
+        receipt.merchantId = String.valueOf(getIVULotoMID());
+        receipt.terminalId =  getTerminalID();
+        receipt.terminalPassword = getTerminalPassword();
         receipt.municipalTax = getTax().doubleValue();
         receipt.stateTax = getTax().doubleValue();
         receipt.subTotal = mSubTotal.doubleValue();
@@ -213,6 +214,20 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         return ((TcrApplication) getActivity().getApplicationContext()).getTaxVat();
     }
 
+    private int getIVULotoMID()
+    {
+        return ((TcrApplication)getActivity().getApplicationContext()).getIvulotoMID();
+    }
+
+    private String getTerminalID()
+    {
+        return ((TcrApplication)getActivity().getApplicationContext()).getterminalID();
+    }
+
+    private String getTerminalPassword()
+    {
+        return ((TcrApplication)getActivity().getApplicationContext()).getTerminalPassword();
+    }
 
     @Override
     protected int getDialogContentLayout() {

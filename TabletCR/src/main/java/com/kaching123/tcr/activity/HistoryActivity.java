@@ -9,17 +9,14 @@ import android.text.TextUtils;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.local.EndTransactionCommand;
 import com.kaching123.tcr.commands.local.StartTransactionCommand;
+import com.kaching123.tcr.commands.payment.GetIVULotoDataCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand.BasePrintCallback;
 import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
@@ -47,6 +44,7 @@ import com.kaching123.tcr.fragment.tendering.history.HistoryOrderListFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryOrderListFragment.ILoader;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
+import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel.PrepaidType;
 import com.kaching123.tcr.model.OrderType;
@@ -54,23 +52,38 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.SaleOrderTipsViewModel.TransactionsState;
+import com.kaching123.tcr.model.payment.GetIVULotoDataRequest;
 import com.kaching123.tcr.model.payment.PaymentMethod;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.IPrePaidInfo;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.sunpass.SunpassInfo;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessPinInfo;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessTopupInfo;
 import com.kaching123.tcr.processor.MoneybackProcessor;
 import com.kaching123.tcr.processor.MoneybackProcessor.IRefundCallback;
 import com.kaching123.tcr.processor.PaymentProcessor;
+import com.kaching123.tcr.processor.PrepaidProcessor;
 import com.kaching123.tcr.util.AnimationUtils;
+import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
+import com.kaching123.tcr.websvc.api.prepaid.Receipt;
+import com.kaching123.tcr.websvc.api.prepaid.WS_Enums;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.ViewById;
+
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.TimeZone;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -89,7 +102,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     boolean printOrder;
     boolean printRefund;
-
+    private IVULotoDataResponse response;
     @ViewById
     ViewFlipper listFlipper;
 
@@ -185,12 +198,100 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         AnimationUtils.applyFlippingEffect(this, listFlipper);
     }
 
+    protected boolean isIVULotoActivated() {
+        return TcrApplication.get().getIVULotoActivated();
+    }
 
     @Override
     public void onReturnClick() {
         //need to load all transactions
         WaitDialogFragment.show(this, getString(R.string.loading_message));
-        getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
+
+        if(isIVULotoActivated())
+            createRefundIVULoto();
+    }
+
+    private void createRefundIVULoto(){
+        WaitDialogFragment.show(HistoryActivity.this, getString(R.string.lottery_wait_dialog_title));
+
+        OrderTotalPriceCursorQuery.loadSync(HistoryActivity.this, orderItemsListFragment.guid, new OrderTotalPriceCursorQuery.LotteryHandler() {
+            @Override
+            public void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee, BigDecimal totalCashBack) {
+                BigDecimal mSubTotal = totalSubtotal.subtract(totalDiscount).add(transactionFee).add(totalCashBack);
+                BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
+                BigDecimal mTotal = totalOrderPrice.add(tipsAmount).add(transactionFee).add(totalCashBack);
+                GetIVULotoDataRequest request = getIVULotoDataRequest(mSubTotal, mTotal);
+                GetIVULotoDataCommand.start(HistoryActivity.this, request, new GetIVULotoDataCommand.IVULotoDataCallBack() {
+                    @Override
+                    protected void onSuccess(IVULotoDataResponse result) {
+                        Logger.d("PayPrintAndFinishFragmentDialog getTicketNumberSuccess");
+                        response = result;
+                        WaitDialogFragment.hide(HistoryActivity.this);
+                        getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
+                    }
+
+                    @Override
+                    protected void onFailure() {
+                        Logger.d("PayPrintAndFinishFragmentDialog getLotteryNumberFail");
+                        response = new IVULotoDataResponse();
+                        WaitDialogFragment.hide(HistoryActivity.this);
+                        Toast.makeText(HistoryActivity.this, getString(R.string.lottery_fail_message), Toast.LENGTH_LONG).show();
+                        AlertDialogFragment.showAlert(HistoryActivity.this,R.string.ivu_loto_receipt_refund_fail_title, getString(R.string.ivu_loto_receipt_refund_fail_message) );
+                    }
+                });
+            }
+        });
+    }
+    private final String IVU_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private final String TIME_ZONE_GMT = "GMT";
+
+    private GetIVULotoDataRequest getIVULotoDataRequest(BigDecimal mSubTotal, BigDecimal mTotal) {
+
+        GetIVULotoDataRequest request = new GetIVULotoDataRequest();
+        request.MID = String.valueOf(getUser().getMid());
+        request.TID = String.valueOf(getUser().getTid());
+        request.Password = getUser().getPassword();
+        request.transactionId = PrepaidProcessor.generateId();
+        Receipt receipt = new Receipt();
+        receipt.merchantId = String.valueOf(getIVULotoMID());
+        receipt.terminalId = getTerminalID();
+        receipt.terminalPassword = getTerminalPassword();
+        receipt.municipalTax = getTax().doubleValue();
+        receipt.stateTax = getTax().doubleValue();
+        receipt.subTotal = mSubTotal.doubleValue();
+        receipt.total = mTotal.doubleValue();
+        DateFormat dateFormat = new SimpleDateFormat(IVU_TIME_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_GMT));
+        Date date = new Date();
+        receipt.txDate = String.valueOf(dateFormat.format(date));
+        receipt.txType = WS_Enums.SoapProtocolVersion.TransactionType.Refund;
+        receipt.tenderType = WS_Enums.SoapProtocolVersion.TypeOfTender.Cash;
+        request.receipt = receipt;
+        return request;
+    }
+
+
+    private PrepaidUser getUser() {
+        return TcrApplication.get().getPrepaidUser();
+    }
+
+    private BigDecimal getTax() {
+        return TcrApplication.get().getTaxVat();
+    }
+
+    private int getIVULotoMID()
+    {
+        return TcrApplication.get().getIvulotoMID();
+    }
+
+    private String getTerminalID()
+    {
+        return TcrApplication.get().getterminalID();
+    }
+
+    private String getTerminalPassword()
+    {
+        return TcrApplication.get().getTerminalPassword();
     }
 
     @Override
