@@ -139,7 +139,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             change.setText(getString(R.string.blackstone_pay_charge_finish, UiHelper.priceFormat(changeAmount)));
         }
 
-        if(isIVULotoActivated())
+        if (isIVULotoActivated())
             createSaleIVULoto();
 
     }
@@ -159,6 +159,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
                     protected void onSuccess(IVULotoDataResponse result) {
                         Logger.d("PayPrintAndFinishFragmentDialog getTicketNumberSuccess");
                         response = result;
+                        Toast.makeText(getActivity(), response.iVULotoData.errorDetail, Toast.LENGTH_LONG).show();
                         WaitDialogFragment.hide(getActivity());
                         if (kitchenPrintStatus != KitchenPrintStatus.PRINTED) {
                             printItemsToKitchen(null, false, false, false);
@@ -189,7 +190,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         request.transactionId = PrepaidProcessor.generateId();
         Receipt receipt = new Receipt();
         receipt.merchantId = String.valueOf(getIVULotoMID());
-        receipt.terminalId =  getTerminalID();
+        receipt.terminalId = getTerminalID();
         receipt.terminalPassword = getTerminalPassword();
         receipt.municipalTax = getTax().doubleValue();
         receipt.stateTax = getTax().doubleValue();
@@ -214,19 +215,16 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         return ((TcrApplication) getActivity().getApplicationContext()).getTaxVat();
     }
 
-    private int getIVULotoMID()
-    {
-        return ((TcrApplication)getActivity().getApplicationContext()).getIvulotoMID();
+    private int getIVULotoMID() {
+        return ((TcrApplication) getActivity().getApplicationContext()).getIvulotoMID();
     }
 
-    private String getTerminalID()
-    {
-        return ((TcrApplication)getActivity().getApplicationContext()).getterminalID();
+    private String getTerminalID() {
+        return ((TcrApplication) getActivity().getApplicationContext()).getterminalID();
     }
 
-    private String getTerminalPassword()
-    {
-        return ((TcrApplication)getActivity().getApplicationContext()).getTerminalPassword();
+    private String getTerminalPassword() {
+        return ((TcrApplication) getActivity().getApplicationContext()).getTerminalPassword();
     }
 
     @Override

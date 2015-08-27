@@ -166,7 +166,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!isSPMSRSet()) {
+        if (!isSPMSRSet()) {
             Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
             if (frm == null) {
                 getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
@@ -205,13 +205,16 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     @Override
     public void onReturnClick() {
         //need to load all transactions
-        WaitDialogFragment.show(this, getString(R.string.loading_message));
 
-        if(isIVULotoActivated())
+        if (isIVULotoActivated()) {
             createRefundIVULoto();
+        } else {
+            WaitDialogFragment.show(this, getString(R.string.loading_message));
+            getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
+        }
     }
 
-    private void createRefundIVULoto(){
+    private void createRefundIVULoto() {
         WaitDialogFragment.show(HistoryActivity.this, getString(R.string.lottery_wait_dialog_title));
 
         OrderTotalPriceCursorQuery.loadSync(HistoryActivity.this, orderItemsListFragment.guid, new OrderTotalPriceCursorQuery.LotteryHandler() {
@@ -227,7 +230,13 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
                         Logger.d("PayPrintAndFinishFragmentDialog getTicketNumberSuccess");
                         response = result;
                         WaitDialogFragment.hide(HistoryActivity.this);
-                        getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
+                        if (response != null && response.iVULotoData.ivuLoto != null) {
+                            WaitDialogFragment.show(HistoryActivity.this, getString(R.string.loading_message));
+                            getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
+                        } else {
+                            Toast.makeText(HistoryActivity.this, getString(R.string.ivu_loto_receipt_refund_fail_title), Toast.LENGTH_LONG).show();
+                            AlertDialogFragment.showAlert(HistoryActivity.this, R.string.ivu_loto_receipt_refund_fail_title, getString(R.string.ivu_loto_receipt_refund_fail_message));
+                        }
                     }
 
                     @Override
@@ -235,13 +244,14 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
                         Logger.d("PayPrintAndFinishFragmentDialog getLotteryNumberFail");
                         response = new IVULotoDataResponse();
                         WaitDialogFragment.hide(HistoryActivity.this);
-                        Toast.makeText(HistoryActivity.this, getString(R.string.lottery_fail_message), Toast.LENGTH_LONG).show();
-                        AlertDialogFragment.showAlert(HistoryActivity.this,R.string.ivu_loto_receipt_refund_fail_title, getString(R.string.ivu_loto_receipt_refund_fail_message) );
+                        Toast.makeText(HistoryActivity.this, getString(R.string.ivu_loto_receipt_refund_fail_title), Toast.LENGTH_LONG).show();
+                        AlertDialogFragment.showAlert(HistoryActivity.this, R.string.ivu_loto_receipt_refund_fail_title, getString(R.string.ivu_loto_receipt_refund_fail_message));
                     }
                 });
             }
         });
     }
+
     private final String IVU_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private final String TIME_ZONE_GMT = "GMT";
 
@@ -279,18 +289,15 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         return TcrApplication.get().getTaxVat();
     }
 
-    private int getIVULotoMID()
-    {
+    private int getIVULotoMID() {
         return TcrApplication.get().getIvulotoMID();
     }
 
-    private String getTerminalID()
-    {
+    private String getTerminalID() {
         return TcrApplication.get().getterminalID();
     }
 
-    private String getTerminalPassword()
-    {
+    private String getTerminalPassword() {
         return TcrApplication.get().getTerminalPassword();
     }
 
@@ -386,20 +393,20 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         int creditReceiptCount = 0;
         int creditCardCount = 0;
 
-        for(PaymentTransactionModel t : transactions){
-            if(t.gateway.isCreditCard()){
-                creditCardCount ++;
-            }else if(t.gateway == PaymentGateway.CASH){
-                cashGatewayCount ++;
-            }else if(t.gateway == PaymentGateway.CREDIT){
-                creditReceiptCount ++;
+        for (PaymentTransactionModel t : transactions) {
+            if (t.gateway.isCreditCard()) {
+                creditCardCount++;
+            } else if (t.gateway == PaymentGateway.CASH) {
+                cashGatewayCount++;
+            } else if (t.gateway == PaymentGateway.CREDIT) {
+                creditReceiptCount++;
             }
         }
-        if(cashGatewayCount == transactions.size())
+        if (cashGatewayCount == transactions.size())
             return PaymentMethod.CASH;
-        if(creditCardCount == transactions.size())
+        if (creditCardCount == transactions.size())
             return PaymentMethod.CREDIT_CARD;
-        if(creditReceiptCount == transactions.size())
+        if (creditReceiptCount == transactions.size())
             return PaymentMethod.CREDIT_RECEIPT;
         return null;
     }
@@ -411,7 +418,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         OrderType orderType = totalCostFragment.getOrderType();
         if (printOrder) {
             reprintOrder(false, false);
-        } else if (printRefund){
+        } else if (printRefund) {
             reprintRefund(false, false);
         }
     }
@@ -434,7 +441,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     private void reprintOrder(boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(this, getString(R.string.wait_printing));
-        switch (totalCostFragment.getOrderType()){
+        switch (totalCostFragment.getOrderType()) {
             case SALE:
                 ReprintOrderCommand.start(this, skipPaperWarning, searchByMac, orderItemsListFragment.guid, printCallback);
                 break;
@@ -447,8 +454,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         }
     }
 
-    private static IPrePaidInfo getEmptyPrepaidInfo(PrepaidType type){
-        switch (type){
+    private static IPrePaidInfo getEmptyPrepaidInfo(PrepaidType type) {
+        switch (type) {
             case SUNPASS:
                 return new SunpassInfo();
             case WIRELESS_PIN:
@@ -519,7 +526,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
             }
             if (i == 0) {
 
-                Logger.d("HistoryActivity onBarcodeReceived: "+",Thread, "+Thread.currentThread().getId());
+                Logger.d("HistoryActivity onBarcodeReceived: " + ",Thread, " + Thread.currentThread().getId());
 
                 historyFragment.setOrderNumber(barcode);
             }
@@ -578,7 +585,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         }
 
         @Override
-        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {}
+        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {
+        }
     };
 
     private LoaderCallbacks<ArrayList<PaymentTransactionModel>> tipsRefundTransactionsLoaderCallback = new LoaderCallbacks<ArrayList<PaymentTransactionModel>>() {
@@ -600,7 +608,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         }
 
         @Override
-        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {}
+        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {
+        }
     };
 
     private BasePrintCallback printCallback = new BasePrintCallback() {
@@ -621,7 +630,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
         @Override
         protected void onPrintSuccess() {
-            HistoryActivity.this.onReprintOrderSuccess();;
+            HistoryActivity.this.onReprintOrderSuccess();
+            ;
         }
 
         @Override

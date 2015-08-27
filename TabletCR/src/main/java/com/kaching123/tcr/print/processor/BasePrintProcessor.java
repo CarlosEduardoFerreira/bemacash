@@ -101,7 +101,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
             printerWrapper.footer(shopInfo.thanksPhrase);
         }
 
-        if (!IVULotoActivated && response != null) {
+        if (IVULotoActivated && response != null) {
             printerWrapper.lotoTitle(context.getString(R.string.ivu_loto_receipt_foot_title));
 
             printerWrapper.emptyLine();
