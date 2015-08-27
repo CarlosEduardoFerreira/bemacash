@@ -11,9 +11,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kaching123.tcr.AutoUpdateService;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragmentWithCallback;
 import com.kaching123.tcr.fragment.settings.AboutFragment;
 import com.kaching123.tcr.fragment.settings.DataUsageStatFragment;
 import com.kaching123.tcr.fragment.settings.DiagnoseFragment;
@@ -41,7 +44,7 @@ import java.util.Set;
  * Created by gdubina on 07/11/13.
  */
 @EActivity(R.layout.settings_activity)
-public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener {
+public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener, WaitDialogFragmentWithCallback.OnDialogDismissListener{
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -134,7 +137,17 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
         stopService(new Intent(SettingsActivity.this, AutoUpdateService.class));
         startCheckUpdateService(true);
     }
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+//        Logger.d("BaseCashierActivity barcodeReceivedFromSerialPort onReceive:" + barcode);
+        DiagnoseFragment fragment = (DiagnoseFragment) getSupportFragmentManager().findFragmentById(R.id.settings_details);
+        fragment.receivedScannerCallback(barcode);
+    }
 
+    @Override
+    public void onDialogDismissed() {
+        WaitDialogFragmentWithCallback.show(this,getString(R.string.wait_dialog_title));
+    }
 
     private class NavigationAdapter extends ObjectsArrayAdapter<NavigationItem> {
 

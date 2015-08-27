@@ -7,11 +7,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,10 +25,11 @@ import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
-import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragmentWithCallback;
 import com.kaching123.tcr.service.DisplayService;
 import com.kaching123.tcr.service.ScaleService;
 import com.kaching123.tcr.service.ScannerService;
+import com.kaching123.tcr.util.ReceiverWrapper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -44,9 +49,13 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
     @ViewById
     protected View emptyItem;
 
+    @ViewById
+    protected EditText usbScannerInput;
+
     private ArrayAdapter<String> adapter;
     private ScaleService scaleService;
     private boolean scaleServiceBound;
+    ReceiverWrapper receiverWrapper;
     protected ServiceConnection scaleServiceConnection = new ServiceConnection() {
 
         @Override
@@ -106,6 +115,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                         break;
                     case 5:
                         FindDeviceFragment.show(getActivity(), findScannerListener, FindDeviceFragment.Mode.SCANNER);
+                        task = new DisplayTask(itemPosition);
                         break;
                     case 7:
                         FindDeviceFragment.show(getActivity(), findScaleListener, FindDeviceFragment.Mode.SCALE);
@@ -277,6 +287,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                 }else if(pos == 5){
                     while(true){
                         if(scannerRead != null && scannerRead != ""){
+                            Logger.d("scannerRead = "+scannerRead);
                             break;
                         }
                     }
@@ -286,9 +297,15 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         protected void onPreExecute() {
-            WaitDialogFragment.show(getActivity(), "Please wait...");
             if (pos == 4)
                 bindToDisplayService();
+//            else if(pos == 5){
+//                if(getUSBScanner()) {
+//                    return;
+//                }
+//
+//            }
+            WaitDialogFragmentWithCallback.show(getActivity(), getString(R.string.wait_dialog_title));
         }
 
         @Override
@@ -300,10 +317,12 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
             }
             else if(pos == 7){
                 confirmStr = String.format(getString(R.string.confirm_scale_title),scaleRead);
-            }else if(pos == 5){
-                confirmStr = String.format(getString(R.string.confirm_scanner_title),scannerRead);
-                unbindFromScannerService();
             }
+//            else if(pos == 5){
+//                confirmStr = String.format(getString(R.string.confirm_scanner_title),scannerRead);
+//                scaleRead = null;
+//                unbindFromScannerService();
+//            }
             AlertDialogFragment.show(getActivity(), AlertDialogFragment.DialogType.CONFIRM,
                     R.string.btn_confirm,
                     confirmStr,
@@ -326,7 +345,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                     },
                     null
             );
-            WaitDialogFragment.hide(getActivity());
+            WaitDialogFragmentWithCallback.hide(getActivity());
         }
     }
 
@@ -359,12 +378,11 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         public void onBarcodeReceived(String barcode) {
-            Logger.d("ScannerBaseActivity: scannerListener: onBarcodeReceived()");
+            Logger.d("ScannerBaseActivity: scannerListener: onBarcodeReceived()" + barcode);
             if (getActivity().isFinishing() || getActivity().isDestroyed()) {
                 Logger.d("ScannerBaseActivity: scannerListener: onBarcodeReceived(): ignore and exit - activity is finishing");
                 return;
             }
-
         }
 
     };
@@ -386,7 +404,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
     }
 
     private void bindToScannerService() {
-        Logger.d("ScannerBaseActivity: bindToScannerService()");
+        Logger.d("ScannerBaseActivity: bindToScannerService()"+getApp().getShopPref().scannerAddress().get());
         boolean scannerConfigured = !TextUtils.isEmpty(getApp().getShopPref().scannerAddress().get());
 
         if (scannerConfigured) {
@@ -438,5 +456,32 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
         this.scannerListener = scannerListener;
     }
 
+    public void receivedScannerCallback(String barcode){
+        disconnectScanner();
+        unbindFromScannerService();
+        AlertDialogFragment.show(getActivity(), AlertDialogFragment.DialogType.CONFIRM,
+                R.string.btn_confirm,
+                String.format(getString(R.string.confirm_scanner_title), barcode),
+                R.string.btn_yes,
+                R.string.btn_retry,
+                true,
+                new StyledDialogFragment.OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        return true;
+                    }
+                },
+                new StyledDialogFragment.OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        WaitDialogFragmentWithCallback.show(getActivity(), getString(R.string.wait_dialog_title));
+                        return true;
+                    }
+                },
+                null
+        );
+        WaitDialogFragmentWithCallback.hide(getActivity());
+
+      }
 
 }
