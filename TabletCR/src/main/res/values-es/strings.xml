@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
-    <string name="app_name">BematechCash</string>
-    <string name="dashboard_activity_label">BematechCash</string>
+    <string name="app_name">BemaCash</string>
+    <string name="dashboard_activity_label">BemaCash</string>
     <string name="settings_activity_label">Configuraci\u00F3n</string>
     <string name="inventory_activity_label">Inventario</string>
     <string name="employees_activity_label">Empleados</string>
@@ -412,7 +412,7 @@
     <string name="dlg_open_amount_label">Monto de apertura</string>
     <string name="btn_done">Tarea finalizada</string>
     <string name="print_order_power_by">Power by %s</string>
-    <string name="print_order_power_by_backstone">Pago a través BematechCash</string>
+    <string name="print_order_power_by_backstone">Pago a través BemaCash</string>
     <string name="print_order_power_by_paypal">Pago a través Paypal</string>
     <string name="wait_dialog_title">Por favor esperar</string>
     <string name="wait_message_open_drawer">Apertura de caja</string>
@@ -1080,14 +1080,14 @@
     <string name="blackstone_settlement_failure_body_3nd">Error no relacionado al banco: </string>
 
     <string name="blackstone_settlement_failure_reason_db_update">Settlement fue ejecutado pero database no fue actualizado</string>
-    <string name="blackstone_settlement_failure">Una o más transacciones de cr\u00e9dito fallaran en el cierre (liquidación/settle). Por favor contactar BematechCash Merchant Services para más detallers.</string>
+    <string name="blackstone_settlement_failure">Una o más transacciones de cr\u00e9dito fallaran en el cierre (liquidación/settle). Por favor contactar BemaCash Merchant Services para más detallers.</string>
 
     <string name="blackstone_settlement_alert_title">Liquidación de Credit Card </string>
     <string name="blackstone_settlement_alert_message">Está operación va a cierrar todas las transacciones en abierto. Propinas no podrán ser adicionadas despues de esta operación. Proseguir?</string>
 
     <string name="blackstone_pax_failure_reason_pax">Pago anulado o problemas de conexión.</string>
     <string name="blackstone_pax_failure_reason_wrong_gateway">Transacci\u00F3n no fue creada desde el terminal pin pad. Imposible proseguir.</string>
-    <string name="blackstone_pax_failure_reason_tips_disabled">Por favor, contactar un representante de BematechCash para habilitar propinas en su terminal.</string>
+    <string name="blackstone_pax_failure_reason_tips_disabled">Por favor, contactar un representante de BemaCash para habilitar propinas en su terminal.</string>
 
     <string name="blackstone_pax_reload_failure_reason_service">Falla en la respuesta del servidor / o terminal.</string>
 
@@ -1303,7 +1303,7 @@
     <string name="KEY_STORE_TYPE">PKCS12</string>
     <string name="KEY_STORE_PROVIDER">BC</string>
 
-    <string name="error_message_max_items_count">Has alcanzado el número máximo de items de inventario soportado en su plan mensual . Por favor , Contactar BematechCash para aumentar este límite.</string>
+    <string name="error_message_max_items_count">Has alcanzado el número máximo de items de inventario soportado en su plan mensual . Por favor , Contactar BemaCash para aumentar este límite.</string>
     <string name="warning_message_warranty_ends_today">Garantía caduca hoy.</string>
     <plurals name="warning_message_warranty_outdated">
         <item quantity="one">Garantía caducada por un día</item>

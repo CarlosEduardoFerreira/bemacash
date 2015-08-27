@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/ItemList.HeaderLayout.1280"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/main_pages_bg_mint_color">
 
     <TextView
         style="@style/ItemList.HeaderText"
