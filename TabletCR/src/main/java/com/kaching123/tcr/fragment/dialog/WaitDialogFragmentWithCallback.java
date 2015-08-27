@@ -1,16 +1,21 @@
 package com.kaching123.tcr.fragment.dialog;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.util.KeyboardUtils;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.EFragment;
@@ -42,6 +47,7 @@ public class WaitDialogFragmentWithCallback extends StyledDialogFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width),
                 getDialog().getWindow().getAttributes().height);
         setCancelable(false);
@@ -102,11 +108,11 @@ public class WaitDialogFragmentWithCallback extends StyledDialogFragment {
 //        DialogUtil.show(activity, DIALOG_NAME, WaitDialogFragment_.builder().msg(msg).build());
 //    }
 
-//    public static DialogFragment showWithReturn(FragmentActivity activity, String msg) {
-//        DialogFragment fragment = WaitDialogFragment_.builder().msg(msg).hasCancelButton(true).build();
-//        DialogUtil.show(activity, DIALOG_NAME, fragment);
-//        return fragment;
-//    }
+    public static DialogFragment showWithReturn(FragmentActivity activity, String msg) {
+        DialogFragment fragment = WaitDialogFragmentWithCallback_.builder().msg(msg).build();
+        DialogUtil.show(activity, DIALOG_NAME, fragment);
+        return fragment;
+    }
 
     public static void hide(FragmentActivity activity) {
         DialogUtil.hide(activity, DIALOG_NAME);
@@ -118,29 +124,8 @@ public class WaitDialogFragmentWithCallback extends StyledDialogFragment {
         boolean hasNewline = s.toString().contains(newline);
         Logger.d("OrderItemListFragment usbScannerInputAfterTextChanged hasNewline: " + s.toString());
         if (hasNewline) {
-            String result = s.toString().replace("\n", "").replace("\r", "");
-            AlertDialogFragment.show(getActivity(), AlertDialogFragment.DialogType.CONFIRM,
-                    R.string.btn_confirm,
-                    String.format(getString(R.string.confirm_scanner_title), result),
-                    R.string.btn_yes,
-                    R.string.btn_retry,
-                    true,
-                    new OnDialogClickListener() {
-                        @Override
-                        public boolean onClick() {
-//                            WaitDialogFragment.show(getActivity(), getString(R.string.wait_dialog_title));
-                            return true;
-                        }
-                    },
-                    new OnDialogClickListener() {
-                        @Override
-                        public boolean onClick() {
-                            mCallback.onDialogDismissed();
-                            return true;
-                        }
-                    },
-                    null
-            );
+            final String result = s.toString().replace("\n", "").replace("\r", "");
+            mCallback.onDialogDismissed(result);
             s.clear();
             dismiss();
         }
@@ -148,7 +133,7 @@ public class WaitDialogFragmentWithCallback extends StyledDialogFragment {
 
     // Container Activity must implement this interface
     public interface OnDialogDismissListener {
-        public void onDialogDismissed();
+        public void onDialogDismissed(String barcode);
     }
 
     @Override

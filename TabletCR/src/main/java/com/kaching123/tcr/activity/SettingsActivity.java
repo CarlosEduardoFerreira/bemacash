@@ -52,6 +52,8 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
         permissions.add(Permission.ADMIN);
     }
 
+    private Fragment fragment = null;
+
     @Override
     protected Set<Permission> getPermissions() {
         return permissions;
@@ -89,7 +91,6 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     }
 
     private void updateDetails(int pos) {
-        Fragment fragment = null;
         switch (pos) {
             case 0:
                 fragment = SyncSettingsFragment.instance();
@@ -145,8 +146,9 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     }
 
     @Override
-    public void onDialogDismissed() {
+    public void onDialogDismissed(String barcode) {
         WaitDialogFragmentWithCallback.show(this,getString(R.string.wait_dialog_title));
+        ((DiagnoseFragment)fragment).setScannerRead(barcode);
     }
 
     private class NavigationAdapter extends ObjectsArrayAdapter<NavigationItem> {

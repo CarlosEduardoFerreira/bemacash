@@ -55,7 +55,6 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
     private ArrayAdapter<String> adapter;
     private ScaleService scaleService;
     private boolean scaleServiceBound;
-    ReceiverWrapper receiverWrapper;
     protected ServiceConnection scaleServiceConnection = new ServiceConnection() {
 
         @Override
@@ -73,6 +72,15 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
     private ScaleService.ScaleBinder scaleBinder;
     private boolean isUSBScanner;
     private ScannerService.ScannerBinder scannerBinder;
+
+    public String getScannerRead() {
+        return scannerRead;
+    }
+
+    public void setScannerRead(String scannerRead) {
+        this.scannerRead = scannerRead;
+    }
+
     private String scannerRead;
 
     public static Fragment instance() {
@@ -299,12 +307,13 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
         protected void onPreExecute() {
             if (pos == 4)
                 bindToDisplayService();
-//            else if(pos == 5){
-//                if(getUSBScanner()) {
-//                    return;
-//                }
-//
-//            }
+            else if(pos == 5){
+                if(getUSBScanner()) {
+                    DialogFragment fragment = WaitDialogFragmentWithCallback.showWithReturn(getActivity(),getString(R.string.wait_dialog_title));
+                    return;
+                }
+
+            }
             WaitDialogFragmentWithCallback.show(getActivity(), getString(R.string.wait_dialog_title));
         }
 
@@ -318,11 +327,11 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
             else if(pos == 7){
                 confirmStr = String.format(getString(R.string.confirm_scale_title),scaleRead);
             }
-//            else if(pos == 5){
-//                confirmStr = String.format(getString(R.string.confirm_scanner_title),scannerRead);
-//                scaleRead = null;
-//                unbindFromScannerService();
-//            }
+            else if(pos == 5){
+                confirmStr = String.format(getString(R.string.confirm_scanner_title),scannerRead);
+                scannerRead = null;
+                unbindFromScannerService();
+            }
             AlertDialogFragment.show(getActivity(), AlertDialogFragment.DialogType.CONFIRM,
                     R.string.btn_confirm,
                     confirmStr,
@@ -457,31 +466,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
     }
 
     public void receivedScannerCallback(String barcode){
-        disconnectScanner();
-        unbindFromScannerService();
-        AlertDialogFragment.show(getActivity(), AlertDialogFragment.DialogType.CONFIRM,
-                R.string.btn_confirm,
-                String.format(getString(R.string.confirm_scanner_title), barcode),
-                R.string.btn_yes,
-                R.string.btn_retry,
-                true,
-                new StyledDialogFragment.OnDialogClickListener() {
-                    @Override
-                    public boolean onClick() {
-                        return true;
-                    }
-                },
-                new StyledDialogFragment.OnDialogClickListener() {
-                    @Override
-                    public boolean onClick() {
-                        WaitDialogFragmentWithCallback.show(getActivity(), getString(R.string.wait_dialog_title));
-                        return true;
-                    }
-                },
-                null
-        );
-        WaitDialogFragmentWithCallback.hide(getActivity());
-
+            scannerRead = barcode;
       }
 
 }
