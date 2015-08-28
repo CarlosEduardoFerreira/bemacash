@@ -85,7 +85,6 @@ public class TotalCostFragment extends Fragment {
     private void setPayButtonView() {
         if (!isCreateReturnOrder) {
             btnPay.setBackgroundResource(R.drawable.pay_btn);
-            btnPay.setText(R.string.button_pay);
             btnPay.setTextSize(getActivity().getResources().getDimensionPixelOffset(R.dimen.button_pay_text_big));
         } else {
             btnPay.setBackgroundResource(R.drawable.return_btn);
