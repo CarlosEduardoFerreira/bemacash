@@ -21,10 +21,14 @@
         android:background="@color/prepaid_blue_divider"></View>
 
     <FrameLayout
-        android:id="@+id/prepaid_body"
         android:layout_width="match_parent"
         android:layout_height="@dimen/prepaid_body_height">
 
+        <fragment
+            android:name="com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment_"
+            android:id="@+id/prepaid_body"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent" />
     </FrameLayout>
 
 </LinearLayout>

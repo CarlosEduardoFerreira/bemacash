@@ -22,17 +22,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crittercism.app.Crittercism;
 import com.getbase.android.db.cursors.FluentCursor;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.PrepaidActivity.PrepaidProcessorActivity;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand.BaseOpenDrawerCallback;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
@@ -68,7 +64,6 @@ import com.kaching123.tcr.fragment.shift.CloseDrawerFragment;
 import com.kaching123.tcr.fragment.shift.OpenAmountFragment;
 import com.kaching123.tcr.fragment.shift.PrintXReportFragment;
 import com.kaching123.tcr.fragment.shift.PutCashFragment;
-import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless.ActivationTypeChoosingFragmentDialog;
 import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginFragment.OnLoginCompleteListener;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
@@ -87,7 +82,6 @@ import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
@@ -100,12 +94,6 @@ import com.kaching123.tcr.util.ScreenUtils;
 import com.telly.groundy.TaskHandler;
 
 import org.androidannotations.annotations.AfterTextChange;
-import com.google.common.base.Optional;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
-
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -119,7 +107,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
@@ -148,7 +135,9 @@ public class DashboardActivity extends SuperBaseActivity {
     private static final int LOADER_TIMESHEET_ID = 4;
     private static final int LOADER_ACTIVATION_ID = 5;
     private static final int LOADER_SQL_COMMAND = 6;
+    public static final int EXTRA_CODE = 1;
 
+    public static String EXTRA_FORCE_LOGOUT = "EXTRA_FORCE_LOGOUT";
     @ViewById
     protected TextView operatorNameValueLabel;
 
@@ -203,7 +192,7 @@ public class DashboardActivity extends SuperBaseActivity {
     @ViewById
     protected ViewGroup reportsButton;
     @ViewById
-    protected ViewGroup prepaidButton;
+    protected ViewGroup checkinAndOutButton;
 
     @ViewById
     protected EditText usbScannerInput;
@@ -238,7 +227,7 @@ public class DashboardActivity extends SuperBaseActivity {
     private MovementWaitForCloseDrawerCallback movementWaitForCloseDrawerCallback = new MovementWaitForCloseDrawerCallback();
     private PrintDropPayoutCallback printDropPayoutCallback = new PrintDropPayoutCallback();
 
-    private MenuItem activationMenuItem;
+//    private MenuItem activationMenuItem;
 
     private List<ActivationCarrierModel> activationCarriers;
     private int openedTrnsactionsCount;
@@ -248,21 +237,17 @@ public class DashboardActivity extends SuperBaseActivity {
     private boolean isShiftLoaderFinished = true;
     private boolean isEmployeeTimeshiftLoaderFinished = true;
 
-    public static final int EXTRA_CODE = 1;
-
-    public static String EXTRA_FORCE_LOGOUT = "EXTRA_FORCE_LOGOUT";
-
     public static void startClearTop(Context context) {
         DashboardActivity_.intent(context).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
     }
 
     public static void start(Context context) {
-        DashboardActivity_.intent(context).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
+        DashboardActivity_.intent(context).start();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
+//        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 
@@ -270,15 +255,12 @@ public class DashboardActivity extends SuperBaseActivity {
             logout(false);
             Toast.makeText(this, R.string.offline_mode_error_toast_message_logout, Toast.LENGTH_SHORT).show();
         }
-
-        if (usbScannerInput != null)
-            usbScannerInput.setInputType(0);
     }
 
     @AfterTextChange
     protected void usbScannerInputAfterTextChanged(Editable s) {
         String st = s.toString();
-        if (st.contains("\n") || st.contains("\r") || st.contains("\r\n")) {
+        if (st.contains("\n")) {
             barcodeReceivedFromSerialPort(st);
             s.clear();
         }
@@ -289,6 +271,11 @@ public class DashboardActivity extends SuperBaseActivity {
     public void barcodeReceivedFromSerialPort(String barcode) {
         Logger.d("DashboardActivity barcodeReceivedFromSerialPort onReceive:" + barcode);
         errorAlarm();
+    }
+
+    @Click
+    protected void checkinAndOutButtonClicked() {
+        showCheckInOrOutDialog();
     }
 
     protected void showCheckInOrOutDialog() {
@@ -405,9 +392,7 @@ public class DashboardActivity extends SuperBaseActivity {
     private void onLogin() {
         //checkDeviceSettings();
         onLogin(false);
-        startCheckUpdateService(false);
     }
-
 
     private void onLogin(boolean tempLogin) {
         setTitle();
@@ -462,7 +447,7 @@ public class DashboardActivity extends SuperBaseActivity {
         getSupportLoaderManager().restartLoader(LOADER_ALERT_ID, null, alertCounterLoader);
         getSupportLoaderManager().restartLoader(LOADER_OPENED_TRANSACTIONS_ID, null, openedTransactionsLoader);
         getSupportLoaderManager().restartLoader(LOADER_TIMESHEET_ID, null, timesheetLoader);
-        getSupportLoaderManager().restartLoader(LOADER_ACTIVATION_ID, null, activationLoader);
+//        getSupportLoaderManager().restartLoader(LOADER_ACTIVATION_ID, null, activationLoader);
     }
 
     private void need2StopCollectData() {
@@ -473,18 +458,10 @@ public class DashboardActivity extends SuperBaseActivity {
         getSupportLoaderManager().destroyLoader(LOADER_ACTIVATION_ID);
     }
 
-    @OnActivityResult(EXTRA_CODE)
-    protected void onResult(int code, Intent data) {
-        if (data != null && code == EXTRA_CODE) {
-            if (data.getBooleanExtra(EXTRA_FORCE_LOGOUT, false))
-                logout(true);
-        }
-
-    }
-
     @Override
     public void onResume() {
         super.onResume();
+
         setTitle();
         setOperatorName();
         need2CollectData();
@@ -582,17 +559,17 @@ public class DashboardActivity extends SuperBaseActivity {
         HistoryActivity.start(DashboardActivity.this);
     }
 
-    @OptionsItem
-    protected void actionActivationSelected() {
-        if (activationCarriers == null || activationCarriers.isEmpty())
-            return;
-
-        if (activationCarriers.size() == 1) {
-            ActivationActivity.start(this, activationCarriers.get(0).url);
-        } else {
-            ActivationTypeChoosingFragmentDialog.show(this, activationCarriers, false);
-        }
-    }
+//    @OptionsItem
+//    protected void actionActivationSelected() {
+//        if (activationCarriers == null || activationCarriers.isEmpty())
+//            return;
+//
+//        if (activationCarriers.size() == 1) {
+//            ActivationActivity.start(this, activationCarriers.get(0).url);
+//        } else {
+//            ActivationTypeChoosingFragmentDialog.show(this, activationCarriers, false);
+//        }
+//    }
 
     @OptionsItem
     protected void actionLogoutSelected() {
@@ -631,16 +608,10 @@ public class DashboardActivity extends SuperBaseActivity {
         need2StopCollectData();
         setOperatorName();
         showLoginFragment();
-        stopService(new Intent(this, AutoUpdateService.class));
     }
 
     private void restoreSystemScreenOffTimeout() {
         ScreenUtils.setScreenOffTimeout(this, getApp().getShopPref().prevScreenTimeout().get());
-    }
-
-    @Click
-    protected void prepaidButtonClicked() {
-        PrepaidProcessorActivity.start(this, getBillpaymentActivate(), getSunpassActivate());
     }
 
     @Click
@@ -650,14 +621,6 @@ public class DashboardActivity extends SuperBaseActivity {
         } else {
             CashierActivity.start(this);
         }
-    }
-
-    private boolean getBillpaymentActivate() {
-        return TcrApplication.get().getBillPaymentActivated();
-    }
-
-    private boolean getSunpassActivate() {
-        return TcrApplication.get().getSunpassActivated();
     }
 
     @Click
@@ -681,12 +644,12 @@ public class DashboardActivity extends SuperBaseActivity {
 
     @Click
     protected void noSaleButtonClicked() {
-        try2OpenDrawer(false, noSaleOpenDrowerCallback, false);
+        try2OpenDrawer(false, noSaleOpenDrowerCallback);
     }
 
     @Click
     protected void dropsAndPayoutsButtonClicked() {
-        try2OpenDrawer(false, movementsOpenDrawerCallback, false);
+        try2OpenDrawer(false, movementsOpenDrawerCallback);
     }
 
     @Click
@@ -727,52 +690,52 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            startShiftAction(true);
+                            startShiftAction();
                             return true;
                         }
                     });
             return;
         }
 
-        startShiftAction(false);
+        startShiftAction();
     }
 
-    private void startShiftAction(boolean needSync) {
+    private void startShiftAction() {
         if (!isShiftOpened) {
             showOpenAmountDialog();
         } else {
-            try2OpenDrawer(false, openDrawerCallback, needSync);
+            try2OpenDrawer(false, openDrawerCallback);
         }
     }
 
-    private void try2OpenDrawer(boolean searchByMac, BaseOpenDrawerCallback callback, boolean needSync) {
+    private void try2OpenDrawer(boolean searchByMac, BaseOpenDrawerCallback callback) {
         WaitDialogFragment.show(this, getString(R.string.wait_message_open_drawer));
-        OpenDrawerCommand.start(DashboardActivity.this, searchByMac, callback, needSync);
+        OpenDrawerCommand.start(DashboardActivity.this, searchByMac, callback);
     }
 
-    @Click
-    protected void clockInButtonContainerClicked() {
-        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_IN, null, new TimesheetFragment.OnTimesheetListener() {
-            @Override
-            public void onCredentialsEntered(String login/*, String password*/) {
-                TimesheetFragment.hide(DashboardActivity.this);
-                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_in));
-                ClockInCommand.start(DashboardActivity.this, login/*, password*/, clockInCallback);
-            }
-        });
-    }
-
-    @Click
-    protected void clockOutButtonContainerClicked() {
-        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_OUT, null, new TimesheetFragment.OnTimesheetListener() {
-            @Override
-            public void onCredentialsEntered(String login/*, String password*/) {
-                TimesheetFragment.hide(DashboardActivity.this);
-                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_out));
-                ClockOutCommand.start(DashboardActivity.this, login/*, password*/, clockOutCallback);
-            }
-        });
-    }
+//    @Click
+//    protected void clockInButtonContainerClicked() {
+//        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_IN, null, new TimesheetFragment.OnTimesheetListener() {
+//            @Override
+//            public void onCredentialsEntered(String login/*, String password*/) {
+//                TimesheetFragment.hide(DashboardActivity.this);
+//                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_in));
+//                ClockInCommand.start(DashboardActivity.this, login/*, password*/, clockInCallback);
+//            }
+//        });
+//    }
+//
+//    @Click
+//    protected void clockOutButtonContainerClicked() {
+//        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_OUT, null, new TimesheetFragment.OnTimesheetListener() {
+//            @Override
+//            public void onCredentialsEntered(String login/*, String password*/) {
+//                TimesheetFragment.hide(DashboardActivity.this);
+//                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_out));
+//                ClockOutCommand.start(DashboardActivity.this, login/*, password*/, clockOutCallback);
+//            }
+//        });
+//    }
 
     @Click
     protected void employeesButtonClicked() {
@@ -784,14 +747,14 @@ public class DashboardActivity extends SuperBaseActivity {
         CustomersActivity.start(this);
     }
 
-    private void onCloseAmountEntered(boolean skipDrawer, BigDecimal value, boolean needSync) {
+    private void onCloseAmountEntered(boolean skipDrawer, BigDecimal value) {
         closeAmount = value;
 
         if (skipDrawer) {
-            waitForCloseDrawerCallback.onDrawerClosed(false);
+            waitForCloseDrawerCallback.onDrawerClosed();
         } else {
             showCloseDrawerDialog(true);
-            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, needSync, waitForCloseDrawerCallback);
+            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, waitForCloseDrawerCallback);
         }
     }
 
@@ -816,21 +779,21 @@ public class DashboardActivity extends SuperBaseActivity {
             @Override
             public void onBack() {
                 closeDrawerCommandHandler.cancel(DashboardActivity.this, 0, null);
-                showCloseAmountDialog(false, closeAmount, false);
+                showCloseAmountDialog(false, closeAmount);
             }
         });
     }
 
-    private void showCloseAmountDialog(boolean skipDrawer, boolean needSync) {
-        showCloseAmountDialog(skipDrawer, null, needSync);
+    private void showCloseAmountDialog(boolean skipDrawer) {
+        showCloseAmountDialog(skipDrawer, null);
     }
 
-    private void showCloseAmountDialog(boolean skipDrawer, BigDecimal closeAmount, boolean needSync) {
+    private void showCloseAmountDialog(boolean skipDrawer, BigDecimal closeAmount) {
         this.closeAmount = null;
-        CloseAmountFragment.show(this, skipDrawer, closeAmount, needSync, new CloseAmountFragment.OnEditAmountListener() {
+        CloseAmountFragment.show(this, skipDrawer, closeAmount, new CloseAmountFragment.OnEditAmountListener() {
             @Override
-            public void onConfirm(boolean skipDrawer, BigDecimal value, boolean needSync) {
-                onCloseAmountEntered(skipDrawer, value, needSync);
+            public void onConfirm(boolean skipDrawer, BigDecimal value) {
+                onCloseAmountEntered(skipDrawer, value);
             }
 
             @Override
@@ -851,10 +814,10 @@ public class DashboardActivity extends SuperBaseActivity {
             public void onPutCash(boolean ignoreDrawable, BigDecimal value) {
                 openAmount = value;
                 if (ignoreDrawable) {
-                    waitForCloseDrawerCallback.onDrawerClosed(false);
+                    waitForCloseDrawerCallback.onDrawerClosed();
                 } else {
                     showPutCashDialog();
-                    closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this,false, waitForCloseDrawerCallback);
+                    closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, waitForCloseDrawerCallback);
                 }
             }
 
@@ -875,7 +838,7 @@ public class DashboardActivity extends SuperBaseActivity {
             public void onConfirm(BigDecimal value, String comment, MovementType movementType) {
                 AddCashDrawerMovementCommand.start(DashboardActivity.this, null, salesStatisticsModel.shiftModel.guid, movementType, value, comment);
                 PutCashFragment.show(DashboardActivity.this, false);
-                WaitForCloseDrawerCommand.start(DashboardActivity.this, false, movementWaitForCloseDrawerCallback);
+                WaitForCloseDrawerCommand.start(DashboardActivity.this, movementWaitForCloseDrawerCallback);
             }
         });
     }
@@ -915,7 +878,6 @@ public class DashboardActivity extends SuperBaseActivity {
         setModuleEnabled(employeesButton, getApp().hasPermission(Permission.EMPLOYEE_MANAGEMENT));
         setModuleEnabled(customersButton, getApp().hasPermission(Permission.CUSTOMER_MANAGEMENT));
         setModuleEnabled(reportsButton, getApp().hasPermission(Permission.REPORTS));
-        setModuleEnabled(prepaidButton, isShiftOpened && getApp().isPrepaidUserValid());
 
         setShiftActionLabel(isShiftOpened);
         if (isShiftOpened) {
@@ -1002,8 +964,8 @@ public class DashboardActivity extends SuperBaseActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.action_credit_receipts).setVisible(getApp().getShopInfo().useCreditReceipt);
-        activationMenuItem = menu.findItem(R.id.action_activation);
-        activationMenuItem.setEnabled(activationCarriers != null && !activationCarriers.isEmpty());
+//        activationMenuItem = menu.findItem(R.id.action_activation);
+//        activationMenuItem.setEnabled(activationCarriers != null && !activationCarriers.isEmpty());
         updateAlertCounter(alertCounter);
         return true;
     }
@@ -1046,32 +1008,32 @@ public class DashboardActivity extends SuperBaseActivity {
 
     };
 
-    private LoaderCallbacks activationLoader = new LoaderCallbacks<List<ActivationCarrierModel>>() {
-
-        @Override
-        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
-            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ActivationCarrierTable.URI_CONTENT))
-                    .where(ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
-                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
-                        @Override
-                        public ActivationCarrierModel apply(Cursor cursor) {
-                            return new ActivationCarrierModel(cursor);
-                        }
-                    }).build(DashboardActivity.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<ActivationCarrierModel>> loader, List<ActivationCarrierModel> data) {
-            activationCarriers = data;
-            if (activationMenuItem != null) {
-                activationMenuItem.setEnabled(data != null && !data.isEmpty());
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<ActivationCarrierModel>> loader) {
-        }
-    };
+//    private LoaderCallbacks activationLoader = new LoaderCallbacks<List<ActivationCarrierModel>>() {
+//
+//        @Override
+//        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
+//            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ActivationCarrierTable.URI_CONTENT))
+//                    .where(ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
+//                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
+//                        @Override
+//                        public ActivationCarrierModel apply(Cursor cursor) {
+//                            return new ActivationCarrierModel(cursor);
+//                        }
+//                    }).build(DashboardActivity.this);
+//        }
+//
+//        @Override
+//        public void onLoadFinished(Loader<List<ActivationCarrierModel>> loader, List<ActivationCarrierModel> data) {
+//            activationCarriers = data;
+////            if (activationMenuItem != null) {
+////                activationMenuItem.setEnabled(data != null && !data.isEmpty());
+////            }
+//        }
+//
+//        @Override
+//        public void onLoaderReset(Loader<List<ActivationCarrierModel>> loader) {
+//        }
+//    };
 
     public static class SalesStatisticsConverter extends ListConverterFunction<Optional<SalesStatisticsModel>> {
 
@@ -1233,9 +1195,7 @@ public class DashboardActivity extends SuperBaseActivity {
     public class WaitForCloseDrawerCallback extends BaseWaitForCloseDrawerCallback {
 
         @Override
-        protected void onDrawerClosed(boolean needSync) {
-            if(needSync)
-                OfflineCommandsService.startUpload(DashboardActivity.this);
+        protected void onDrawerClosed() {
             if (isShiftOpened) {
                 CloseDrawerFragment.hide(DashboardActivity.this);
                 CloseAmountFragment.hide(DashboardActivity.this);
@@ -1253,7 +1213,7 @@ public class DashboardActivity extends SuperBaseActivity {
         private void handleCancelBtn() {
             if (isShiftOpened) {
                 CloseDrawerFragment.hide(DashboardActivity.this);
-                showCloseAmountDialog(false, closeAmount, false);
+                showCloseAmountDialog(false, closeAmount);
             } else {
                 PutCashFragment.hide(DashboardActivity.this);
                 showOpenAmountDialog();
@@ -1261,7 +1221,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         private void handleTryAgainBtn() {
-            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this,false, this);
+            closeDrawerCommandHandler = WaitForCloseDrawerCommand.start(DashboardActivity.this, this);
         }
 
         @Override
@@ -1296,7 +1256,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            onDrawerClosed(false);
+                            onDrawerClosed();
                             return true;
                         }
                     }
@@ -1318,7 +1278,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            try2OpenDrawer(true, openDrawerCallback, false);
+                            try2OpenDrawer(true, openDrawerCallback);
                             return true;
                         }
                     }
@@ -1326,14 +1286,14 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         @Override
-        public void onDrawerOpened(boolean needSync) {
-            onDrawerOpened(false, needSync);
+        public void onDrawerOpened() {
+            onDrawerOpened(false);
         }
 
-        private void onDrawerOpened(boolean skipDrawer, boolean needSync) {
+        private void onDrawerOpened(boolean skipDrawer) {
             WaitDialogFragment.hide(DashboardActivity.this);
             if (isShiftOpened) {
-                showCloseAmountDialog(skipDrawer, needSync);
+                showCloseAmountDialog(skipDrawer);
             }
         }
 
@@ -1343,7 +1303,7 @@ public class DashboardActivity extends SuperBaseActivity {
             AlertDialogFragment.showAlertWithSkip(DashboardActivity.this, R.string.open_drawer_error_title, getString(PrintCallbackHelper.getPrinterErrorMessage(error)), new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            try2OpenDrawer(false, openDrawerCallback, false);
+                            try2OpenDrawer(false, openDrawerCallback);
                             return true;
                         }
                     },
@@ -1371,7 +1331,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            try2OpenDrawer(true, noSaleOpenDrowerCallback,false);
+                            try2OpenDrawer(true, noSaleOpenDrowerCallback);
                             return true;
                         }
                     }
@@ -1379,7 +1339,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         @Override
-        protected void onDrawerOpened(boolean needSync) {
+        protected void onDrawerOpened() {
             WaitDialogFragment.hide(DashboardActivity.this);
         }
 
@@ -1403,7 +1363,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            try2OpenDrawer(true, movementsOpenDrawerCallback, false);
+                            try2OpenDrawer(true, movementsOpenDrawerCallback);
                             return true;
                         }
                     }
@@ -1411,7 +1371,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         @Override
-        protected void onDrawerOpened(boolean needsync) {
+        protected void onDrawerOpened() {
             WaitDialogFragment.hide(DashboardActivity.this);
 
             showCashDrawerMovementEditDialog();
@@ -1426,7 +1386,7 @@ public class DashboardActivity extends SuperBaseActivity {
                         @Override
                         public boolean onClick() {
                             WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_open_drawer));
-                            OpenDrawerCommand.start(DashboardActivity.this, false, movementsOpenDrawerCallback, false);
+                            OpenDrawerCommand.start(DashboardActivity.this, false, movementsOpenDrawerCallback);
                             return true;
                         }
                     },
@@ -1443,7 +1403,7 @@ public class DashboardActivity extends SuperBaseActivity {
     private class MovementWaitForCloseDrawerCallback extends BaseWaitForCloseDrawerCallback {
 
         @Override
-        protected void onDrawerClosed(boolean needSync) {
+        protected void onDrawerClosed() {
             PutCashFragment.hide(DashboardActivity.this);
             printDropAndPayout(false, false);
         }
@@ -1468,7 +1428,7 @@ public class DashboardActivity extends SuperBaseActivity {
                         @Override
                         public boolean onClick() {
                             PutCashFragment.show(DashboardActivity.this, true);
-                            WaitForCloseDrawerCommand.start(DashboardActivity.this, false, movementWaitForCloseDrawerCallback);
+                            WaitForCloseDrawerCommand.start(DashboardActivity.this, movementWaitForCloseDrawerCallback);
                             return true;
                         }
                     },
@@ -1529,17 +1489,8 @@ public class DashboardActivity extends SuperBaseActivity {
     }
 
     private void printDropAndPayout(boolean skipPaperWarning, boolean searchByMac) {
-        boolean printDropOrPayout = getPrintDropOrPayout();
-        if (printDropOrPayout)
-        {
-            WaitDialogFragment.show(this, getString(R.string.wait_printing));
-            PrintDropPayoutCommand.start(this, null, skipPaperWarning, searchByMac, printDropPayoutCallback);
-        }
-
-    }
-
-    private boolean getPrintDropOrPayout() {
-        return getApp().getPrintDropOrPayout();
+        WaitDialogFragment.show(this, getString(R.string.wait_printing));
+        PrintDropPayoutCommand.start(this, null, skipPaperWarning, searchByMac, printDropPayoutCallback);
     }
 
     private class StartShiftCallback extends StartShiftCommand.BaseStartShiftCallback {
@@ -1562,12 +1513,6 @@ public class DashboardActivity extends SuperBaseActivity {
         @Override
         protected void onShiftClosed() {
             WaitDialogFragment.hide(DashboardActivity.this);
-
-            if (getApp().isTrainingMode()) {
-                showPrintXReportDialog();
-                return;
-            }
-
             WaitDialogFragment.show(DashboardActivity.this, getString(R.string.truncate_wait_message));
             ClearSalesHistoryCommand.start(DashboardActivity.this, new BaseClearSalesHistoryCallback() {
                 @Override
@@ -1604,6 +1549,12 @@ public class DashboardActivity extends SuperBaseActivity {
         @Override
         protected void onClockIn(String guid, String fullName, Date time) {
             WaitDialogFragment.hide(DashboardActivity.this);
+
+            if (getApp().isTrainingMode()) {
+                showPrintXReportDialog();
+                return;
+            }
+
             AlertDialogFragment.showComplete(DashboardActivity.this, R.string.btn_clock_in,
                     getString(R.string.dashboard_clock_in_msg, fullName, DateUtils.timeOnlyAttendanceFormat(time)));
         }

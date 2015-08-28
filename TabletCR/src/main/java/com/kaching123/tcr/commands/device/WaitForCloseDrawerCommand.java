@@ -32,7 +32,6 @@ public class WaitForCloseDrawerCommand extends BaseDeviceCommand {
     @Override
     protected TaskResult executeInner(PosPrinter printer) throws IOException {
         Logger.d("PrinterCommand: WaitForCloseDrawerCommand execute");
-        boolean needSync = getBooleanArg(PrinterCommand.ARG_NEED_SYNC);
         if (isEmulate()) {
             Logger.d("PrinterCommand: WaitForCloseDrawerCommand emulate mode!!!");
             try {
@@ -42,7 +41,7 @@ public class WaitForCloseDrawerCommand extends BaseDeviceCommand {
             if (isQuitting()) {
                 return cancelled();
             }
-            return succeeded().add(PrinterCommand.EXTRA_NEED_SYNC, needSync);
+            return succeeded();
         }
         if (getPrinterID().equalsIgnoreCase(USBPrinter.USB_DESC))
             return succeeded();
@@ -50,7 +49,7 @@ public class WaitForCloseDrawerCommand extends BaseDeviceCommand {
         boolean checkDrawerStatus = getApp().getShopInfo().drawerClosedForSale;
         if (!checkDrawerStatus) {
             Logger.d("PrinterCommand: WaitForCloseDrawerCommand doesn't wait");
-            return succeeded().add(PrinterCommand.EXTRA_NEED_SYNC, needSync);
+            return succeeded();
         }
 
         Logger.d("PrinterCommand: WaitForCloseDrawerCommand before WaitForCloseAction");
@@ -60,7 +59,7 @@ public class WaitForCloseDrawerCommand extends BaseDeviceCommand {
         if (isQuitting()) {
             return cancelled();
         }
-        return isClosed ? succeeded().add(PrinterCommand.EXTRA_NEED_SYNC, needSync) : failed().add(RESULT_CLOSE_ERROR, true);
+        return isClosed ? succeeded() : failed().add(RESULT_CLOSE_ERROR, true);
     }
 
     @Override
@@ -69,21 +68,21 @@ public class WaitForCloseDrawerCommand extends BaseDeviceCommand {
             waitForCloseAction.cancel();
     }
 
-    public static TaskHandler start(Context context, boolean needSync,/*CallbacksManager manager,*/ BaseWaitForCloseDrawerCallback callback) {
-        return create(WaitForCloseDrawerCommand.class)/*.callbackManager(manager)*/.arg(PrinterCommand.ARG_NEED_SYNC, needSync).callback(callback).queueUsing(context);
+    public static TaskHandler start(Context context, /*CallbacksManager manager,*/ BaseWaitForCloseDrawerCallback callback) {
+        return create(WaitForCloseDrawerCommand.class)/*.callbackManager(manager)*/.callback(callback).queueUsing(context);
     }
 
     public static abstract class BaseWaitForCloseDrawerCallback {
 
         @OnSuccess(WaitForCloseDrawerCommand.class)
-        public void onSuccess(@Param(PrinterCommand.EXTRA_NEED_SYNC) boolean needSync) {
-            onDrawerClosed(needSync);
+        public void onSuccess() {
+            onDrawerClosed();
         }
 
         @OnFailure(WaitForCloseDrawerCommand.class)
         public void onFailure(@Param(PrinterCommand.EXTRA_ERROR_PRINTER) PrinterError error, @Param(RESULT_CLOSE_ERROR) boolean isCloseError) {
             if (error == PrinterError.NOT_CONFIGURED) {
-                onDrawerClosed(true);
+                onDrawerClosed();
                 return;
             }
             if (isCloseError) {
@@ -93,7 +92,7 @@ public class WaitForCloseDrawerCommand extends BaseDeviceCommand {
             onDrawerCloseError(error);
         }
 
-        protected abstract void onDrawerClosed(boolean needSync);
+        protected abstract void onDrawerClosed();
 
         protected abstract void onDrawerTimeoutError();
 

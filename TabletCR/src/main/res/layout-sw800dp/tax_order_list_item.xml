@@ -54,7 +54,7 @@
         android:id="@+id/item_front"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:background="@drawable/item_list_bg">
+        android:background="@color/bg_grey_color">
             <LinearLayout
                 android:id="@+id/clickable_container"
                 style="@style/ItemList.ItemLayout.Block"

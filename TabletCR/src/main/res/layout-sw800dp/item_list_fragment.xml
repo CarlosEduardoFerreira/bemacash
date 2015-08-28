@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/item_list_bg"
-                android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_grey_color"
+    android:orientation="vertical">
 
     <include
         android:id="@id/header"
-        layout="@layout/itempick_items_list_header"/>
+        layout="@layout/itempick_items_list_header" />
 
     <!--<View
         android:layout_width="fill_parent"
@@ -16,13 +16,12 @@
 
 
     <ListView
-        android:layout_below="@id/header"
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@drawable/list_divider"
-        android:layerType="software"/>
+        android:layout_below="@id/header"
+        android:divider="?android:attr/listDivider"
+        android:layerType="software" />
 
-    <include
-        layout="@layout/itempick_items_list_vertical_dividers"/>
+    <include layout="@layout/itempick_items_list_vertical_dividers" />
 </RelativeLayout>

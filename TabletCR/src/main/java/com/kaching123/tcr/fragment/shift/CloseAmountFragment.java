@@ -3,13 +3,12 @@ package com.kaching123.tcr.fragment.shift;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.edit.DecimalEditFragment;
-
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
 
 import java.math.BigDecimal;
 
@@ -27,9 +26,6 @@ public class CloseAmountFragment extends DecimalEditFragment {
 
     @FragmentArg
     protected boolean skipDrawer;
-
-    @FragmentArg
-    protected boolean needSync;
 
     @Override
     protected BigDecimal getMaxValue() {
@@ -80,7 +76,7 @@ public class CloseAmountFragment extends DecimalEditFragment {
     @Override
     protected void callCommand(String guid, BigDecimal value) {
         if (editAmountListener != null) {
-            editAmountListener.onConfirm(skipDrawer, value, needSync);
+            editAmountListener.onConfirm(skipDrawer, value);
         }
     }
 
@@ -95,8 +91,8 @@ public class CloseAmountFragment extends DecimalEditFragment {
         this.editAmountListener = editAmountListener;
     }
 
-    public static void show(FragmentActivity activity, boolean skipDrawer, BigDecimal amount, boolean needSync, OnEditAmountListener listener) {
-        CloseAmountFragment fragment = CloseAmountFragment_.builder().skipDrawer(skipDrawer).needSync(needSync).decimalValue(amount).build();
+    public static void show(FragmentActivity activity, boolean skipDrawer, BigDecimal amount, OnEditAmountListener listener) {
+        CloseAmountFragment fragment = CloseAmountFragment_.builder().skipDrawer(skipDrawer).decimalValue(amount).build();
         fragment.setEditAmountListener(listener);
         DialogUtil.show(activity, DIALOG_NAME, fragment);
     }
@@ -106,8 +102,7 @@ public class CloseAmountFragment extends DecimalEditFragment {
     }
 
     public static interface OnEditAmountListener {
-        void onConfirm(boolean skipDrawer, BigDecimal value, boolean needSync);
-
+        void onConfirm(boolean skipDrawer, BigDecimal value);
         void onCancel();
     }
 }

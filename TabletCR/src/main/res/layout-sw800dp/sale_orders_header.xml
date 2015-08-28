@@ -48,6 +48,7 @@
         android:text="@string/orders_header_tender_type"/>
 
     <TextView
+        android:visibility="gone"
         style="@style/ItemList.HeaderText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

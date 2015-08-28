@@ -8,7 +8,7 @@
               android:paddingRight="80dp"
               android:paddingTop="40dp"
               android:paddingBottom="40dp"
-              android:background="@color/beige">
+              android:background="@color/bg_grey_color">
 
     <LinearLayout
         android:layout_height="0dp"

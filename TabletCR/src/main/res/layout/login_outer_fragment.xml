@@ -12,17 +12,8 @@
         android:layout_margin="16dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:textColor="#BBB9AE"
-        android:textStyle="bold"
+        android:textColor="@android:color/black"
         android:textSize="16sp" />
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:textColor="#BBB9AE"
-        android:textSize="16sp" />
-
     <TextView android:id="@+id/version_name"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"

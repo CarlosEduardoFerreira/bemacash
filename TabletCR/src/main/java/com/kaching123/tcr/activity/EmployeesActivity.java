@@ -173,7 +173,7 @@ public class EmployeesActivity extends SuperBaseActivity {
 
     private void try2OpenDrawer(boolean searchByMac) {
         WaitDialogFragment.show(EmployeesActivity.this, getString(R.string.wait_message_open_drawer));
-        OpenDrawerCommand.start(EmployeesActivity.this, searchByMac, openDrawerCallback, false);
+        OpenDrawerCommand.start(EmployeesActivity.this, searchByMac, openDrawerCallback);
     }
 
     @Override
@@ -368,10 +368,10 @@ public class EmployeesActivity extends SuperBaseActivity {
         }
 
         @Override
-        protected void onDrawerOpened(boolean needSync) {
+        protected void onDrawerOpened() {
             WaitDialogFragment.hide(EmployeesActivity.this);
             PutCashFragment.show(EmployeesActivity.this, true);
-            WaitForCloseDrawerCommand.start(EmployeesActivity.this, needSync,waitForCloseDrawerCallback);
+            WaitForCloseDrawerCommand.start(EmployeesActivity.this, waitForCloseDrawerCallback);
         }
 
         @Override
@@ -397,7 +397,7 @@ public class EmployeesActivity extends SuperBaseActivity {
 
     private BaseWaitForCloseDrawerCallback waitForCloseDrawerCallback = new BaseWaitForCloseDrawerCallback() {
         @Override
-        protected void onDrawerClosed(boolean needSync) {
+        protected void onDrawerClosed() {
             PutCashFragment.hide(EmployeesActivity.this);
             addTips();
         }
@@ -421,7 +421,7 @@ public class EmployeesActivity extends SuperBaseActivity {
                         @Override
                         public boolean onClick() {
                             PutCashFragment.show(EmployeesActivity.this, true);
-                            WaitForCloseDrawerCommand.start(EmployeesActivity.this, false, waitForCloseDrawerCallback);
+                            WaitForCloseDrawerCommand.start(EmployeesActivity.this, waitForCloseDrawerCallback);
                             return true;
                         }
                     },

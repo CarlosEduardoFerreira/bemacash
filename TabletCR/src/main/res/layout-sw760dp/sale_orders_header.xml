@@ -13,13 +13,13 @@
         android:gravity="center"
         android:paddingLeft="-16dp"
         android:text="@string/orders_header_num"
-        android:layout_weight="0.6"/>
+        android:layout_weight="0.7"/>
 
     <TextView
         style="@style/ItemList.HeaderText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.8"
+        android:layout_weight="1.2"
         android:gravity="center"
         android:text="@string/orders_header_merchant"/>
 
@@ -46,14 +46,6 @@
         android:layout_weight="0.7"
         android:gravity="center"
         android:text="@string/orders_header_tender_type"/>
-
-    <TextView
-        style="@style/ItemList.HeaderText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:gravity="center"
-        android:text="@string/orders_header_prepaid"/>
 
     <TextView
         android:visibility="gone"

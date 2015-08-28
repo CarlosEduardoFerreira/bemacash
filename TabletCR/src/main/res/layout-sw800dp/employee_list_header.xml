@@ -23,7 +23,6 @@
         android:text="User ID"/>
 
     <TextView
-
         style="@style/ItemList.HeaderText"
         android:layout_height="match_parent"
         android:layout_width="0dp"
