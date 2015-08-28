@@ -142,7 +142,16 @@ public class LoginFragment extends SuperBaseDialogFragment {
                 getDialog().getWindow().getAttributes().height);
         setCancelable(false);
     }
-
+//        Window window = dialog.getWindow();
+//
+//        // set "origin" to top left corner, so to speak
+//        window.setGravity(Gravity.TOP|Gravity.LEFT);
+//
+//        // after that, setting values for x and y works "naturally"
+//        WindowManager.LayoutParams params = window.getAttributes();
+//        params.x = 630;
+//        params.y = 0;
+//        window.setAttributes(params);
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = new Dialog(getActivity(), R.style.AppTheme_Transparent);

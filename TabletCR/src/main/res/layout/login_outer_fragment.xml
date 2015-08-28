@@ -5,7 +5,16 @@
     android:layout_width="match_parent"
     android:background="@drawable/login_background">
 
-    <TextView android:id="@+id/register_serial_label"
+    <TextView
+        android:id="@+id/register_serial_label"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:textColor="#BBB9AE"
+        android:textStyle="bold"
+        android:textSize="16sp" />
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_margin="16dp"

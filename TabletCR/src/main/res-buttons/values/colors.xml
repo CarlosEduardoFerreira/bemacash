@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="text_green_normal">#3b5e15</color>
-    <color name="text_green_pressed">#27410b</color>
-    <color name="text_green_disabled">#663b5e15</color>
+    <color name="text_green_normal">#BDD244</color>
+    <color name="text_green_pressed">#BBC749</color>
+    <color name="text_green_disabled">#E3ECAB</color>
 
-    <color name="text_green2_normal">#5bbd6e</color>
-    <color name="text_green2_pressed">#0e3b16</color>
-    <color name="text_green2_disabled">#665bbd6e</color>
+    <color name="text_green2_normal">#BDD244</color>
+    <color name="text_green2_pressed">#BBC749</color>
+    <color name="text_green2_disabled">#E3ECAB</color>
 
     <color name="text_grey_normal">#666666</color>
     <color name="text_grey_pressed">#494949</color>
