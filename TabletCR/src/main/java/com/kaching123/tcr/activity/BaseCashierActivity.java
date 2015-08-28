@@ -804,9 +804,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         checkHoldInfo();
-        menu.findItem(R.id.action_prepaid).setEnabled(getApp().isPrepaidUserValid());
         menu.findItem(R.id.action_order_items).setVisible(!isCreateReturnOrder);
-        menu.findItem(R.id.action_prepaid).setVisible(!isCreateReturnOrder);
         PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX_EBT_CASH.gateway();
         menu.findItem(R.id.action_balance).setVisible(getApp().isPaxConfigured() && paxGateway.acceptPaxEbtEnabled());
         menu.findItem(R.id.action_commission).setVisible(getApp().isCommissionsEnabled() && !isCreateReturnOrder);
@@ -1048,17 +1046,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void actionBarItemClicked() {
 
-    }
-
-    @OptionsItem
-    protected void actionPrepaidSelected() {
-        if (!getApp().isOperatorClockedIn() && getApp().getShopInfo().clockinRequired4Sales) {
-            try2ClockIn();
-            return;
-        }
-        actionBarItemClicked();
-//        PrepaidProcessor.create().init(this);
-        PrepaidProcessorActivity.start(this, getBillpaymentActivate(), getSunpassActivate());
     }
 
     private boolean getBillpaymentActivate() {

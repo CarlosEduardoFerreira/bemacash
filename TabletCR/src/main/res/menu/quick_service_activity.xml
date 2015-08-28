@@ -31,13 +31,6 @@
         android:orderInCategory="@integer/menu_order_default"/>
 
     <item
-        android:icon="@drawable/btn_prepaid"
-        android:id="@+id/action_prepaid"
-        android:showAsAction="always|withText"
-        android:title="@string/cashier_action_prapaid"
-        android:orderInCategory="@integer/menu_order_default"/>
-
-    <item
         android:icon="@drawable/btn_balance"
         android:id="@+id/action_balance"
         android:showAsAction="never"
