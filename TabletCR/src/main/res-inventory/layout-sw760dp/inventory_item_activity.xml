@@ -7,7 +7,7 @@
     android:paddingRight="40dp"
     android:paddingTop="25dp"
     android:paddingBottom="25dp"
-    android:background="@color/beige">
+    android:background="@color/bg_grey_color">
 
     <LinearLayout
         android:layout_height="match_parent"
@@ -247,6 +247,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:button="@drawable/checkbox_mint"
                     android:checked="true" />
 
             </TableRow>
@@ -290,6 +291,7 @@
                     android:id="@+id/has_notes"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:button="@drawable/checkbox_mint"
                     android:layout_weight="1" />
 
             </TableRow>
@@ -374,6 +376,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:button="@drawable/checkbox_mint"
                     android:checked="true" />
             </TableRow>
 
@@ -435,6 +438,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:button="@drawable/checkbox_mint"
                     android:checked="true" />
             </TableRow>
 
@@ -499,6 +503,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:button="@drawable/checkbox_mint"
                     android:checked="true" />
             </TableRow>
 
@@ -560,10 +565,10 @@
 
         <Button
             style="@style/LocalizableButton.Green"
-            android:text="@string/button_save"
             android:textSize="26sp"
             android:paddingBottom="6dp"
             android:id="@+id/button"
+            android:text="@string/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"

@@ -3,7 +3,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="50dp"
-    android:background="@drawable/modifications_activity_list_bg_header"
+    android:background="@color/mint_color"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     >
@@ -11,7 +11,7 @@
     <TextView
         style="@style/SimpleList.Header.Text"
         android:layout_height="match_parent"
-        android:layout_width="@dimen/modifiers_list_name_width"
+        android:layout_width="@dimen/modifiers_list_name_1024_768_width"
         android:paddingLeft="@dimen/modifiers_list_name_padding_left"
         android:gravity="center_vertical"
         android:text="Name"/>

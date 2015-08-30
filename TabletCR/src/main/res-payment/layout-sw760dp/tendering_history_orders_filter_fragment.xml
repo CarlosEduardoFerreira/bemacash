@@ -26,6 +26,12 @@
                     android:layout_height="wrap_content"
                     android:text="@string/orders_history_order_num" />
 
+                <EditText
+                    android:id="@+id/usb_scanner_input"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:textSize="1sp" />
+
                 <com.kaching123.tcr.component.CustomEditBox
                     android:id="@+id/order_number"
                     style="@style/FilterPanel.CustomEditBox"
@@ -190,6 +196,8 @@
             android:background="@drawable/filter_btn"/>
 
     </LinearLayout>
+        android:layout_height="70dp"
+        android:background="@drawable/filter_btn" />
 
     <LinearLayout
         android:id="@+id/below_holder"

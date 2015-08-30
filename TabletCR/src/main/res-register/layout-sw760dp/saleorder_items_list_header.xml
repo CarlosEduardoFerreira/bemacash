@@ -5,7 +5,8 @@
     style="@style/ItemList.HeaderLayout"
     android:orientation="horizontal"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:background="@color/mint_color">
 
     <TextView
         style="@style/ItemList.HeaderText.Border"
@@ -14,14 +15,14 @@
         android:gravity="left"
         android:text="@string/order_header_title"
         android:layout_weight="3"/>
-
     <EditText
         android:id="@+id/usb_scanner_input"
         android:textSize="1sp"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="13"/>
-
+        android:gravity="center"
+        android:cursorVisible="false"
+        android:layout_weight="12"/>
     <TextView
         style="@style/ItemList.HeaderText.Border"
         android:layout_width="0dp"

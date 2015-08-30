@@ -7,7 +7,7 @@
     android:paddingRight="80dp"
     android:paddingTop="25dp"
     android:paddingBottom="30dp"
-    android:background="@color/beige">
+    android:background="@color/bg_grey_color">
 
     <LinearLayout
         android:layout_height="match_parent"
@@ -584,10 +584,10 @@
 
         <Button
             style="@style/LocalizableButton.Green"
-            android:text="@string/button_save"
             android:textSize="26sp"
             android:paddingBottom="6dp"
             android:id="@+id/button"
+            android:text="@string/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"

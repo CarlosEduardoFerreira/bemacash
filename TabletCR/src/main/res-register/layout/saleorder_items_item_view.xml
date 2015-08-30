@@ -67,7 +67,6 @@
             android:background="@drawable/item_remove_cancel_btn"
             android:layout_marginRight="@dimen/list_item_padding_right"
             android:textSize="18sp"
-            android:text="@string/btn_item_cancel"
             android:id="@+id/btn_item_cancel" />
 
         <Button
@@ -88,7 +87,7 @@
         android:paddingTop="0dp"
         android:paddingBottom="0dp"
         android:id="@+id/item_front"
-        android:background="@drawable/item_list_bg"
+        android:background="@color/bg_grey_color"
         style="@style/ItemList.ItemLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

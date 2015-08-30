@@ -15,6 +15,11 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
+            <fragment
+                android:id="@+id/categories_fragment"
+                android:name="com.kaching123.tcr.fragment.quickservice.QuickCategoriesFragment_"
+                android:layout_height="match_parent"
+                android:layout_width="240dp"/>
 
             <FrameLayout
                 android:layout_width="0dp"
@@ -52,19 +57,7 @@
             </FrameLayout>
 
 
-            <FrameLayout
-                android:layout_width="320dp"
-                android:layout_height="match_parent"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp">
 
-                <fragment
-                    android:id="@+id/total_cost_fragment"
-                    android:name="com.kaching123.tcr.fragment.saleorder.TotalCostFragment_"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-            </FrameLayout>
 
         </LinearLayout>
 
@@ -75,24 +68,34 @@
             android:orientation="horizontal"
             android:layout_weight="1">
 
-            <fragment
-                android:id="@+id/categories_fragment"
-                android:name="com.kaching123.tcr.fragment.quickservice.QuickCategoriesFragment_"
-                android:layout_height="match_parent"
-                android:layout_width="240dp"/>
 
             <fragment
-                android:layout_toRightOf="@id/categories_fragment"
                 android:id="@+id/items_list_fragment"
                 android:name="com.kaching123.tcr.fragment.quickservice.QuickItemsFragment_"
                 android:layout_height="match_parent"
-                android:layout_width="match_parent"/>
+                android:layout_width="960dp"/>
 
             <fragment
                 android:id="@+id/modify_fragment"
                 android:name="com.kaching123.tcr.fragment.quickservice.QuickModifyFragment_"
                 android:layout_height="match_parent"
-                android:layout_width="match_parent"/>
+                android:layout_width="1280dp"/>
+
+            <FrameLayout
+                android:layout_toRightOf="@+id/items_list_fragment"
+                android:layout_width="320dp"
+                android:layout_height="match_parent"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp">
+
+                <fragment
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/total_cost_fragment"
+                    android:name="com.kaching123.tcr.fragment.saleorder.TotalCostFragment_"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </FrameLayout>
 
         </RelativeLayout>
 

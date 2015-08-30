@@ -10,7 +10,7 @@
         android:paddingBottom="30dp"
         android:paddingLeft="76dp"
         android:paddingRight="76dp"
-        android:background="@color/beige">
+        android:background="@color/bg_grey_color">
 
         <fragment
             android:id="@+id/modifiers"

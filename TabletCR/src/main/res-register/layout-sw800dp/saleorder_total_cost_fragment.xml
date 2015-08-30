@@ -8,9 +8,9 @@
         style="@style/TotalCostTable.Container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/subtotal_top_bkg"
+        android:background="#808284"
         android:orientation="vertical">
-
+        <!--android:background="@drawable/subtotal_top_bkg"-->
         <LinearLayout
             style="@style/TotalCostTable.Row"
             android:layout_width="match_parent"
@@ -58,12 +58,13 @@
                 android:text="$ 0.00" />
         </LinearLayout>
 
-        <View
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="3dp"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@drawable/total_cost_order_discount_border" />
+        <!--<View-->
+            <!--android:layout_marginTop="4dp"-->
+            <!--android:layout_marginBottom="3dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="2dp"-->
+            <!--android:background="@drawable/total_cost_order_discount_border"-->
+             <!--/>-->
 
         <LinearLayout
             style="@style/TotalCostTable.Row.Clickable"
@@ -128,6 +129,7 @@
                 android:id="@+id/btn_void"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/button_void"
                 android:textSize="18sp"
                 android:paddingLeft="12dp"
                 android:paddingBottom="0dp"
