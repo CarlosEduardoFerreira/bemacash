@@ -61,6 +61,11 @@ public class DigitalReportItemBuilder extends BaseDigitalBuilder implements IRep
     }
 
     @Override
+    public void addComments(String title, String comment) {
+        addStyled(title, comment);
+    }
+
+    @Override
     public void add(Date clockIn, Date clockOut, boolean isSameDay) {
         if (isSameDay) {
             addClockInOut("  " + dateOnlyFormat(clockIn), timeOnlyAttendanceFormat(clockIn), clockOut == null ? "-" + NBSP + NBSP : timeOnlyAttendanceFormat(clockOut));
@@ -447,7 +452,7 @@ public class DigitalReportItemBuilder extends BaseDigitalBuilder implements IRep
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String opratorTitle, String operatorName) {
 
     }
 }

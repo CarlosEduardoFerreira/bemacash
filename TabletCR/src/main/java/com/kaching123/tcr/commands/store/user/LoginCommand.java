@@ -53,6 +53,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 public class LoginCommand extends GroundyTask {
 
     public static enum Error {LOGIN_FAILED, SYNC_OUTDATED, SYNC_FAILED, REGISTER_CHECK_FAILED, EMPLOYEE_NOT_ACTIVE, OFFLINE, SYNC_INCONSISTENT, LOGIN_OFFLINE_FAILED, SYNC_LOCKED, SYNC_INTERRUPTED}
+
     public static enum Mode {
         LOGIN, SWITCH
     }
@@ -81,8 +82,8 @@ public class LoginCommand extends GroundyTask {
         String registerSerial = app.getRegisterSerial();
         boolean isOffline = !Util.isNetworkAvailable(getContext());
 
-        String lastUserName = getLastUserName();
-        String lastUserPassword = getLastUserPassword();
+        String lastUserName = getLastUserName() == null ? userName : getLastUserName();
+        String lastUserPassword = getLastUserPassword() == null ? password : getLastUserPassword();
         boolean isEmployeeSuccessUpload = true;
         if (lastUserName != null) {
             uploadTaskV2Adapter = new UploadTaskV2(loginLocal(lastUserName, lastUserPassword));

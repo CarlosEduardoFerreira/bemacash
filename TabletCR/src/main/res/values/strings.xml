@@ -417,7 +417,8 @@
     <string name="printer_tips">Tips</string>
     <string name="printer_balance">EBT Balance</string>
     <string name="printer_order_num">Order</string>
-    <string name="printer_guest">Guest</string>
+    <string name="printer_guest">Guest:</string>
+    <string name="printer_cashier">Cashier:</string>
     <string name="printer_refund_total">Total (tax included)</string>
     <string name="printer_refund_tips">     Tips</string>
     <string name="printer_signature_subtitle">Signature Receipt</string>
@@ -905,6 +906,7 @@
     <string name="xreport_discounts">Discounts:</string>
     <string name="xreport_returns">Returns:</string>
     <string name="xreport_net_sales">Net Sales:</string>
+    <string name="xreport_departments_sales">Departments:</string>
     <string name="xreport_gratuity">Gratuity:</string>
     <string name="xreport_tax">Tax:</string>
     <string name="xreport_transaction_fee">Transaction Fee:</string>
@@ -1401,6 +1403,7 @@
     <string name="safe_drop">SAFE DROP</string>
     <string name="payout">PAYOUT</string>
     <string name="amount">Amount</string>
+    <string name="comment">Comment:</string>
     <string name="sync_shop_info">shop</string>
     <string name="sync_recalc_data">local</string>
     <string name="kitchen_print_qty_update_failed">Items printed quantity not updated for printer \'%s\'</string>

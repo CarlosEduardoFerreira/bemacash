@@ -268,8 +268,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
                     devices.add(new DeviceModel(SEARIL_PORT_SCANNER_ADDRESS, SEARIL_PORT_SCANNER_NAME));
 //                    if (checkUsb(USB_SCANNER_VID, USB_SCANNER_PID))
 //                        devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
+                    devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
                 }
-            devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
             for (BluetoothDevice device : bluetoothDevices) {
                 if (useConstraint && !checkConstraint(device))
                     continue;

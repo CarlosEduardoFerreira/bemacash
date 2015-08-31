@@ -24,13 +24,11 @@ import com.annotatedsql.annotation.sql.SqlQuery;
 import com.annotatedsql.annotation.sql.StaticWhere;
 import com.annotatedsql.annotation.sql.Table;
 import com.annotatedsql.annotation.sql.Unique;
+import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Unit.Status;
-import com.kaching123.tcr.store.ShopSchema2.CustomerView2;
-import com.kaching123.tcr.store.ShopSchema2.CustomerView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchemaEx.Trigger.Action;
 import com.kaching123.tcr.store.ShopSchemaEx.Trigger.Time;
-import com.kaching123.tcr.BuildConfig;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 import static com.kaching123.tcr.store.ShopSchemaEx.ForeignKey.foreignKey;
@@ -39,7 +37,7 @@ import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTriggers;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 301)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 302)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -75,7 +73,7 @@ public abstract class ShopStore {
     }
 
     @Table(ApkUpdate.TABLE_NAME)
-    public static interface ApkUpdate extends IBemaSyncTable{
+    public static interface ApkUpdate extends IBemaSyncTable {
         @URI
         String URI_CONTENT = "apk_update";
         String TABLE_NAME = "apk_update";
@@ -1326,6 +1324,7 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String ORDER_ID = "sale_order_id";
     }
+
     static {
         applyForeignKeys(BillPaymentDescriptionTable.TABLE_NAME,
                 foreignKey(BillPaymentDescriptionTable.ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true)
@@ -1741,7 +1740,7 @@ public abstract class ShopStore {
                 + " on " + SALES + "." + SaleOrderTable.STATUS + " = " + OrderStatus.ACTIVE.ordinal()
                 + " and " + UnitTable.TABLE_NAME + "." + UnitTable.SALE_ORDER_ID + " = " + SALES + "." + SaleOrderTable.GUID
                 + " where " + SALES + "." + SaleOrderTable.PARENT_ID + " is null and " + SALES + "." + SaleOrderTable.CREATE_TIME + " < %1$s "
-                + " and ("+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " IS NULL OR "+ TIPS + "." + EmployeeTipsTable.CREATE_TIME + " < %2$s)"
+                + " and (" + TIPS + "." + EmployeeTipsTable.CREATE_TIME + " IS NULL OR " + TIPS + "." + EmployeeTipsTable.CREATE_TIME + " < %2$s)"
                 + " and " + UnitTable.TABLE_NAME + "." + UnitTable.ID + " is null"
                 + " group by " + SALES + "." + SaleOrderTable.GUID
                 + " having ( max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") is null OR max(" + REFUNDS + "." + SaleOrderTable.CREATE_TIME + ") < %3$s)"
@@ -1757,7 +1756,7 @@ public abstract class ShopStore {
         String UPDATE_QTY_FLAG = "t_update_qty_flag";
         String CREATE_TIME = "t_create_time";
 
-        String QUERY =  "select * from ("
+        String QUERY = "select * from ("
                 + "select " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
                 + " from " + ItemMovementTable.TABLE_NAME
                 + " left join " + ItemTable.TABLE_NAME
@@ -1765,7 +1764,7 @@ public abstract class ShopStore {
                 + " and " + ItemTable.TABLE_NAME + "." + ItemTable.UPDATE_QTY_FLAG + " = " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
                 + " where " + ItemTable.TABLE_NAME + "." + ItemTable.GUID + " is null "
                 + " group by " + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.ITEM_UPDATE_QTY_FLAG
-                + " having max("+ ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + ") < %1$s"
+                + " having max(" + ItemMovementTable.TABLE_NAME + "." + ItemMovementTable.CREATE_TIME + ") < %1$s"
                 + ") limit %2$s";
 
     }
@@ -1774,13 +1773,13 @@ public abstract class ShopStore {
 
         String CONTENT_PATH = "old_active_unit_orders_query";
 
-        String QUERY = "SELECT "+ SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.GUID
+        String QUERY = "SELECT " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.GUID
                 + " FROM " + SaleOrderTable.TABLE_NAME
                 + " join " + UnitTable.TABLE_NAME
                 + " on " + UnitTable.TABLE_NAME + "." + UnitTable.SALE_ORDER_ID + " = " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.GUID
                 + " join " + SaleItemTable.TABLE_NAME + " on " + SaleItemTable.TABLE_NAME + "." + SaleItemTable.ORDER_GUID + " = " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.GUID
                 + " and " + SaleItemTable.TABLE_NAME + "." + SaleItemTable.ITEM_GUID + " = " + UnitTable.TABLE_NAME + "." + UnitTable.ITEM_ID
-                + " where " +  SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.STATUS + " = " + OrderStatus.ACTIVE.ordinal()
+                + " where " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.STATUS + " = " + OrderStatus.ACTIVE.ordinal()
                 + " and " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.UPDATE_IS_DRAFT + " = 0"
                 + " and " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.UPDATE_TIME + " < %s"
                 + " group by " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.GUID
@@ -2401,6 +2400,43 @@ public abstract class ShopStore {
         @Join(type = Join.Type.LEFT, joinTable = DepartmentTable.TABLE_NAME, joinColumn = DepartmentTable.GUID, onTableAlias = TABLE_CATEGORY, onColumn = CategoryTable.DEPARTMENT_GUID)
         String TABLE_DEPARTMENT = "department_table";*/
     }
+
+    @SimpleView(SaleItemDeptView.VIEW_NAME)
+    public static interface SaleItemDeptView {
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "sale_item_dept_view";
+
+        String VIEW_NAME = "sale_item_dept_view";
+
+        @Columns({SaleOrderTable.GUID, SaleOrderTable.SHIFT_GUID, SaleOrderTable.DISCOUNT, SaleOrderTable.DISCOUNT_TYPE})
+        @From(SaleOrderTable.TABLE_NAME)
+        String TABLE_SALE_ORDER = "sale_order_table";
+
+        @Columns({PaymentTransactionTable.CREATE_TIME, PaymentTransactionTable.STATUS})
+        @Join(joinTable = PaymentTransactionTable.TABLE_NAME, joinColumn = PaymentTransactionTable.ORDER_GUID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.GUID)
+        String TABLE_PAYMNET_TRANSACTION = "payment_transaction_table";
+
+        @Columns({SaleItemTable.FINAL_DISCOUNT, SaleItemTable.FINAL_GROSS_PRICE, SaleItemTable.FINAL_TAX, SaleItemTable.ITEM_GUID, SaleItemTable.ORDER_GUID, SaleItemTable.PRICE, SaleItemTable.TAX, SaleItemTable.QUANTITY, SaleItemTable.DISCOUNT, SaleItemTable.DISCOUNT_TYPE, SaleItemTable.DISCOUNTABLE, SaleItemTable.TAXABLE})
+        @Join(joinTable = SaleItemTable.TABLE_NAME, joinColumn = SaleItemTable.ORDER_GUID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.GUID)
+        String TABLE_SALE_ITEM = "sale_item_table";
+
+        @Columns({ModifierTable.EXTRA_COST})
+        @Join(type = Join.Type.LEFT, joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.ITEM_GUID, onTableAlias = TABLE_SALE_ITEM, onColumn = SaleItemTable.ITEM_GUID)
+        String TABLE_MODIFIER = "modifier_table";
+
+        @Columns({ItemTable.CATEGORY_ID, ItemTable.GUID})
+        @Join(joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ITEM, onColumn = SaleItemTable.ITEM_GUID)
+        String TABLE_ITEM = "item_table";
+
+        @Columns({CategoryTable.GUID, CategoryTable.TITLE})
+        @Join(joinTable = CategoryTable.TABLE_NAME, joinColumn = CategoryTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.CATEGORY_ID)
+        String TABLE_CATEGORY = "category_table";
+
+        @Columns({DepartmentTable.GUID, DepartmentTable.TITLE})
+        @Join(joinTable = DepartmentTable.TABLE_NAME, joinColumn = DepartmentTable.GUID, onTableAlias = TABLE_CATEGORY, onColumn = CategoryTable.DEPARTMENT_GUID)
+        String TABLE_DEPARTMENT = "department_table";
+    }
+
 
     @SimpleView(EmployeeTimesheetView.VIEW_NAME)
     public static interface EmployeeTimesheetView {

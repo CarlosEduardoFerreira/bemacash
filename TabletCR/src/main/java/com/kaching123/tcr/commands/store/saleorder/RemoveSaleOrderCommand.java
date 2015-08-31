@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
@@ -83,6 +84,9 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+//        if(order != null && order.orderStatus == OrderStatus.ACTIVE){
+//            return operations;
+//        }
 
         operations.add(ContentProviderOperation.newUpdate(URI_UNIT)
                 .withValue(UnitTable.SALE_ORDER_ID, null)
@@ -115,7 +119,17 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         BatchSqlCommand batchSqlCommand = batchDelete(SaleOrderModel.class);
-
+//        SaleOrderModel order = null;
+//        Cursor c = ProviderAction.query(URI_ORDER)
+//                .where(SaleOrderTable.GUID + " = ?", orderId)
+//                .perform(getContext());
+//        if (c.moveToFirst()) {
+//            order = new SaleOrderModel(c);
+//            Logger.d("Guid = "+order.getGuid());
+//        }
+//        if(order != null && order.orderStatus == OrderStatus.ACTIVE){
+//            return batchSqlCommand;
+//        }
         UnitsJdbcConverter unitConverter = (UnitsJdbcConverter)JdbcFactory.getConverter(UnitTable.TABLE_NAME);
         batchSqlCommand.add(unitConverter.removeFromOrder(orderId, getAppCommandContext()));
 

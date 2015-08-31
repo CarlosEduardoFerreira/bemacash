@@ -23,13 +23,14 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "20"
+    buildToolsVersion "21.1.2"
     dexOptions {
         jumboMode = true
     }
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 19
+        multiDexEnabled = true
     }
 
     sourceSets {
@@ -165,6 +166,8 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.1'
 
     compile 'com.crittercism:crittercism-android-agent:+'
+
+    compile 'com.android.support:multidex:1.0.0'
 }
 
 apt {

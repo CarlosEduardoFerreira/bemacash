@@ -158,7 +158,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName) {
         stringBuilder.append(_styled("table", TABLE_STYLE));
         stringBuilder.append("<tr>");
         stringBuilder.append(_styled("td", HEADER_STYLE));
@@ -168,9 +168,18 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
         stringBuilder.append(dateFormat.format(date));
         stringBuilder.append("</td>");
         stringBuilder.append("</tr>");
-        stringBuilder.append("</table>");
 
-        stringBuilder.append(_styled("div", HEADER_STYLE, RIGHT_STYLE)).append(operatorName).append("</div>").append("<br>");
+        stringBuilder.append("<tr>");
+        stringBuilder.append(_styled("td", HEADER_STYLE));
+        stringBuilder.append(operatorTitle);
+        stringBuilder.append("</td>");
+        stringBuilder.append(_styled("td", HEADER_STYLE, RIGHT_STYLE));
+        stringBuilder.append(operatorName);
+        stringBuilder.append("</td>");
+        stringBuilder.append("</tr>");
+
+//        stringBuilder.append(_styled("div", HEADER_STYLE, RIGHT_STYLE)).append(operatorName).append("</div>").append("<br>");
+        stringBuilder.append("</table>");
     }
 
     @Override

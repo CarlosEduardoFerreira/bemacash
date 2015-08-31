@@ -299,7 +299,7 @@ public class SyncCommand implements Runnable {
         syncPAXMerchantInfo();
 
         //go to the blackstone api to refresh cache
-        syncWireless(service);
+        //syncWireless(service);
 
         int count = 0;
         // download date from our amazon web server - start
@@ -463,7 +463,8 @@ public class SyncCommand implements Runnable {
             Logger.d("[SYNC HISTORY]SyncCommand: history lock released");
         }
         // download date from our amazon web server - end
-
+        //go to the blackstone api to refresh cache
+        syncWireless(service);
         sendSyncSuccessful(api, employee);
 
         return count;

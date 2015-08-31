@@ -68,7 +68,8 @@ public class AutoUpdateService extends Service implements UpdateObserver.UpdateO
 
         if (force)
             executor.execute(task);
-        return super.onStartCommand(intent, flags, startId);
+        super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     public class Task implements Runnable {

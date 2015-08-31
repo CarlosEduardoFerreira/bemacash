@@ -265,4 +265,6 @@ public interface ShopPref {
     long lastUpdateTime();
 
     boolean updateApprove();
+
+    boolean enableEreportDepartSale();
 }

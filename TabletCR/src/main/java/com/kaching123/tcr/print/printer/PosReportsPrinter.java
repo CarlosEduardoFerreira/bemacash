@@ -47,12 +47,17 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
 
     @Override
     public void add(String title, BigDecimal qty, BigDecimal price) {
-        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, quantityFormat.format(qty),commaPriceFormat(price))));
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, quantityFormat.format(qty), commaPriceFormat(price))));
     }
 
     @Override
     public void add(String title, BigDecimal value) {
-        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, title,commaPriceFormat(value))));
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, title, commaPriceFormat(value))));
+    }
+
+    @Override
+    public void addComments(String title, String comment) {
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, title, comment)));
     }
 
     @Override
@@ -87,7 +92,7 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
 
     @Override
     public void add4Columns(String title, BigDecimal qty1, BigDecimal qty2, BigDecimal qty3) {
-        add(new PrintLineAction(format4ColumnsString(PRINTER_MAX_TEXT_LEN, 9, 9, 9, title, quantityFormat.format(qty1), quantityFormat.format(qty2), commaPriceFormat(qty3))));
+        add(new PrintLineAction(format4ColumnsString(PRINTER_MAX_TEXT_LEN, 9, 9, 9, title, quantityFormat.format(qty1), quantityFormat.format(qty2), quantityFormat.format(qty3))));
     }
 
     @Override
@@ -108,7 +113,7 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
 
     @Override
     public void addWithTab(String title, BigDecimal value) {
-        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, SPACES_2 + title,commaPriceFormat(value))));
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, SPACES_2 + title, commaPriceFormat(value))));
     }
 
     @Override
@@ -117,9 +122,9 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
             return;
 
         PrintLineAction line = new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, right.length(), left, right));
-        if(bold){
+        if (bold) {
             boldString(line);
-        }else{
+        } else {
             add(line);
         }
     }
@@ -187,7 +192,7 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName) {
 
     }
 
@@ -210,18 +215,18 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
         StringBuilder printTitle = new StringBuilder(title);
 
         int maxTitleLen = maxLen - qtyLen - priceLen - 2; //2 spaces
-        if (printTitle.length() > maxTitleLen){
+        if (printTitle.length() > maxTitleLen) {
             printTitle.setLength(maxTitleLen);
-        }else{
-            for (int i = printTitle.length(); i < maxTitleLen; i++){
+        } else {
+            for (int i = printTitle.length(); i < maxTitleLen; i++) {
                 printTitle.append(' ');
             }
         }
 
         printTitle.append(' ');
 
-        if (qty.length() < qtyLen){
-            for (int i = qty.length(); i < qtyLen; i++){
+        if (qty.length() < qtyLen) {
+            for (int i = qty.length(); i < qtyLen; i++) {
                 printTitle.append(' ');
             }
         }
@@ -229,8 +234,8 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
 
         printTitle.append(' ');
 
-        if (price.length() < priceLen){
-            for (int i = price.length(); i < priceLen; i++){
+        if (price.length() < priceLen) {
+            for (int i = price.length(); i < priceLen; i++) {
                 printTitle.append(' ');
             }
         }
@@ -239,15 +244,15 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
         return printTitle.toString();
     }
 
-    public static String formatDateRange(int maxLen, int dateLength, String leftDate, String rightDate){
+    public static String formatDateRange(int maxLen, int dateLength, String leftDate, String rightDate) {
         StringBuilder printTitle = new StringBuilder(leftDate);
 
-        int spaceCnt = (maxLen - 2 * dateLength - 2)/2;
-        for (int i = 0; i < spaceCnt + 1; i++){
+        int spaceCnt = (maxLen - 2 * dateLength - 2) / 2;
+        for (int i = 0; i < spaceCnt + 1; i++) {
             printTitle.append(' ');
         }
         printTitle.append("--");
-        for (int i = 0; i < spaceCnt + 1; i++){
+        for (int i = 0; i < spaceCnt + 1; i++) {
             printTitle.append(' ');
         }
 
@@ -256,17 +261,17 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
         return printTitle.toString();
     }
 
-    public static String format4ColumnsString(int maxLen, int len2, int len3, int len4, String float1, String fixed2, String fixed3, String fixed4){
+    public static String format4ColumnsString(int maxLen, int len2, int len3, int len4, String float1, String fixed2, String fixed3, String fixed4) {
         StringBuilder printLine = new StringBuilder(float1);
 
         int maxLen1 = maxLen - len2 - len3 - len4 - 3; //3 spaces between columns
         if (maxLen1 < 0)
             return "";
 
-        if (float1.length() > maxLen1){
+        if (float1.length() > maxLen1) {
             printLine.setLength(maxLen1);
-        }else{
-            for (int i = float1.length(); i < maxLen1; i++){
+        } else {
+            for (int i = float1.length(); i < maxLen1; i++) {
                 printLine.append(' ');
             }
         }
@@ -274,9 +279,9 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
         int[] lengths = new int[]{len2, len3, len4};
         String[] strings = new String[]{fixed2, fixed3, fixed4};
 
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             printLine.append(' ');
-            for (int k = strings[i].length(); k < lengths[i]; k++){
+            for (int k = strings[i].length(); k < lengths[i]; k++) {
                 printLine.append(' ');
             }
             printLine.append(strings[i]);

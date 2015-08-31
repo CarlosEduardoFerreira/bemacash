@@ -9,9 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
@@ -22,6 +19,10 @@ import com.kaching123.tcr.fragment.PrintCallbackHelper2.IPrintCallback;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 /**
  * Created by gdubina on 29/01/14.
@@ -57,18 +58,20 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
             }
         });
 
-        typeSpinner.setAdapter(getTypesAdapter());
-        typeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadData();
-            }
+        if (getTypesAdapter() != null) {
+            typeSpinner.setAdapter(getTypesAdapter());
+            typeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    loadData();
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
+                }
+            });
+        }
         hideCashDrawReport();
         Fragment fragment = createBodyFragment();
         if (fragment != null) {
@@ -95,13 +98,17 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
     }
 
     protected void showCashDrawReport() {
-        cashDrawerTypeLabel.setVisibility(View.VISIBLE);
-        typeSpinner.setVisibility(View.VISIBLE);
+        if (cashDrawerTypeLabel != null) {
+            cashDrawerTypeLabel.setVisibility(View.VISIBLE);
+            typeSpinner.setVisibility(View.VISIBLE);
+        }
     }
 
     protected void hideCashDrawReport() {
-        cashDrawerTypeLabel.setVisibility(View.GONE);
-        typeSpinner.setVisibility(View.GONE);
+        if (cashDrawerTypeLabel != null) {
+            cashDrawerTypeLabel.setVisibility(View.GONE);
+            typeSpinner.setVisibility(View.GONE);
+        }
     }
 
     @Override

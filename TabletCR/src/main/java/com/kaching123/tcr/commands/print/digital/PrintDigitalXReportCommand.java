@@ -31,6 +31,8 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
 
     private static final String EXTRA_XREPORT = "EXTRA_XREPORT";
 
+    private static final String ARG_XREPORT_ENABLE = "ARG_XREPORT_ENABLE";
+
     private ReportType xReportType;
 
     @Override
@@ -46,7 +48,7 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
 
-        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext());
+        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE));
         processor.print(getContext(), getApp(), builder);
 
         File file = new File(getContext().getExternalCacheDir(), getContext().getString(R.string.report_type_xreport) + ".html");
@@ -62,10 +64,11 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         return succeeded().add(EXTRA_XREPORT, Uri.fromFile(file));
     }
 
-    public static void start(Context context, String shiftGuid, ReportType xReportType, BasePrintDigitalXReportCallback callback) {
+    public static void start(Context context, String shiftGuid, ReportType xReportType, BasePrintDigitalXReportCallback callback, boolean enableEreportDepartSale) {
         create(PrintDigitalXReportCommand.class)
                 .arg(ARG_SHIFT_GUID, shiftGuid)
                 .arg(ARG_XREPORT_TYPE, xReportType)
+                .arg(ARG_XREPORT_ENABLE, enableEreportDepartSale)
                 .callback(callback).queueUsing(context);
     }
 
