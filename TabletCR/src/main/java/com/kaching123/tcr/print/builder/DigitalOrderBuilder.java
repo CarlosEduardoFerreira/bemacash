@@ -36,6 +36,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     private static final String POWER_BY_STYLE = "font-style:italic;font-weight:bold;font-size:0.8em;";
     private static final String FOOTER_STYLE = "text-align:center;font-size:0.8em;";
     private static final String HEADER_STYLE = "font-size:0.8em;";
+    private static final String IVULOTO_BODY_STYLE = "text-align:right;font-size:0.8em;";
     private static final String PRICE_STYLE = "text-align:right;";
 
     private static final int BODY_WIDTH = 250;
@@ -213,6 +214,27 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     @Override
     public void footer(String label, boolean bold) {
         stringBuilder.append(bold ? _styled("div", FOOTER_STYLE, BOLD_STYLE) : _styled("div", FOOTER_STYLE)).append(label).append("</div>");
+    }
+
+    @Override
+    public void lotoTitle(String label) {
+        StringBuilder printTitle = new StringBuilder();
+
+        if (label.length() < 15) {
+            printTitle.append(" ------------------- ");
+            printTitle.append(label);
+            printTitle.append(" ------------------- ");
+        } else {
+            printTitle.append(" ------- ");
+            printTitle.append(label);
+            printTitle.append(" ------- ");
+        }
+        stringBuilder.append(_styled("div", HEADER_STYLE)).append(printTitle.toString()).append("</div>");
+    }
+
+    @Override
+    public void lotoBody(String label) {
+        stringBuilder.append(_styled("div", IVULOTO_BODY_STYLE)).append(label).append("</div>");
     }
 
     public void powerBy(String label) {

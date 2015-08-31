@@ -19,6 +19,7 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.util.PhoneUtil;
+import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     protected String taxTotal;
     protected ArrayList<PaymentTransactionModel> transactions;
     protected String amountTotal;
+    protected IVULotoDataResponse response;
+    protected boolean IVULotoActivated;
 
     private final IAppCommandContext appCommandContext;
 
@@ -59,12 +62,12 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
-        printFooter(app, printerWrapper);
+        printFooter(context, app, printerWrapper);
     }
 
     protected abstract void printBody(final Context context, final TcrApplication app, final T printerWrapper);
 
-    protected void printFooter(TcrApplication app, T printerWrapper) {
+    protected void printFooter(Context context, TcrApplication app, T printerWrapper) {
 
         if (title == null || title.equalsIgnoreCase("ARG_ORDER_TITLE"))
             printerWrapper.barcode(orderNumber);
@@ -96,6 +99,27 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         }
         if (!TextUtils.isEmpty(shopInfo.thanksPhrase)) {
             printerWrapper.footer(shopInfo.thanksPhrase);
+        }
+
+        if (IVULotoActivated && response != null) {
+            printerWrapper.lotoTitle(context.getString(R.string.ivu_loto_receipt_foot_title));
+
+            printerWrapper.emptyLine();
+
+            if (response.iVULotoData.ivuLoto != null) {
+                printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_subtitle) + " " + response.iVULotoData.ivuLoto);
+                String[] dateStr = response.iVULotoData.drawDate.split("T");
+                String date = dateStr[0] == null ? response.iVULotoData.ivuLoto : dateStr[0];
+                printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_data) + " " + date);
+                printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_foot_control_number) + " " + response.iVULotoData.controlNumber);
+            } else {
+                printerWrapper.lotoBody(context.getString(R.string.ivu_loto_receipt_fail_message));
+            }
+
+
+            printerWrapper.emptyLine();
+
+            printerWrapper.lotoTitle(context.getString(R.string.ivu_loto_receipt_foot_instruction));
         }
     }
 

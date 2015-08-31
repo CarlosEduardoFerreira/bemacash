@@ -642,6 +642,46 @@ public class TcrApplication extends MultiDexApplication {
         return shopPref.SunpassActivated().get();
     }
 
+    public void setDirecTvPRActivated(boolean activated) {
+        shopPref.DirecTvPRActivated().put(activated);
+    }
+
+    public boolean getDirecTvPRActivated() {
+        return shopPref.DirecTvPRActivated().get();
+    }
+
+    public void setIVULotoActivated(boolean activated) {
+        shopPref.IVULotoActivated().put(activated);
+    }
+
+    public boolean getIVULotoActivated() {
+        return shopPref.IVULotoActivated().get();
+    }
+
+    public void setIvulotoMID(int ivulotoMID) {
+        shopPref.ivulotoMID().put(ivulotoMID);
+    }
+
+    public int getIvulotoMID() {
+        return shopPref.ivulotoMID().get();
+    }
+
+    public void setTerminalID(String terminalID) {
+        shopPref.terminalID().put(terminalID);
+    }
+
+    public String getterminalID() {
+        return shopPref.terminalID().get();
+    }
+
+    public void setTerminalPassword(String terminalPassword) {
+        shopPref.terminalPassword().put(terminalPassword);
+    }
+
+    public String getTerminalPassword() {
+        return shopPref.terminalPassword().get();
+    }
+
     public void setBillPaymentActivated(boolean activated) {
         shopPref.BillPaymentActivated().put(activated);
     }

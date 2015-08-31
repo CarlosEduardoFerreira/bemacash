@@ -513,6 +513,8 @@
     <string name="print_order_power_by_backstone">Blackstone</string>
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
+    <string name="lottery_wait_dialog_title">Please wait...</string>
+    <string name="lottery_fail_message">Fails to catch lottery</string>
     <string name="apk_update_dialog_title">Would you like to update to version %d now?</string>
     <string name="pax_connect_wait_dialog_title">Connecting Pax...</string>
     <string name="pax_wait_dialog_title">Searching Pax...</string>
@@ -1580,4 +1582,13 @@
     <string name="order_searching_message_upload_started">Uploading data...</string>
 
     <string name="server_search_checkbox">Force search on back office</string>
+    <string name="ivu_loto_receipt_foot_title">PIDE TU RECIBO</string>
+    <string name="ivu_loto_receipt_foot_instruction">CON EL IVULOTO TODOS GANAMOS</string>
+    <string name="ivu_loto_receipt_foot_subtitle">IVULOTO: </string>
+    <string name="ivu_loto_receipt_foot_data">ST DRAMOO1: </string>
+    <string name="ivu_loto_receipt_foot_control_number">CONTROL: </string>
+
+    <string name="ivu_loto_receipt_fail_message">Ivuloto no disponible</string>
+    <string name="ivu_loto_receipt_refund_fail_title">Refund Fail</string>
+    <string name="ivu_loto_receipt_refund_fail_message">Error: Refund Fail.</string>
 </resources>

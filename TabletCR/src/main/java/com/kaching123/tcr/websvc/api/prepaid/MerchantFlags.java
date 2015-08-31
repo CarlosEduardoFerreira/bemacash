@@ -22,6 +22,8 @@ public class MerchantFlags implements KvmSerializable {
     
     public boolean sunpassActivated;
     public boolean billPaymentActivated;
+    public boolean direcTvPRActivated;
+    public boolean iVULotoActivated;
     
     public MerchantFlags(){}
     
@@ -49,6 +51,26 @@ public class MerchantFlags implements KvmSerializable {
                 billPaymentActivated = (Boolean) obj;
             }
         }
+        if (soapObject.hasProperty("DirecTvPRActivated"))
+        {
+            Object obj = soapObject.getProperty("DirecTvPRActivated");
+            if (obj != null && obj.getClass().equals(SoapPrimitive.class)){
+                SoapPrimitive j =(SoapPrimitive) obj;
+                direcTvPRActivated = Boolean.parseBoolean(j.toString());
+            }else if (obj!= null && obj instanceof Boolean){
+                direcTvPRActivated = (Boolean) obj;
+            }
+        }
+        if (soapObject.hasProperty("IVULotoActivated"))
+        {
+            Object obj = soapObject.getProperty("IVULotoActivated");
+            if (obj != null && obj.getClass().equals(SoapPrimitive.class)){
+                SoapPrimitive j =(SoapPrimitive) obj;
+                iVULotoActivated = Boolean.parseBoolean(j.toString());
+            }else if (obj!= null && obj instanceof Boolean){
+                iVULotoActivated = (Boolean) obj;
+            }
+        }
     }
     @Override
     public Object getProperty(int arg0) {
@@ -57,6 +79,10 @@ public class MerchantFlags implements KvmSerializable {
                 return sunpassActivated;
             case 1:
                 return billPaymentActivated;
+            case 2:
+                return direcTvPRActivated;
+            case 3:
+                return iVULotoActivated;
         }
         return null;
     }

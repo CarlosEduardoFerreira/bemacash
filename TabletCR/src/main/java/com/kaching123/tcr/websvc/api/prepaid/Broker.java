@@ -31,7 +31,7 @@ public class Broker {
 
     public static final String TRANSACTION_MODE_TEST = "T";
     public static final String TRANSACTION_MODE_LIVE = "L";
-    
+
     public String NAMESPACE = "http://services.bstonecorp.com/TransactionBroker/Broker";
     public String url = "https://services.bstonecorp.com/TransactionBroker/Broker.asmx";
     public int timeOut = 45000;
@@ -42,9 +42,9 @@ public class Broker {
     static {
         headers.add(new HeaderProperty("Connection", "close"));
     }
-    
+
     public Broker(){}
-    
+
     public Broker(IWsdl2CodeEvents eventHandler)
     {
         this.eventHandler = eventHandler;
@@ -181,9 +181,6 @@ public class Broker {
         soapEnvelope.addMapping("http://services.bstonecorp.com/TransactionBroker/Broker","receipt",new Receipt().getClass());
         MarshalFloat marshalFloat = new MarshalFloat();
         marshalFloat.register(soapEnvelope);
-
-        Receipt receiptRequest = new Receipt();
-
         soapReq.addProperty("MID",mID);
         soapReq.addProperty("TID",tID);
         soapReq.addProperty("Password",password);
@@ -226,9 +223,9 @@ public class Broker {
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         GetSinglePINAsync(mID, tID, password, cashier, productMaincode, productDenomination, orderID, profileID, transactionMode, signatureValue, headers);
     }
-    
+
     public void GetSinglePINAsync(final String mID,final String tID,final String password,final String cashier,final String productMaincode,final double productDenomination,final long orderID,final int profileID,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, PIN>(){
             @Override
             protected void onPreExecute() {
@@ -248,12 +245,12 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public PIN GetSinglePIN(String mID,String tID,String password,String cashier,String productMaincode,
-                                  double productDenomination,long orderID,int profileID,String transactionMode,String signatureValue){
+                            double productDenomination,long orderID,int profileID,String transactionMode,String signatureValue){
         return GetSinglePIN(mID, tID, password, cashier, productMaincode, productDenomination, orderID, profileID, transactionMode, signatureValue, headers);
     }
-    
+
     public PIN GetSinglePIN(String mID,String tID,String password,String cashier,String productMaincode,double productDenomination,long orderID,int profileID,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -301,15 +298,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void GetMultiplePINAsync(String mID,String tID,String password,String cashier,String productMaincode,double productDenomination,int qtyPINs,long orderID,int profileID,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         GetMultiplePINAsync(mID, tID, password, cashier, productMaincode, productDenomination, qtyPINs, orderID, profileID, transactionMode, signatureValue, headers);
     }
-    
+
     public void GetMultiplePINAsync(final String mID,final String tID,final String password,final String cashier,final String productMaincode,final double productDenomination,final int qtyPINs,final long orderID,final int profileID,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, VectorPIN>(){
             @Override
             protected void onPreExecute() {
@@ -329,11 +326,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public VectorPIN GetMultiplePIN(String mID,String tID,String password,String cashier,String productMaincode,double productDenomination,int qtyPINs,long orderID,int profileID,String transactionMode,String signatureValue){
         return GetMultiplePIN(mID, tID, password, cashier, productMaincode, productDenomination, qtyPINs, orderID, profileID, transactionMode, signatureValue, headers);
     }
-    
+
     public VectorPIN GetMultiplePIN(String mID,String tID,String password,String cashier,String productMaincode,double productDenomination,int qtyPINs,long orderID,int profileID,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -382,15 +379,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void GetMultiplePINLiteAsync(String mID,String tID,String password,String cashier,String productMaincode,double productDenomination,int qtyPINs,long orderID,int profileID,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         GetMultiplePINLiteAsync(mID, tID, password, cashier, productMaincode, productDenomination, qtyPINs, orderID, profileID, transactionMode, signatureValue, headers);
     }
-    
+
     public void GetMultiplePINLiteAsync(final String mID,final String tID,final String password,final String cashier,final String productMaincode,final double productDenomination,final int qtyPINs,final long orderID,final int profileID,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, VectorPIN>(){
             @Override
             protected void onPreExecute() {
@@ -410,11 +407,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public VectorPIN GetMultiplePINLite(String mID,String tID,String password,String cashier,String productMaincode,double productDenomination,int qtyPINs,long orderID,int profileID,String transactionMode,String signatureValue){
         return GetMultiplePINLite(mID, tID, password, cashier, productMaincode, productDenomination, qtyPINs, orderID, profileID, transactionMode, signatureValue, headers);
     }
-    
+
     public VectorPIN GetMultiplePINLite(String mID,String tID,String password,String cashier,String productMaincode,double productDenomination,int qtyPINs,long orderID,int profileID,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -463,15 +460,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void VoidOrderAsync(String mID,String tID,String password,String cashier,long orderID,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         VoidOrderAsync(mID, tID, password, cashier, orderID, transactionMode, signatureValue, headers);
     }
-    
+
     public void VoidOrderAsync(final String mID,final String tID,final String password,final String cashier,final long orderID,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, PIN>(){
             @Override
             protected void onPreExecute() {
@@ -491,11 +488,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public PIN VoidOrder(String mID,String tID,String password,String cashier,long orderID,String transactionMode,String signatureValue){
         return VoidOrder(mID, tID, password, cashier, orderID, transactionMode, signatureValue, headers);
     }
-    
+
     public PIN VoidOrder(String mID,String tID,String password,String cashier,long orderID,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -529,7 +526,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     PIN resultVariable =  new PIN (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -539,15 +536,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void DoTopUpAsync(String mID,String tID,String password,String cashier,String productMaincode,double topUpAmount,String phoneNumber,String countryCode,long orderID,int profileID,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         DoTopUpAsync(mID, tID, password, cashier, productMaincode, topUpAmount, phoneNumber, countryCode, orderID, profileID, transactionMode, signatureValue, headers);
     }
-    
+
     public void DoTopUpAsync(final String mID,final String tID,final String password,final String cashier,final String productMaincode,final double topUpAmount,final String phoneNumber,final String countryCode,final long orderID,final int profileID,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, PIN>(){
             @Override
             protected void onPreExecute() {
@@ -567,11 +564,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public PIN DoTopUp(String mID,String tID,String password,String cashier,String productMaincode,double topUpAmount,String phoneNumber,String countryCode,long orderID,int profileID,String transactionMode,String signatureValue){
         return DoTopUp(mID, tID, password, cashier, productMaincode, topUpAmount, phoneNumber, countryCode, orderID, profileID, transactionMode, signatureValue, headers);
     }
-    
+
     public PIN DoTopUp(String mID,String tID,String password,String cashier,String productMaincode,double topUpAmount,String phoneNumber,String countryCode,long orderID,int profileID,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -612,7 +609,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     PIN resultVariable =  new PIN (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -622,15 +619,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void DoTopUpFeeAsync(String mID,String tID,String password,String cashier,String productMaincode,double topUpAmount,String phoneNumber,String countryCode,long orderID,int profileID,String transactionMode,double transactionFee,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         DoTopUpFeeAsync(mID, tID, password, cashier, productMaincode, topUpAmount, phoneNumber, countryCode, orderID, profileID, transactionMode, transactionFee, signatureValue, headers);
     }
-    
+
     public void DoTopUpFeeAsync(final String mID,final String tID,final String password,final String cashier,final String productMaincode,final double topUpAmount,final String phoneNumber,final String countryCode,final long orderID,final int profileID,final String transactionMode,final double transactionFee,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, PIN>(){
             @Override
             protected void onPreExecute() {
@@ -650,11 +647,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public PIN DoTopUpFee(String mID,String tID,String password,String cashier,String productMaincode,double topUpAmount,String phoneNumber,String countryCode,long orderID,int profileID,String transactionMode,double transactionFee,String signatureValue){
         return DoTopUpFee(mID, tID, password, cashier, productMaincode, topUpAmount, phoneNumber, countryCode, orderID, profileID, transactionMode, transactionFee, signatureValue, headers);
     }
-    
+
     public PIN DoTopUpFee(String mID,String tID,String password,String cashier,String productMaincode,double topUpAmount,String phoneNumber,String countryCode,long orderID,int profileID,String transactionMode,double transactionFee,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -696,7 +693,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     PIN resultVariable =  new PIN (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -706,15 +703,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void DoDailyReconciliationAsync(String mID,String tID,String password,String cashier,String batchDate,boolean detailedResponse,long transactionId,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         DoDailyReconciliationAsync(mID, tID, password, cashier, batchDate, detailedResponse, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public void DoDailyReconciliationAsync(final String mID,final String tID,final String password,final String cashier,final String batchDate,final boolean detailedResponse,final long transactionId,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, BillPaymentReconciliationResponse>(){
             @Override
             protected void onPreExecute() {
@@ -734,11 +731,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public BillPaymentReconciliationResponse DoDailyReconciliation(String mID,String tID,String password,String cashier,String batchDate,boolean detailedResponse,long transactionId,String transactionMode,String signatureValue){
         return DoDailyReconciliation(mID, tID, password, cashier, batchDate, detailedResponse, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public BillPaymentReconciliationResponse DoDailyReconciliation(String mID,String tID,String password,String cashier,String batchDate,boolean detailedResponse,long transactionId,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -774,7 +771,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     BillPaymentReconciliationResponse resultVariable =  new BillPaymentReconciliationResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -784,15 +781,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void DoBillPresentmentAsync(String mID,String tID,String password,String cashier,String vendorId,String accountNumber,String altAccountNumber,String additAccountNumber1,String additAccountNumber2,double paymentAmount,double feeAmount,String customerFirstName,String customerLastName,String paymentType,String senderFirstName,String senderLastName,long transactionId,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         DoBillPresentmentAsync(mID, tID, password, cashier, vendorId, accountNumber, altAccountNumber, additAccountNumber1, additAccountNumber2, paymentAmount, feeAmount, customerFirstName, customerLastName, paymentType, senderFirstName, senderLastName, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public void DoBillPresentmentAsync(final String mID,final String tID,final String password,final String cashier,final String vendorId,final String accountNumber,final String altAccountNumber,final String additAccountNumber1,final String additAccountNumber2,final double paymentAmount,final double feeAmount,final String customerFirstName,final String customerLastName,final String paymentType,final String senderFirstName,final String senderLastName,final long transactionId,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, BillPaymentResponse>(){
             @Override
             protected void onPreExecute() {
@@ -812,11 +809,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public BillPaymentResponse DoBillPresentment(String mID,String tID,String password,String cashier,String vendorId,String accountNumber,String altAccountNumber,String additAccountNumber1,String additAccountNumber2,double paymentAmount,double feeAmount,String customerFirstName,String customerLastName,String paymentType,String senderFirstName,String senderLastName,long transactionId,String transactionMode,String signatureValue){
         return DoBillPresentment(mID, tID, password, cashier, vendorId, accountNumber, altAccountNumber, additAccountNumber1, additAccountNumber2, paymentAmount, feeAmount, customerFirstName, customerLastName, paymentType, senderFirstName, senderLastName, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public BillPaymentResponse DoBillPresentment(String mID,String tID,String password,String cashier,String vendorId,String accountNumber,String altAccountNumber,String additAccountNumber1,String additAccountNumber2,double paymentAmount,double feeAmount,String customerFirstName,String customerLastName,String paymentType,String senderFirstName,String senderLastName,long transactionId,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -864,7 +861,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     BillPaymentResponse resultVariable =  new BillPaymentResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -874,15 +871,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void DoBillPaymentAsync(String mID,String tID,String password,String cashier,String vendorId,String accountNumber,String altAccountNumber,String additAccountNumber1,String additAccountNumber2,double paymentAmount,double feeAmount,String customerFirstName,String customerLastName,String paymentType,String senderFirstName,String senderLastName,long transactionId,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         DoBillPaymentAsync(mID, tID, password, cashier, vendorId, accountNumber, altAccountNumber, additAccountNumber1, additAccountNumber2, paymentAmount, feeAmount, customerFirstName, customerLastName, paymentType, senderFirstName, senderLastName, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public void DoBillPaymentAsync(final String mID,final String tID,final String password,final String cashier,final String vendorId,final String accountNumber,final String altAccountNumber,final String additAccountNumber1,final String additAccountNumber2,final double paymentAmount,final double feeAmount,final String customerFirstName,final String customerLastName,final String paymentType,final String senderFirstName,final String senderLastName,final long transactionId,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, BillPaymentResponse>(){
             @Override
             protected void onPreExecute() {
@@ -902,11 +899,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public BillPaymentResponse DoBillPayment(String mID,String tID,String password,String cashier,String vendorId,String accountNumber,String altAccountNumber,String additAccountNumber1,String additAccountNumber2,double paymentAmount,double feeAmount,String customerFirstName,String customerLastName,String paymentType,String senderFirstName,String senderLastName,long transactionId,String transactionMode,String signatureValue){
         return DoBillPayment(mID, tID, password, cashier, vendorId, accountNumber, altAccountNumber, additAccountNumber1, additAccountNumber2, paymentAmount, feeAmount, customerFirstName, customerLastName, paymentType, senderFirstName, senderLastName, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public BillPaymentResponse DoBillPayment(String mID,String tID,String password,String cashier,String vendorId,String accountNumber,String altAccountNumber,String additAccountNumber1,String additAccountNumber2,double paymentAmount,double feeAmount,String customerFirstName,String customerLastName,String paymentType,String senderFirstName,String senderLastName,long transactionId,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -954,7 +951,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     BillPaymentResponse resultVariable =  new BillPaymentResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -964,15 +961,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void GetBillerCategoriesAsync(String mID,String tID,String password,String cashier,long transactionId,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         GetBillerCategoriesAsync(mID, tID, password, cashier, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public void GetBillerCategoriesAsync(final String mID,final String tID,final String password,final String cashier,final long transactionId,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, BillerCategoriesResponse>(){
             @Override
             protected void onPreExecute() {
@@ -992,11 +989,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public BillerCategoriesResponse GetBillerCategories(String mID,String tID,String password,String cashier,long transactionId,String transactionMode,String signatureValue){
         return GetBillerCategories(mID, tID, password, cashier, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public BillerCategoriesResponse GetBillerCategories(String mID,String tID,String password,String cashier,long transactionId,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -1030,7 +1027,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     BillerCategoriesResponse resultVariable =  new BillerCategoriesResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -1040,15 +1037,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void GetMasterBillersByCategoryAsync(String mID,String tID,String password,String cashier,String categoryId,long transactionId,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         GetMasterBillersByCategoryAsync(mID, tID, password, cashier, categoryId, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public void GetMasterBillersByCategoryAsync(final String mID,final String tID,final String password,final String cashier,final String categoryId,final long transactionId,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, MasterBillersByCategoryResponse>(){
             @Override
             protected void onPreExecute() {
@@ -1068,11 +1065,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public MasterBillersByCategoryResponse GetMasterBillersByCategory(String mID,String tID,String password,String cashier,String categoryId,long transactionId,String transactionMode,String signatureValue){
         return GetMasterBillersByCategory(mID, tID, password, cashier, categoryId, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public MasterBillersByCategoryResponse GetMasterBillersByCategory(String mID,String tID,String password,String cashier,String categoryId,long transactionId,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -1107,7 +1104,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     MasterBillersByCategoryResponse resultVariable =  new MasterBillersByCategoryResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -1117,15 +1114,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void GetMasterBillerPaymentOptionsAsync(String mID,String tID,String password,String cashier,String masterBillerId,long transactionId,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         GetMasterBillerPaymentOptionsAsync(mID, tID, password, cashier, masterBillerId, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public void GetMasterBillerPaymentOptionsAsync(final String mID,final String tID,final String password,final String cashier,final String masterBillerId,final long transactionId,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, MasterBillerPaymentOptionsResponse>(){
             @Override
             protected void onPreExecute() {
@@ -1145,11 +1142,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public MasterBillerPaymentOptionsResponse GetMasterBillerPaymentOptions(String mID,String tID,String password,String cashier,String masterBillerId,long transactionId,String transactionMode,String signatureValue){
         return GetMasterBillerPaymentOptions(mID, tID, password, cashier, masterBillerId, transactionId, transactionMode, signatureValue, headers);
     }
-    
+
     public MasterBillerPaymentOptionsResponse GetMasterBillerPaymentOptions(String mID,String tID,String password,String cashier,String masterBillerId,long transactionId,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -1184,7 +1181,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     MasterBillerPaymentOptionsResponse resultVariable =  new MasterBillerPaymentOptionsResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -1194,15 +1191,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void GetSunPassBalanceAsync(String mID,String tID,String password,String cashier,String accountNumber,String transactionMode,long transactionId,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         GetSunPassBalanceAsync(mID, tID, password, cashier, accountNumber, transactionMode, transactionId, signatureValue, headers);
     }
-    
+
     public void GetSunPassBalanceAsync(final String mID,final String tID,final String password,final String cashier,final String accountNumber,final String transactionMode,final long transactionId,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, BalanceResponse>(){
             @Override
             protected void onPreExecute() {
@@ -1222,11 +1219,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public BalanceResponse GetSunPassBalance(String mID,String tID,String password,String cashier,String accountNumber,String transactionMode,long transactionId,String signatureValue){
         return GetSunPassBalance(mID, tID, password, cashier, accountNumber, transactionMode, transactionId, signatureValue, headers);
     }
-    
+
     public BalanceResponse GetSunPassBalance(String mID,String tID,String password,String cashier,String accountNumber,String transactionMode,long transactionId,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -1261,7 +1258,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     BalanceResponse resultVariable =  new BalanceResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -1271,15 +1268,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void DoSunPassReplenishmentAsync(String mID,String tID,String password,String cashier,long transactionId,String accountNumber,double amount,double feeAmount,String purchaseId,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         DoSunPassReplenishmentAsync(mID, tID, password, cashier, transactionId, accountNumber, amount, feeAmount, purchaseId, transactionMode, signatureValue, headers);
     }
-    
+
     public void DoSunPassReplenishmentAsync(final String mID,final String tID,final String password,final String cashier,final long transactionId,final String accountNumber,final double amount,final double feeAmount,final String purchaseId,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, ReplenishmentResponse>(){
             @Override
             protected void onPreExecute() {
@@ -1299,11 +1296,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public ReplenishmentResponse DoSunPassReplenishment(String mID,String tID,String password,String cashier,long transactionId,String accountNumber,double amount,double feeAmount,String purchaseId,String transactionMode,String signatureValue){
         return DoSunPassReplenishment(mID, tID, password, cashier, transactionId, accountNumber, amount, feeAmount, purchaseId, transactionMode, signatureValue, headers);
     }
-    
+
     public ReplenishmentResponse DoSunPassReplenishment(String mID,String tID,String password,String cashier,long transactionId,String accountNumber,double amount,double feeAmount,String purchaseId,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -1343,7 +1340,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     ReplenishmentResponse resultVariable =  new ReplenishmentResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -1353,15 +1350,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void DoSunPassDocumentInquiryAsync(String mID,String tID,String password,String cashier,String accountNumber,String licensePlateNumber,String transactionMode,long transactionId,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         DoSunPassDocumentInquiryAsync(mID, tID, password, cashier, accountNumber, licensePlateNumber, transactionMode, transactionId, signatureValue, headers);
     }
-    
+
     public void DoSunPassDocumentInquiryAsync(final String mID,final String tID,final String password,final String cashier,final String accountNumber,final String licensePlateNumber,final String transactionMode,final long transactionId,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, DocumentInquiryResponse>(){
             @Override
             protected void onPreExecute() {
@@ -1381,11 +1378,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public DocumentInquiryResponse DoSunPassDocumentInquiry(String mID,String tID,String password,String cashier,String accountNumber,String licensePlateNumber,String transactionMode,long transactionId,String signatureValue){
         return DoSunPassDocumentInquiry(mID, tID, password, cashier, accountNumber, licensePlateNumber, transactionMode, transactionId, signatureValue, headers);
     }
-    
+
     public DocumentInquiryResponse DoSunPassDocumentInquiry(String mID,String tID,String password,String cashier,String accountNumber,String licensePlateNumber,String transactionMode,long transactionId,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -1421,7 +1418,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     DocumentInquiryResponse resultVariable =  new DocumentInquiryResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -1431,15 +1428,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void DoSunPassDocumentPaymentAsync(String mID,String tID,String password,String cashier,long transactionId,String accountNumber,String licensePlateNumber,double amount,double feeAmount,String purchaseId,VectorDocument paidDocuments,String transactionMode,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         DoSunPassDocumentPaymentAsync(mID, tID, password, cashier, transactionId, accountNumber, licensePlateNumber, amount, feeAmount, purchaseId, paidDocuments, transactionMode, signatureValue, headers);
     }
-    
+
     public void DoSunPassDocumentPaymentAsync(final String mID,final String tID,final String password,final String cashier,final long transactionId,final String accountNumber,final String licensePlateNumber,final double amount,final double feeAmount,final String purchaseId,final VectorDocument paidDocuments,final String transactionMode,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, DocumentPaymentResponse>(){
             @Override
             protected void onPreExecute() {
@@ -1459,11 +1456,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public DocumentPaymentResponse DoSunPassDocumentPayment(String mID,String tID,String password,String cashier,long transactionId,String accountNumber,String licensePlateNumber,double amount,double feeAmount,String purchaseId,VectorDocument paidDocuments,String transactionMode,String signatureValue){
         return DoSunPassDocumentPayment(mID, tID, password, cashier, transactionId, accountNumber, licensePlateNumber, amount, feeAmount, purchaseId, paidDocuments, transactionMode, signatureValue, headers);
     }
-    
+
     public DocumentPaymentResponse DoSunPassDocumentPayment(String mID,String tID,String password,String cashier,long transactionId,String accountNumber,String licensePlateNumber,double amount,double feeAmount,String purchaseId,VectorDocument paidDocuments,String transactionMode,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -1533,15 +1530,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void GetProductListAsync(String mID,String tID,String password,long transactionId,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         GetProductListAsync(mID, tID, password, transactionId, signatureValue, headers);
     }
-    
+
     public void GetProductListAsync(final String mID,final String tID,final String password,final long transactionId,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, ProductListResponse>(){
             @Override
             protected void onPreExecute() {
@@ -1561,12 +1558,12 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public ProductListResponse
     GetProductList(String mID,String tID,String password,long transactionId,String signatureValue){
         return GetProductList(mID, tID, password, transactionId, signatureValue, headers);
     }
-    
+
     public ProductListResponse GetProductList(String mID,String tID,String password,long transactionId,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -1598,7 +1595,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     ProductListResponse resultVariable =  new ProductListResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {
@@ -1608,15 +1605,15 @@ public class Broker {
         }
         return null;
     }
-    
+
     public void GetProductListVersionNumberAsync(String mID,String tID,String password,long transactionId,String signatureValue) throws Exception{
         if (this.eventHandler == null)
             throw new Exception("Async Methods Requires IWsdl2CodeEvents");
         GetProductListVersionNumberAsync(mID, tID, password, transactionId, signatureValue, headers);
     }
-    
+
     public void GetProductListVersionNumberAsync(final String mID,final String tID,final String password,final long transactionId,final String signatureValue,final List<HeaderProperty> headers) throws Exception{
-        
+
         new AsyncTask<Void, Void, ProductListVersionResponse>(){
             @Override
             protected void onPreExecute() {
@@ -1636,11 +1633,11 @@ public class Broker {
             }
         }.execute();
     }
-    
+
     public ProductListVersionResponse GetProductListVersionNumber(String mID,String tID,String password,long transactionId,String signatureValue){
         return GetProductListVersionNumber(mID, tID, password, transactionId, signatureValue, headers);
     }
-    
+
     public ProductListVersionResponse GetProductListVersionNumber(String mID,String tID,String password,long transactionId,String signatureValue,List<HeaderProperty> headers){
         SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         soapEnvelope.implicitTypes = true;
@@ -1672,7 +1669,7 @@ public class Broker {
                     SoapObject j = (SoapObject)obj;
                     ProductListVersionResponse resultVariable =  new ProductListVersionResponse (j);
                     return resultVariable;
-                    
+
                 }
             }
         }catch (Exception e) {

@@ -154,6 +154,16 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
         footer(label);
     }
 
+    @Override
+    public void lotoTitle(String label) {
+        add(new PrintLineAction(formatIVUTitle(label)));
+    }
+
+    @Override
+    public void lotoBody(String label) {
+        add(new PrintLineAction(formatIVUBody(PRINTER_MAX_TEXT_LEN, label)));
+    }
+
     public void powerBy(String label) {
         drawLine();
         boldString(new PrintLineAction(crop(PRINTER_MAX_TEXT_LEN, label)));//double

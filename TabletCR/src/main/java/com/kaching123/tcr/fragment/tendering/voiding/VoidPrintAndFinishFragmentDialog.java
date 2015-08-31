@@ -3,26 +3,43 @@ package com.kaching123.tcr.fragment.tendering.voiding;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
+import com.kaching123.tcr.commands.payment.GetIVULotoDataCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand.BasePrintCallback;
 import com.kaching123.tcr.commands.print.pos.PrintRefundCommand;
+import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2.IPrintCallback;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
+import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.model.payment.GetIVULotoDataRequest;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
+import com.kaching123.tcr.processor.PrepaidProcessor;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CustomerView;
+import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
+import com.kaching123.tcr.websvc.api.prepaid.Receipt;
+import com.kaching123.tcr.websvc.api.prepaid.WS_Enums;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -71,6 +88,7 @@ public class VoidPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDial
         super.onActivityCreated(savedInstanceState);
         setCancelable(false);
     }
+
 
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {

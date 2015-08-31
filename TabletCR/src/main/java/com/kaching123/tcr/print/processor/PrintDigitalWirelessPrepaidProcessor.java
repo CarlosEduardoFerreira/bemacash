@@ -1,5 +1,7 @@
 package com.kaching123.tcr.print.processor;
 
+import android.content.Context;
+
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessInfo;
@@ -15,8 +17,8 @@ public class PrintDigitalWirelessPrepaidProcessor extends PrintWirelessPrepaidPr
     }
 
     @Override
-    protected void printFooter(TcrApplication app, ITextPrinter printerWrapper) {
+    protected void printFooter(Context context, TcrApplication app, ITextPrinter printerWrapper) {
         printerWrapper.emptyLine();
-        super.printFooter(app, printerWrapper);
+        super.printFooter(context, app, printerWrapper);
     }
 }

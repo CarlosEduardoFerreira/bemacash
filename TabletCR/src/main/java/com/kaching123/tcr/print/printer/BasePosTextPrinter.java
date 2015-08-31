@@ -252,10 +252,9 @@ public class BasePosTextPrinter implements IPrinter {
             left = "";
         if (fixedRight == null)
             fixedRight = "";
-        if ( rightBlockLen > maxLen)
-        {
+        if (rightBlockLen > maxLen) {
             rightBlockLen = maxLen;
-            fixedRight = fixedRight.substring(0,maxLen);
+            fixedRight = fixedRight.substring(0, maxLen);
 
         }
 
@@ -351,6 +350,35 @@ public class BasePosTextPrinter implements IPrinter {
                 printTitle.append(' ');
             }
         }
+        return printTitle.toString();
+    }
+
+    public static String formatIVUBody(int maxLen, String title) {
+        if (title == null)
+            title = "";
+        StringBuilder printTitle = new StringBuilder();
+        for (int n = 0; n < 19; n++) {
+            printTitle.append(" ");
+        }
+        printTitle.append(title);
+
+        return printTitle.toString();
+    }
+
+    public static String formatIVUTitle(String label)
+    {
+        StringBuilder printTitle = new StringBuilder();
+        if (label.length() < 15) {
+
+            printTitle.append(" ------------ ");
+            printTitle.append(label);
+            printTitle.append(" ------------ ");
+        } else {
+            printTitle.append(" ------ ");
+            printTitle.append(label);
+            printTitle.append(" ------ ");
+        }
+
         return printTitle.toString();
     }
 

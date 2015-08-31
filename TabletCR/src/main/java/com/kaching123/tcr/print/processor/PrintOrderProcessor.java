@@ -14,6 +14,7 @@ import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.util.CalculationUtil;
+import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.math.BigDecimal;
@@ -55,6 +56,13 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         this.amountTotal = amountTotal;
     }
 
+    public void setIVULotoDataResponse(IVULotoDataResponse response){
+        this.response = response;
+    }
+
+    public void setIVULotoActivated(boolean IVULotoActivated){
+        this.IVULotoActivated = IVULotoActivated;
+    }
 
     public PrintOrderProcessor(String orderGuid, IAppCommandContext appCommandContext) {
         super(orderGuid, appCommandContext);

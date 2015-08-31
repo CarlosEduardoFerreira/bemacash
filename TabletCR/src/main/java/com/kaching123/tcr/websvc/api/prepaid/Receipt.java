@@ -23,21 +23,20 @@ import com.kaching123.tcr.websvc.api.prepaid.WS_Enums.SoapProtocolVersion.TypeOf
 import com.kaching123.tcr.websvc.api.prepaid.WS_Enums.SoapProtocolVersion.TransactionType;
 
 public class Receipt implements KvmSerializable , Serializable {
-    
+
     public String merchantId;
     public double municipalTax;
     public double stateTax;
     public double subTotal;
     public TypeOfTender tenderType;
     public String terminalId;
-
     public String terminalPassword;
     public double total;
     public String txDate;
     public TransactionType txType;
-    
+
     public Receipt(){}
-    
+
     public Receipt(SoapObject soapObject)
     {
         if (soapObject == null)
@@ -165,12 +164,12 @@ public class Receipt implements KvmSerializable , Serializable {
         }
         return null;
     }
-    
+
     @Override
     public int getPropertyCount() {
         return 10;
     }
-    
+
     @Override
     public void getPropertyInfo(int index, @SuppressWarnings("rawtypes") Hashtable arg1, PropertyInfo info) {
         switch(index){
@@ -216,9 +215,9 @@ public class Receipt implements KvmSerializable , Serializable {
                 break;
         }
     }
-    
+
     @Override
     public void setProperty(int arg0, Object arg1) {
     }
-    
+
 }

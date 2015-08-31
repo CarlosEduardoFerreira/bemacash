@@ -223,7 +223,8 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
     }
 
     protected void startCheckUpdateService(boolean force) {
-        Intent intent = new Intent(this, AutoUpdateService.class);
+        Logger.d("SuperBaseActivity startCheckUpdateService: " +getUpdateCheckTimer());
+        Intent intent = new Intent(SuperBaseActivity.this, AutoUpdateService.class);
         intent.putExtra(AutoUpdateService.ARG_TIMER, getUpdateCheckTimer());
         intent.putExtra(AutoUpdateService.ARG_MANUAL_CHECK, force);
         startService(intent);
