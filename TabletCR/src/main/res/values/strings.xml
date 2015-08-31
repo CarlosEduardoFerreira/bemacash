@@ -120,7 +120,6 @@
     <string name="pref_usb_msr_empty">USB MSR is not configured</string>
     <string name="pref_scale_empty">Scale is not configured</string>
     <string name="pref_device_diagnose_empty">Devices is not configured</string>
-    <string name="pref_scale_empty">Scale is not configured</string>
     <string name="pref_scanner_search">Search</string>
     <string name="sync_notify_title">Syncing...</string>
     <string name="pref_device_diagnose_title">Launch Diagnose</string>
@@ -171,6 +170,8 @@
     <string name="pref_msr_header_summary">USB MSR settings</string>
     <string name="pref_swiper_header_title">Credit Card Swiper</string>
     <string name="pref_swiper_header_summary">Credit Card Swiper settings</string>
+    <string name="pref_devices_diagnose_title">Devices</string>
+    <string name="pref_devices_diagnose_summary">Launch Devices Diagnose</string>
     <string name="total_cost_subtotal_label">Subtotal:</string>
     <string name="total_cost_discount_label">Discount:</string>
     <string name="total_cost_tax_label">Tax total:</string>
@@ -1210,6 +1211,9 @@
     <string name="find_msr_title">Please choose MSR</string>
     <string name="find_msr_progress">MSR searching...</string>
     <string name="find_msr_empty">Can\'t find MSR. Please check your settings!</string>
+    <string name="find_scale_title">Please choose Scale</string>
+    <string name="find_scale_progress">Scale searching...</string>
+    <string name="find_scale_empty">Can\'t find Scale. Please check your settings!</string>
     <string name="scanner_delete_warning_dialog_title">Delete Scanner</string>
     <string name="scanner_delete_warning_dialog_message">Are you sure you want to delete scanner?</string>
     <string name="usb_msr_delete_warning_dialog_title">Delete USB MSR</string>

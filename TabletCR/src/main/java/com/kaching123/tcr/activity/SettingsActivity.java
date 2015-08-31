@@ -44,7 +44,7 @@ import java.util.Set;
  * Created by gdubina on 07/11/13.
  */
 @EActivity(R.layout.settings_activity)
-public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener {
+public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener, WaitDialogFragmentWithCallback.OnDialogDismissListener{
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -91,7 +91,6 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     }
 
     private void updateDetails(int pos) {
-        Fragment fragment = null;
         switch (pos) {
             case 0:
                 fragment = SyncSettingsFragment.instance();
