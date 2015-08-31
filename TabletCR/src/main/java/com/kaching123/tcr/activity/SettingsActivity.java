@@ -20,6 +20,7 @@ import com.kaching123.tcr.fragment.settings.DisplayFragment;
 import com.kaching123.tcr.fragment.settings.DrawerSettingsFragment;
 import com.kaching123.tcr.fragment.settings.PaxListFragment;
 import com.kaching123.tcr.fragment.settings.PrinterListFragment;
+import com.kaching123.tcr.fragment.settings.ScaleFragment;
 import com.kaching123.tcr.fragment.settings.ScannerFragment;
 import com.kaching123.tcr.fragment.settings.SyncSettingsFragment;
 import com.kaching123.tcr.fragment.settings.TrainingModeSettingsFragment;
@@ -65,6 +66,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 new NavigationItem(getString(R.string.pref_display_header_title), getString(R.string.pref_display_header_summary)),
                 new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
                 new NavigationItem(getString(R.string.pref_msr_header_title), getString(R.string.pref_msr_header_summary)),
+                new NavigationItem(getString(R.string.pref_scale_header_title), getString(R.string.pref_scale_header_summary)),
                 new NavigationItem(getString(R.string.pref_datausage_header_title), getString(R.string.pref_datausage_header_summary)),
                 new NavigationItem(getString(R.string.pref_training_mode_header_title), getString(R.string.pref_training_mode_header_summary)),
                 new NavigationItem(getString(R.string.pref_about_header_title), getString(R.string.pref_about_header_summary))
@@ -106,12 +108,15 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 fragment = USBMsrFragment.instance();
                 break;
             case 7:
-                fragment = DataUsageStatFragment.instance();
+                fragment = ScaleFragment.instance();
                 break;
             case 8:
-                fragment = TrainingModeSettingsFragment.instance();
+                fragment = DataUsageStatFragment.instance();
                 break;
             case 9:
+                fragment = TrainingModeSettingsFragment.instance();
+                break;
+            case 10:
                 fragment = AboutFragment.instance();
                 break;
         }
