@@ -4,11 +4,12 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/beige">
+              android:background="@color/bg_grey_color">
 
     <GridLayout
         android:layout_height="@dimen/reports_details_header_height"
         android:layout_width="match_parent"
+        android:background="@color/bg_grey_color"
         android:paddingTop="16dp"
         android:paddingLeft="32dp"
         android:paddingRight="32dp"
@@ -146,7 +147,7 @@
     <LinearLayout
         android:layout_height="32dp"
         android:layout_width="match_parent"
-        android:background="@color/reports_divider"
+        android:background="@color/blue_bright"
         android:orientation="horizontal"
         android:gravity="center">
 
@@ -171,6 +172,7 @@
     <com.kaching123.tcr.component.chart.BarChart
         android:id="@+id/bar_chart"
         style="@style/Reports.BarChart"
+        android:background="@color/bg_grey_color"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_marginTop="20dp"
