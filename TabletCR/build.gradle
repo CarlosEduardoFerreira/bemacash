@@ -23,12 +23,12 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "21.1.2"
+    buildToolsVersion '21.1.2'
     dexOptions {
         jumboMode = true
     }
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 17
         targetSdkVersion 19
         multiDexEnabled = true
     }
@@ -120,6 +120,7 @@ configurations {
 }
 
 dependencies {
+    compile 'com.android.support:multidex:1.0.0'
     compile project(':BemaPos')
     compile project(':BemaDisplay')
     compile project(':android-support-v4-preferencefragment')
@@ -166,8 +167,6 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.1'
 
     compile 'com.crittercism:crittercism-android-agent:+'
-
-    compile 'com.android.support:multidex:1.0.0'
 }
 
 apt {

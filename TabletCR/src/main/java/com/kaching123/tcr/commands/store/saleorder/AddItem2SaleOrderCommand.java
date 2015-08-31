@@ -16,6 +16,7 @@ import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -95,7 +96,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
             fireAddOrderEvent(item.orderGuid);
         }
 
-        if (TextUtils.isEmpty(modifierGiud) && (addonGuids == null || addonGuids.isEmpty()) && (optionalGuids == null || optionalGuids.isEmpty())) {
+        if (item.priceType != PriceType.UNIT_PRICE && TextUtils.isEmpty(modifierGiud) && (addonGuids == null || addonGuids.isEmpty()) && (optionalGuids == null || optionalGuids.isEmpty())) {
             tryCombineWithExistingItem();
         }
 

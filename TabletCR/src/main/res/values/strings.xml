@@ -119,8 +119,12 @@
     <string name="pref_scanner_empty">Scanner is not configured</string>
     <string name="pref_usb_msr_empty">USB MSR is not configured</string>
     <string name="pref_scale_empty">Scale is not configured</string>
+    <string name="pref_device_diagnose_empty">Devices is not configured</string>
+    <string name="pref_scale_empty">Scale is not configured</string>
     <string name="pref_scanner_search">Search</string>
     <string name="sync_notify_title">Syncing...</string>
+    <string name="pref_device_diagnose_title">Launch Diagnose</string>
+    <string name="pref_device_diagnose_subtitle">You can Launch Diagnose here</string>
     <string name="sync_notify_message">Syncing database</string>
     <string name="sync_notify_new_items">New data was downloaded: %d entity(s)</string>
     <string name="sync_err_unknown">Synchronization data error</string>
@@ -519,6 +523,9 @@
     <string name="lottery_wait_dialog_title">Please wait...</string>
     <string name="lottery_fail_message">Fails to catch lottery</string>
     <string name="apk_update_dialog_title">Would you like to update to version %d now?</string>
+    <string name="confirm_display_title">Have you see the message showing on Display now?</string>
+    <string name="confirm_scale_title">The number on the scale is : %s, is it correct?</string>
+    <string name="confirm_scanner_title">The barcode you scanned is : %s, is it correct?</string>
     <string name="pax_connect_wait_dialog_title">Connecting Pax...</string>
     <string name="pax_wait_dialog_title">Searching Pax...</string>
     <string name="pax_not_found_message">Pax not found</string>

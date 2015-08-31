@@ -18,6 +18,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
  */
 public class SaleOrderItemModel implements IValueModel, Serializable {
 
+    public String description;
     public String saleItemGuid;
     public ArrayList<Unit> tmpUnit = new ArrayList<Unit>();
     public String orderGuid;
@@ -58,6 +59,35 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
+        this.qty = qty;
+        this.price = price;
+        this.priceType = priceType;
+        this.discount = discount;
+        this.discountType = discountType;
+        this.isTaxable = isTaxable;
+        this.discountable = discountable;
+        this.sequence = sequence;
+        this.tmpRefundQty = tmpRefundQty;
+        this.parentGuid = parentGuid;
+        this.tax = tax;
+        this.finalGrossPrice = finalGrossPrice;
+        this.finalTax = finalTax;
+        this.finalDiscount = finalDiscount;
+        this.notes = notes;
+        this.hasNotes = hasNotes;
+    }
+
+    public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description, BigDecimal qty, BigDecimal kitchenPrintedQty, PriceType priceType, BigDecimal price, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax, long sequence, String parentGuid,
+                              BigDecimal finalGrossPrice,
+                              BigDecimal finalTax,
+                              BigDecimal finalDiscount,
+                              BigDecimal tmpRefundQty,
+                              String notes,
+                              boolean hasNotes) {
+        this.saleItemGuid = saleItemGuid;
+        this.orderGuid = orderGuid;
+        this.itemGuid = itemGuid;
+        this.description = description;
         this.qty = qty;
         this.price = price;
         this.priceType = priceType;

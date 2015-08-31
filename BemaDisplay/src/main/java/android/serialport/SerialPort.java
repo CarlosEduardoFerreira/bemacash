@@ -15,7 +15,7 @@
  * limitations under the License. 
  */
 
-package com.kaching123.display;
+package android.serialport;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -38,15 +38,34 @@ public class SerialPort {
 	private FileInputStream mFileInputStream;
 	private FileOutputStream mFileOutputStream;
 
-/* Serial port attribute.
- *      data: (7 == CS7, 8 == CS8)
- *      parity: (0 == none, 1 == odd, 2 == even)
- *      stop: (1 == 1 stop bit, 2 == 2 stop bits)
- *      flowctl: (0 == none, 1 == XON/XOFF, 2 == RTS/CTS)
- */
+	/* Serial port attribute.
+     *      data: (7 == CS7, 8 == CS8)
+     *      parity: (0 == none, 1 == odd, 2 == even)
+     *      stop: (1 == 1 stop bit, 2 == 2 stop bits)
+     *      flowctl: (0 == none, 1 == XON/XOFF, 2 == RTS/CTS)
+     */
 	public SerialPort(File device, int baudrate, int databit, int parity, int stopbit, int flowctl) throws SecurityException, IOException {
 
-		/* Check access permission */
+
+
+		mFd = open(device.getAbsolutePath(), baudrate, databit, parity, stopbit, flowctl);
+		if (mFd == null) {
+			Log.e(TAG, "native open returns null");
+			throw new IOException();
+		}
+		mFileInputStream = new FileInputStream(mFd);
+		mFileOutputStream = new FileOutputStream(mFd);
+	}
+	/* Serial port attribute.
+     *      data: (7 == CS7, 8 == CS8)
+     *      parity: (0 == none, 1 == odd, 2 == even)
+     *      stop: (1 == 1 stop bit, 2 == 2 stop bits)
+     *      flowctl: (0 == none, 1 == XON/XOFF, 2 == RTS/CTS)
+     */
+	public SerialPort(String portName, int baudrate, int databit, int parity, int stopbit, int flowctl) throws SecurityException, IOException {
+
+		File device = new File( portName);
+        /* Check access permission */
 		if (!device.canRead() || !device.canWrite()) {
 			try {
 				/* Missing read/write permission, trying to chmod the file */
@@ -61,9 +80,12 @@ public class SerialPort {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				Log.d(TAG + "Initialze", e.getMessage());
+
 				throw new SecurityException();
 			}
 		}
+
 
 		mFd = open(device.getAbsolutePath(), baudrate, databit, parity, stopbit, flowctl);
 		if (mFd == null) {
@@ -73,7 +95,6 @@ public class SerialPort {
 		mFileInputStream = new FileInputStream(mFd);
 		mFileOutputStream = new FileOutputStream(mFd);
 	}
-
 	// Getters and setters
 	public InputStream getInputStream() {
 		return mFileInputStream;

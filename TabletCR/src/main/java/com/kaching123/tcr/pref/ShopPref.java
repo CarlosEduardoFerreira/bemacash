@@ -256,6 +256,8 @@ public interface ShopPref {
 
     String scaleName();
 
+    String scaleAddress();
+
     String updateUrl();
 
     String updateFilePath();
