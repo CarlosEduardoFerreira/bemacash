@@ -212,7 +212,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
         @Override
         public Loader<List<SaleOrderModel>> onCreateLoader(int arg0, Bundle arg1) {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
-                    .where(ShopStore.SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid())
+//                    .where(ShopStore.SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid())
                     .where(ShopStore.SaleOrderTable.GUID + " <> ?", argOrderGuid == null ? "" : argOrderGuid)
                     .where(ShopStore.SaleOrderTable.STATUS + " = ? ", OrderStatus.ONHOLD.ordinal());
 

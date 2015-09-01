@@ -1732,8 +1732,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         @Override
         public Loader<OrdersStatInfo> onCreateLoader(int arg0, Bundle arg1) {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(SaleOrderTable.URI_CONTENT))
-                    .projection("count(" + SaleOrderTable.GUID + ")")
-                    .where(SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid() == null ? "" : getApp().getOperatorGuid());
+                    .projection("count(" + SaleOrderTable.GUID + ")");
+//                    .where(SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid() == null ? "" : getApp().getOperatorGuid());
             if (!TextUtils.isEmpty(orderGuid))
                 builder.where(SaleOrderTable.GUID + " <> ?", orderGuid);
             Date minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar);
