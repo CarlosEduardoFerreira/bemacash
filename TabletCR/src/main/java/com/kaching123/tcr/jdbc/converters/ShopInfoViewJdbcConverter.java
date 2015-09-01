@@ -157,7 +157,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER),
                 rs.getBoolean(ENABLE_XREPORT_DEPART_SALE),
-                rs.getInt(IVULOTO_MID),
+                rs.getString(IVULOTO_MID),
                 rs.getString(TERMINAL_ID),
                 rs.getString(TERMINAL_PASSWORD)
         );
@@ -221,7 +221,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER),
                 rs.getBoolean(ENABLE_XREPORT_DEPART_SALE),
-                rs.getInt(IVULOTO_MID),
+                rs.getString(IVULOTO_MID),
                 rs.getString(TERMINAL_ID),
                 rs.getString(TERMINAL_PASSWORD));
     }
@@ -309,7 +309,7 @@ public class ShopInfoViewJdbcConverter {
 
         public final boolean enableEreportDepartSale;
 
-        public final int ivulotoMid;
+        public final String ivulotoMid;
 
         public final String terminalID;
 
@@ -366,7 +366,7 @@ public class ShopInfoViewJdbcConverter {
                         boolean printDropOrPayout,
                         long updateCheckTimer,
                         boolean enableEreportDepartSale,
-                        int ivulotoMid,
+                        String ivulotoMid,
                         String terminalID,
                         String terminalPassword) {
             this.id = id;

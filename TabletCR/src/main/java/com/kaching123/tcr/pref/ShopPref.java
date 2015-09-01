@@ -276,7 +276,7 @@ public interface ShopPref {
 
     boolean IVULotoActivated();
 
-    int ivulotoMID();
+    String ivulotoMID();
 
     String terminalID();
 

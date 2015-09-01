@@ -230,7 +230,7 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.printDropOrPayout().getOr(true),
                     shopPref.updateCheckTimer().getOr(0),
                     shopPref.enableEreportDepartSale().getOr(false),
-                    shopPref.ivulotoMID().getOr(0),
+                    shopPref.ivulotoMID().get(),
                     shopPref.terminalID().get(),
                     shopPref.terminalPassword().get());
         }
@@ -667,11 +667,11 @@ public class TcrApplication extends MultiDexApplication {
         return shopPref.IVULotoActivated().get();
     }
 
-    public void setIvulotoMID(int ivulotoMID) {
+    public void setIvulotoMID(String ivulotoMID) {
         shopPref.ivulotoMID().put(ivulotoMID);
     }
 
-    public int getIvulotoMID() {
+    public String getIvulotoMID() {
         return shopPref.ivulotoMID().get();
     }
 

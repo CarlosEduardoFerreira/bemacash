@@ -263,7 +263,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         request.Password = getUser().getPassword();
         request.transactionId = PrepaidProcessor.generateId();
         Receipt receipt = new Receipt();
-        receipt.merchantId = String.valueOf(getIVULotoMID());
+        receipt.merchantId = getIVULotoMID();
         receipt.terminalId = getTerminalID();
         receipt.terminalPassword = getTerminalPassword();
         receipt.municipalTax = getTax().doubleValue();
@@ -289,7 +289,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         return TcrApplication.get().getTaxVat();
     }
 
-    private int getIVULotoMID() {
+    private String getIVULotoMID() {
         return TcrApplication.get().getIvulotoMID();
     }
 

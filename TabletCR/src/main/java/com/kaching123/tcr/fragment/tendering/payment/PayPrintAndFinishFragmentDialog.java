@@ -189,7 +189,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         request.Password = getUser().getPassword();
         request.transactionId = PrepaidProcessor.generateId();
         Receipt receipt = new Receipt();
-        receipt.merchantId = String.valueOf(getIVULotoMID());
+        receipt.merchantId = getIVULotoMID();
         receipt.terminalId = getTerminalID();
         receipt.terminalPassword = getTerminalPassword();
         receipt.municipalTax = getTax().doubleValue();
@@ -215,7 +215,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         return ((TcrApplication) getActivity().getApplicationContext()).getTaxVat();
     }
 
-    private int getIVULotoMID() {
+    private String getIVULotoMID() {
         return ((TcrApplication) getActivity().getApplicationContext()).getIvulotoMID();
     }
 
