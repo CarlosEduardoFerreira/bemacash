@@ -94,6 +94,12 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String ENABLE_XREPORT_DEPART_SALE = "ENABLE_XREPORT_DEPART_SALE";
 
+    public static final String IVULOTO_MID = "IVULOTO_MID";
+
+    public static final String TERMINAL_ID = "TERMINAL_ID";
+
+    public static final String TERMINAL_PASSWORD = "TERMINAL_PASSWORD";
+
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
                 rs.getLong(ID),
@@ -150,7 +156,10 @@ public class ShopInfoViewJdbcConverter {
                 rs.getLong(MAX_ITEMS_COUNT),
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER),
-                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE)
+                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE),
+                rs.getInt(IVULOTO_MID),
+                rs.getString(TERMINAL_ID),
+                rs.getString(TERMINAL_PASSWORD)
         );
     }
 
@@ -211,7 +220,10 @@ public class ShopInfoViewJdbcConverter {
                 rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE),
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER),
-                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE));
+                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE),
+                rs.getInt(IVULOTO_MID),
+                rs.getString(TERMINAL_ID),
+                rs.getString(TERMINAL_PASSWORD));
     }
 
     public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException  {
@@ -297,7 +309,13 @@ public class ShopInfoViewJdbcConverter {
 
         public final boolean enableEreportDepartSale;
 
-        public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
+        public final int ivulotoMid;
+
+        public final String terminalID;
+
+        public final String terminalPassword;
+
+        public  ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
                         String address3,
@@ -347,7 +365,10 @@ public class ShopInfoViewJdbcConverter {
                         long maxItemsCount,
                         boolean printDropOrPayout,
                         long updateCheckTimer,
-                        boolean enableEreportDepartSale) {
+                        boolean enableEreportDepartSale,
+                        int ivulotoMid,
+                        String terminalID,
+                        String terminalPassword) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -413,6 +434,13 @@ public class ShopInfoViewJdbcConverter {
             this.updateCheckTimer = updateCheckTimer;
 
             this.enableEreportDepartSale = enableEreportDepartSale;
+
+            this.ivulotoMid = ivulotoMid;
+
+            this.terminalID = terminalID;
+
+            this.terminalPassword = terminalPassword;
+
         }
 
     }

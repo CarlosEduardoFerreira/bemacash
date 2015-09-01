@@ -33,6 +33,7 @@ import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.payment.blackstone.payment.User;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
+import com.kaching123.tcr.pref.ShopPref;
 import com.kaching123.tcr.pref.ShopPref_;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.SyncOpenHelper;
@@ -228,7 +229,10 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.maxItemsCount().getOr(0),
                     shopPref.printDropOrPayout().getOr(true),
                     shopPref.updateCheckTimer().getOr(0),
-                    shopPref.enableEreportDepartSale().getOr(false));
+                    shopPref.enableEreportDepartSale().getOr(false),
+                    shopPref.ivulotoMID().getOr(0),
+                    shopPref.terminalID().get(),
+                    shopPref.terminalPassword().get());
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -555,6 +559,9 @@ public class TcrApplication extends MultiDexApplication {
                 .printDropOrPayout().put(info.printDropOrPayout)
                 .updateCheckTimer().put(info.updateCheckTimer)
                 .enableEreportDepartSale().put(info.enableEreportDepartSale)
+                .ivulotoMID().put(info.ivulotoMid)
+                .terminalID().put(info.terminalID)
+                .terminalPassword().put(info.terminalPassword)
                 .apply();
 
         setUsers();
