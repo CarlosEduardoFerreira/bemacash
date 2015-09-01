@@ -11,15 +11,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kaching123.tcr.AutoUpdateService;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragmentWithCallback;
 import com.kaching123.tcr.fragment.settings.AboutFragment;
 import com.kaching123.tcr.fragment.settings.DataUsageStatFragment;
+import com.kaching123.tcr.fragment.settings.DiagnoseFragment;
 import com.kaching123.tcr.fragment.settings.DisplayFragment;
 import com.kaching123.tcr.fragment.settings.DrawerSettingsFragment;
 import com.kaching123.tcr.fragment.settings.PaxListFragment;
 import com.kaching123.tcr.fragment.settings.PrinterListFragment;
+import com.kaching123.tcr.fragment.settings.ScaleFragment;
 import com.kaching123.tcr.fragment.settings.ScannerFragment;
 import com.kaching123.tcr.fragment.settings.SyncSettingsFragment;
 import com.kaching123.tcr.fragment.settings.TrainingModeSettingsFragment;
@@ -39,13 +44,15 @@ import java.util.Set;
  * Created by gdubina on 07/11/13.
  */
 @EActivity(R.layout.settings_activity)
-public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener {
+public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener, WaitDialogFragmentWithCallback.OnDialogDismissListener{
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
     static {
         permissions.add(Permission.ADMIN);
     }
+
+    private Fragment fragment = null;
 
     @Override
     protected Set<Permission> getPermissions() {
@@ -65,6 +72,8 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 new NavigationItem(getString(R.string.pref_display_header_title), getString(R.string.pref_display_header_summary)),
                 new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
                 new NavigationItem(getString(R.string.pref_msr_header_title), getString(R.string.pref_msr_header_summary)),
+                new NavigationItem(getString(R.string.pref_scale_header_title), getString(R.string.pref_scale_header_summary)),
+                new NavigationItem(getString(R.string.pref_devices_diagnose_title), getString(R.string.pref_devices_diagnose_summary)),
                 new NavigationItem(getString(R.string.pref_datausage_header_title), getString(R.string.pref_datausage_header_summary)),
                 new NavigationItem(getString(R.string.pref_training_mode_header_title), getString(R.string.pref_training_mode_header_summary)),
                 new NavigationItem(getString(R.string.pref_about_header_title), getString(R.string.pref_about_header_summary))
@@ -82,7 +91,6 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     }
 
     private void updateDetails(int pos) {
-        Fragment fragment = null;
         switch (pos) {
             case 0:
                 fragment = SyncSettingsFragment.instance();
@@ -106,12 +114,18 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 fragment = USBMsrFragment.instance();
                 break;
             case 7:
-                fragment = DataUsageStatFragment.instance();
+                fragment = ScaleFragment.instance();
                 break;
             case 8:
-                fragment = TrainingModeSettingsFragment.instance();
+                fragment = DiagnoseFragment.instance();
                 break;
             case 9:
+                fragment = DataUsageStatFragment.instance();
+                break;
+            case 10:
+                fragment = TrainingModeSettingsFragment.instance();
+                break;
+            case 11:
                 fragment = AboutFragment.instance();
                 break;
         }
@@ -124,7 +138,18 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
         stopService(new Intent(SettingsActivity.this, AutoUpdateService.class));
         startCheckUpdateService(true);
     }
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+//        Logger.d("BaseCashierActivity barcodeReceivedFromSerialPort onReceive:" + barcode);
+        DiagnoseFragment fragment = (DiagnoseFragment) getSupportFragmentManager().findFragmentById(R.id.settings_details);
+        fragment.receivedScannerCallback(barcode);
+    }
 
+    @Override
+    public void onDialogDismissed(String barcode) {
+        WaitDialogFragmentWithCallback.show(this,getString(R.string.wait_dialog_title));
+        ((DiagnoseFragment)fragment).setScannerRead(barcode);
+    }
 
     private class NavigationAdapter extends ObjectsArrayAdapter<NavigationItem> {
 

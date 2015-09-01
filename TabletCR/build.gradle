@@ -23,12 +23,12 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "20"
     dexOptions {
         jumboMode = true
     }
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 17
         targetSdkVersion 19
         multiDexEnabled = true
     }
@@ -86,25 +86,25 @@ android {
     productFlavors {
 
         prod {
-            applicationId = "com.bemacash.tcr"
+            applicationId = "com.kaching123.tcr"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
             buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         dev {
-            applicationId = "com.bemacash.tcr"
+            applicationId = "com.kaching123.tcr"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
             buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         stage {
-            applicationId = "com.bemacash.tcr"
+            applicationId = "com.kaching123.tcr"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
             buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         preprod {
-            applicationId = "com.bemacash.tcr"
+            applicationId = "com.kaching123.tcr"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
             buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }

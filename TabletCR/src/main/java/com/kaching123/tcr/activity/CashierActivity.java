@@ -310,7 +310,8 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
 
         @Override
         protected void onSuccess(String saleItemGuid) {
-            startCommand(new DisplaySaleItemCommand(saleItemGuid));
+            startCommand(new DisplaySaleItemCommand(saleItemGuid));// show on display
+
         }
     };
 

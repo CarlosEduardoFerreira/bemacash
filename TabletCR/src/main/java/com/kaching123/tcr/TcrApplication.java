@@ -11,6 +11,7 @@ import android.util.Base64;
 
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
+import com.kaching123.display.SerialPortScale;
 import com.kaching123.display.SerialPortScanner;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.rest.RestCommand;
@@ -112,6 +113,7 @@ public class TcrApplication extends MultiDexApplication {
     private RestAdapter restAdapterJsonOrg;
 
     private SerialPortScanner serialPortScanner;
+    private SerialPortScale serialPortScale;
 
     public String emailApiKey = "EvG5Cb8acZC4Dzm6b4a5GRdDBPk362";
 
@@ -1025,6 +1027,12 @@ public class TcrApplication extends MultiDexApplication {
         serialPortScanner = new SerialPortScanner();
 
         return serialPortScanner.getInputStreamReader();
+    }
+
+    public InputStream getScaleIS() {
+        serialPortScale = new SerialPortScale();
+
+        return serialPortScale.getInputStreamReader();
     }
 
     public void closeSerialScanner() {

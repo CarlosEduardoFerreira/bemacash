@@ -12,8 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bematechus.bemaUtils.PortInfo;
+import com.kaching123.display.scale.BemaScale;
 import com.kaching123.tcr.BuildConfig;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -74,7 +78,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
     protected Mode mode;
 
     public enum Mode {
-        DISPLAY, SCANNER, USBMSR
+        DISPLAY, SCANNER, USBMSR, SCALE
     }
 
     public static void show(FragmentActivity activity, FindDeviceListener findDeviceListener, Mode mode) {
@@ -128,6 +132,9 @@ public class FindDeviceFragment extends StyledDialogFragment {
         } else if (mode == Mode.USBMSR) {
             progressLabel.setText(R.string.find_msr_progress);
             emptyView.setText(R.string.find_msr_empty);
+        } else if (mode == Mode.SCALE) {
+            progressLabel.setText(R.string.find_scale_progress);
+            emptyView.setText(R.string.find_scale_empty);
         }
 
         adapter = new DeviceAdapter(getActivity());
@@ -143,6 +150,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
             storeScanner(device);
         } else if (mode == Mode.USBMSR) {
             storeUsbMsr(device);
+        } else if (mode == Mode.SCALE) {
+            storeScale(device);
         }
 
         if (findDeviceListener != null)
@@ -201,6 +210,10 @@ public class FindDeviceFragment extends StyledDialogFragment {
         getApp().getShopPref().usbMSRName().put(usbMsr.getAddress());
     }
 
+    private void storeScale(DeviceModel scale) {
+        getApp().getShopPref().scaleName().put(scale.getName());
+    }
+
     private class GetDevicesTask extends AsyncTask<Void, Void, Collection<DeviceModel>> {
 
         private static final String DISPLAY_DEVICE_NAME_CONSTRAINT = "LCI Display";
@@ -241,6 +254,10 @@ public class FindDeviceFragment extends StyledDialogFragment {
                 case USBMSR:
                     devices = getUsbMsrDevices();
                     break;
+                case SCALE:
+                    devices = getScaleDevice();
+//                    devices = getDevices(bluetoothDevices);
+                    break;
                 default:
                     break;
             }
@@ -264,6 +281,10 @@ public class FindDeviceFragment extends StyledDialogFragment {
             if (isAIO())
                 if (mode == Mode.DISPLAY)
                     devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
+                else if(mode == Mode.SCALE){
+                    devices.add(new DeviceModel("COM2","COM2"));
+                    devices.add(new DeviceModel("COM1","COM1"));
+                }
                 else {
                     devices.add(new DeviceModel(SEARIL_PORT_SCANNER_ADDRESS, SEARIL_PORT_SCANNER_NAME));
 //                    if (checkUsb(USB_SCANNER_VID, USB_SCANNER_PID))
@@ -283,6 +304,24 @@ public class FindDeviceFragment extends StyledDialogFragment {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
             if (checkUsb(USB_MSR_VID, USB_MSR_PID))
                 devices.add(new DeviceModel(USB_MSR_NAME, USB_MSR_NAME));
+            return devices;
+        }
+
+        private Set<DeviceModel> getScaleDevice() {
+            Set<DeviceModel> devices = new HashSet<DeviceModel>();
+            for(int i = 1; i <= 2; i++) {
+                String portName = "COM" + i;
+                PortInfo info = BemaScale.scalePortInfo();
+                info.setPortName(portName);
+                BemaScale scale = new BemaScale(info);
+                int state = scale.open();
+                Logger.d("state = "+state);
+                if( state >= 0) {
+                    Logger.d("Scale Connected to " + info.getPortName());
+                    devices.add(new DeviceModel(info.getPortName(), info.getPortName()));
+                }
+            }
+
             return devices;
         }
 

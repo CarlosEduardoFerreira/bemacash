@@ -254,6 +254,10 @@ public interface ShopPref {
 
     String usbMSRName();
 
+    String scaleName();
+
+    String scaleAddress();
+
     String updateUrl();
 
     String updateFilePath();
