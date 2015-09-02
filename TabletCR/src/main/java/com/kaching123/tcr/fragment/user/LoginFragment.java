@@ -360,6 +360,11 @@ public class LoginFragment extends SuperBaseDialogFragment {
         }
 
         @Override
+        protected void onRegisterPending() {
+            showError(R.string.error_message_register_pending);
+        }
+
+        @Override
         protected void onEmployeeNotActive() {
             showError(R.string.error_message_employee_not_active);
         }
@@ -384,6 +389,10 @@ public class LoginFragment extends SuperBaseDialogFragment {
             showError(R.string.error_message_login_offline_failed);
         }
 
+        @Override
+        protected void onBlockMerchant() {
+            showError(R.string.block_merchant_message);
+        }
         @Override
         protected void onSyncLocked() {
             showError(R.string.error_message_sync_locked);
