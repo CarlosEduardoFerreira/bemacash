@@ -1,4 +1,4 @@
-package com.kaching123.tcr.commands.payment.pax;
+package com.kaching123.tcr.commands.payment.pax.blackstone;
 
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.MIDownloadRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.MIResponse;
@@ -6,7 +6,7 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.MIRespons
 /**
  * Created by pkabakov on 25.06.2014.
  */
-public class PaxMIDownloadCommand extends BasePaxMICommand<MIDownloadRequest> {
+public class PaxBlackstoneMIDownloadCommand extends BaseBlackstonePaxMICommand<MIDownloadRequest> {
 
     @Override
     protected MIDownloadRequest getRequest() {
@@ -14,7 +14,7 @@ public class PaxMIDownloadCommand extends BasePaxMICommand<MIDownloadRequest> {
     }
 
     @Override
-    protected MIResponse getResponse(PaxWebApi api, MIDownloadRequest request) {
+    protected MIResponse getResponse(PaxBlackstoneBaseCommand.PaxWebApi api, MIDownloadRequest request) {
         return api.midownload(request);
     }
 }

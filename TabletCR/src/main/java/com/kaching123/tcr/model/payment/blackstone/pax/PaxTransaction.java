@@ -1,12 +1,14 @@
 package com.kaching123.tcr.model.payment.blackstone.pax;
 
 import android.os.Parcel;
+import android.util.Log;
 
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.model.payment.general.transaction.TransactionType;
+import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.LastTrasnactionResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
 
@@ -19,6 +21,7 @@ import java.math.BigDecimal;
 public class PaxTransaction extends Transaction<PaxTransaction> {
 
     public boolean allowReload;
+    private final static String TAG = "PaxTransaction";
 
     public PaxTransaction(String userTransactionNumber, BigDecimal amount) {
         super(userTransactionNumber, amount);
@@ -55,6 +58,23 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         String balanceStr = data.getDetails().getDetails().getSale().getBalance();
         if (balanceStr != null) {
             balance = new BigDecimal(balanceStr);
+        }
+    }
+
+    public void updateWith(com.pax.poslink.PaymentResponse response) {
+        cardName = response.CardType;
+        amount = new BigDecimal(response.ApprovedAmount).divide(CalculationUtil.ONE_HUNDRED);
+        serviceTransactionNumber = response.RefNum;
+        authorizationNumber = response.AuthCode;
+        lastFour = response.BogusAccountNum;
+        //TODO PosLink need change to HostCode later.
+//        userTransactionNumber = response.RefNum;
+        try {
+            balance = new BigDecimal(response.RemainingBalance);
+        }
+        catch (Exception ex )
+        {
+            Log.d(TAG, ex.getMessage());
         }
     }
 

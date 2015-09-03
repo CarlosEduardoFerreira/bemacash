@@ -7,7 +7,9 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorHelloCommand;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.model.PaxModel;
 
 import java.math.BigDecimal;
 
@@ -67,6 +69,8 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
     }
 
     protected boolean onConfirm() {
+        if (!getApp().isBlackstonePax() && getApp().isPaxConfigured())
+            PaxProcessorHelloCommand.start(getActivity(), PaxModel.get(), helloCallBack);
         if (printBox.isChecked()) {
             printOrder(false, false);
         } else {
@@ -74,6 +78,19 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
         }
         return false;
     }
+
+    public PaxProcessorHelloCommand.PaxHelloCommandBaseCallback helloCallBack = new PaxProcessorHelloCommand.PaxHelloCommandBaseCallback() {
+
+        @Override
+        protected void handleSuccess(String details) {
+
+        }
+
+        @Override
+        protected void handleError(String error) {
+
+        }
+    };
 
     protected void completeProcess() {
         if (listener != null) {

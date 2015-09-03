@@ -2,7 +2,7 @@ package com.kaching123.tcr.processor;
 
 import android.content.Context;
 
-import com.kaching123.tcr.commands.payment.pax.PaxHelloCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneHelloCommand;
 import com.kaching123.tcr.model.PaxModel;
 
 import java.util.Timer;
@@ -35,7 +35,7 @@ public class PaxPokeProcessor {
         executor = new TimerTask() {
             @Override
             public void run() {
-                new PaxHelloCommand().sync(context, PaxModel.get());
+                new PaxBlackstoneHelloCommand().sync(context, PaxModel.get());
             }
         };
         timer.schedule(executor, INTERVAL_DEBUG, INTERVAL);

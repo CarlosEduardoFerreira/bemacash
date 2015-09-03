@@ -1,4 +1,4 @@
-package com.kaching123.tcr.commands.payment.pax;
+package com.kaching123.tcr.commands.payment.pax.blackstone;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,13 +15,13 @@ import com.telly.groundy.annotations.Param;
 
 import retrofit.RetrofitError;
 
-public class PaxHelloCommand extends PaxBaseCommand {
+public class PaxBlackstoneHelloCommand extends PaxBlackstoneBaseCommand {
 
     public static final String RESULT_DETAILS = "RESULT_DETAILS";
     public static final String RESULT_CODE = "RESULT_CODE";
 
     public static void start(Context context, PaxModel paxTerminal, PaxHelloCommandBaseCallback callback) {
-        create(PaxHelloCommand.class).arg(ARG_DATA_PAX, paxTerminal).allowNonUiCallbacks().callback(callback).queueUsing(context);
+        create(PaxBlackstoneHelloCommand.class).arg(ARG_DATA_PAX, paxTerminal).allowNonUiCallbacks().callback(callback).queueUsing(context);
     }
 
     @Override
@@ -32,7 +32,6 @@ public class PaxHelloCommand extends PaxBaseCommand {
     public TaskResult sync(Context context, PaxModel model) {
         Bundle b = new Bundle();
         b.putParcelable(ARG_DATA_PAX, model);
-        b.putBoolean(ARG_INIT_CONNECT, true);
         //no need in commands cache (creds on start)
         return super.sync(context, b, null);
     }
@@ -47,13 +46,11 @@ public class PaxHelloCommand extends PaxBaseCommand {
             HelloResponse response = api.hello(new HelloRequest().setDisplay(String.format("%s^%s", top != null ? top : "", bottom != null ? bottom : "")));
             errorCode = response.getResponse();
             if (errorCode == 200) {
-                new PaxMIDownloadCommand().sync(getContext(), paxTerminal);
+                new PaxBlackstoneMIDownloadCommand().sync(getContext(), paxTerminal);
                 PaxPokeProcessor.get().start(getContext());
                 getApp().getShopPref().paxUrl().put(paxTerminal.ip);
                 getApp().getShopPref().paxPort().put(paxTerminal.port);
                 Logger.d("response was ok");
-
-                new PaxSerialCommand().sync(getContext(), paxTerminal);
                 return succeeded().add(RESULT_DETAILS, response.getDetails()).add(RESULT_CODE, errorCode);
             }
             errorMsg = response.getDetails();
@@ -72,14 +69,14 @@ public class PaxHelloCommand extends PaxBaseCommand {
 
     public static abstract class PaxHelloCommandBaseCallback {
 
-        @OnSuccess(PaxHelloCommand.class)
+        @OnSuccess(PaxBlackstoneHelloCommand.class)
         public final void onSuccess(@Param(RESULT_DETAILS) String details) {
             handleSuccess(details);
         }
 
         protected abstract void handleSuccess(String details);
 
-        @OnFailure(PaxHelloCommand.class)
+        @OnFailure(PaxBlackstoneHelloCommand.class)
         public final void onFailure(@Param(RESULT_DETAILS) String error) {
             handleError(error);
         }

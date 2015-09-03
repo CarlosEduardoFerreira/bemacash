@@ -1,9 +1,10 @@
-package com.kaching123.tcr.commands.payment.pax;
+package com.kaching123.tcr.commands.payment.pax.blackstone;
 
 import android.content.Context;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.SettlementCommand;
+import com.kaching123.tcr.commands.payment.pax.PaxGateway;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode;
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.SettlementRequest;
@@ -22,7 +23,7 @@ import retrofit.RetrofitError;
 /**
  * Created by mayer
  */
-public class PaxSettlementCommand extends PaxBaseCommand {
+public class PaxBlackstoneSettlementCommand extends PaxBlackstoneBaseCommand {
 
     private static final String RESULT_PREAUTH_TRANSACTIONS_CLOSED = "RESULT_PREAUTH_TRANSACTIONS_CLOSED";
 
@@ -30,9 +31,9 @@ public class PaxSettlementCommand extends PaxBaseCommand {
 
 
     public static final TaskHandler start(Context context,
-                                              PaxModel paxTerminal,
-                                              SettlementCommandBaseCallback callback) {
-        return  create(PaxSettlementCommand.class)
+                                          PaxModel paxTerminal,
+                                          SettlementCommandBaseCallback callback) {
+        return  create(PaxBlackstoneSettlementCommand.class)
                 .arg(ARG_DATA_PAX, paxTerminal)
                 .callback(callback)
                 .queueUsing(context);
@@ -40,7 +41,7 @@ public class PaxSettlementCommand extends PaxBaseCommand {
 
     @Override
     protected TaskResult doCommand(PaxWebApi api) {
-        Error error = Error.UNDEFINED;
+        PaxGateway.Error error = PaxGateway.Error.UNDEFINED;
         TransactionStatusCode responseCode = null;
         try {
             SettlementResponse response = api.settlement(new SettlementRequest());
@@ -55,9 +56,9 @@ public class PaxSettlementCommand extends PaxBaseCommand {
 
             if (!success) {
                 if (paxResponseCode != null)
-                    error = Error.PAX;
+                    error = PaxGateway.Error.PAX;
                 if (responseCode != null)
-                    error = Error.SERVICE;
+                    error = PaxGateway.Error.SERVICE;
                 Logger.e("PaxSettlementCommand failed, pax error code: " + paxResponseCode + "; error code: " + (responseCode == null ? null : responseCode.getCode()));
                 return failed().add(RESULT_ERROR, error).add(RESULT_ERROR_CODE, responseCode);
             }
@@ -67,10 +68,10 @@ public class PaxSettlementCommand extends PaxBaseCommand {
             return succeeded().add(RESULT_DATA, responseCode).add(RESULT_PREAUTH_TRANSACTIONS_CLOSED, isPreauthTransactionsClosed);
         } catch (Pax404Exception e) {
             Logger.e("PaxSettlementCommand failed", e);
-            error = Error.PAX404;
+            error = PaxGateway.Error.PAX404;
         } catch (RetrofitError e) {
             Logger.e("PaxSettlementCommand failed", e);
-            error = Error.CONNECTIVITY;
+            error = PaxGateway.Error.CONNECTIVITY;
         }
 
         return failed().add(RESULT_ERROR, error).add(RESULT_ERROR_CODE, responseCode);
@@ -78,20 +79,20 @@ public class PaxSettlementCommand extends PaxBaseCommand {
 
     public static abstract class SettlementCommandBaseCallback {
 
-        @OnSuccess(PaxSettlementCommand.class)
-        public final void onSuccess(@Param(PaxSettlementCommand.RESULT_DATA) TransactionStatusCode responseCode,
-                                    @Param(PaxSettlementCommand.RESULT_PREAUTH_TRANSACTIONS_CLOSED) boolean transactionsClosed) {
+        @OnSuccess(PaxBlackstoneSettlementCommand.class)
+        public final void onSuccess(@Param(RESULT_DATA) TransactionStatusCode responseCode,
+                                    @Param(PaxBlackstoneSettlementCommand.RESULT_PREAUTH_TRANSACTIONS_CLOSED) boolean transactionsClosed) {
             handleSuccess(responseCode, transactionsClosed);
         }
 
         protected abstract void handleSuccess(TransactionStatusCode responseCode, boolean transactionsClosed);
 
-        @OnFailure(PaxSettlementCommand.class)
-        public final void onFailure(@Param(PaxSettlementCommand.RESULT_ERROR) Error error, @Param(PaxSettlementCommand.RESULT_ERROR_CODE) TransactionStatusCode errorCode) {
+        @OnFailure(PaxBlackstoneSettlementCommand.class)
+        public final void onFailure(@Param(RESULT_ERROR) PaxGateway.Error error, @Param(RESULT_ERROR_CODE) TransactionStatusCode errorCode) {
             handleError(error, errorCode);
         }
 
-        protected abstract void handleError(Error error, TransactionStatusCode errorCode);
+        protected abstract void handleError(PaxGateway.Error error, TransactionStatusCode errorCode);
     }
 
 }

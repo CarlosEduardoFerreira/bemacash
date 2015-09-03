@@ -20,9 +20,8 @@ import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackGateway;
-import com.kaching123.tcr.commands.payment.pax.PaxBaseCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxBaseCommand.Error;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorHelloCommand;
 import com.kaching123.tcr.commands.print.pos.PrintSignatureOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
@@ -75,7 +74,6 @@ import com.kaching123.tcr.model.payment.general.transaction.BlackStoneTransactio
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.model.payment.general.transaction.TransactionType;
 import com.kaching123.tcr.processor.MoneybackProcessor.IVoidCallback;
-import com.kaching123.tcr.processor.PaxReloadProcessor.IPAXReloadCallback;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
 
@@ -261,14 +259,14 @@ public class PaymentProcessor {
             }
 
             @Override
-            public void onComplete(TransactionStatusCode responseCode, Error error) {
+            public void onComplete(TransactionStatusCode responseCode, PaxGateway.Error error) {
                 Logger.d("proceedToClosePreauth onComplete");
                 hide();
 
                 boolean codeNotNull = responseCode != null;
                 boolean success = codeNotNull && responseCode.success();
                 boolean allowRetry = codeNotNull && responseCode.retryMayHelp();
-                boolean allowReload = !success && Error.SERVICE != error;
+                boolean allowReload = !success && PaxGateway.Error.SERVICE != error;
 
                 //only for this situation
                 boolean abortSwitchToClose = TransactionStatusCode.REFERENCED_PREAUTHORIZATION_COMPLETED == responseCode;
@@ -318,7 +316,7 @@ public class PaymentProcessor {
                 return messageSpannable;
             }
 
-            private Spannable getErrorMessage(boolean success, boolean codeNotNull, TransactionStatusCode responseCode, Error error) {
+            private Spannable getErrorMessage(boolean success, boolean codeNotNull, TransactionStatusCode responseCode, PaxGateway.Error error) {
                 final String message;
                 final Spannable messageSpannable;
                 if (success) {
@@ -392,7 +390,7 @@ public class PaymentProcessor {
 
             @Override
             public void onReload(final Object UIFragent) {
-                PaxReloadProcessor.get().reload(context, transaction, amount, new IPAXReloadCallback() {
+                PaxReloadProcessor.get().reload(context, transaction, amount, new PaxReloadProcessor.IPAXReloadCallback() {
                     @Override
                     public void onStart() {
                         ((PayNotificationFragmentDialog) UIFragent).startSwirl(true);
@@ -457,8 +455,8 @@ public class PaymentProcessor {
             }
 
             @Override
-            public void onComplete(TransactionStatusCode responseCode, PaxBaseCommand.Error error, boolean transactionsClosed) {
-                Logger.d("proceedToDoSettlement (PAX) onComplete");
+            public void onComplete(TransactionStatusCode responseCode, PaxGateway.Error error, boolean transactionsClosed) {
+                Logger.d("proceedToDoSettlement (PAX) onComplete Blackstone");
                 hide();
 
                 boolean codeNotNull = responseCode != null;
@@ -467,6 +465,7 @@ public class PaymentProcessor {
 
                 proceedToDoSettlementNotification(context, allowRetry, success, transactionsClosed, getErrorMessage(success, transactionsClosed, codeNotNull, error));
             }
+
 
             private Spannable getErrorMessage(boolean success, boolean transactionsClosed, boolean codeNotNull, ErrorReason errorReason) {
                 final String message;
@@ -502,7 +501,7 @@ public class PaymentProcessor {
                 return messageSpannable;
             }
 
-            private Spannable getErrorMessage(boolean success, boolean transactionsClosed, boolean codeNotNull, Error error) {
+            private Spannable getErrorMessage(boolean success, boolean transactionsClosed, boolean codeNotNull, PaxGateway.Error error) {
                 final String message;
                 final Spannable messageSpannable;
                 if (success && transactionsClosed) {
@@ -844,7 +843,7 @@ public class PaymentProcessor {
                     protected void handleSuccess() {
                         hide();
                         Toast.makeText(context, context.getString(R.string.pax_configured), Toast.LENGTH_LONG).show();
-                        DeletePaxCommand.start(context,model, true);
+                        DeletePaxCommand.start(context, model, true);
                         proceedToPAXPayment(context, transaction);
                     }
 
@@ -867,6 +866,19 @@ public class PaymentProcessor {
             }
         });
     }
+
+    public PaxProcessorHelloCommand.PaxHelloCommandBaseCallback helloCallBack = new PaxProcessorHelloCommand.PaxHelloCommandBaseCallback() {
+
+        @Override
+        protected void handleSuccess(String details) {
+
+        }
+
+        @Override
+        protected void handleError(String error) {
+
+        }
+    };
 
     private final void proceedToNotificationBlock(final FragmentActivity context, Transaction transaction, String reason) {
         final Spannable messageSpannable;
@@ -1105,24 +1117,28 @@ public class PaymentProcessor {
 
             @Override
             public void onReload(final Object UIFragent) {
-                PaxReloadProcessor.get().reload(context, transaction, null, new IPAXReloadCallback() {
-                    @Override
-                    public void onStart() {
-                        ((PayNotificationFragmentDialog) UIFragent).startSwirl(true);
-                    }
+                if (TcrApplication.get().isBlackstonePax()) {
+                    PaxReloadProcessor.get().reload(context, transaction, null, new PaxReloadProcessor.IPAXReloadCallback() {
+                        @Override
+                        public void onStart() {
+                            ((PayNotificationFragmentDialog) UIFragent).startSwirl(true);
+                        }
 
-                    @Override
-                    public void onComplete(SaleActionResponse reloadResponse) {
-                        hide();
-                        proceedToPAXPayment(context, transaction, reloadResponse);
-                    }
+                        @Override
+                        public void onComplete(SaleActionResponse reloadResponse) {
+                            hide();
+                            proceedToPAXPayment(context, transaction, reloadResponse);
+                        }
 
-                    @Override
-                    public void onError(String errorMessage, boolean allowFurtherReload) {
-                        ((PayNotificationFragmentDialog) UIFragent).startSwirl(false);
-                        ((PayNotificationFragmentDialog) UIFragent).enableReload(allowFurtherReload, errorMessage);
-                    }
-                });
+                        @Override
+                        public void onError(String errorMessage, boolean allowFurtherReload) {
+                            ((PayNotificationFragmentDialog) UIFragent).startSwirl(false);
+                            ((PayNotificationFragmentDialog) UIFragent).enableReload(allowFurtherReload, errorMessage);
+                        }
+                    });
+                } else {
+                    proceedToPAXPayment(context, transaction);
+                }
             }
 
             @Override

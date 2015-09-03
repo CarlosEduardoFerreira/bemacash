@@ -8,8 +8,13 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
-import com.kaching123.tcr.commands.payment.pax.PaxRefundCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneBalanceCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneRefundCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBalanceCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorRefundCommand;
+
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -57,10 +62,25 @@ public class RefundPAXPendingFragmentDialog extends TransactionPendingFragmentDi
         message.setText(getString(R.string.pax_refund_instructions, transaction.getGuid()));
     }
 
-    @Override
-    protected void doCommand() {
-        PaxGateway gateway = (PaxGateway) transaction.getGateway().gateway();
-        gateway.refund(getActivity(), new PaxRefundCommand.PaxREFUNDCommandBaseCallback() {
+    private Object returnPaxCallBack () {
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return  new PaxProcessorRefundCommand.PaxREFUNDCommandBaseCallback() {
+
+                @Override
+                protected void handleSuccess(SaleOrderModel childOrderModel,
+                                             PaymentTransactionModel childTransactionModel,
+                                             Transaction transaction,
+                                             String errorMessage) {
+                    listener.onComplete(childTransactionModel, transaction, childOrderModel, errorMessage);
+                }
+
+                @Override
+                protected void handleError() {
+                    listener.onCancel();
+                }
+            };
+        }
+        return new PaxBlackstoneRefundCommand.PaxREFUNDCommandBaseCallback() {
 
             @Override
             protected void handleSuccess(SaleOrderModel childOrderModel,
@@ -74,7 +94,13 @@ public class RefundPAXPendingFragmentDialog extends TransactionPendingFragmentDi
             protected void handleError() {
                 listener.onCancel();
             }
-        }, null, null, new PaymentTransactionModel(getApp().getShiftGuid(), transaction), amount, reloadResponse, childOrderModel, refundTips, isManualReturn);
+        };
+    }
+
+    @Override
+    protected void doCommand() {
+        PaxGateway gateway = (PaxGateway) transaction.getGateway().gateway();
+        gateway.refund(getActivity(), returnPaxCallBack(), null, null, new PaymentTransactionModel(getApp().getShiftGuid(), transaction), amount, reloadResponse, childOrderModel, refundTips, isManualReturn);
     }
 
     public RefundPAXPendingFragmentDialog setAmount(BigDecimal amount) {

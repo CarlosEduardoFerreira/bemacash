@@ -10,6 +10,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorHelloCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand.BasePrintCallback;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
 import com.kaching123.tcr.commands.print.pos.PrintSignatureOrderCommand;
@@ -27,6 +28,7 @@ import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
 import com.kaching123.tcr.fragment.tendering.PayChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
+import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 
 import org.androidannotations.annotations.EFragment;
@@ -172,6 +174,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     @Override
     protected boolean onConfirm() {
         printReceipts();
+        if (!getApp().isBlackstonePax() && getApp().isPaxConfigured())
+            PaxProcessorHelloCommand.start(getActivity(), PaxModel.get(), helloCallBack);
         return false;
     }
 

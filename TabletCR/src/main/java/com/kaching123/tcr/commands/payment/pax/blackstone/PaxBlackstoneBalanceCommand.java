@@ -1,4 +1,4 @@
-package com.kaching123.tcr.commands.payment.pax;
+package com.kaching123.tcr.commands.payment.pax.blackstone;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -21,7 +21,7 @@ import retrofit.RetrofitError;
 /**
  * Created by mayer
  */
-public class PaxBalanceCommand extends PaxBaseCommand {
+public class PaxBlackstoneBalanceCommand extends PaxBlackstoneBaseCommand {
 
     public static final int TRANSACTION_ID_BALANCE = 9;
 
@@ -31,10 +31,10 @@ public class PaxBalanceCommand extends PaxBaseCommand {
     private static final String ARG_PURPOSE = "ARG_AMOUNT_1";
 
 
-    public static final TaskHandler startBalanceRequest(Context context,
+    public static final TaskHandler start(Context context,
                                               PaxModel paxTerminal,
                                               PaxBalanceCommandBaseCallback callback) {
-        return  create(PaxBalanceCommand.class)
+        return  create(PaxBlackstoneBalanceCommand.class)
                 .arg(ARG_DATA_PAX, paxTerminal)
                 .arg(ARG_PURPOSE, TRANSACTION_ID_BALANCE)
                 .callback(callback)
@@ -87,16 +87,16 @@ public class PaxBalanceCommand extends PaxBaseCommand {
 
     public static abstract class PaxBalanceCommandBaseCallback {
 
-        @OnSuccess(PaxBalanceCommand.class)
-        public final void onSuccess(@Param(PaxBalanceCommand.RESULT_AMOUNT) BigDecimal result,
-                                    @Param(PaxBalanceCommand.RESULT_LAST4) String last4,
-                                    @Param(PaxBalanceCommand.RESULT_ERROR_REASON) String errorReason) {
+        @OnSuccess(PaxBlackstoneBalanceCommand.class)
+        public final void onSuccess(@Param(PaxBlackstoneBalanceCommand.RESULT_AMOUNT) BigDecimal result,
+                                    @Param(PaxBlackstoneBalanceCommand.RESULT_LAST4) String last4,
+                                    @Param(PaxBlackstoneBalanceCommand.RESULT_ERROR_REASON) String errorReason) {
             handleSuccess(result, last4, errorReason);
         }
 
         protected abstract void handleSuccess(BigDecimal result, String last4, String errorReason);
 
-        @OnFailure(PaxBalanceCommand.class)
+        @OnFailure(PaxBlackstoneBalanceCommand.class)
         public final void onFailure() {
             handleError();
         }

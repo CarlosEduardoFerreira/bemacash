@@ -5,8 +5,10 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.commands.payment.pax.PaxHelloCommand;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneHelloCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorHelloCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorInitCommand;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PaxTable;
@@ -32,17 +34,17 @@ public class EditPaxCommand extends PublicGroundyTask {
         if (needInsert) {
             printerModel.guid = UUID.randomUUID().toString();
         }
-
-        boolean ok = !isFailed(new PaxHelloCommand().sync(getContext(), printerModel));
+        ContentValues v = printerModel.toValues();
+        boolean ok;
+        if (TcrApplication.get().isBlackstonePax()) {
+            ok = !isFailed(new PaxBlackstoneHelloCommand().sync(getContext(), printerModel));
+        } else {
+            if (!isFailed(new PaxProcessorInitCommand().sync(getContext(), printerModel))) ;
+            ok = !isFailed(new PaxProcessorHelloCommand().sync(getContext(), printerModel));
+        }
         if (!ok) {
             return failed();
-        } else {
-            if (getApp().getShopPref().paxSerial().get() != null) {
-                printerModel.serial = getApp().getShopPref().paxSerial().get();
-            }
-
         }
-        ContentValues v = printerModel.toValues();
         if (needInsert) {
             ProviderAction
                     .insert(URI_PRINTER)

@@ -3,10 +3,12 @@ package com.kaching123.tcr.processor;
 import android.content.Context;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
-import com.kaching123.tcr.commands.payment.pax.PaxBaseCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxLastTransactionCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxLastTransactionCommand.PaxSaleCommandBaseCallback;
+import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneBaseCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneSaleCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneLastTransactionCommand;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
@@ -22,7 +24,7 @@ public class PaxReloadProcessor {
     private PaxReloadProcessor() {
 
     }
-
+    //TODO: RELOAD IN PAX PROCESSOR
     public static PaxReloadProcessor get() {
         return new PaxReloadProcessor();
     }
@@ -30,28 +32,34 @@ public class PaxReloadProcessor {
     public void reload(final Context context, final Transaction transaction, final BigDecimal amount, final IPAXReloadCallback callback) {
         assert callback != null;
         callback.onStart();
-        PaxLastTransactionCommand.startSale(context, PaxModel.get(), transaction, amount, new PaxSaleCommandBaseCallback() {
+        if (TcrApplication.get().isBlackstonePax()) {
 
-            @Override
-            protected void handleSuccess(SaleActionResponse response) {
-                assert callback != null;
-                callback.onComplete(response);
-            }
+        }
+        else{
+            PaxBlackstoneLastTransactionCommand.startSale(context, PaxModel.get(), transaction, amount, new PaxBlackstoneLastTransactionCommand.PaxLastTransactionCommandBaseCallback() {
 
-            @Override
-            protected void handleError(PaxBaseCommand.Error error) {
-                assert callback != null;
-                boolean allowFurther = PaxBaseCommand.Error.SERVICE != error;
-                callback.onError(getErrorMessage(context, error), allowFurther);
-            }
-        });
+                @Override
+                protected void handleSuccess(SaleActionResponse response) {
+                    assert callback != null;
+                    callback.onComplete(response);
+                }
+
+                @Override
+                protected void handleError(PaxGateway.Error error) {
+                    assert callback != null;
+                    boolean allowFurther = PaxGateway.Error.SERVICE != error;
+                    callback.onError(getErrorMessage(context, error), allowFurther);
+                }
+            });
+        }
+
     }
 
-    private String getErrorMessage(Context context, PaxBaseCommand.Error error) {
+    private String getErrorMessage(Context context, PaxGateway.Error error) {
         final String message;
         final int messageClarification;
 
-         if (error != null) {
+        if (error != null) {
             switch (error) {
                 case CONNECTIVITY:
                     message = context.getString(R.string.pax_timeout);
@@ -67,8 +75,8 @@ public class PaxReloadProcessor {
                     message = ErrorReason.UNKNOWN.getDescription();
                     break;
             }
-             messageClarification = R.string.blackstone_pay_failure_body_3nd;
-         } else {
+            messageClarification = R.string.blackstone_pay_failure_body_3nd;
+        } else {
             message = ErrorReason.UNKNOWN.getDescription();
             messageClarification = R.string.blackstone_pay_failure_body_3nd;
         }

@@ -16,7 +16,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSetAutomaticBatchCloseCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackUpdateAutomaticHourToCloseBatchCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxMIDownloadCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneMIDownloadCommand;
 import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.RestCommand.IntegerResponse;
 import com.kaching123.tcr.commands.rest.sync.DBVersionCheckCommand;
@@ -72,8 +72,6 @@ import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.IBemaSyncTable;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
-import com.kaching123.tcr.store.ShopStore.MaxUpdateTableTimeParentRelationsQuery;
-import com.kaching123.tcr.store.ShopStore.MaxUpdateTableTimeQuery;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.OldActiveUnitOrdersQuery;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
@@ -1459,7 +1457,7 @@ public class SyncCommand implements Runnable {
             return;
         }
 
-        MerchantDetails merchantDetails = new PaxMIDownloadCommand().sync(service, PaxModel.get());
+        MerchantDetails merchantDetails = new PaxBlackstoneMIDownloadCommand().sync(service, PaxModel.get());
         if (merchantDetails == null) {
             Logger.e("SyncCommand.syncPAXMerchantInfo(): failed: command failed!");
             return;

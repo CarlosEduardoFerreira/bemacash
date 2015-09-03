@@ -4,10 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -15,9 +11,9 @@ import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackClosePreauthCommand.BaseClosePreauthCallback;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackGateway;
-import com.kaching123.tcr.commands.payment.pax.PaxAddTipsCommand.PaxTipsCommandBaseCallback;
-import com.kaching123.tcr.commands.payment.pax.PaxBaseCommand;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneAddTipsCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorAddTipsCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase;
@@ -27,6 +23,11 @@ import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode
 import com.kaching123.tcr.model.payment.blackstone.payment.response.PreauthResponse;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 
@@ -75,6 +76,15 @@ public class CloseTransPendingFragmentDialog extends TransactionPendingFragmentD
             message.setText(getString(R.string.pax_close_instructions, transactionModel == null ? "" : transactionModel.getGuid()));
     }
 
+    private Object returnPaxCallBack() {
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return closePreauthPaxProcessorCallback;
+        }
+
+        return closePreauthPaxBlackstoneCallback;
+
+    }
+
     @Override
     protected void doCommand() {
         if (getApp().isPaxConfigured()) {
@@ -82,8 +92,9 @@ public class CloseTransPendingFragmentDialog extends TransactionPendingFragmentD
                 failed(getString(R.string.blackstone_pax_failure_reason_wrong_gateway));
                 return;
             }
-            PaxGateway paxGateway = (PaxGateway)PaymentGateway.PAX.gateway();
-            paxGateway.closePreauth(getActivity(), closePreauthPaxCallback, transactionModel,
+            PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX.gateway();
+
+            paxGateway.closePreauth(getActivity(), returnPaxCallBack(), transactionModel,
                     tips == null ? CalculationUtil.value(BigDecimal.ZERO) : tips.amount, tips == null ? null : tips.comment, tips == null ? null : tips.employeeId,
                     reloadResponse);
             return;
@@ -104,7 +115,7 @@ public class CloseTransPendingFragmentDialog extends TransactionPendingFragmentD
         }
     }
 
-    private void complete(TransactionStatusCode responseCode, PaxBaseCommand.Error error) {
+    private void complete(TransactionStatusCode responseCode, PaxGateway.Error error) {
         if (closeListener != null) {
             closeListener.onComplete(responseCode, error);
         }
@@ -131,26 +142,42 @@ public class CloseTransPendingFragmentDialog extends TransactionPendingFragmentD
         }
     };
 
-    private PaxTipsCommandBaseCallback closePreauthPaxCallback = new PaxTipsCommandBaseCallback() {
+    private PaxBlackstoneAddTipsCommand.PaxTipsCommandBaseCallback closePreauthPaxBlackstoneCallback = new PaxBlackstoneAddTipsCommand.PaxTipsCommandBaseCallback() {
 
         @Override
         protected void handleSuccess(TransactionStatusCode responseCode) {
-            Logger.d("PaxTipsCommandBaseCallback.handleSuccess(): responseCode: ", responseCode);
-            complete(responseCode, (PaxBaseCommand.Error) null);
+            Logger.d("PaxTipsBlackstoneCommandBaseCallback.handleSuccess(): responseCode: ", responseCode);
+            complete(responseCode, (PaxGateway.Error) null);
         }
 
         @Override
-        protected void handleError(PaxBaseCommand.Error error, TransactionStatusCode errorCode) {
-            Logger.e("PaxTipsCommandBaseCallback.handleFailure(): errorCode: " + errorCode + ", error: " + error);
+        protected void handleError(PaxGateway.Error error, TransactionStatusCode errorCode) {
+            Logger.e("PaxTipsBlackstoneCommandBaseCallback.handleFailure(): errorCode: " + errorCode + ", error: " + error);
             complete(errorCode, error);
         }
+
+    };
+    private PaxProcessorAddTipsCommand.PaxTipsCommandBaseCallback closePreauthPaxProcessorCallback = new PaxProcessorAddTipsCommand.PaxTipsCommandBaseCallback() {
+
+        @Override
+        protected void handleSuccess(TransactionStatusCode responseCode) {
+            Logger.d("PaxTipsProcessorCommandBaseCallback.handleSuccess(): responseCode: ", responseCode);
+            complete(responseCode, (PaxGateway.Error) null);
+        }
+
+        @Override
+        protected void handleError(PaxGateway.Error error, TransactionStatusCode errorCode) {
+            Logger.e("PaxTipsProcessorCommandBaseCallback.handleFailure(): errorCode: " + errorCode + ", error: " + error);
+            complete(errorCode, error);
+        }
+
     };
 
     public interface ICloseProgressListener {
 
         void onComplete(TransactionStatusCode responseCode, ErrorReason errorReason);
 
-        void onComplete(TransactionStatusCode responseCode, PaxBaseCommand.Error error);
+        void onComplete(TransactionStatusCode responseCode, PaxGateway.Error error);
 
         void onFailure(String errorMessage);
     }

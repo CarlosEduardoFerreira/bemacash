@@ -8,6 +8,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
@@ -285,6 +286,22 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
         }
         return (T) this;
     }
+
+    public T updateFromClosePreauth(PaxProcessorBaseCommand.PaxProcessorResponse response ) {
+        isClosedPreauth = true;
+        if (response != null) {
+            serviceTransactionNumber = response.getResponse().RefNum;
+            authorizationNumber = response.getResponse().AuthCode;
+            code = response.getStatusCode();
+            if ( response.getResponse().CardType != null) {
+                cardName = response.getResponse().CardType;
+            }
+        } else {
+            Logger.d("PaxProcessorResponse response was null");
+        }
+        return (T) this;
+    }
+
 
     public T updateFromClosePreauth(PreauthResponse sale) {
         isClosedPreauth = true;

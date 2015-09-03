@@ -10,11 +10,20 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackDoSettlementCommand.BaseDoSettlementCallback;
+
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackGateway;
-import com.kaching123.tcr.commands.payment.pax.PaxBaseCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxBaseCommand.Error;
+
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
-import com.kaching123.tcr.commands.payment.pax.PaxSettlementCommand.SettlementCommandBaseCallback;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneBaseCommand;
+
+
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneSettlementCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSettlementCommand;
+
+
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
+
+
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase;
 import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode;
@@ -42,7 +51,7 @@ public class SettlementTransPendingFragmentDialog extends TransactionPendingFrag
     protected void doCommand() {
         if (getApp().isPaxConfigured()) {
             PaxGateway paxGateway = (PaxGateway)PaymentGateway.PAX.gateway();
-            paxGateway.doSettlement(getActivity(), doSettlementPaxCallback);
+            paxGateway.doSettlement(getActivity(), returnPaxCallBack());
             return;
         }
         BlackGateway blackstoneGateway = (BlackGateway) PaymentGateway.BLACKSTONE.gateway();
@@ -55,7 +64,7 @@ public class SettlementTransPendingFragmentDialog extends TransactionPendingFrag
         }
     }
 
-    private void complete(TransactionStatusCode responseCode, Error error, boolean transactionsClosed) {
+    private void complete(TransactionStatusCode responseCode, PaxGateway.Error error, boolean transactionsClosed) {
         if (settlementListener != null) {
             settlementListener.onComplete(responseCode, error, transactionsClosed);
         }
@@ -81,16 +90,36 @@ public class SettlementTransPendingFragmentDialog extends TransactionPendingFrag
         }
     };
 
-    private SettlementCommandBaseCallback doSettlementPaxCallback = new SettlementCommandBaseCallback() {
+    private Object returnPaxCallBack () {
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return  doSettlementProcessorPaxCallback;
+        }
+        return doSettlementPaxCallback;
+    }
+    private PaxBlackstoneSettlementCommand.SettlementCommandBaseCallback doSettlementPaxCallback = new PaxBlackstoneSettlementCommand.SettlementCommandBaseCallback() {
 
         @Override
         protected void handleSuccess(TransactionStatusCode responseCode, boolean transactionsClosed) {
             Logger.d("SettlementCommandBaseCallback.handleSuccess(): responseCode: " + responseCode + ", transactionsClosed: " + transactionsClosed);
-            complete(responseCode, (Error)null, transactionsClosed);
+            complete(responseCode,  (PaxGateway.Error) null, transactionsClosed);
         }
 
         @Override
-        protected void handleError(PaxBaseCommand.Error error, TransactionStatusCode errorCode) {
+        protected void handleError(PaxGateway.Error error, TransactionStatusCode errorCode) {
+            Logger.e("SettlementCommandBaseCallback.handleFailure(): errorCode: " + errorCode + ", error: " + error);
+            complete(errorCode, error, false);
+        }
+    };
+    private PaxProcessorSettlementCommand.SettlementCommandBaseCallback doSettlementProcessorPaxCallback = new PaxProcessorSettlementCommand.SettlementCommandBaseCallback() {
+
+        @Override
+        protected void handleSuccess(TransactionStatusCode responseCode, boolean transactionsClosed) {
+            Logger.d("SettlementCommandBaseCallback.handleSuccess(): responseCode: " + responseCode + ", transactionsClosed: " + transactionsClosed);
+            complete(responseCode, (PaxGateway.Error) null, transactionsClosed);
+        }
+
+        @Override
+        protected void handleError(PaxGateway.Error error, TransactionStatusCode errorCode) {
             Logger.e("SettlementCommandBaseCallback.handleFailure(): errorCode: " + errorCode + ", error: " + error);
             complete(errorCode, error, false);
         }
@@ -100,7 +129,7 @@ public class SettlementTransPendingFragmentDialog extends TransactionPendingFrag
 
         void onComplete(TransactionStatusCode responseCode, ErrorReason errorReason, boolean transactionsClosed);
 
-        void onComplete(TransactionStatusCode responseCode, Error error, boolean transactionsClosed);
+        void onComplete(TransactionStatusCode responseCode, PaxGateway.Error error, boolean transactionsClosed);
 
     }
 

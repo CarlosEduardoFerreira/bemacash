@@ -226,6 +226,7 @@ public interface ShopPref {
      */
     String paxSerial();
 
+    boolean isBlackstonePax();
     String paxUrl();
 
     int paxPort();

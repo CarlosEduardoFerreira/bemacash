@@ -7,8 +7,11 @@ import android.widget.TextView;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.payment.pax.PaxBalanceCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxBalanceCommand.PaxBalanceCommandBaseCallback;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.payment.PaymentGateway;
+import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneBalanceCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBalanceCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase;
 import com.kaching123.tcr.model.PaxModel;
@@ -41,10 +44,23 @@ public class BalancePAXPendingFragmentDialog extends TransactionPendingFragmentD
         message.setSingleLine(false);
         message.setText(R.string.pax_balance_instructions);
     }
+    private Object returnPaxCallBack () {
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return  new PaxProcessorBalanceCommand.PaxBalanceCommandBaseCallback() {
 
-    @Override
-    protected void doCommand() {
-        PaxBalanceCommand.startBalanceRequest(getActivity(), PaxModel.get(), new PaxBalanceCommandBaseCallback() {
+                @Override
+                protected void handleSuccess(BigDecimal result, String last4, String errorReason) {
+                    listener.onComplete(result, last4, errorReason);
+
+                }
+
+                @Override
+                protected void handleError() {
+                    listener.onCancel();
+                }
+            };
+        }
+        return new PaxBlackstoneBalanceCommand.PaxBalanceCommandBaseCallback() {
 
             @Override
             protected void handleSuccess(BigDecimal result, String last4, String errorReason) {
@@ -56,7 +72,15 @@ public class BalancePAXPendingFragmentDialog extends TransactionPendingFragmentD
             protected void handleError() {
                 listener.onCancel();
             }
-        });
+        };
+    }
+
+    @Override
+    protected void doCommand() {
+
+        PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX.gateway();
+        paxGateway.doBalance(getActivity(),returnPaxCallBack());
+
     }
 
     public interface IBalanceSaleProgressListener {

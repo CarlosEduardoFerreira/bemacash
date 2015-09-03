@@ -1,4 +1,4 @@
-package com.kaching123.tcr.commands.payment.pax;
+package com.kaching123.tcr.commands.payment.pax.blackstone;
 
 import android.content.ContentProviderOperation;
 
@@ -13,14 +13,12 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.request.LastTransactionRe
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.MIDownloadRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.MIRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.SaleActionRequest;
-import com.kaching123.tcr.websvc.api.pax.model.payment.request.SerialRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.SettlementRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.AddTipsResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.HelloResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.LastTrasnactionResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.MIResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
-import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SerialResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SettlementResponse;
 import com.squareup.okhttp.OkHttpClient;
 import com.telly.groundy.TaskResult;
@@ -45,14 +43,11 @@ import retrofit.http.POST;
 /**
  * Created by hamsterksu on 24.04.2014.
  */
-public abstract class PaxBaseCommand extends AsyncCommand {
+public abstract class PaxBlackstoneBaseCommand extends AsyncCommand {
 
-    public static final int CONNECTION_TIMEOUT = 30000;
-
-    public static final int TRANSACTION_TIMEOUT = (int) TimeUnit.MINUTES.toMillis(1);
+    public static final int CONNECTION_TIMEOUT = (int) TimeUnit.MINUTES.toMillis(2);
 
     protected static final String ARG_DATA_PAX = "ARG_DATA_PAX";
-    protected static final String ARG_INIT_CONNECT = "ARG_INIT_CONNECT";
 
     protected static final String RESULT_DATA = "RESULT_DATA";
     protected static final String RESULT_ERROR = "RESULT_ERROR";
@@ -63,14 +58,13 @@ public abstract class PaxBaseCommand extends AsyncCommand {
     @Override
     protected TaskResult doCommand() {
         if (paxTerminal == null)
-            paxTerminal = getArgs().getParcelable(ARG_DATA_PAX);
-        boolean init = getBooleanArg(ARG_INIT_CONNECT);
-        return doCommand(getApi(init));
+            paxTerminal = (PaxModel) getArgs().getSerializable(ARG_DATA_PAX);
+        return doCommand(getApi());
     }
 
     protected abstract TaskResult doCommand(PaxWebApi api);
 
-    @Override
+	@Override
     protected boolean validateAppCommandContext() {
         return false;
     }
@@ -85,7 +79,7 @@ public abstract class PaxBaseCommand extends AsyncCommand {
         return null;
     }
 
-    private PaxWebApi getApi(final boolean initConnect) {
+    private PaxWebApi getApi() {
         RestAdapter.Builder adapterBuilder = new RestAdapter.Builder().setEndpoint(String.format("http://%s:%s", paxTerminal.ip, paxTerminal.port));
         adapterBuilder.setErrorHandler(new PaxErrorHandler());
         adapterBuilder.setConverter(new GsonConverter(createGson()));
@@ -95,8 +89,8 @@ public abstract class PaxBaseCommand extends AsyncCommand {
             @Override
             protected HttpURLConnection openConnection(Request request) throws IOException {
                 HttpURLConnection connection = super.openConnection(request);
-                connection.setReadTimeout(initConnect ? CONNECTION_TIMEOUT : TRANSACTION_TIMEOUT);
-                connection.setConnectTimeout(initConnect ? CONNECTION_TIMEOUT : TRANSACTION_TIMEOUT);
+                connection.setReadTimeout(CONNECTION_TIMEOUT);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
                 return connection;
             }
         };
@@ -136,9 +130,7 @@ public abstract class PaxBaseCommand extends AsyncCommand {
         }
     }
 
-    public enum Error {
-        UNDEFINED, SERVICE, PAX, PAX404, CONNECTIVITY
-    }
+
 
     public static class Pax404Exception extends RuntimeException {
 
@@ -151,9 +143,6 @@ public abstract class PaxBaseCommand extends AsyncCommand {
 
         @POST("/")
         HelloResponse hello(@Body HelloRequest request);
-
-        @POST("/")
-        SerialResponse serial(@Body SerialRequest request);
 
         @POST("/")
         MIResponse midownload(@Body MIDownloadRequest request);

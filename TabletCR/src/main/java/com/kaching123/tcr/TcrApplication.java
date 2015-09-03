@@ -660,6 +660,12 @@ public class TcrApplication extends MultiDexApplication {
         return shopPref.paxTipsEnabled().get();
     }
 
+    public boolean isBlackstonePax() {
+
+        return shopPref.isBlackstonePax().get();
+
+    }
+
     public void setPaxSerial(String serial) {
         shopPref.paxSerial().put(serial);
     }

@@ -1,4 +1,4 @@
-package com.kaching123.tcr.commands.payment.pax;
+package com.kaching123.tcr.commands.payment.pax.blackstone;
 
 import android.content.Context;
 
@@ -19,7 +19,7 @@ import retrofit.RetrofitError;
 /**
  * Created by pkabakov on 25.06.2014.
  */
-public abstract class BasePaxMICommand<T extends BaseMIRequest> extends PaxBaseCommand {
+public abstract class BaseBlackstonePaxMICommand<T extends BaseMIRequest> extends PaxBlackstoneBaseCommand {
 
     protected MerchantDetails merchantDetails;
 

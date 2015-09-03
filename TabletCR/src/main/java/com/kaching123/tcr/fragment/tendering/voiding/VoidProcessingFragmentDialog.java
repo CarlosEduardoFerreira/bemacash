@@ -16,6 +16,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.WaitForCashInDrawerCommand;
 import com.kaching123.tcr.commands.payment.AddReturnOrderCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
@@ -25,7 +26,12 @@ import com.kaching123.tcr.commands.payment.blackstone.payment.BlackVoidCommand;
 import com.kaching123.tcr.commands.payment.cash.CashVoidCommand;
 import com.kaching123.tcr.commands.payment.other.CheckVoidCommand;
 import com.kaching123.tcr.commands.payment.other.OfflineCreditVoidCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxRefundCommand.PaxREFUNDCommandBaseCallback;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneRefundCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneSaleCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorRefundCommand;
+
+
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -159,28 +165,9 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
         getNegativeButton().setVisibility(View.VISIBLE);
         return true;
     }
-
-    private boolean voidNextPAXTransaction() {
-
-        PaymentTransactionModel transaction = paxTransactions.poll();
-        if (transaction == null) {
-            return false;
-        }
-        if (!PaymentType.SALE.equals(transaction.paymentType)) {
-            Logger.d("wrong transaction PType, ignoring");
-            voidNextPAXTransaction();
-            return false;
-        } else if (!transaction.status.isSuccessful()) {
-            Logger.d("wrong transaction PaymentStatus, ignoring");
-            voidNextPAXTransaction();
-            return false;
-        } else if (!PaymentGateway.PAX.equals(transaction.gateway)) {
-            Logger.d("wrong transaction TransactionType, ignoring");
-            voidNextPAXTransaction();
-            return false;
-        } else {
-            message.setText(String.format("Current PAX transaction number %s. Overall voided %d of %d", transaction.getGuid(), ++current, max));
-            transaction.gateway.gateway().voidMe(getActivity(), new PaxREFUNDCommandBaseCallback() {
+    private Object returnPaxCallBack () {
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return new PaxProcessorRefundCommand.PaxREFUNDCommandBaseCallback() {
 
                 @Override
                 protected void handleSuccess(SaleOrderModel childOrderModel,
@@ -203,7 +190,57 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
                     failedPaxTransactions = true;
                     next();
                 }
-            }, user, transaction, childOrderModel, needToCancel);
+            };
+        }
+
+        return new PaxBlackstoneRefundCommand.PaxREFUNDCommandBaseCallback() {
+
+            @Override
+            protected void handleSuccess(SaleOrderModel childOrderModel,
+                                         PaymentTransactionModel childTransactionModel,
+                                         Transaction transaction,
+                                         String errorMessage) {
+                if (childOrderModel != null) {
+                    VoidProcessingFragmentDialog.this.childOrderModel = childOrderModel;
+                    message.setText(String.format("voided %d of %d", ++current, max));
+                    voidedTransactions.add(childTransactionModel);
+                } else {
+                    failedPaxTransactions = true;
+                }
+                next();
+            }
+
+            @Override
+            protected void handleError() {
+                message.setText(String.format("voided %d of %d", ++current, max));
+                failedPaxTransactions = true;
+                next();
+            }
+        };
+
+    }
+
+    private boolean voidNextPAXTransaction() {
+
+        PaymentTransactionModel transaction = paxTransactions.poll();
+        if (transaction == null) {
+            return false;
+        }
+        if (!PaymentType.SALE.equals(transaction.paymentType)) {
+            Logger.d("wrong transaction PType, ignoring");
+            voidNextPAXTransaction();
+            return false;
+        } else if (!transaction.status.isSuccessful()) {
+            Logger.d("wrong transaction PaymentStatus, ignoring");
+            voidNextPAXTransaction();
+            return false;
+        } else if (!PaymentGateway.PAX.equals(transaction.gateway)) {
+            Logger.d("wrong transaction TransactionType, ignoring");
+            voidNextPAXTransaction();
+            return false;
+        } else {
+            message.setText(String.format("Current PAX transaction number %s. Overall voided %d of %d", transaction.getGuid(), ++current, max));
+            transaction.gateway.gateway().voidMe(getActivity(), returnPaxCallBack() , user, transaction, childOrderModel, needToCancel);
             return true;
         }
     }
@@ -424,8 +461,8 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
 
     @OnSuccess(OfflineCreditVoidCommand.class)
     public void onVoidOfflineCredirSuccess(@Param(OfflineCreditVoidCommand.ARG_TRANSACTION) PaymentTransactionModel transaction,
-                                  @Param(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL) SaleOrderModel childOrderModel,
-                                  @Param(OfflineCreditVoidCommand.ARG_CHILD_TRANSACTION_MODEL) PaymentTransactionModel childTransaction) {
+                                           @Param(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL) SaleOrderModel childOrderModel,
+                                           @Param(OfflineCreditVoidCommand.ARG_CHILD_TRANSACTION_MODEL) PaymentTransactionModel childTransaction) {
         message.setText(String.format("voided %d of %d", ++current, max));
         this.childOrderModel = childOrderModel;
         voidedTransactions.add(childTransaction);
@@ -434,7 +471,7 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
 
     @OnFailure(OfflineCreditVoidCommand.class)
     public void onVoidOfflineCreditFail( @Param(OfflineCreditVoidCommand.ARG_TRANSACTION) PaymentTransactionModel transaction,
-                               @Param(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL) SaleOrderModel childOrderModel) {
+                                         @Param(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL) SaleOrderModel childOrderModel) {
         this.childOrderModel = childOrderModel;
         message.setText(String.format("voided %d of %d", ++current, max));
         failedOfflineCreditTransactions = true;
@@ -443,8 +480,8 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
 
     @OnSuccess(CheckVoidCommand.class)
     public void onVoidCheckSuccess(@Param(CheckVoidCommand.ARG_TRANSACTION) PaymentTransactionModel transaction,
-                                           @Param(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL) SaleOrderModel childOrderModel,
-                                           @Param(CheckVoidCommand.ARG_CHILD_TRANSACTION_MODEL) PaymentTransactionModel childTransaction) {
+                                   @Param(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL) SaleOrderModel childOrderModel,
+                                   @Param(CheckVoidCommand.ARG_CHILD_TRANSACTION_MODEL) PaymentTransactionModel childTransaction) {
         message.setText(String.format("voided %d of %d", ++current, max));
         this.childOrderModel = childOrderModel;
         voidedTransactions.add(childTransaction);
@@ -453,7 +490,7 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
 
     @OnFailure(CheckVoidCommand.class)
     public void onVoidCheckCreditFail( @Param(CheckVoidCommand.ARG_TRANSACTION) PaymentTransactionModel transaction,
-                                         @Param(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL) SaleOrderModel childOrderModel) {
+                                       @Param(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL) SaleOrderModel childOrderModel) {
         this.childOrderModel = childOrderModel;
         message.setText(String.format("voided %d of %d", ++current, max));
         failedCheckTransactions = true;
@@ -624,10 +661,10 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
                             SaleOrderModel childOrderModel,
                             boolean needToCancel) {
         DialogUtil.show(context, DIALOG_NAME, VoidProcessingFragmentDialog_.builder().needToCancel(needToCancel).build())
-                  .setChildOrderModel(childOrderModel)
-                  .setListener(listener)
-                  .setTransactions(transactions)
-                  .setUser(user);
+                .setChildOrderModel(childOrderModel)
+                .setListener(listener)
+                .setTransactions(transactions)
+                .setUser(user);
     }
 
     public static void hide(FragmentActivity activity) {

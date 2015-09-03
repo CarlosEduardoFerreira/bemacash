@@ -1,4 +1,4 @@
-package com.kaching123.tcr.commands.payment.pax;
+package com.kaching123.tcr.commands.payment.pax.blackstone;
 
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.MIRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.MIResponse;
@@ -6,7 +6,7 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.MIRespons
 /**
  * Created by mayer
  */
-public class PaxMICommand extends BasePaxMICommand<MIRequest> {
+public class PaxBlackstoneMICommand extends BaseBlackstonePaxMICommand<MIRequest> {
 
     @Override
     protected boolean shouldStoreData() {
@@ -19,7 +19,7 @@ public class PaxMICommand extends BasePaxMICommand<MIRequest> {
     }
 
     @Override
-    protected MIResponse getResponse(PaxWebApi api, MIRequest request) {
+    protected MIResponse getResponse(PaxBlackstoneBaseCommand.PaxWebApi api, MIRequest request) {
         return api.mi(request);
     }
 }

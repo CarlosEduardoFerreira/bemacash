@@ -5,9 +5,16 @@ import android.content.Context;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.IPaymentGateway;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
-import com.kaching123.tcr.commands.payment.pax.PaxAddTipsCommand.PaxTipsCommandBaseCallback;
-import com.kaching123.tcr.commands.payment.pax.PaxRefundCommand.PaxREFUNDCommandBaseCallback;
-import com.kaching123.tcr.commands.payment.pax.PaxSettlementCommand.SettlementCommandBaseCallback;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneAddTipsCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneBalanceCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneRefundCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneSaleCommand;
+import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneSettlementCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorAddTipsCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBalanceCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorRefundCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSettlementCommand;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
@@ -36,19 +43,59 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
     private final PaxMethod self;
 
     public static PaxGateway credit() {
-        return new PaxGateway(PaxSaleCommand.TRANSACTION_ID_CREDIT_SALE, PaxSaleCommand.TRANSACTION_ID_CREDIT_REFUND, PaxMethod.CREDIT);
+        int sId;
+        int rId;
+        if (TcrApplication.get().isBlackstonePax()) {
+            sId = PaxBlackstoneSaleCommand.TRANSACTION_ID_CREDIT_SALE;
+            rId = PaxBlackstoneSaleCommand.TRANSACTION_ID_CREDIT_REFUND;
+        } else {
+            sId = PaxProcessorSaleCommand.TRANSACTION_ID_CREDIT_SALE;
+            rId = PaxProcessorSaleCommand.TRANS_TYPE_RETURN;
+        }
+
+
+        return new PaxGateway(sId, rId, PaxMethod.CREDIT);
     }
 
     public static PaxGateway debit() {
-        return new PaxGateway(PaxSaleCommand.TRANSACTION_ID_DEBIT_SALE, PaxSaleCommand.TRANSACTION_ID_DEBIT_REFUND, PaxMethod.DEBIT);
+        int sId;
+        int rId;
+        if (TcrApplication.get().isBlackstonePax()) {
+            sId = PaxBlackstoneSaleCommand.TRANSACTION_ID_DEBIT_SALE;
+            rId = PaxBlackstoneSaleCommand.TRANSACTION_ID_DEBIT_REFUND;
+        } else {
+            sId = PaxProcessorSaleCommand.TRANSACTION_ID_DEBIT_SALE;
+            rId = PaxProcessorSaleCommand.TRANS_TYPE_RETURN;
+        }
+        return new PaxGateway(sId, rId, PaxMethod.DEBIT);
     }
 
     public static PaxGateway ebtFoodstamp() {
-        return new PaxGateway(PaxSaleCommand.TRANSACTION_ID_EBT_FOODSTAMP_SALE, PaxSaleCommand.TRANSACTION_ID_EBT_REFUND, PaxMethod.EBT_FOODSTAMP);
+        int sId;
+        int rId;
+        if (TcrApplication.get().isBlackstonePax()) {
+            sId = PaxBlackstoneSaleCommand.TRANSACTION_ID_EBT_FOODSTAMP_SALE;
+            rId = PaxBlackstoneSaleCommand.TRANSACTION_ID_EBT_REFUND;
+        } else {
+            sId = PaxProcessorSaleCommand.TRANSACTION_ID_EBT_FOODSTAMP_SALE;
+            rId = PaxProcessorSaleCommand.TRANS_TYPE_RETURN;
+        }
+        return new PaxGateway(sId, rId, PaxMethod.EBT_FOODSTAMP);
+
     }
 
     public static PaxGateway ebtCash() {
-        return new PaxGateway(PaxSaleCommand.TRANSACTION_ID_EBT_CASH_SALE, 0, PaxMethod.EBT_CASH);
+        int sId;
+        int rId;
+        if (TcrApplication.get().isBlackstonePax()) {
+            sId = PaxBlackstoneSaleCommand.TRANSACTION_ID_EBT_CASH_SALE;
+            rId = 0;
+        } else {
+            sId = PaxProcessorSaleCommand.TRANSACTION_ID_EBT_CASH_SALE;
+            rId = PaxProcessorSaleCommand.TRANS_TYPE_RETURN;
+        }
+        return new PaxGateway(sId, rId, PaxMethod.EBT_CASH);
+
     }
 
     public PaxGateway(int saleId, int refundId, PaxMethod self) {
@@ -64,12 +111,22 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
                             Void ignore,
                             Transaction transaction) {
         transaction.setCode(TransactionStatusCode.OPERATION_COMPLETED_SUCCESSFULLY);
-        return PaxSaleCommand.startSale(
+
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return PaxProcessorSaleCommand.startSale(
+                    context,
+                    PaxModel.get(),
+                    transaction,
+                    saleId,
+                    (PaxProcessorSaleCommand.PaxSaleCommandBaseCallback) callback);
+        }
+
+        return PaxBlackstoneSaleCommand.startSale(
                 context,
                 PaxModel.get(),
                 transaction,
                 saleId,
-                (PaxSaleCommand.PaxSaleCommandBaseCallback) callback);
+                (PaxBlackstoneSaleCommand.PaxSaleCommandBaseCallback) callback);
     }
 
     public TaskHandler sale(Context context,
@@ -77,15 +134,25 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
                             User user,
                             Void ignore,
                             Transaction transaction,
-                            SaleActionResponse reloadResponse) {
+                            Object reloadResponse) {
         transaction.setCode(TransactionStatusCode.OPERATION_COMPLETED_SUCCESSFULLY);
-        return PaxSaleCommand.startSaleFromData(
+
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return PaxProcessorSaleCommand.startSaleFromData(
+                    context,
+                    PaxModel.get(),
+                    transaction,
+                    saleId,
+                    (SaleActionResponse) reloadResponse,
+                    (PaxProcessorSaleCommand.PaxSaleCommandBaseCallback) callback);
+        }
+        return PaxBlackstoneSaleCommand.startSaleFromData(
                 context,
                 PaxModel.get(),
                 transaction,
                 saleId,
-                reloadResponse,
-                (PaxSaleCommand.PaxSaleCommandBaseCallback) callback);
+                (SaleActionResponse) reloadResponse,
+                (PaxBlackstoneSaleCommand.PaxSaleCommandBaseCallback) callback);
     }
 
     @Override
@@ -96,8 +163,12 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
                               PaymentTransactionModel transaction,
                               BigDecimal amount,
                               SaleOrderModel childOrderModel, boolean refundTips, boolean isManualReturn) {
-        return PaxRefundCommand.startReturn(context, PaxModel.get(), transaction, amount, childOrderModel, refundId, refundTips, isManualReturn,
-                (PaxREFUNDCommandBaseCallback) callback);
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return PaxProcessorRefundCommand.startReturn(context, PaxModel.get(), transaction, amount, childOrderModel, refundId, refundTips, isManualReturn,
+                    (PaxProcessorRefundCommand.PaxREFUNDCommandBaseCallback) callback);
+        }
+        return PaxBlackstoneRefundCommand.startReturn(context, PaxModel.get(), transaction, amount, childOrderModel, refundId, refundTips, isManualReturn,
+                (PaxBlackstoneRefundCommand.PaxREFUNDCommandBaseCallback) callback);
     }
 
     public TaskHandler refund(Context context,
@@ -110,8 +181,12 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
                               SaleOrderModel childOrderModel,
                               boolean refundTips,
                               boolean isManualReturn) {
-        return PaxRefundCommand.startReturn(context, PaxModel.get(), transaction, amount, childOrderModel, refundId, reloadResponse, refundTips, isManualReturn,
-                (PaxREFUNDCommandBaseCallback) callback);
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return PaxProcessorRefundCommand.startReturn(context, PaxModel.get(), transaction, amount, childOrderModel, refundId, reloadResponse, refundTips, isManualReturn,
+                    (PaxProcessorRefundCommand.PaxREFUNDCommandBaseCallback) callback);
+        }
+        return PaxBlackstoneRefundCommand.startReturn(context, PaxModel.get(), transaction, amount, childOrderModel, refundId, reloadResponse, refundTips, isManualReturn,
+                (PaxBlackstoneRefundCommand.PaxREFUNDCommandBaseCallback) callback);
     }
 
     @Override
@@ -121,25 +196,46 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
                               PaymentTransactionModel transaction,
                               SaleOrderModel childOrderModel,
                               boolean needToCancel) {
+
         transaction.status = PaymentStatus.SUCCESS;
         transaction.paymentType = PaymentType.REFUND;
         transaction.declineReason = PaymentStatus.SUCCESS.toString();
-        return PaxRefundCommand.startReturn(context, PaxModel.get(), transaction, transaction.amount, childOrderModel, refundId, false, false,
-                (PaxREFUNDCommandBaseCallback) callback);
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return PaxProcessorRefundCommand.startReturn(context, PaxModel.get(), transaction, transaction.amount, childOrderModel, refundId, false, false,
+                    (PaxProcessorRefundCommand.PaxREFUNDCommandBaseCallback) callback);
+        }
+        return PaxBlackstoneRefundCommand.startReturn(context, PaxModel.get(), transaction, transaction.amount, childOrderModel, refundId, false, false,
+                (PaxBlackstoneRefundCommand.PaxREFUNDCommandBaseCallback) callback);
     }
+
     public TaskHandler closePreauth(Context context,
-                                    PaxTipsCommandBaseCallback callback,
+                                    Object callback,
                                     PaymentTransactionModel transactionModel,
                                     BigDecimal tipsAmount,
                                     String tipsComments,
                                     String tippedEmployeeId,
                                     SaleActionResponse reloadResponse) {
-        return PaxAddTipsCommand.start(context, PaxModel.get(), transactionModel, tipsAmount, tipsComments, tippedEmployeeId, reloadResponse, callback);
+
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return PaxProcessorAddTipsCommand.start(context, PaxModel.get(), transactionModel, tipsAmount, tipsComments, tippedEmployeeId, reloadResponse, (PaxProcessorAddTipsCommand.PaxTipsCommandBaseCallback) callback);
+        }
+        return PaxBlackstoneAddTipsCommand.start(context, PaxModel.get(), transactionModel, tipsAmount, tipsComments, tippedEmployeeId, reloadResponse, (PaxBlackstoneAddTipsCommand.PaxTipsCommandBaseCallback) callback);
     }
 
     public TaskHandler doSettlement(Context context,
-                                    SettlementCommandBaseCallback callback) {
-        return PaxSettlementCommand.start(context, PaxModel.get(), callback);
+                                    Object callback) {
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return PaxProcessorSettlementCommand.start(context, PaxModel.get(), (PaxProcessorSettlementCommand.SettlementCommandBaseCallback) callback);
+        }
+        return PaxBlackstoneSettlementCommand.start(context, PaxModel.get(), (PaxBlackstoneSettlementCommand.SettlementCommandBaseCallback) callback);
+    }
+
+    public TaskHandler doBalance(Context context,
+                                 Object callback) {
+        if (!TcrApplication.get().isBlackstonePax()) {
+            return PaxProcessorBalanceCommand.start(context, PaxModel.get(), (PaxProcessorBalanceCommand.PaxBalanceCommandBaseCallback) callback);
+        }
+        return PaxBlackstoneBalanceCommand.start(context, PaxModel.get(), (PaxBlackstoneBalanceCommand.PaxBalanceCommandBaseCallback) callback);
     }
 
     @Override
@@ -204,6 +300,12 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
         CREDIT,
         DEBIT,
         EBT_FOODSTAMP,
-        EBT_CASH
+        EBT_CASH,
+        GIFT
     }
+
+    public enum Error {
+        UNDEFINED, SERVICE, PAX, PAX404, CONNECTIVITY, TIMEOUT
+    }
+
 }
