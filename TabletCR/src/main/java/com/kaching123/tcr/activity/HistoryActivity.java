@@ -230,7 +230,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
                         Logger.d("PayPrintAndFinishFragmentDialog getTicketNumberSuccess");
                         response = result;
                         WaitDialogFragment.hide(HistoryActivity.this);
-                        if (response != null && response.iVULotoData.ivuLoto != null) {
+                        if (response.iVULotoData.errorDetail == null) {
                             WaitDialogFragment.show(HistoryActivity.this, getString(R.string.loading_message));
                             getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
                         } else {
