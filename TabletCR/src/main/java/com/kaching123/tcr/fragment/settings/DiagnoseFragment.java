@@ -42,7 +42,7 @@ import org.androidannotations.annotations.ViewById;
 @EFragment(R.layout.settings_device_diagnose_fragment)
 @OptionsMenu(R.menu.settings_device_diagnose_fragment)
 public class DiagnoseFragment extends SuperBaseFragment implements DisplayService.IDisplayBinder {
-    final static String[] DEVICE_ARRAY = {"Network","Printer","Pax","Drawer","Display","Scanner","Msr","Scale"};
+    final static String[] DEVICE_ARRAY = {"Network","Printer","Display","Scanner","Scale"};
     @ViewById
     protected ListView list;
 
@@ -117,15 +117,15 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                     case 1:
                         TestPrinterFragment.show(getActivity());
                         break;
-                    case 4:
+                    case 2:
                         FindDeviceFragment.show(getActivity(), findDisplayListener, FindDeviceFragment.Mode.DISPLAY);
                         task = new DisplayTask(itemPosition);
                         break;
-                    case 5:
+                    case 3:
                         FindDeviceFragment.show(getActivity(), findScannerListener, FindDeviceFragment.Mode.SCANNER);
                         task = new DisplayTask(itemPosition);
                         break;
-                    case 7:
+                    case 4:
                         FindDeviceFragment.show(getActivity(), findScaleListener, FindDeviceFragment.Mode.SCALE);
                         task = new DisplayTask(itemPosition);
                         break;
@@ -281,9 +281,9 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         protected Void doInBackground(String... params) {
-                if(pos == 4)
+                if(pos == 2)
                     startCommand(new DisplayWelcomeMessageCommand());
-                else if(pos == 7){
+                else if(pos == 4){
 //                    scaleRead = scaleService.readScale();
                     while(true){
                         if(scaleService != null && scaleServiceBound){
@@ -292,7 +292,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                             break;
                         }
                     }
-                }else if(pos == 5){
+                }else if(pos == 3){
                     while(true){
                         if(scannerRead != null && scannerRead != ""){
                             Logger.d("scannerRead = "+scannerRead);
@@ -305,9 +305,9 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         protected void onPreExecute() {
-            if (pos == 4)
+            if (pos == 2)
                 bindToDisplayService();
-            else if(pos == 5){
+            else if(pos == 3){
                 if(getUSBScanner()) {
                     DialogFragment fragment = WaitDialogFragmentWithCallback.showWithReturn(getActivity(),getString(R.string.wait_dialog_title));
                     return;
@@ -320,14 +320,14 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
         @Override
         protected void onPostExecute(Void none) {
             String confirmStr = null;
-            if (pos == 4) {
+            if (pos == 2) {
                 confirmStr = getString(R.string.confirm_display_title);
                 unbindFromDisplayService();
             }
-            else if(pos == 7){
+            else if(pos == 4){
                 confirmStr = String.format(getString(R.string.confirm_scale_title),scaleRead);
             }
-            else if(pos == 5){
+            else if(pos == 3){
                 confirmStr = String.format(getString(R.string.confirm_scanner_title),scannerRead);
                 scannerRead = null;
                 unbindFromScannerService();
