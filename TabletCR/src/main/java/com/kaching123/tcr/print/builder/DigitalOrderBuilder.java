@@ -227,7 +227,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
         } else {
             printTitle.append(" ------- ");
             printTitle.append(label);
-            printTitle.append(" ------- ");
+            printTitle.append(" ------ ");
         }
         stringBuilder.append(_styled("div", HEADER_STYLE)).append(printTitle.toString()).append("</div>");
     }

@@ -376,7 +376,7 @@ public class BasePosTextPrinter implements IPrinter {
         } else {
             printTitle.append(" ------ ");
             printTitle.append(label);
-            printTitle.append(" ------ ");
+            printTitle.append(" ----- ");
         }
 
         return printTitle.toString();
