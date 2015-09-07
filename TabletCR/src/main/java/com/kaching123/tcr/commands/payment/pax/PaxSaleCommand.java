@@ -20,7 +20,9 @@ import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.util.CalculationUtil;
+import com.kaching123.tcr.websvc.api.pax.model.payment.request.LastTransactionRequest;
 import com.kaching123.tcr.websvc.api.pax.model.payment.request.SaleActionRequest;
+import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.LastTrasnactionResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
@@ -66,6 +68,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
 
     private final static String EXTRA_PAX_IP = "EXTRA_PAX_IP";
     private final static String EXTRA_PAX_PORT = "EXTRA_PAX_PORT";
+    private final static String LAST_TRANSACTION = "last-transaction";
 
     public static final TaskHandler startSale(Context context,
                                               PaxModel paxTerminal,
@@ -138,6 +141,7 @@ public class PaxSaleCommand extends PaxBaseCommand {
         PaymentTransactionJdbcConverter jdbcConverter = (PaymentTransactionJdbcConverter) JdbcFactory.getConverter(PaymentTransactionTable.TABLE_NAME);
         operations = new ArrayList<ContentProviderOperation>();
         sqlCommand = batchInsert(PaymentTransactionModel.class);
+        Object possibleData = getArgs().getSerializable(ARG_SALEACTIONRESPONSE);
 
         int transactionId = getIntArg(ARG_PURPOSE);
         transaction = getArgs().getParcelable(ARG_AMOUNT);
@@ -147,7 +151,6 @@ public class PaxSaleCommand extends PaxBaseCommand {
         String sAmount = String.valueOf(cents.intValue());
         Logger.d("PaxSaleCommand %d - %s", transactionId, sAmount);
         try {
-            Object possibleData = getArgs().getSerializable(ARG_SALEACTIONRESPONSE);
             SaleActionResponse response;
             if (possibleData == null) {
                 SaleActionRequest request = new SaleActionRequest(transactionId, sAmount, null);
@@ -195,18 +198,64 @@ public class PaxSaleCommand extends PaxBaseCommand {
             transaction.allowReload = true;
             errorReason = getContext().getString(R.string.pax_timeout);
             Logger.e("PaxError", e);
-            return failed();
+            LastTrasnactionResponse response;
+
+                LastTransactionRequest request = new LastTransactionRequest();
+                Logger.d("LastTransactionRequest request:" + request);
+                response = api.last(request);
+
+            Logger.d("PaxSaleCommand response:" + response);
+            boolean success = lastTransactionSuccess(response, jdbcConverter);
+            if(!success)
+                return failed();
+            else
+                return succeeded();
         } catch (Exception e) {
             transaction.allowReload = true;
             // Though it should not happen, as Gena confirms we only care about local DB and data will sync after,
             // I put this check due to possibilty on DB corruption, DB access failure and many other ugly rare stuff
             Logger.e("Rare SQL exception caught, data was not updated", e);
             errorReason = "Rare SQL exception caught, data was not updated";
-            return failed();
+            LastTrasnactionResponse response;
+
+            LastTransactionRequest request = new LastTransactionRequest();
+            Logger.d("LastTransactionRequest request:" + request);
+            response = api.last(request);
+
+            Logger.d("PaxSaleCommand response:" + response);
+            boolean success = lastTransactionSuccess(response, jdbcConverter);
+            if(!success)
+                return failed();
+            else
+                return succeeded();
         }
         return succeeded();
     }
 
+
+    private boolean lastTransactionSuccess(LastTrasnactionResponse response, PaymentTransactionJdbcConverter jdbcConverter)
+    {
+        if (200 == response.getResponse()) {
+            transaction.updateWith(response);
+            if (response.getDetails().getDetails().getDigits() != null)
+                transaction.lastFour = response.getDetails().getDetails().getDigits();
+            if (response.getDetails().getDetails().getCashBackAmount() != null)
+                transaction.cashBack = new BigDecimal(response.getDetails().getDetails().getCashBackAmount()).negate();
+            if (response.getDetails().getDetails().getTransactionNumber() != null)
+                transaction.authorizationNumber = response.getDetails().getDetails().getSale().getAuthNumber();
+            if (response.getDetails().getDetails().getBalanceCash() != null)
+                transaction.balance = (new BigDecimal(response.getDetails().getDetails().getBalanceCash()));
+            if (response.getDetails().getDetails().getBalanceFS() != null)
+                transaction.balance = transaction.balance.compareTo((new BigDecimal(response.getDetails().getDetails().getBalanceFS()))) > 0 ? transaction.balance : (new BigDecimal(response.getDetails().getDetails().getBalanceFS()));
+            PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
+            operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
+                    .withValues(transactionModel.toValues())
+                    .build());
+            sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
+            return true;
+        }
+        return false;
+    }
     @Override
     protected boolean validateAppCommandContext() {
         return true;
