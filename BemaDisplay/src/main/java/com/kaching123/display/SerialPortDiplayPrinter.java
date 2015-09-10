@@ -1,6 +1,8 @@
 package com.kaching123.display;
 
-import android.serialport.SerialPort;
+import android.os.Build;
+
+import android_serialport_api.SerialPort;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +14,7 @@ public class SerialPortDiplayPrinter implements DisplayPrinter {
     private SerialPort mSerialPort = null;
     protected OutputStream mOutputStream;
     private final String path = "/dev/ttymxc4";
+    private final String path2 = "/dev/ttymxc3";
     private final int baudrate = 9600;
     private final int databits = 8;
     private final int parity = 0;
@@ -22,7 +25,10 @@ public class SerialPortDiplayPrinter implements DisplayPrinter {
         if (mSerialPort == null) {
             /* Open the serial port */
             try {
-                mSerialPort = new SerialPort(new File(path), baudrate, databits, parity, stopbits, flowctl);
+                if(Build.MANUFACTURER.toUpperCase().contains("FREESCALE")){
+                    mSerialPort = new SerialPort(new File(path2), baudrate, databits, parity, stopbits, flowctl);
+                }else
+                    mSerialPort = new SerialPort(new File(path), baudrate, databits, parity, stopbits, flowctl);
                 mOutputStream = mSerialPort.getOutputStream();
             } catch (SecurityException e) {
             } catch (IOException e) {

@@ -1,6 +1,6 @@
 package com.kaching123.display;
 
-import android.serialport.SerialPort;
+import android_serialport_api.SerialPort;
 
 import java.io.File;
 import java.io.IOException;
