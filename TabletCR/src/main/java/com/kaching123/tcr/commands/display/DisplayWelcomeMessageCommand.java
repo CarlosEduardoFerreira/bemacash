@@ -21,9 +21,11 @@ public class DisplayWelcomeMessageCommand extends BaseDisplayCommand<DisplayPrin
     @Override
     protected void printBody(Context context, DisplayPrinterWrapper printerWrapper) {
         ShopInfo shopInfo = ((TcrApplication) context.getApplicationContext()).getShopInfo();
-        Logger.d(shopInfo.displayWelcomeMsg);
-        printerWrapper.addLine(shopInfo.displayWelcomeMsg);
-        printerWrapper.addLine(shopInfo.displayWelcomeMsgBottom);
+        Logger.d("displayWelcomeMsg = "+shopInfo.displayWelcomeMsg);
+        String top = shopInfo.displayWelcomeMsg == null ? " ":shopInfo.displayWelcomeMsg;
+        String bottom = shopInfo.displayWelcomeMsgBottom == null ? " ":shopInfo.displayWelcomeMsgBottom;
+        printerWrapper.addLine(top);
+        printerWrapper.addLine(bottom);
     }
 
     @Override
