@@ -30,6 +30,7 @@ public class DisplayPartialTenderCommand extends BaseDisplayCommand<DisplayPrint
     @Override
     protected void printBody(Context context, DisplayPrinterWrapper printerWrapper) {
 
+        printerWrapper.addLine(" ");
         printerWrapper.add(context.getString(R.string.display_tender_title), context.getString(R.string.display_pending_title), tenderAmount, pendingAmount);
     }
     @Override

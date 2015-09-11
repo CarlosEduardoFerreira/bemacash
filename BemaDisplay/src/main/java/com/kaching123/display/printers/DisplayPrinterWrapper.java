@@ -66,6 +66,9 @@ public class DisplayPrinterWrapper implements IDisplayPrinterWrapper {
     public void addLine(String text) {
         commands.add(new PrintTextAction(cropFillText(MAX_TEXT_LINE_LEN, text), isSerialPortDisplay));
     }
+    public void addLine() {
+        commands.add(new PrintTextAction(fill(MAX_TEXT_LEN, ' '), isSerialPortDisplay));
+    }
 
     public void add(BigDecimal quantity, String description, BigDecimal total) {
         add(decimalFormat.format(quantity), description, priceFormat.format(total));

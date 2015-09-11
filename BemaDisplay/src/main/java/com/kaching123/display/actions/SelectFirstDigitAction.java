@@ -12,7 +12,7 @@ public class SelectFirstDigitAction extends Action {
 
     private static final byte E_MOVE_TO_HOME_POSITION = 0x0B;
 
-    private static final byte[] COMMAND_BYTES_SERIAL = {E_MOVE_TO_HOME_POSITION};
+    private static final byte[] COMMAND_BYTES_SERIAL = {0x1b, 0x40, 0x1b,0x74,0x02,E_MOVE_TO_HOME_POSITION};
     private static final byte[] COMMAND_BYTES = {SELECT_DIGIT,FIRST_DIGIT_IDX};
     private boolean isSerial;
     public SelectFirstDigitAction(boolean isSerial){
