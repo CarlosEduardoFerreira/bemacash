@@ -98,7 +98,7 @@ public class LoginCommand extends GroundyTask {
             Logger.d("Performing remote login... login: %s, serial: %s", userName, registerSerial);
             RemoteLoginResult remoteLoginResult = webLogin(registerSerial, userName, password);
             if (remoteLoginResult != null) {
-                if (remoteLoginResult.registerNumber != null) {
+                if (remoteLoginResult.registerNumber == null) {
                     Logger.d("Remote login FAILED! register check failed");
                     return failed().add(EXTRA_ERROR, Error.REGISTER_CHECK_FAILED);
                 }
