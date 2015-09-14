@@ -28,7 +28,7 @@ android {
         jumboMode = true
     }
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 15
         targetSdkVersion 19
         multiDexEnabled = true
     }
