@@ -98,7 +98,16 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
     @Override
     protected int getDialogTitle() {
-        return mode == Mode.DISPLAY ? R.string.find_display_title : R.string.find_scanner_title;
+        if(mode == Mode.DISPLAY) {
+           return  R.string.find_display_title;
+        }else if(mode == Mode.SCANNER){
+            return R.string.find_scanner_title;
+        }else if(mode == Mode.USBMSR){
+            return R.string.find_msr_title;
+        }else if(mode == Mode.SCALE){
+            return R.string.find_scale_title;
+        }
+        return R.string.find_display_title;
     }
 
     @Override
