@@ -72,6 +72,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
     public static String USB_MSR_PID = "0009";
     public static String USB_SCANNER_VID = "0000";
     public static String USB_SCANNER_PID = "5710";
+    public static String[] MODEL_NUMBER_ARRAY = {"POSLAB","FREESCALE"};
     public static String MODEL_NUMBER_OLD = "EcolMini";
     public static String MODEL_NUMBER_NEW = "8010";
     @FragmentArg
@@ -169,7 +170,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
     }
 
     private boolean isAIO() {
-        return getDeviceName().contains(MODEL_NUMBER_OLD) || getDeviceName().contains(MODEL_NUMBER_NEW);
+        return Arrays.asList(MODEL_NUMBER_ARRAY).contains(Build.MANUFACTURER.toUpperCase());
     }
 
     public String getDeviceName() {
