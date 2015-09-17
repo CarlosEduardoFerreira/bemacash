@@ -200,7 +200,7 @@ public class BemaScale {
 
     private String covertBytesToScale(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        sb.append(new String(bytes).substring(1,6));
+        sb.append(new String(bytes).substring(1,7));
         return sb.toString().replaceAll("^0+(?!$)", ""); // remove leading 0
     }
 
