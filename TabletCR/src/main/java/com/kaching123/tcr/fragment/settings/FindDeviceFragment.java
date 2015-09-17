@@ -289,8 +289,11 @@ public class FindDeviceFragment extends StyledDialogFragment {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
             boolean useConstraint = mode == Mode.DISPLAY;
             if (isAIO())
-                if (mode == Mode.DISPLAY)
+                if (mode == Mode.DISPLAY) {
                     devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
+                    devices.add(new DeviceModel("COM2","COM2"));
+                    devices.add(new DeviceModel("COM1","COM1"));
+                }
                 else if(mode == Mode.SCALE){
                     devices.add(new DeviceModel("COM2","COM2"));
                     devices.add(new DeviceModel("COM1","COM1"));

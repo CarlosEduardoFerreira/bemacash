@@ -97,17 +97,18 @@ public class DisplayService extends Service {
     }
 
     private boolean isSerialPortDisplay() {
-        return getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER);
+        return getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER) ||
+                getApp().getShopPref().displayAddress().get().startsWith("COM");
     }
 
     private boolean openDisplayPrinter() {
         DisplayPrinter displayPrinter = null;
-        if (isSerialPortDisplay()) {
-            displayPrinter = new SerialPortDiplayPrinter(); // Mint only Serial port
-        } else {
             try
-
             {
+
+            if (isSerialPortDisplay()) {
+                displayPrinter = new SerialPortDiplayPrinter(getApp().getShopPref().displayAddress().get()); // Mint only Serial port
+            } else {
                 BluetoothDevice display = getDisplay();
                 if (display == null)
                     return false;
@@ -121,7 +122,8 @@ public class DisplayService extends Service {
                 }
 
                 displayPrinter = new BluetoothSocketPrinter(display);
-                initDisplayPrinter(displayPrinter);
+                }
+            initDisplayPrinter(displayPrinter);
             } catch (
                     IOException e
                     )
@@ -134,7 +136,6 @@ public class DisplayService extends Service {
                 }
                 return false;
             }
-        }
 
         this.displayPrinter = displayPrinter;
         return true;
@@ -142,7 +143,7 @@ public class DisplayService extends Service {
 
     private void initDisplayPrinter(DisplayPrinter displayPrinter) throws IOException {
         if (isSerialPortDisplay())
-            new InitSerialPortDisplayAction().execute(displayPrinter);
+            new InitSerialPortDisplayAction(getApp().getShopPref().displayAddress().get().equalsIgnoreCase(FindDeviceFragment.INTEGRATED_DISPLAYER)).execute(displayPrinter);
         else
             new InitDisplayAction().execute(displayPrinter);
     }
