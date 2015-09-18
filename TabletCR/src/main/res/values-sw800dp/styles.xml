@@ -592,7 +592,7 @@
     </style>
 
     <style name="DrawerPicker.ItemSubText">
-        <item name="android:textColor">@color/drawer_subtext_color_selector</item>
+        <item name="android:textColor">@android:color/black</item>
     </style>
 
     <style name="DrawerPicker.Item.Category">
