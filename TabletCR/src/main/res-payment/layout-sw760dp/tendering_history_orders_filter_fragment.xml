@@ -16,7 +16,8 @@
         <TableLayout
             style="@style/FilterPanel.Table"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            >
 
             <TableRow>
 
@@ -187,17 +188,14 @@
 
         <Button
             style="@style/LocalizableButton.Blue"
-            android:text="@string/button_search"
             android:textSize="28sp"
             android:id="@+id/filter"
             android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="260dp"
+            android:layout_height="50dp"
             android:background="@drawable/filter_btn"/>
 
     </LinearLayout>
-        android:layout_height="70dp"
-        android:background="@drawable/filter_btn" />
 
     <LinearLayout
         android:id="@+id/below_holder"

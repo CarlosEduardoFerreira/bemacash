@@ -276,7 +276,7 @@
     </style>
 
     <style name="FilterPanel.CustomEditBox" parent="CustomEditBox">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/subtotal_table_text_main</item>
     </style>
 

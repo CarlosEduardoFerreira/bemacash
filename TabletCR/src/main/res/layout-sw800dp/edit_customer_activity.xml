@@ -10,194 +10,249 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TableLayout
-            android:layout_height="match_parent"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1">
-
-            <TextView
-                style="@style/EditItem.Table.Header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/edit_item_row_margin_top"
-                android:layout_marginLeft="0dp"
-                android:paddingBottom="8dp"
-                android:paddingLeft="4dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/user_information"
-                android:background="@drawable/inventory_title_line"
-                android:text="@string/customer_label_personal_info"/>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout
-                    style="@style/EditItem.Table.LabelLayout">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label.Required"
-                        android:text="@string/customer_label_first_name"/>
-                </FrameLayout>
-
-                <EditText
-                    style="@style/EditItem.Table.Edittext"
-                    android:id="@+id/first_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:maxLength="@integer/name_max_length"
-                    android:singleLine="true"
-                    android:inputType="textPersonName"
-                    android:nextFocusDown="@+id/last_name"/>
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout
-                    style="@style/EditItem.Table.LabelLayout">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/customer_label_last_name"/>
-                </FrameLayout>
-
-                <EditText
-                    style="@style/EditItem.Table.Edittext"
-                    android:id="@+id/last_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:maxLength="@integer/name_max_length"
-                    android:singleLine="true"
-                    android:inputType="textPersonName"
-                    android:nextFocusDown="@+id/email"/>
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout
-                    style="@style/EditItem.Table.LabelLayout">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label.Required"
-                        android:text="@string/customer_label_sex"/>
-                </FrameLayout>
-
-                <Spinner
-                    android:id="@+id/sex_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout
-                    style="@style/EditItem.Table.LabelLayout">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/customer_label_consent_promotions"
-                        />
-
-                </FrameLayout>
-
-                <CheckBox
-                    android:id="@+id/consent_promotions"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"/>
-
-            </TableRow>
-
-
-        </TableLayout>
-
-        <TableLayout
-            android:layout_marginLeft="@dimen/edit_item_table_margin_left"
             android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1">
+            android:layout_weight="2"
+            android:orientation="vertical">
 
-            <TextView
-                style="@style/EditItem.Table.Header"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/edit_item_row_margin_top"
-                android:layout_marginLeft="0dp"
-                android:paddingBottom="8dp"
-                android:paddingLeft="4dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/user_information"
-                android:background="@drawable/inventory_title_line"
-                android:text="@string/customer_label_contacts"/>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
 
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout
-                    style="@style/EditItem.Table.LabelLayout">
+                <TableLayout
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1">
 
                     <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/customer_label_email"/>
-                </FrameLayout>
+                        style="@style/EditItem.Table.Header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/edit_item_row_margin_top"
+                        android:layout_marginLeft="0dp"
+                        android:paddingBottom="8dp"
+                        android:paddingLeft="4dp"
+                        android:drawablePadding="8dp"
+                        android:drawableLeft="@drawable/user_information"
+                        android:background="@drawable/inventory_title_line"
+                        android:text="@string/customer_label_personal_info"/>
 
-                <EditText
-                    style="@style/EditItem.Table.Edittext"
-                    android:id="@+id/email"
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout
+                            style="@style/EditItem.Table.LabelLayout">
+
+                            <TextView
+                                style="@style/EditItem.Table.Label.Required"
+                                android:text="@string/customer_label_first_name"/>
+                        </FrameLayout>
+
+                        <EditText
+                            style="@style/EditItem.Table.Edittext"
+                            android:id="@+id/first_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:maxLength="@integer/name_max_length"
+                            android:singleLine="true"
+                            android:inputType="textPersonName"
+                            android:nextFocusDown="@+id/last_name"/>
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout
+                            style="@style/EditItem.Table.LabelLayout">
+
+                            <TextView
+                                style="@style/EditItem.Table.Label"
+                                android:text="@string/customer_label_last_name"/>
+                        </FrameLayout>
+
+                        <EditText
+                            style="@style/EditItem.Table.Edittext"
+                            android:id="@+id/last_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:maxLength="@integer/name_max_length"
+                            android:singleLine="true"
+                            android:inputType="textPersonName"
+                            android:nextFocusDown="@+id/email"/>
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout
+                            style="@style/EditItem.Table.LabelLayout">
+
+                            <TextView
+                                style="@style/EditItem.Table.Label"
+                                android:text="@string/customer_label_sex"/>
+                        </FrameLayout>
+
+                        <Spinner
+                            android:id="@+id/sex_spinner"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout
+                            style="@style/EditItem.Table.LabelLayout">
+
+                            <TextView
+                                style="@style/EditItem.Table.Label"
+                                android:text="@string/customer_label_consent_promotions"
+                                />
+
+                        </FrameLayout>
+
+                        <CheckBox
+                            android:id="@+id/consent_promotions"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="true"/>
+
+                    </TableRow>
+
+
+                </TableLayout>
+
+                <TableLayout
+                    android:layout_marginLeft="@dimen/edit_item_table_margin_left"
+                    android:layout_height="match_parent"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:singleLine="true"
-                    android:inputType="textEmailAddress"
-                    android:maxLength="@integer/email_max_length"
-                    android:nextFocusDown="@+id/phone"/>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout
-                    style="@style/EditItem.Table.LabelLayout">
+                    android:layout_weight="1">
 
                     <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/customer_label_phone"/>
-                </FrameLayout>
+                        style="@style/EditItem.Table.Header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/edit_item_row_margin_top"
+                        android:layout_marginLeft="0dp"
+                        android:paddingBottom="8dp"
+                        android:paddingLeft="4dp"
+                        android:drawablePadding="8dp"
+                        android:drawableLeft="@drawable/user_information"
+                        android:background="@drawable/inventory_title_line"
+                        android:text="@string/customer_label_contacts"/>
 
-                <EditText
-                    style="@style/EditItem.Table.Edittext"
-                    android:id="@+id/phone"
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout
+                            style="@style/EditItem.Table.LabelLayout">
+
+                            <TextView
+                                style="@style/EditItem.Table.Label"
+                                android:text="@string/customer_label_email"/>
+                        </FrameLayout>
+
+                        <EditText
+                            style="@style/EditItem.Table.Edittext"
+                            android:id="@+id/email"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:inputType="textEmailAddress"
+                            android:maxLength="@integer/email_max_length"
+                            android:nextFocusDown="@+id/phone"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout
+                            style="@style/EditItem.Table.LabelLayout">
+
+                            <TextView
+                                style="@style/EditItem.Table.Label"
+                                android:text="@string/customer_label_phone"/>
+                        </FrameLayout>
+
+                        <EditText
+                            style="@style/EditItem.Table.Edittext"
+                            android:id="@+id/phone"
+                            android:layout_width="0dp"
+                            android:singleLine="true"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="phone"
+                            android:maxLength="@integer/phone_max_length"
+                            android:nextFocusDown="@+id/street"/>
+                    </TableRow>
+
+                </TableLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+                <TableLayout
+                    android:layout_height="match_parent"
                     android:layout_width="0dp"
-                    android:singleLine="true"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="phone"
-                    android:maxLength="@integer/phone_max_length"
-                    android:nextFocusDown="@+id/street"/>
-            </TableRow>
+                    android:layout_weight="1">
 
-        </TableLayout>
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout
+                            style="@style/EditItem.Table.LabelLayout">
+
+                            <TextView
+                                style="@style/EditItem.Table.Label"
+                                android:text="@string/customer_label_notes"/>
+                        </FrameLayout>
+
+                        <EditText
+                            style="@style/EditItem.Table.Edittext"
+                            android:background="@drawable/gradient"
+                            android:id="@+id/notes"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="textMultiLine"
+                            android:maxLines="@integer/notes_max_lines"
+                            android:minLines="@integer/notes_min_lines"
+                            android:maxLength="@integer/notes_max_length"
+                            android:scrollbars="vertical"
+                            android:nextFocusDown="@+id/street"/>
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+        </LinearLayout>
+
 
         <TableLayout
             android:layout_marginLeft="@dimen/edit_item_table_margin_left"
@@ -373,10 +428,10 @@
 
     <Button
         style="@style/LocalizableButton.Green"
+        android:text="@string/button_save"
         android:textSize="26sp"
         android:paddingBottom="6dp"
         android:id="@+id/save_button"
-        android:text="@string/btn_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/save_btn_bg"
