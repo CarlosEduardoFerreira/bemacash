@@ -15,7 +15,7 @@ public class PaxProcessorMICommand extends PaxProcessorBaseCommand {
 
     @Override
     protected PaxModel getPaxModel() {
-        return (PaxModel) getArgs().getSerializable(ARG_DATA_PAX);
+        return (PaxModel) getArgs().getParcelable(ARG_DATA_PAX);
     }
 
 }

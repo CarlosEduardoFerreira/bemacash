@@ -41,7 +41,7 @@ public class PaxProcessorHelloCommand extends PaxProcessorBaseCommand {
 
     @Override
     protected PaxModel getPaxModel() {
-        return paxModel == null ? (PaxModel) getArgs().getSerializable(ARG_DATA_PAX) : paxModel;
+        return paxModel == null ? (PaxModel) getArgs().getParcelable(ARG_DATA_PAX) : paxModel;
     }
 
     @Override
