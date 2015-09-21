@@ -52,7 +52,6 @@ public class QtyEditFragment extends DecimalEditFragment{
     protected void attachViews() {
         super.attachViews();
         editText.setFilters(new InputFilter[]{new QuantityFormatInputFilter()});
-        Logger.d("cancel button "+isEnable);
         if(!isEnable) {
             getNegativeButton().setOnClickListener(new View.OnClickListener() {
                 @Override
