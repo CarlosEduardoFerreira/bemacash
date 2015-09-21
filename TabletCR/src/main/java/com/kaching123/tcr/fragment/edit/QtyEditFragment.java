@@ -9,6 +9,7 @@ import android.widget.Button;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.QuantityFormatInputFilter;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -51,8 +52,8 @@ public class QtyEditFragment extends DecimalEditFragment{
     protected void attachViews() {
         super.attachViews();
         editText.setFilters(new InputFilter[]{new QuantityFormatInputFilter()});
-//        getNegativeButton().setEnabled(isEnable);
-        if(!isEnable)
+        Logger.d("cancel button "+isEnable);
+        if(!isEnable) {
             getNegativeButton().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -60,6 +61,7 @@ public class QtyEditFragment extends DecimalEditFragment{
                     dismiss();
                 }
             });
+        }
     }
 
     @Override

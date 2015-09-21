@@ -117,7 +117,7 @@ public class InventoryQtyEditDialog extends QtyEditFragment {
     };
 
     public static void show(FragmentActivity activity, BigDecimal qty, boolean isInteger, OnEditQtyListener onResultListener){
-        DialogUtil.show(activity, DIALOG_NAME, InventoryQtyEditDialog_.builder().isInteger(isInteger).decimalValue(qty).build())
+        DialogUtil.show(activity, DIALOG_NAME, InventoryQtyEditDialog_.builder().isInteger(isInteger).isEnable(true).decimalValue(qty).build())
                 .setListener(onResultListener);
     }
 
