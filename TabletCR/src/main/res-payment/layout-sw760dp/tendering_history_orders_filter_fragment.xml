@@ -188,10 +188,11 @@
 
         <Button
             style="@style/LocalizableButton.Blue"
-            android:textSize="28sp"
+            android:textSize="38sp"
+            android:text="@string/button_search"
             android:id="@+id/filter"
             android:layout_gravity="center"
-            android:layout_width="260dp"
+            android:layout_width="fill_parent"
             android:layout_height="50dp"
             android:background="@drawable/filter_btn"/>
 
@@ -200,7 +201,7 @@
     <LinearLayout
         android:id="@+id/below_holder"
         android:layout_below="@id/filter_container"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="6dp"
         android:layout_alignParentLeft="true"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">
