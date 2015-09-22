@@ -298,8 +298,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     private void bindToScaleService() {
-        boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().scaleName().get()); //Serial Port?
-        if (displayConfigured) {
+        boolean scaleConfigured = !TextUtils.isEmpty(getApp().getShopPref().scaleName().get()); //Serial Port?
+        if (scaleConfigured) {
             ScaleService.bind(this,scaleServiceConnection);
         }
     }
@@ -1245,7 +1245,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 this.orderGuid,
                 model.guid,
                 model.description,
-                quantity == null ? (model.priceType == PriceType.UNIT_PRICE && scaleServiceBound ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
+                quantity == null ? (model.priceType == PriceType.UNIT_PRICE ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
                 BigDecimal.ZERO,
                 isCreateReturnOrder ? PriceType.OPEN : model.priceType,
                 price == null ? model.price : price,
@@ -1949,14 +1949,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
             //orderItemListFragment.needScrollToTheEnd();
             if(item.priceType == PriceType.UNIT_PRICE) {
-                if (scaleService.getStatus() == 0) {
+                if (scaleService != null && scaleService.getStatus() == 0) {
                     BigDecimal newQty = new BigDecimal(scaleService.readScale());
                     UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
-                    }else {
+                }else {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                             BaseCashierActivity.this);
                     alertDialogBuilder.setTitle("Scale Warning");
-                    String header = scaleService.getStatus() < 0 ? "Scale is not present":"Scale cannot get weight of " + item.description;
+                    String header = scaleService == null || scaleService.getStatus() < 0 ? "Scale is not present":"Scale cannot get weight of " + item.description;
                     alertDialogBuilder
                             .setMessage(header + ", do you want to enter the quantity manually?")
                             .setCancelable(false)
