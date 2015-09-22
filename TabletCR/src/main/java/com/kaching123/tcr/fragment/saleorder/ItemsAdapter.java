@@ -148,7 +148,6 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
                 highlightedColumn = null;
             }
         }
-        Logger.d("hello " + item.tmpUnit.size());
         return convertView;
     }
 
