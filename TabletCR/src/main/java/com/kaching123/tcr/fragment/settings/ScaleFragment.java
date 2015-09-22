@@ -61,10 +61,10 @@ public class ScaleFragment extends SuperBaseFragment {
 
     @OptionsItem
     protected void actionSearchSelected() {
-        FindDeviceFragment.show(getActivity(), findScaleListener, FindDeviceFragment.Mode.SCALE);
+        FindDeviceFragment.show(getActivity(), findDisplayListener, FindDeviceFragment.Mode.SCALE);
     }
 
-    private FindDeviceFragment.FindDeviceListener findScaleListener = new FindDeviceFragment.FindDeviceListener() {
+    private FindDeviceFragment.FindDeviceListener findDisplayListener = new FindDeviceFragment.FindDeviceListener() {
 
         @Override
         public void onDeviceSelected() {

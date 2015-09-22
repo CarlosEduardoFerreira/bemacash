@@ -43,6 +43,13 @@ public class SignupActivity extends SuperBaseActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(client);
         webView.loadUrl(url);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            public void onPageFinished(WebView view, String url) {
+                String serialNum = app.getRegisterSerial();
+                view.loadUrl("javascript:document.getElementById('merchant_register_serial').value = '" + serialNum + "';");
+            }
+        });
     }
 
     @Override

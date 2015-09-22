@@ -72,6 +72,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
     public static String USB_MSR_PID = "0009";
     public static String USB_SCANNER_VID = "0000";
     public static String USB_SCANNER_PID = "5710";
+    public static String[] MODEL_NUMBER_ARRAY = {"POSLAB","FREESCALE"};
     public static String MODEL_NUMBER_OLD = "EcolMini";
     public static String MODEL_NUMBER_NEW = "8010";
     @FragmentArg
@@ -98,7 +99,16 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
     @Override
     protected int getDialogTitle() {
-        return mode == Mode.DISPLAY ? R.string.find_display_title : R.string.find_scanner_title;
+        if(mode == Mode.DISPLAY) {
+           return  R.string.find_display_title;
+        }else if(mode == Mode.SCANNER){
+            return R.string.find_scanner_title;
+        }else if(mode == Mode.USBMSR){
+            return R.string.find_msr_title;
+        }else if(mode == Mode.SCALE){
+            return R.string.find_scale_title;
+        }
+        return R.string.find_display_title;
     }
 
     @Override
@@ -160,7 +170,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
     }
 
     private boolean isAIO() {
-        return getDeviceName().contains(MODEL_NUMBER_OLD) || getDeviceName().contains(MODEL_NUMBER_NEW);
+        return Arrays.asList(MODEL_NUMBER_ARRAY).contains(Build.MANUFACTURER.toUpperCase());
     }
 
     public String getDeviceName() {
@@ -279,8 +289,11 @@ public class FindDeviceFragment extends StyledDialogFragment {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
             boolean useConstraint = mode == Mode.DISPLAY;
             if (isAIO())
-                if (mode == Mode.DISPLAY)
+                if (mode == Mode.DISPLAY) {
                     devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
+                    devices.add(new DeviceModel("COM2","COM2"));
+                    devices.add(new DeviceModel("COM1","COM1"));
+                }
                 else if(mode == Mode.SCALE){
                     devices.add(new DeviceModel("COM2","COM2"));
                     devices.add(new DeviceModel("COM1","COM1"));

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BemaCash</string>
-    <string name="dashboard_activity_label">BemaCash</string>
+
+    <string name="app_name">Kashin 123</string>
+    <string name="dashboard_activity_label">Kashin 123</string>
     <string name="settings_activity_label">Settings</string>
     <string name="inventory_activity_label">Inventory</string>
     <string name="employees_activity_label">Employees</string>
@@ -133,6 +134,10 @@
     <string name="upload_notify_message">Uploading local changes</string>
     <string name="upload_notify_message_success">Data was uploaded</string>
     <string name="upload_notify_message_error">Upload data error</string>
+
+    <string name="upload_notify_message_error_db_version_invalid">There\'s a newer version of Kashin available. Please update to be eligible for upload!</string>
+    <string name="upload_notify_message_error_db_version_failed">Failed to check Kashin version. Please try again later</string>
+
 
     <string name="sync_success_title">Database syncing</string>
     <string name="sync_success_message">Data was synchronized</string>
@@ -513,7 +518,7 @@
     <string name="dlg_multiple_serial_codes_title">Multiple serial codes</string>
     <string name="btn_done">Done</string>
     <string name="print_order_power_by">Power by %s</string>
-    <string name="print_order_power_by_backstone">BemaCash</string>
+    <string name="print_order_power_by_backstone">Blackstone</string>
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
     <string name="apk_update_dialog_title">Would you like to update to version %d now?</string>
@@ -637,7 +642,7 @@
     <string name="error_message_register_check">Can\'t find register.\nPlease contact your admin!</string>
     <string name="error_message_register_pending">Register is in pending status.\nPlease contact your admin!</string>
     <string name="error_message_employee_not_active">Employee status should be \'Active\'</string>
-    <string name="error_message_outdated">There has been a newer version of BemaCash released recently. Please update in order to be eligible for sync. Your local data will not be lost.</string>
+    <string name="error_message_outdated">There has been a newer version of Kashin released recently. Please update in order to be eligible for sync. Your local data will not be lost.</string>
     <string name="error_message_offline">You are offline, please check your Internet connection and try again</string>
     <string name="error_message_sync_inconsistent">Couldn\'t finalize synchronization, please try again later</string>
     <string name="error_message_login_offline_failed">Unable to log in. Please, connect your tablet to the Internet and try again</string>
@@ -1289,12 +1294,12 @@
     <string name="blackstone_settlement_failure_body_constructor" formatted="false">%s %s %s</string>
     <string name="blackstone_settlement_failure_body_3nd">There was a non-banking related issue: </string>
     <string name="blackstone_settlement_failure_reason_db_update">Settlement was executed but database wasn\'t updated</string>
-    <string name="blackstone_settlement_failure">One or more credit card transactions failed to settle. Please contact BemaCash Merchant Services for more details.</string>
+    <string name="blackstone_settlement_failure">One or more credit card transactions failed to settle. Please contact Blackstone Merchant Services for more details.</string>
     <string name="blackstone_settlement_alert_title">Credit Card Settlement</string>
     <string name="blackstone_settlement_alert_message">This operation will settle all open credit card transactions. After completion, tips cannot be added to these transactions. Do you want to proceed?</string>
     <string name="blackstone_pax_failure_reason_pax">Payment cancelled or connection problem.</string>
     <string name="blackstone_pax_failure_reason_wrong_gateway">Selected transaction was not created with PAX and can not be processed with it.</string>
-    <string name="blackstone_pax_failure_reason_tips_disabled">Contact BemaCash representative to enable tips in your pin pad.</string>
+    <string name="blackstone_pax_failure_reason_tips_disabled">Contact Blackstone representative to enable tips in your pin pad.</string>
     <string name="blackstone_pax_reload_failure_reason_service">The response is empty or related to another transaction, so the actual data is not going to be gathered.</string>
     <string name="blackstone_failure_reason_wrong_gateway">Selected transaction was not created with MSR and can not be processed with it.</string>
     <string name="close_transactions_list_fragment_title">Opened transactions</string>
@@ -1473,7 +1478,7 @@
     <string name="KEY_STORE_TYPE">PKCS12</string>
     <string name="KEY_STORE_PROVIDER">BC</string>
 
-    <!-- changed for BemaCash -->
+    <!-- changed for MintPos -->
     <string name="dashboard_activity_checkin_and_out_button_label">Clock In/Out</string>
     <string name="warning_message_warranty_ends_today">Warranty ends today.</string>
 
@@ -1486,7 +1491,7 @@
     <string name="btn_checkin">Clock In</string>
     <string name="btn_checkout">Clock Out</string>
     <string name="cashier_action_search_disable">Search disable</string>
-    <string name="error_message_max_items_count">You have reached the maximum number of inventory items supported in your monthly plan. Please, Contact BemaCash support to learn how to increase this limit.</string>
+    <string name="error_message_max_items_count">You have reached the maximum number of inventory items supported in your monthly plan. Please, Contact MintPos support to learn how to increase this limit.</string>
     <string name="prepaid_head_home_button">Home</string>
     <string name="prepaid_head_long_distance_text">Long Distance</string>
     <string name="prepaid_head_wireless_text">Wireless</string>
@@ -1569,7 +1574,7 @@
     <string name="sunopass_document_id_null">Document ID cannot be null</string>
     <string name="sunopass_license_plate_number_null">License Plate Number cannot be null</string>
     <string name="sunopass_choose_document_payment_method">Choose Document Payment Method</string>
-    <string name="block_merchant_message">This Shop is blocked by BemaCash, please contact BemaCash for any questions. Thanks.</string>
+    <string name="block_merchant_message">This Shop is blocked by MintPos, please contact MintPos for any questions. Thanks.</string>
     <string name="custom_service">CUSTOMER SERVICE</string>
     <string name="title_activity_my">MyActivity</string>
     <string name="hello_world">Hello world!</string>

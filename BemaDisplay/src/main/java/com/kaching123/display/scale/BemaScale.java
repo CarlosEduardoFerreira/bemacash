@@ -8,6 +8,7 @@ import com.bematechus.bemaUtils.WatchDog;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * Created by long.jiao on 7/16/2015.
@@ -135,6 +136,7 @@ public class BemaScale {
                             break;
                         bytesRead += ret;
                     }
+                    formatBytes(bytes);
                     return Integer.parseInt(new String(Arrays.copyOfRange(bytes, 11, 13)));
                     //ToDo: Toast different error if necessary
                 }
@@ -148,6 +150,13 @@ public class BemaScale {
                 e.printStackTrace();
             }
         return -1;
+    }
+
+    private void formatBytes(byte[] bytes) {
+        for(int i = 0; i < bytes.length; i++){
+            if(bytes[i]<0)
+                bytes[i] += 128;
+        }
     }
 
     public String readScale(){
@@ -168,6 +177,8 @@ public class BemaScale {
                             break;
                         bytesRead += ret;
                     }
+                    formatBytes(bytes);
+                    Log.e(TAG, "serial port : " + Arrays.toString(bytes) + " string : " + new String(bytes));
 //                    return Arrays.toString(bytes);
                     // check status
                     if (bytes[11] == 0x30 && bytes[12] == 0x30)
@@ -189,7 +200,7 @@ public class BemaScale {
 
     private String covertBytesToScale(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        sb.append(new String(bytes).substring(1,6));
+        sb.append(new String(bytes).substring(1,7));
         return sb.toString().replaceAll("^0+(?!$)", ""); // remove leading 0
     }
 

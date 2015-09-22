@@ -37,6 +37,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
+import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
 
 import java.util.ArrayList;
 
@@ -65,6 +66,12 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     @FragmentArg
     protected String orderGuid;
+
+    @FragmentArg
+    protected boolean IVULotoActivated;
+
+    @FragmentArg
+    protected IVULotoDataResponse ivuLotoDataResponse;
 
     protected String email;
 

@@ -272,4 +272,14 @@ public interface ShopPref {
     boolean updateApprove();
 
     boolean enableEreportDepartSale();
+
+    boolean DirecTvPRActivated();
+
+    boolean IVULotoActivated();
+
+    String ivulotoMID();
+
+    String terminalID();
+
+    String terminalPassword();
 }

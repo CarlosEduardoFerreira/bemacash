@@ -37,10 +37,14 @@ public class DisplayOrderCommand extends BaseDisplayCommand<DisplayPrinterWrappe
 
             @Override
             public void handleTotal(BigDecimal totalDiscount, BigDecimal subTotalItemTotal, BigDecimal totalTaxVatValue, BigDecimal totalOrderPrice, BigDecimal tipsValue) {
-                if (totalDiscount != null && totalDiscount.compareTo(BigDecimal.ZERO) != 0)
+                if (totalDiscount != null && totalDiscount.compareTo(BigDecimal.ZERO) != 0) {
+                    printerWrapper.addLine(" ");
                     printerWrapper.add(context.getString(R.string.display_total_title), context.getString(R.string.display_discount_title), totalOrderPrice, totalDiscount);
-                else
+                }
+                else {
+                    printerWrapper.addLine(" ");
                     printerWrapper.add(context.getString(R.string.display_total_title), totalOrderPrice);
+                }
             }
         });
     }
