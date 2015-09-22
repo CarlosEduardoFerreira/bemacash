@@ -135,10 +135,6 @@
     <string name="upload_notify_message_success">Data was uploaded</string>
     <string name="upload_notify_message_error">Upload data error</string>
 
-    <string name="upload_notify_message_error_db_version_invalid">There\'s a newer version of Kashin available. Please update to be eligible for upload!</string>
-    <string name="upload_notify_message_error_db_version_failed">Failed to check Kashin version. Please try again later</string>
-
-
     <string name="sync_success_title">Database syncing</string>
     <string name="sync_success_message">Data was synchronized</string>
     <string name="sync_error_title">Database syncing</string>

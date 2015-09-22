@@ -274,12 +274,4 @@ public interface ShopPref {
     boolean enableEreportDepartSale();
 
     boolean DirecTvPRActivated();
-
-    boolean IVULotoActivated();
-
-    String ivulotoMID();
-
-    String terminalID();
-
-    String terminalPassword();
 }
