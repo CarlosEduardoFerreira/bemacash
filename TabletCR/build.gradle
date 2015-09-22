@@ -86,25 +86,25 @@ android {
     productFlavors {
 
         prod {
-            applicationId = "com.kaching123.tcr"
+            applicationId = "com.bemacash.tcr"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
             buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         dev {
-            applicationId = "com.kaching123.tcr"
+            applicationId = "com.bemacash.tcr"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
             buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         stage {
-            applicationId = "com.kaching123.tcr"
+            applicationId = "com.bemacash.tcr"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
             buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
 
         preprod {
-            applicationId = "com.kaching123.tcr"
+            applicationId = "com.bemacash.tcr"
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"${applicationId}.store.AUTHORITY\""
             buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${applicationId}.files\""
         }
