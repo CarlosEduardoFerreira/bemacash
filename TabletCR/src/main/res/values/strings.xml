@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Kashin 123</string>
-    <string name="dashboard_activity_label">Kashin 123</string>
+    <string name="app_name">BemaCash</string>
+    <string name="dashboard_activity_label">BemaCash</string>
     <string name="settings_activity_label">Settings</string>
     <string name="inventory_activity_label">Inventory</string>
     <string name="employees_activity_label">Employees</string>
