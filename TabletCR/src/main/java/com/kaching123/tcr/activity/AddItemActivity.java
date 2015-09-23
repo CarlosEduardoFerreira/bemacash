@@ -7,9 +7,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsMenu;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -17,6 +14,10 @@ import com.kaching123.tcr.fragment.inventory.ItemCodeChooserAlertDialogFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.util.UnitUtil;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsMenu;
 
 /**
  * Created by vkompaniets on 05.12.13.
@@ -31,11 +32,15 @@ public class AddItemActivity extends BaseItemActivity {
     protected void init() {
         super.init();
         if (!TextUtils.isEmpty(model.tmpBarcode)) {
-            ItemCodeChooserAlertDialogFragment.show(AddItemActivity.this, model.tmpBarcode);
+            ItemCodeChooserAlertDialogFragment.show(AddItemActivity.this, filterBarcodes(model.tmpBarcode));
         }
         unitsLabel.setText(UnitUtil.PCS_LABEL);
         updateStockTrackingBlock(false);
         setFieldsChangeListeners();
+    }
+
+    private String filterBarcodes(String barcodes) {
+        return barcodes.replace("-","").replace("#","");
     }
 
     @Override
