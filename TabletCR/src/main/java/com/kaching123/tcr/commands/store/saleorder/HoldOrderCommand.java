@@ -59,7 +59,7 @@ public class HoldOrderCommand extends UpdateSaleOrderCommand {
                 .withSelection(ShopStore.SaleOrderTable.GUID + " = ?", new String[]{order.guid})
                 .build());
         ContentValues values = new ContentValues();
-        values.put(ShopStore.SaleOrderTable.STATUS, OrderStatus.ONHOLD.ordinal());
+        values.put(ShopStore.SaleOrderTable.STATUS, OrderStatus.HOLDON.ordinal());
         operations.add(ContentProviderOperation.newUpdate(URI_ORDER)
                 .withValues(values)
                 .withSelection(ShopStore.SaleOrderTable.GUID + " = ?", new String[]{getStringArg(ARG_ORDER_GUID)})
@@ -69,7 +69,7 @@ public class HoldOrderCommand extends UpdateSaleOrderCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        order.orderStatus = OrderStatus.ONHOLD;
+        order.orderStatus = OrderStatus.HOLDON;
         return JdbcFactory.getConverter(order).updateSQL(order, getAppCommandContext());
     }
 
