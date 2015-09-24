@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crittercism.app.Crittercism;
 import com.getbase.android.db.cursors.FluentCursor;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
@@ -247,7 +248,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
+        Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 
