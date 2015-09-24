@@ -250,7 +250,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
-        Logger.d("BaseCashierActivity barcodeReceivedFromSerialPort onReceive:" + barcode);
         onBarcodeReceived(barcode);
     }
 
@@ -400,13 +399,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
             @Override
             public void onBarcodeReceivedFromUSB(String barcode) {
-                Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB()");
                 if (isPaying) {
-                    Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB(): ignore and exit - payment in progress");
                     return;
                 }
 
-                Logger.d("BaseCashierActivity: IItemsListHandlerHandler: onBarcodeReceivedFromUSB(): tryToSearchBarCode()");
                 tryToSearchBarCode(barcode, true);
             }
         });
@@ -528,7 +524,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void tryToAddByBarcode(final ItemExModel item, final String barcode, BigDecimal price, BigDecimal quantity, final boolean fromScanner, Unit unit) {
         if (item == null) {
-            Logger.d("Scanner: tryToAddByBarcode - show no item dialog ");
             if (fromScanner)
                 disconnectScanner();
             playAlarm();
@@ -571,7 +566,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
 
         if (!item.isActiveStatus) {
-            Logger.d("Scanner: tryToAddByBarcode - show item not active dialog ");
             if (fromScanner)
                 disconnectScanner();
             playAlarm();
@@ -619,7 +613,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //        }
 
 
-        Logger.d("Scanner: tryToAddByBarcode - addItemDiscount item");
         tryToAddItem(item, price, quantity, unit);
     }
 
@@ -1133,7 +1126,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             }, Permission.SALES_RETURN);
             return;
         }
-        Logger.d("Lets show some history");
         if (!isSPMSRSet()) {
             MsrDataFragment msr = getMsr();
             if (msr != null) {
@@ -1629,7 +1621,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @Override
     public void onBarcodeReceived(String barcode) {
         if (barcodeListener != null) {
-            Logger.d("BaseCashierActivity: onBarcodeReceived(): barcode  = " + barcode);
             int i = 0;
             for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                 if (fragment instanceof BarcodeReceiver) {
@@ -1699,14 +1690,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private BarcodeListener defaultBarcodeListener = new BarcodeListener() {
         @Override
         public void onBarcodeReceived(String barcode) {
-            Logger.d("BaseCashierActivity: defaultBarcodeListener: onBarcodeReceived()");
             if (isPaying) {
-                Logger.d("BaseCashierActivity: defaultBarcodeListener: onBarcodeReceived(): ignore and exit - payment in progress");
                 playAlarm();
                 return;
             }
 
-            Logger.d("BaseCashierActivity: defaultBarcodeListener: onBarcodeReceived(): tryToSearchBarCode()");
             tryToSearchBarCode(barcode, true);
         }
     };
