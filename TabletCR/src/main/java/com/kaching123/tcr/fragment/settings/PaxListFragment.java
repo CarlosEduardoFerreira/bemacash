@@ -111,14 +111,14 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
         }
     }
 
-    @OptionsItem
-    protected void actionSearchSelected() {
-        if (list != null && list.getCount() > 0) {
-            Toast.makeText(getActivity(), "Only one active pinpad is available", Toast.LENGTH_LONG).show();
-        } else {
-            FindPAXFragment.show(getActivity(), getPaxTimeout());
-        }
-    }
+//    @OptionsItem
+//    protected void actionSearchSelected() {
+//        if (list != null && list.getCount() > 0) {
+//            Toast.makeText(getActivity(), "Only one active pinpad is available", Toast.LENGTH_LONG).show();
+//        } else {
+//            FindPAXFragment.show(getActivity(), getPaxTimeout());
+//        }
+//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

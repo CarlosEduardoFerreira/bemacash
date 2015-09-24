@@ -8,10 +8,10 @@
         android:title="@string/printers_action_add"
         android:orderInCategory="@integer/menu_order_default" />
 
-    <item
-        android:icon="@drawable/ic_action_action_search"
-        android:id="@+id/action_search"
-        android:showAsAction="always"
-        android:title="@string/printers_action_add"
-        android:orderInCategory="@integer/menu_order_default" />
+    <!--<item-->
+        <!--android:icon="@drawable/ic_action_action_search"-->
+        <!--android:id="@+id/action_search"-->
+        <!--android:showAsAction="always"-->
+        <!--android:title="@string/printers_action_add"-->
+        <!--android:orderInCategory="@integer/menu_order_default" />-->
 </menu>

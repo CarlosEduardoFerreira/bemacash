@@ -21,7 +21,7 @@ import java.io.IOException;
  */
 public final class PAXWebSerivce {
 
-    public static final String PAX_URL = "http://192.168.178.136:6911";
+    public static final String PAX_URL = "http://192.168.178.136:10009";
 
     private PAXWebSerivce(){}
 

@@ -140,7 +140,7 @@ public class PaxEditFragment extends KeyboardDialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (model == null) {
-            model = new PaxModel(null, "", 6911, "", null, null, false, null);
+            model = new PaxModel(null, "", 10009, "", null, null, false, null);
         }
         getDialog().getWindow().setLayout(
                 getResources().getDimensionPixelOffset(R.dimen.printer_edit_dialog_width),
