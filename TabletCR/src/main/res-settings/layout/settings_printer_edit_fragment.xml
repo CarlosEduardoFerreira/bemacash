@@ -8,7 +8,7 @@
         style="@style/StyledDialog.Content.EditText"
         android:layout_alignParentRight="true"
         android:id="@+id/port"
-        android:layout_width="86dp"
+        android:layout_width="95dp"
         android:layout_height="wrap_content"
         android:hint="@string/printer_config_port_hint"
         android:focusableInTouchMode="true"
