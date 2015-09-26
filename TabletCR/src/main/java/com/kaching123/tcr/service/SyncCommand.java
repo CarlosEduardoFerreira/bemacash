@@ -462,7 +462,7 @@ public class SyncCommand implements Runnable {
         }
         // download date from our amazon web server - end
         //go to the blackstone api to refresh cache
-        syncWireless(service);
+//        syncWireless(service);
         sendSyncSuccessful(api, employee);
 
         return count;
