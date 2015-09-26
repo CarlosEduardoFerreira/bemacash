@@ -1516,4 +1516,8 @@
     <style name="Prepaid.Head.Text.SmallText.LongDistance">
         <item name="android:textColor">@color/gray_dark</item>
     </style>
+
+    <style name="keyboard">
+        <item name="android:layout_height">65dp</item>
+    </style>
 </resources>

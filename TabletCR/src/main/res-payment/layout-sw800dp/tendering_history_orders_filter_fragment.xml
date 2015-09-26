@@ -183,13 +183,11 @@
         <Button
             style="@style/LocalizableButton.Blue"
             android:text="@string/button_search"
-            android:textSize="40sp"
+            android:textSize="28sp"
             android:id="@+id/filter"
-            android:layout_below="@+id/above_holder"
             android:layout_gravity="center"
-            android:layout_centerHorizontal="true"
             android:layout_width="fill_parent"
-            android:layout_height="70dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/filter_btn"/>
 
     </LinearLayout>
@@ -197,7 +195,7 @@
     <LinearLayout
         android:id="@+id/below_holder"
         android:layout_below="@id/filter_container"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:layout_alignParentLeft="true"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">
