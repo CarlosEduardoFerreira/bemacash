@@ -124,11 +124,12 @@
 
     <Button
         style="@style/LocalizableButton.Blue"
+        android:text="@string/button_search"
         android:textSize="28sp"
         android:id="@+id/filter"
         android:layout_below="@+id/above_holder"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_centerVertical="true"
         android:layout_height="wrap_content"
         android:background="@drawable/filter_btn"
