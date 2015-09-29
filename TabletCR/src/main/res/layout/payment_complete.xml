@@ -34,7 +34,7 @@
             android:id="@+id/print_box"
             android:text="@string/chkbx_print"
             style="@style/CheckBox.Dark"
-            android:checked="true"
+            android:checked="false"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_width="wrap_content" />

@@ -35,11 +35,6 @@
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="0.7"/>
-    <View
-        style="@style/ItemList.HeaderSpace"
-        android:layout_height="match_parent"
-        android:layout_width="0dp"
-        android:layout_weight="0.5"/>
 
     <View
         android:visibility="gone"
