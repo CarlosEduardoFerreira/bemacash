@@ -84,6 +84,7 @@
             android:name=".activity.HistoryActivity_"
             android:label="@string/history_activity_label"
             android:theme="@style/AppTheme.Holo.NoCapsTabText"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.CategoriesActivity_"
