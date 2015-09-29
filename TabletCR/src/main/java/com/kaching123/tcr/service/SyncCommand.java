@@ -280,7 +280,7 @@ public class SyncCommand implements Runnable {
 
     private int syncNowInner(final EmployeeModel employee) throws SyncException, DBVersionCheckException, SyncInconsistentException, SyncLockedException, SyncInterruptedException {
         if (getApp().isTrainingMode()) {
-            syncPAXMerchantInfo();
+//            syncPAXMerchantInfo();
             syncWireless(service);
             return 0;
         }
@@ -294,7 +294,7 @@ public class SyncCommand implements Runnable {
         }
 
         checkAutoSettlement(wasTipsEnabled, oldAutoSettlementTime);
-        syncPAXMerchantInfo();
+//        syncPAXMerchantInfo();
 
         //go to the blackstone api to refresh cache
         //syncWireless(service);
