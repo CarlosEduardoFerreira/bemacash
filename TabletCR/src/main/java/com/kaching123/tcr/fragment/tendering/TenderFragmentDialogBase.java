@@ -54,11 +54,11 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     @ViewById
     protected Button btnPaxDebit;
 
-    @ViewById
-    protected Button btnPaxEbtFoodstamp;
-
-    @ViewById
-    protected Button btnPaxEbtCash;
+//    @ViewById
+//    protected Button btnPaxEbtFoodstamp;
+//
+//    @ViewById
+//    protected Button btnPaxEbtCash;
 
     @ViewById
     protected Button btnOfflineCredit;

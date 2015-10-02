@@ -9,10 +9,10 @@
         android:showAsAction="always"
         android:orderInCategory="@integer/menu_order_default"/>
 
-    <item
-        android:id="@+id/action_settlement"
-        android:title="@string/history_action_settlement"
-        android:showAsAction="never"
-        android:orderInCategory="@integer/menu_order_default"/>
+    <!--<item-->
+        <!--android:id="@+id/action_settlement"-->
+        <!--android:title="@string/history_action_settlement"-->
+        <!--android:showAsAction="never"-->
+        <!--android:orderInCategory="@integer/menu_order_default"/>-->
 
 </menu>

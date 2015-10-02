@@ -232,7 +232,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             if (TransactionsState.OPEN.equals(transactionsState)) {
                 loader.where(SaleOrderTipsQuery.HAS_OPENED_TRANSACTIONS + " = 1 ");
             } else if (TransactionsState.CLOSED.equals(transactionsState)) {
-                loader.where(SaleOrderTipsQuery.HAS_PREAUTH_TRANSACTIONS + " = 1 and " + SaleOrderTipsQuery.HAS_OPENED_TRANSACTIONS + " = 0");
+                loader.where(SaleOrderTipsQuery.HAS_OPENED_TRANSACTIONS + " = 0");
             }
         }
 

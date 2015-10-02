@@ -135,18 +135,18 @@ public class HistoryOrderFragment extends DateRangeFragment implements IKeyboard
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        MenuItem actionSettlement = menu.findItem(R.id.action_settlement);
+//        MenuItem actionSettlement = menu.findItem(R.id.action_settlement);
         unitAction = menu.findItem(R.id.action_unit);
 
-        actionSettlement.setVisible(getApp().isTipsEnabled());
+//        actionSettlement.setVisible(getApp().isTipsEnabled());
         unitAction.setVisible(isShown && getApp().getShopPref().acceptSerializableItems().get());
     }
 
-    @OptionsItem
-    protected void actionSettlementSelected() {
-        if (settlementListener != null)
-            settlementListener.onSettlementRequested();
-    }
+//    @OptionsItem
+//    protected void actionSettlementSelected() {
+//        if (settlementListener != null)
+//            settlementListener.onSettlementRequested();
+//    }
 
     @OptionsItem
     protected void actionUnitSelected() {

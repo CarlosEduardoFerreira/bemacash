@@ -137,9 +137,9 @@ public class RefundTenderFragmentDialog extends TenderFragmentDialogBase<RefundT
         if (displayDebitBtn || displayEbtBtn) {
             btnCard.setVisibility(View.GONE);
             btnPaxDebit.setEnabled(displayDebitBtn);
-            btnPaxEbtFoodstamp.setEnabled(displayEbtBtn);
+//            btnPaxEbtFoodstamp.setEnabled(displayEbtBtn);
             btnPaxDebit.setVisibility(displayDebitBtn ? View.VISIBLE : View.GONE);
-            btnPaxEbtFoodstamp.setVisibility(displayEbtBtn ? View.VISIBLE : View.GONE);
+//            btnPaxEbtFoodstamp.setVisibility(displayEbtBtn ? View.VISIBLE : View.GONE);
         } else {
             btnCard.setEnabled(displayCCBtn);
         }
