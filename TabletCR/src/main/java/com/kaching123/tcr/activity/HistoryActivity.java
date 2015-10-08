@@ -202,7 +202,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     @Override
     public void onCloseClick(ArrayList<PaymentTransactionModel> preauthTransactions, boolean isOrderTipped) {
-        if (TcrApplication.get().isBlackstonePax() && getApp().isPaxConfigured() && !getApp().isPaxTipsEnabled()) {
+        if (getApp().isPaxConfigured()) {
             AlertDialogFragment.showAlert(HistoryActivity.this, R.string.error_dialog_title, getString(R.string.blackstone_pax_failure_reason_tips_disabled));
             return;
         }
