@@ -30,6 +30,7 @@ import com.telly.groundy.annotations.Param;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseBigDecimal;
 import org.supercsv.cellprocessor.ParseBool;
+import org.supercsv.cellprocessor.ParseDate;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.ICsvListReader;
@@ -524,6 +525,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                     new Optional(new ParseBigDecimal()),//qty on hand
                     new Optional(new ParseBigDecimal()),//order trigger
                     new Optional(new ParseBigDecimal()),//recommended order
+                    new Optional(new ParseDate("MM-dd-yyyy")),//last sold Data
             };
         } else {
             return new CellProcessor[]{
