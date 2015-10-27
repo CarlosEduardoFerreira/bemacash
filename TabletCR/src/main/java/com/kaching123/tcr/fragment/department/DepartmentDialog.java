@@ -1,7 +1,13 @@
 package com.kaching123.tcr.fragment.department;
 
+import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.WindowManager;
@@ -9,30 +15,44 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
+import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.inventory.CheckDepartCommand;
 import com.kaching123.tcr.commands.store.inventory.AddDepartmentCommand;
 import com.kaching123.tcr.commands.store.inventory.EditDepartmentCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.DepartmentModel;
+import com.kaching123.tcr.model.converter.ListConverterFunction;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+
+import java.util.List;
 
 /**
  * Created by vkompaniets on 17.12.13.
  */
-@EFragment (R.layout.department_dialog_fragment)
+@EFragment(R.layout.department_dialog_fragment)
 public class DepartmentDialog extends StyledDialogFragment {
 
     public static final String DIALOG_NAME = "department_dialog";
+
 
     @FragmentArg
     protected DepartmentModel model;
 
     @ViewById
     protected EditText title;
+
+    protected String strTitle;
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -42,14 +62,14 @@ public class DepartmentDialog extends StyledDialogFragment {
         params.width = getResources().getDimensionPixelOffset(R.dimen.department_dialog_width);
         params.height = getResources().getDimensionPixelOffset(R.dimen.department_dialog_height);
 
-        if (model != null){
+        if (model != null) {
             title.setText(model.title);
         }
 
         title.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if(EditorInfo.IME_ACTION_DONE == i){
+                if (EditorInfo.IME_ACTION_DONE == i) {
                     if (doClick()) {
                         dismiss();
                     }
@@ -91,17 +111,40 @@ public class DepartmentDialog extends StyledDialogFragment {
     }
 
     private boolean doClick() {
-        if (fieldsValide()){
-            String title = this.title.getText().toString().trim();
-            if (model != null){
-                model.title = title;
+        if (fieldsValide()) {
+            strTitle = this.title.getText().toString().trim();
+            final Context context = getActivity();
+            if (model != null) {
+                model.title = strTitle;
                 EditDepartmentCommand.start(getActivity(), model);
-            }else{
-                AddDepartmentCommand.start(getActivity(), title);
+            } else {
+                CheckDepartCommand.create(context, strTitle, new CheckDepartCommand.CheckDepartCommandListener() {
+                    @Override
+                    protected void handleSuccess() {
+                        AddDepartmentCommand.start(context, strTitle);
+                    }
+
+                    @Override
+                    protected void handleFailure() {
+                        Toast.makeText(context, "Cannot crate the duplicated Department", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
             return true;
         }
         return false;
+    }
+
+
+    private static class DepartmentConverter extends ListConverterFunction<DepartmentModel> {
+        @Override
+        public DepartmentModel apply(Cursor c) {
+            super.apply(c);
+            return new DepartmentModel(
+                    c.getString(indexHolder.get(ShopStore.DepartmentTable.GUID)),
+                    c.getString(indexHolder.get(ShopStore.DepartmentTable.TITLE))
+            );
+        }
     }
 
     private boolean fieldsValide() {
@@ -111,7 +154,7 @@ public class DepartmentDialog extends StyledDialogFragment {
         return true;
     }
 
-    public static void show (FragmentActivity activity, DepartmentModel model){
+    public static void show(FragmentActivity activity, DepartmentModel model) {
         DialogUtil.show(activity, DIALOG_NAME, DepartmentDialog_.builder().model(model).build());
     }
 
