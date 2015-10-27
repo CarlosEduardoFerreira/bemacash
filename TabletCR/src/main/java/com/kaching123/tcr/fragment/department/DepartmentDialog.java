@@ -1,13 +1,9 @@
 package com.kaching123.tcr.fragment.department;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.WindowManager;
@@ -17,24 +13,19 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.inventory.CheckDepartCommand;
+import com.kaching123.tcr.commands.CheckDepartCommand;
 import com.kaching123.tcr.commands.store.inventory.AddDepartmentCommand;
 import com.kaching123.tcr.commands.store.inventory.EditDepartmentCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.DepartmentModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
-import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-
-import java.util.List;
 
 /**
  * Created by vkompaniets on 17.12.13.
