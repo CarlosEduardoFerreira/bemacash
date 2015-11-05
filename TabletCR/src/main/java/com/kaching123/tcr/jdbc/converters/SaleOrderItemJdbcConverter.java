@@ -2,6 +2,7 @@ package com.kaching123.tcr.jdbc.converters;
 
 import android.content.ContentValues;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
@@ -118,7 +119,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(ORDER_ID, model.orderGuid)
                 .add(ITEM_ID, model.itemGuid)
                 .add(QUANTITY, model.qty, ContentValuesUtil.QUANTITY_SCALE)
-                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty, ContentValuesUtil.QUANTITY_SCALE)
+                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty == null ? BigDecimal.ZERO:model.kitchenPrintedQty, ContentValuesUtil.QUANTITY_SCALE)
                 .add(PRICE, model.price)
                 .add(PRICE_TYPE, model.priceType)
                 .add(DISCOUNTABLE, model.discountable)
@@ -218,7 +219,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
 
     public SingleSqlCommand updateKitchenPrintedQty(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
         return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
-                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty)
+                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty, ContentValuesUtil.QUANTITY_SCALE)
                 .where(SALE_ITEM_ID, model.saleItemGuid)
                 .build(JdbcFactory.getApiMethod(model));
     }

@@ -2,6 +2,7 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 
 import java.io.Serializable;
@@ -75,6 +76,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.finalDiscount = finalDiscount;
         this.notes = notes;
         this.hasNotes = hasNotes;
+        this.kitchenPrintedQty = kitchenPrintedQty;
     }
 
     public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description, BigDecimal qty, BigDecimal kitchenPrintedQty, PriceType priceType, BigDecimal price, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax, long sequence, String parentGuid,
@@ -104,6 +106,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.finalDiscount = finalDiscount;
         this.notes = notes;
         this.hasNotes = hasNotes;
+        this.kitchenPrintedQty = kitchenPrintedQty;
     }
 
     public SaleOrderItemModel setUnitItemGuid( ArrayList<Unit>  tmpUnit) {
@@ -129,6 +132,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
 
         values.put(SaleItemTable.DISCOUNTABLE, discountable);
         values.put(SaleItemTable.DISCOUNT, _decimal(discount));
+        values.put(SaleItemTable.KITCHEN_PRINTED_QTY, _decimalQty(kitchenPrintedQty));
         _putDiscount(values, SaleItemTable.DISCOUNT_TYPE, discountType);
         values.put(SaleItemTable.TAXABLE, isTaxable);
         values.put(SaleItemTable.TAX, _decimal(tax));
