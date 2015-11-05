@@ -117,8 +117,11 @@ public class HoldFragmentDialog extends StyledDialogFragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(EditorInfo.IME_ACTION_DONE == actionId){
+                    if (printBox.isChecked()) {
+                        printItemsToKitchen(null, false, false, false);
+                        return false;
+                    }
                     onPositiveHandler();
-                    dismiss();
                     return true;
                 }
                 return false;
