@@ -31,6 +31,7 @@ import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
@@ -124,6 +125,11 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         if (kitchenPrintStatus != KitchenPrintStatus.PRINTED) {
             printItemsToKitchen(null, false, false, false);
         }
+    }
+
+    @AfterViews
+    protected void initViews() {
+        printBox.setChecked(true);
     }
 
     @Override
