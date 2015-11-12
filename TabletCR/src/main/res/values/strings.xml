@@ -247,6 +247,8 @@
     <string name="dlg_process_refund_title">Refund</string>
     <string name="dlg_process_software_update_title">Software Update</string>
     <string name="dlg_void_title">Void order</string>
+    <string name="dlg_return_title">Return order</string>
+    <string name="dlg_return_msg">Are you sure you want to return $ %1$s on order %2$s?</string>
     <string name="dlg_void_fail_title">Void Fail</string>
     <string name="dlg_void_msg">Are you sure you want to void order?</string>
     <string name="dlg_void_forbidden_msg">This order had been Kichen-Printed, cannot be avoided. Need to ask Manager for Permission</string>

@@ -23,11 +23,13 @@ import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
+import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
+import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment.RefundAmount;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
@@ -286,12 +288,22 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
     protected void btnReturnClicked() {
         assert listener != null;
 
-        if (!getApp().isOperatorClockedIn() && getApp().getShopInfo().clockinRequired4Sales){
-            try2ClockIn();
-            return;
-        }
+        AlertDialogFragment.showConfirmationNoImage(getActivity(),
+                R.string.dlg_return_title,
+                String.format(getString(R.string.dlg_return_msg), refundAmount.getText().toString(), num.getText().toString()),
+                new StyledDialogFragment.OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        if (!getApp().isOperatorClockedIn() && getApp().getShopInfo().clockinRequired4Sales){
+                            try2ClockIn();
+                            return false;
+                        }
 
-        listener.onReturnClick();
+                        listener.onReturnClick();
+                        return true;
+                    }
+                }
+        );
     }
 
     @Click
