@@ -501,7 +501,7 @@ public final class SaleReportsProcessor {
                         context.getString(R.string.report_reorder_inventory_header_item),
                         context.getString(R.string.report_reorder_inventory_header_qty),
                         context.getString(R.string.report_reorder_inventory_header_rec_qty_short),
-                        context.getString(R.string.report_reorder_inventory_header_to_order_qty_short)
+                        context.getString(R.string.report_reorder_inventory_header_to_order_qty)
                 );
             }
 
