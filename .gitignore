@@ -29,3 +29,4 @@ build
 *.bin
 local.properties
 *.lock
+*.patch
