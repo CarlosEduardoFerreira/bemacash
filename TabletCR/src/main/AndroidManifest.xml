@@ -34,7 +34,20 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
+        <activity
+            android:name=".activity.UsbEventReceiverActivity"
+            android:theme="@style/Theme.Transparent"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.example.taskAffinityUsbEventReceiver"
+            android:process=":UsbEventReceiverActivityProcess"
+            android:exported="false"
+            >
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/usb_device_filter" />
+        </activity>
         <activity
             android:name=".activity.DashboardActivity_"
             android:label="@string/dashboard_activity_label"
