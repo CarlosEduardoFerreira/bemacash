@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ResourceCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,6 +36,10 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.util.Validator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static com.kaching123.tcr.R.layout.spinner_item_dark;
 import static com.kaching123.tcr.util.Util.toInt;
 
 /**
@@ -58,8 +63,11 @@ public class PrinterEditFragment extends KeyboardDialogFragment implements Loade
     protected CustomEditBox ipText;
     @ViewById(R.id.port)
     protected CustomEditBox portText;
+    @ViewById(R.id.printer_type)
+    protected Spinner printerType;
 
     private AliasAdapter aliasAdapter;
+    private ArrayAdapter<String> typeAdapter;
 
     private MatrixCursor defCursor = new MatrixCursor(new String[]{"_id", PrinterAliasTable.GUID, PrinterAliasTable.ALIAS});
 
@@ -101,6 +109,7 @@ public class PrinterEditFragment extends KeyboardDialogFragment implements Loade
         model.ip = ip;
         model.port = port;
         model.aliasGuid = aliasGuid;
+        model.printerType = (String) printerType.getSelectedItem();
         EditPrinterCommand.start(getActivity(), model);
         hide(getActivity());
         return true;
@@ -134,7 +143,7 @@ public class PrinterEditFragment extends KeyboardDialogFragment implements Loade
         super.onActivityCreated(savedInstanceState);
 
         if (model == null) {
-            model = new PrinterModel(null, "", 9100, "", null, null, false, null);
+            model = new PrinterModel(null, "", 9100, "", null, null, false, null, null);
         }
         getDialog().getWindow().setLayout(
                 getResources().getDimensionPixelOffset(R.dimen.printer_edit_dialog_width),
@@ -166,6 +175,10 @@ public class PrinterEditFragment extends KeyboardDialogFragment implements Loade
 
         aliasAdapter = new AliasAdapter(getActivity());
         alias.setAdapter(aliasAdapter);
+
+        typeAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_dark, Arrays.asList(getResources().getStringArray(R.array.printer_types)));
+        typeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        printerType.setAdapter(typeAdapter);
 
         ipText.setText(model.ip);
         portText.setText(String.valueOf(model.port));
@@ -225,7 +238,7 @@ public class PrinterEditFragment extends KeyboardDialogFragment implements Loade
     private class AliasAdapter extends ResourceCursorAdapter {
 
         public AliasAdapter(Context context) {
-            super(context, R.layout.spinner_item_dark, null, false);
+            super(context, spinner_item_dark, null, false);
             setDropDownViewResource(R.layout.spinner_dropdown_item);
         }
 

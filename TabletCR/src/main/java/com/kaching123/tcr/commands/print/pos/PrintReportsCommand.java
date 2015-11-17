@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.commands.print.SaleReportsProcessor;
+import com.kaching123.tcr.print.printer.PosReportsMatrixPrinter;
 import com.kaching123.tcr.print.printer.PosReportsPrinter;
 import com.kaching123.tcr.print.processor.PrintReportsProcessor;
 import com.telly.groundy.annotations.OnFailure;
@@ -25,7 +26,7 @@ public class PrintReportsCommand extends BasePrintCommand<PosReportsPrinter> {
 
     @Override
     protected PosReportsPrinter createTextPrinter() {
-        return new PosReportsPrinter();
+        return getPrinter().printerType.equalsIgnoreCase("Terminal") ? new PosReportsPrinter():new PosReportsMatrixPrinter();
     }
 
     @Override

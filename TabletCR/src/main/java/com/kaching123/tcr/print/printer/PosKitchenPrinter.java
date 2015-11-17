@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 /**
  * Created by vkompaniets on 14.02.14.
  */
-public class PosKitchenPrinter extends BasePosTextPrinter implements IKitchenPrinter {
+public class PosKitchenPrinter extends PosOrderTextPrinter implements IKitchenPrinter {
     public static final int PRINTER_KITCHEN_MAX_TEXT_LEN = 39;
 
     public PosKitchenPrinter() {
@@ -30,6 +30,11 @@ public class PosKitchenPrinter extends BasePosTextPrinter implements IKitchenPri
         tabbed(operatorLabel, operatorName);
         if (orderTitle != null)
             tabbed(orderHolder, orderTitle);
+    }
+
+    @Override
+    public void header(String message) {
+        boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, message)));
     }
 
     @Override

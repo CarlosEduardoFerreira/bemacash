@@ -90,6 +90,7 @@ public class TestPrinterFragment extends StyledDialogFragment {
                                 info.subNet,
                                 info.gateway,
                                 info.dhcp,
+                                null,
                                 null);
 //                        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
                         ConfigurePrinterCommand.start(

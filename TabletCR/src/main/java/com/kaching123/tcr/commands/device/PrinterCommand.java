@@ -58,7 +58,8 @@ public abstract class PrinterCommand extends PublicGroundyTask {
                         PrinterTable.MAC,
                         PrinterTable.SUBNET,
                         PrinterTable.GATEWAY,
-                        PrinterTable.DHCP
+                        PrinterTable.DHCP,
+                        PrinterTable.PRINTER_TYPE
                 )
                 .where(PrinterTable.ALIAS_GUID + " IS NULL")
                 .perform(getContext());
@@ -70,7 +71,8 @@ public abstract class PrinterCommand extends PublicGroundyTask {
                     c.getString(2),
                     c.getString(3),
                     c.getString(4),
-                    c.getInt(5) == 1
+                    c.getInt(5) == 1,
+                    c.getString(6)
             );
         }
         c.close();
@@ -178,7 +180,7 @@ public abstract class PrinterCommand extends PublicGroundyTask {
             new ConfigurePaperSensorAction().execute(printer);
               
             if (printer.supportExtendedStatus()) {
-          if (!isKitchenPrinter())
+          if (getPrinter().printerType.equalsIgnoreCase("Terminal"))
                 status = new GetPrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer);
             else {
                 PrinterStatusEx.PrinterStatusInfo printerStatus = new GetMP200PrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer).printerStatus;
@@ -214,10 +216,6 @@ public abstract class PrinterCommand extends PublicGroundyTask {
         }
 
         return validateStateExtResult;
-    }
-
-    protected boolean isKitchenPrinter() {
-        return false;
     }
 
     private void internalConfigure(PosPrinter printer) throws IOException {

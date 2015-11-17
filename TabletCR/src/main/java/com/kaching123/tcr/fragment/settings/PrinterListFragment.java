@@ -169,7 +169,8 @@ public class PrinterListFragment extends Fragment implements LoaderCallbacks<Cur
                     c.getString(5),
                     c.getString(6),
                     c.getInt(7) == 1,
-                    c.getString(8));
+                    c.getString(8),
+                    c.getString(9));
         }
 
         @Override

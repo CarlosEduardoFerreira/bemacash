@@ -6,6 +6,7 @@ import com.kaching123.pos.util.IXReportPrinter;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.model.XReportInfo;
 import com.kaching123.tcr.print.builder.DigitalXReportBuilder;
+import com.kaching123.tcr.print.printer.PosXReportTextMatrixPrinter;
 import com.kaching123.tcr.print.printer.PosXReportTextPrinter;
 import com.kaching123.tcr.print.processor.PrintXReportProcessor;
 import com.kaching123.tcr.reports.XReportQuery;
@@ -22,7 +23,7 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
 
     @Override
     protected IXReportPrinter createTextPrinter() {
-        return new PosXReportTextPrinter();
+        return getPrinter().printerType.equalsIgnoreCase("Terminal") ? new PosXReportTextPrinter(): new PosXReportTextMatrixPrinter();
     }
 
     @Override

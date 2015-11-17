@@ -41,7 +41,8 @@ public class AddPrintersCommand extends PublicGroundyTask {
                     p.subNet,
                     p.gateway,
                     p.dhcp,
-                    null);
+                    null,
+                    p.printerType);
             models.add(model);
 
             values[i] = model.toValues();

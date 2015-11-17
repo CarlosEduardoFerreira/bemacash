@@ -18,6 +18,21 @@ public class PrinterInfo implements Parcelable {
     public final boolean dhcp;
 
     public final String fullAddress;
+    public final String printerType;
+
+    public PrinterInfo(String ip, int port, String macAddress, String subNet, String gateway, boolean dhcp, String printerType) {
+        this.ip = ip;
+        this.port = port;
+        this.macAddress = macAddress;
+        this.subNet = subNet;
+        this.gateway = gateway;
+        this.dhcp = dhcp;
+        if ( ip.compareTo(USBPrinter.USB_DESC)==0)
+            this.fullAddress = USBPrinter.USB_DESC + " (" + USBPrinter.USB_MODELS + ")";
+        else
+            this.fullAddress = ip + ":" + port;
+        this.printerType = printerType;
+    }
 
     public PrinterInfo(String ip, int port, String macAddress, String subNet, String gateway, boolean dhcp) {
         this.ip = ip;
@@ -30,6 +45,7 @@ public class PrinterInfo implements Parcelable {
             this.fullAddress = USBPrinter.USB_DESC + " (" + USBPrinter.USB_MODELS + ")";
         else
             this.fullAddress = ip + ":" + port;
+        this.printerType = "Terminal";
     }
 
     @Override
@@ -45,6 +61,7 @@ public class PrinterInfo implements Parcelable {
         dest.writeString(subNet);
         dest.writeString(gateway);
         dest.writeInt(dhcp ? 1 : 0);
+        dest.writeString(printerType);
     }
 
     public static Creator<PrinterInfo> CREATOR = new Creator<PrinterInfo>() {
@@ -57,7 +74,8 @@ public class PrinterInfo implements Parcelable {
                     source.readString(),
                     source.readString(),
                     source.readString(),
-                    source.readInt() == 1
+                    source.readInt() == 1,
+                    source.readString()
             );
         }
 

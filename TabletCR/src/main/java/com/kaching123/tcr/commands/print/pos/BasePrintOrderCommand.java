@@ -1,5 +1,6 @@
 package com.kaching123.tcr.commands.print.pos;
 
+import com.kaching123.tcr.print.printer.PosKitchenPrinter;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
 
 /**
@@ -9,6 +10,6 @@ public abstract class BasePrintOrderCommand extends BasePrintCommand<PosOrderTex
 
     @Override
     protected PosOrderTextPrinter createTextPrinter() {
-        return new PosOrderTextPrinter();
+        return getPrinter().printerType.equalsIgnoreCase("Terminal") ? new PosOrderTextPrinter(): new PosKitchenPrinter();
     }
 }

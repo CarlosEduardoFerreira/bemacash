@@ -48,6 +48,7 @@
     <string name="prepaid_dialog_conditions_title">Choose conditions</string>
     <string name="prepaid_dialog_number_title">Enter phone number</string>
     <string name="prepaid_dialog_progress_title">Billing in progress</string>
+    <string name="prepaid_dialog_payment_progress_title">Payment In progress</string>
     <string name="prepaid_dialog_notification_title">Successfully completed</string>
     <string name="prepaid_dialog_or">- or -</string>
     <string name="prepaid_dialog_phone" formatted="false">You chose %s. Please enter the phone number below:</string>
@@ -314,7 +315,7 @@
     <string name="blackstone_pay_failure_body_2nd">The server has replied: </string>
     <string name="blackstone_pay_failure_body_constructor" formatted="false">%s %s %s</string>
     <string name="blackstone_pay_failure_body_3nd">There was a non-banking related issue: </string>
-    <string name="blackstone_pay_progress_body">Verification...</string>
+    <string name="blackstone_pay_progress_body">Generating payment...</string>
     <string name="blackstone_pay_total">Total:</string>
     <string name="blackstone_pay_pending_amount">Pending amount:</string>
     <string name="blackstone_pay_charge">Change:</string>
@@ -519,8 +520,9 @@
     <string name="print_order_power_by_backstone">Blackstone</string>
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
+    <string name="scan_dialog_title">Please scan a barcode...</string>
     <string name="apk_update_dialog_title">Would you like to update to version %d now?</string>
-    <string name="confirm_display_title">Have you see the message showing on Display now?</string>
+    <string name="confirm_display_title">Do you see the message on the display?</string>
     <string name="confirm_scale_title">The number on the scale is : %s, is it correct?</string>
     <string name="confirm_scanner_title">The barcode you scanned is : %s, is it correct?</string>
     <string name="pax_connect_wait_dialog_title">Connecting Pax...</string>
@@ -966,6 +968,11 @@
         <item>Blocked</item>
     </string-array>
 
+    <string-array name="printer_types">
+        <item>Terminal</item>
+        <item>Matrix</item>
+    </string-array>
+
     <string name="report_details_menu_email">Send by email</string>
     <string name="report_details_menu_print">Print</string>
     <string name="report_details_menu_export">Export</string>
@@ -1209,7 +1216,7 @@
     <string name="find_msr_empty">Can\'t find MSR. Please check your settings!</string>
     <string name="find_scale_title">Please choose Scale</string>
     <string name="find_scale_progress">Scale searching...</string>
-    <string name="find_scale_empty">Can\'t find Scale. Please check your settings!</string>
+    <string name="find_scale_empty">Can\'t find Scale. Please check your settings! Please make sure your scale is in type-4!</string>
     <string name="scanner_delete_warning_dialog_title">Delete Scanner</string>
     <string name="scanner_delete_warning_dialog_message">Are you sure you want to delete scanner?</string>
     <string name="usb_msr_delete_warning_dialog_title">Delete USB MSR</string>
@@ -1217,7 +1224,7 @@
     <string name="scale_delete_warning_dialog_title">Delete Scale</string>
     <string name="scale_delete_warning_dialog_message">Are you sure you want to delete scale?</string>
     <string name="tendering_choose_customer_dialog_title">Choose customer</string>
-    <string name="printer_edit_alias_dialog_title">Printer Alias</string>
+    <string name="printer_edit_alias_dialog_title">Printer Alias and Type</string>
     <string name="report_printing_confirmation_dlg_title">Printing</string>
     <string name="report_printing_confirmation_dlg_msg">Are you sure you want to print report?</string>
     <string name="check_drawer_state_wait_dialog_message">Checking drawer state...</string>

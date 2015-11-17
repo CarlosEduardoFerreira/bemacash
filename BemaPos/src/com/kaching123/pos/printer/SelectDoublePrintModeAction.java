@@ -15,7 +15,7 @@ import com.kaching123.pos.Action;
 public class SelectDoublePrintModeAction extends Action {
 
     private static final byte[] COMMAND_ON = new byte[]{ESC, 0x21, 0x20};
-    private static final byte[] COMMAND_OFF = new byte[]{ESC, 0x21, 0x00};
+    private static final byte[] COMMAND_OFF = new byte[]{ESC, 0x21, 0x01};
 
     private boolean on;
 

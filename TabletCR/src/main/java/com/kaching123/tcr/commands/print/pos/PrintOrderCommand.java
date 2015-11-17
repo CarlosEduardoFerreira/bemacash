@@ -2,10 +2,14 @@ package com.kaching123.tcr.commands.print.pos;
 
 import android.content.Context;
 
+import com.kaching123.pos.PosPrinter;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
+import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
+import com.telly.groundy.TaskResult;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -21,6 +25,11 @@ public class PrintOrderCommand extends BasePrintOrderCommand {
     protected static final String ARG_ORDER_TOTALAMOUNT = "ARG_ORDER_TOTALAMOUNT";
     protected static final String ARG_ORDER_TRANSACTIONS = "ARG_ORDER_TRANSACTIONS";
 
+    @Override
+    protected TaskResult execute(PosPrinter printer) throws IOException {
+
+        return super.execute(printer);
+    }
 
     @Override
     protected void printBody(PosOrderTextPrinter printerWrapper) {

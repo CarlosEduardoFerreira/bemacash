@@ -1475,6 +1475,9 @@ public abstract class ShopStore {
         String ALIAS_GUID = "alias_guid";
 
         @Column(type = Type.TEXT)
+        String PRINTER_TYPE = "printer_type";
+
+        @Column(type = Type.TEXT)
         String MAC = "mac";
 
         @Column(type = Type.TEXT)

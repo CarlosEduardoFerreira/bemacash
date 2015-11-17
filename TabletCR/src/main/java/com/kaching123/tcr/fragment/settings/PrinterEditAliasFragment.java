@@ -12,6 +12,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ResourceCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,6 +28,8 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.PrinterModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
+
+import java.util.Arrays;
 
 /**
  * Created by gdubina on 11.02.14.
@@ -46,7 +49,11 @@ public class PrinterEditAliasFragment extends StyledDialogFragment implements Lo
     @ViewById(R.id.alias)
     protected Spinner alias;
 
+    @ViewById(R.id.printer_type)
+    protected Spinner printerType;
+
     private AliasAdapter aliasAdapter;
+    private ArrayAdapter<String> typeAdapter;
 
     private MatrixCursor defCursor = new MatrixCursor(new String[]{"_id", PrinterAliasTable.GUID, PrinterAliasTable.ALIAS});
 
@@ -84,6 +91,7 @@ public class PrinterEditAliasFragment extends StyledDialogFragment implements Lo
         String aliasGuid = aliasAdapter.getGuid(alias.getSelectedItemPosition());
 
         model.aliasGuid = aliasGuid;
+        model.printerType = (String) printerType.getItemAtPosition(printerType.getSelectedItemPosition());
         EditPrinterCommand.start(getActivity(), model);
         return true;
     }
@@ -92,7 +100,7 @@ public class PrinterEditAliasFragment extends StyledDialogFragment implements Lo
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (model == null) {
-            model = new PrinterModel(null, "", 9100, "", null, null, false, null);
+            model = new PrinterModel(null, "", 9100, "", null, null, false, null,null);
         }
         getDialog().getWindow().setLayout(
                 getResources().getDimensionPixelOffset(R.dimen.printer_edit_dialog_width),
@@ -102,6 +110,11 @@ public class PrinterEditAliasFragment extends StyledDialogFragment implements Lo
 
         aliasAdapter = new AliasAdapter(getActivity());
         alias.setAdapter(aliasAdapter);
+
+        typeAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_dark, Arrays.asList(getResources().getStringArray(R.array.printer_types)));
+        typeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        printerType.setAdapter(typeAdapter);
+
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -126,6 +139,13 @@ public class PrinterEditAliasFragment extends StyledDialogFragment implements Lo
         }
         aliasAdapter.changeCursor(new MergeCursor(new Cursor[]{defCursor, c}));
         alias.setSelection(selected);
+        String[] types = getResources().getStringArray(R.array.printer_types);
+        for(int i = 0; i < types.length; i++){
+            if(types[i].equals(model.printerType)){
+                printerType.setSelection(i);
+                break;
+            }
+        }
     }
 
     @Override

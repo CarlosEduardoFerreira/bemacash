@@ -165,7 +165,8 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                         PrinterTable.MAC,
                         PrinterTable.SUBNET,
                         PrinterTable.GATEWAY,
-                        PrinterTable.DHCP
+                        PrinterTable.DHCP,
+                        PrinterTable.PRINTER_TYPE
                 )
                 .whereIn(PrinterTable.ALIAS_GUID, aliases)
                 .perform(getContext());
@@ -182,7 +183,8 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                     c.getString(3),
                     c.getString(4),
                     c.getString(5),
-                    c.getInt(6) == 1));
+                    c.getInt(6) == 1,
+                    c.getString(7)));
         }
         c.close();
         return result;
@@ -278,11 +280,6 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
 
         protected PrinterInfo getPrinter() {
             return printer;
-        }
-
-        @Override
-        protected boolean isKitchenPrinter() {
-            return aliasGuid != null;
         }
 
         @Override

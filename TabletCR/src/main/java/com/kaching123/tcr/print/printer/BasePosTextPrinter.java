@@ -46,7 +46,7 @@ public class BasePosTextPrinter implements IPrinter {
 
     public static final int PRINTER_MAX_TEXT_LEN = 41;
 
-    protected static final int PRINTER_MAX_PRICE_LEN = 8;
+    protected static final int PRINTER_MAX_PRICE_LEN = 11;
     protected static final int PRINTER_MAX_QTY_LEN = 6;
     protected static final int PRINTER_FOUR_QTY_LEN = 4;
     protected static final int PRINTER_MAX_DATE_LEN = 22;
