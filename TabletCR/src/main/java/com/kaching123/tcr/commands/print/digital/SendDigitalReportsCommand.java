@@ -23,7 +23,7 @@ public class SendDigitalReportsCommand extends BaseSendEmailCommand {
     private static final String ARG_REGISTER_GUID = "ARG_REGISTER_GUID";
     private static final String ARG_REPORT_TYPE = "ARG_REPORT_TYPE";
     private static final String ARG_EMPLOYEE_GUID = "ARG_EMPLOYEE_GUID";
-    private static final String ARG_CASH_DRAWER_TYPE = "ARG_EMPLOYEE_GUID";
+    private static final String ARG_CASH_DRAWER_TYPE = "ARG_CASH_DRAWER_TYPE";
     private static final String ARG_EMPLOYEE_NAME = "ARG_EMPLOYEE_NAME";
 
     @Override
