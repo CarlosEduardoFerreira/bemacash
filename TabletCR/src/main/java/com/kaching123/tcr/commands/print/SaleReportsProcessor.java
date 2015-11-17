@@ -138,6 +138,7 @@ public final class SaleReportsProcessor {
                 printer.add((PosReportsPrinter.superShortDateFormat.format(new Date(Long.parseLong(item.date)))).toString(), item.amount);
                 if (item.comment != null)
                     printer.addComments(context.getString(R.string.comment), item.comment);
+                printer.endBody();
                 printer.emptyLine();
                 return null;
             }
