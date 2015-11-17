@@ -115,6 +115,14 @@ public class PrinterEditAliasFragment extends StyledDialogFragment implements Lo
         typeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         printerType.setAdapter(typeAdapter);
 
+        String[] types = getResources().getStringArray(R.array.printer_types);
+        for(int i = 0; i < types.length; i++){
+            if(types[i].equalsIgnoreCase(model.printerType)){
+                printerType.setSelection(i);
+                break;
+            }
+        }
+
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -139,9 +147,10 @@ public class PrinterEditAliasFragment extends StyledDialogFragment implements Lo
         }
         aliasAdapter.changeCursor(new MergeCursor(new Cursor[]{defCursor, c}));
         alias.setSelection(selected);
+
         String[] types = getResources().getStringArray(R.array.printer_types);
         for(int i = 0; i < types.length; i++){
-            if(types[i].equals(model.printerType)){
+            if(types[i].equalsIgnoreCase(model.printerType)){
                 printerType.setSelection(i);
                 break;
             }

@@ -34,6 +34,7 @@ import com.kaching123.tcr.model.PrinterModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.PrinterView2.AliasTable;
 import com.kaching123.tcr.store.ShopSchema2.PrinterView2.PrinterTable;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PrinterView;
 import com.mobeta.android.dslv.DragSortListView;
 
@@ -103,7 +104,8 @@ public class PrinterListFragment extends Fragment implements LoaderCallbacks<Cur
                 PrinterTable.GATEWAY,
                 PrinterTable.DHCP,
                 PrinterTable.ALIAS_GUID,
-                AliasTable.ALIAS
+                AliasTable.ALIAS,
+                PrinterTable.PRINTER_TYPE
         }, null, null, AliasTable.ALIAS);
     }
 
@@ -170,7 +172,7 @@ public class PrinterListFragment extends Fragment implements LoaderCallbacks<Cur
                     c.getString(6),
                     c.getInt(7) == 1,
                     c.getString(8),
-                    c.getString(9));
+                    c.getString(10));
         }
 
         @Override
