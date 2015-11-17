@@ -66,7 +66,7 @@ public class SendDigitalReportsCommand extends BaseSendEmailCommand {
         create(SendDigitalReportsCommand.class).arg(ARG_REPORT_TYPE, reportType).arg(ARG_START_TIME, start).arg(ARG_END_TIME, end).arg(ARG_EMPLOYEE_GUID, employeeGuid).callback(callback).queueUsing(context);
     }
 
-    public static void start(Context context, ReportType reportType, long start, long end, String employeeGuid, long type, String name, BaseSendDigitalReportsCallback callback) {
+    public static void start(Context context, ReportType reportType, long start, long end, String employeeGuid, int type, String name, BaseSendDigitalReportsCallback callback) {
         create(SendDigitalReportsCommand.class).arg(ARG_REPORT_TYPE, reportType).arg(ARG_START_TIME, start).arg(ARG_END_TIME, end).arg(ARG_EMPLOYEE_GUID, employeeGuid).arg(ARG_EMPLOYEE_NAME, name).arg(ARG_CASH_DRAWER_TYPE, type).callback(callback).queueUsing(context);
     }
 
