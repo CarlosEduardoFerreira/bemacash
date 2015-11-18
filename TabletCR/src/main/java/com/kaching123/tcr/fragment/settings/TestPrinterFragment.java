@@ -100,7 +100,7 @@ public class TestPrinterFragment extends StyledDialogFragment {
                         );
                     }
                 }
-//                AddPrintersCommand.start(getActivity(), printers);
+                AddPrintersCommand.start(getActivity(), printers);
                 return true;
             }
         };
