@@ -28,6 +28,8 @@ import static com.kaching123.tcr.print.processor.BasePrintProcessor.getCityState
  */
 public class PrintXReportProcessor {
 
+    private final static String ITEM_STRING_FORMAT = "%s (%s)";
+
     private XReportInfo report;
     private ReportType xReportType;
     private boolean enableEreportDepartSale;
@@ -149,7 +151,7 @@ public class PrintXReportProcessor {
             printer.boldPair(context.getString(R.string.xreport_items_sales), report.totalValue, false);
             for (SalesByItemsReportQuery.ReportItemInfo item: report.itemSales) {
                 if (item.revenue.compareTo(BigDecimal.ZERO) > 0)
-                    printer.pair(item.description, item.revenue);
+                    printer.pair(String.format(ITEM_STRING_FORMAT,item.description,item.qty.toString()), item.revenue);
             }
             printer.emptyLine();
         }
