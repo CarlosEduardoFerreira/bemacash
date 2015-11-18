@@ -640,7 +640,7 @@
     <string name="error_message_login_empty">Please fill all fields!</string>
     <string name="error_message_login_db">Can\'t update database, please try again</string>
     <string name="error_message_login_title">Login error</string>
-    <string name="error_message_login_duplicate">You have already logged by this user</string>
+    <string name="error_message_login_duplicate">You do not have the required permission</string>
     <string name="error_message_login_no_permission">You do not have the required permission</string>
     <string name="error_message_register_check">Can\'t find register.\nPlease contact your admin!</string>
     <string name="error_message_register_pending">Register is in pending status.\nPlease contact your admin!</string>
