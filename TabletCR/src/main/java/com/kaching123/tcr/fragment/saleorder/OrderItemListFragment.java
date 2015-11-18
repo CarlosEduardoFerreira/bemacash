@@ -219,7 +219,33 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 final SaleOrderItemViewModel model = adapter.getItem(pos);
                 if (!model.isSerializable) {
                     final String saleItemGuid = adapter.getSaleItemGuid(pos);
-                    if(getOperatorPermissions().contains(Permission.CHANGE_QTY)){
+                    if(model.itemModel.priceType == PriceType.UNIT_PRICE) {
+                        if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) {
+                            QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
+                                @Override
+                                public void onConfirm(BigDecimal value) {
+                                    highlightedColumn(saleItemGuid, Type.QTY);
+
+                                    UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
+                                }
+                            });
+                        } else {
+                            PermissionFragment.showCancelable(getActivity(), new BaseTempLoginListener(getActivity()) {
+                                @Override
+                                public void onLoginComplete() {
+                                    super.onLoginComplete();
+                                    QtyEditFragment.show((FragmentActivity) getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
+                                        @Override
+                                        public void onConfirm(BigDecimal value) {
+                                            highlightedColumn(saleItemGuid, Type.QTY);
+
+                                            UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
+                                        }
+                                    });
+                                }
+                            }, Permission.CHANGE_QTY);
+                        }
+                    }else {
                         QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
                             @Override
                             public void onConfirm(BigDecimal value) {
@@ -228,21 +254,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                                 UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
                             }
                         });
-                    }else{
-                        PermissionFragment.showCancelable(getActivity(), new BaseTempLoginListener(getActivity()) {
-                            @Override
-                            public void onLoginComplete() {
-                                super.onLoginComplete();
-                                QtyEditFragment.show((FragmentActivity) getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
-                                    @Override
-                                    public void onConfirm(BigDecimal value) {
-                                        highlightedColumn(saleItemGuid, Type.QTY);
-
-                                        UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
-                                    }
-                                });
-                            }
-                        }, Permission.CHANGE_QTY);
                     }
 
                 } else {
