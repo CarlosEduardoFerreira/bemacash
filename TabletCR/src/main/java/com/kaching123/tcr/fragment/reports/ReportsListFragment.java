@@ -62,8 +62,8 @@ public class ReportsListFragment extends SuperBaseFragment {
                 ReportType.RETURNED_ORDERS,
                 ReportType.RETURNED_ITEMS,
                 ReportType.SALES_BY_CUSTOMERS,
-                ReportType.PREPAID_SALES_BY_ITEMS,
-                ReportType.PREPAID_SALES_TOP_10_REVENUES,
+//                ReportType.PREPAID_SALES_BY_ITEMS,
+//                ReportType.PREPAID_SALES_TOP_10_REVENUES,
                 ReportType.DROPS_AND_PAYOUTS
         }));
 
