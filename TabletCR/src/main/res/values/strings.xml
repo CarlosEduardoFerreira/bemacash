@@ -798,6 +798,7 @@
     <string name="employee_edit_login_error">Login is empty</string>
     <string name="employee_edit_password_error">Password is empty</string>
     <string name="employee_edit_password_confirm_error">The password and confirmation do not match</string>
+    <string name="employee_edit_phone_confirm_error">The phone number is already in use.</string>
     <string name="employee_edit_login_min_error">Login minimal length is 3</string>
     <string name="employee_edit_password_min_error">Password minimal length is 4</string>
     <string name="employee_edit_email_not_valid_error">Email is not valid</string>

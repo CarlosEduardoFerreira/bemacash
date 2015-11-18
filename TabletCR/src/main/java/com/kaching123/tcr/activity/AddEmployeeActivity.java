@@ -5,10 +5,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.local.EndEmployeeCommand;
 import com.kaching123.tcr.commands.local.StartEmployeeCommand;
@@ -39,6 +41,7 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
 
     private AddEmployeeCallback addEmployeeCallback = new AddEmployeeCallback();
     protected static final Uri URI_EMPLOYEE_SYNCED = ShopProvider.getNoNotifyContentUri(ShopStore.EmployeeTable.URI_CONTENT);
+    protected static final Uri URI_EMPLOYEE = ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT);
 
     @AfterViews
     @Override
@@ -59,6 +62,13 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
         if (!super.validateForm()) {
             return false;
         }
+
+
+        if(!checkPhoneNumber(phone.getText().toString())){
+            Toast.makeText(this, R.string.employee_edit_phone_confirm_error, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         String passwordText = password.getText().toString().trim();
         if ((TextUtils.isEmpty(passwordText))) {
             Toast.makeText(this, R.string.employee_edit_password_error, Toast.LENGTH_SHORT).show();
@@ -75,6 +85,15 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
             return false;
         }
         return true;
+    }
+    private boolean checkPhoneNumber(String phone) {
+        Cursor c = ProviderAction
+                .query(URI_EMPLOYEE)
+                .where(ShopStore.EmployeeTable.PHONE + " = ?", phone)
+                .perform(getBaseContext());
+        boolean exists = c.moveToFirst();
+        c.close();
+        return exists;
     }
 
     @Override
