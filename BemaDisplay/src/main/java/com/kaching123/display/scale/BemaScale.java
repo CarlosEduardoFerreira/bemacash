@@ -21,7 +21,7 @@ public class BemaScale {
 //    public static final byte[] REQ = {0x12}; // request of weight data of type-1
     public static final byte[] REQ = {0x57,0x0D}; // request of weight data
     public static final byte[] ZERO = {0x38,0x38,0x38,0x38}; // request of weight data
-    private static final int ScaleDataLength = 15;
+    private static final int ScaleDataLength = 16;
 
     private PortInfo portInfo;
 
@@ -119,25 +119,27 @@ public class BemaScale {
     }
 
     public int getStatus(){
-        if ( port != null)
+        if ( port != null){
             try {
                 if (port.write(REQ) > 0) {
                     Thread.sleep(200);
                     if (port.getInputStream().available() == 0)
                         return -1;
+                    if (port.getInputStream().available() != ScaleDataLength)
+                        return -2;
                     port.setReadTimeout(2000);
                     byte[] bytes = new byte[ScaleDataLength];
                     int bytesRead = 0;
                     WatchDog wd = new WatchDog();
                     wd.Start((long) port.getReadTimeout());
-                    while (bytesRead < ScaleDataLength && wd.isTimeOut() == false) {
+                    while (bytesRead < ScaleDataLength && !wd.isTimeOut()) {
                         int ret = port.read(bytes, bytesRead, ScaleDataLength - bytesRead);
                         if (ret < 0)
                             break;
                         bytesRead += ret;
                     }
                     formatBytes(bytes);
-                    return Integer.parseInt(new String(Arrays.copyOfRange(bytes, 11, 13)));
+                    return Integer.parseInt(new String(Arrays.copyOfRange(bytes, 12, 14)));
                     //ToDo: Toast different error if necessary
                 }
             } catch (NumberFormatException e){
@@ -149,6 +151,7 @@ public class BemaScale {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
         return -1;
     }
 
@@ -181,7 +184,7 @@ public class BemaScale {
                     Log.e(TAG, "serial port : " + Arrays.toString(bytes) + " string : " + new String(bytes));
 //                    return Arrays.toString(bytes);
                     // check status
-                    if (bytes[11] == 0x30 && bytes[12] == 0x30)
+                    if (bytes[12] == 0x30 && bytes[13] == 0x30)
                         return covertBytesToScale(bytes);
                     //ToDo: Toast different error if necessary
                 }
@@ -197,10 +200,46 @@ public class BemaScale {
         return "0.00";
     }
 
+    public String getUnitsLabel(){
+        if ( port != null)
+            try {
+                if (port.write(REQ) > 0) {
+                    Thread.sleep(200);
+                    if (port.getInputStream().available() == 0)
+                        return "";
+                    port.setReadTimeout(2000);
+                    byte[] bytes = new byte[ScaleDataLength];
+                    int bytesRead = 0;
+                    WatchDog wd = new WatchDog();
+                    wd.Start((long) port.getReadTimeout());
+                    while (bytesRead < ScaleDataLength && wd.isTimeOut() == false) {
+                        int ret = port.read(bytes, bytesRead, ScaleDataLength - bytesRead);
+                        if (ret < 0)
+                            break;
+                        bytesRead += ret;
+                    }
+                    formatBytes(bytes);
+                    return new String(Arrays.copyOfRange(bytes,7,9), "UTF-8");
+                    //ToDo: Toast different error if necessary
+                }
+            } catch (NumberFormatException e){
+                e.printStackTrace();
+            } catch (CommunicationException ex) {
+                Log.d(TAG, ex.getMessage());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        return "";
+    }
+
 
     private String covertBytesToScale(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         sb.append(new String(bytes).substring(1,7));
+        if(sb.indexOf(".") == -1)
+           sb = sb.delete(4,6);
         return sb.toString().replaceAll("^0+(?!$)", ""); // remove leading 0
     }
 

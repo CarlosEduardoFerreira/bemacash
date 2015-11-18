@@ -3,7 +3,9 @@ package com.kaching123.tcr.function;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.model.DiscountType;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.util.CalculationUtil;
 
 import java.math.BigDecimal;
@@ -47,7 +49,8 @@ public final class OrderTotalPriceCalculator {
                             desc,
                             i.getQty(), i.getPrice(),
                             i.isDiscountable(), i.getDiscount(), i.getDiscountType(),
-                            i.isTaxable(), i.getTax()
+                            i.isTaxable(), i.getTax(),
+                            i.unitsLabel, i.itemModel.priceType
                     )
             );
         }
@@ -70,7 +73,7 @@ public final class OrderTotalPriceCalculator {
                 BigDecimal itemSubTotal = getSubTotal(i.qty, i.totalPrice);
                 BigDecimal itemTotal = getSubTotal(i.qty, i.totalPrice, i.discount, i.discountType);
 
-                handler.handleItem(i.saleItemGuid, i.description, i.qty, i.totalPrice, itemSubTotal, itemTotal, itemFinalPrice, itemFinalDiscount, itemFinalTax);
+                handler.handleItem(i.saleItemGuid, i.description, i.qty, i.totalPrice, i.unitLabel, i.priceType, itemSubTotal, itemTotal, itemFinalPrice, itemFinalDiscount, itemFinalTax);
             }
         });
         handler.handleTotal(result.totalItemDiscount.add(result.tmpOderDiscountVal), result.subTotalItemTotal, result.totalTaxVatValue, result.totalOrderPrice, tips);
@@ -308,7 +311,7 @@ public final class OrderTotalPriceCalculator {
 
     public static interface Handler {
 
-        void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax);
+        void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons,String unitLabel, PriceType priceType, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax);
 
         void handleTotal(BigDecimal totalDiscount, BigDecimal subTotalItemTotal, BigDecimal totalTaxVatValue, BigDecimal totalOrderPrice, BigDecimal tipsValue);
 
@@ -355,8 +358,27 @@ public final class OrderTotalPriceCalculator {
         public final DiscountType discountType;
         public final boolean isTaxable;
         public final BigDecimal tax;
+        public final String unitLabel;
+        public final PriceType priceType;
+        public final ArrayList<Unit> tmpUnit = new ArrayList<Unit>();
+        public final ArrayList<SaleOrderItemViewModel.AddonInfo> addons = new ArrayList<SaleOrderItemViewModel.AddonInfo>();
 
         public BigDecimal totalPrice;
+
+        public SaleItemInfo(String saleItemGiud, String itemGiud, String description, BigDecimal qty, BigDecimal totalPrice, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax, String unitLabel, PriceType priceType) {
+            this.saleItemGuid = saleItemGiud;
+            this.itemGiud = itemGiud;
+            this.description = description;
+            this.qty = qty;
+            this.totalPrice = totalPrice;
+            this.discountable = discountable;
+            this.discount = discount;
+            this.discountType = discountType;
+            this.isTaxable = isTaxable;
+            this.tax = tax;
+            this.unitLabel = unitLabel;
+            this.priceType = priceType;
+        }
 
         public SaleItemInfo(String saleItemGiud, String itemGiud, String description, BigDecimal qty, BigDecimal totalPrice, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax) {
             this.saleItemGuid = saleItemGiud;
@@ -369,10 +391,12 @@ public final class OrderTotalPriceCalculator {
             this.discountType = discountType;
             this.isTaxable = isTaxable;
             this.tax = tax;
+            this.unitLabel = null;
+            this.priceType = null;
         }
 
         public SaleItemInfo copy(BigDecimal qty) {
-            return new SaleItemInfo(saleItemGuid, itemGiud, description, qty, totalPrice, discountable, discount, discountType, isTaxable, tax);
+            return new SaleItemInfo(saleItemGuid, itemGiud, description, qty, totalPrice, discountable, discount, discountType, isTaxable, tax, unitLabel, priceType);
         }
     }
 

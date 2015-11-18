@@ -1,8 +1,11 @@
 package com.kaching123.tcr.fragment.settings;
 
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
+import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
@@ -12,13 +15,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bematechus.bemaUtils.PortInfo;
+import com.kaching123.display.USBDiplayPrinter;
 import com.kaching123.display.scale.BemaScale;
+import com.kaching123.pos.USBPrinter;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.DeviceModel;
@@ -66,6 +71,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
     public static String USB_MSR_NAME = "Integrated MSR";
     public static String USB_SCANNER_NAME = "USB SCANNER";
     public static String USB_SCANNER_ADDRESS = "USB SCANNER";
+    public static String USB_DISPLAY = "LDX1000";
     public static String SEARIL_PORT_SCANNER_ADDRESS = "Integrated Scanner";
     public static String SEARIL_PORT_SCANNER_NAME = "Integrated Scanner";
     public static String USB_MSR_VID = "1667";
@@ -275,6 +281,25 @@ public class FindDeviceFragment extends StyledDialogFragment {
             return devices;
         }
 
+        private boolean searchForUsbDisplay()
+        {
+            UsbManager manager = (UsbManager) getActivity().getSystemService(Context.USB_SERVICE);
+            try
+            {
+
+                PendingIntent mPermissionIntent;
+
+                mPermissionIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(PrinterCommand.ACTION_USB_PERMISSION), 0);
+
+                USBDiplayPrinter display = new USBDiplayPrinter(USBDiplayPrinter.LDX1000_PID,USBDiplayPrinter.LDX1000_VID,manager,null);
+                return display.findPrinter(true);
+            }
+            catch (Exception e) {
+                Logger.e("Discovery USB printers ", e);
+            }
+            return false;
+        }
+
         private Collection<DeviceModel> getEmulatedDevice() {
             DeviceModel emulatedDevice;
             if (mode == Mode.DISPLAY) {
@@ -293,6 +318,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
                     devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
                     devices.add(new DeviceModel("COM2","COM2"));
                     devices.add(new DeviceModel("COM1","COM1"));
+                    if(searchForUsbDisplay())
+                        devices.add(new DeviceModel(USB_DISPLAY,USB_DISPLAY));
                 }
                 else if(mode == Mode.SCALE){
                     devices.add(new DeviceModel("COM2","COM2"));
@@ -333,6 +360,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
                     Logger.d("Scale Connected to " + info.getPortName());
                     devices.add(new DeviceModel(info.getPortName(), info.getPortName()));
                 }
+                scale.close();
             }
 
             return devices;

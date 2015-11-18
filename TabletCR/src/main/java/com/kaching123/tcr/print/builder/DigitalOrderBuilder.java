@@ -1,6 +1,7 @@
 package com.kaching123.tcr.print.builder;
 
 import com.kaching123.pos.PosPrinter;
+import com.kaching123.pos.printer.PrintLineAction;
 import com.kaching123.pos.util.ITextPrinter;
 
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static com.kaching123.tcr.print.FormatterUtil.commaPriceFormat;
 
 /**
  * Created by pkabakov on 21.12.13.
@@ -110,6 +113,34 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     @Override
     public void add(String title, BigDecimal qty, BigDecimal price, List<String> units) {
         add(title, quantityFormat.format(qty), priceFormat.format(price), units);
+    }
+
+    @Override
+    public void add(String title, BigDecimal qty, BigDecimal price, BigDecimal unitPrice, String unitsLabel, boolean isUntiPrice, List<String> units) {
+        if(!isUntiPrice && qty.compareTo(BigDecimal.ONE) == 0)
+            add(title, commaPriceFormat(price));
+        else {
+            add(title);
+            stringBuilder.append(_styled("table", TABLE_STYLE));
+            stringBuilder.append("<tr>");
+            stringBuilder.append("<td>");
+            stringBuilder.append("  ").append(qty).append(" "+unitsLabel).append(" @ ").append("1 "+unitsLabel).append(" /" + unitPrice);
+            stringBuilder.append("</td>");
+
+            stringBuilder.append(_styled("td", PRICE_STYLE));
+            stringBuilder.append(price);
+            stringBuilder.append("</td>");
+            stringBuilder.append("</tr>");
+
+        }
+        for (String serial : units) {
+            stringBuilder.append("<tr>");
+            stringBuilder.append("<td>");
+            stringBuilder.append("Serial : ").append(serial);
+            stringBuilder.append("</td>");
+            stringBuilder.append("</tr>");
+        }
+        stringBuilder.append("</table>");
     }
 
     @Override
@@ -247,7 +278,13 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
 
     @Override
     public void add(String content) {
+        stringBuilder.append(_styled("table", TABLE_STYLE));
+        stringBuilder.append("<tr>");
+        stringBuilder.append("<td>");
         stringBuilder.append(content);
+        stringBuilder.append("</td>");
+        stringBuilder.append("</tr>");
+        stringBuilder.append("</table>");
     }
 
     @Override

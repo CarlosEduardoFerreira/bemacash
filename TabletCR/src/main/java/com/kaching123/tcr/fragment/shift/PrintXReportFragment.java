@@ -159,21 +159,25 @@ public class PrintXReportFragment extends StyledDialogFragment {
             return;
 
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_print_zreport));
-        PrintXReportCommand.start(getActivity(), shiftGuid, xReportType, ignorePaperEnd, searchByMac, new PrintXReportCallback(), getXreportSaleEnabled());
+        PrintXReportCommand.start(getActivity(), shiftGuid, xReportType, ignorePaperEnd, searchByMac, new PrintXReportCallback(), getXreportSaleEnabled(),getItemXreportSaleEnabled());
     }
 
     private void sendDigital() {
         if (getActivity() == null)
             return;
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_print_zreport));
-        SendDigitalXReportCommand.start(getActivity(), shiftGuid, xReportType, getXreportSaleEnabled(), new SendDigitalXReportCallback());
+        SendDigitalXReportCommand.start(getActivity(), shiftGuid, xReportType, getXreportSaleEnabled(),getItemXreportSaleEnabled(), new SendDigitalXReportCallback());
+    }
+
+    private boolean getItemXreportSaleEnabled() {
+        return getApp().getShopPref().enableEreportItemSale().get();
     }
 
     private void digitalPrint() {
         if (getActivity() == null)
             return;
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_print_zreport));
-        PrintDigitalXReportCommand.start(getActivity(), shiftGuid, xReportType, new PrintDigitalXReportCallback(), getXreportSaleEnabled());
+        PrintDigitalXReportCommand.start(getActivity(), shiftGuid, xReportType, new PrintDigitalXReportCallback(), getXreportSaleEnabled(),getItemXreportSaleEnabled());
     }
 
     private boolean getXreportSaleEnabled() {

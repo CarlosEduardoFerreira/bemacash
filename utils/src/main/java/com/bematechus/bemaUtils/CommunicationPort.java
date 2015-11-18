@@ -45,7 +45,7 @@ public abstract class CommunicationPort {
     }
 
     public void setReadTimeout(Integer timeout) {
-        readTimeout = timeout;
+        this.readTimeout = timeout;
     }
     public Integer getReadTimeout () { return readTimeout;}
 

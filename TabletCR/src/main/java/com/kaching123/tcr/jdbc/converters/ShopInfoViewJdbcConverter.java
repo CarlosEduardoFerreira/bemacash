@@ -1,5 +1,6 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -80,6 +81,9 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String OFFLINE_PERIOD = "OFFLINE_PERIOD";
     public static final String PRINTER_TWO_COPIES_RECEIPT = "PRINTER_TWO_COPIES_RECEIPT";
+    public static final String PRINTER_RECEIPT_TWICE = "PRINTER_RECEIPT_TWICE";
+
+    public static final String PRINTER_DETAIL_RECEIPT = "PRINTER_DETAIL_RECEIPT";
 
     public static final String MAX_ITEMS_COUNT = "MAX_ITEMS_COUNT";
 
@@ -93,6 +97,15 @@ public class ShopInfoViewJdbcConverter {
     public static final String PRINT_DROP_OR_PAYOUT = "PRINT_DROP_OR_PAYOUT";
 
     public static final String ENABLE_XREPORT_DEPART_SALE = "ENABLE_XREPORT_DEPART_SALE";
+    public static final String ENABLE_XREPORT_ITEM_SALE = "ENABLE_XREPORT_ITEM_SALE";
+
+    public static final String IVULOTO_MID = "IVULOTO_MID";
+
+    public static final String TERMINAL_ID = "TERMINAL_ID";
+
+    public static final String TERMINAL_PASSWORD = "TERMINAL_PASSWORD";
+
+    public static final String REMOVE_CHECK_AND_OFFLINECREDIT = "REMOVE_CHECK_AND_OFFLINECREDIT";
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
@@ -147,10 +160,17 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBigDecimal(DEFAULT_STORE_COMMISSION),
                 rs.getInt(OFFLINE_PERIOD),
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
+                rs.getInt(PRINTER_RECEIPT_TWICE),
+                rs.getBoolean(PRINTER_DETAIL_RECEIPT),
                 rs.getLong(MAX_ITEMS_COUNT),
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER),
-                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE)
+                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE),
+                rs.getBoolean(ENABLE_XREPORT_ITEM_SALE),
+                rs.getString(IVULOTO_MID),
+                rs.getString(TERMINAL_ID),
+                rs.getString(TERMINAL_PASSWORD),
+                rs.getBoolean(REMOVE_CHECK_AND_OFFLINECREDIT)
         );
     }
 
@@ -207,14 +227,21 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBigDecimal(DEFAULT_STORE_COMMISSION),
                 rs.getInt(OFFLINE_PERIOD),
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
+                rs.getInt(PRINTER_RECEIPT_TWICE),
+                rs.getBoolean(PRINTER_DETAIL_RECEIPT),
                 //TODO delete
                 rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE),
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER),
-                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE));
+                rs.getBoolean(ENABLE_XREPORT_DEPART_SALE),
+                rs.getBoolean(ENABLE_XREPORT_ITEM_SALE),
+                rs.getString(IVULOTO_MID),
+                rs.getString(TERMINAL_ID),
+                rs.getString(TERMINAL_PASSWORD),
+                rs.getBoolean(REMOVE_CHECK_AND_OFFLINECREDIT));
     }
 
-    public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException  {
+    public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException {
         int salesHistoryLimit = rs.getInt(MAX_HISTORY_RANGE);
         if (salesHistoryLimit == 0)
             return null;
@@ -289,6 +316,10 @@ public class ShopInfoViewJdbcConverter {
 
         public final boolean printerTwoCopiesReceipt;
 
+        public final int printReceiptTwice;
+
+        public final boolean printDetailReceipt;
+
         public final long maxItemsCount;
 
         public final long updateCheckTimer;
@@ -297,6 +328,15 @@ public class ShopInfoViewJdbcConverter {
 
         public final boolean enableEreportDepartSale;
 
+        public final boolean enableEreportItemSale;
+
+        public final String ivulotoMid;
+
+        public final String terminalID;
+
+        public final String terminalPassword;
+
+        public final boolean removeCheckAndOfflineCredit;
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
@@ -344,10 +384,17 @@ public class ShopInfoViewJdbcConverter {
                         BigDecimal defaultStoreCommission,
                         int offlinePeriodHours,
                         boolean printerTwoCopiesReceipt,
+                        int printReceiptTwice,
+                        boolean printDetailReceipt,
                         long maxItemsCount,
                         boolean printDropOrPayout,
                         long updateCheckTimer,
-                        boolean enableEreportDepartSale) {
+                        boolean enableEreportDepartSale,
+                        boolean enableEreportItemSale,
+                        String ivulotoMid,
+                        String terminalID,
+                        String terminalPassword,
+                        boolean removeCheckAndOfflineCredit) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -407,12 +454,25 @@ public class ShopInfoViewJdbcConverter {
 
             this.printerTwoCopiesReceipt = printerTwoCopiesReceipt;
 
+            this.printReceiptTwice = printReceiptTwice;
+
+            this.printDetailReceipt = printDetailReceipt;
+
             this.maxItemsCount = maxItemsCount;
 
             this.printDropOrPayout = printDropOrPayout;
             this.updateCheckTimer = updateCheckTimer;
 
             this.enableEreportDepartSale = enableEreportDepartSale;
+            this.enableEreportItemSale = enableEreportItemSale;
+
+            this.ivulotoMid = ivulotoMid;
+
+            this.terminalID = terminalID;
+
+            this.terminalPassword = terminalPassword;
+
+            this.removeCheckAndOfflineCredit = removeCheckAndOfflineCredit;
         }
 
     }

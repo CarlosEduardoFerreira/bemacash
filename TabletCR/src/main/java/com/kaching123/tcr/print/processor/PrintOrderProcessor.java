@@ -10,6 +10,7 @@ import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
@@ -86,7 +87,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ? transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
             @Override
-            public void handleItem(String saleItemGuid, String description, BigDecimal qty,
+            public void handleItem(String saleItemGuid, String description, String unitLabel, PriceType priceType, BigDecimal qty,
                                    BigDecimal itemSubtotal, BigDecimal itemDiscount,
                                    BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note) {
                 List<String> unitAsStrings = new ArrayList<String>(units.size());
@@ -97,11 +98,14 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 BigDecimal itemPrice = itemFullPrice;
                 if (addons != null && addons.size() != 0)
                     for (SaleOrderItemViewModel.AddonInfo addon : addons) {
-                        if (addon.addon.type != ModifierType.MODIFIER)
                             itemPrice = itemPrice.subtract(addon.addon.extraCost);
                     }
                 itemSubtotal = CalculationUtil.getSubTotal(qty, itemPrice);
-                printerWrapper.add(description, qty, itemSubtotal, unitAsStrings);
+//                if(app.getShopPref().printDetailReceipt().get())
+                if(true)
+                    printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
+                else
+                    printerWrapper.add(description, qty, itemSubtotal, unitAsStrings);
                 if (addons != null && addons.size() != 0)
                     for (SaleOrderItemViewModel.AddonInfo addon : addons) {
                         String title = addon.addonTitle;

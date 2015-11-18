@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -52,6 +53,7 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
@@ -98,7 +100,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         boolean hasNewline = s.toString().contains(newline);
         if (hasNewline) {
             Logger.d("OrderItemListFragment usbScannerInputAfterTextChanged hasNewline: " + s.toString());
-            Toast.makeText(getActivity(), s.toString(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(getActivity(), s.toString(), Toast.LENGTH_LONG).show();
             String result = s.toString().replace("\n", "").replace("\r", "");
             itemsListHandler.onBarcodeReceivedFromUSB(result);
             s.clear();
@@ -217,14 +219,32 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 final SaleOrderItemViewModel model = adapter.getItem(pos);
                 if (!model.isSerializable) {
                     final String saleItemGuid = adapter.getSaleItemGuid(pos);
-                    QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
-                        @Override
-                        public void onConfirm(BigDecimal value) {
-                            highlightedColumn(saleItemGuid, Type.QTY);
+                    if(getOperatorPermissions().contains(Permission.CHANGE_QTY)){
+                        QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
+                            @Override
+                            public void onConfirm(BigDecimal value) {
+                                highlightedColumn(saleItemGuid, Type.QTY);
 
-                            UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
-                        }
-                    });
+                                UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
+                            }
+                        });
+                    }else{
+                        PermissionFragment.showCancelable(getActivity(), new BaseTempLoginListener(getActivity()) {
+                            @Override
+                            public void onLoginComplete() {
+                                super.onLoginComplete();
+                                QtyEditFragment.show((FragmentActivity) getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
+                                    @Override
+                                    public void onConfirm(BigDecimal value) {
+                                        highlightedColumn(saleItemGuid, Type.QTY);
+
+                                        UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
+                                    }
+                                });
+                            }
+                        }, Permission.CHANGE_QTY);
+                    }
+
                 } else {
                     Toast.makeText(getActivity(), R.string.cashier_msg_error_changing_qty, Toast.LENGTH_LONG).show();
                 }
@@ -291,6 +311,9 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             }
         });
         setListAdapter(adapter);
+    }
+
+    private void showChangeQtyFragment() {
     }
 
     private boolean isVoidNeedPermission() {

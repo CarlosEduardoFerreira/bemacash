@@ -42,6 +42,14 @@ public final class FormatterUtil {
         }
     };
 
+    private static ThreadLocal<DecimalFormat> commaFormat = new ThreadLocal<DecimalFormat>(){
+        protected DecimalFormat initialValue() {
+            DecimalFormat format = new DecimalFormat("#,##0.00");
+            format.setDecimalFormatSymbols(otherSymbols);
+            return format;
+        }
+    };
+
     private static ThreadLocal<DecimalFormat> commaBracketsPriceFormat = new ThreadLocal<DecimalFormat>(){
         protected DecimalFormat initialValue() {
             DecimalFormat format = new DecimalFormat("$ (#,##0.00)");
@@ -60,6 +68,10 @@ public final class FormatterUtil {
 
     public static String commaPriceFormat(BigDecimal value){
         return commaPriceFormat.get().format(value);
+    }
+
+    public static String commaFormat(BigDecimal value){
+        return commaFormat.get().format(value);
     }
 
     public static String commaBracketsPriceFormat(BigDecimal value){

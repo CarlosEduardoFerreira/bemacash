@@ -147,7 +147,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
 
     @Override
     public void onDialogDismissed(String barcode) {
-        WaitDialogFragmentWithCallback.show(this,getString(R.string.wait_dialog_title));
+//        WaitDialogFragmentWithCallback.show(this,getString(R.string.wait_dialog_title));
         ((DiagnoseFragment)fragment).setScannerRead(barcode);
     }
 

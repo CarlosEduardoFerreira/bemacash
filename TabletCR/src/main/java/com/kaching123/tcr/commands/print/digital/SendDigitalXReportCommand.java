@@ -25,6 +25,8 @@ public class SendDigitalXReportCommand extends BaseSendEmailCommand {
 
     private static final String ARG_XREPORT_ENABLE = "ARG_XREPORT_ENABLE";
 
+    private static final String ARG_ITEM_XREPORT_ENABLE = "ARG_ITEM_XREPORT_ENABLE";
+
     @Override
     protected Response execute(SyncApi restApi, String apiKey) {
         String email = getApp().getShopInfo().ownerEmail;
@@ -41,7 +43,7 @@ public class SendDigitalXReportCommand extends BaseSendEmailCommand {
         } else {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
-        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE));
+        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE), getBooleanArg(ARG_ITEM_XREPORT_ENABLE));
         processor.print(getContext(), getApp(), builder);
 
         String html = builder.build();
@@ -58,11 +60,12 @@ public class SendDigitalXReportCommand extends BaseSendEmailCommand {
     }
 
 
-    public static void start(Context context, String shiftGuid, ReportType xReportType, boolean enableEreportDepartSale, SendPrintDigitalXReportCallback callback) {
+    public static void start(Context context, String shiftGuid, ReportType xReportType, boolean enableEreportDepartSale, boolean itemXreportSaleEnabled, SendPrintDigitalXReportCallback callback) {
         create(SendDigitalXReportCommand.class)
                 .arg(ARG_SHIFT_GUID, shiftGuid)
                 .arg(ARG_XREPORT_TYPE, xReportType)
                 .arg(ARG_XREPORT_ENABLE, enableEreportDepartSale)
+                .arg(ARG_ITEM_XREPORT_ENABLE,itemXreportSaleEnabled)
                 .callback(callback).queueUsing(context);
     }
 

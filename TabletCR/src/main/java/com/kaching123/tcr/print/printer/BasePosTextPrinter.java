@@ -11,6 +11,7 @@ import com.kaching123.pos.printer.FullPaperCutAction2;
 import com.kaching123.pos.printer.InitPrintAction;
 import com.kaching123.pos.printer.LeftAlignment;
 import com.kaching123.pos.printer.LogoAction;
+import com.kaching123.pos.printer.PrintAndPaperFeedAction;
 import com.kaching123.pos.printer.PrintLineAction;
 import com.kaching123.pos.printer.SelectDoublePrintModeAction;
 import com.kaching123.pos.util.IPrinter;
@@ -46,7 +47,7 @@ public class BasePosTextPrinter implements IPrinter {
 
     public static final int PRINTER_MAX_TEXT_LEN = 41;
 
-    protected static final int PRINTER_MAX_PRICE_LEN = 11;
+    protected static final int PRINTER_MAX_PRICE_LEN = 12;
     protected static final int PRINTER_MAX_QTY_LEN = 6;
     protected static final int PRINTER_FOUR_QTY_LEN = 4;
     protected static final int PRINTER_MAX_DATE_LEN = 22;
@@ -103,7 +104,7 @@ public class BasePosTextPrinter implements IPrinter {
     @Override
     public void emptyLine(int c) {
         for (int i = 0; i < c; i++) {
-            add(new PrintLineAction(""));
+            add(new PrintAndPaperFeedAction());
         }
     }
 
@@ -184,6 +185,21 @@ public class BasePosTextPrinter implements IPrinter {
             printTitle.append(' ');
         }
 //        printTitle.append("$");
+        printTitle.append(price);
+        return printTitle.toString();
+    }
+
+    public static String formatLabelString(int maxLen, String qty, String unitPrice, String unitLabel, String price){
+        StringBuilder printTitle = new StringBuilder();
+        printTitle.append("  ");// space before qty;
+        printTitle.append(qty);
+        printTitle.append(" "+unitLabel);
+        printTitle.append(" @ ");
+        printTitle.append(unitPrice);
+        printTitle.append(" /"+unitLabel);
+        for(int i = printTitle.length(); i < maxLen - price.length(); i++){
+            printTitle.append(' ');
+        }
         printTitle.append(price);
         return printTitle.toString();
     }

@@ -10,6 +10,7 @@ import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.XReportInfo;
 import com.kaching123.tcr.model.departsSale;
+import com.kaching123.tcr.reports.SalesByItemsReportQuery;
 import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
@@ -32,12 +33,14 @@ public class PrintXReportProcessor {
     private boolean enableEreportDepartSale;
 
     private final IAppCommandContext appCommandContext;
+    private boolean enableEreportItemSale;
 
-    public PrintXReportProcessor(XReportInfo report, ReportType xReportType, IAppCommandContext appCommandContext, boolean enableEreportDepartSale) {
+    public PrintXReportProcessor(XReportInfo report, ReportType xReportType, IAppCommandContext appCommandContext, boolean enableEreportDepartSale, boolean enableEreportItemSale) {
         this.report = report;
         this.xReportType = xReportType;
         this.appCommandContext = appCommandContext;
         this.enableEreportDepartSale = enableEreportDepartSale;
+        this.enableEreportItemSale = enableEreportItemSale;
     }
 
     public void print(Context context, TcrApplication app, IXReportPrinter printer) {
@@ -131,13 +134,22 @@ public class PrintXReportProcessor {
         printer.emptyLine();
 
         if (enableEreportDepartSale) {
-            printer.boldPair(context.getString(R.string.xreport_departments_sales), report.totalValue, true);
+            printer.boldPair(context.getString(R.string.xreport_departments_sales), report.totalValue, false);
             Iterator iter = report.departsSales.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry item = (Map.Entry) iter.next();
                 departsSale temp = (departsSale) item.getValue();
                 if (temp.sales.compareTo(BigDecimal.ZERO) > 0)
                     printer.pair(temp.departTitle, temp.sales);
+            }
+            printer.emptyLine();
+        }
+
+        if(enableEreportItemSale){
+            printer.boldPair(context.getString(R.string.xreport_items_sales), report.totalValue, false);
+            for (SalesByItemsReportQuery.ReportItemInfo item: report.itemSales) {
+                if (item.revenue.compareTo(BigDecimal.ZERO) > 0)
+                    printer.pair(item.description, item.revenue);
             }
             printer.emptyLine();
         }

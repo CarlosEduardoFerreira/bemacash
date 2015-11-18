@@ -27,6 +27,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
+import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
 
 /**
  * @author Ivan v. Rikhmayer

@@ -88,6 +88,7 @@ import com.kaching123.tcr.util.Validator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -105,6 +106,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 public abstract class BaseItemActivity extends ScannerBaseActivity implements LoaderManager.LoaderCallbacks<Cursor>, ItemCodeChooserAlertDialogFragment.ItemCodeTypeChooseListener {
 
     private static final int REQ_MODIFIER = 1;
+    private static final String[] UNITS_LABEL = {"PCS","LB","OZ"};
 
     private static final Uri MODIFIER_URI = ShopProvider.getContentUri(ModifierTable.URI_CONTENT);
 
@@ -952,6 +954,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         if (TextUtils.isEmpty(unitsLabel.getText())) {
             Toast.makeText(this, R.string.item_activity_alert_units_label_msg, Toast.LENGTH_SHORT).show();
+            return false;
+        }else if(priceType.getSelectedItem().toString().equalsIgnoreCase("Unit Price") &&
+                !Arrays.asList(UNITS_LABEL).contains(unitsLabel.getText().toString().toUpperCase())){
+            Toast.makeText(this, R.string.item_activity_alert_units_label_not_match_msg, Toast.LENGTH_SHORT).show();
             return false;
         }
         PriceType pt = ((PriceTypeHolder) priceType.getSelectedItem()).type;

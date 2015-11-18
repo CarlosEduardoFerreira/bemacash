@@ -39,6 +39,7 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.service.ScaleService.ScaleBinder;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
@@ -139,6 +140,8 @@ import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
 import com.kaching123.tcr.service.ScaleService;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.util.DateUtils;
@@ -169,10 +172,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.kaching123.tcr.util.CursorUtil._wrap;
+
 @EActivity
 public abstract class BaseCashierActivity extends ScannerBaseActivity implements IOrderActionListener, IDisplayBinder, BarcodeListenerHolder {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
+    private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
 
     static {
         permissions.add(Permission.SALES_TRANSACTION);
@@ -247,6 +253,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private static final Handler handler = new Handler();
     private long lastClickTime;
+    private boolean stop;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -458,12 +465,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @Override
     public void onResume() {
         super.onResume();
+        stop = false;
         LocalBroadcastManager.getInstance(this).registerReceiver(syncGapReceiver, new IntentFilter(SyncCommand.ACTION_SYNC_GAP));
     }
 
     @Override
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(syncGapReceiver);
+        stop = true;
         super.onPause();
     }
 
@@ -810,7 +819,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 WaitDialogFragment.show(BaseCashierActivity.this, getString(R.string.wait_printing));
-                PrintOrderCommand.start(BaseCashierActivity.this, false, false, orderGuid, printOrderCallback, orderTitle, totalCostFragment.getOrderSubTotal(), totalCostFragment.getOrderDiscountTotal(), totalCostFragment.getOrderTaxTotal(), totalCostFragment.getOrderAmountTotal());
+                for(int i = 0; i < getApp().getShopPref().printReceiptTwice().get(); i++)
+                    PrintOrderCommand.start(BaseCashierActivity.this, false, false, orderGuid, printOrderCallback, orderTitle, totalCostFragment.getOrderSubTotal(), totalCostFragment.getOrderDiscountTotal(), totalCostFragment.getOrderTaxTotal(), totalCostFragment.getOrderAmountTotal());
                 return true;
             }
         });
@@ -850,7 +860,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         checkHoldInfo();
         menu.findItem(R.id.action_order_items).setVisible(!isCreateReturnOrder);
         PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX_EBT_CASH.gateway();
-        menu.findItem(R.id.action_balance).setVisible(getApp().isPaxConfigured() && paxGateway.acceptPaxEbtEnabled());
+//        menu.findItem(R.id.action_balance).setVisible(getApp().isPaxConfigured() && paxGateway.acceptPaxEbtEnabled());
         menu.findItem(R.id.action_commission).setVisible(getApp().isCommissionsEnabled() && !isCreateReturnOrder);
         return true;
     }
@@ -864,11 +874,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    @OptionsItem
-    protected void actionBalanceSelected() {
-        actionBarItemClicked();
-        PaxBalanceProcessor.get().checkBalance(this);
-    }
+//    @OptionsItem
+//    protected void actionBalanceSelected() {
+//        actionBarItemClicked();
+//        PaxBalanceProcessor.get().checkBalance(this);
+//    }
 
     protected void initSearchView() {
         final SearchView searchView = (SearchView) searchItem.getActionView();
@@ -1947,17 +1957,19 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 return;
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
             //orderItemListFragment.needScrollToTheEnd();
+            final SaleOrderItemViewModel model = getSaleItem(item.saleItemGuid);
             if(item.priceType == PriceType.UNIT_PRICE) {
-                if (scaleService != null && scaleService.getStatus() == 0) {
+                if (scaleServiceBound && scaleService.getStatus() == 0 && scaleService.isUnitsLabelMatch(model.unitsLabel)) {
                     BigDecimal newQty = new BigDecimal(scaleService.readScale());
                     UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
                 }else {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                             BaseCashierActivity.this);
                     alertDialogBuilder.setTitle("Scale Warning");
-                    String header = scaleService == null || scaleService.getStatus() < 0 ? "Scale is not present":"Scale cannot get weight of " + item.description;
+                    String header = !scaleServiceBound || scaleService.getStatus() < 0 ? "Check connection to the scale":"Place " + item.description + " on the Scale";
+                    header += " or enter the weight manually.";
                     alertDialogBuilder
-                            .setMessage(header + ", do you want to enter the quantity manually?")
+                            .setMessage(header)
                             .setCancelable(false)
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -1968,29 +1980,93 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                     return;
                                 }
                             })
+                            .setNeutralButton("Setting", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    if (item.qty.equals(BigDecimal.ZERO)) {
+                                        orderItemListFragment.doRemoceClickLine(item.getGuid());
+                                    }
+                                    dialog.cancel();
+                                    SettingsActivity.start(BaseCashierActivity.this);
+                                }
+                            })
                             .setPositiveButton("Manually", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
-                                        @Override
-                                        public void onConfirm(BigDecimal value) {
-                                            UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
-                                        }
-                                    },orderItemListFragment);
+                                    if(getOperatorPermissions().contains(Permission.CHANGE_QTY)){
+                                        QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
+                                            @Override
+                                            public void onConfirm(BigDecimal value) {
+                                                UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
+                                            }
+                                        }, orderItemListFragment);
+                                    }else{
+                                        PermissionFragment.showCancelable(BaseCashierActivity.this, new OnDialogClickListener() {
+                                            @Override
+                                            public boolean onClick() {
+                                                if (item.qty.equals(BigDecimal.ZERO)) {
+                                                    orderItemListFragment.doRemoceClickLine(item.getGuid());
+                                                }
+                                                return true;
+                                            }
+                                        },
+                                                new BaseTempLoginListener(BaseCashierActivity.this) {
+                                            @Override
+                                            public void onLoginComplete() {
+                                                super.onLoginComplete();
+                                                QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
+                                                    @Override
+                                                    public void onConfirm(BigDecimal value) {
+                                                        UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
+                                                    }
+                                                }, orderItemListFragment);
+                                            }
+                                        }, Permission.CHANGE_QTY);
+                                    }
                                     return;
                                 }
                             });
+
                     final AlertDialog alertDialog = alertDialogBuilder.create();
-                    new Thread(new Runnable() {
+                    Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             BigDecimal newQty = null;
                             while (scaleService != null) {
                                 newQty = new BigDecimal(scaleService.readScale());
-                                if (newQty.compareTo(BigDecimal.ZERO) == 1 || !alertDialog.isShowing()) {
+                                if(!alertDialog.isShowing())
+                                    break;
+
+                                if(!scaleService.isUnitsLabelMatch(model.unitsLabel)){
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to " + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
+                                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
+                                        }
+                                    });
+                                }else if (newQty.compareTo(BigDecimal.ZERO) != 1) {
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            String header = !scaleServiceBound ? "Check connection to the scale":"Place " + item.description + " on the Scale";
+                                            header += " or enter the weight manually.";
+                                            alertDialog.setMessage(header);
+                                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+                                        }
+                                    });
+                                }else{
+                                    // units label match && qty > 0
+                                    break;
+                                }
+                                if(stop){
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            orderItemListFragment.doRemoceClickLine(item.getGuid());
+                                            alertDialog.dismiss();
+                                        }
+                                    });
                                     break;
                                 }
                             }
-                            if(alertDialog.isShowing()) {
+                            // dialog shown, not been dismissed.
+                            if (alertDialog.isShowing()) {
                                 final BigDecimal finalNewQty = newQty;
                                 runOnUiThread(new Runnable() {
                                     public void run() {
@@ -2002,8 +2078,21 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                 });
                             }
                         }
-                    }).start();
+                    });
                     alertDialog.show();
+                    // hide button which not necessary
+                    if(scaleService.getStatus() >= 0){
+                        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.GONE);
+                        if(!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
+                            Logger.d("Status = "+scaleService.getStatus());
+                            alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to " + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
+                        }
+                    }
+                    //if not bound to service, do not need start thread
+                    if(scaleService.getStatus() >= 0) {
+                        thread.start();
+                    }
                 }
             }
             return;
@@ -2022,6 +2111,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 return;
             setOrderGuid(orderGuid, true);
         }
+    }
+
+    private SaleOrderItemViewModel getSaleItem(String saleItemGuid) {
+
+        Cursor cursor = ProviderAction.query(URI_SALE_ITEMS)
+                .where(ShopSchema2.SaleOrderItemsView2.SaleItemTable.SALE_ITEM_GUID + " = ?", saleItemGuid)
+                .perform(this);
+        List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor, new SaleOrderItemViewModelWrapFunction(this, false));
+        return saleItemsList == null || saleItemsList.isEmpty() ? null : saleItemsList.get(0);
     }
 
 

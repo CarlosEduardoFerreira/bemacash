@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.format.Formatter;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.model.PaxModel;
@@ -22,10 +23,16 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.channels.IllegalBlockingModeException;
+import java.util.Enumeration;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class FindPaxCommand extends PublicGroundyTask {
@@ -44,6 +51,8 @@ public class FindPaxCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
+        Logger.d("Trace socket timeout. SocketTimeoutException: catched. FindPaxCommand doInBackground");
+
         String ipHead = logLocalIpAddresses();
         int timeOut = getIntArg(ARG_TIME_OUT) == 0 ? getApp().getPaxTimeOut() : getIntArg(ARG_TIME_OUT);
         PaxModel model = new PaxModel(null, "", 10009, "", null, null, false, null);
@@ -123,11 +132,31 @@ public class FindPaxCommand extends PublicGroundyTask {
         }
     }
 
+    public static String getIpAddress() {
+        try {
+            for (Enumeration en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = (NetworkInterface) en.nextElement();
+                for (Enumeration enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = (InetAddress) enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()&&inetAddress instanceof Inet4Address) {
+                        String ipAddress=inetAddress.getHostAddress().toString();
+                        Log.e("IP address", "" + ipAddress);
+                        return ipAddress;
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            Log.e("Socket exception in GetIP Address of Utilities", ex.toString());
+        }
+        return null;
+    }
+
     private String getDHCPIp() {
-        WifiManager wifi = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
-        DhcpInfo dhcpInfo = wifi.getDhcpInfo();
-        String ipFull = Formatter.formatIpAddress(dhcpInfo.ipAddress);
-        String[] dots = ipFull.split("\\.");
+//        WifiManager wifi = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+//        DhcpInfo dhcpInfo = wifi.getDhcpInfo();
+//        String ipFull = Formatter.formatIpAddress(dhcpInfo.ipAddress);
+//        String[] dots = ipFull.split("\\.");
+        String[] dots = getIpAddress().split("\\.");
         String ip = dots[0] + "." + dots[1] + "." + dots[2] + ".";
         return ip;
     }

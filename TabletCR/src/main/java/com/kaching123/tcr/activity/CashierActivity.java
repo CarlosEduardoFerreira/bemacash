@@ -178,7 +178,7 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Perform action on key press
-                    Toast.makeText(CashierActivity.this, scannerInput.getText(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(CashierActivity.this, scannerInput.getText(), Toast.LENGTH_SHORT).show();
                     tryToSearchBarCode(scannerInput);
                     return true;
                 }

@@ -25,7 +25,7 @@ public abstract class BasePrintCommand<T extends IPrinter> extends PrinterComman
         final T printerWrapper = createTextPrinter();
 
         printBody(printerWrapper);
-        printerWrapper.emptyLine(5);
+        printerWrapper.emptyLine(7);
 
         try {
             printerWrapper.print(printer);

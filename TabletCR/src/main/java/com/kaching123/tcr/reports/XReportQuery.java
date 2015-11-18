@@ -320,7 +320,7 @@ public final class XReportQuery {
                 payOuts = payOuts.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
         }
         cur.close();
-        return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, totalValue);
+        return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, result, totalValue);
     }
 
     private static Date getStartOfDay() {
@@ -382,7 +382,7 @@ public final class XReportQuery {
         BigDecimal cashBack = BigDecimal.ZERO;
 
         TreeMap<String, departsSale> departsSales = new TreeMap<String, departsSale>();
-
+        ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>();
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
 
         String lastShiftGuid = getLastShiftGuidDaily(context, registerId);
@@ -453,7 +453,7 @@ public final class XReportQuery {
             }
 
             departsSale prepaidTotalSale = new departsSale("Prepaid", BigDecimal.ZERO);
-            ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.PREPAID));
+            result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.PREPAID));
             final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
             for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
                 prepaidTotalSale.sales = prepaidTotalSale.sales.add(item.revenue);
@@ -519,7 +519,7 @@ public final class XReportQuery {
 
         return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity,
                 tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash,
-                tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, totalValue);
+                tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, result, totalValue);
     }
 
     private static BigDecimal getDailyOrdersTransactionFee(Context context, OrderStatus type, long registerId) {

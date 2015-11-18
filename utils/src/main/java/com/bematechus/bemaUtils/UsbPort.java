@@ -40,6 +40,8 @@ public class UsbPort extends CommunicationPort {
 
     public static final int LR2000_PID = 0x811e;
     public static final int LR2000_VID = 0x0fe6;
+    public static final int LDX1000_PID = 0xa010;
+    public static final int LDX1000_VID = 0x0fa8;
     public static final String USB_DESC = "USB";
     public static final String USB_MODELS = "LR2000";
 
@@ -55,7 +57,13 @@ public class UsbPort extends CommunicationPort {
     @Override
     public boolean open(PortInfo info) throws CommunicationException {
 
-
+        if(info.getPortName().equalsIgnoreCase("LDX1000")){
+            info.setUSB_PID(LDX1000_PID);
+            info.setUSB_VID(LDX1000_VID);
+        }else{
+            info.setUSB_PID(LR2000_PID);
+            info.setUSB_VID(LR2000_VID);
+        }
         this.pid = info.getUSB_PID();
         this.vid = info.getUSB_VID();
         this.deviceId = info.getPortNumber();

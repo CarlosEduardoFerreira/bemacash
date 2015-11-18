@@ -10,6 +10,7 @@ import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
@@ -90,8 +91,8 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
             OrderTotalPriceCursorQuery.loadSync(context, orderGuid, childOrderGuid, new PrintHandler() {
 
                 @Override
-                public void handleItem(String saleItemGuid, String description,
-                                       BigDecimal qty, BigDecimal itemSubtotal,
+                public void handleItem(String saleItemGuid, String description, String unitLabel,
+                                       PriceType priceType, BigDecimal qty, BigDecimal itemSubtotal,
                                        BigDecimal itemDiscount, BigDecimal itemTax,
                                        BigDecimal singleItemPrice, List<Unit> units,
                                        ArrayList<SaleOrderItemViewModel.AddonInfo> addons,
@@ -110,7 +111,11 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                             }
                         }
                     }
-                    printerWrapper.add(description, refundQty, negative(itemTotal), unitAsStrings);
+                    //                if(app.getShopPref().printDetailReceipt().get())
+                    if(true)
+                        printerWrapper.add(description, qty, negative(itemTotal), singleItemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
+                    else
+                        printerWrapper.add(description, qty, negative(itemTotal), unitAsStrings);
                     total = total.add(itemTotal);
                 }
 

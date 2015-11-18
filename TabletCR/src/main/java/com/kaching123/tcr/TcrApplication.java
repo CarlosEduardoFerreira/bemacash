@@ -169,6 +169,7 @@ public class TcrApplication extends MultiDexApplication {
 
     @Background
     public void initPref() {
+        Logger.d("PrintReceiptTwice = "+shopPref.printReceiptTwice().get());
         synchronized (this) {
             shopInfo = new ShopInfo(
                     shopPref.shopId().get(),
@@ -226,10 +227,17 @@ public class TcrApplication extends MultiDexApplication {
                     _decimal(shopPref.defaultStoreCommission().getOr(null)),
                     shopPref.offlinePeriodHours().getOr(0),
                     shopPref.printerTwoCopiesReceipt().getOr(false),
+                    shopPref.printReceiptTwice().getOr(1),
+                    shopPref.printDetailReceipt().getOr(false),
                     shopPref.maxItemsCount().getOr(0),
                     shopPref.printDropOrPayout().getOr(true),
                     shopPref.updateCheckTimer().getOr(0),
-                    shopPref.enableEreportDepartSale().getOr(false));
+                    shopPref.enableEreportDepartSale().getOr(false),
+                    shopPref.enableEreportItemSale().getOr(false),
+                    shopPref.ivulotoMID().get(),
+                    shopPref.terminalID().get(),
+                    shopPref.terminalPassword().get(),
+                    shopPref.removeCheckAndOfflineCredit().get());
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -552,10 +560,17 @@ public class TcrApplication extends MultiDexApplication {
                 .defaultStoreCommission().put(_decimal(info.defaultStoreCommission))
                 .offlinePeriodHours().put(info.offlinePeriodHours)
                 .printerTwoCopiesReceipt().put(info.printerTwoCopiesReceipt)
+                .printDetailReceipt().put(info.printDetailReceipt)
+                .printReceiptTwice().put(info.printReceiptTwice)
                 .maxItemsCount().put(info.maxItemsCount)
                 .printDropOrPayout().put(info.printDropOrPayout)
                 .updateCheckTimer().put(info.updateCheckTimer)
                 .enableEreportDepartSale().put(info.enableEreportDepartSale)
+                .enableEreportItemSale().put(info.enableEreportItemSale)
+                .ivulotoMID().put(info.ivulotoMid)
+                .terminalID().put(info.terminalID)
+                .terminalPassword().put(info.terminalPassword)
+                .removeCheckAndOfflineCredit().put(info.removeCheckAndOfflineCredit)
                 .apply();
 
         setUsers();
@@ -643,6 +658,54 @@ public class TcrApplication extends MultiDexApplication {
 
     public boolean getSunpassActivated() {
         return shopPref.SunpassActivated().get();
+    }
+
+    public void setDirecTvPRActivated(boolean activated) {
+        shopPref.DirecTvPRActivated().put(activated);
+    }
+
+    public boolean getDirecTvPRActivated() {
+        return shopPref.DirecTvPRActivated().get();
+    }
+
+    public void setIVULotoActivated(boolean activated) {
+        shopPref.IVULotoActivated().put(activated);
+    }
+
+    public boolean getIVULotoActivated() {
+        return shopPref.IVULotoActivated().get();
+    }
+
+    public void setRemoveCheckAndOfflineCredit(boolean removeCheckAndOfflineCredit) {
+        shopPref.removeCheckAndOfflineCredit().put(removeCheckAndOfflineCredit);
+    }
+
+    public boolean getRemoveCheckAndOfflineCredit() {
+        return shopPref.removeCheckAndOfflineCredit().get();
+    }
+
+    public void setIvulotoMID(String ivulotoMID) {
+        shopPref.ivulotoMID().put(ivulotoMID);
+    }
+
+    public String getIvulotoMID() {
+        return shopPref.ivulotoMID().get();
+    }
+
+    public void setTerminalID(String terminalID) {
+        shopPref.terminalID().put(terminalID);
+    }
+
+    public String getterminalID() {
+        return shopPref.terminalID().get();
+    }
+
+    public void setTerminalPassword(String terminalPassword) {
+        shopPref.terminalPassword().put(terminalPassword);
+    }
+
+    public String getTerminalPassword() {
+        return shopPref.terminalPassword().get();
     }
 
     public void setBillPaymentActivated(boolean activated) {

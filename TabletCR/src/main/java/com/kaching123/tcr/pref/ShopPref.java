@@ -66,6 +66,8 @@ public interface ShopPref {
 
     boolean printOnholdOrders();
 
+    int printReceiptTwice();
+
     boolean shopDrawerClosedForSale();
 
     boolean clockinRequired4Sales();
@@ -251,6 +253,8 @@ public interface ShopPref {
 
     boolean printDropOrPayout();
 
+    boolean printDetailReceipt();
+
     int paxTimeOut();
 
     String usbMSRName();
@@ -273,5 +277,16 @@ public interface ShopPref {
 
     boolean enableEreportDepartSale();
 
+    boolean enableEreportItemSale();
+
     boolean DirecTvPRActivated();
+    boolean IVULotoActivated();
+
+    String ivulotoMID();
+
+    String terminalID();
+
+    String terminalPassword();
+
+    boolean removeCheckAndOfflineCredit();
 }

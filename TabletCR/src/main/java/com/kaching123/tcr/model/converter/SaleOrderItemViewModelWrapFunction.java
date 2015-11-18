@@ -15,6 +15,7 @@ import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
 import com.kaching123.tcr.function.UnitWrapFunction;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.OrderType;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemAddonModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
@@ -139,8 +140,9 @@ public class SaleOrderItemViewModelWrapFunction implements Function<Cursor, List
         //Logger.d("Provider: wrap - end: " + (System.currentTimeMillis() - time));
 
         OrderTotalPriceCalculator.calculate(items, null, new Handler() {
+
             @Override
-            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
+            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, String unitLabel, PriceType priceType, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
                 SaleOrderItemViewModel item = saleItemsMap.get(saleItemGuid);
                 if (item != null) {
                     item.finalPrice = itemFinalPrice;

@@ -4,9 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import org.androidannotations.annotations.EFragment;
@@ -39,6 +44,8 @@ import com.kaching123.tcr.reports.ReorderReportQuery.ItemQtyInfo;
 import java.io.File;
 import java.util.List;
 
+import static com.kaching123.tcr.util.KeyboardUtils.hideKeyboard;
+
 /**
  * Created by gdubina on 31.01.14.
  */
@@ -49,9 +56,12 @@ public class ReorderReportFragment extends SuperBaseFragment implements LoaderCa
     @ViewById(android.R.id.list)
     protected ListView listView;
 
+    private MenuItem searchItem;
+
     protected ObjectsCursorAdapter<ItemQtyInfo> adapter;
 
     private ExportCommandCallback exportCommandCallback = new ExportCommandCallback();
+    private String textFilter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -63,8 +73,54 @@ public class ReorderReportFragment extends SuperBaseFragment implements LoaderCa
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        searchItem = menu.findItem(R.id.action_search);
+        assert searchItem != null;
+        initSearchView();
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void initSearchView() {
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        assert searchView != null;
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                hideKeyboard(getActivity(), searchView);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterSearchFragment(newText);
+                return true;
+            }
+        });
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                searchView.setQuery(null, true);
+                return true;
+            }
+        });
+    }
+
+    private void filterSearchFragment(String newText) {
+        this.textFilter = newText;
+        getLoaderManager().restartLoader(0, null, this).forceLoad();
+    }
+
+    @Override
     public Loader<List<ItemQtyInfo>> onCreateLoader(int i, Bundle bundle) {
-        return ReorderReportQuery.getLoader(getActivity());
+        if(TextUtils.isEmpty(textFilter))
+            return ReorderReportQuery.getLoader(getActivity());
+        return ReorderReportQuery.getLoader(getActivity(),textFilter);
     }
 
     @Override

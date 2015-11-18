@@ -8,6 +8,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler2;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.Unit;
@@ -144,9 +145,9 @@ public final class OrderTotalPriceCursorQuery {
 
         for (SaleOrderItemViewModel item : items) {
             String itemDescription = item.description;
-            if (item.modifier != null) {
-                itemDescription = itemDescription + ", " + item.modifier.addonTitle;
-            }
+//            if (item.modifier != null) {
+//                itemDescription = itemDescription + ", " + item.modifier.addonTitle;
+//            }
 
             final SaleOrderItemModel itemModel = item.itemModel;
             final BigDecimal itemQty = item.getQty();
@@ -166,8 +167,10 @@ public final class OrderTotalPriceCursorQuery {
             } else {
                 units = null;
             }
-            ArrayList<SaleOrderItemViewModel.AddonInfo> addons = item.getAddons();
-            handler.handleItem(item.getSaleItemGuid(), itemDescription,
+            ArrayList<SaleOrderItemViewModel.AddonInfo> addons = item.getAddons() == null ? new ArrayList<SaleOrderItemViewModel.AddonInfo>() : item.getAddons();
+            if(item.getModifier() != null)
+                addons.add(0,item.getModifier());
+            handler.handleItem(item.getSaleItemGuid(), itemDescription,item.unitsLabel,itemModel.priceType,
                     itemQty, itemSubtotal, itemDiscount,
                     itemTax, singleItemPrice, units, addons, transactionFee, item.fullPrice, item.getNotes());
         }
@@ -177,7 +180,8 @@ public final class OrderTotalPriceCursorQuery {
 
     public static interface PrintHandler {
         void handleItem(String saleItemGuid, String description,
-                        BigDecimal qty, BigDecimal itemSubtotal,
+                        String unitLabel,
+                        PriceType priceType, BigDecimal qty, BigDecimal itemSubtotal,
                         BigDecimal itemDiscount, BigDecimal itemTax,
                         BigDecimal singleItemPrice, List<Unit> units,
                         ArrayList<SaleOrderItemViewModel.AddonInfo> addons,

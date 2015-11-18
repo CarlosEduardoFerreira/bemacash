@@ -47,6 +47,7 @@
 
                 <TextView
                     android:text="Coffee"
+                    android:maxLength="20"
                     android:id="@+id/item_price_label"
                     style="@style/QuickServiceInfo.Label"
                     android:layout_height="wrap_content"

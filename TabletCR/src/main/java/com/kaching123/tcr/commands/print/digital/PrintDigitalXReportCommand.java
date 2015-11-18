@@ -33,6 +33,8 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
 
     private static final String ARG_XREPORT_ENABLE = "ARG_XREPORT_ENABLE";
 
+    private static final String ARG_ITEM_XREPORT_ENABLE = "ARG_ITEM_XREPORT_ENABLE";
+
     private ReportType xReportType;
 
     @Override
@@ -48,7 +50,7 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
 
-        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE));
+        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE), getBooleanArg(ARG_ITEM_XREPORT_ENABLE));
         processor.print(getContext(), getApp(), builder);
 
         File file = new File(getContext().getExternalCacheDir(), getContext().getString(R.string.report_type_xreport) + ".html");
@@ -64,11 +66,12 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         return succeeded().add(EXTRA_XREPORT, Uri.fromFile(file));
     }
 
-    public static void start(Context context, String shiftGuid, ReportType xReportType, BasePrintDigitalXReportCallback callback, boolean enableEreportDepartSale) {
+    public static void start(Context context, String shiftGuid, ReportType xReportType, BasePrintDigitalXReportCallback callback, boolean enableEreportDepartSale, boolean itemXreportSaleEnabled) {
         create(PrintDigitalXReportCommand.class)
                 .arg(ARG_SHIFT_GUID, shiftGuid)
                 .arg(ARG_XREPORT_TYPE, xReportType)
                 .arg(ARG_XREPORT_ENABLE, enableEreportDepartSale)
+                .arg(ARG_ITEM_XREPORT_ENABLE, itemXreportSaleEnabled)
                 .callback(callback).queueUsing(context);
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/DrawerPicker.Item.Category"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -8,25 +8,34 @@
     android:paddingLeft="12dp"
     android:gravity="center_vertical">
 
-    <TextView
-        style="@style/DrawerPicker.ItemText.Category"
-        android:textStyle="bold"
-        android:id="@+id/title"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"/>
-
-    <TextView
-        style="@style/DrawerPicker.ItemSubText.Category"
-        android:id="@+id/count"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_weight="1"/>
-
     <ImageView
         android:id="@+id/arrow"
         android:layout_height="match_parent"
         android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
         android:src="@drawable/drawer_category_arrow_selector"/>
 
-</LinearLayout>
+    <TextView
+        style="@style/DrawerPicker.ItemSubText.Category"
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/arrow"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="8dp"/>
+
+    <TextView
+        style="@style/DrawerPicker.ItemText.Category"
+        android:id="@+id/title"
+        android:layout_alignParentLeft="true"
+        android:gravity="left"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
+        android:layout_toLeftOf="@id/count"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"/>
+
+</RelativeLayout>

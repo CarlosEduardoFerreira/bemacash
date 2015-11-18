@@ -8,6 +8,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
+import com.kaching123.tcr.model.PriceType;
 
 import java.math.BigDecimal;
 
@@ -32,7 +33,8 @@ public class DisplayOrderCommand extends BaseDisplayCommand<DisplayPrinterWrappe
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new Handler() {
 
             @Override
-            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
+            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, String unitLabel, PriceType priceType, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
+
             }
 
             @Override

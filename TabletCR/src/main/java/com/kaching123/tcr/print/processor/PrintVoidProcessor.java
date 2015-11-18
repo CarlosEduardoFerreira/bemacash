@@ -14,8 +14,10 @@ import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
+import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
@@ -31,7 +33,7 @@ import static com.kaching123.tcr.util.CursorUtil._wrap;
 /**
  * Created by gdubina on 23.12.13.
  */
-public class PrintVoidProcessor extends BasePrintProcessor<ITextPrinter> {
+public class PrintVoidProcessor extends BasePrintProcessor<PosOrderTextPrinter> {
 
     private static final Uri SALE_ITEMS_URI = ShopProvider.getContentUri(SaleOrderItemsView.URI_CONTENT);
     private static final Uri SALE_ORDER_URI = ShopProvider.getContentUri(SaleOrderTable.URI_CONTENT);
@@ -46,7 +48,7 @@ public class PrintVoidProcessor extends BasePrintProcessor<ITextPrinter> {
     }
 
     @Override
-    public void printHeader(Context context, TcrApplication app, ITextPrinter printerWrapper) {
+    public void printHeader(Context context, TcrApplication app, PosOrderTextPrinter printerWrapper) {
         if (reprint) {
             printerWrapper.subTitle(context.getString(R.string.print_order_copy_header));
             printerWrapper.emptyLine();
@@ -58,7 +60,7 @@ public class PrintVoidProcessor extends BasePrintProcessor<ITextPrinter> {
 
 
     @Override
-    protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
+    protected void printBody(final Context context, final TcrApplication app, final PosOrderTextPrinter printerWrapper) {
         printerWrapper.subTitle(context.getString(R.string.print_order_void_subtitle));
         printerWrapper.drawLine();
 
@@ -73,11 +75,14 @@ public class PrintVoidProcessor extends BasePrintProcessor<ITextPrinter> {
 
             @Override
             public void handleItem(String saleItemGuid, String description, BigDecimal qty,
-                                   BigDecimal itemPriceWithAddons, BigDecimal ignore1,
+                                   BigDecimal itemPriceWithAddons, String unitLabel, PriceType priceType, BigDecimal ignore1,
                                    BigDecimal ignore2, BigDecimal itemFinalPrice,
                                    BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
                 BigDecimal itemTotal = CalculationUtil.getSubTotal(qty, itemFinalPrice);
-                printerWrapper.add(description, qty, CalculationUtil.negative(itemTotal), null);
+                if(true)
+                    printerWrapper.add(description, qty, CalculationUtil.negative(itemTotal), itemFinalPrice, unitLabel, priceType == PriceType.UNIT_PRICE, null);
+                else
+                    printerWrapper.add(description, qty, CalculationUtil.negative(itemTotal), null);
             }
 
             @Override
@@ -101,7 +106,7 @@ public class PrintVoidProcessor extends BasePrintProcessor<ITextPrinter> {
 
 
     @Override
-    protected void printMidTid(ITextPrinter printer, String label, String value, boolean bold) {
+    protected void printMidTid(PosOrderTextPrinter printer, String label, String value, boolean bold) {
         printer.addWithTab2(label, value, true, bold);
     }
 

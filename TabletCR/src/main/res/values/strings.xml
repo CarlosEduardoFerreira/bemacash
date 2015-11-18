@@ -400,6 +400,7 @@
     <string name="item_activity_alert_ean_duplicate_msg">Item with such ean is already exists!</string>
     <string name="item_activity_alert_product_code_duplicate_msg">Item with such product code is already exists!</string>
     <string name="item_activity_alert_units_label_msg">Units label is empty!</string>
+    <string name="item_activity_alert_units_label_not_match_msg">Units label should be PCS, LB or OZ!</string>
     <string name="item_activity_alert_price_empty_msg">Price is empty!</string>
     <string name="item_activity_alert_price_positive_msg">Price should be positive!</string>
     <string name="item_activity_alert_discount_less_100_msg">Discount should be less then 100%</string>
@@ -521,6 +522,8 @@
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
     <string name="scan_dialog_title">Please scan a barcode...</string>
+    <string name="lottery_wait_dialog_title">Please wait...</string>
+    <string name="lottery_fail_message">Fails to catch lottery</string>
     <string name="apk_update_dialog_title">Would you like to update to version %d now?</string>
     <string name="confirm_display_title">Do you see the message on the display?</string>
     <string name="confirm_scale_title">The number on the scale is : %s, is it correct?</string>
@@ -770,6 +773,7 @@
     <string name="permission_training_mode">Training Mode</string>
     <string name="permission_warranty_expiration_override">Warranty Expiration Override</string>
     <string name="permission_cash_drawer_money">Cash Drawer Money</string>
+    <string name="permission_change_quantity">Change Quantity</string>
     <string name="permission_software_update">Software Update</string>
     <string name="permission_group_sales_module">Sales Module</string>
     <string name="permission_group_table_management">Table Management</string>
@@ -918,6 +922,7 @@
     <string name="xreport_returns">Returns:</string>
     <string name="xreport_net_sales">Net Sales:</string>
     <string name="xreport_departments_sales">Departments:</string>
+    <string name="xreport_items_sales">Items:</string>
     <string name="xreport_gratuity">Gratuity:</string>
     <string name="xreport_tax">Tax:</string>
     <string name="xreport_transaction_fee">Transaction Fee:</string>

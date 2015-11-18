@@ -33,6 +33,9 @@ public class WaitDialogFragmentWithCallback extends StyledDialogFragment {
     @FragmentArg
     protected String msg;
 
+    @FragmentArg
+    protected boolean isCancelable;
+
     @ViewById
     protected TextView progressMsg;
 
@@ -51,12 +54,17 @@ public class WaitDialogFragmentWithCallback extends StyledDialogFragment {
         getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width),
                 getDialog().getWindow().getAttributes().height);
         setCancelable(false);
-        cancelButton.setOnClickListener(new View.OnClickListener(){
+        if(isCancelable) {
+            cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mCallback.onDialogDismissed("");
                     dismiss();
                 }
             });
+        }else{
+            cancelButton.setVisibility(View.GONE);
+        }
         progressMsg.setText(msg);
     }
 
@@ -101,7 +109,11 @@ public class WaitDialogFragmentWithCallback extends StyledDialogFragment {
     }
 
     public static void show(FragmentActivity activity, String msg) {
-        DialogUtil.show(activity, DIALOG_NAME, WaitDialogFragmentWithCallback_.builder().msg(msg).build());
+        DialogUtil.show(activity, DIALOG_NAME, WaitDialogFragmentWithCallback_.builder().msg(msg).isCancelable(true).build());
+    }
+
+    public static void show(FragmentActivity activity, String msg, boolean cancelable) {
+        DialogUtil.show(activity, DIALOG_NAME, WaitDialogFragmentWithCallback_.builder().msg(msg).isCancelable(cancelable).build());
     }
 
 //    public static void showWithCancel(FragmentActivity activity, String msg) {

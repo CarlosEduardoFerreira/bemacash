@@ -31,6 +31,7 @@ import com.kaching123.tcr.fragment.wireless.UnitsSearchHistoryFragment;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderViewModel;
 import com.kaching123.tcr.model.Unit;
@@ -188,7 +189,7 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
         OrderTotalPriceCalculator.calculate(orderItems, null, new Handler() {
 
             @Override
-            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
+            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, String unitLabel, PriceType priceType, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
 
             }
 

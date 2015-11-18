@@ -46,6 +46,7 @@
     <string name="prepaid_dialog_conditions_title">Escoger Condiciones</string>
     <string name="prepaid_dialog_number_title">Ingresar Numero Telef\u00F3nico</string>
     <string name="prepaid_dialog_progress_title">Facturaci\u00F3n en progreso</string>
+    <string name="prepaid_dialog_payment_progress_title">Facturaci\u00F3n en progreso</string>
     <string name="prepaid_dialog_notification_title">Concluido Satisfactoriamente</string>
     <string name="prepaid_dialog_or"> - o -</string>
     <string formatted = "false" name="prepaid_dialog_phone">Uste elegi\u00F3 %s. Por favor ingresar numero Telef\u00F3nico </string>
@@ -252,7 +253,7 @@
     <string name="blackstone_pay_failure_body_2nd">El servidor ha reportado error</string>
     <string name="blackstone_pay_failure_body_constructor" formatted = "false">%s %s %s</string>
     <string name="blackstone_pay_failure_body_3nd">Problema no relacionado con entidad bancaria</string>
-    <string name="blackstone_pay_progress_body">Verificaci\u00F3n</string>
+    <string name="blackstone_pay_progress_body">Generating payment\u00F3n</string>
     <string name="blackstone_pay_total">Total</string>
     <string name="blackstone_pay_pending_amount">Monto Pendiente</string>
     <string name="blackstone_pay_charge">Cambio Exacto</string>

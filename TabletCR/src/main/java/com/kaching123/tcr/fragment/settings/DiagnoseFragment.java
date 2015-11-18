@@ -1,11 +1,13 @@
 package com.kaching123.tcr.fragment.settings;
 
+import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.display.DisplayMessageCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -39,6 +42,8 @@ import org.androidannotations.annotations.ViewById;
 /**
  * Created by long.jiao on 8/14/2015.
  */
+
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 @EFragment(R.layout.settings_device_diagnose_fragment)
 @OptionsMenu(R.menu.settings_device_diagnose_fragment)
 public class DiagnoseFragment extends SuperBaseFragment implements DisplayService.IDisplayBinder {
@@ -281,8 +286,20 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         protected Void doInBackground(String... params) {
-                if(pos == 2)
-                    startCommand(new DisplayWelcomeMessageCommand());
+                if(pos == 2) {
+                    if(getApp().getShopPref().displayName().get().toUpperCase().contains("LCI") || getApp().getShopPref().displayName().get().toUpperCase().contains("LDX")) {
+                        while (displayBinder == null) {
+                            try {
+                                Thread.sleep(300);
+                                startCommand(new DisplayMessageCommand("Connected"));
+                                Thread.sleep(4000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }else
+                        startCommand(new DisplayMessageCommand("Connected"));
+                }
                 else if(pos == 4){
 //                    scaleRead = scaleService.readScale();
                     while(true){
@@ -294,8 +311,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                     }
                 }else if(pos == 3){
                     while(true){
-                        if(scannerRead != null && scannerRead != ""){
-                            Logger.d("scannerRead = "+scannerRead);
+                        if(scannerRead != null){
                             break;
                         }
                     }
@@ -305,16 +321,13 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         protected void onPreExecute() {
-            if (pos == 2)
+            if (pos == 2) {
                 bindToDisplayService();
-            else if(pos == 3){
-                if(getUSBScanner()) {
-                    DialogFragment fragment = WaitDialogFragmentWithCallback.showWithReturn(getActivity(),getString(R.string.wait_dialog_title));
-                    return;
-                }
-
+                WaitDialogFragmentWithCallback.show(getActivity(), getString(R.string.wait_dialog_title),false);
             }
-            WaitDialogFragmentWithCallback.show(getActivity(), getString(R.string.wait_dialog_title));
+            else if(pos == 3){
+                WaitDialogFragmentWithCallback.show(getActivity(), getString(R.string.scan_dialog_title),true);
+            }
         }
 
         @Override
@@ -328,6 +341,10 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                 confirmStr = String.format(getString(R.string.confirm_scale_title),scaleRead);
             }
             else if(pos == 3){
+                if(scannerRead == ""){
+                    scannerRead = null;
+                    return;
+                }
                 confirmStr = String.format(getString(R.string.confirm_scanner_title),scannerRead);
                 scannerRead = null;
                 unbindFromScannerService();

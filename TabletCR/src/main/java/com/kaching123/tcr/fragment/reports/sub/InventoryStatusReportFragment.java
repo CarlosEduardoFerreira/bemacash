@@ -7,13 +7,18 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -57,6 +62,7 @@ import java.util.List;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 import static com.kaching123.tcr.fragment.UiHelper.showQuantityInteger;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
+import static com.kaching123.tcr.util.KeyboardUtils.hideKeyboard;
 
 /**
  * Created by vkompaniets on 04.03.14.
@@ -71,12 +77,15 @@ public class InventoryStatusReportFragment extends SuperBaseFragment {
     @ViewById(android.R.id.list)
     protected ListView listView;
 
+    private MenuItem searchItem;
+
     private ItemsAdapter itemsAdapter;
 
     private DepartmentAdapter departmentAdapter;
 
     private String depGuid;
     private ExportCommandBaseCallback exportCallback = new ExportCallback();
+    private String textFilter;
 
     public static InventoryStatusReportFragment instance() {
         return InventoryStatusReportFragment_.builder().build();
@@ -105,6 +114,52 @@ public class InventoryStatusReportFragment extends SuperBaseFragment {
 
         itemsAdapter = new ItemsAdapter(getActivity());
         listView.setAdapter(itemsAdapter);
+    }
+
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        searchItem = menu.findItem(R.id.action_search);
+        assert searchItem != null;
+        initSearchView();
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void initSearchView() {
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        assert searchView != null;
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                hideKeyboard(getActivity(), searchView);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterSearchFragment(newText);
+                return true;
+            }
+        });
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                searchView.setQuery(null, true);
+                return true;
+            }
+        });
+    }
+
+    private void filterSearchFragment(String newText) {
+        this.textFilter = newText.toLowerCase();
+        getLoaderManager().restartLoader(0, null, new ItemsLoader()).forceLoad();
     }
 
     private void setDepartment(String depGuid) {
@@ -251,7 +306,14 @@ public class InventoryStatusReportFragment extends SuperBaseFragment {
                     ArrayList<Object> rows = new ArrayList<Object>();
                     for (DepInfo depInfo : depInfos) {
                         rows.add(new HeaderRow(depInfo.title));
-                        rows.addAll(depInfo.items);
+                        if(TextUtils.isEmpty(textFilter)){
+                            rows.addAll(depInfo.items);
+                        }else{
+                            for(ItemInfo item: depInfo.items){
+                                if(item.title.toLowerCase().matches(".*"+textFilter+".*"))
+                                    rows.add(item);
+                            }
+                        }
                         rows.add(new TotalRow(depInfo.totalCost));
                     }
                     return rows;

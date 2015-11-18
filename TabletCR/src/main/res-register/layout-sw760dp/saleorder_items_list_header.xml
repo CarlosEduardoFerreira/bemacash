@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:text="@string/order_header_title"
-        android:layout_weight="3"/>
+        android:layout_weight="16"/>
     <EditText
         android:id="@+id/usb_scanner_input"
         android:textSize="1sp"
@@ -22,14 +22,14 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:cursorVisible="false"
-        android:layout_weight="12"/>
+        android:layout_weight="0"/>
     <TextView
         style="@style/ItemList.HeaderText.Border"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/order_header_quantiy"
         android:gravity="center"
-        android:layout_weight="5"/>
+        android:layout_weight="6"/>
 
 
     <TextView

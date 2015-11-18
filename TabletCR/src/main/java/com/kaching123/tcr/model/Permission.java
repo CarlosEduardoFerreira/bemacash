@@ -31,6 +31,7 @@ public enum Permission implements LabaledEnum {
     TRAINING_MODE(24, R.string.permission_training_mode, Group.SYSTEM_CONFIGURATION),
     WARRANTY_EXPIRATION_OVERRIDE(23, R.string.permission_warranty_expiration_override, Group.SALES_MODULE),
     CASH_DRAWER_MONEY(22, R.string.permission_cash_drawer_money, Group.DASHBOARD),
+    CHANGE_QTY(59, R.string.permission_change_quantity, Group.SALES_MODULE),
     SOFTWARE_UPDATE(25, R.string.permission_software_update, Group.SYSTEM_CONFIGURATION);
 
     private final long id;

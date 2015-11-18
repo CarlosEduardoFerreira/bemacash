@@ -114,7 +114,8 @@ public class InventoryValueFragment extends Fragment implements LoaderCallbacks<
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchItem.setVisible(false);
         MenuItem export = menu.findItem(R.id.action_export);
         assert export != null;
         export.setVisible(EXPORTABLE);

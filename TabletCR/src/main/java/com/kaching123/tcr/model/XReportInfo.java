@@ -1,6 +1,9 @@
 package com.kaching123.tcr.model;
 
+import com.kaching123.tcr.reports.SalesByItemsReportQuery;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -38,6 +41,7 @@ public class XReportInfo {
     public BigDecimal payOuts = BigDecimal.ZERO;
     public BigDecimal cashBack = BigDecimal.ZERO;
     public TreeMap<String, departsSale> departsSales = new TreeMap<String, departsSale>();
+    public ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales;
     public BigDecimal totalValue;
     /*public BigDecimal ccAmex;
     public BigDecimal ccVisa;
@@ -58,6 +62,7 @@ public class XReportInfo {
                        BigDecimal payOuts,
                        BigDecimal cashBack,
                        TreeMap<String, departsSale> departsSales,
+                       ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales,
                        BigDecimal totalValue) {
         this.begin = begin;
         this.end = end;
@@ -88,6 +93,9 @@ public class XReportInfo {
         this.payOuts = payOuts;
         this.cashBack = cashBack;
         this.departsSales = departsSales;
+        this.itemSales = itemSales;
         this.totalValue = totalValue;
     }
+
+
 }

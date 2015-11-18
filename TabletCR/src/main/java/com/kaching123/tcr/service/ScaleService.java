@@ -3,18 +3,23 @@ package com.kaching123.tcr.service;
 /**
  * Created by long.jiao on 7/30/2015.
  */
+import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.bematechus.bemaUtils.PortInfo;
 import com.kaching123.display.scale.BemaScale;
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 
 import java.math.BigDecimal;
 
@@ -65,6 +70,30 @@ public class ScaleService extends Service {
             return scale.readScale();
         return "0.00";
     }
+
+    public boolean isUnitsLabelMatch(String unitsLabel) {
+        if (scale != null)
+            return scale.getUnitsLabel().equalsIgnoreCase(unitsLabel);
+        return true;
+    }
+
+//    public String readScale(String unitsLabel) {
+//        BigDecimal qty = new BigDecimal(scale.readScale());
+//        if (scale != null) {
+//            if(!scale.getUnitsLabel().equalsIgnoreCase(unitsLabel)){
+//                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+//                        ScaleService.this);
+//                alertDialogBuilder.setTitle("Scale Warning");
+//                if(unitsLabel.equalsIgnoreCase("OZ")){
+//                    qty = qty.multiply(new BigDecimal(16));
+//                }else if(unitsLabel.equalsIgnoreCase("LB")){
+//                    qty = qty.multiply(new BigDecimal(0.0625));
+//                }
+//            }
+//            return qty.toString();
+//        }
+//        return "0.00";
+//    }
 
     public int getStatus(){
         return scale.getStatus();

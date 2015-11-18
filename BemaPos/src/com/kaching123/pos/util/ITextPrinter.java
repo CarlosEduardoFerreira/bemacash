@@ -12,6 +12,7 @@ public interface ITextPrinter extends IHeaderFooterPrinter {
     public void addAddsOn(String title, BigDecimal price);
     public void addCashBack(String title, BigDecimal price);
     public void add(String title, BigDecimal qty, BigDecimal price, List<String> units);
+    public void add(String title, BigDecimal qty, BigDecimal price,BigDecimal unitPrice, String unitsLabel, boolean isUnitPrice, List<String> units);
     public void addItemDiscount(String title, BigDecimal discoutn);
     public void addWithTab(String left, String right, boolean fixedLeft, boolean bold);
     public void addWithTab2(String left, String right, boolean fixedLeft, boolean bold);

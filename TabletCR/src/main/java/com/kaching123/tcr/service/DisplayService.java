@@ -1,11 +1,13 @@
 package com.kaching123.tcr.service;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.hardware.usb.UsbManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -14,10 +16,12 @@ import android.os.Message;
 import com.kaching123.display.BluetoothSocketPrinter;
 import com.kaching123.display.DisplayPrinter;
 import com.kaching123.display.SerialPortDiplayPrinter;
+import com.kaching123.display.USBDiplayPrinter;
 import com.kaching123.display.actions.InitDisplayAction;
 import com.kaching123.display.actions.InitSerialPortDisplayAction;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 
 import java.io.IOException;
@@ -101,6 +105,10 @@ public class DisplayService extends Service {
                 getApp().getShopPref().displayAddress().get().startsWith("COM");
     }
 
+    private boolean isUSBDisplay() {
+        return getApp().getShopPref().displayAddress().get().equalsIgnoreCase("LDX1000");
+    }
+
     private boolean openDisplayPrinter() {
         DisplayPrinter displayPrinter = null;
             try
@@ -108,6 +116,12 @@ public class DisplayService extends Service {
 
             if (isSerialPortDisplay()) {
                 displayPrinter = new SerialPortDiplayPrinter(getApp().getShopPref().displayAddress().get()); // Mint only Serial port
+            } else if(isUSBDisplay()){
+                UsbManager manager = (UsbManager) getBaseContext().getSystemService(Context.USB_SERVICE);
+                PendingIntent mPermissionIntent;
+
+                mPermissionIntent = PendingIntent.getBroadcast(getBaseContext(), 0, new Intent(PrinterCommand.ACTION_USB_PERMISSION), 0);
+                displayPrinter = new USBDiplayPrinter(USBDiplayPrinter.LDX1000_PID,USBDiplayPrinter.LDX1000_VID,manager,mPermissionIntent);
             } else {
                 BluetoothDevice display = getDisplay();
                 if (display == null)

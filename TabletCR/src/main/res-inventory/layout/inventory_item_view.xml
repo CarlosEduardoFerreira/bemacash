@@ -16,7 +16,7 @@
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:layout_weight="4"
+        android:layout_weight="3.5"
         android:layout_gravity="center_vertical"
         android:orientation="vertical">
 
@@ -49,7 +49,7 @@
     <FrameLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1.3">
 
         <TextView
             style="@style/ItemList.ItemText"
@@ -71,7 +71,7 @@
         android:gravity="right"
         android:paddingLeft="4dp"
         android:paddingRight="2dp"
-        android:layout_weight="1">
+        android:layout_weight="1.5">
 
         <TextView
             android:id="@+id/qty"
@@ -107,7 +107,7 @@
     <FrameLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:layout_weight="0.5">
+        android:layout_weight="0.2">
 
         <ImageView
             android:id="@+id/drag"
