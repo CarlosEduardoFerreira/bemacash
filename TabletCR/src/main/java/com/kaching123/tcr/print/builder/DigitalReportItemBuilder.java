@@ -97,7 +97,7 @@ public class DigitalReportItemBuilder extends BaseDigitalBuilder implements IRep
 
     @Override
     public void add4Columns(String title, BigDecimal qty1, BigDecimal qty2, BigDecimal qty3) {
-        add4Columns(title, quantityFormat.format(qty1), quantityFormat.format(qty2), quantityFormat.format(qty2));
+        add4Columns(title, quantityFormat.format(qty1), quantityFormat.format(qty2), quantityFormat.format(qty3));
     }
 
     @Override
