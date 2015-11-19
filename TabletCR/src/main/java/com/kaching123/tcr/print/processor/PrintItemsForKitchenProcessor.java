@@ -113,7 +113,8 @@ public class PrintItemsForKitchenProcessor {
         for (ItemInfo item : items){
             String description = item.description;
             if (!TextUtils.isEmpty(item.modifier)){
-                description = description + ", " + item.modifier;
+//                description = description + ", " + item.modifier;
+                item.addons.add(item.modifier);
             }
 
             BigDecimal printQty = printAllItems ? item.qty : item.qty.subtract(item.printedQty);
