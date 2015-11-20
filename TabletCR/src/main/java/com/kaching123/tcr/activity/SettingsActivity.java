@@ -2,7 +2,10 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -55,6 +58,22 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     private Fragment fragment = null;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                init();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
     protected Set<Permission> getPermissions() {
         return permissions;
     }
@@ -76,7 +95,30 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 new NavigationItem(getString(R.string.pref_devices_diagnose_title), getString(R.string.pref_devices_diagnose_summary)),
                 new NavigationItem(getString(R.string.pref_datausage_header_title), getString(R.string.pref_datausage_header_summary)),
                 new NavigationItem(getString(R.string.pref_training_mode_header_title), getString(R.string.pref_training_mode_header_summary)),
-                new NavigationItem(getString(R.string.pref_about_header_title), getString(R.string.pref_about_header_summary))
+                new NavigationItem(getString(R.string.pref_about_header_title), getString(R.string.pref_about_header_summary)),
+                new NavigationItem("Hardware", "Hardware settings"))
+        ));
+
+        navigationList.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                updateDetails(position);
+            }
+        });
+
+        navigationList.setItemChecked(0, true);
+        updateDetails(0);
+    }
+
+    protected void initDevices() {
+        navigationList.setAdapter(new NavigationAdapter(this, Arrays.asList(
+                new NavigationItem(getString(R.string.pref_printer_title), getString(R.string.pref_printer_summary)),
+                new NavigationItem(getString(R.string.pref_pax_title), getString(R.string.pref_pax_summary)),
+                new NavigationItem(getString(R.string.pref_drawer_header_title), getString(R.string.pref_drawer_header_summary)),
+                new NavigationItem(getString(R.string.pref_display_header_title), getString(R.string.pref_display_header_summary)),
+                new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
+                new NavigationItem(getString(R.string.pref_msr_header_title), getString(R.string.pref_msr_header_summary)),
+                new NavigationItem(getString(R.string.pref_scale_header_title), getString(R.string.pref_scale_header_summary))
         )));
 
         navigationList.setOnItemClickListener(new OnItemClickListener() {
@@ -128,6 +170,10 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
             case 11:
                 fragment = AboutFragment.instance();
                 break;
+            case 12:
+                initDevices();
+                break;
+
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.settings_details, fragment).commit();
     }
@@ -176,7 +222,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
         }
     }
 
-    private static class UiHolder {
+    private class UiHolder {
 
         TextView text1;
 
@@ -188,7 +234,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
         }
     }
 
-    private static class NavigationItem {
+    private class NavigationItem {
         String title;
         String subTitle;
 
