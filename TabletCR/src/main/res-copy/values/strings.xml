@@ -2,4 +2,6 @@
 <resources>
     <string name="pref_scale_header_title">Scale settings</string>
     <string name="pref_scale_header_summary">Serial scale settings</string>
+    <string name="pref_hardware_header_title">Hardware</string>
+    <string name="pref_hardware_header_summary">Hardware settings</string>
 </resources>

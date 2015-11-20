@@ -85,18 +85,10 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     protected void init() {
         navigationList.setAdapter(new NavigationAdapter(this, Arrays.asList(
                 new NavigationItem(getString(R.string.pref_sync_title), getString(R.string.pref_sync_summary)),
-                new NavigationItem(getString(R.string.pref_printer_title), getString(R.string.pref_printer_summary)),
-                new NavigationItem(getString(R.string.pref_pax_title), getString(R.string.pref_pax_summary)),
-                new NavigationItem(getString(R.string.pref_drawer_header_title), getString(R.string.pref_drawer_header_summary)),
-                new NavigationItem(getString(R.string.pref_display_header_title), getString(R.string.pref_display_header_summary)),
-                new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
-                new NavigationItem(getString(R.string.pref_msr_header_title), getString(R.string.pref_msr_header_summary)),
-                new NavigationItem(getString(R.string.pref_scale_header_title), getString(R.string.pref_scale_header_summary)),
-                new NavigationItem(getString(R.string.pref_devices_diagnose_title), getString(R.string.pref_devices_diagnose_summary)),
+                new NavigationItem(getString(R.string.pref_hardware_header_title), getString(R.string.pref_hardware_header_summary), true),
                 new NavigationItem(getString(R.string.pref_datausage_header_title), getString(R.string.pref_datausage_header_summary)),
                 new NavigationItem(getString(R.string.pref_training_mode_header_title), getString(R.string.pref_training_mode_header_summary)),
-                new NavigationItem(getString(R.string.pref_about_header_title), getString(R.string.pref_about_header_summary)),
-                new NavigationItem("Hardware", "Hardware settings"))
+                new NavigationItem(getString(R.string.pref_about_header_title), getString(R.string.pref_about_header_summary)))
         ));
 
         navigationList.setOnItemClickListener(new OnItemClickListener() {
@@ -113,23 +105,24 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     protected void initDevices() {
         navigationList.setAdapter(new NavigationAdapter(this, Arrays.asList(
                 new NavigationItem(getString(R.string.pref_printer_title), getString(R.string.pref_printer_summary)),
+                new NavigationItem(getString(R.string.pref_display_header_title), getString(R.string.pref_display_header_summary)),
                 new NavigationItem(getString(R.string.pref_pax_title), getString(R.string.pref_pax_summary)),
                 new NavigationItem(getString(R.string.pref_drawer_header_title), getString(R.string.pref_drawer_header_summary)),
-                new NavigationItem(getString(R.string.pref_display_header_title), getString(R.string.pref_display_header_summary)),
                 new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
                 new NavigationItem(getString(R.string.pref_msr_header_title), getString(R.string.pref_msr_header_summary)),
-                new NavigationItem(getString(R.string.pref_scale_header_title), getString(R.string.pref_scale_header_summary))
+                new NavigationItem(getString(R.string.pref_scale_header_title), getString(R.string.pref_scale_header_summary)),
+                new NavigationItem(getString(R.string.pref_devices_diagnose_title), getString(R.string.pref_devices_diagnose_summary))
         )));
 
         navigationList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                updateDetails(position);
+                updateHardwareDetails(position);
             }
         });
 
         navigationList.setItemChecked(0, true);
-        updateDetails(0);
+        updateHardwareDetails(0);
     }
 
     private void updateDetails(int pos) {
@@ -138,7 +131,29 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 fragment = SyncSettingsFragment.instance();
                 break;
             case 1:
+                initDevices();
+                break;
+            case 2:
+                fragment = DataUsageStatFragment.instance();
+                break;
+            case 3:
+                fragment = TrainingModeSettingsFragment.instance();
+                break;
+            case 4:
+                fragment = AboutFragment.instance();
+                break;
+
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.settings_details, fragment).commit();
+    }
+
+    private void updateHardwareDetails(int pos){
+        switch (pos) {
+            case 0:
                 fragment = PrinterListFragment.instance();
+                break;
+            case 1:
+                fragment = DisplayFragment.instance();
                 break;
             case 2:
                 fragment = PaxListFragment.instance();
@@ -147,31 +162,16 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 fragment = DrawerSettingsFragment.instance();
                 break;
             case 4:
-                fragment = DisplayFragment.instance();
-                break;
-            case 5:
                 fragment = ScannerFragment.instance();
                 break;
-            case 6:
+            case 5:
                 fragment = USBMsrFragment.instance();
                 break;
-            case 7:
+            case 6:
                 fragment = ScaleFragment.instance();
                 break;
-            case 8:
+            case 7:
                 fragment = DiagnoseFragment.instance();
-                break;
-            case 9:
-                fragment = DataUsageStatFragment.instance();
-                break;
-            case 10:
-                fragment = TrainingModeSettingsFragment.instance();
-                break;
-            case 11:
-                fragment = AboutFragment.instance();
-                break;
-            case 12:
-                initDevices();
                 break;
 
         }
@@ -208,7 +208,8 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
             View v = View.inflate(getContext(), R.layout.settings_navigation_item_line2, null);
             v.setTag(new UiHolder(
                     (TextView) v.findViewById(R.id.text1),
-                    (TextView) v.findViewById(R.id.text2)
+                    (TextView) v.findViewById(R.id.text2),
+                    (TextView) v.findViewById(R.id.indicator)
             ));
             return v;
         }
@@ -218,6 +219,8 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
             UiHolder holder = (UiHolder) v.getTag();
             holder.text1.setText(item.title);
             holder.text2.setText(item.subTitle);
+            if(item.hasIndicator)
+                holder.indicator.setVisibility(View.VISIBLE);
             return v;
         }
     }
@@ -228,19 +231,29 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
 
         TextView text2;
 
-        private UiHolder(TextView text1, TextView text2) {
+        TextView indicator;
+
+        private UiHolder(TextView text1, TextView text2, TextView indicator) {
             this.text1 = text1;
             this.text2 = text2;
+            this.indicator = indicator;
         }
     }
 
     private class NavigationItem {
         String title;
         String subTitle;
+        boolean hasIndicator;
 
         private NavigationItem(String title, String subTitle) {
             this.title = title;
             this.subTitle = subTitle;
+            this.hasIndicator = false;
+        }
+        private NavigationItem(String title, String subTitle, boolean hasIndicator) {
+            this.title = title;
+            this.subTitle = subTitle;
+            this.hasIndicator = hasIndicator;
         }
     }
 
