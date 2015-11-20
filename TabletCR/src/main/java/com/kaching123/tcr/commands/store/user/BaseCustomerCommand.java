@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.store.ShopProvider;
@@ -37,7 +38,7 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
 
         model = (CustomerModel) getArgs().getSerializable(ARG_CUSTOMER);
 
-        if (!ignoreEmailCheck() && checkEmail())
+        if ((!ignoreEmailCheck() && checkEmail()) || checkPhone())
             return failed().add(EXTRA_ERROR, Error.EMAIL_EXISTS);
 
         doQuery(operations);
@@ -61,6 +62,20 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
         Cursor c = ProviderAction
                 .query(CUSTOMER_URI)
                 .where(CustomerTable.EMAIL + " = ?", model.email)
+                .where(CustomerTable.GUID + " <> ?", model.guid)
+                .perform(getContext());
+        boolean exists = c.moveToFirst();
+        c.close();
+        return exists;
+    }
+
+    private boolean checkPhone(){
+        if (TextUtils.isEmpty(model.phone))
+            return false;
+
+        Cursor c = ProviderAction
+                .query(CUSTOMER_URI)
+                .where(CustomerTable.PHONE + " = ?", model.phone)
                 .where(CustomerTable.GUID + " <> ?", model.guid)
                 .perform(getContext());
         boolean exists = c.moveToFirst();

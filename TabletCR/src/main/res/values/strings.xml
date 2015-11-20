@@ -798,7 +798,7 @@
     <string name="employee_edit_login_error">Login is empty</string>
     <string name="employee_edit_password_error">Password is empty</string>
     <string name="employee_edit_password_confirm_error">The password and confirmation do not match</string>
-    <string name="employee_edit_phone_confirm_error">The phone number is already in use.</string>
+    <string name="employee_edit_phone_confirm_error">The email or phone number is already in use.</string>
     <string name="employee_edit_login_min_error">Login minimal length is 3</string>
     <string name="employee_edit_password_min_error">Password minimal length is 4</string>
     <string name="employee_edit_email_not_valid_error">Email is not valid</string>
@@ -1105,8 +1105,10 @@
     <string name="customer_edit_email_not_valid_error">Email invalid</string>
     <string name="customer_edit_phone_not_valid_error">Phone invalid</string>
     <string name="customer_edit_email_phone_empty">Please, fill Phone or Email</string>
+    <string name="customer_edit_phone_duplicate">The phone number is already in use.</string>
     <string name="customer_edit_error_msg">Can\'t save customer. Please try again!</string>
-    <string name="customer_edit_email_exists_error_msg">Can\'t save customer. Customer with such email already exists</string>
+    <string name="customer_edit_email_exists_error_msg">Can\'t save customer. Customer with such email or phone already exists</string>
+    <string name="customer_edit_phone_exists_error_msg">Can\'t save customer. Customer with such phone already exists</string>
     <string name="customer_delete_dialog_title">Delete customer</string>
     <string name="customer_delete_dialog_message">Are you sure you want to delete this customer?</string>
     <string name="customer_delete_dialog_error_message">Can\'t delete customer. Please try again!</string>

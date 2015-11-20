@@ -2,6 +2,8 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
@@ -33,6 +36,8 @@ import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.model.LabaledEnum;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PermissionPreset;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
 
 import org.androidannotations.annotations.Click;
@@ -57,6 +62,7 @@ import static com.kaching123.tcr.util.PhoneUtil.onlyDigits;
 @EActivity
 public abstract class BaseEmployeeActivity extends SuperBaseActivity {
 
+    protected static final Uri URI_EMPLOYEE = ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT);
     protected static final int CUSTOM_PRESET_INDEX = PermissionPreset.values().length - 1;
     public static final int LOGIN_MIN_LEN = 3;
     public static final int PASSWORD_MIN_LEN = 4;
@@ -204,6 +210,11 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
             return false;
         }
 
+        if(!checkPhoneNumber(phone.getText().toString())){
+            Toast.makeText(this, R.string.employee_edit_phone_confirm_error, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         /*if (TextUtils.isEmpty(lastName.getText())) {
             Toast.makeText(this, R.string.employee_edit_last_name_error, Toast.LENGTH_SHORT).show();
             return false;
@@ -234,6 +245,16 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
         }
 
         return true;
+    }
+
+    private boolean checkPhoneNumber(String phone) {
+        Cursor c = ProviderAction
+                .query(URI_EMPLOYEE)
+                .where(ShopStore.EmployeeTable.PHONE + " = ?", phone)
+                .perform(getBaseContext());
+        boolean exists = c.moveToFirst();
+        c.close();
+        return exists;
     }
 
     @Click
