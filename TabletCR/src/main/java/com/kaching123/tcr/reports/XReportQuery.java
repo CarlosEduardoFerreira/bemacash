@@ -142,7 +142,7 @@ public final class XReportQuery {
             prepaidTotalSale.sales = prepaidTotalSale.sales.add(item.revenue);
         }
         departsSales.put(prepaidTotalSale.departTitle, prepaidTotalSale);
-
+        result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.SALE));
         Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(),  shiftGuid);
         totalValue = BigDecimal.ZERO;
         for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
@@ -460,6 +460,7 @@ public final class XReportQuery {
             }
             departsSales.put(prepaidTotalSale.departTitle, prepaidTotalSale);
 
+            result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.SALE));
             Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), guid);
             totalValue = BigDecimal.ZERO;
             for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
