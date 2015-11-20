@@ -111,8 +111,7 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                             }
                         }
                     }
-                    //                if(app.getShopPref().printDetailReceipt().get())
-                    if(true)
+                    if(app.getShopPref().printDetailReceipt().get())
                         printerWrapper.add(description, qty, negative(itemTotal), singleItemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                     else
                         printerWrapper.add(description, qty, negative(itemTotal), unitAsStrings);

@@ -101,8 +101,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                             itemPrice = itemPrice.subtract(addon.addon.extraCost);
                     }
                 itemSubtotal = CalculationUtil.getSubTotal(qty, itemPrice);
-//                if(app.getShopPref().printDetailReceipt().get())
-                if(true)
+                if(app.getShopPref().printDetailReceipt().get())
                     printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                 else
                     printerWrapper.add(description, qty, itemSubtotal, unitAsStrings);
