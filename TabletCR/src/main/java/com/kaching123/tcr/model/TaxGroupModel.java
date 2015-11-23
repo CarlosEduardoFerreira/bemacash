@@ -34,14 +34,14 @@ public class TaxGroupModel implements IValueModel, Serializable {
         ContentValues values = new ContentValues();
         values.put(ShopStore.TaxGroupTable.GUID, guid);
         values.put(ShopStore.TaxGroupTable.TITLE, title);
-        values.put(ShopStore.TaxGroupTable.TAX, _decimal(tax));
+        values.put(ShopStore.TaxGroupTable.TAX, _decimal(tax,3));
         return values;
     }
 
     public ContentValues toUpdateValues() {
         ContentValues values = new ContentValues();
         values.put(ShopStore.TaxGroupTable.TITLE, title);
-        values.put(ShopStore.TaxGroupTable.TAX, _decimal(tax));
+        values.put(ShopStore.TaxGroupTable.TAX, _decimal(tax,3));
         return values;
     }
 

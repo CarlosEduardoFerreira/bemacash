@@ -1108,7 +1108,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             ((TextView) view.findViewById(android.R.id.text1)).setText(
                     String.format("%s (%s)",
                             c.getString(c.getColumnIndex(TaxGroupTable.TITLE)),
-                            UiHelper.formatPercent(_decimal(c, c.getColumnIndex(TaxGroupTable.TAX)))
+                            UiHelper.formatQuantity(_decimal(c, c.getColumnIndex(TaxGroupTable.TAX)))
                     )
             );
         }

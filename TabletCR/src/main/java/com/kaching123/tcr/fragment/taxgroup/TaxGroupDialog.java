@@ -18,6 +18,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.CreateTaxGroup;
 import com.kaching123.tcr.commands.store.inventory.UpdateTaxGroup;
 import com.kaching123.tcr.component.PercentFormatInputFilter;
+import com.kaching123.tcr.component.QuantityFormatInputFilter;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -43,7 +44,7 @@ public class TaxGroupDialog extends StyledDialogFragment {
 
     @AfterViews
     protected void initViews() {
-        InputFilter[] decimalFilter = new InputFilter[]{new PercentFormatInputFilter()};
+        InputFilter[] decimalFilter = new InputFilter[]{new QuantityFormatInputFilter()};
         tax.setFilters(decimalFilter);
         tax.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -69,7 +70,7 @@ public class TaxGroupDialog extends StyledDialogFragment {
 
         if (model != null){
             title.setText(model.title);
-            UiHelper.showInteger(tax, model.tax);
+            UiHelper.showQuantity(tax, model.tax);
         }
     }
 

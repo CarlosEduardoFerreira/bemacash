@@ -179,6 +179,12 @@ public final class UiHelper {
         return String.format(Locale.US, "%s %%", percentFormat.format(percent));
     }
 
+    public static String formatQuantity(BigDecimal percent) {
+        if (percent == null)
+            return null;
+        return String.format(Locale.US, "%s %%", quantityFormat.format(percent));
+    }
+
     public static boolean isValidEmail(CharSequence target) {
         if (target == null) {
             return false;
