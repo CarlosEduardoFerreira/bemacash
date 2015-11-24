@@ -18,7 +18,8 @@ public class Logger {
             LOGGER.d(msg);
 		}
 	}
-	
+
+    
 	public static void e(String msg, Throwable t){
         LOGGER.e(msg, t);
 	}
