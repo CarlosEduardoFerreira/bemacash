@@ -200,13 +200,17 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @OptionsItem
     protected void actionExportSelected() {
-        FileChooserFragment.show(this, Type.FOLDER, new FileChooseListener() {
-            @Override
-            public void fileChosen(final File file) {
-                WaitDialogFragment.show(InventoryActivity.this, getString(R.string.inventory_export_wait_msg));
-                ExportInventoryCommand.start(InventoryActivity.this, file.getAbsolutePath(), exportCallback);
-            }
-        });
+        if(getApp().isFreemium()) {
+            AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        } else {
+            FileChooserFragment.show(this, Type.FOLDER, new FileChooseListener() {
+                @Override
+                public void fileChosen(final File file) {
+                    WaitDialogFragment.show(InventoryActivity.this, getString(R.string.inventory_export_wait_msg));
+                    ExportInventoryCommand.start(InventoryActivity.this, file.getAbsolutePath(), exportCallback);
+                }
+            });
+        }
     }
 
     /*@OptionsItem

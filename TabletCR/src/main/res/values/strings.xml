@@ -136,6 +136,9 @@
     <string name="upload_notify_message_success">Data was uploaded</string>
     <string name="upload_notify_message_error">Upload data error</string>
 
+    <string name="unavailable_option_title">Functionality limit</string>
+    <string name="unavailable_option_message">This functionality is not available for current plan</string>
+
     <string name="sync_success_title">Database syncing</string>
     <string name="sync_success_message">Data was synchronized</string>
     <string name="sync_error_title">Database syncing</string>

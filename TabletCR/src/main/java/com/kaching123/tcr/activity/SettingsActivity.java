@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +16,8 @@ import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
+import com.kaching123.tcr.fragment.UnavailabledOptionFragment;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
-import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragmentWithCallback;
 import com.kaching123.tcr.fragment.settings.AboutFragment;
 import com.kaching123.tcr.fragment.settings.DataUsageStatFragment;
@@ -168,7 +167,11 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 fragment = USBMsrFragment.instance();
                 break;
             case 6:
-                fragment = ScaleFragment.instance();
+                if(getApp().isFreemium()) {
+                    fragment = UnavailabledOptionFragment.instance();
+                } else {
+                    fragment = ScaleFragment.instance();
+                }
                 break;
             case 7:
                 fragment = DiagnoseFragment.instance();

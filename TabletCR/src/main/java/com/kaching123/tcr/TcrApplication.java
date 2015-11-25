@@ -629,7 +629,11 @@ public class TcrApplication extends MultiDexApplication {
         operatorPermissions = newPermissions;
     }
 
-    public boolean hasPermission(Permission permissions) {
+    public boolean isFreemium() {
+        return true;
+    }
+
+        public boolean hasPermission(Permission permissions) {
         if (permissions == null)
             return true;
         Set<Permission> operatorPermissions = getOperatorPermissions();
