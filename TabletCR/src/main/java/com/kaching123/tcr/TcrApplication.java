@@ -630,7 +630,7 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public boolean isFreemium() {
-        return true;
+        return false;
     }
 
         public boolean hasPermission(Permission permissions) {

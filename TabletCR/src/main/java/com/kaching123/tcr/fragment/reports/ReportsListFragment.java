@@ -18,6 +18,7 @@ import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.XReportChooserAlertDialogFragment;
 
 import java.util.ArrayList;
@@ -105,7 +106,11 @@ public class ReportsListFragment extends SuperBaseFragment {
                 if (reportType == ReportType.SHIFTS_REPORT) {
                     listener.onReportSelected(adapter.getItem(position));
                 } else if (reportType == ReportType.X_REPORT) {
-                    XReportChooserAlertDialogFragment.show(getActivity());
+                    if (getApp().isFreemium()) {
+                        AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+                    } else {
+                        XReportChooserAlertDialogFragment.show(getActivity());
+                    }
                 }
             }
         };

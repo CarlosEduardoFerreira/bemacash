@@ -55,6 +55,7 @@ import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.QuantityFormatInputFilter;
 import com.kaching123.tcr.component.SignedQuantityFormatInputFilter;
 import com.kaching123.tcr.fragment.UiHelper;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.editmodifiers.EditDialog;
 import com.kaching123.tcr.fragment.editmodifiers.EditDialog.OnEditListener;
@@ -574,20 +575,32 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     @Click
     protected void modifiersAddClicked() {
-        if(saveItem())
-            addModifierClicked(ModifierType.MODIFIER);
+        if(getApp().isFreemium()) {
+            AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        } else {
+            if(saveItem())
+                addModifierClicked(ModifierType.MODIFIER);
+        }
     }
 
     @Click
     protected void addonsAddClicked() {
-        if(saveItem())
-            addModifierClicked(ModifierType.ADDON);
+        if(getApp().isFreemium()) {
+            AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        } else {
+            if(saveItem())
+                addModifierClicked(ModifierType.ADDON);
+        }
     }
 
     @Click
     protected void optionsAddClicked() {
-        if(saveItem())
-            addModifierClicked(ModifierType.OPTIONAL);
+        if(getApp().isFreemium()) {
+            AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        } else {
+            if(saveItem())
+                addModifierClicked(ModifierType.OPTIONAL);
+        }
     }
 
     @Click
