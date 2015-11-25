@@ -1,5 +1,5 @@
 <resources>
-    <string name="api_server_url">http://bematech.mystresspos.com</string>
+    <string name="api_server_url">http://superpreprod.bemacashdev.com</string>
     <string name="api_basic_cred"></string>
-    <string name="merchant_register_url">http://bemaCash.mystresspos.com/#merchant_signup</string>
+    <string name="merchant_register_url">http://superpreprod.bemacashdev.com/#merchant_signup</string>
 </resources>
