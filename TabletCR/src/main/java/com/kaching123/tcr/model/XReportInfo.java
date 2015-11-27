@@ -40,7 +40,7 @@ public class XReportInfo {
     public BigDecimal safeDrops = BigDecimal.ZERO;
     public BigDecimal payOuts = BigDecimal.ZERO;
     public BigDecimal cashBack = BigDecimal.ZERO;
-    public TreeMap<String, departsSale> departsSales = new TreeMap<String, departsSale>();
+    public TreeMap<String, DepartsSale_> departsSales = new TreeMap<String, DepartsSale_>();
     public ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales;
     public BigDecimal totalValue;
     /*public BigDecimal ccAmex;
@@ -56,12 +56,35 @@ public class XReportInfo {
         this.end = end;
     }
 
-    public XReportInfo(Date begin, Date end, BigDecimal grossSales, BigDecimal discounts, BigDecimal returns, BigDecimal netSales, BigDecimal gratuity, BigDecimal tax, BigDecimal totalTender, BigDecimal cogs, BigDecimal grossMargin, BigDecimal grossMarginPercent, BigDecimal tenderCreditCard, BigDecimal tenderCash, BigDecimal tenderCreditReceipt, BigDecimal tenderOfflineCredit, BigDecimal tenderCheck, BigDecimal tenderEbtCash, BigDecimal tenderEbtFoodstamp, BigDecimal tenderDebit, HashMap<String, BigDecimal> cards, BigDecimal drawerDifference, BigDecimal transactionFee, BigDecimal openAmount,
+    public XReportInfo(Date begin,
+                       Date end,
+                       BigDecimal grossSales,
+                       BigDecimal discounts,
+                       BigDecimal returns,
+                       BigDecimal netSales,
+                       BigDecimal gratuity,
+                       BigDecimal tax,
+                       BigDecimal totalTender,
+                       BigDecimal cogs,
+                       BigDecimal grossMargin,
+                       BigDecimal grossMarginPercent,
+                       BigDecimal tenderCreditCard,
+                       BigDecimal tenderCash,
+                       BigDecimal tenderCreditReceipt,
+                       BigDecimal tenderOfflineCredit,
+                       BigDecimal tenderCheck,
+                       BigDecimal tenderEbtCash,
+                       BigDecimal tenderEbtFoodstamp,
+                       BigDecimal tenderDebit,
+                       HashMap<String, BigDecimal> cards,
+                       BigDecimal drawerDifference,
+                       BigDecimal transactionFee,
+                       BigDecimal openAmount,
                        BigDecimal cashSale,
                        BigDecimal safeDrops,
                        BigDecimal payOuts,
                        BigDecimal cashBack,
-                       TreeMap<String, departsSale> departsSales,
+                       TreeMap<String, DepartsSale_> departsSales,
                        ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales,
                        BigDecimal totalValue) {
         this.begin = begin;

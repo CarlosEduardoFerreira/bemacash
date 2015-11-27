@@ -15,13 +15,13 @@ import com.kaching123.tcr.commands.print.SaleReportsProcessor;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler2;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleItemInfo;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderInfo;
+import com.kaching123.tcr.model.DepartsSale_;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.TipsModel.PaymentType;
 import com.kaching123.tcr.model.XReportInfo;
-import com.kaching123.tcr.model.departsSale;
 import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
@@ -63,20 +63,21 @@ import com.kaching123.tcr.store.ShopSchema2.XReportView2.DepartmentTable;*/
 /**
  * Created by gdubina on 22.01.14.
  */
-public final class XReportQuery {
+public class XReportQuery {
 
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(XReportView.URI_CONTENT);
-    private static final Uri ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
-    private static final Uri URI_PAYMENTS = ShopProvider.getContentUri(PaymentTransactionView.URI_CONTENT);
-    private static final Uri URI_SHIFT = ShopProvider.getContentUri(ShiftTable.URI_CONTENT);
+    protected static final Uri URI_SALE_ORDER = ShopProvider.contentUri(ShopStore.SaleOrderTable.URI_CONTENT);
+    protected static final Uri URI_PAYMENTS = ShopProvider.getContentUri(PaymentTransactionView.URI_CONTENT);
+    protected static final Uri URI_SHIFT = ShopProvider.getContentUri(ShiftTable.URI_CONTENT);
     private static final Uri URI_SHIFT_LIMITED = ShopProvider.getContentWithLimitUri(ShiftTable.URI_CONTENT, 1);
-    private static final Uri URI_TIPS = ShopProvider.getContentUri(EmployeeTipsTable.URI_CONTENT);
-    private static final Uri URI_DRAWER_CASH_MOVEMENT = ShopProvider.getContentUri(ShopStore.CashDrawerMovementTable.URI_CONTENT);
+    protected static final Uri URI_TIPS = ShopProvider.getContentUri(EmployeeTipsTable.URI_CONTENT);
+    protected static final Uri URI_CASH_DRAWER_DATA =   ShopProvider.contentUri(ShopStore.CashDrawerMovementTable.URI_CONTENT);
     private static final Uri URI_SALE_ITEM_DEPARTMENT = ShopProvider.getContentUri(ShopStore.SaleItemDeptView.URI_CONTENT);
     private static final Uri URI_DEPARTMENT = ShopProvider.getContentUri(ShopStore.DepartmentTable.URI_CONTENT);
     protected static BigDecimal totalValue = BigDecimal.ZERO;
 
-    private XReportQuery() {
+
+    protected XReportQuery() {
     }
 
     protected static SalesByItemsReportQuery createQuery() {
@@ -87,7 +88,7 @@ public final class XReportQuery {
         return true;
     }
 
-    public static departsSale getDepartSale(String departTitle, Cursor c) {
+    public static DepartsSale_ getDepartSale(String departTitle, Cursor c) {
         BigDecimal finalItemPrice = BigDecimal.ZERO;
         BigDecimal itemSubTotal = getSubTotal(_decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleItemDeptView2.SaleItemTable.QUANTITY))), _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleItemDeptView2.SaleItemTable.PRICE))));
         if (_bool(c, c.getColumnIndex(ShopSchema2.SaleItemDeptView2.SaleItemTable.DISCOUNTABLE))) {
@@ -108,7 +109,7 @@ public final class XReportQuery {
             finalItemPrice = finalItemPrice.add(itemFinalTax);
         }
 
-        return new departsSale(departTitle, finalItemPrice);
+        return new DepartsSale_(departTitle, finalItemPrice);
     }
 
     public static XReportInfo loadXReport(Context context, String shiftGuid) {
@@ -122,7 +123,7 @@ public final class XReportQuery {
         BigDecimal payOuts = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, departsSale> departsSales = new TreeMap<String, departsSale>();
+        TreeMap<String, DepartsSale_> departsSales = new TreeMap<String, DepartsSale_>();
 
         Cursor c = ProviderAction.query(URI_SHIFT)
                 .where(ShiftTable.GUID + " = ?", shiftGuid)
@@ -135,7 +136,7 @@ public final class XReportQuery {
         }
         c.close();
 
-        departsSale prepaidTotalSale = new departsSale("Prepaid", BigDecimal.ZERO);
+        DepartsSale_ prepaidTotalSale = new DepartsSale_("Prepaid", BigDecimal.ZERO);
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
         final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
         for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
@@ -146,7 +147,7 @@ public final class XReportQuery {
         Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(),  shiftGuid);
         totalValue = BigDecimal.ZERO;
         for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
-            departsSales.put(d.description, new departsSale(d.description, d.revenue));
+            departsSales.put(d.description, new DepartsSale_(d.description, d.revenue));
             d.reset();
             totalValue = totalValue.add(d.revenue);
         }
@@ -161,14 +162,14 @@ public final class XReportQuery {
 //            String temp = c.getString(c.getColumnIndex(ShopSchema2.SaleItemDeptView2.DepartmentTable.TITLE));
 //            if (temp != null) {
 //                if (departsSales.size() == 0) {
-//                    departsSale tempDepartSale = getDepartSale(temp, c);
+//                    DepartsSale_ tempDepartSale = getDepartSale(temp, c);
 //                    departsSales.put(tempDepartSale.departTitle, tempDepartSale);
 //                } else if (departsSales.size() != 0) {
 //                    if (!departsSales.containsKey(temp)) {
-//                        departsSale tempDepartSale = getDepartSale(temp, c);
+//                        DepartsSale_ tempDepartSale = getDepartSale(temp, c);
 //                        departsSales.put(temp, tempDepartSale);
 //                    } else {
-//                        departsSale tempDepartSale = getDepartSale(temp, c);
+//                        DepartsSale_ tempDepartSale = getDepartSale(temp, c);
 //                        departsSales.get(temp).sales = departsSales.get(temp).sales.add(tempDepartSale.sales);
 //                    }
 //                }
@@ -309,7 +310,7 @@ public final class XReportQuery {
 
         final BigDecimal drawerDifference = getDrawerDifference(context, shiftGuid);
         cashSale = cash;
-        Cursor cur = ProviderAction.query(URI_DRAWER_CASH_MOVEMENT)
+        Cursor cur = ProviderAction.query(URI_CASH_DRAWER_DATA)
                 .where(ShopStore.CashDrawerMovementTable.SHIFT_GUID + " = ?", shiftGuid)
                 .perform(context);
 
@@ -320,22 +321,25 @@ public final class XReportQuery {
                 payOuts = payOuts.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
         }
         cur.close();
-        return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, result, totalValue);
+        return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax, totalTender,
+                cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt, offlineCredit, check,
+                ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops,
+                payOuts, cashBack, departsSales, result, totalValue);
     }
 
-    private static Date getStartOfDay() {
+    protected static Date getStartOfDay() {
         final Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
         return calendar.getTime();
     }
 
-    private static Date getEndOfDay() {
+    protected static Date getEndOfDay() {
         final Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 23, 59, 59);
         return calendar.getTime();
     }
 
-    private static List<String> getDailyShiftGuidList(Context context) {
+    protected static List<String> getDailyShiftGuidList(Context context) {
         final Cursor c = ProviderAction.query(URI_SHIFT)
                 .where(ShiftTable.START_TIME + " > ? OR " + ShiftTable.END_TIME + " > ? OR " + ShiftTable.END_TIME + " IS NULL", getStartOfDay().getTime(), getStartOfDay().getTime())
                 .perform(context);
@@ -381,7 +385,7 @@ public final class XReportQuery {
         BigDecimal payOuts = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, departsSale> departsSales = new TreeMap<String, departsSale>();
+        TreeMap<String, DepartsSale_> departsSales = new TreeMap<String, DepartsSale_>();
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>();
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
 
@@ -452,7 +456,7 @@ public final class XReportQuery {
                 }
             }
 
-            departsSale prepaidTotalSale = new departsSale("Prepaid", BigDecimal.ZERO);
+            DepartsSale_ prepaidTotalSale = new DepartsSale_("Prepaid", BigDecimal.ZERO);
             result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.PREPAID));
             final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
             for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
@@ -464,7 +468,7 @@ public final class XReportQuery {
             Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), guid);
             totalValue = BigDecimal.ZERO;
             for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
-                departsSales.put(d.description, new departsSale(d.description, d.revenue));
+                departsSales.put(d.description, new DepartsSale_(d.description, d.revenue));
                 d.reset();
                 totalValue = totalValue.add(d.revenue);
             }
@@ -506,7 +510,7 @@ public final class XReportQuery {
         grossMarginInPercent = CalculationUtil.value(CalculationUtil
                 .getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
 
-        Cursor cur = ProviderAction.query(URI_DRAWER_CASH_MOVEMENT)
+        Cursor cur = ProviderAction.query(URI_CASH_DRAWER_DATA)
                 .where(ShopStore.CashDrawerMovementTable.SHIFT_GUID + " = ?", lastShiftGuid)
                 .perform(context);
 
@@ -520,11 +524,12 @@ public final class XReportQuery {
 
         return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity,
                 tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash,
-                tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, result, totalValue);
+                tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee,
+                openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, result, totalValue);
     }
 
-    private static BigDecimal getDailyOrdersTransactionFee(Context context, OrderStatus type, long registerId) {
-        Cursor c = ProviderAction.query(ORDER_URI)
+    protected static BigDecimal getDailyOrdersTransactionFee(Context context, OrderStatus type, long registerId) {
+        Cursor c = ProviderAction.query(URI_SALE_ORDER)
                 .projection(ShopStore.SaleOrderTable.TRANSACTION_FEE)
                 .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
                 .where(ShopStore.SaleOrderTable.REGISTER_ID + " = ?", registerId)
@@ -540,7 +545,7 @@ public final class XReportQuery {
         return totalTransactionFee;
     }
 
-    private static BigDecimal getLastShiftDailyOpenAmount(Context context, String shiftGuid) {
+    protected static BigDecimal getLastShiftDailyOpenAmount(Context context, String shiftGuid) {
         BigDecimal openAmount = BigDecimal.ZERO;
         try {
             Cursor c = ProviderAction.query(URI_SHIFT)
@@ -559,7 +564,7 @@ public final class XReportQuery {
         return openAmount;
     }
 
-    private static String getLastShiftGuidDaily(Context context, long registerId) {
+    protected static String getLastShiftGuidDaily(Context context, long registerId) {
         String lastShiftGuid = null;
         Cursor c = ProviderAction.query(URI_SHIFT)
                 .projection(ShiftTable.GUID)
@@ -575,8 +580,8 @@ public final class XReportQuery {
         return lastShiftGuid;
     }
 
-    private static BigDecimal getShiftOrdersTransactionFee(Context context, String shiftGuid, OrderStatus type) {
-        Cursor c = ProviderAction.query(ORDER_URI)
+    protected static BigDecimal getShiftOrdersTransactionFee(Context context, String shiftGuid, OrderStatus type) {
+        Cursor c = ProviderAction.query(URI_SALE_ORDER)
                 .projection(ShopStore.SaleOrderTable.TRANSACTION_FEE)
                 .where(ShopStore.SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .where(ShopStore.SaleOrderTable.STATUS + " = ?", type.ordinal())
@@ -592,7 +597,7 @@ public final class XReportQuery {
         return totalTransactionFee;
     }
 
-    private static BigDecimal getDrawerDifference(Context context, String shiftGuid) {
+    protected static BigDecimal getDrawerDifference(Context context, String shiftGuid) {
         Optional<SalesStatisticsModel> salesStatisticsModel = ProviderAction.query(URI_SHIFT)
                 .where(ShiftTable.GUID + " = ?", shiftGuid)
                 .orderBy(ShopStore.ShiftTable.START_TIME + " DESC")
@@ -603,7 +608,7 @@ public final class XReportQuery {
         return null;
     }
 
-    private static StatInfo getDailyOrders(Context context, String shiftGuid, OrderStatus type, long registerId) {
+    protected static StatInfo getDailyOrders(Context context, String shiftGuid, OrderStatus type, long registerId) {
         Cursor c = ProviderAction.query(URI_SALE_ITEMS)
                 .where(SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .where(SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
@@ -613,7 +618,7 @@ public final class XReportQuery {
         return getOrders(context, c, shiftGuid, type);
     }
 
-    private static StatInfo getShiftOrders(Context context, String shiftGuid, OrderStatus type) {
+    protected static StatInfo getShiftOrders(Context context, String shiftGuid, OrderStatus type) {
         Cursor c = ProviderAction.query(URI_SALE_ITEMS)
                 .where(SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .where(SaleOrderTable.STATUS + " = ?", type.ordinal())

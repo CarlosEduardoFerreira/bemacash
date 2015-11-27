@@ -8,8 +8,8 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
+import com.kaching123.tcr.model.DepartsSale_;
 import com.kaching123.tcr.model.XReportInfo;
-import com.kaching123.tcr.model.departsSale;
 import com.kaching123.tcr.reports.SalesByItemsReportQuery;
 import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -140,7 +140,7 @@ public class PrintXReportProcessor {
             Iterator iter = report.departsSales.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry item = (Map.Entry) iter.next();
-                departsSale temp = (departsSale) item.getValue();
+                DepartsSale_ temp = (DepartsSale_) item.getValue();
                 if (temp.sales.compareTo(BigDecimal.ZERO) > 0)
                     printer.pair(temp.departTitle, temp.sales);
             }

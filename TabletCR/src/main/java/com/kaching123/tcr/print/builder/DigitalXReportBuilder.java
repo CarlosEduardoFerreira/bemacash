@@ -101,6 +101,28 @@ public class DigitalXReportBuilder extends BaseDigitalBuilder implements IXRepor
         stringBuilder.append("</table>");
     }
 
+    /**
+     * @param tabSize
+     * Should be from 1 to 3 tabulations
+     */
+    @Override
+    public void subPair(String name, BigDecimal cost, int tabSize, boolean bold) {
+        StringBuilder sb = new StringBuilder();
+        sb.ensureCapacity(40);
+
+        if(tabSize <= 1)
+            tabSize = 1;
+        if(tabSize > 3)
+            tabSize = 3;
+
+        for (int i = 0; i < tabSize; i++) {
+            sb.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+        }
+        sb.append(name);
+
+        pair(sb.toString(), commaPriceFormat(cost), bold);
+    }
+
     private void percent(String percent){
         stringBuilder.append(_styled("div", RIGHT_STYLE)).append(percent).append("</div>");
     }

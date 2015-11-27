@@ -20,6 +20,7 @@ import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.XReportChooserAlertDialogFragment;
+import com.kaching123.tcr.fragment.dialog.ZReportChooserAlertDialogFragment;
 
 import java.util.ArrayList;
 
@@ -85,7 +86,8 @@ public class ReportsListFragment extends SuperBaseFragment {
 
         shiftList.setAdapter(new ReportsAdapter(getActivity(), new ReportType[]{
                 ReportType.SHIFTS_REPORT,
-                ReportType.X_REPORT
+                ReportType.X_REPORT,
+                ReportType.Z_REPORT
         }));
 
         final OnItemClickListener onItemClickListener = new OnItemClickListener() {
@@ -111,6 +113,8 @@ public class ReportsListFragment extends SuperBaseFragment {
                     } else {
                         XReportChooserAlertDialogFragment.show(getActivity());
                     }
+                } else if (reportType == ReportType.Z_REPORT) {
+                    ZReportChooserAlertDialogFragment.show(getActivity());
                 }
             }
         };

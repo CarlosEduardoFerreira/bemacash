@@ -40,7 +40,7 @@ public class XReportActivity extends SuperBaseActivity {
         getActionBar().setTitle(getActionBarTitle());
     }
 
-    private String getActionBarTitle() {
+    protected String getActionBarTitle() {
         int actionBarTitleRes = R.string.xreport_activity_label;
         if (ReportType.X_REPORT_DAILY_SALES == xReportType) {
             actionBarTitleRes = R.string.xreport_daily_subtitle;

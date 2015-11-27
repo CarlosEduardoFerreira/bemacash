@@ -831,6 +831,7 @@
     <string name="btn_clock_out">Clock Out</string>
     <string name="reports_activity_label">Reports</string>
     <string name="report_type_xreport">Close Shift Report</string>
+    <string name="report_type_zreport">Close Shift ZReport</string>
     <string name="report_type_sales_summary">Sales Summary Report</string>
     <string name="report_type_sales_by_items">Sales by Items</string>
     <string name="report_type_sales_by_deps">Sales by Departments</string>
@@ -849,6 +850,7 @@
     <string name="report_type_by_customers">Sales by Customers</string>
     <string name="report_type_shifts_report">Shifts Report</string>
     <string name="report_type_x_report">X-Report</string>
+    <string name="report_type_z_report">Z-Report</string>
     <string name="report_type_tips_report">Shift Gratuity</string>
     <string name="report_type_prepaid_sales_by_items">Pre-paid Item Sales</string>
     <string name="report_type_prepaid_sales_top10_revenues">Top 10 Pre-paid Revenues</string>
@@ -958,6 +960,65 @@
     <string name="xreport_dialog_checkbox_print">Print</string>
     <string name="xreport_dialog_checkbox_email">Send by email</string>
     <string name="xreport_dialog_checkbox_screen">Show on screen</string>
+
+    <string name="zreport_chooser_current_shift_sales">Current shift sales</string>
+    <string name="zreport_chooser_sale_for_a_day">Sales for а day</string>
+    <string name="zreport_chooser_dialog_title">Z-Report type</string>
+    <string name="zreport">Z-Report</string>
+
+    <string name="zreport_subtitle">Close Shift Report</string>
+    <string name="zreport_current_shift_subtitle">Z-report - Current shift</string>
+    <string name="zreport_daily_subtitle">Z-report - Daily Sales</string>
+    <string name="zreport_print_time">Print date/time:</string>
+    <string name="zreport_start_time">Start date/time:</string>
+    <string name="zreport_end_time">End date/time:</string>
+    <string name="zreport_gross_sales">Gross Sales:</string>
+    <string name="zreport_discounts">Discounts:</string>
+    <string name="zreport_returns">Returns:</string>
+    <string name="zreport_net_sales">Net Sales:</string>
+    <string name="zreport_gratuity">Gratuity:</string>
+    <string name="zreport_tax">Tax:</string>
+    <string name="zreport_icms_total_tax">Total taxes (ICMS):</string>
+    <string name="zreport_icms_percent_tax">ICMS (%s):</string>
+    <string name="zreport_total_tender">Total Tender:</string>
+    <string name="zreport_cogs">COGS:</string>
+    <string name="zreport_gross_margin">Gross Margin:</string>
+
+    <string name="zreport_tender_summary">Tender Summary</string>
+    <string name="zreport_credit_card">Credit Card:</string>
+    <string name="zreport_credit_cards">Credit Cards:</string>
+    <string name="zreport_cash">Cash:</string>
+    <string name="zreport_gift_card">Gift Card:</string>
+    <string name="zreport_credit_receipt">Credit Receipt:</string>
+    <string name="zreport_offline_credit">Offline Credit:</string>
+    <string name="zreport_offline_debit">Offline Debit:</string>
+    <string name="zreport_offline_voucher">Offline Voucher:</string>
+    <string name="zreport_check">Check:</string>
+
+    <string name="zreport_transaction_count">Transaction Count</string>
+    <string name="zreport_sales">Sales:</string>
+    <string name="zreport_voids">Voids:</string>
+    <string name="zreport_refunds">Refunds:</string>
+
+    <string name="zreport_drops_payouts">Transaction Total:</string>
+    <string name="zreport_drops">Cash Drops:</string>
+    <string name="zreport_payouts">Cash Buys:</string>
+
+    <string name="zreport_ebt_cash">EBT Cash:</string>
+    <string name="zreport_ebt_foodstamp">EBT Foodstamp:</string>
+    <string name="zreport_debit">Debit:</string>
+    <string name="zreport_voucher">Voucher:</string>
+    <string name="zreport_drawer_difference">Drawer Difference:</string>
+
+    <string name="zreport_credit_card_details">Credit Card Details</string>
+    <string name="zreport_amex">Amex:</string>
+    <string name="zreport_visa">Visa:</string>
+    <string name="zreport_master_card">Master Card:</string>
+
+    <string name="zreport_dialog_checkbox_print">Print</string>
+    <string name="zreport_dialog_checkbox_email">Send by email</string>
+    <string name="zreport_dialog_checkbox_screen">Show on screen</string>
+
     <string name="register_label_all">All</string>
     <string name="datetime_picker_title">Date and Time</string>
     <string name="clockin_datetime_picker_title">Clock In</string>

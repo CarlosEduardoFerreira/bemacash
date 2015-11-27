@@ -36,6 +36,31 @@ public class PosXReportTextPrinter extends BasePosTextPrinter implements IXRepor
     public void pair(String name, BigDecimal cost) {
         pair(name, cost, false);
     }
+    /**
+     * @param tabSize
+     * Should be from 1 to 3 tabulations.
+     */
+    @Override
+    public void subPair(String name, BigDecimal cost, int tabSize, boolean bold) {
+        StringBuilder sb = new StringBuilder();
+        sb.ensureCapacity(40);
+
+        if (tabSize <= 1)
+            tabSize = 1;
+        if (tabSize > 3)
+            tabSize = 3;
+
+        for (int i = 0; i < tabSize; i++) {
+            sb.append("  ");
+        }
+        sb.append(name);
+
+        if (bold) {
+            boldPair(sb.toString(), cost, false);
+        } else {
+            pair(sb.toString(), cost);
+        }
+    }
 
     @Override
     public void pair(String left, String right) {

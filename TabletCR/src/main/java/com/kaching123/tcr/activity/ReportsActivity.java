@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.XReportChooserAlertDialogFragment.XReportTypeChooseListener;
+import com.kaching123.tcr.fragment.dialog.ZReportChooserAlertDialogFragment.ZReportTypeChooserListener;
 import com.kaching123.tcr.fragment.reports.CustomersReportsFragment;
 import com.kaching123.tcr.fragment.reports.EmployeeReportsDetailsExtFragment;
 import com.kaching123.tcr.fragment.reports.EmployeeReportsDetailsFragment;
@@ -17,6 +18,7 @@ import com.kaching123.tcr.fragment.reports.ReportsListFragment;
 import com.kaching123.tcr.fragment.reports.ReportsListFragment.OnReportSelectedListener;
 import com.kaching123.tcr.fragment.reports.sub.InventoryStatusReportFragment;
 import com.kaching123.tcr.fragment.shift.PrintXReportFragment;
+import com.kaching123.tcr.fragment.shift.PrintZReportFragment;
 import com.kaching123.tcr.model.Permission;
 
 import org.androidannotations.annotations.AfterViews;
@@ -29,7 +31,7 @@ import java.util.Set;
  * Created by pkabakov on 13.01.14.
  */
 @EActivity(R.layout.reports_activity)
-public class ReportsActivity extends SuperBaseActivity implements OnReportSelectedListener, XReportTypeChooseListener {
+public class ReportsActivity extends SuperBaseActivity implements OnReportSelectedListener, XReportTypeChooseListener, ZReportTypeChooserListener {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -106,6 +108,19 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
         getSupportFragmentManager().beginTransaction().replace(R.id.report_details, fragment).addToBackStack(type.name()).commit();
     }
 
+    @Override
+    public void onZReportTypeChosen(ReportType zReportType) {
+        if (ReportType.Z_REPORT_CURRENT_SHIFT == zReportType) {
+            if (!getApp().isShiftOpened()) {
+                AlertDialogFragment.showAlert(this, R.string.error_dialog_title, getResources().getString(R.string.reports_error_open_shift));
+            } else {
+                PrintZReportFragment.show(this, getApp().getShiftGuid(), zReportType);
+            }
+        } else if (ReportType.Z_REPORT_DAILY_SALES == zReportType) {
+            PrintZReportFragment.show(this, null, zReportType);
+        }
+    }
+
     public static enum ReportType {
 
         SALES_SUMMARY(R.string.report_type_sales_summary, R.string.report_category_sales),
@@ -131,6 +146,9 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
         X_REPORT(R.string.report_type_x_report, R.string.report_category_shift),
         X_REPORT_CURRENT_SHIFT(R.string.xreport_chooser_current_shift_sales, R.string.report_category_shift),
         X_REPORT_DAILY_SALES(R.string.xreport_chooser_sale_for_a_day, R.string.report_category_shift),
+        Z_REPORT(R.string.report_type_z_report, R.string.report_category_shift),
+        Z_REPORT_CURRENT_SHIFT(R.string.zreport_chooser_current_shift_sales, R.string.report_category_shift),
+        Z_REPORT_DAILY_SALES(R.string.zreport_chooser_sale_for_a_day, R.string.report_category_shift),
         EMPLOYEE_TIPS(R.string.report_type_tips_report, R.string.report_category_employee),
         DROPS_AND_PAYOUTS(R.string.report_type_drops_and_payouts, R.string.report_category_sales);
 

@@ -22,8 +22,8 @@ public enum PaymentGateway {
     /*6*/CREDIT(new CreditGateway()),//credit receipt, NOT credit card
     /*7*/OFFLINE_CREDIT(new OfflineCreditGateway()),
     /*8*/CHECK(new CheckGateway()),
-    /*9*/PAYPAL(new PayPalGateway());//gateway for credit card, shop can use just one, this is not implemented yet
-
+    /*9*/PAYPAL(new PayPalGateway()),//gateway for credit card, shop can use just one, this is not implemented yet
+    /*10*/CREDIT_RECEIPT(new CreditGateway());//credit receipt, NOT credit card
 
     private IPaymentGateway gateway;
 
