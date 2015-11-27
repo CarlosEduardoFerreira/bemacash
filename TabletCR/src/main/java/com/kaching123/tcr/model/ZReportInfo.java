@@ -45,7 +45,7 @@ public class ZReportInfo extends XReportInfo {
                        BigDecimal safeDrops,
                        BigDecimal payOuts,
                        BigDecimal cashBack,
-                       TreeMap<String, DepartsSale_> departsSales,
+                       TreeMap<String, DepartsSale> departsSales,
                        ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales,
                        BigDecimal totalValue,
                        int salesCounter,

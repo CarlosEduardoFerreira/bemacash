@@ -8,7 +8,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.print.SaleReportsProcessor;
 import com.kaching123.tcr.model.ContentValuesUtil;
-import com.kaching123.tcr.model.DepartsSale_;
+import com.kaching123.tcr.model.DepartsSale;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
@@ -60,7 +60,7 @@ public final class ZReportQuery extends XReportQuery {
         BigDecimal payOuts = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, DepartsSale_> departsSales = new TreeMap<String, DepartsSale_>();
+        TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
 
         salesCount = 0;
         returnsCount = 0;
@@ -77,7 +77,7 @@ public final class ZReportQuery extends XReportQuery {
         }
         c.close();
 
-        DepartsSale_ prepaidTotalSale = new DepartsSale_("Prepaid", BigDecimal.ZERO);
+        DepartsSale prepaidTotalSale = new DepartsSale("Prepaid", BigDecimal.ZERO);
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
         final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
         for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
@@ -88,7 +88,7 @@ public final class ZReportQuery extends XReportQuery {
         Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), shiftGuid);
         totalValue = BigDecimal.ZERO;
         for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
-            departsSales.put(d.description, new DepartsSale_(d.description, d.revenue));
+            departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
             d.reset();
             totalValue = totalValue.add(d.revenue);
         }
@@ -341,7 +341,7 @@ public final class ZReportQuery extends XReportQuery {
         BigDecimal cashSale = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, DepartsSale_> departsSales = new TreeMap<String, DepartsSale_>();
+        TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>();
 
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
@@ -444,7 +444,7 @@ public final class ZReportQuery extends XReportQuery {
                     cards.put(card, value);
                 }
 
-                DepartsSale_ prepaidTotalSale = new DepartsSale_("Prepaid", BigDecimal.ZERO);
+                DepartsSale prepaidTotalSale = new DepartsSale("Prepaid", BigDecimal.ZERO);
                 itemSales = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.PREPAID));
                 final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(itemSales, OrderType.PREPAID);
                 for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
@@ -456,7 +456,7 @@ public final class ZReportQuery extends XReportQuery {
                 Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), guid);
                 totalValue = BigDecimal.ZERO;
                 for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
-                    departsSales.put(d.description, new DepartsSale_(d.description, d.revenue));
+                    departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
                     d.reset();
                     totalValue = totalValue.add(d.revenue);
                 }

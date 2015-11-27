@@ -15,7 +15,7 @@ import com.kaching123.tcr.commands.print.SaleReportsProcessor;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler2;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleItemInfo;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderInfo;
-import com.kaching123.tcr.model.DepartsSale_;
+import com.kaching123.tcr.model.DepartsSale;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
@@ -88,7 +88,7 @@ public class XReportQuery {
         return true;
     }
 
-    public static DepartsSale_ getDepartSale(String departTitle, Cursor c) {
+    public static DepartsSale getDepartSale(String departTitle, Cursor c) {
         BigDecimal finalItemPrice = BigDecimal.ZERO;
         BigDecimal itemSubTotal = getSubTotal(_decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleItemDeptView2.SaleItemTable.QUANTITY))), _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleItemDeptView2.SaleItemTable.PRICE))));
         if (_bool(c, c.getColumnIndex(ShopSchema2.SaleItemDeptView2.SaleItemTable.DISCOUNTABLE))) {
@@ -109,7 +109,7 @@ public class XReportQuery {
             finalItemPrice = finalItemPrice.add(itemFinalTax);
         }
 
-        return new DepartsSale_(departTitle, finalItemPrice);
+        return new DepartsSale(departTitle, finalItemPrice);
     }
 
     public static XReportInfo loadXReport(Context context, String shiftGuid) {
@@ -123,7 +123,7 @@ public class XReportQuery {
         BigDecimal payOuts = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, DepartsSale_> departsSales = new TreeMap<String, DepartsSale_>();
+        TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
 
         Cursor c = ProviderAction.query(URI_SHIFT)
                 .where(ShiftTable.GUID + " = ?", shiftGuid)
@@ -136,7 +136,7 @@ public class XReportQuery {
         }
         c.close();
 
-        DepartsSale_ prepaidTotalSale = new DepartsSale_("Prepaid", BigDecimal.ZERO);
+        DepartsSale prepaidTotalSale = new DepartsSale("Prepaid", BigDecimal.ZERO);
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
         final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
         for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
@@ -147,7 +147,7 @@ public class XReportQuery {
         Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(),  shiftGuid);
         totalValue = BigDecimal.ZERO;
         for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
-            departsSales.put(d.description, new DepartsSale_(d.description, d.revenue));
+            departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
             d.reset();
             totalValue = totalValue.add(d.revenue);
         }
@@ -162,14 +162,14 @@ public class XReportQuery {
 //            String temp = c.getString(c.getColumnIndex(ShopSchema2.SaleItemDeptView2.DepartmentTable.TITLE));
 //            if (temp != null) {
 //                if (departsSales.size() == 0) {
-//                    DepartsSale_ tempDepartSale = getDepartSale(temp, c);
+//                    DepartsSale tempDepartSale = getDepartSale(temp, c);
 //                    departsSales.put(tempDepartSale.departTitle, tempDepartSale);
 //                } else if (departsSales.size() != 0) {
 //                    if (!departsSales.containsKey(temp)) {
-//                        DepartsSale_ tempDepartSale = getDepartSale(temp, c);
+//                        DepartsSale tempDepartSale = getDepartSale(temp, c);
 //                        departsSales.put(temp, tempDepartSale);
 //                    } else {
-//                        DepartsSale_ tempDepartSale = getDepartSale(temp, c);
+//                        DepartsSale tempDepartSale = getDepartSale(temp, c);
 //                        departsSales.get(temp).sales = departsSales.get(temp).sales.add(tempDepartSale.sales);
 //                    }
 //                }
@@ -385,7 +385,7 @@ public class XReportQuery {
         BigDecimal payOuts = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, DepartsSale_> departsSales = new TreeMap<String, DepartsSale_>();
+        TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>();
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
 
@@ -456,7 +456,7 @@ public class XReportQuery {
                 }
             }
 
-            DepartsSale_ prepaidTotalSale = new DepartsSale_("Prepaid", BigDecimal.ZERO);
+            DepartsSale prepaidTotalSale = new DepartsSale("Prepaid", BigDecimal.ZERO);
             result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.PREPAID));
             final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
             for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
@@ -468,7 +468,7 @@ public class XReportQuery {
             Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), guid);
             totalValue = BigDecimal.ZERO;
             for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
-                departsSales.put(d.description, new DepartsSale_(d.description, d.revenue));
+                departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
                 d.reset();
                 totalValue = totalValue.add(d.revenue);
             }
