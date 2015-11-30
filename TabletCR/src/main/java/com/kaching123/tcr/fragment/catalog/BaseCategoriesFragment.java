@@ -45,6 +45,7 @@ public abstract class BaseCategoriesFragment extends Fragment implements LoaderM
     protected CategoryItemView header;
 
     private boolean useOnlyNearTheEnd;
+    public boolean forSale;
 
     @InstanceState
     protected int selectedPosition;
@@ -92,6 +93,10 @@ public abstract class BaseCategoriesFragment extends Fragment implements LoaderM
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
         getLoaderManager().restartLoader(0, null, this);
     }
+    public void setFilter(boolean forSale) {
+        this.forSale = forSale;
+         getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -105,6 +110,15 @@ public abstract class BaseCategoriesFragment extends Fragment implements LoaderM
         if (!loadEmptyCategories){
             builder.where(ItemTable.GUID + " is not null");
         }
+
+        if (forSale) {
+            builder.where(ItemTable.SALABLE + " = ? ", "0");
+        }
+
+        if (!(this instanceof CategoriesFragment)){
+            builder.where(ItemTable.SALABLE + " = ? ", "1");
+        }
+
         builder.orderBy(getOrderBy());
         return builder.build(getActivity());
     }

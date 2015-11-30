@@ -28,13 +28,18 @@ public class ItemExModel extends ItemModel {
     }
 
     public ItemExModel(String guid, String categoryId, String description, String code, String eanCode, String productCode, PriceType priceType, BigDecimal price,
-                       BigDecimal availableQty, String unitsLabel, boolean isStockTracking, boolean isActiveStatus, boolean isDiscountable,
+                       BigDecimal availableQty, String unitsLabel, boolean isStockTracking, boolean isActiveStatus,
+                       boolean isDiscountable,
+                       boolean isSalable,
                        BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal cost, BigDecimal minimumQty, BigDecimal recommendedQty,
                        String updateQtyFlag, String taxGroupGuid, int modifiersCount, int addonsCount, int optionalCount, String departmentGuid, BigDecimal tax,
                        String defaultModifierGuid, int orderNum, String printerAliasGuid, int btnView, boolean hasNotes, boolean serializable, Unit.CodeType codeType,
                        boolean commissionEligible, BigDecimal commission) {
-        super(guid, categoryId, description, code, eanCode, productCode, priceType, price, availableQty, unitsLabel, isStockTracking, isActiveStatus,
-                isDiscountable, discount, discountType, isTaxable, cost, minimumQty, recommendedQty, updateQtyFlag, taxGroupGuid, defaultModifierGuid,
+        super(guid, categoryId, description, code, eanCode, productCode, priceType, price, availableQty, unitsLabel,
+                isStockTracking, isActiveStatus,
+                isDiscountable,
+                isSalable,
+                discount, discountType, isTaxable, cost, minimumQty, recommendedQty, updateQtyFlag, taxGroupGuid, defaultModifierGuid,
                 orderNum, printerAliasGuid, btnView, hasNotes, serializable, codeType, commissionEligible, commission);
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;

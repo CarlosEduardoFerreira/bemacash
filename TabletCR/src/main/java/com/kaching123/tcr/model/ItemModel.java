@@ -53,6 +53,7 @@ public class ItemModel implements Serializable, IValueModel {
     public boolean serializable;
     public boolean commissionEligible = true;
     public BigDecimal commission;
+    public boolean isSalable;
 
     public ItemModel(){
         this.guid = UUID.randomUUID().toString();
@@ -69,7 +70,9 @@ public class ItemModel implements Serializable, IValueModel {
                      PriceType priceType, BigDecimal price, BigDecimal availableQty, String unitsLabel,
 
                      boolean isStockTracking, boolean isActiveStatus,
-                     boolean isDiscountable, BigDecimal discount, DiscountType discountType,
+                     boolean isDiscountable,
+                     boolean isSalable,
+                     BigDecimal discount, DiscountType discountType,
                      boolean isTaxable,
                      BigDecimal cost,
                      BigDecimal minimumQty,
@@ -99,6 +102,7 @@ public class ItemModel implements Serializable, IValueModel {
         this.isStockTracking = isStockTracking;
         this.isActiveStatus = isActiveStatus;
         this.isDiscountable = isDiscountable;
+        this.isSalable = isSalable;
         this.discount = discount;
         this.discountType = discountType;
         this.isTaxable = isTaxable;
@@ -144,6 +148,7 @@ public class ItemModel implements Serializable, IValueModel {
         values.put(ItemTable.ACTIVE_STATUS, isActiveStatus);
 
         values.put(ItemTable.DISCOUNTABLE, isDiscountable);
+        values.put(ItemTable.SALABLE, isSalable);
         values.put(ItemTable.DISCOUNT, _decimal(discount));
         _putDiscount(values, ItemTable.DISCOUNT_TYPE, discountType);
 

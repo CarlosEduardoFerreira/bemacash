@@ -387,6 +387,7 @@
     <string name="item_activity_stock_tracking">Stock tracking:</string>
     <string name="item_activity_sales_price">Sales Price:</string>
     <string name="item_activity_discountable">Discountable:</string>
+    <string name="item_activity_salable">For Sale:</string>
     <string name="item_activity_discount_type">Discount type:</string>
     <string name="item_activity_discount_amount">Discount:</string>
     <string name="item_activity_taxable">Taxable:</string>

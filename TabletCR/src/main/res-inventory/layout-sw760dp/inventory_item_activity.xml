@@ -529,6 +529,26 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
             </TableRow>
+            <TableRow
+                android:id="@+id/salable_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <FrameLayout style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_salable" />
+                </FrameLayout>
+
+                <CheckBox
+                    android:id="@+id/salable_ch_box"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true" />
+            </TableRow>
 
             <RelativeLayout
                 android:layout_marginTop="18dp"
@@ -548,7 +568,6 @@
                     style="@style/EditItem.Table.Label"
                     android:layout_centerVertical="true"
                     android:text="@string/item_activity_button_view" />
-
 
             </RelativeLayout>
 

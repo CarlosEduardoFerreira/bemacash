@@ -368,6 +368,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String DISCOUNTABLE = "discountable";
 
+        @Column(type = Type.INTEGER, defVal = "1")
+        String SALABLE = "salable";
+
         @Column(type = Column.Type.TEXT)
         String DISCOUNT = "discount";
 
@@ -2062,6 +2065,7 @@ public abstract class ShopStore {
         String STOCK_TRACKING = ItemExtView.TABLE_ITEM + "_" + ItemTable.STOCK_TRACKING;
         String ACTIVE_STATUS = ItemExtView.TABLE_ITEM + "_" + ItemTable.ACTIVE_STATUS;
         String DISCOUNTABLE = ItemExtView.TABLE_ITEM + "_" + ItemTable.DISCOUNTABLE;
+        String SALABLE = ItemExtView.TABLE_ITEM + "_" + ItemTable.SALABLE;
         String DISCOUNT = ItemExtView.TABLE_ITEM + "_" + ItemTable.DISCOUNT;
         String DISCOUNT_TYPE = ItemExtView.TABLE_ITEM + "_" + ItemTable.DISCOUNT_TYPE;
         String TAXABLE = ItemExtView.TABLE_ITEM + "_" + ItemTable.TAXABLE;
@@ -2773,7 +2777,7 @@ public abstract class ShopStore {
         @Join(joinTable = DepartmentTable.TABLE_NAME, joinColumn = DepartmentTable.GUID, onTableAlias = TABLE_CATEGORY, onColumn = CategoryTable.DEPARTMENT_GUID)
         String TABLE_DEPARTMENT = "department_table";
 
-        @Columns({ItemTable.GUID, ItemTable.STOCK_TRACKING, ItemTable.TMP_AVAILABLE_QTY, ItemTable.MINIMUM_QTY})
+        @Columns({ItemTable.GUID, ItemTable.STOCK_TRACKING, ItemTable.TMP_AVAILABLE_QTY, ItemTable.MINIMUM_QTY, ItemTable.SALABLE})
         @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.CATEGORY_ID, onTableAlias = TABLE_CATEGORY, onColumn = CategoryTable.GUID)
         String TABLE_ITEM = "item_table";
 

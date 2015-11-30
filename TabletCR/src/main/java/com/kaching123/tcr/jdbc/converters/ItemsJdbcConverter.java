@@ -38,6 +38,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String STOCK_TRACKING = "STOCK_TRACKING";
     private static final String ACTIVE_STATUS = "ACTIVE_STATUS";
     private static final String DISCOUNTABLE = "DISCOUNTABLE";
+    private static final String SALABLE = "SALABLE";
     private static final String DISCOUNT = "DISCOUNT";
     private static final String DISCOUNT_TYPE = "DISCOUNT_TYPE";
     private static final String TAXABLE = "TAXABLE";
@@ -73,6 +74,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(STOCK_TRACKING),
                 rs.getBoolean(ACTIVE_STATUS),
                 rs.getBoolean(DISCOUNTABLE),
+                rs.getBoolean(SALABLE),
                 rs.getBigDecimal(DISCOUNT),
                 _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT),
                 rs.getBoolean(TAXABLE),
@@ -110,6 +112,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(STOCK_TRACKING),
                 rs.getBoolean(ACTIVE_STATUS),
                 rs.getBoolean(DISCOUNTABLE),
+                rs.getBoolean(SALABLE),
                 rs.getBigDecimal(DISCOUNT),
                 _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT),
                 rs.getBoolean(TAXABLE),
@@ -155,6 +158,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(STOCK_TRACKING, item.isStockTracking)
                 .add(ACTIVE_STATUS, item.isActiveStatus)
                 .add(DISCOUNTABLE, item.isDiscountable)
+                .add(SALABLE, item.isSalable)
                 .add(DISCOUNT, item.discount)
                 .add(DISCOUNT_TYPE, item.discountType)
                 .add(TAXABLE, item.isTaxable)
@@ -188,6 +192,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(STOCK_TRACKING, item.isStockTracking)
                 .add(ACTIVE_STATUS, item.isActiveStatus)
                 .add(DISCOUNTABLE, item.isDiscountable)
+                .add(SALABLE, item.isSalable)
                 .add(DISCOUNT, item.discount)
                 .add(DISCOUNT_TYPE, item.discountType)
                 .add(TAXABLE, item.isTaxable)

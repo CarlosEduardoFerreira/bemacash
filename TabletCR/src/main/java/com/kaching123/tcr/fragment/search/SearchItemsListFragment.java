@@ -80,6 +80,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
         Logger.d("ItemsListFragment onCreateLoader");
         return CursorLoaderBuilder.forUri(URI_ITEMS)
                 .projection(ItemConverter.PROJECTION)
+                .where(ItemTable.SALABLE + " = ?", 1)
                 .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
                 .where(ItemTable.DESCRIPTION + " like ?" + " OR " + ItemTable.PRODUCT_CODE/*EAN_CODE*/ + " like ?", "%" + searchText + "%", "%" + searchText + "%")
                 .orderBy(ItemTable.CATEGORY_ID + ", " + ItemTable.ORDER_NUM)
@@ -123,6 +124,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 ItemTable.ACTIVE_STATUS,
                 ItemTable.DISCOUNTABLE,
                 ItemTable.DISCOUNT,
+                ItemTable.SALABLE,
                 ItemTable.DISCOUNT_TYPE,
                 ItemTable.TAXABLE,
                 ItemTable.TAX_GROUP_GUID,
@@ -162,6 +164,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getInt(indexHolder.get(ItemTable.STOCK_TRACKING)) == 1,
                     c.getInt(indexHolder.get(ItemTable.ACTIVE_STATUS)) == 1,
                     c.getInt(indexHolder.get(ItemTable.DISCOUNTABLE)) == 1,
+                    c.getInt(indexHolder.get(ItemTable.SALABLE)) == 1,
                     _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT))),
                     _discountType(c, indexHolder.get(ItemTable.DISCOUNT_TYPE)),
                     c.getInt(indexHolder.get(ItemTable.TAXABLE)) == 1,

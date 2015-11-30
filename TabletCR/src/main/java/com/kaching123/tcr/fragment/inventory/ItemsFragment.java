@@ -5,11 +5,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
@@ -58,6 +61,8 @@ public class ItemsFragment extends BaseItemsPickFragment {
     private boolean draggable;
 
     private String departmentGuid;
+
+    public boolean forSale;
 
     @Override
     protected IObjectsAdapter<ItemExModel> createAdapter() {
@@ -115,6 +120,9 @@ public class ItemsFragment extends BaseItemsPickFragment {
             builder.where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY));
         }
 
+         if (forSale) {
+            builder.where(ItemTable.SALABLE + " = ? ", "0");
+        }
         Loader<List<ItemExModel>> loader = builder.transform(new ItemExFunction()).build(getActivity());
         return loader;
     }
@@ -123,6 +131,13 @@ public class ItemsFragment extends BaseItemsPickFragment {
         this.textFilter = filter;
         getLoaderManager().restartLoader(0, null, this);
     }
+
+    public void setFilter(boolean forSale) {
+        this.forSale = forSale;
+
+        getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
+    }
+
 
     public void setUseOnlyNearTheEnd(boolean useOnlyNearTheEnd) {
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
@@ -153,7 +168,26 @@ public class ItemsFragment extends BaseItemsPickFragment {
             this.draggable = draggable;
         }
 
-        @Override
+        public void marks(LinearLayout holder,
+                          boolean forSale) {
+            // Now the layout parameters, these are a little tricky at first
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER_VERTICAL | Gravity.RIGHT;
+            params.rightMargin = 5;
+            holder.removeAllViews();
+
+            if (!forSale) {
+                ImageView image = new ImageView(getContext());
+                image.setScaleType(ImageView.ScaleType.MATRIX);
+                image.setImageResource(R.drawable.ic_money_off_black_18dp);
+                // Let's get the root layout and add our ImageView
+                holder.addView(image, 0, params);
+            }
+        }
+
+            @Override
         protected View newView(int position, ViewGroup parent) {
             View convertView = LayoutInflater.from(getContext()).inflate(R.layout.inventory_item_view, parent, false);
 
@@ -213,7 +247,9 @@ public class ItemsFragment extends BaseItemsPickFragment {
             showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
 
             holder.drag.setVisibility(draggable ? View.VISIBLE : View.INVISIBLE);
-
+            /*marks(holder.status,
+                    item.isSalable);
+*/
             return convertView;
         }
 

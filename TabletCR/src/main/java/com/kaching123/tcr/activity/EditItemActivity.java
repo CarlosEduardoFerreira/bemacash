@@ -155,6 +155,8 @@ public class EditItemActivity extends BaseItemActivity {
         showPrice(salesPrice, model.price);
         discountable.setChecked(model.isDiscountable);
         taxable.setChecked(model.isTaxable);
+        salableChBox.setChecked(model.isSalable);
+        enableForSaleParams(model.isSalable);
         showPrice(cost, model.cost);
 
         commissionsEligible.setChecked(model.commissionEligible);

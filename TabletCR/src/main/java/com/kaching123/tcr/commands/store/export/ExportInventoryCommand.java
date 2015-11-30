@@ -55,6 +55,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                         ItemTable.PRODUCT_CODE,
                         ItemTable.SALE_PRICE,
                         ItemTable.DISCOUNTABLE,
+                        ItemTable.SALABLE,
                         ItemTable.TAXABLE,
                         ItemTable.STOCK_TRACKING,
                         ItemTable.COST,
@@ -77,6 +78,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
         columns.add(c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.SALE_PRICE)));
         columns.add(_bool(c, c.getColumnIndex(ItemTable.DISCOUNTABLE)));
+        columns.add(String.valueOf(_bool(c, c.getColumnIndex(ItemTable.SALABLE))));
         columns.add(_bool(c, c.getColumnIndex(ItemTable.TAXABLE)));
         columns.add(_bool(c, c.getColumnIndex(ItemTable.STOCK_TRACKING)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.COST)));
@@ -100,6 +102,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                 "Product Code",
                 "Price",
                 "Discountable",
+                "Salable",
                 "Taxable",
                 "STOCK_TRACK",
                 "Cost",
@@ -122,6 +125,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                 null, //"Product Code",
                 null, //"Price",
                 null, //"Discountable",
+                null, //"Salable",
                 null, //"Taxable",
                 null, //"STOCK_TRACK",
                 null, //"Cost",

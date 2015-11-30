@@ -47,6 +47,7 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
     public Loader<List<ItemExModel>> onCreateLoader(int loaderId, Bundle args) {
         Logger.d("ItemsListFragment onCreateLoader");
         return CursorLoaderBuilder.forUri(URI_ITEMS)
+                .where(ItemTable.SALABLE + " = ?", 1)
                 .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
                 .where(ItemTable.IS_DELETED + " = ?", 0)
                 .where(ItemTable.CATEGORY_ID + " = ? ", categoryGuid == null ? "" : categoryGuid)

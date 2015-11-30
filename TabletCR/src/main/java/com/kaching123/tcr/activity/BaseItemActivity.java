@@ -149,10 +149,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected Spinner department;
     @ViewById
     protected Spinner category;
-
     @ViewById
     protected Spinner taxGroup;
-
     @ViewById
     protected EditText ean;
     @ViewById
@@ -190,6 +188,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     @ViewById
     protected EditText salesPrice;
     @ViewById
+    protected CheckBox salableChBox;
+    @ViewById
     protected CheckBox discountable;
     @ViewById
     protected Spinner discountType;
@@ -205,16 +205,12 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected View buttonView;
     @ViewById
     protected CheckBox hasNotes;
-
     @ViewById
     protected TableLayout modifiersTable;
-
     @ViewById
     protected TextView availableQtyPencil;
-
     @ViewById
     protected View availableQtyBlock;
-
     @ViewById
     protected View commissionsEligibleContainer;
     @ViewById
@@ -555,6 +551,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     @Click
     protected void buttonClicked() {
         if (validateForm()) {
+            model.isTaxable = true;
             collectDataToModel(model);
             callCommand(model);
             this.finish();
@@ -694,6 +691,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected void setFieldsChangeListeners() {
         TextChangeListener textChangeListener = new TextChangeListener();
         CheckedChangeListener checkedChangeListener = new CheckedChangeListener();
+        SalableCheckedChangeListener salableCheckedChangeListener = new SalableCheckedChangeListener();
 
         description.addTextChangedListener(textChangeListener);
         ean.addTextChangedListener(new TextWatcher() {
@@ -755,6 +753,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         salesPrice.addTextChangedListener(textChangeListener);
         discountable.setOnCheckedChangeListener(checkedChangeListener);
         taxable.setOnCheckedChangeListener(checkedChangeListener);
+        salableChBox.setOnCheckedChangeListener(salableCheckedChangeListener);
         commissionsEligible.setOnCheckedChangeListener(checkedChangeListener);
         cost.addTextChangedListener(textChangeListener);
         commissions.addTextChangedListener(textChangeListener);
@@ -901,19 +900,32 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         model.isStockTracking = this.stockTrackingFlag.isChecked();
 
-        String price = this.salesPrice.getText().toString();
+        //String price = this.salesPrice.getText().toString();
+        String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?
+                BigDecimal.ZERO.toString() : this.salesPrice.getText().toString();
+
         model.price = parseBigDecimal(price, BigDecimal.ZERO);
 
         model.isDiscountable = this.discountable.isChecked();
+
+        model.isSalable = this.salableChBox.isChecked();
+
 
         model.discountType = ((DiscountTypeHolder) discountType.getSelectedItem()).type;
 
         String discount = this.discount.getText().toString();
         model.discount = parseBigDecimal(discount, BigDecimal.ZERO);
 
-        model.isTaxable = this.taxable.isChecked();
+      //  model.isTaxable = this.taxable.isChecked();
+       // c = (Cursor) this.taxGroup.getSelectedItem();
+     //   model.taxGroupGuid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
+
         c = (Cursor) this.taxGroup.getSelectedItem();
-        model.taxGroupGuid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
+
+        model.taxGroupGuid =
+                (c == null) ? null : (salableChBox.isChecked() ?
+                c.getString(c.getColumnIndex(TaxGroupTable.GUID)) : null);
+
 
         String cost = this.cost.getText().toString();
         model.cost = parseBigDecimal(cost, BigDecimal.ZERO);
@@ -965,6 +977,16 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             return false;
         }
 
+/*        if (this.taxGroup.getSelectedItem() == null && salableChBox.isChecked()) {
+            Toast.makeText(this, getString(R.string.item_activity_alert_tax_group_empty_error), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(model.ncmTaxId) && (salableChBox.isChecked() || model.refType == ItemRefType.Reference)) {
+            Toast.makeText(this, getString(R.string.item_activity_alert_ncm_empty_error), Toast.LENGTH_SHORT).show();
+            return false;
+        }*/
+
         if (TextUtils.isEmpty(unitsLabel.getText())) {
             Toast.makeText(this, R.string.item_activity_alert_units_label_msg, Toast.LENGTH_SHORT).show();
             return false;
@@ -974,7 +996,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             return false;
         }
         PriceType pt = ((PriceTypeHolder) priceType.getSelectedItem()).type;
-        if (pt != PriceType.OPEN) {
+        if (pt != PriceType.OPEN && salableChBox.isChecked()) {
             BigDecimal priceValue = parseBigDecimal(salesPrice.getText().toString(), null);
             if (priceValue == null) {
                 Toast.makeText(this, R.string.item_activity_alert_price_empty_msg, Toast.LENGTH_SHORT).show();
@@ -1011,6 +1033,19 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         }
 
         return true;
+    }
+
+    /**
+     * Enable\disable views depends on "For Sale" checkBox.
+     *
+     * @param enable enable or disable views
+     */
+    protected void enableForSaleParams(boolean enable) {
+        View views[] = {salesPrice, discountable, discountType, discount,
+                commissionsEligible, commissions};
+        for (View view : views) {
+            view.setEnabled(enable);
+        }
     }
 
     @Override
@@ -1296,6 +1331,13 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         }
     }
 
+    private class SalableCheckedChangeListener implements OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            changed = true;
+            enableForSaleParams(isChecked);
+        }
+    }
     private class UpcLoader implements LoaderCallbacks<Cursor> {
 
         @Override

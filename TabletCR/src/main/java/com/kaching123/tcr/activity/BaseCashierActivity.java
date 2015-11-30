@@ -574,7 +574,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             return;
         }
 
-        if (!item.isActiveStatus) {
+        if (!item.isActiveStatus && !item.isSalable) {
             if (fromScanner)
                 disconnectScanner();
             playAlarm();

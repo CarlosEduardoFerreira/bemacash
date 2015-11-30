@@ -112,6 +112,7 @@ public class SearchFragment extends Fragment implements LoaderCallbacks<List<Cat
                     c.getInt(indexHolder.get(SearchItemWithModifierView.STOCK_TRACKING)) == 1,
                     c.getInt(indexHolder.get(SearchItemWithModifierView.ACTIVE_STATUS)) == 1,
                     c.getInt(indexHolder.get(SearchItemWithModifierView.DISCOUNTABLE)) == 1,
+                    c.getInt(indexHolder.get(SearchItemWithModifierView.SALABLE)) == 1,
                     _decimal(c.getString(indexHolder.get(SearchItemWithModifierView.DISCOUNT))),
                     _discountType(c, indexHolder.get(SearchItemWithModifierView.DISCOUNT_TYPE)),
                     c.getInt(indexHolder.get(SearchItemWithModifierView.TAXABLE)) == 1,

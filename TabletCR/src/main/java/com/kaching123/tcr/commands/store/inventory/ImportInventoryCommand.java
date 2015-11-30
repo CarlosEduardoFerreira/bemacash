@@ -390,6 +390,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 (Boolean) fields.get(FIELD_STOCK_TRACKING),
                 true,
                 (Boolean) fields.get(FIELD_DISCOUNTABLE),
+                (Boolean) fields.get(FIELD_SALABLE),
                 BigDecimal.ZERO,
                 DiscountType.PERCENT,
                 (Boolean) fields.get(FIELD_TAXABLE),
@@ -500,6 +501,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private static final int FIELD_QTY = 12;
     private static final int FIELD_ORDER_TRIGGER = 13;
     private static final int FIELD_RECOMMENDED = 14;
+    private static final int FIELD_SALABLE = 15;
 
     private static CellProcessor[] getProcessors(ImportType type) {
         if (type == ImportType.DELETE) {
@@ -519,6 +521,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                     new Optional(), // product code
                     new Optional(new ParseBigDecimal()),//price
                     new Optional(new ParseBool()),//discountable
+                    new Optional(new ParseBool()),//salable
                     new Optional(new ParseBool()),//taxable
                     new Optional(new ParseBool()),//stock track
                     new Optional(new ParseBigDecimal()),//cost
