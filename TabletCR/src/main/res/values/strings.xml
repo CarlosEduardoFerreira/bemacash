@@ -1176,6 +1176,7 @@
     <string name="customer_delete_dialog_title">Delete customer</string>
     <string name="customer_delete_dialog_message">Are you sure you want to delete this customer?</string>
     <string name="customer_delete_dialog_error_message">Can\'t delete customer. Please try again!</string>
+    <string name="customer_edit_unavailable_option_message">Editing functionality is not available for current plan</string>
     <string name="email_order_customer_label">Apply customer:</string>
     <string name="email_order_customer_hint">Name or email</string>
     <string name="settings_no_printers">No printers configured!</string>

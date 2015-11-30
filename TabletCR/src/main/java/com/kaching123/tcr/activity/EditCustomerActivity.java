@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -65,6 +66,8 @@ public class EditCustomerActivity extends SuperBaseActivity {
     @Extra
     protected CustomerModel model;
 
+    @ViewById(R.id.availability_message)
+    protected TextView availabilityMessage;
     @ViewById
     protected EditText firstName;
     @ViewById
@@ -87,12 +90,12 @@ public class EditCustomerActivity extends SuperBaseActivity {
     protected EditText zip;
     @ViewById
     protected EditText notes;
-
     @ViewById
     protected Spinner sexSpinner;
-
     @ViewById
     protected CheckBox consentPromotions;
+    @ViewById
+    protected Button saveButton;
 
     private Mode mode;
 
@@ -109,6 +112,24 @@ public class EditCustomerActivity extends SuperBaseActivity {
         fragment.startActivityForResult(intent, requestCode);
     }
 
+    private void setItemsEnabled(boolean flag) {
+        availabilityMessage.setVisibility(flag ? View.GONE : View.VISIBLE);
+        firstName.setEnabled(flag);
+        lastName.setEnabled(flag);
+        email.setEnabled(flag);
+        phone.setEnabled(flag);
+        street.setEnabled(flag);
+        complementary.setEnabled(flag);
+        city.setEnabled(flag);
+        state.setEnabled(flag);
+        country.setEnabled(flag);
+        zip.setEnabled(flag);
+        notes.setEnabled(flag);
+        sexSpinner.setEnabled(flag);
+        consentPromotions.setEnabled(flag);
+        saveButton.setEnabled(flag);
+    }
+
     @Override
     protected Set<Permission> getPermissions() {
         return permissions;
@@ -122,6 +143,12 @@ public class EditCustomerActivity extends SuperBaseActivity {
         setCustomer();
 
         phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+
+        if(getApp().isFreemium()) {
+            setItemsEnabled(false);
+        } else {
+            setItemsEnabled(true);
+        }
 
     }
 
@@ -164,7 +191,11 @@ public class EditCustomerActivity extends SuperBaseActivity {
 
     @OptionsItem
     protected void actionRemoveSelected(){
-        deleteCustomer();
+        if(getApp().isFreemium()) {
+            AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        } else {
+            deleteCustomer();
+        }
     }
 
     private void deleteCustomer() {

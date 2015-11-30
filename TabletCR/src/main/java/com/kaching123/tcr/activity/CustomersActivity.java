@@ -142,7 +142,11 @@ public class CustomersActivity extends SuperBaseActivity {
 
     @OptionsItem
     protected void actionAddSelected(){
-        EditCustomerActivity.start(CustomersActivity.this, null);
+        if(getApp().isFreemium()) {
+            AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        } else {
+            EditCustomerActivity.start(CustomersActivity.this, null);
+        }
     }
 
     /*@OptionsItem
