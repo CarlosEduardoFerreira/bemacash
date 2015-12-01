@@ -484,7 +484,27 @@
                     android:layout_weight="1"
                     android:inputType="numberDecimal" />
             </TableRow>
+            <TableRow
+                android:id="@+id/salable_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
 
+                <FrameLayout style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_salable" />
+                </FrameLayout>
+
+                <CheckBox
+                    android:id="@+id/salable_ch_box"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:button="@drawable/checkbox_mint"
+                    android:checked="true" />
+            </TableRow>
             <TableRow
                 android:id="@+id/commissions_eligible_container"
                 android:layout_width="fill_parent"
@@ -528,26 +548,6 @@
                     android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
-            </TableRow>
-            <TableRow
-                android:id="@+id/salable_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical">
-
-                <FrameLayout style="@style/EditItem.Table.LabelLayout.Price">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/item_activity_salable" />
-                </FrameLayout>
-
-                <CheckBox
-                    android:id="@+id/salable_ch_box"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true" />
             </TableRow>
 
             <RelativeLayout

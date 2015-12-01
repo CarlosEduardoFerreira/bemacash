@@ -193,6 +193,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
             ViewHolder holder = new ViewHolder();
 
+                holder.status = (LinearLayout) convertView.findViewById(R.id.status);
             holder.description = (TextView) convertView.findViewById(R.id.description);
             holder.ean = (TextView) convertView.findViewById(R.id.ean);
             holder.cost = (TextView) convertView.findViewById(R.id.cost);
@@ -247,9 +248,9 @@ public class ItemsFragment extends BaseItemsPickFragment {
             showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
 
             holder.drag.setVisibility(draggable ? View.VISIBLE : View.INVISIBLE);
-            /*marks(holder.status,
-                    item.isSalable);
-*/
+
+            marks(holder.status, item.isSalable);
+
             return convertView;
         }
 
@@ -284,6 +285,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         }
 
         private class ViewHolder {
+            LinearLayout status;
             TextView description;
             TextView ean;
             TextView cost;

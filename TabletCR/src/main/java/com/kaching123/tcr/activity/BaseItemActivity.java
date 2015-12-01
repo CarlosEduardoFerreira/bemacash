@@ -551,7 +551,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     @Click
     protected void buttonClicked() {
         if (validateForm()) {
-            model.isTaxable = true;
             collectDataToModel(model);
             callCommand(model);
             this.finish();
@@ -900,7 +899,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         model.isStockTracking = this.stockTrackingFlag.isChecked();
 
-        //String price = this.salesPrice.getText().toString();
         String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?
                 BigDecimal.ZERO.toString() : this.salesPrice.getText().toString();
 
@@ -916,7 +914,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         String discount = this.discount.getText().toString();
         model.discount = parseBigDecimal(discount, BigDecimal.ZERO);
 
-      //  model.isTaxable = this.taxable.isChecked();
+        model.isTaxable = this.taxable.isChecked();
        // c = (Cursor) this.taxGroup.getSelectedItem();
      //   model.taxGroupGuid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
 
@@ -1042,7 +1040,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
      */
     protected void enableForSaleParams(boolean enable) {
         View views[] = {salesPrice, discountable, discountType, discount,
-                commissionsEligible, commissions};
+                commissionsEligible, commissions, taxable, taxGroup};
         for (View view : views) {
             view.setEnabled(enable);
         }
