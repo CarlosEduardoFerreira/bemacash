@@ -254,7 +254,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected void actionSerialSelected() {
         if (model.isSerializable()) {
             UnitActivity.start(this, model, TAG_RESULT);
-            return;
         } else {
             Toast.makeText(this, R.string.cashier_action_serial_disabled, Toast.LENGTH_LONG).show();
         }
@@ -343,12 +342,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         modifiersTable.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
                 if (!PlanOptions.isModifiersAllowed()) {
                     AlertDialogFragment.showAlert(BaseItemActivity.this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                 } else {
-                    //ModifiersActivity.start(BaseItemActivity.this, REQ_MODIFIER, model.guid, description.getText().toString(), model.defaultModifierGuid);
-ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
+                    ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
                 }
             }
         });
