@@ -6,7 +6,7 @@
     android:layout_height="match_parent" >
     <TextView
         style="@style/EditItem.Table.Label"
-        android:text="@string/unavailable_option_message"
+        android:text="@string/unavailable_edit_option_message"
         android:id="@+id/availability_message"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"

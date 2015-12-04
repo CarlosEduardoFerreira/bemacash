@@ -20,12 +20,14 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
@@ -53,6 +55,7 @@ import com.kaching123.tcr.fragment.itempick.DrawerCategoriesFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
@@ -200,7 +203,7 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @OptionsItem
     protected void actionExportSelected() {
-        if(getApp().isFreemium()) {
+        if (!PlanOptions.isExportInventoryAllowed()) {
             AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
         } else {
             FileChooserFragment.show(this, Type.FOLDER, new FileChooseListener() {
@@ -227,9 +230,9 @@ public class InventoryActivity extends ScannerBaseActivity {
     @OptionsItem
     protected void actionSortSelected() {
         int level = sortItem.getIcon().getLevel();
-        if (level == 0){
+        if (level == 0) {
             level = 1;
-        }else {
+        } else {
             level = 0;
         }
         sortByName = level == 1;
@@ -272,7 +275,7 @@ public class InventoryActivity extends ScannerBaseActivity {
     }
 
     @OptionsItem
-    protected void actionManagePrinterAliasSelected(){
+    protected void actionManagePrinterAliasSelected() {
         PrinterAliasActivity.start(this);
     }
 

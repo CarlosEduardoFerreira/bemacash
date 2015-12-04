@@ -138,6 +138,8 @@
 
     <string name="unavailable_option_title">Functionality limit</string>
     <string name="unavailable_option_message">This functionality is not available for current plan</string>
+    <string name="unavailable_employee_option_message">Not able to create more then %d employees in current plan</string>
+    <string name="unavailable_edit_option_message">This functionality is available only in Read Only Mode for current plan</string>
 
     <string name="sync_success_title">Database syncing</string>
     <string name="sync_success_message">Data was synchronized</string>
@@ -189,6 +191,7 @@
     <string name="cashier_action_set_warranty">Set Warranty</string>
     <string name="btn_login">Login</string>
     <string name="cashier_action_serial">Serial management</string>
+    <string name="cashier_action_composer">Composition items management</string>
     <string name="cashier_action_serial_disabled">This item is not serial.</string>
     <string name="cashier_msg_error_changing_price">Discount per item has already applied, to change open price you need to reset discount per item</string>
     <string name="cashier_msg_error_changing_discount">Order discount was already applied, to apply discount per item you need to reset order discount firstly</string>
@@ -717,6 +720,7 @@
     <string name="sync_item">items part#1 </string>
     <string name="sync_modifier">items part#2</string>
     <string name="sync_item_movement">items part#3</string>
+    <string name="sync_item_composition">composition items</string>
     <string name="sync_sale_order">sale orders part#1</string>
     <string name="sync_sale_order_item">sale orders part#2</string>
     <string name="sync_sale_order_item_addons">sale orders part#3</string>

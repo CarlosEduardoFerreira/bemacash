@@ -289,4 +289,22 @@ public interface ShopPref {
     String terminalPassword();
 
     boolean removeCheckAndOfflineCredit();
+
+    long planId();
+
+    /**
+     *  freemium settings
+     */
+
+    boolean modifiersAvailable();
+
+    boolean customerEditingAvailable();
+
+    int employeeLimit();
+
+    boolean exportInventory();
+
+    boolean employeeCustomPermitissions();
+
+    boolean scalesConnection();
 }

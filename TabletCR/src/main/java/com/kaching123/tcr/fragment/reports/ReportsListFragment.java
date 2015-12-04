@@ -21,6 +21,7 @@ import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.XReportChooserAlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.ZReportChooserAlertDialogFragment;
+import com.kaching123.tcr.model.PlanOptions;
 
 import java.util.ArrayList;
 
@@ -108,10 +109,10 @@ public class ReportsListFragment extends SuperBaseFragment {
                 if (reportType == ReportType.SHIFTS_REPORT) {
                     listener.onReportSelected(adapter.getItem(position));
                 } else if (reportType == ReportType.X_REPORT) {
-                    if (getApp().isFreemium()) {
-                        AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
-                    } else {
+                    if (PlanOptions.isExportInventoryAllowed()) {
                         XReportChooserAlertDialogFragment.show(getActivity());
+                    } else {
+                        AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     }
                 } else if (reportType == ReportType.Z_REPORT) {
                     ZReportChooserAlertDialogFragment.show(getActivity());

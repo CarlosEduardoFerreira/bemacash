@@ -1,6 +1,5 @@
 package com.kaching123.tcr;
 
-import android.app.Application;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
@@ -30,10 +29,10 @@ import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.Vie
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeePermissionsModel;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PlanOptionsResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.User;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
-import com.kaching123.tcr.pref.ShopPref;
 import com.kaching123.tcr.pref.ShopPref_;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.SyncOpenHelper;
@@ -41,8 +40,6 @@ import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.kaching123.tcr.util.OrgJsonConverter;
 import com.squareup.okhttp.OkHttpClient;
-
-import com.google.gson.Gson;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EApplication;
@@ -85,6 +82,8 @@ public class TcrApplication extends MultiDexApplication {
     public static final long MONEYBACK_MAX_TIMESPAN_MSEC = TimeUnit.DAYS.toMillis(30);
     public static final long DEFAULT_OFFLINE_PERIOD = TimeUnit.HOURS.toMillis(192);
     public static final long OFFLINE_PERIOD_NEAR = TimeUnit.HOURS.toMillis(24);
+
+    private static final long FREEMIUM_PLAN_ID = 14;
 
     private static TcrApplication self;
 
@@ -169,7 +168,7 @@ public class TcrApplication extends MultiDexApplication {
 
     @Background
     public void initPref() {
-        Logger.d("PrintReceiptTwice = "+shopPref.printReceiptTwice().get());
+        Logger.d("PrintReceiptTwice = " + shopPref.printReceiptTwice().get());
         synchronized (this) {
             shopInfo = new ShopInfo(
                     shopPref.shopId().get(),
@@ -237,7 +236,8 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.ivulotoMID().get(),
                     shopPref.terminalID().get(),
                     shopPref.terminalPassword().get(),
-                    shopPref.removeCheckAndOfflineCredit().get());
+                    shopPref.removeCheckAndOfflineCredit().get(),
+                    shopPref.planId().get());
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -571,6 +571,7 @@ public class TcrApplication extends MultiDexApplication {
                 .terminalID().put(info.terminalID)
                 .terminalPassword().put(info.terminalPassword)
                 .removeCheckAndOfflineCredit().put(info.removeCheckAndOfflineCredit)
+                .planId().put(info.planId)
                 .apply();
 
         setUsers();
@@ -630,10 +631,12 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public boolean isFreemium() {
-        return false;
+        final boolean isFreemium = shopPref.planId().get() == FREEMIUM_PLAN_ID;
+        Logger.d("[Freemium] %s", isFreemium);
+        return isFreemium;
     }
 
-        public boolean hasPermission(Permission permissions) {
+    public boolean hasPermission(Permission permissions) {
         if (permissions == null)
             return true;
         Set<Permission> operatorPermissions = getOperatorPermissions();
@@ -1087,6 +1090,10 @@ public class TcrApplication extends MultiDexApplication {
                     return new GetCurrentTimestampResponse(response.getString("status"), response.getString("message"), response.getString("data"));
                 } else if (type == RestCommand.IntegerResponse.class) {
                     return new RestCommand.IntegerResponse(response.getString("status"), response.getString("message"), response.isNull("data") ? null : response.getInt("data"));
+                } else if (type == PlanOptionsResponse.class) {
+                    return new PlanOptionsResponse(response.getString("status"), response.getString("message"), response.isNull("entity")
+                            ? (!response.isNull("data") ? response.getJSONObject("data") : null)
+                            : response.getJSONObject("entity"));
                 } else {
                     throw new ConversionException("Can't parse response. Unknown type: " + type);
                 }

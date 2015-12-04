@@ -44,6 +44,7 @@ import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.TipsModel.PaymentType;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
@@ -109,6 +110,8 @@ public class EmployeesActivity extends SuperBaseActivity {
     private List<String> tipsEmplGuids;
     private String tipsNotes;
 
+    private int employeeCount = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,10 +142,15 @@ public class EmployeesActivity extends SuperBaseActivity {
 
     @OptionsItem
     protected void actionAddSelected() {
-        EmployeeModel model = new EmployeeModel(UUID.randomUUID().toString(), null, null, null, null, null, null, null, null, null, null, null, null, true, null, null,
-                EmployeeStatus.ACTIVE,
-                TcrApplication.get().getShopId(), BigDecimal.ZERO, false, false, null, false, true);//TcrApplication.get().getShopId());
-        AddEmployeeActivity.start(this, model);
+        if (PlanOptions.isEmployeeLimited() && (employeeCount >= PlanOptions.getEmployeeLimit())) {
+            AlertDialogFragment.showAlert(this,
+                    R.string.unavailable_option_title, getString(R.string.unavailable_employee_option_message, PlanOptions.getEmployeeLimit()));
+        } else {
+            EmployeeModel model = new EmployeeModel(UUID.randomUUID().toString(), null, null, null, null, null, null, null, null, null, null, null, null, true, null, null,
+                    EmployeeStatus.ACTIVE,
+                    TcrApplication.get().getShopId(), BigDecimal.ZERO, false, false, null, false, true);//TcrApplication.get().getShopId());
+            AddEmployeeActivity.start(this, model);
+        }
     }
 
     @OptionsItem
@@ -317,11 +325,13 @@ public class EmployeesActivity extends SuperBaseActivity {
         @Override
         public void onLoadFinished(Loader<List<EmployeeModel>> listLoader, List<EmployeeModel> employeeModels) {
             adapter.changeCursor(employeeModels);
+            employeeCount = adapter.getCount();
         }
 
         @Override
         public void onLoaderReset(Loader<List<EmployeeModel>> listLoader) {
             adapter.changeCursor(null);
+            employeeCount = 0;
         }
     }
 

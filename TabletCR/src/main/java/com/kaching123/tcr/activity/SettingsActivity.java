@@ -32,6 +32,7 @@ import com.kaching123.tcr.fragment.settings.SyncSettingsFragment;
 import com.kaching123.tcr.fragment.settings.TrainingModeSettingsFragment;
 import com.kaching123.tcr.fragment.settings.USBMsrFragment;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PlanOptions;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -46,7 +47,7 @@ import java.util.Set;
  * Created by gdubina on 07/11/13.
  */
 @EActivity(R.layout.settings_activity)
-public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener, WaitDialogFragmentWithCallback.OnDialogDismissListener{
+public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener, WaitDialogFragmentWithCallback.OnDialogDismissListener {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -57,7 +58,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     private Fragment fragment = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -72,6 +73,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     protected Set<Permission> getPermissions() {
         return permissions;
@@ -146,7 +148,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
         getSupportFragmentManager().beginTransaction().replace(R.id.settings_details, fragment).commit();
     }
 
-    private void updateHardwareDetails(int pos){
+    private void updateHardwareDetails(int pos) {
         switch (pos) {
             case 0:
                 fragment = PrinterListFragment.instance();
@@ -167,11 +169,8 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
                 fragment = USBMsrFragment.instance();
                 break;
             case 6:
-                if(getApp().isFreemium()) {
-                    fragment = UnavailabledOptionFragment.instance();
-                } else {
-                    fragment = ScaleFragment.instance();
-                }
+                fragment = PlanOptions.isScaleConnectionAllowed() ?
+                        ScaleFragment.instance() : UnavailabledOptionFragment.instance();
                 break;
             case 7:
                 fragment = DiagnoseFragment.instance();
@@ -187,6 +186,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
         stopService(new Intent(SettingsActivity.this, AutoUpdateService.class));
         startCheckUpdateService(true);
     }
+
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
 //        Logger.d("BaseCashierActivity barcodeReceivedFromSerialPort onReceive:" + barcode);
@@ -197,7 +197,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     @Override
     public void onDialogDismissed(String barcode) {
 //        WaitDialogFragmentWithCallback.show(this,getString(R.string.wait_dialog_title));
-        ((DiagnoseFragment)fragment).setScannerRead(barcode);
+        ((DiagnoseFragment) fragment).setScannerRead(barcode);
     }
 
     private class NavigationAdapter extends ObjectsArrayAdapter<NavigationItem> {
@@ -222,7 +222,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
             UiHolder holder = (UiHolder) v.getTag();
             holder.text1.setText(item.title);
             holder.text2.setText(item.subTitle);
-            if(item.hasIndicator)
+            if (item.hasIndicator)
                 holder.indicator.setVisibility(View.VISIBLE);
             return v;
         }
@@ -253,6 +253,7 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
             this.subTitle = subTitle;
             this.hasIndicator = false;
         }
+
         private NavigationItem(String title, String subTitle, boolean hasIndicator) {
             this.title = title;
             this.subTitle = subTitle;

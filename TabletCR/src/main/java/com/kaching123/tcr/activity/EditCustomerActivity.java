@@ -25,6 +25,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.user.AddCustomerCommand;
 import com.kaching123.tcr.commands.store.user.AddCustomerCommand.BaseAddCustomerCallback;
@@ -38,6 +39,7 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickList
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PlanOptions;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -57,6 +59,7 @@ import static com.kaching123.tcr.util.PhoneUtil.onlyDigits;
 public class EditCustomerActivity extends SuperBaseActivity {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
+
     static {
         permissions.add(Permission.CUSTOMER_MANAGEMENT);
     }
@@ -141,15 +144,8 @@ public class EditCustomerActivity extends SuperBaseActivity {
         setTitle();
         sexSpinner.setAdapter(new SexAdapter());
         setCustomer();
-
         phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-
-        if(getApp().isFreemium()) {
-            setItemsEnabled(false);
-        } else {
-            setItemsEnabled(true);
-        }
-
+        setItemsEnabled(PlanOptions.isEditingCustomersAllowed());
     }
 
     private void setTitle() {
@@ -190,8 +186,8 @@ public class EditCustomerActivity extends SuperBaseActivity {
     }
 
     @OptionsItem
-    protected void actionRemoveSelected(){
-        if(getApp().isFreemium()) {
+    protected void actionRemoveSelected() {
+        if (!PlanOptions.isEditingCustomersAllowed()) {
             AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
         } else {
             deleteCustomer();
@@ -235,17 +231,17 @@ public class EditCustomerActivity extends SuperBaseActivity {
         String emailText = email.getText().toString().trim();
         String phoneText = phone.getText().toString().trim();
 
-        if (TextUtils.isEmpty(emailText) && TextUtils.isEmpty(phoneText)){
+        if (TextUtils.isEmpty(emailText) && TextUtils.isEmpty(phoneText)) {
             Toast.makeText(this, R.string.customer_edit_email_phone_empty, Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (!TextUtils.isEmpty(emailText) && !isValidEmail(emailText)){
+        if (!TextUtils.isEmpty(emailText) && !isValidEmail(emailText)) {
             Toast.makeText(this, R.string.customer_edit_email_not_valid_error, Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (!TextUtils.isEmpty(phoneText) && !isValid(phoneText)){
+        if (!TextUtils.isEmpty(phoneText) && !isValid(phoneText)) {
             Toast.makeText(this, R.string.customer_edit_phone_not_valid_error, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -270,7 +266,7 @@ public class EditCustomerActivity extends SuperBaseActivity {
         }
 
         model.firstName = firstName.getText().toString().trim();
-        model.lastName= lastName.getText().toString().trim();
+        model.lastName = lastName.getText().toString().trim();
         model.email = email.getText().toString().trim();
         model.phone = onlyDigits(phone.getText().toString().trim());
         model.street = street.getText().toString().trim();

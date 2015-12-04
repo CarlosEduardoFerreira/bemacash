@@ -107,6 +107,8 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String REMOVE_CHECK_AND_OFFLINECREDIT = "REMOVE_CHECK_AND_OFFLINECREDIT";
 
+    public static final String PLAN_ID = "PLAN_ID";
+
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
                 rs.getLong(ID),
@@ -170,7 +172,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getString(IVULOTO_MID),
                 rs.getString(TERMINAL_ID),
                 rs.getString(TERMINAL_PASSWORD),
-                rs.getBoolean(REMOVE_CHECK_AND_OFFLINECREDIT)
+                rs.getBoolean(REMOVE_CHECK_AND_OFFLINECREDIT),
+                rs.getLong(PLAN_ID)
         );
     }
 
@@ -238,7 +241,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getString(IVULOTO_MID),
                 rs.getString(TERMINAL_ID),
                 rs.getString(TERMINAL_PASSWORD),
-                rs.getBoolean(REMOVE_CHECK_AND_OFFLINECREDIT));
+                rs.getBoolean(REMOVE_CHECK_AND_OFFLINECREDIT),
+                rs.getLong(PLAN_ID));
     }
 
     public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException {
@@ -337,6 +341,9 @@ public class ShopInfoViewJdbcConverter {
         public final String terminalPassword;
 
         public final boolean removeCheckAndOfflineCredit;
+
+        public final long planId;
+
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
@@ -394,7 +401,8 @@ public class ShopInfoViewJdbcConverter {
                         String ivulotoMid,
                         String terminalID,
                         String terminalPassword,
-                        boolean removeCheckAndOfflineCredit) {
+                        boolean removeCheckAndOfflineCredit,
+                        long planId) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -473,6 +481,8 @@ public class ShopInfoViewJdbcConverter {
             this.terminalPassword = terminalPassword;
 
             this.removeCheckAndOfflineCredit = removeCheckAndOfflineCredit;
+
+            this.planId = planId;
         }
 
     }

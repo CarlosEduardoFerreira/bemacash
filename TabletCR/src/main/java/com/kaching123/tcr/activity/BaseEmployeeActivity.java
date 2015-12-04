@@ -30,12 +30,14 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.SignedCurrencyFormatInputFilter;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.model.LabaledEnum;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PermissionPreset;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
@@ -122,6 +124,10 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
 
     protected abstract void callCommand(EmployeeModel model, ArrayList<Permission> permissions);
 
+    private boolean isFirstSpinnerCall = true;
+
+    private int spinnerLastPos;
+
     protected void init() {
         login.setTransformationMethod(SingleLineTransformationMethod.getInstance());
         presetDataList = new ArrayList<PresetWrapper>();
@@ -129,13 +135,25 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
             presetDataList.add(new PresetWrapper(preset));
         }
 
-        ArrayAdapter<PresetWrapper> presetAdapter = new ArrayAdapter<PresetWrapper>(this, R.layout.spinner_item_light, presetDataList);
+        final ArrayAdapter<PresetWrapper> presetAdapter = new ArrayAdapter<PresetWrapper>(this,
+                R.layout.spinner_item_light, presetDataList);
         presetAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         preset.setAdapter(presetAdapter);
         preset.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                displayPermissions(i);
+                if (!isFirstSpinnerCall) {
+                    if (!PlanOptions.isCustomPermissionAllowed() &&
+                            presetDataList.get(i).getItem().getId() == PermissionPreset.CUSTOM.getId()) {
+                        AlertDialogFragment.showAlert(BaseEmployeeActivity.this,
+                                R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+                        preset.setSelection(spinnerLastPos);
+                    } else {
+                        displayPermissions(i);
+                        spinnerLastPos = i;
+                    }
+                }
+                isFirstSpinnerCall = false;
             }
 
             @Override
@@ -259,7 +277,12 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
 
     @Click
     protected void btnEditPermissionClicked() {
-        PermissionActivity.start(this, PERMISSIONS_REQUEST_INDEX, permissions);
+        if (!PlanOptions.isCustomPermissionAllowed()) {
+            AlertDialogFragment.showAlert(BaseEmployeeActivity.this,
+                    R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        } else {
+            PermissionActivity.start(this, PERMISSIONS_REQUEST_INDEX, permissions);
+        }
     }
 
     @OnActivityResult(PERMISSIONS_REQUEST_INDEX)

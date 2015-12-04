@@ -19,11 +19,13 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.store.export.ExportQuickbooksCustomersCommand.ExportCommandBaseCallback;
@@ -31,6 +33,7 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
@@ -46,11 +49,12 @@ import static com.kaching123.tcr.util.KeyboardUtils.hideKeyboard;
 /**
  * Created by pkabakov on 10.02.14.
  */
-@EActivity (R.layout.customers_activity)
-@OptionsMenu (R.menu.customers_activity)
+@EActivity(R.layout.customers_activity)
+@OptionsMenu(R.menu.customers_activity)
 public class CustomersActivity extends SuperBaseActivity {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
+
     static {
         permissions.add(Permission.CUSTOMER_MANAGEMENT);
     }
@@ -84,7 +88,7 @@ public class CustomersActivity extends SuperBaseActivity {
     }
 
     @AfterViews
-    protected void init(){
+    protected void init() {
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -141,8 +145,8 @@ public class CustomersActivity extends SuperBaseActivity {
     }
 
     @OptionsItem
-    protected void actionAddSelected(){
-        if(getApp().isFreemium()) {
+    protected void actionAddSelected() {
+        if (!PlanOptions.isEditingCustomersAllowed()) {
             AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
         } else {
             EditCustomerActivity.start(CustomersActivity.this, null);
@@ -175,7 +179,7 @@ public class CustomersActivity extends SuperBaseActivity {
         }
     }
 
-    private class CustomersAdapter extends ObjectsCursorAdapter<CustomerModel>{
+    private class CustomersAdapter extends ObjectsCursorAdapter<CustomerModel> {
 
         public CustomersAdapter(Context context) {
             super(context);
@@ -230,7 +234,7 @@ public class CustomersActivity extends SuperBaseActivity {
             return convertView;
         }
 
-        private class ViewHolder{
+        private class ViewHolder {
             TextView name;
             TextView address;
             TextView email;
@@ -247,7 +251,7 @@ public class CustomersActivity extends SuperBaseActivity {
         public Loader<List<CustomerModel>> onCreateLoader(int i, Bundle bundle) {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(CUSTOMERS_URI);
             builder.orderBy(CustomerTable.FISRT_NAME + ", " + CustomerTable.LAST_NAME);
-            if (!TextUtils.isEmpty(textFilter)){
+            if (!TextUtils.isEmpty(textFilter)) {
                 String filter = "%" + textFilter + "%";
                 builder.where(CustomerTable.FISRT_NAME + " LIKE ? OR " + CustomerTable.LAST_NAME + " LIKE ? OR " + CustomerTable.EMAIL + " LIKE ? OR " + CustomerTable.PHONE + " LIKE ?",
                         filter, filter, filter, filter);
@@ -273,7 +277,7 @@ public class CustomersActivity extends SuperBaseActivity {
         }
     }
 
-    public static void start (Context context){
+    public static void start(Context context) {
         CustomersActivity_.intent(context).start();
     }
 }

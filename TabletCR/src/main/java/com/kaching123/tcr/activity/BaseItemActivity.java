@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -36,12 +37,15 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -71,6 +75,7 @@ import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.model.Unit;
@@ -107,11 +112,14 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 public abstract class BaseItemActivity extends ScannerBaseActivity implements LoaderManager.LoaderCallbacks<Cursor>, ItemCodeChooserAlertDialogFragment.ItemCodeTypeChooseListener {
 
     private static final int REQ_MODIFIER = 1;
-    private static final String[] UNITS_LABEL = {"PCS","LB","OZ"};
+    private static final String[] UNITS_LABEL = {"PCS", "LB", "OZ"};
 
     private static final Uri MODIFIER_URI = ShopProvider.getContentUri(ModifierTable.URI_CONTENT);
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
+
+    //@OptionsMenuItem(R.id.action_composer) //fixme idyuzheva
+    //protected MenuItem composer;
 
     static {
         permissions.add(Permission.INVENTORY_MODULE);
@@ -334,7 +342,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         modifiersTable.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                ModifiersActivity.start(BaseItemActivity.this, REQ_MODIFIER, model.guid, description.getText().toString(), model.defaultModifierGuid);
+                if (!PlanOptions.isModifiersAllowed()) {
+                    AlertDialogFragment.showAlert(BaseItemActivity.this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+                } else {
+                    ModifiersActivity.start(BaseItemActivity.this, REQ_MODIFIER, model.guid, description.getText().toString(), model.defaultModifierGuid);
+                }
             }
         });
 
@@ -562,39 +574,37 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             collectDataToModel(model);
             callCommand(model);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-
-
     @Click
     protected void modifiersAddClicked() {
-        if(getApp().isFreemium()) {
+        if (!PlanOptions.isModifiersAllowed()) {
             AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
         } else {
-            if(saveItem())
+            if (saveItem())
                 addModifierClicked(ModifierType.MODIFIER);
         }
     }
 
     @Click
     protected void addonsAddClicked() {
-        if(getApp().isFreemium()) {
+        if (!PlanOptions.isModifiersAllowed()) {
             AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
         } else {
-            if(saveItem())
+            if (saveItem())
                 addModifierClicked(ModifierType.ADDON);
         }
     }
 
     @Click
     protected void optionsAddClicked() {
-        if(getApp().isFreemium()) {
+        if (!PlanOptions.isModifiersAllowed()) {
             AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
         } else {
-            if(saveItem())
+            if (saveItem())
                 addModifierClicked(ModifierType.OPTIONAL);
         }
     }
@@ -915,14 +925,14 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.discount = parseBigDecimal(discount, BigDecimal.ZERO);
 
         model.isTaxable = this.taxable.isChecked();
-       // c = (Cursor) this.taxGroup.getSelectedItem();
-     //   model.taxGroupGuid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
+        // c = (Cursor) this.taxGroup.getSelectedItem();
+        //   model.taxGroupGuid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
 
         c = (Cursor) this.taxGroup.getSelectedItem();
 
         model.taxGroupGuid =
                 (c == null) ? null : (salableChBox.isChecked() ?
-                c.getString(c.getColumnIndex(TaxGroupTable.GUID)) : null);
+                        c.getString(c.getColumnIndex(TaxGroupTable.GUID)) : null);
 
 
         String cost = this.cost.getText().toString();
@@ -988,8 +998,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         if (TextUtils.isEmpty(unitsLabel.getText())) {
             Toast.makeText(this, R.string.item_activity_alert_units_label_msg, Toast.LENGTH_SHORT).show();
             return false;
-        }else if(priceType.getSelectedItem().toString().equalsIgnoreCase("Unit Price") &&
-                !Arrays.asList(UNITS_LABEL).contains(unitsLabel.getText().toString().toUpperCase())){
+        } else if (priceType.getSelectedItem().toString().equalsIgnoreCase("Unit Price") &&
+                !Arrays.asList(UNITS_LABEL).contains(unitsLabel.getText().toString().toUpperCase())) {
             Toast.makeText(this, R.string.item_activity_alert_units_label_not_match_msg, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -1418,5 +1428,31 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             );
         }
     };
+
+    /*protected Drawable buildCounterDrawable(int count, int backgroundImageId) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.badge, null);
+        view.setBackgroundResource(backgroundImageId);
+
+        if (count == 0) {
+            View counterTextPanel = view.findViewById(R.id.counterValuePanel);
+            counterTextPanel.setVisibility(View.GONE);
+        } else {
+            TextView textView = (TextView) view.findViewById(R.id.count);
+            textView.setText("" + count);
+        }
+
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.setDrawingCacheEnabled(true);
+        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+
+        return new BitmapDrawable(getResources(), bitmap);
+    }*/
 
 }
