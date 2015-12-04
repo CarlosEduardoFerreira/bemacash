@@ -129,7 +129,7 @@ public class ModifiersActivity extends SuperBaseActivity/* implements LoaderMana
     @OptionsItem
     protected void actionNewSelected(){
         hideSearchFragment();
-        EditDialog.show(this, "", new ModifierModel(UUID.randomUUID().toString(), itemGuid, null, null, null), ActionType.CREATE, onEditListener);
+        EditDialog.show(this, "", new ModifierModel(UUID.randomUUID().toString(), itemGuid, null, null, null, null, null, null), ActionType.CREATE, onEditListener);
     }
 
     @Override

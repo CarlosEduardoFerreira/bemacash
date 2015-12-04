@@ -248,6 +248,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     private boolean duplicateProductCode;
 
     protected static final int TAG_RESULT = 12;
+    protected static final int TAG_RESULT_MODIFIER = 14;
 
     @OptionsItem
     protected void actionSerialSelected() {
@@ -342,10 +343,13 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         modifiersTable.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+           //     ModifiersActivity.start(BaseItemActivity.this, REQ_MODIFIER, model.guid, description.getText().toString(), model.defaultModifierGuid);
+                //ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
                 if (!PlanOptions.isModifiersAllowed()) {
                     AlertDialogFragment.showAlert(BaseItemActivity.this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                 } else {
-                    ModifiersActivity.start(BaseItemActivity.this, REQ_MODIFIER, model.guid, description.getText().toString(), model.defaultModifierGuid);
+                    //ModifiersActivity.start(BaseItemActivity.this, REQ_MODIFIER, model.guid, description.getText().toString(), model.defaultModifierGuid);
+ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
                 }
             }
         });
@@ -620,7 +624,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     private void addModifierClicked(ModifierType modifierType) {
-        EditDialog.showWithType(this, new ModifierModel(UUID.randomUUID().toString(), model.guid, null, null, null), modifierType, new OnEditListener() {
+        EditDialog.showWithType(this, new ModifierModel(UUID.randomUUID().toString(), model.guid, null, null, null, null, null, null), modifierType, new OnEditListener() {
             @Override
             public void onDefaultModifierChanged(String modifierId, boolean useAsDefault, boolean resetDefaultModifier) {
                 if (useAsDefault) {

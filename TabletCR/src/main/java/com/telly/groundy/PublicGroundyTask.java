@@ -35,7 +35,7 @@ public abstract class PublicGroundyTask extends GroundyTask {
                 .arg(ARG_APP_CONTEXT_SHOP_ID, app.getShopId())
                 .arg(ARG_APP_CONTEXT_EMPLOYEE_GUID, app.getOperatorGuid())
                 .arg(ARG_APP_CONTEXT_REGISTER_ID, app.getRegisterId())
-                //.arg(ARG_APP_CONTEXT_SHIFT_GUID, app.getShiftGuid())
+                .arg(ARG_APP_CONTEXT_SHIFT_GUID, app.getShiftGuid())
                 .arg(ARG_APP_CONTEXT_PREPAID_USER, app.getPrepaidUser())
                 .arg(ARG_APP_CONTEXT_EMPLOYEE_LOGIN, app.getOperatorLogin())
                 .arg(ARG_APP_CONTEXT_BLACKSTONE_USER, app.getBlackStoneUser())

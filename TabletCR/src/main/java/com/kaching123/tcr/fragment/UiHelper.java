@@ -3,6 +3,7 @@ package com.kaching123.tcr.fragment;
 import android.text.TextUtils;
 import android.widget.TextView;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.PhoneUtil;
 
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.util.Locale;
 
 /**
@@ -24,6 +26,10 @@ public final class UiHelper {
     private static final DecimalFormat integralIntegerFormat = new DecimalFormat("0");
     private static final DecimalFormat quantityFormat = new DecimalFormat("0.000");
     private static final DecimalFormat quantityIntegerFormat = new DecimalFormat("0.###");
+
+    private static final DecimalFormat brandQtyFormat = new DecimalFormat("#,##0.000");
+    private static final DecimalFormat brandQrtyIntFormat = new DecimalFormat("#,###");
+    private static final DecimalFormat priceInputFormat = new DecimalFormat("#,###.##");
 
     //private static final DecimalFormat percentInBracketsFormat = new DecimalFormat(" (0.##)");
 
@@ -46,6 +52,16 @@ public final class UiHelper {
     private UiHelper() {
     }
 
+    public static BigDecimal parseBigDecimal(String text) {
+        BigDecimal value = BigDecimal.ZERO;
+        try {
+            value = (BigDecimal) priceFormat.parseObject(text);
+        } catch (ParseException e) {
+            Logger.e("Parse error: " + e.toString());
+        }
+        return value;
+    }
+
     public static BigDecimal parseBigDecimal(TextView editText, BigDecimal def) {
         return parseBigDecimal(editText.getText().toString(), def);
     }
@@ -58,6 +74,42 @@ public final class UiHelper {
         } catch (Exception e) {
             return def;
         }
+    }
+    public static BigDecimal parseBrandDecimalInput(String text) {
+        BigDecimal value = BigDecimal.ZERO;
+        try {
+            value = (BigDecimal) priceInputFormat.parseObject(text);
+        } catch (ParseException e) {
+            Logger.e("Parse error: " + e.toString());
+        }
+        return value;
+    }
+    public static void showBrandQty(TextView textView, BigDecimal price) {
+        if (textView == null) {
+            return;
+        }
+        if (price == null) {
+            textView.setText(null);
+        } else {
+            textView.setText(brandQtyFormat.format(price));
+        }
+    }
+    public static void showBrandQtyInteger(TextView textView, BigDecimal price) {
+        if (textView == null) {
+            return;
+        }
+        if (price == null) {
+            textView.setText(null);
+        } else {
+            textView.setText(brandQrtyIntFormat.format(price));
+        }
+    }
+
+
+    public static String brandFormat(BigDecimal price) {
+        if (price == null)
+            return null;
+        return brandQtyFormat.format(price);
     }
 
     public static void showDecimal(TextView textView, BigDecimal decimal) {
@@ -103,6 +155,21 @@ public final class UiHelper {
         }
     }
 
+    public static String brandQtyFormat(BigDecimal qty) {
+        if (qty == null)
+            return null;
+        return brandQtyFormat.format(qty);
+    }
+
+    public static String brandQtyIntFormat(BigDecimal qty) {
+        if (qty == null) {
+            return null;
+        }
+        return brandQrtyIntFormat.format(qty);
+    }
+
+
+
     public static void showAddonPrice(TextView textView, BigDecimal price) {
         if (price == null || price.compareTo(BigDecimal.ZERO) == 0) {
             textView.setText(null);
@@ -147,6 +214,16 @@ public final class UiHelper {
         if (price == null)
             return null;
         return priceFormat.format(price);
+    }
+
+    public static BigDecimal parseBrandQtyInput(String text) {
+        BigDecimal value = BigDecimal.ZERO;
+        try {
+            value = (BigDecimal) brandQrtyIntFormat.parseObject(text);
+        } catch (ParseException e) {
+            Logger.e("Parse error: " + e.toString());
+        }
+        return value;
     }
 
     public static String qtyFormat(BigDecimal qty) {

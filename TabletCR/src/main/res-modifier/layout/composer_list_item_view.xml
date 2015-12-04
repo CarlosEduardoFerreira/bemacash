@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ItemList.ItemLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/wireless_item_bg"
+    android:descendantFocusability="blocksDescendants">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:gravity="center">
+
+        <CheckBox
+            android:id="@+id/unit_track"
+            style="@style/EditItem.Table.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:enabled="false"
+            android:paddingRight="@dimen/item_field_padding" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:gravity="center">
+
+        <CheckBox
+            android:id="@+id/unit_free"
+            style="@style/EditItem.Table.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:enabled="false"
+            android:paddingRight="@dimen/item_field_padding" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/unit_name"
+        style="@style/ItemList.ItemText"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:singleLine="true"
+        android:textColor="@drawable/wireless_text_selector" />
+
+    <TextView
+        android:id="@+id/code"
+        style="@style/ItemList.ItemText"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:singleLine="true"
+        android:textColor="@drawable/wireless_text_selector" />
+
+    <TextView
+        android:id="@+id/cost_item"
+        style="@style/ItemList.ItemText"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:singleLine="true"
+        android:textColor="@drawable/wireless_text_selector" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:layout_gravity="center_vertical|left"
+        android:gravity="center_vertical|left">
+
+        <TextView
+            android:id="@+id/item_qty"
+            style="@style/ItemList.ItemText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingLeft="@dimen/item_field_padding"
+            android:paddingRight="@dimen/item_field_padding"
+            android:singleLine="true"
+            android:text="end"
+            android:textColor="@drawable/wireless_text_selector" />
+
+        <TextView
+            android:id="@+id/item_qty_label"
+            style="@style/ItemList.ItemText.Highlightable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingLeft="@dimen/item_field_padding"
+            android:paddingRight="@dimen/item_field_padding"
+            android:singleLine="true"
+            android:text="end"
+            android:textColor="@color/refund_list_selected" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:layout_gravity="center_vertical|left"
+        android:gravity="center_vertical|left">
+
+        <TextView
+            android:id="@+id/unit_qty"
+            style="@style/ItemList.ItemText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingLeft="@dimen/item_field_padding"
+            android:paddingRight="@dimen/item_field_padding"
+            android:singleLine="true"
+            android:text="end"
+            android:textColor="@drawable/wireless_text_selector" />
+
+        <TextView
+            android:id="@+id/unit_qty_label"
+            style="@style/ItemList.ItemText.Highlightable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingLeft="@dimen/item_field_padding"
+            android:paddingRight="@dimen/item_field_padding"
+            android:singleLine="true"
+            android:text="end"
+            android:textColor="@color/refund_list_selected" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/cost"
+        style="@style/ItemList.ItemText"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/item_field_padding"
+        android:paddingRight="@dimen/item_field_padding"
+        android:singleLine="true"
+        android:textColor="@drawable/wireless_text_selector" />
+
+</LinearLayout>

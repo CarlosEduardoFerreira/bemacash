@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/unit_edit_dialog"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+
+              android:layout_marginBottom="5dp"
+              android:gravity="left"
+              android:orientation="vertical"
+              android:padding="15dp">
+
+    <TextView
+        style="@style/StyledDialog.Content.Label.Light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:singleLine="false"
+        android:text="@string/composer_dialog_text"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/track"
+            style="@style/CheckBox.Light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"/>
+
+        <TextView
+            style="@style/StyledDialog.Content.Label.Light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/composer_dialog_track"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/free"
+            style="@style/CheckBox.Light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"/>
+
+        <TextView
+            style="@style/StyledDialog.Content.Label.Light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/composer_dialog_free"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/StyledDialog.Content.Label.Light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/composer_dialog_item"
+            android:textSize="18dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/child_selected"
+                style="@style/CheckBox.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:enabled="false"
+                android:gravity="center_vertical"/>
+
+            <com.kaching123.tcr.component.ItemAutocompleteTextView
+                android:id="@+id/item_chooser"
+                style="@style/StyledDialog.Content.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:hint="@string/composer_filter"
+                android:imeOptions="actionDone"
+                android:inputType="textVisiblePassword"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textColor="@color/gray_dark"
+                android:id="@+id/price_type_msg"
+                style="@style/StyledDialog.Content.Label.Light"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/modifier_edit_text_font_size"
+                android:text="@string/composer_dialog_price_type" />
+
+            <TextView
+                android:id="@+id/price_type"
+                style="@style/StyledDialog.Content.Label.Light"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/modifier_edit_text_font_size"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:gravity="start" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/qty_textview"
+                style="@style/StyledDialog.Content.Label.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Loading..."
+                android:textSize="18dp"/>
+
+            <EditText
+                android:id="@+id/qty_editbox"
+                style="@style/CustomEditBox.Decimal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_holo_dark"
+                android:digits="0123456789."
+                android:inputType="phone"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

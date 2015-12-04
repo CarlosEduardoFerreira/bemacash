@@ -181,4 +181,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="modifier_edit_text_font_size">18sp</dimen>
+
 </resources>

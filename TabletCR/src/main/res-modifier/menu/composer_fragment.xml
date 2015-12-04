@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:myapp ="http://schemas.android.com/apk/res-auto">
+    <item
+        android:icon="@drawable/plus_normal"
+        android:id="@+id/action_add"
+        android:title="@string/cashier_action_add"
+        myapp:showAsAction="always"
+        android:orderInCategory="@integer/menu_order_default"/>
+</menu>

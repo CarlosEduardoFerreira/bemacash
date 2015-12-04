@@ -25,6 +25,8 @@
     <string name="order_header_unit_price">Unit Price</string>
     <string name="order_header_discount">Discount</string>
     <string name="order_header_total">Total</string>
+    <string name="order_header_quantity">Quantity :</string>
+
     <string name="refund_header_checkbox">+</string>
     <string name="refund_header_name">Item description</string>
     <string name="refund_header_refQty">Return Qty</string>
@@ -92,6 +94,42 @@
     <string name="orders_history_merchant">Cashier:</string>
     <string name="orders_history_order_num">Order#:</string>
     <string name="orders_history_transactions_status">Status:</string>
+
+    <string name="composer_header_item">Composing item</string>
+    <string name="composer_header_code">Item product code</string>
+    <string name="composer_header_item_qty">Composer Quantity</string>
+    <string name="composer_item_header_item_qty">Item Quantity</string>
+
+    <string name="composer_add_success">Composer item created</string>
+    <string name="composer_cancel_success">Composer action cancelled</string>
+    <string name="composer_edit_success">Composer item adjusted</string>
+    <string name="composer_remove_success">Composer item(s) removed</string>
+
+    <string name="composer_dialog_track">Item track-able</string>
+    <string name="composer_dialog_free">Restricked host qty</string>
+    <string name="composer_dialog_qty" formatted="false">Quantity (%s): </string>
+    <string name="composer_dialog_price_type" >Price type :</string>
+
+    <string name="modifier_hint">Short description</string>
+
+    <string name="modifier_header_free">From inventory</string>
+    <string name="modifier_header_cost">Item price</string>
+    <string name="modifier_header_cost_total">Total item price</string>
+    <string name="modifier_header_item">Title</string>
+    <string name="modifier_group_edit">Edit Selected Group</string>
+    <string name="modifier_group_delete">Remove Selected Group</string>
+
+    <string name="modifier_add_success">Modifier item created</string>
+    <string name="modifier_cancel_success">Modifier action cancelled</string>
+    <string name="modifier_edit_success">Modifier item adjusted</string>
+    <string name="modifier_remove_success">Modifier item(s) removed</string>
+    <string name="modifier_header_item_qty">Modifier Quantity</string>
+    <string name="modifier_group_remove_success">Modifier group removed</string>
+    <string name="modifier_on">From inventory</string>
+    <string name="modifier_off">Native</string>
+    <string name="modifier_group_default_success">Default item adjusted</string>
+
+
     <string name="printers_searching">Printers searching...</string>
     <string name="pax_searching">searching device...</string>
     <string name="pref_current_pax_msg">You can setup PAX pinpad here</string>
@@ -178,6 +216,8 @@
     <string name="total_cost_discount_label">Discount:</string>
     <string name="total_cost_tax_label">Tax total:</string>
     <string name="total_cost_order_discount_hint">Order discount</string>
+
+    <string name="cashier_action_add_group">Add a modifier Group</string>
     <string name="cashier_action_settings">Settings</string>
     <string name="cashier_action_order_list">Order list</string>
     <string name="cashier_action_prapaid">Prepaid</string>
@@ -415,6 +455,7 @@
     <string name="item_activity_alert_code_type_title">Code type</string>
     <string name="item_activity_alert_code_type_ean">UPC\\EAN</string>
     <string name="item_activity_alert_code_type_product_code">Product Code</string>
+    <string name="item_activity_alert_composer_msg">Composer issue</string>
     <string name="commission_validation_alert_msg">Commission should be less then 100%</string>
     <string name="edit_item_common_information">Common information</string>
     <string name="edit_item_information">Common Info</string>
@@ -1234,6 +1275,7 @@
     <string name="printer_config_update_wait">Updating...</string>
     <string name="orders_history_default_item_description">Display all</string>
     <string name="notes_edit_fragment_title">Notes</string>
+    <string name="composer_filter">Find the item</string>
     <string name="notes_edit_fragment_hint">Type notes here</string>
     <string name="credit_receipt_dlg_title">Credit Receipt</string>
     <string name="credit_receipt_proceed_error">Balance is too small or credit receipt is already used</string>
@@ -1448,6 +1490,8 @@
     <string name="prepaid_long_distance_rates">Rates</string>
     <string name="prepaid_long_distance_terms_and_conditions">Terms and Conditions</string>
     <string name="houde_tips_label">House</string>
+    <string name="groups_label">Not in Group</string>
+
     <string name="drawer_swiper_entries_def">Swiper Kit</string>
     <string name="pref_swiper">Setup swiper hardware</string>
     <string name="order_tender_type_cash">Cash</string>
@@ -1681,5 +1725,32 @@
     <string name="server_search_checkbox">Force search on back office</string>
     <string name="upload_notify_message_error_db_version_invalid">There\'s a newer version of BemaCash available. Please update to be eligible for upload!</string>
     <string name="upload_notify_message_error_db_version_failed">Failed to check BemaCash version. Please try again later</string>
+
+    <string name="contextual_action_default">Mark default</string>
+    <string name="wireless_contextual_action_edit">edit</string>
+    <string name="wireless_contextual_action_delete">delete</string>
+
+    <string name="modifier_selection">Modifiers selected: %d</string>
+    <string name="addon_selection">Add-ons selected: %d</string>
+    <string name="optional_selection">No-options selected: %d</string>
+
+    <string name="modifiers_copy_activity_title">%s - copy modifiers</string>
+
+    <string name="modifier_dialog_add_title">Add a modifier</string>
+    <string name="modifier_dialog_edit_title">Modify modifier</string>
+    <string name="addon_dialog_add_title">Add an addon</string>
+    <string name="addon_dialog_edit_title">Modify the addon</string>
+    <string name="noop_dialog_add_title">Add a no-option</string>
+    <string name="noop_dialog_edit_title">Modify a no-option</string>
+    <string name="modifier_dialog_group_add_title">Add a modifier Group</string>
+    <string name="modifier_dialog_group_edit_title">Modify modifier Group</string>
+
+    <string name="composer_dialog_text">Please determine the composer details</string>
+    <string name="composer_dialog_item">Please choose a composer</string>
+    <string name="composer_header_track">Track item inventory</string>
+    <string name="composer_header_free">Restrict host quantity</string>
+    <string name="composer_header_cost">Item cost</string>
+    <string name="composer_header_cost_total">Total item cost</string>
+    <string name="composer_footer_cost_total" formatted="false">Total: %s</string>
 
 </resources>

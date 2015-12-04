@@ -440,6 +440,8 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
             return false;
         }
     }
-
+    protected SuperBaseActivity self() {
+        return this;
+    }
 
 }

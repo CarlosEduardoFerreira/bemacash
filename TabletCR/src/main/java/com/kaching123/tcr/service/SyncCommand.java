@@ -930,7 +930,11 @@ public class SyncCommand implements Runnable {
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, isSyncGap, isFirstSync);
     }
 
-    private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel,
+    private int syncSingleTable2(Context context,
+                                 SyncApi2 api,
+                                 String localTable,
+                                 String guidColumn,
+                                 EmployeeModel employeeModel,
                                  boolean supportParentChildRelations,
                                  String parentIdColumn,
                                  boolean isChild,
@@ -968,7 +972,8 @@ public class SyncCommand implements Runnable {
 
             try {
                 JdbcConverter converter = JdbcFactory.getConverter(localTable);
-                GetPagedArrayResponse resp = getResponse(api, employeeModel, localTable, supportParentChildRelations, isChild, app, minUpdateTime, updateTime, converter,
+                GetPagedArrayResponse resp = getResponse(api,
+                        employeeModel, localTable, supportParentChildRelations, isChild, app, minUpdateTime, updateTime, converter,
                         fillHistoryGep, isSyncGap, isFirstSync);
                 Logger.d("Resp = %s", resp);
                 if (resp != null && resp.isSyncLockedError()) {

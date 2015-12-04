@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 /**
  * Created by gdubina on 11.12.13.
  */
-class RegexpFormatInputFilter implements InputFilter {
+public class RegexpFormatInputFilter implements InputFilter {
 
     private Pattern pattern;
 

@@ -95,6 +95,25 @@
             android:name=".activity.ModifiersActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape" />
+
+        <activity
+            android:name=".activity.ModifierActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape" />
+
+        <activity
+            android:name=".activity.SuperBaseActivity_"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".activity.LoginActivity_"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".activity.CopyModifiersActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape" />
+
         <activity
             android:name=".activity.HistoryActivity_"
             android:label="@string/history_activity_label"

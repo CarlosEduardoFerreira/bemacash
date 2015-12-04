@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ItemList.HeaderLayout"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25"
+        android:gravity="center"
+        android:text="@string/modifier_header_free" />
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        android:text="@string/modifier_header_item" />
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.4"
+        android:gravity="center"
+        android:text="@string/composer_header_code" />
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.35"
+        android:gravity="center"
+        android:text="@string/modifier_header_item_qty" />
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25"
+        android:gravity="center"
+        android:text="@string/modifier_header_cost" />
+
+    <TextView
+        style="@style/ItemList.HeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25"
+        android:gravity="center"
+        android:text="@string/modifier_header_cost_total" />
+</LinearLayout>

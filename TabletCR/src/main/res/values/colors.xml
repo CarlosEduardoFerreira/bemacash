@@ -47,6 +47,8 @@
     <color name ="edit_item_table_label_text">#9f9d95</color>
     <color name ="edit_item_table_edit">#a2a097</color>
 
+    <color name="highlighted_text_dark">#9983CC39</color>
+
     <!-- -->
 
     <color name ="dashboard_shift_time_pressed_text">#99978F</color>

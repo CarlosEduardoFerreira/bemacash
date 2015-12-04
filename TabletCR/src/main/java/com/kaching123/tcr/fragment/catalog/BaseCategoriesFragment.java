@@ -30,11 +30,11 @@ import static com.kaching123.tcr.model.ContentValuesUtil._count;
  * Created by vkompaniets on 25.11.13.
  */
 @EFragment
-public abstract class BaseCategoriesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.ICategoryListener> extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final Uri URI_CATEGORIES = ShopProvider.getContentUriGroupBy(CategoryView.URI_CONTENT, CategoryTable.GUID);
 
-    protected ICategoryListener listener;
+    protected T listener;
 
     protected CursorAdapter adapter;
 
@@ -62,7 +62,9 @@ public abstract class BaseCategoriesFragment extends Fragment implements LoaderM
         });
         adapter = createAdapter();
         getAdapterView().setAdapter(adapter);
-        getLoaderManager().initLoader(0, null, this);
+        if (loadImmediately()) {
+            getLoaderManager().initLoader(0, null, this);
+        }
     }
 
     private void loadByPosition(AdapterView<?> v, int pos){
@@ -74,6 +76,9 @@ public abstract class BaseCategoriesFragment extends Fragment implements LoaderM
         }
     }
 
+    protected boolean loadImmediately() {
+        return true;
+    }
     protected void headerItemClicked() {
         if (this.listener != null) {
             this.listener.onCategoryChanged(AdapterView.INVALID_POSITION, null, null);
@@ -102,7 +107,11 @@ public abstract class BaseCategoriesFragment extends Fragment implements LoaderM
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         boolean loadEmptyCategories = this instanceof CategoriesFragment;
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(URI_CATEGORIES);
-        builder.projection(CategoryTable.ID, CategoryTable.DEPARTMENT_GUID, CategoryTable.GUID, CategoryTable.TITLE, CategoryTable.IMAGE, _count(ItemTable.GUID, CategoryView.ITEM_COUNT));
+        builder.projection(CategoryTable.ID, CategoryTable.DEPARTMENT_GUID,
+                CategoryTable.GUID,
+                CategoryTable.TITLE,
+                CategoryTable.IMAGE,
+                _count(ItemTable.GUID, CategoryView.ITEM_COUNT));
         if (useOnlyNearTheEnd){
             builder.where(ItemTable.STOCK_TRACKING + " = ? ", "1");
             builder.where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY));
@@ -138,7 +147,7 @@ public abstract class BaseCategoriesFragment extends Fragment implements LoaderM
         checkFirstRow(cursor);
     }
 
-    private int getItemsCount(Cursor cursor) {
+    protected int getItemsCount(Cursor cursor) {
         int n = 0;
         while (cursor.moveToNext()){
             n += cursor.getInt(cursor.getColumnIndex(CategoryView.ITEM_COUNT));
@@ -151,7 +160,7 @@ public abstract class BaseCategoriesFragment extends Fragment implements LoaderM
         adapter.changeCursor(null);
     }
 
-    private void checkFirstRow(Cursor cursor) {
+    protected void checkFirstRow(Cursor cursor) {
         if (cursor == null || this.listener == null)
             return;
 
@@ -170,11 +179,11 @@ public abstract class BaseCategoriesFragment extends Fragment implements LoaderM
         return view instanceof ListView && ((ListView) view).getHeaderViewsCount() > 0;
     }
 
-    public void setListener(ICategoryListener listener) {
+    public void setListener(T listener) {
         this.listener = listener;
     }
 
-    public static interface ICategoryListener {
+    public interface ICategoryListener {
         void onCategoryChanged(long id, String depGuid, String catGuid);
     }
 }

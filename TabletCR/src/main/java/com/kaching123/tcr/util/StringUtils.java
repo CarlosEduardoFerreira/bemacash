@@ -1,6 +1,10 @@
 package com.kaching123.tcr.util;
 
+import android.content.Context;
+
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.model.PriceType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,4 +67,16 @@ public class StringUtils {
 
 
     }
+    public static String valueOf(PriceType type, Context context) {
+        switch (type) {
+            case FIXED:
+                return context.getString(R.string.price_type_fixed);
+            case OPEN:
+                return context.getString(R.string.price_type_open);
+            case UNIT_PRICE:
+                return context.getString(R.string.price_type_unit_price);
+        }
+        return type.name();
+    }
+
 }

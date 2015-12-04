@@ -19,4 +19,8 @@ public final class UnitUtil {
     public static boolean isPcs(PriceType type){
         return !PriceType.UNIT_PRICE.equals(type);
     }
+
+    public static boolean isNotUnitPriceType(PriceType type) {
+        return !PriceType.UNIT_PRICE.equals(type);
+    }
 }

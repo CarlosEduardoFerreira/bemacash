@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/body_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/item_list_bg"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/header"
+            layout="@layout/composer_items_list_header" />
+
+        <ListView
+            android:layout_below="@id/header"
+            android:layout_above="@+id/footer"
+            android:id="@android:id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/list_divider"
+            android:choiceMode="multipleChoiceModal" />
+
+        <include layout="@layout/composer_vertical_div" />
+
+        <LinearLayout
+            android:layout_alignParentBottom="true"
+            style="@style/ItemList.HeaderLayout"
+            android:id="@+id/footer"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+
+            <TextView
+                style="@style/ItemList.HeaderText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="3.5" />
+
+            <TextView
+                style="@style/ItemList.HeaderText"
+                android:id="@+id/footer_total"
+                android:layout_width="0dp"
+                android:paddingLeft="5dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center_vertical"
+                android:text="@string/composer_footer_cost_total" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/loading_spinner"
+        style="?android:progressBarStyleLarge"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+</FrameLayout>
+

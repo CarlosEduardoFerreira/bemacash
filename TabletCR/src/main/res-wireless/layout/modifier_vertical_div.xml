@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/item_list_padding_left">
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.25" />
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5" />
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.4" />
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.35" />
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.25" />
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.25" />
+</LinearLayout>

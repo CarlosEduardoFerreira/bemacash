@@ -45,13 +45,15 @@ public class SearchFragment extends Fragment implements LoaderCallbacks<List<Cat
     protected StickyListHeadersListView stickyListHeadersListView;
 
     IItemListener listener;
-
+    private String itemGuid;
     private String searchText = "";
 
     public void setListener(IItemListener listener) {
         this.listener = listener;
     }
-
+    public void setItemGuid(String itemGuid) {
+        this.itemGuid = itemGuid;
+    }
     public void setSearchText(String searchText) {
         setListAdapter(null);
         this.searchText = searchText;
@@ -79,7 +81,7 @@ public class SearchFragment extends Fragment implements LoaderCallbacks<List<Cat
     @Override
     public Loader<List<CategoryItemViewModel>> onCreateLoader(int i, Bundle bundle) {
         return CursorLoaderBuilder.forUri(URI_ITEMS)
-                .where("", "%" + searchText + "%")
+                .where("", "%" + searchText + "%", itemGuid == null ? "" : itemGuid)
                 .transform(new ItemConverter()).build(getActivity());
     }
 

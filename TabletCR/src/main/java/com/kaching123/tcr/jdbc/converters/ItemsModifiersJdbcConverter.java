@@ -31,6 +31,11 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
     private static final String TITLE = "TITLE";
     private static final String EXTRA_COST = "EXTRA_COST";
 
+    private static final String ITEM_SUB_GUID = "ITEM_SUB_GUID";
+    private static final String ITEM_SUB_QUANTITY = "ITEM_SUB_QUANTITY";
+    private static final String ITEM_GROUP_GUID = "ITEM_GROUP_GUID";
+
+
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
         return new ModifierModel(
@@ -38,7 +43,10 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 rs.getString(ITEM_GUID),
                 _enum(ModifierType.class, rs.getString(TYPE), ModifierType.ADDON),
                 rs.getString(TITLE),
-                rs.getBigDecimal(EXTRA_COST)
+                rs.getBigDecimal(EXTRA_COST),
+                rs.getString(ITEM_SUB_GUID),
+                rs.getBigDecimal(ITEM_SUB_QUANTITY),
+                rs.getString(ITEM_GROUP_GUID)
         ).toValues();
     }
 
@@ -49,7 +57,10 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 rs.getString(ITEM_GUID),
                 _enum(ModifierType.class, rs.getString(TYPE), ModifierType.ADDON),
                 rs.getString(TITLE),
-                rs.getBigDecimal(EXTRA_COST)
+                rs.getBigDecimal(EXTRA_COST),
+                rs.getString(ITEM_SUB_GUID),
+                rs.getBigDecimal(ITEM_SUB_QUANTITY),
+                rs.getString(ITEM_GROUP_GUID)
         );
     }
 
@@ -82,5 +93,14 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 .where(MODIFIER_GUID, model.modifierGuid)
                 .build(JdbcFactory.getApiMethod(model));
     }
+
+    public SingleSqlCommand clearGroups(String guid, IAppCommandContext appCommandContext) {
+        return _update(TABLE_NAME, appCommandContext)
+                .add(ITEM_GROUP_GUID, (String)null)
+                .where(ITEM_GROUP_GUID, guid)
+                .build(JdbcFactory.getApiMethod(new ModifierModel()));
+    }
+
+
 
 }

@@ -188,6 +188,53 @@ public abstract class ShopStore {
         String FEEAMOUNT = "feeAmount";
     }
 
+    @Table(ComposerTable.TABLE_NAME)
+    @Indexes({
+            @Index(name = "host_item", columns = ComposerTable.ITEM_HOST_ID),
+            @Index(name = "child_item", columns = ComposerTable.ITEM_CHILD_ID),
+    })
+    public interface ComposerTable extends IBemaSyncTable {
+
+        @URI(altNotify = {ComposerView.URI_CONTENT})
+        String URI_CONTENT = "composer";
+
+        String TABLE_NAME = "composer";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ID = "_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ITEM_HOST_ID = "item_host_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ITEM_CHILD_ID = "item_child_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String QUANTITY = "qty";
+
+        @NotNull
+        @Column(type = Type.INTEGER, defVal = "0")
+        String STORE_TRACKING_ENABLED = "store_tracking_enabled";
+
+        @NotNull
+        @Column(type = Type.INTEGER, defVal = "0")
+        String FREE_OF_CHARGE_COMPOSER = "free_of_charge_composer";
+    }
+
+    static {
+        applyForeignKeys(ComposerTable.TABLE_NAME,
+                foreignKey(ComposerTable.ITEM_HOST_ID, ItemTable.TABLE_NAME, ItemTable.GUID),
+                foreignKey(ComposerTable.ITEM_CHILD_ID, ItemTable.TABLE_NAME, ItemTable.GUID)
+        );
+    }
+
+
+
     @Table(UnitTable.TABLE_NAME)
     @Indexes({
             @Index(name = "item", columns = UnitTable.ITEM_ID),
@@ -319,7 +366,7 @@ public abstract class ShopStore {
     })
     public static interface ItemTable extends IBemaSyncTable {
 
-        @URI(altNotify = {ItemExtView.URI_CONTENT, CategoryView.URI_CONTENT})
+        @URI(altNotify = {ItemExtView.URI_CONTENT, CategoryView.URI_CONTENT, ModifierView.URI_CONTENT})
         String URI_CONTENT = "item";
 
         String TABLE_NAME = "item";
@@ -358,6 +405,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.TEXT)
         String UNITS_LABEL = "units_label";
+
+        @Column(type = Type.TEXT)
+        String UNIT_LABEL_ID = "unit_label_id";
 
         @Column(type = Column.Type.INTEGER)
         String STOCK_TRACKING = "stock_tracking";
@@ -417,6 +467,10 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER)
         String CODE_TYPE = "code_type";
+
+        @NotNull
+        @Column(type = Type.INTEGER, defVal = "0")
+        String ITEM_REF_TYPE = "item_ref_type";
 
         @NotNull
         @Column(type = Type.INTEGER, defVal = "1")
@@ -488,7 +542,7 @@ public abstract class ShopStore {
     @Index(name = "item", columns = ModifierTable.ITEM_GUID)
     public static interface ModifierTable extends IBemaSyncTable {
 
-        @URI
+        @URI(altNotify = {ModifierView.URI_CONTENT, ModifierGroupView.URI_CONTENT})
         String URI_CONTENT = "items_modifier";
 
         String TABLE_NAME = "items_modifier";
@@ -513,6 +567,18 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.TEXT)
         String EXTRA_COST = "extra_cost";
+
+        @Column(type = Type.TEXT)
+        String ITEM_SUB_GUID = "item_sub_guid";
+
+        @Column(type = Type.TEXT)
+        String ITEM_SUB_QTY = "item_sub_qty";
+
+        @Column(type = Type.TEXT)
+        String ITEM_GROUP_GUID = "item_group_guid";
+
+        @Column(type = Type.INTEGER)
+        String DEFAULT = "is_default";
     }
 
     static {
@@ -2719,6 +2785,29 @@ public abstract class ShopStore {
         String TABLE_TIPS = "tips_table";
 
     }
+    @SimpleView(ComposerView.VIEW_NAME)
+    public interface ComposerView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "so_composer_view";
+
+        String VIEW_NAME = "so_composer_view";
+
+        @From(ComposerTable.TABLE_NAME)
+        String TABLE_COMPOSER_ITEM = "composer_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_COMPOSER_ITEM, onColumn = ComposerTable.ITEM_HOST_ID)
+        String TABLE_HOST_ITEM = "item_host_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_COMPOSER_ITEM, onColumn = ComposerTable.ITEM_CHILD_ID)
+        String TABLE_CHILD_ITEM = "item_child_table";
+
+        @Columns(UnitLabelTable.SHORTCUT)
+        @Join(type = Join.Type.LEFT, joinTable = UnitLabelTable.TABLE_NAME, joinColumn = UnitLabelTable.GUID, onTableAlias = TABLE_CHILD_ITEM, onColumn = ItemTable.UNIT_LABEL_ID)
+        String TABLE_UNIT_LABEL = "unit_label_table";
+    }
 
     @SimpleView(TipsReportView.VIEW_NAME)
     public static interface TipsReportView {
@@ -2873,7 +2962,108 @@ public abstract class ShopStore {
                 + " order by " + "si." + SaleItemTable.PARENT_GUID;
     }
 
+    @Table(ModifierGroupTable.TABLE_NAME)
+    public interface ModifierGroupTable extends IBemaSyncTable {
 
+        @URI(altNotify = {ModifierGroupView.URI_CONTENT, ModifierView.URI_CONTENT})
+        String URI_CONTENT = "items_modifier_group";
+
+        String TABLE_NAME = "items_modifier_group";
+
+        @PrimaryKey
+        @Autoincrement
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @Unique
+        @NotNull
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @Column(type = Type.TEXT)
+        String DEFAULT_GUID = "default_guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String TITLE = "title";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ITEM_GUID = "item_guid";
+    }
+
+    static {
+        applyForeignKeys(ModifierGroupTable.TABLE_NAME, foreignKey(ModifierGroupTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
+    }
+
+    @SimpleView(ModifierView.VIEW_NAME)
+    public interface ModifierView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "so_modifier_view";
+
+        String VIEW_NAME = "so_modifier_view";
+
+        @From(ModifierTable.TABLE_NAME)
+        String TABLE_MODIFIER_ITEM = "modifier_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_MODIFIER_ITEM, onColumn = ModifierTable.ITEM_SUB_GUID)
+        String TABLE_ITEM = "item_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Join(type = Join.Type.LEFT, joinTable = ModifierGroupTable.TABLE_NAME, joinColumn = ModifierGroupTable.GUID, onTableAlias = TABLE_MODIFIER_ITEM, onColumn = ModifierTable.ITEM_GROUP_GUID)
+        String TABLE_GROUP_ITEM = "item_group_table";
+
+        @Columns(UnitLabelTable.SHORTCUT)
+        @Join(type = Join.Type.LEFT, joinTable = UnitLabelTable.TABLE_NAME, joinColumn = UnitLabelTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.UNIT_LABEL_ID)
+        String TABLE_UNIT_LABEL = "unit_label_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns(ItemTable.DEFAULT_MODIFIER_GUID)
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_MODIFIER_ITEM, onColumn = ModifierTable.ITEM_GUID)
+        String TABLE_HOST_ITEM = "item_host_table";
+    }
+
+    @Table(UnitLabelTable.TABLE_NAME)
+    public interface UnitLabelTable extends IBemaSyncTable {
+        @URI
+        String URI_CONTENT = "unit_label_table";
+
+        String TABLE_NAME = "unit_label_table";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String DESCRIPTION = "description";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String SHORTCUT = "shortcut";
+    }
+
+    @SimpleView(ModifierGroupView.VIEW_NAME)
+    public interface ModifierGroupView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "modifier_group_view";
+
+        String VIEW_NAME = "modifier_group_view";
+
+        String ITEM_COUNT = "item_count";
+
+        @From(ModifierGroupTable.TABLE_NAME)
+        String TABGROUP = "group_table";
+
+        @Join(type = Join.Type.LEFT, joinTable = ModifierTable.TABLE_NAME,
+                joinColumn = ModifierTable.ITEM_GROUP_GUID, onTableAlias = TABGROUP,
+                onColumn = ModifierGroupTable.GUID)
+        String TABLE_ITEM = "item_table";
+    }
 
     /*@SimpleView(InventoryView.VIEW_NAME)
     public static interface InventoryView {

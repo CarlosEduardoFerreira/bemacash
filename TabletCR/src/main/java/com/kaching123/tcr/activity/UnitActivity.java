@@ -231,7 +231,7 @@ public class UnitActivity extends ScannerBaseActivity implements UnitItemListFra
         });
     }
 
-    private UnitActivity self() {
+    protected UnitActivity self() {
         return this;
     }
 }
