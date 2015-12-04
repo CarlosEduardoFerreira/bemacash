@@ -376,7 +376,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
             return true;
 
         Set<Permission> operatorPermissions = getApp().getOperatorPermissions();
-        return operatorPermissions == null ? false : operatorPermissions.containsAll(permissions);
+        return operatorPermissions != null && operatorPermissions.containsAll(permissions);
     }
 
     @Override

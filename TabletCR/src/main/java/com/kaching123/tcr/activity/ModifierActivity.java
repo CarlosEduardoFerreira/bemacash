@@ -64,11 +64,15 @@ public class ModifierActivity extends ScannerBaseActivity implements ModifierIte
 
     protected ModificationPagerAdapter pagerAdapter;
 
+    private ActionBar actionBar;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar = getActionBar();
+        if(actionBar!=null) {
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
 
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
@@ -90,7 +94,7 @@ public class ModifierActivity extends ScannerBaseActivity implements ModifierIte
         actionBar.addTab(actionBar.newTab().setText(R.string.dlg_section_modifier).setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText(R.string.dlg_section_addon).setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText(R.string.dlg_section_optional).setTabListener(tabListener));
-
+    }
         setTitle(model.description);
     }
 
@@ -107,8 +111,8 @@ public class ModifierActivity extends ScannerBaseActivity implements ModifierIte
                 new ViewPager.SimpleOnPageChangeListener() {
                     @Override
                     public void onPageSelected(int position) {
-                        if (getActionBar().getTabCount() > position) {
-                            getActionBar().setSelectedNavigationItem(position);
+                        if (actionBar.getTabCount() > position) {
+                            actionBar.setSelectedNavigationItem(position);
                         }
                     }
                 });

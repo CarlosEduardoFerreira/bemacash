@@ -343,7 +343,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         modifiersTable.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-           //     ModifiersActivity.start(BaseItemActivity.this, REQ_MODIFIER, model.guid, description.getText().toString(), model.defaultModifierGuid);
                 //ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
                 if (!PlanOptions.isModifiersAllowed()) {
                     AlertDialogFragment.showAlert(BaseItemActivity.this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
@@ -504,15 +503,6 @@ ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
                 return 0;
         }
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_MODIFIER && resultCode == RESULT_OK && data != null) {
-            model.defaultModifierGuid = data.getStringExtra(ModifiersActivity.EXTRA_DEF_MODIFIER);
-        }
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         switch (i) {

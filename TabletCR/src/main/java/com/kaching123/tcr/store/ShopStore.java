@@ -2199,6 +2199,52 @@ public abstract class ShopStore {
                 " order by " + CATEGORY_TITLE + ", " + ORDER_NUM;
     }
 
+    @RawQuery(ModifiersCountView.QUERY_NAME)
+    public interface ModifiersCountView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "modifiers_count_view";
+
+        String QUERY_NAME = "modifiers_count_view";
+
+        String GROUP_BY = " GROUP BY ";
+        String ORDER_BY = " ORDER BY ";
+        String HAVING = " HAVING ";
+        String ON = " ON ";
+        String AS = " AS ";
+        String AND = " AND ";
+        String FROM = " FROM ";
+        String SELECT = " SELECT ";
+        String WHERE = " WHERE ";
+        String JOIN = " JOIN ";
+        String coma = ", ";
+
+        String ITEM_GUID = "ITEM_GUID2";
+        String ITEM_DESCRIPTION = "ITEM_DESCRIPTION2";
+        String CATEGORY_GUID = "CATEGORY_GUID2";
+        String CATEGORY_TITLE = "CATEGORY_TITLE2";
+        String MODIFIERS_COUNT = " sum(case when " + "m." +  ModifierTable.TYPE + " = 0 then 1 else 0 end) as " + ItemExtView.MODIFIERS_COUNT;
+        String ADDONS_COUNT = " sum(case when " + "m." + ModifierTable.TYPE + " = 1 then 1 else 0 end) as " + ItemExtView.ADDONS_COUNT;
+        String OPTIONALS_COUNT = " sum(case when " + "m." + ModifierTable.TYPE + " = 2 then 1 else 0 end) as " + ItemExtView.OPTIONAL_COUNT;
+
+        @SqlQuery
+        String QUERY =
+                SELECT
+                        + "i." + ItemTable.GUID + AS + ITEM_GUID + coma + "i." + ItemTable.DESCRIPTION + AS + ITEM_DESCRIPTION + coma
+                        + "c." + CategoryTable.GUID + AS + CATEGORY_GUID + coma + "c." + CategoryTable.TITLE + AS + CATEGORY_TITLE + coma
+                        + MODIFIERS_COUNT + coma + ADDONS_COUNT + coma + OPTIONALS_COUNT
+                        + FROM + ItemTable.TABLE_NAME + " as i "
+                        + JOIN + CategoryTable.TABLE_NAME + " as c "
+                        + ON + "c." + CategoryTable.GUID + " = " + "i." + ItemTable.CATEGORY_ID
+                        + JOIN + ModifierTable.TABLE_NAME + " as m "
+                        + ON + ITEM_GUID + " = " + "m." + ModifierTable.ITEM_GUID + AND + "m." + ModifierTable.IS_DELETED + " = 0"
+                        + WHERE + "i." + ItemTable.IS_DELETED + " = 0" + AND + "i." + ItemTable.ACTIVE_STATUS + " = 1 and " + ITEM_DESCRIPTION + " like ? and " + ITEM_GUID + " != ? "
+                        + GROUP_BY + ITEM_GUID
+                        + HAVING + ItemExtView.MODIFIERS_COUNT + " > 0 or " + ItemExtView.ADDONS_COUNT + " > 0 or " + ItemExtView.OPTIONAL_COUNT + " > 0 "
+                        + ORDER_BY + CATEGORY_GUID;
+    }
+
+
     @SimpleView(SaleItemExView.VIEW_NAME)
     public static interface SaleItemExView {
 

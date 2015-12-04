@@ -11,135 +11,124 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.fragment.search.CategoryItemViewModel;
-import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
-import com.kaching123.tcr.store.ShopStore.SearchItemWithModifierView;
+import com.kaching123.tcr.store.ShopStore.ModifiersCountView;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
-
-import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
-
-import static com.kaching123.tcr.model.ContentValuesUtil._bool;
-import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
-import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
-import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 
 /**
  * Created by vkompaniets on 11.12.13.
  */
 @EFragment(R.layout.editmodifiers_copymodifiers_search_fragment)
-public class SearchFragment extends Fragment implements LoaderCallbacks<List<CategoryItemViewModel>> {
+public class SearchFragment extends Fragment {
 
-    private static final Uri URI_ITEMS = ShopProvider.getContentUri(SearchItemWithModifierView.URI_CONTENT);
+    private static final Uri URI_ITEMS = ShopProvider.contentUri(ModifiersCountView.URI_CONTENT);
 
     @ViewById(android.R.id.list)
     protected StickyListHeadersListView stickyListHeadersListView;
 
-    IItemListener listener;
     private String itemGuid;
     private String searchText = "";
+    IItemListener listener;
+
+    private ModifiersCopyListAdapter adapter;
 
     public void setListener(IItemListener listener) {
         this.listener = listener;
     }
+
     public void setItemGuid(String itemGuid) {
         this.itemGuid = itemGuid;
     }
-    public void setSearchText(String searchText) {
-        setListAdapter(null);
-        this.searchText = searchText;
-        stickyListHeadersListView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if (listener != null) {
-                    listener.onItemSelected(id, (CategoryItemViewModel) adapterView.getItemAtPosition(position));
-                }
-            }
-        });
-        getLoaderManager().restartLoader(0, null, this);
-    }
 
-    private void setListAdapter(StickyListHeadersAdapter adapter) {
-        stickyListHeadersListView.setAdapter(adapter);
+    public void setSearchText(String searchText) {
+        this.searchText = searchText;
+        getLoaderManager().restartLoader(0, null, loader);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().restartLoader(0, null, this);
+
+        adapter = new ModifiersCopyListAdapter(getActivity());
+
+        stickyListHeadersListView.setAdapter(adapter);
+        stickyListHeadersListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                if (listener != null) {
+                    ModifierCountItemModel model = (ModifierCountItemModel) adapterView.getItemAtPosition(position);
+                    listener.onItemSelected(id, model.guid);
+                }
+            }
+        });
     }
 
-    @Override
-    public Loader<List<CategoryItemViewModel>> onCreateLoader(int i, Bundle bundle) {
-        return CursorLoaderBuilder.forUri(URI_ITEMS)
-                .where("", "%" + searchText + "%", itemGuid == null ? "" : itemGuid)
-                .transform(new ItemConverter()).build(getActivity());
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<CategoryItemViewModel>> listLoader, List<CategoryItemViewModel> categoryItemViewModels) {
-        setListAdapter(new ModifiersCopyListAdapter(getActivity(), categoryItemViewModels));
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<CategoryItemViewModel>> listLoader) {
-        setListAdapter(null);
-    }
-
-    private static class ItemConverter extends ListConverterFunction<CategoryItemViewModel> {
+    private LoaderCallbacks<List<ModifierCountItemModel>> loader = new LoaderCallbacks<List<ModifierCountItemModel>>() {
+        @Override
+        public Loader<List<ModifierCountItemModel>> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder.forUri(URI_ITEMS)
+                    .where("", "%" + searchText + "%", itemGuid == null ? "" : itemGuid)
+                    .transform(new ItemConverter())
+                    .build(getActivity());
+        }
 
         @Override
-        public CategoryItemViewModel apply(Cursor c) {
-            super.apply(c);
-            return new CategoryItemViewModel(
-                    c.getString(indexHolder.get(SearchItemWithModifierView.GUID)),
-                    c.getString(indexHolder.get(SearchItemWithModifierView.CATEGORY_ID)),
-                    c.getString(indexHolder.get(SearchItemWithModifierView.DESCRIPTION)),
-                    c.getString(indexHolder.get(SearchItemWithModifierView.CODE)),
-                    c.getString(indexHolder.get(SearchItemWithModifierView.EAN_CODE)),
-                    c.getString(indexHolder.get(SearchItemWithModifierView.PRODUCT_CODE)),
-                    PriceType.valueOf(c.getInt(indexHolder.get(SearchItemWithModifierView.PRICE_TYPE))),
-                    _decimal(c.getString(indexHolder.get(SearchItemWithModifierView.SALE_PRICE))),
-                    _decimalQty(c.getString(indexHolder.get(SearchItemWithModifierView.QUANTITY))),
-                    c.getString(indexHolder.get(SearchItemWithModifierView.UNITS_LABEL)),
-                    c.getInt(indexHolder.get(SearchItemWithModifierView.STOCK_TRACKING)) == 1,
-                    c.getInt(indexHolder.get(SearchItemWithModifierView.ACTIVE_STATUS)) == 1,
-                    c.getInt(indexHolder.get(SearchItemWithModifierView.DISCOUNTABLE)) == 1,
-                    c.getInt(indexHolder.get(SearchItemWithModifierView.SALABLE)) == 1,
-                    _decimal(c.getString(indexHolder.get(SearchItemWithModifierView.DISCOUNT))),
-                    _discountType(c, indexHolder.get(SearchItemWithModifierView.DISCOUNT_TYPE)),
-                    c.getInt(indexHolder.get(SearchItemWithModifierView.TAXABLE)) == 1,
-                    c.getString(indexHolder.get(SearchItemWithModifierView.TAX_GROUP_GUID)),
-                    c.getInt(indexHolder.get(ItemExtView.MODIFIERS_COUNT)),
-                    c.getInt(indexHolder.get(ItemExtView.ADDONS_COUNT)),
-                    c.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT)),
-                    c.getString(indexHolder.get(SearchItemWithModifierView.DEPARTMENT_ID)),
-                    c.getString(indexHolder.get(SearchItemWithModifierView.CATEGORY_TITLE)),
-                    _decimal(c.getString(indexHolder.get(SearchItemWithModifierView.TAX))),
-                    c.getString(c.getColumnIndex(SearchItemWithModifierView.DEFAULT_MODIFIER_GUID)),
-                    c.getInt(indexHolder.get(SearchItemWithModifierView.ORDER_NUM)),
-                    c.getString(c.getColumnIndex(SearchItemWithModifierView.PRINTER_ALIAS_GUID)),
-                    c.getInt(indexHolder.get(SearchItemWithModifierView.BUTTON_VIEW)),
-                    c.getInt(indexHolder.get(SearchItemWithModifierView.HASNOTES)) == 1,
-                    c.getInt(indexHolder.get(SearchItemWithModifierView.SERIALIZABLE)) == 1,
-                    _codeType(c, indexHolder.get(SearchItemWithModifierView.CODE_TYPE)),
-                    _bool(c, c.getColumnIndex(SearchItemWithModifierView.ELIGIBLE_FOR_COMMISSION)),
-                    _decimal(c, c.getColumnIndex(SearchItemWithModifierView.COMMISSION))
+        public void onLoadFinished(Loader<List<ModifierCountItemModel>> loader, List<ModifierCountItemModel> data) {
+            adapter.changeCursor(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<ModifierCountItemModel>> loader) {
+            adapter.changeCursor(null);
+        }
+    };
+
+    private static class ItemConverter extends ListConverterFunction<ModifierCountItemModel> {
+        @Override
+        public ModifierCountItemModel apply(Cursor cursor) {
+            super.apply(cursor);
+            return new ModifierCountItemModel(
+                    cursor.getString(indexHolder.get(ModifiersCountView.ITEM_GUID)),
+                    cursor.getString(indexHolder.get(ModifiersCountView.ITEM_DESCRIPTION)),
+                    cursor.getString(indexHolder.get(ModifiersCountView.CATEGORY_GUID)),
+                    cursor.getString(indexHolder.get(ModifiersCountView.CATEGORY_TITLE)),
+                    cursor.getInt(indexHolder.get(ItemExtView.MODIFIERS_COUNT)),
+                    cursor.getInt(indexHolder.get(ItemExtView.ADDONS_COUNT)),
+                    cursor.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT))
             );
         }
     }
 
-    public static interface IItemListener {
-        void onItemSelected(long id, ItemExModel model);
+    public static class ModifierCountItemModel {
+        final String guid;
+        final String description;
+        final String categoryId;
+        final String categoryTitle;
+        final int numModifiers;
+        final int numAddons;
+        final int numOptionals;
+
+        public ModifierCountItemModel(String guid, String description, String categoryId, String categoryTitle, int numModifiers, int numAddons, int numOptionals) {
+            this.guid = guid;
+            this.description = description;
+            this.categoryId = categoryId;
+            this.categoryTitle = categoryTitle;
+            this.numModifiers = numModifiers;
+            this.numAddons = numAddons;
+            this.numOptionals = numOptionals;
+        }
+    }
+
+    public interface IItemListener {
+        void onItemSelected(long id, String fromItem);
     }
 
 }

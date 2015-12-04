@@ -12,6 +12,7 @@ import com.kaching123.tcr.jdbc.converters.EmployeeJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeeTimesheetJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ItemsModifierGroupsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsModifiersJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
@@ -40,6 +41,8 @@ import com.kaching123.tcr.model.IValueModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemMovementModel;
+import com.kaching123.tcr.model.ModifierExModel;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrinterAliasModel;
@@ -52,6 +55,7 @@ import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopStore.CashDrawerMovementTable;
@@ -104,9 +108,17 @@ public class JdbcFactory {
 
         CONVERTERS.put(ModifierTable.TABLE_NAME, c = new ItemsModifiersJdbcConverter());
         CONVERTERS2.put(ModifierModel.class, c);
+        CONVERTERS2.put(ModifierExModel.class, c);
 
         API_METHOD.put(ModifierTable.TABLE_NAME, "modifiers");
         API_METHOD2.put(ModifierModel.class, "modifiers");
+        API_METHOD2.put(ModifierExModel.class, "modifiers");
+
+        CONVERTERS.put(ModifierGroupTable.TABLE_NAME, c = new ItemsModifierGroupsJdbcConverter());
+        CONVERTERS2.put(ModifierGroupModel.class, c);
+
+        API_METHOD.put(ModifierGroupTable.TABLE_NAME, "modifier_groups");
+        API_METHOD2.put(ModifierGroupModel.class, "modifier_groups");
 
         CONVERTERS.put(ItemMovementTable.TABLE_NAME, c = new ItemsMovementJdbcConverter());
         CONVERTERS2.put(ItemMovementModel.class, c);

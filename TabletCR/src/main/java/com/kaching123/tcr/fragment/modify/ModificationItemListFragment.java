@@ -77,9 +77,17 @@ public class ModificationItemListFragment extends ModifierItemListFragment {
     @Override
     protected void attachViews() {
         super.attachViews();
-        List<Fragment> fragmentsList = getChildFragmentManager().getFragments();
+        List<Fragment> fragmentsList = getFragmentManager().getFragments();
+        //List<Fragment> fragmentsList = getChildFragmentManager().getFragments();
         if(fragmentsList !=null) {
-            groupFragment = (ModifierGroupItemFragment) fragmentsList.get(0);
+            for(Fragment fr:fragmentsList) {
+                if(fr instanceof ModifierGroupItemFragment){
+                    groupFragment = (ModifierGroupItemFragment) fr;
+                    break;
+                }
+            }
+            //groupFragment = (ModifierGroupItemFragment) fragmentsList.get(3);
+            if(groupFragment != null) {
             groupFragment.setListener(new GroupCallback() {
 
                 @Override
@@ -99,6 +107,7 @@ public class ModificationItemListFragment extends ModifierItemListFragment {
                 }
             });
             groupFragment.setItemGuid(model.guid);
+            }
         } else {
             Logger.e("ModifierGroupItemFragment isn't in list");
         }

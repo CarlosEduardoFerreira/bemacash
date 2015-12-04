@@ -5,6 +5,7 @@
         android:icon="@drawable/plus_normal"
         android:id="@+id/action_add"
         android:title="@string/cashier_action_add"
-        myapp:showAsAction="always"
+        android:showAsAction="always"
+        myapp:showAsAction="ifRoom"
         android:orderInCategory="@integer/menu_order_default"/>
 </menu>

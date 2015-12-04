@@ -5,14 +5,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.WindowManager;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.CopyModifiersCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
-import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierType;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,15 +22,15 @@ import java.util.HashSet;
  */
 
 @EFragment(R.layout.editmodifiers_copymodifiers_dialog)
-public class ModifiersCopyDialog extends StyledDialogFragment {
+public class ModifiersCopyDialog extends StyledDialogFragment implements InnerCopyFragment.IItemClickListener {
 
     public static String DIALOG_NAME = "modifier_copy_dialog";
 
     @FragmentArg
-    protected ItemExModel itemModel;
+    protected String fromItem;
 
     @FragmentArg
-    protected String copyToItemGuid;
+    protected String toItem;
 
     private InnerCopyFragment modifiers;
 
@@ -42,20 +42,22 @@ public class ModifiersCopyDialog extends StyledDialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        enablePositiveButtons(false);
+
         FragmentManager fm = getChildFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.modifiers, modifiers = InnerCopyFragment_.builder()
-                        .itemGuid(itemModel.guid)
+                        .itemGuid(fromItem)
                         .type(ModifierType.MODIFIER)
-                        .build())
+                        .build().setListener(this))
                 .replace(R.id.addons, addons = InnerCopyFragment_.builder()
-                        .itemGuid(itemModel.guid)
+                        .itemGuid(fromItem)
                         .type(ModifierType.ADDON)
-                        .build())
+                        .build().setListener(this))
                 .replace(R.id.options, options = InnerCopyFragment_.builder()
-                        .itemGuid(itemModel.guid)
+                        .itemGuid(fromItem)
                         .type(ModifierType.OPTIONAL)
-                        .build())
+                        .build().setListener(this))
                 .commit();
 
         WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
@@ -88,34 +90,33 @@ public class ModifiersCopyDialog extends StyledDialogFragment {
         return clickListener;
     }
 
-    public void setOnClosedListener(OnClosedListener onClosedListener) {
-        this.onClosedListener = onClosedListener;
-    }
-
-    public static void show(FragmentActivity activity, String copyToItemGuid, ItemExModel srcItemModel, OnClosedListener onClosedListener) {
-        DialogUtil.show(activity, DIALOG_NAME, ModifiersCopyDialog_.builder().itemModel(srcItemModel).copyToItemGuid(copyToItemGuid).build()).setOnClosedListener(onClosedListener);
+    public static void show(FragmentActivity activity, String fromItem, String toItem) {
+        DialogUtil.show(activity, DIALOG_NAME, ModifiersCopyDialog_.builder().fromItem(fromItem).toItem(toItem).build());
     }
 
     private OnDialogClickListener clickListener = new OnDialogClickListener() {
         @Override
         public boolean onClick() {
-            HashSet<String> all = new HashSet<String>();
-            all.addAll(modifiers.getSelectedItems());
-            all.addAll(addons.getSelectedItems());
-            all.addAll(options.getSelectedItems());
+            HashSet<String> all = collectSelectedItems();
             if (!all.isEmpty()) {
-                CopyModifiersCommand.start(getActivity(), copyToItemGuid, new ArrayList<String>(all));
+                CopyModifiersCommand.start(getActivity(), toItem, new ArrayList<String>(all));
             }
-            if(onClosedListener != null){
-                onClosedListener.onDialogSuccessClosed();
-            }
+            getActivity().finish();
             return true;
         }
     };
 
-    private OnClosedListener onClosedListener;
+    private HashSet<String> collectSelectedItems() {
+        HashSet<String> all = new HashSet<String>();
+        all.addAll(modifiers.getSelectedItems());
+        all.addAll(addons.getSelectedItems());
+        all.addAll(options.getSelectedItems());
+        return all;
+    }
 
-    public static interface OnClosedListener{
-        void onDialogSuccessClosed();
+    @Override
+    public void onClick() {
+        HashSet<String> all = collectSelectedItems();
+        enablePositiveButtons(!all.isEmpty());
     }
 }

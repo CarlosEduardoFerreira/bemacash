@@ -4,6 +4,7 @@
         android:icon="@drawable/ic_action_action_search"
         android:id="@+id/action_search"
         android:title="@string/modifiers_action_copy"
+        android:showAsAction="collapseActionView|always"
         myapp:showAsAction="collapseActionView|always"
         android:actionViewClass="android.widget.SearchView"
         android:orderInCategory="@integer/menu_order_default"/>

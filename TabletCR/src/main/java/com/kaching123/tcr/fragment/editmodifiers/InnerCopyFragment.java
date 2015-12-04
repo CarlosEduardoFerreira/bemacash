@@ -52,6 +52,11 @@ public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<
 
     private InnerFragmentAdapter adapter;
 
+    private IItemClickListener listener;
+    public InnerCopyFragment setListener(IItemClickListener listener) {
+        this.listener = listener;
+        return this;
+    }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -63,6 +68,8 @@ public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 adapter.itemClicked(position);
                 setSelectAll(adapter.isAllSelected());
+                if (listener != null)
+                    listener.onClick();
             }
         });
         setTypeTitle();
@@ -75,6 +82,8 @@ public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<
         adapter.setSelectAll(value);
         checkboxAll.setTag(value);
         setSelectAll(value);
+        if (listener != null)
+            listener.onClick();
     }
 
     private void setSelectAll(boolean selected){
@@ -118,4 +127,7 @@ public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<
         return adapter.getSelectedItems();
     }
 
+    public interface IItemClickListener {
+        void onClick();
+    }
 }

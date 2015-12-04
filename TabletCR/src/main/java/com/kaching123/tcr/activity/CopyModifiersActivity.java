@@ -7,9 +7,8 @@ import android.widget.SearchView;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.editmodifiers.ModifiersCopyDialog;
-import com.kaching123.tcr.fragment.editmodifiers.SearchFragment;
 import com.kaching123.tcr.fragment.editmodifiers.SearchFragment.IItemListener;
-import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.fragment.editmodifiers.SearchFragment;
 import com.kaching123.tcr.util.KeyboardUtils;
 
 import org.androidannotations.annotations.AfterViews;
@@ -41,6 +40,11 @@ public class CopyModifiersActivity extends SuperBaseActivity {
         setTitle(getString(R.string.modifiers_copy_activity_title, itemName));
         searchFragment.setListener(new IItemListener() {
             @Override
+            public void onItemSelected(long id, String fromItem) {
+                ModifiersCopyDialog.show(self(), fromItem, CopyModifiersActivity.this.itemGuid);
+            }
+        });/*
+            @Override
             public void onItemSelected(long id, ItemExModel model) {
                 ModifiersCopyDialog.show(self(), "fromItem", model,new ModifiersCopyDialog.OnClosedListener() {
                     @Override
@@ -49,7 +53,7 @@ public class CopyModifiersActivity extends SuperBaseActivity {
                     }
                 });
             }
-        });
+        });*/
 
         searchFragment.setItemGuid(itemGuid);
         searchFragment.setSearchText("");
