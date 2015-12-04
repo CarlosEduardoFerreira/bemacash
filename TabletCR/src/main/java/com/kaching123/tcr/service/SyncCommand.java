@@ -41,6 +41,8 @@ import com.kaching123.tcr.model.EmployeePermissionModel;
 import com.kaching123.tcr.model.IValueModel;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PlanOptions;
+import com.kaching123.tcr.model.PlanOptionsResponse;
 import com.kaching123.tcr.model.RegisterModel;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
 import com.kaching123.tcr.model.payment.blackstone.payment.User;
@@ -124,6 +126,7 @@ public class SyncCommand implements Runnable {
     public static final String EXTRA_SUCCESS = "success";
     public static final String EXTRA_SYNC_LOCKED = "sync_locked";
 
+    //fixme idyuzheva
     private static final String[] TABLES_URIS = new String[]{
             RegisterTable.URI_CONTENT,
             PrinterAliasTable.URI_CONTENT,
@@ -361,6 +364,7 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, CategoryTable.TABLE_NAME, CategoryTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ItemTable.TABLE_NAME, ItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID, employee, serverLastTimestamp);
+                    //FIXME idyuzheva composer
 
                     //between iterations shouldn't be any gaps
                     boolean firstIteration = retriesCount == FINALIZE_SYNC_RETRIES;
@@ -644,6 +648,8 @@ public class SyncCommand implements Runnable {
             return false;
         if (!isTableEmpty(context, UnitTable.TABLE_NAME, UnitTable.ID))
             return false;
+        //if (!isTableEmpty(context, ComposerTable.TABLE_NAME, ComposerTable.ID))//FIXME idyuzheva
+        //return false;
         return true;
     }
 
@@ -1263,6 +1269,13 @@ public class SyncCommand implements Runnable {
             syncPrepaidTaxes(entity.getJSONArray("PREPAID_ITEM_TAXES"));
             syncActivationCarriers(entity.getJSONArray("ACTIVATION_CARRIERS"));
             salesHistoryLimit = syncShop(entity.getJSONObject("SHOP"));
+
+            if (app.isFreemium()) {
+                Logger.d("[Freemium] Getting settings for current plan");
+                PlanOptionsResponse freemiumOptions = api.getFreemiumOptions(app.emailApiKey,
+                        SyncUploadRequestBuilder.getReqCredentials(employeeModel, app));
+                freemiumOptions.get().save();
+            }
         } catch (SyncException e) {
             throw e;
         } catch (SyncLockedException e) {
@@ -1659,6 +1672,7 @@ public class SyncCommand implements Runnable {
         abstract void onFinish();
     }
 
+    //fixme idyuzheva
     public enum Table {
         //NOTE: don't change order - stored as int in db
         REGISTER(RegisterTable.TABLE_NAME, true),
