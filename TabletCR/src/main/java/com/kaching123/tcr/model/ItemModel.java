@@ -33,6 +33,7 @@ public class ItemModel implements Serializable, IValueModel {
     public BigDecimal price;
     public BigDecimal availableQty;
     public String unitsLabel;
+    public String unitsLabelId;
     public boolean isStockTracking;
     public boolean isActiveStatus;
     public boolean isDiscountable;
@@ -73,6 +74,7 @@ public class ItemModel implements Serializable, IValueModel {
                      BigDecimal price,
                      BigDecimal availableQty,
                      String unitsLabel,
+                     String unitsLabelId,
                      boolean isStockTracking,
                      boolean isActiveStatus,
                      boolean isDiscountable,
@@ -105,6 +107,7 @@ public class ItemModel implements Serializable, IValueModel {
         this.price = price;
         this.availableQty = availableQty;
         this.unitsLabel = unitsLabel;
+        this.unitsLabelId = unitsLabelId;
         this.isStockTracking = isStockTracking;
         this.isActiveStatus = isActiveStatus;
         this.isDiscountable = isDiscountable;
@@ -149,6 +152,7 @@ public class ItemModel implements Serializable, IValueModel {
         values.put(ItemTable.PRICE_TYPE, priceType.ordinal());
         values.put(ItemTable.SALE_PRICE, _decimal(price));
         values.put(ItemTable.UNITS_LABEL, unitsLabel);
+        values.put(ItemTable.UNIT_LABEL_ID, unitsLabelId);
 
         values.put(ItemTable.STOCK_TRACKING, isStockTracking);
         values.put(ItemTable.ACTIVE_STATUS, isActiveStatus);

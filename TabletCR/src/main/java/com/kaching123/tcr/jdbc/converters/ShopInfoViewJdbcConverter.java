@@ -80,6 +80,11 @@ public class ShopInfoViewJdbcConverter {
     public static final String DEFAULT_STORE_COMMISSION = "DEFAULT_STORE_COMMISSION";
 
     public static final String OFFLINE_PERIOD = "OFFLINE_PERIOD";
+
+    public static final String DEF_UNIT_LBL_SH = "DEFAULT_UNIT_LBL_SHORTCUT";
+    public static final String DEF_UNIT_LBL_DESR = "DEFAULT_UNIT_LBL_DESCRIPTION";
+
+
     public static final String PRINTER_TWO_COPIES_RECEIPT = "PRINTER_TWO_COPIES_RECEIPT";
     public static final String PRINTER_RECEIPT_TWICE = "PRINTER_RECEIPT_TWICE";
 
@@ -161,6 +166,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(COMMISSION_CONTROL),
                 rs.getBigDecimal(DEFAULT_STORE_COMMISSION),
                 rs.getInt(OFFLINE_PERIOD),
+                rs.getString(DEF_UNIT_LBL_SH),
+                rs.getString(DEF_UNIT_LBL_DESR),
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
                 rs.getInt(PRINTER_RECEIPT_TWICE),
                 rs.getBoolean(PRINTER_DETAIL_RECEIPT),
@@ -229,6 +236,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(COMMISSION_CONTROL),
                 rs.getBigDecimal(DEFAULT_STORE_COMMISSION),
                 rs.getInt(OFFLINE_PERIOD),
+                rs.getString(DEF_UNIT_LBL_SH),
+                rs.getString(DEF_UNIT_LBL_DESR),
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
                 rs.getInt(PRINTER_RECEIPT_TWICE),
                 rs.getBoolean(PRINTER_DETAIL_RECEIPT),
@@ -316,6 +325,9 @@ public class ShopInfoViewJdbcConverter {
         public final boolean commissionControl;
         public final BigDecimal defaultStoreCommission;
 
+        public final String defUnitLabelShortcut;
+        public final String defUnitLabelDescription;
+
         public final int offlinePeriodHours;
 
         public final boolean printerTwoCopiesReceipt;
@@ -390,6 +402,8 @@ public class ShopInfoViewJdbcConverter {
                         boolean commissionControl,
                         BigDecimal defaultStoreCommission,
                         int offlinePeriodHours,
+                        String defUnitLabelShortcut,
+                        String defUnitLabelDescription,
                         boolean printerTwoCopiesReceipt,
                         int printReceiptTwice,
                         boolean printDetailReceipt,
@@ -459,6 +473,10 @@ public class ShopInfoViewJdbcConverter {
             this.defaultStoreCommission = defaultStoreCommission;
 
             this.offlinePeriodHours = offlinePeriodHours;
+
+            this.defUnitLabelShortcut = defUnitLabelShortcut;
+            this.defUnitLabelDescription = defUnitLabelDescription;
+
 
             this.printerTwoCopiesReceipt = printerTwoCopiesReceipt;
 

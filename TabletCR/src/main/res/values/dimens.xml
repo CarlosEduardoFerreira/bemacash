@@ -183,4 +183,7 @@
 
     <dimen name="modifier_edit_text_font_size">18sp</dimen>
 
+    <dimen name="add_edit_unit_label_dlg_width">400dp</dimen>
+    <dimen name="add_edit_unit_label_dlg_heigth">300dp</dimen>
+
 </resources>

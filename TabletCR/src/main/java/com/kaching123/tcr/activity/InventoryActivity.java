@@ -284,6 +284,11 @@ public class InventoryActivity extends ScannerBaseActivity {
         PrinterAliasActivity.start(this);
     }
 
+    @OptionsItem
+    protected void actionManageUnitsSelected() {
+        UnitLabelActivity.start(this);
+    }
+
     private void initSearchView() {
         final SearchView searchView = (SearchView) searchItem.getActionView();
         assert searchView != null;

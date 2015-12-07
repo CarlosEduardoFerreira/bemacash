@@ -240,6 +240,11 @@ public interface ShopPref {
 
     String lastUncompletedSaleOrderGuid();
 
+    // Default Unit Label shortcut and description
+    String unitLabelDefaultShortcut();
+    String unitLabelDefaultDescription();
+
+
     boolean printerTwoCopiesReceipt();
 
     boolean NeedBillpaymentUpdated();

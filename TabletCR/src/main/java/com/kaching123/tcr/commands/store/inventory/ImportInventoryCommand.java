@@ -13,6 +13,7 @@ import com.kaching123.tcr.commands.store.inventory.AddItemCommand.AddItemResult;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.PriceType;
+import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.ItemFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
@@ -372,7 +373,29 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         }
         //create model
         String guid = (String) fields.get(FIELD_CODE);
-        String unitLabel = (String) fields.get(FIELD_UNITS_LABEL);
+        String oldUnitLabel = (String) fields.get(FIELD_UNITS_LABEL);
+        String unitLabelId = null;
+        UnitLabelModel unitLabelModel;
+        if (!TextUtils.isEmpty(oldUnitLabel)) { // if not empty
+            if (!UnitUtil.isContainInvalidChar(oldUnitLabel) || oldUnitLabel.length() > UnitUtil.MAX_LENGTH) { // if valid imported UL
+                unitLabelModel = UnitLabelModel.getByShortcut(getContext(), oldUnitLabel);
+
+                if (unitLabelModel != null) { // if found
+                    unitLabelId = unitLabelModel.guid;
+                    oldUnitLabel = null;
+                } else { // if not found
+                    fireInvalidData(description, productCode);
+                    Logger.d("[IMPORT] Can't found unit label: %s", oldUnitLabel);
+                }
+            } else { // if not valid imported UL
+                fireInvalidData(description, productCode);
+                Logger.d("[IMPORT] Unit label contains invalid chars: %s", oldUnitLabel);
+            }
+        } else { // if imported UL was empty
+            oldUnitLabel = TcrApplication.get().getShopInfo().defUnitLabelShortcut;
+        }
+
+
         BigDecimal quantity = (BigDecimal) fields.get(FIELD_QTY);
         if (quantity == null)
             quantity = BigDecimal.ZERO;
@@ -386,7 +409,8 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 priceType,
                 price,
                 quantity,
-                TextUtils.isEmpty(unitLabel) ? UnitUtil.PCS_LABEL : unitLabel,
+                oldUnitLabel,
+                unitLabelId,
                 (Boolean) fields.get(FIELD_STOCK_TRACKING),
                 true,
                 (Boolean) fields.get(FIELD_DISCOUNTABLE),

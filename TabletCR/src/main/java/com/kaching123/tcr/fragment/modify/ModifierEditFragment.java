@@ -352,6 +352,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                 model.childItemQty = parseBrandQtyInput(qtyEditbox.getText().toString());
             }
         } else {
+            //// FIXME: 07.12.2015 java.lang.ClassCastException: java.lang.Long cannot be cast to java.math.BigDecimal
             model.cost = parseBigDecimal(priceEditbox.getText().toString());
         }
         if (TextUtils.isEmpty(description.getText().toString())) {

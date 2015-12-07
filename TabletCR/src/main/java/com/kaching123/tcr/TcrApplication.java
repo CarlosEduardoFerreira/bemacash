@@ -225,6 +225,10 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.commissionControl().getOr(false),
                     _decimal(shopPref.defaultStoreCommission().getOr(null)),
                     shopPref.offlinePeriodHours().getOr(0),
+
+                    shopPref.unitLabelDefaultShortcut().getOr(null),
+                    shopPref.unitLabelDefaultDescription().getOr(null),
+
                     shopPref.printerTwoCopiesReceipt().getOr(false),
                     shopPref.printReceiptTwice().getOr(1),
                     shopPref.printDetailReceipt().getOr(false),

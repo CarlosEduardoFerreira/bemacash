@@ -2,6 +2,9 @@ package com.kaching123.tcr.util;
 
 import com.kaching123.tcr.model.PriceType;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by hamsterksu on 11.12.13.
  */
@@ -9,6 +12,12 @@ public final class UnitUtil {
 
     public static final String PCS_LABEL = "pcs";
     private static final String PCS_DOT = "pcs.";
+
+    private final static String REGEXP = "[^\\x20-\\x7E]|[\\x7C]";
+    private static Pattern pattern = Pattern.compile(REGEXP);
+
+    public final static int MAX_LENGTH = 6;
+
 
     private UnitUtil(){}
 
@@ -23,4 +32,11 @@ public final class UnitUtil {
     public static boolean isNotUnitPriceType(PriceType type) {
         return !PriceType.UNIT_PRICE.equals(type);
     }
+
+    public static boolean isContainInvalidChar(CharSequence shortcut) {
+        Matcher matcher = pattern.matcher(shortcut);
+        boolean find = matcher.find();
+        return find;
+    }
+
 }

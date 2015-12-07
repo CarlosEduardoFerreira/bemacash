@@ -37,7 +37,6 @@ android {
         main {
             res.srcDirs = findResDirs('src/main')
             java.srcDirs = ['src/main/java', 'build/source/apt/${variant.dirName}']
-            resources.srcDirs = ['src/main/resources', 'src/main/res-composer']
         }
     }
 

@@ -1,9 +1,12 @@
-package com.kaching123.tcr.model;
+package com.kaching123.tcr.model.converter;
 
 import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.google.common.base.Function;
+import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ModifierExModel;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.store.ShopSchema2;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -51,7 +54,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.SALE_PRICE))),
                     _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.TMP_AVAILABLE_QTY))),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UNITS_LABEL)),
-                    //shortCut,
+                    c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UNIT_LABEL_ID)),
                     c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.STOCK_TRACKING)) == 1,
                     c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.ACTIVE_STATUS)) == 1,
                     false,

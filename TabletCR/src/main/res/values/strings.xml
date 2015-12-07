@@ -397,6 +397,7 @@
     <string name="inventory_action_manage_departments">Manage Departments</string>
     <string name="inventory_action_manage_tax_groups">Manage Tax Groups</string>
     <string name="inventory_action_manage_printer_alias">Manage Printer Alias</string>
+    <string name="inventory_action_manage_units">Manage Unit Labels</string>
     <string name="inventory_action_export">Export</string>
     <string name="inventory_action_quickbooks_export">Export to Quickbooks</string>
     <string name="inventory_action_import">Import</string>
@@ -1752,5 +1753,30 @@
     <string name="composer_header_cost">Item cost</string>
     <string name="composer_header_cost_total">Total item cost</string>
     <string name="composer_footer_cost_total" formatted="false">Total: %s</string>
+
+    <string name="unit_label_description">Description</string>
+    <string name="unit_label_shortcut">Unit label</string>
+    <string name="unit_label_shortcut_dlg">Unit label (6 symbols)</string>
+    <string name="unit_label_action_create">Add new unit label</string>
+    <string name="unit_label_add_dialog_title">Add new unit label</string>
+    <string name="unit_label_create_dialog_title">Create unit label</string>
+    <string name="unit_label_edit_dialog_title">Edit unit label</string>
+    <string name="unit_label_remove_dialog_title">Remove unit label</string>
+    <string name="unit_label_shortcut_already_exists_dialog_title">Unit label shortcut already exists</string>
+    <string name="unit_label_remove_dialog_body">Please confirm unit label removal.</string>
+    <string name="unit_label_edit_completed">Unit label updated successfully.</string>
+    <string name="unit_label_add_completed">Unit label added successfully.</string>
+    <string name="unit_label_shortcut_already_exists">The unit label with the same shortcut already exists.</string>
+    <string name="unit_label_remove_used_msg">One or more unit labels are used in items.</string>
+    <string name="unit_label_contextual_edit">edit</string>
+    <string name="unit_label_contextual_delete">delete</string>
+
+    <plurals name="unit_labels_selected">
+        <item quantity="one">Selected %d label</item>
+        <item quantity="other">Selected %d labels</item>
+
+    </plurals>
+    <string name="units_activity_label">Unit labels</string>
+
 
 </resources>

@@ -50,6 +50,13 @@
         android:orderInCategory="@integer/menu_order_default"/>
 
     <item
+        android:id="@+id/action_manage_units"
+        android:title="@string/inventory_action_manage_units"
+        android:orderInCategory="@integer/menu_order_default"
+        android:showAsAction="never"/>
+
+
+    <item
         android:id="@+id/action_export"
         android:showAsAction="never"
         android:title="@string/inventory_action_export"

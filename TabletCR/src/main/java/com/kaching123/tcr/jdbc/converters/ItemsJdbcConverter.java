@@ -35,6 +35,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String PRICE_TYPE = "PRICE_TYPE";
     private static final String SALE_PRICE = "SALE_PRICE";
     private static final String UNITS_LABEL = "UNITS_LABEL";
+    private static final String UNITS_LABEL_ID = "UNIT_LABEL_ID";
     private static final String STOCK_TRACKING = "STOCK_TRACKING";
     private static final String ACTIVE_STATUS = "ACTIVE_STATUS";
     private static final String DISCOUNTABLE = "DISCOUNTABLE";
@@ -71,6 +72,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBigDecimal(SALE_PRICE),
                 BigDecimal.ZERO,
                 rs.getString(UNITS_LABEL),
+                rs.getString(UNITS_LABEL_ID),
                 rs.getBoolean(STOCK_TRACKING),
                 rs.getBoolean(ACTIVE_STATUS),
                 rs.getBoolean(DISCOUNTABLE),
@@ -109,6 +111,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBigDecimal(SALE_PRICE),
                 BigDecimal.ZERO,
                 rs.getString(UNITS_LABEL),
+                rs.getString(UNITS_LABEL_ID),
                 rs.getBoolean(STOCK_TRACKING),
                 rs.getBoolean(ACTIVE_STATUS),
                 rs.getBoolean(DISCOUNTABLE),

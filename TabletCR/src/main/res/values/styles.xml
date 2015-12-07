@@ -1023,6 +1023,12 @@
         <item name="android:paddingTop">32dp</item>
     </style>
 
+    <style name="StyledDialog.Layout.UnitLabelDialog">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+    </style>
+
     <style name="TempLogin" />
 
     <style name="TempLogin.Label">
