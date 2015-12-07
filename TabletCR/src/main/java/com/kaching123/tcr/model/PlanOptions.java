@@ -33,6 +33,12 @@ public class PlanOptions {
     @SerializedName("allow_z_report")
     public PlanOption zReportSettings; //ignore, web only
 
+    @SerializedName("inventory_limited")
+    public PlanOption isInventoryLimited;
+
+    @SerializedName("inventory_limited_amount")
+    public PlanOption inventoryLimit;
+
     public PlanOptions() {
     }
 
@@ -45,6 +51,8 @@ public class PlanOptions {
                 .exportInventory().put(exportInventory.isAvailable())
                 .employeeCustomPermitissions().put(employeeCustomPermission.isAvailable())
                 .scalesConnection().put(scalesConnection.isAvailable())
+                .isInventoryLimited().put(isInventoryLimited.isAvailable())
+                .inventoryLimit().put(inventoryLimit.getValue())
                 .apply();
     }
 
@@ -65,6 +73,19 @@ public class PlanOptions {
             }
         }
         return true;
+    }
+
+    private static boolean isLimited(RestrictionType restrictionType) {
+        TcrApplication app = TcrApplication.get();
+        if (app.isFreemium()) {
+            switch (restrictionType) {
+                case INVENTORY_LIMIT:
+                    return app.getShopPref().isInventoryLimited().get();
+                case EMPLOYEE_LIMIT:
+                    return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isExportInventoryAllowed() {
@@ -88,11 +109,19 @@ public class PlanOptions {
     }
 
     public static boolean isEmployeeLimited() {
-        return TcrApplication.get().isFreemium();
+        return isLimited(RestrictionType.EMPLOYEE_LIMIT);
+    }
+
+    public static boolean isInventoryLimited() {
+        return isLimited(RestrictionType.INVENTORY_LIMIT);
     }
 
     public static int getEmployeeLimit() {
         return TcrApplication.get().getShopPref().employeeLimit().get();
+    }
+
+    public static int getInventoryLimit() {
+        return TcrApplication.get().getShopPref().inventoryLimit().get();
     }
 
     public class PlanOption {
@@ -144,6 +173,7 @@ public class PlanOptions {
         MODIFIERS,
         CUSTOMER,
         EMPLOYEE_LIMIT,
+        INVENTORY_LIMIT,
         EXPORT_INVENTORY,
         EMPLOYEE_CUSTOM_PERMISSIONS,
         SCALE_CONNECTION

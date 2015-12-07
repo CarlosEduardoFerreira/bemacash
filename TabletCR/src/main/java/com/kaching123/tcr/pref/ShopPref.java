@@ -229,6 +229,7 @@ public interface ShopPref {
     String paxSerial();
 
     boolean isBlackstonePax();
+
     String paxUrl();
 
     int paxPort();
@@ -280,6 +281,7 @@ public interface ShopPref {
     boolean enableEreportItemSale();
 
     boolean DirecTvPRActivated();
+
     boolean IVULotoActivated();
 
     String ivulotoMID();
@@ -293,7 +295,7 @@ public interface ShopPref {
     long planId();
 
     /**
-     *  freemium settings
+     * freemium settings
      */
 
     boolean modifiersAvailable();
@@ -307,4 +309,8 @@ public interface ShopPref {
     boolean employeeCustomPermitissions();
 
     boolean scalesConnection();
+
+    boolean isInventoryLimited();
+
+    int inventoryLimit();
 }

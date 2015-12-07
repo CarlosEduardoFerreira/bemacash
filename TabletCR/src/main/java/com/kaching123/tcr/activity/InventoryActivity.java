@@ -255,7 +255,12 @@ public class InventoryActivity extends ScannerBaseActivity {
     }
 
     private boolean checkMaxItemsCount() {
-        return itemsCount < getApp().getShopInfo().maxItemsCount;
+        if (PlanOptions.isInventoryLimited()) {
+            return itemsCount < PlanOptions.getInventoryLimit();
+        } else {
+            return true;
+        }
+        //return itemsCount < getApp().getShopInfo().maxItemsCount;
     }
 
     @OptionsItem
