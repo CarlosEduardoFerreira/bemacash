@@ -247,7 +247,7 @@ public final class ZReportQuery extends XReportQuery {
         Logger.d("[ZREPORT]\tTax:          %s", tax);
         Logger.d("[ZREPORT]\t------------------");
 
-        BigDecimal totalTender = netSale;//.add(gratuity);//.add(tax)
+        BigDecimal totalTender = netSale.add(gratuity).add(tax);
         Logger.d("[ZREPORT]\tTotal Tender: %s", totalTender);
 
         Logger.d("[ZREPORT]\tCOGS:         %s", cogs);

@@ -270,6 +270,10 @@ public final class ContentValuesUtil {
         return def;
     }
 
+    public static String _unitLabelShortcut(Cursor c, int indexItemTable, int indexUnitLabelTable) {
+        return !TextUtils.isEmpty(c.getString(indexItemTable)) ? c.getString(indexItemTable) : c.getString(indexUnitLabelTable);
+    }
+
     /*public static <T> T _enum(T[] values, int order, T def) {
         if (order >= values.length || order < 0) {
             return def;

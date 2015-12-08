@@ -52,6 +52,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.PrinterAliasActivity.PrinterAliasConverter;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.adapter.SpinnerAdapter;
+import com.kaching123.tcr.adapter.UnitsLabelAdapter;
 import com.kaching123.tcr.commands.wireless.CollectUnitsCommand;
 import com.kaching123.tcr.commands.wireless.DropUnitsCommand;
 import com.kaching123.tcr.commands.wireless.DropUnitsCommand.UnitCallback;
@@ -80,8 +81,12 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.CodeType;
+import com.kaching123.tcr.model.UnitLabelModel;
+import com.kaching123.tcr.model.UnitLabelModelFactory;
 import com.kaching123.tcr.model.converter.ModifierFunction;
+import com.kaching123.tcr.model.converter.UnitLabelFunction;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
@@ -140,6 +145,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected static final Uri CATEGORY_URI = ShopProvider.getContentUri(CategoryTable.URI_CONTENT);
     protected static final Uri TAX_GROUP_URI = ShopProvider.getContentUri(TaxGroupTable.URI_CONTENT);
     protected static final Uri PRINTER_ALIAS_URI = ShopProvider.getContentUri(PrinterAliasTable.URI_CONTENT);
+    protected static final Uri UNIT_LABEL_URI = ShopProvider.contentUri(ShopStore.UnitLabelTable.URI_CONTENT);
 
     protected static final int DEPARTMENT_LOADER_ID = 0;
     protected static final int CATEGORY_LOADER_ID = 1;
@@ -250,6 +256,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected static final int TAG_RESULT = 12;
     protected static final int TAG_RESULT_COMPOSER = 13;
     protected static final int TAG_RESULT_MODIFIER = 14;
+
+    protected UnitsLabelAdapter unitsLabelAdapter;
+
 
     @OptionsItem
     protected void actionSerialSelected() {
@@ -1344,6 +1353,47 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             enableForSaleParams(isChecked);
         }
     }
+
+    private class UnitsLabelLoader implements LoaderCallbacks<List<UnitLabelModel>> {
+
+        @Override
+        public Loader<List<UnitLabelModel>> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder
+                    .forUri(UNIT_LABEL_URI)
+                    .orderBy(ShopStore.UnitLabelTable.SHORTCUT)
+                    .transform(new UnitLabelFunction())
+                    .build(BaseItemActivity.this);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<UnitLabelModel>> loader, List<UnitLabelModel> data) {
+            ArrayList<UnitLabelModel> models = new ArrayList<UnitLabelModel>(data.size() + 1);
+
+            String oldUnitLabel = model.unitsLabel;
+            if (!TextUtils.isEmpty(oldUnitLabel)) {
+                models.add(UnitLabelModelFactory.getSimpleModel(oldUnitLabel));
+            }
+
+            models.addAll(data);
+
+            unitsLabelAdapter.changeCursor(models);
+
+            if (!TextUtils.isEmpty(oldUnitLabel)) {
+                unitsLabel.setSelection(unitsLabelAdapter.getPositionByShortcut(oldUnitLabel));
+            } else if (!TextUtils.isEmpty(model.unitsLabelId)) {
+                unitsLabel.setSelection(unitsLabelAdapter.getPositionById(model.unitsLabelId));
+            } else {
+                // for new Items
+                unitsLabel.setSelection(unitsLabelAdapter.getPositionByShortcut(
+                        TcrApplication.get().getShopInfo().defUnitLabelShortcut));
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<UnitLabelModel>> loader) {
+        }
+    }
+
 
     private class UpcLoader implements LoaderCallbacks<Cursor> {
 

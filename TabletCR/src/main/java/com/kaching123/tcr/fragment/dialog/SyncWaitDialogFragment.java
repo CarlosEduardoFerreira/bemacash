@@ -154,6 +154,9 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(CashDrawerMovementTable.TABLE_NAME, R.string.sync_cashdrawer_movemennt);
 
         TABLE_NAMES.put(ShopStore.TaxGroupTable.TABLE_NAME, R.string.tax_group);
+        TABLE_NAMES.put(ShopStore.ModifierGroupTable.TABLE_NAME, R.string.sync_mod_groups_table);
+
+        TABLE_NAMES.put(ShopStore.UnitLabelTable.TABLE_NAME, R.string.sync_unit_label_table);
 
         TABLE_NAMES.put(RegisterTable.TABLE_NAME, R.string.register);
 
@@ -168,6 +171,9 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
 
         TABLE_NAMES.put(EmployeeTipsTable.TABLE_NAME, R.string.sync_employee_tips);
         TABLE_NAMES.put(EmployeeCommissionsTable.TABLE_NAME, R.string.sync_employee_commissions);
+
+        TABLE_NAMES.put(ShopStore.UnitLabelTable.TABLE_NAME, R.string.sync_oomposer);
+
     }
 
     public static void show(FragmentActivity activity, String msg) {

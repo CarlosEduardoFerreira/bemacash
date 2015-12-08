@@ -183,6 +183,11 @@
     <string name="sync_success_message">Data was synchronized</string>
     <string name="sync_error_title">Database syncing</string>
     <string name="sync_error_message">Synchronization data error</string>
+
+    <string name="sync_mod_groups_table">modification groups</string>
+    <string name="sync_unit_label_table">units label</string>
+    <string name="sync_oomposer">composition items</string>
+
     <string name="pref_sync_title">Database syncing</string>
     <string name="pref_sync_summary">Setup sync time</string>
     <string name="pref_sync_list_title">Database synchronization time</string>

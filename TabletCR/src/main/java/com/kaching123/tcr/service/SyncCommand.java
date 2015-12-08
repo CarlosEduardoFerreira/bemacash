@@ -60,6 +60,8 @@ import com.kaching123.tcr.store.ShopProviderExt;
 import com.kaching123.tcr.store.ShopProviderExt.Method;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ComposerTable;
+import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
+import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopStore.CashDrawerMovementTable;
@@ -142,8 +144,10 @@ public class SyncCommand implements Runnable {
             ItemTable.URI_CONTENT,
             ModifierTable.URI_CONTENT,
             ComposerTable.URI_CONTENT,
+            ModifierGroupTable.URI_CONTENT,
             ItemMovementTable.URI_CONTENT,
             UnitTable.URI_CONTENT,
+            UnitLabelTable.URI_CONTENT,
 
             SaleOrderTable.URI_CONTENT,
             SaleItemTable.URI_CONTENT,
@@ -347,6 +351,7 @@ public class SyncCommand implements Runnable {
 
                     Logger.e("SyncCommand.syncNowInner(): attempt #" + (FINALIZE_SYNC_RETRIES - retriesCount + 1) + "; serverLastTimestamp: " + serverLastTimestamp + "; minUpdateTime: " + minUpdateTime);
                     serverHasBeenUpdated = false;
+                    count += syncSingleTable2(service, api2, UnitLabelTable.TABLE_NAME, UnitLabelTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, RegisterTable.TABLE_NAME, RegisterTable.ID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, CustomerTable.TABLE_NAME, CustomerTable.GUID, employee, serverLastTimestamp);
@@ -365,6 +370,7 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, CategoryTable.TABLE_NAME, CategoryTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ItemTable.TABLE_NAME, ItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, ModifierGroupTable.TABLE_NAME, ModifierGroupTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ComposerTable.TABLE_NAME, ComposerTable.ID, employee, serverLastTimestamp);
 
                     //between iterations shouldn't be any gaps
@@ -629,6 +635,8 @@ public class SyncCommand implements Runnable {
             return false;
         if (!isTableEmpty(context, ModifierTable.URI_CONTENT, ModifierTable.MODIFIER_GUID))
             return false;
+        if (!isTableEmpty(context, ModifierGroupTable.URI_CONTENT, ModifierGroupTable.GUID))
+            return false;
         if (!isTableEmpty(context, ItemMovementTable.URI_CONTENT, ItemMovementTable.ITEM_GUID))
             return false;
         if (!isTableEmpty(context, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID))
@@ -740,6 +748,8 @@ public class SyncCommand implements Runnable {
             try {
                 checkIsLoadingOldOrders();
 
+                count += syncLocalSingleTable(service, ShopStore.UnitLabelTable.TABLE_NAME, UnitLabelTable.GUID);
+
                 count += syncLocalSingleTable(service, RegisterTable.TABLE_NAME, RegisterTable.ID);
                 count += syncLocalSingleTable(service, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID);
                 count += syncLocalSingleTable(service, CustomerTable.TABLE_NAME, CustomerTable.GUID);
@@ -759,6 +769,7 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, CategoryTable.TABLE_NAME, CategoryTable.GUID);
                 count += syncLocalSingleTable(service, ItemTable.TABLE_NAME, ItemTable.GUID);
                 count += syncLocalSingleTable(service, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID);
+                count += syncLocalSingleTable(service, ModifierGroupTable.TABLE_NAME, ModifierGroupTable.GUID);
                 count += syncLocalSingleTable(service, ComposerTable.TABLE_NAME, ComposerTable.ID);
                 count += syncLocalSingleTable(service, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID);
 
@@ -1692,8 +1703,10 @@ public class SyncCommand implements Runnable {
         DEPARTMENT(DepartmentTable.TABLE_NAME, true),
         CATEGORY(CategoryTable.TABLE_NAME, true),
         ITEM(ItemTable.TABLE_NAME, true),
-        COMPOSER(ComposerTable.TABLE_NAME, true),
+
+        COMPOSER(ShopStore.ComposerTable.TABLE_NAME, true),
         MODIFIER_GROUP(ShopStore.ModifierGroupTable.TABLE_NAME, true),
+        UNIT_LABEL(UnitLabelTable.TABLE_NAME, true),
         MODIFIER(ModifierTable.TABLE_NAME, true),
         ITEM_MOVEMENT(ItemMovementTable.TABLE_NAME, true),
         UNIT(UnitTable.TABLE_NAME, true),

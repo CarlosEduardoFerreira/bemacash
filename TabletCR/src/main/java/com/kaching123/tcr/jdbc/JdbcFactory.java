@@ -26,6 +26,7 @@ import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ShiftJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.TaxGroupJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.TipsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.UnitLabelJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.UnitsJdbcConverter;
 import com.kaching123.tcr.model.ActivationCarrierModel;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
@@ -56,7 +57,9 @@ import com.kaching123.tcr.model.ShiftModel;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
@@ -258,6 +261,11 @@ public class JdbcFactory {
         API_METHOD.put(EmployeeCommissionsTable.TABLE_NAME, "commissions");
         API_METHOD2.put(CommissionsModel.class, "commissions");
 
+        CONVERTERS.put(ShopStore.UnitLabelTable.TABLE_NAME, c = new UnitLabelJdbcConverter());
+        CONVERTERS2.put(UnitLabelModel.class, c);
+
+        API_METHOD.put(ShopStore.UnitLabelTable.TABLE_NAME, "unit_label");
+        API_METHOD2.put(UnitLabelModel.class, "unit_label");
     }
 
     public static JdbcConverter getConverter(String tableName) {

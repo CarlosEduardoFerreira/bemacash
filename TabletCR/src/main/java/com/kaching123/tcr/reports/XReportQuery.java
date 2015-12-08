@@ -57,8 +57,6 @@ import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
-/*import com.kaching123.tcr.store.ShopSchema2.XReportView2.CategoryTable;
-import com.kaching123.tcr.store.ShopSchema2.XReportView2.DepartmentTable;*/
 
 /**
  * Created by gdubina on 22.01.14.

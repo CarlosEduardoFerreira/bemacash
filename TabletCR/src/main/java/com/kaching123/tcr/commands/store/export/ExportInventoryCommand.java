@@ -11,6 +11,7 @@ import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.DepartmentTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.SaleOrderTable;
+import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore.ExportItemView;
 import com.kaching123.tcr.util.DateUtils;
 import com.telly.groundy.annotations.OnFailure;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
+import static com.kaching123.tcr.model.ContentValuesUtil._unitLabelShortcut;
 
 /**
  * Created by gdubina on 20/01/14.
@@ -51,6 +53,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                         DepartmentTable.TITLE,
                         CategoryTable.TITLE,
                         ItemTable.UNITS_LABEL,
+                        UnitLabelTable.SHORTCUT,
                         ItemTable.EAN_CODE,
                         ItemTable.PRODUCT_CODE,
                         ItemTable.SALE_PRICE,
@@ -73,7 +76,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
         columns.add(c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)));
         columns.add(c.getString(c.getColumnIndex(DepartmentTable.TITLE)));
         columns.add(c.getString(c.getColumnIndex(CategoryTable.TITLE)));
-        columns.add(c.getString(c.getColumnIndex(ItemTable.UNITS_LABEL)));
+        columns.add(_unitLabelShortcut(c, c.getColumnIndex(ItemTable.UNITS_LABEL), c.getColumnIndex(UnitLabelTable.SHORTCUT)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.EAN_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.SALE_PRICE)));
