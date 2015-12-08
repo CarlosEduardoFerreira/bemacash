@@ -59,6 +59,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
 import com.kaching123.tcr.store.ShopProviderExt.Method;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.ComposerTable;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopStore.CashDrawerMovementTable;
@@ -126,7 +127,6 @@ public class SyncCommand implements Runnable {
     public static final String EXTRA_SUCCESS = "success";
     public static final String EXTRA_SYNC_LOCKED = "sync_locked";
 
-    //fixme idyuzheva
     private static final String[] TABLES_URIS = new String[]{
             RegisterTable.URI_CONTENT,
             PrinterAliasTable.URI_CONTENT,
@@ -141,6 +141,7 @@ public class SyncCommand implements Runnable {
             CategoryTable.URI_CONTENT,
             ItemTable.URI_CONTENT,
             ModifierTable.URI_CONTENT,
+            ComposerTable.URI_CONTENT,
             ItemMovementTable.URI_CONTENT,
             UnitTable.URI_CONTENT,
 
@@ -364,7 +365,7 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, CategoryTable.TABLE_NAME, CategoryTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ItemTable.TABLE_NAME, ItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID, employee, serverLastTimestamp);
-                    //FIXME idyuzheva composer
+                    count += syncSingleTable2(service, api2, ComposerTable.TABLE_NAME, ComposerTable.ID, employee, serverLastTimestamp);
 
                     //between iterations shouldn't be any gaps
                     boolean firstIteration = retriesCount == FINALIZE_SYNC_RETRIES;
@@ -648,8 +649,8 @@ public class SyncCommand implements Runnable {
             return false;
         if (!isTableEmpty(context, UnitTable.TABLE_NAME, UnitTable.ID))
             return false;
-        //if (!isTableEmpty(context, ComposerTable.TABLE_NAME, ComposerTable.ID))//FIXME idyuzheva
-        //return false;
+        if (!isTableEmpty(context, ComposerTable.TABLE_NAME, ComposerTable.ID))
+            return false;
         return true;
     }
 
@@ -758,6 +759,7 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, CategoryTable.TABLE_NAME, CategoryTable.GUID);
                 count += syncLocalSingleTable(service, ItemTable.TABLE_NAME, ItemTable.GUID);
                 count += syncLocalSingleTable(service, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID);
+                count += syncLocalSingleTable(service, ComposerTable.TABLE_NAME, ComposerTable.ID);
                 count += syncLocalSingleTable(service, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID);
 
                 //sale
@@ -834,7 +836,7 @@ public class SyncCommand implements Runnable {
         }
 
         ArrayList<String> invalidOrderGuids = new ArrayList<String>(c.getCount());
-        while(c.moveToNext()) {
+        while (c.moveToNext()) {
             String orderGuid = c.getString(0);
             invalidOrderGuids.add(orderGuid);
         }
@@ -853,7 +855,7 @@ public class SyncCommand implements Runnable {
         int pos = 0;
         int count = 0;
         StringBuilder inBuilder = new StringBuilder();
-        for (String orderGuid: invalidOldActiveUnitOrders) {
+        for (String orderGuid : invalidOldActiveUnitOrders) {
             orderGuids.add(orderGuid);
 
             if (orderGuids.size() == MAX_QUERY_PARAMETERS_COUNT || pos++ == (invalidOldActiveUnitOrders.size() - 1)) {
@@ -1109,7 +1111,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.download(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -1121,7 +1123,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeUnitsRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.downloadUnitsLimited(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -1133,7 +1135,7 @@ public class SyncCommand implements Runnable {
 
     private GetPagedArrayResponse makeMovementsRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.downloadMovementGroups(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -1145,7 +1147,7 @@ public class SyncCommand implements Runnable {
 
     private GetArrayResponse makeOldActiveOrdersRequest(SyncApi2 api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.downloadOldActiveOrders(apiKey, credentials, entity);
             } catch (RetrofitError e) {
@@ -1157,7 +1159,7 @@ public class SyncCommand implements Runnable {
 
     private GetResponse makeShopInfoRequest(SyncApi2 api, String apiKey, JSONObject credentials) throws JSONException, SyncException {
         int retry = 0;
-        while(retry++ < 5) {
+        while (retry++ < 5) {
             try {
                 return api.downloadShopInfo(apiKey, credentials);
             } catch (RetrofitError e) {
@@ -1530,7 +1532,6 @@ public class SyncCommand implements Runnable {
         Table table = Table.getTable(tableName, !isChild);
 
 
-
         MaxUpdateTime mainMaxUpdateTime = getMaxTimeInner(context, table);
         MaxUpdateTime syncMaxUpdateTime = getMaxTimeSyncInner(syncOpenHelper, hasChildren, args);
         MaxUpdateTime maxUpdateTime = mainMaxUpdateTime;
@@ -1717,7 +1718,7 @@ public class SyncCommand implements Runnable {
         }
 
         public static Table getTable(String tableName, boolean isParent) {
-            for (Table table: Table.values()) {
+            for (Table table : Table.values()) {
                 if (table.tableName.equals(tableName) && table.isParent == isParent)
                     return table;
             }

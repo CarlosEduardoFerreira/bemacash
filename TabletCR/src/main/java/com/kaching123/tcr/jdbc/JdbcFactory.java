@@ -177,7 +177,6 @@ public class JdbcFactory {
         API_METHOD.put(UnitTable.TABLE_NAME, "units");
         API_METHOD2.put(Unit.class, "units");
 
-        //FIXME idyuzheva
         CONVERTERS.put(ComposerTable.TABLE_NAME, c = new ComposerJdbcConverter());
         CONVERTERS2.put(ComposerModel.class, c);
 

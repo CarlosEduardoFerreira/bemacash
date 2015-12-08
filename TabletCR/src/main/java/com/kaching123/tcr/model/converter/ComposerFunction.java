@@ -30,13 +30,11 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 c.getString(c.getColumnIndex(ItemHostTable.CODE)),
                 c.getString(c.getColumnIndex(ItemHostTable.EAN_CODE)),
                 c.getString(c.getColumnIndex(ItemHostTable.PRODUCT_CODE)),
-                //null,////FIXME idyuzheva _productType(c, c.getColumnIndex(ItemHostTable.PRODUCT_TYPE)), No imported or national product types
                 _priceType(c, c.getColumnIndex(ItemHostTable.PRICE_TYPE)),
                 ContentValuesUtilBase._decimal(c.getString(c.getColumnIndex(ItemHostTable.SALE_PRICE))),
                 ContentValuesUtilBase._decimalQty(c.getString(c.getColumnIndex(ItemHostTable.TMP_AVAILABLE_QTY))),
                 c.getString(c.getColumnIndex(ItemHostTable.UNITS_LABEL)),
-                //null,//FIXME idyuzheva c.getString(c.getColumnIndex(ItemHostTable.UNIT_LABEL_ID)),
-                //null, //FIXME idyuzheva
+                c.getString(c.getColumnIndex(ItemHostTable.UNIT_LABEL_ID)),
                 c.getInt(c.getColumnIndex(ItemHostTable.STOCK_TRACKING)) == 1,
                 c.getInt(c.getColumnIndex(ItemHostTable.ACTIVE_STATUS)) == 1,
                 false,
@@ -65,13 +63,12 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 false,
                 null);
 
-        /*//FIXME idyuzheva add Unit labels
         String shortCut;
         try {
             shortCut = c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.UnitLabelTable.SHORTCUT));
         } catch (IllegalArgumentException noItem) {
             shortCut = null;
-        }*/
+        }
         ItemExModel child = new ItemExModel(
                 c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.GUID)),
                 null,
@@ -79,12 +76,11 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.CODE)),
                 c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.EAN_CODE)),
                 c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.PRODUCT_CODE)),
-                //_productType(c, c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.PRODUCT_TYPE)),
                 _priceType(c, c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.PRICE_TYPE)),
                 ContentValuesUtilBase._decimal(c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.SALE_PRICE))),
                 ContentValuesUtilBase._decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.TMP_AVAILABLE_QTY))),
                 c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.UNITS_LABEL)),
-                //c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.UNIT_LABEL_ID)),
+                c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.UNIT_LABEL_ID)),
                 //shortCut,
                 c.getInt(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.STOCK_TRACKING)) == 1,
                 c.getInt(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.ACTIVE_STATUS)) == 1,
@@ -113,7 +109,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 null,
                 false,
                 null);
-        ;
+
         return new ComposerExModel(
                 c.getString(c.getColumnIndex(ComposerTable.ID)),
                 c.getString(c.getColumnIndex(ComposerTable.ITEM_HOST_ID)),

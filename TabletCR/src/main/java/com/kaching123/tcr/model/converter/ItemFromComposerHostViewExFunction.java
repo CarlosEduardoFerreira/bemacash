@@ -20,12 +20,11 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
             ItemHostTable.CODE,
             ItemHostTable.EAN_CODE,
             ItemHostTable.PRODUCT_CODE,
-            //ItemHostTable.PRODUCT_TYPE,
             ItemHostTable.PRICE_TYPE,
             ItemHostTable.SALE_PRICE,
             ItemHostTable.TMP_AVAILABLE_QTY,
             ItemHostTable.UNITS_LABEL,
-            //FIXME idyuzheva ItemHostTable.UNIT_LABEL_ID,
+            ItemHostTable.UNIT_LABEL_ID,
             ItemHostTable.STOCK_TRACKING,
             ItemHostTable.ACTIVE_STATUS,
             ItemHostTable.COST,
@@ -45,13 +44,12 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 c.getString(indexHolder.get(ItemHostTable.CODE)),
                 c.getString(indexHolder.get(ItemHostTable.EAN_CODE)),
                 c.getString(indexHolder.get(ItemHostTable.PRODUCT_CODE)),
-                //_productType(c, indexHolder.get(ItemHostTable.PRODUCT_TYPE)),
                 _priceType(c, indexHolder.get(ItemHostTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemHostTable.SALE_PRICE))),
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemHostTable.UNITS_LABEL)),
-                //FIXME idyuzheva c.getString(indexHolder.get(ItemHostTable.UNIT_LABEL_ID)),
-                //FIXME idyuzheva null,
+                c.getString(indexHolder.get(ItemHostTable.UNIT_LABEL_ID)),
+                //shortcut null,
                 c.getInt(indexHolder.get(ItemHostTable.STOCK_TRACKING)) == 1,
                 c.getInt(indexHolder.get(ItemHostTable.ACTIVE_STATUS)) == 1,
                 false,
@@ -78,17 +76,7 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 false,
                 null,
                 false,
-                null);/*
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                true,
-                null,
-                null,
-                null);*/
+                null);
     }
 
 

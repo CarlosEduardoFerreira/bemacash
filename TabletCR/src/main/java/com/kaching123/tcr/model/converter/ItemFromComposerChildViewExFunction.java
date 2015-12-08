@@ -21,12 +21,11 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
             ItemChildTable.CODE,
             ItemChildTable.EAN_CODE,
             ItemChildTable.PRODUCT_CODE,
-            //ItemChildTable.PRODUCT_TYPE,
             ItemChildTable.PRICE_TYPE,
             ItemChildTable.SALE_PRICE,
             ItemChildTable.TMP_AVAILABLE_QTY,
             ItemChildTable.UNITS_LABEL,
-            //FIXME idyuzheva add later ItemChildTable.UNIT_LABEL_ID,
+            ItemChildTable.UNIT_LABEL_ID,
             ItemChildTable.STOCK_TRACKING,
             ItemChildTable.ACTIVE_STATUS,
             ItemChildTable.COST,
@@ -39,12 +38,11 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
     public ItemExModel apply(Cursor c) {
         super.apply(c);
         String shortCut;
-        //FIXME idyuzheva
-        /*try {
+        try {
             shortCut = c.getString(indexHolder.get(ShopSchema2.ComposerView2.UnitLabelTable.SHORTCUT));
         } catch (IllegalArgumentException noItem) {
             shortCut = null;
-        }*/
+        }
 
         return new ItemExModel(
                 c.getString(indexHolder.get(ItemChildTable.GUID)),
@@ -53,12 +51,11 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 c.getString(indexHolder.get(ItemChildTable.CODE)),
                 c.getString(indexHolder.get(ItemChildTable.EAN_CODE)),
                 c.getString(indexHolder.get(ItemChildTable.PRODUCT_CODE)),
-                //_productType(c, indexHolder.get(ItemChildTable.PRODUCT_TYPE)),
                 _priceType(c, indexHolder.get(ItemChildTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemChildTable.SALE_PRICE))),
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemChildTable.UNITS_LABEL)),
-                //FIXME idyuzheva c.getString(indexHolder.get(ItemChildTable.UNIT_LABEL_ID)),
+                c.getString(indexHolder.get(ItemChildTable.UNIT_LABEL_ID)),
                 //shortCut,
                 c.getInt(indexHolder.get(ItemChildTable.STOCK_TRACKING)) == 1,
                 c.getInt(indexHolder.get(ItemChildTable.ACTIVE_STATUS)) == 1,
@@ -86,17 +83,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 false,
                 null,
                 false,
-                null);/*
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                true,
-                null,
-                null,
-                null);*/
+                null);
     }
 }
 
