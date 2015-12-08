@@ -54,6 +54,13 @@ public final class UiHelper {
         quantityIntegerFormat.setDecimalFormatSymbols(otherSymbols);
 
         integralIntegerFormat.setRoundingMode(RoundingMode.DOWN);
+
+        brandQrtyIntFormat.setDecimalFormatSymbols(symbols);
+        brandQrtyIntFormat.setParseBigDecimal(true);
+        brandQrtyIntFormat.setRoundingMode(RoundingMode.FLOOR);
+        brandQtyFormat.setDecimalFormatSymbols(symbols);
+        brandQtyFormat.setParseBigDecimal(true);
+        brandQtyFormat.setRoundingMode(RoundingMode.FLOOR);
     }
 
     private UiHelper() {

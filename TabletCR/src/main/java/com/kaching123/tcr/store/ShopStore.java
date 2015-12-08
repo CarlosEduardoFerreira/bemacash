@@ -1918,6 +1918,11 @@ public abstract class ShopStore {
         @Columns(ModifierTable.TITLE)
         @Join(type = Join.Type.LEFT, joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.MODIFIER_GUID, onTableAlias = TABLE_SALE_ORDER_ITEM_ADDON, onColumn = SaleAddonTable.ADDON_GUID)
         String TABLE_MODIFIER = "modifier_table";
+
+        //        String raw = "unit_label_id";
+        @Columns(UnitLabelTable.SHORTCUT)
+        @Join(type = Join.Type.LEFT, joinTable = UnitLabelTable.TABLE_NAME, joinColumn = UnitLabelTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.UNIT_LABEL_ID)
+        String TABLE_UNIT_LABEL = "unit_label_table";
     }
 
     @SimpleView(SaleOrderItemsViewFast.VIEW_NAME)
@@ -2055,6 +2060,14 @@ public abstract class ShopStore {
         @Columns(TaxGroupTable.TAX)
         @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID)
         String TABLE_TAX_GROUP = "tax_group_table";
+
+        @Columns({UnitLabelTable.SHORTCUT})
+        @Join(type = Join.Type.LEFT,
+                joinTable = UnitLabelTable.TABLE_NAME,
+                joinColumn = UnitLabelTable.GUID,
+                onTableAlias = TABLE_ITEM,
+                onColumn = ItemTable.UNIT_LABEL_ID)
+        String TABLE_UNIT_LABEL = "unit_label_table";
 
         @Columns(ComposerTable.ID)
         @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_HOST_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
@@ -2455,6 +2468,13 @@ public abstract class ShopStore {
         @Join(type = Join.Type.LEFT, joinTable = SaleOrderTable.TABLE_NAME, joinColumn = SaleOrderTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ORDER_GUID)
         String TABLE_SALE_ORDER = "sale_order_table";
 
+        @Columns({UnitLabelTable.SHORTCUT})
+        @Join(type = Join.Type.LEFT,
+                joinTable = UnitLabelTable.TABLE_NAME,
+                joinColumn = UnitLabelTable.GUID,
+                onTableAlias = TABLE_ITEM,
+                onColumn = ItemTable.UNIT_LABEL_ID)
+        String TABLE_UNIT_LABEL = "unit_label_table";
     }
 
     @SimpleView(SaleReportItemsView.VIEW_NAME)
