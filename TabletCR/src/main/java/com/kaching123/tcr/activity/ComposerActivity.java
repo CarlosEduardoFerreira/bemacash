@@ -8,12 +8,14 @@ import android.support.v4.app.Fragment;
 import android.widget.LinearLayout;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.fragment.composer.ComposerEditFragment;
 import com.kaching123.tcr.fragment.composer.ComposerItemListFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.store.composer.RemoveComposerCommand;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -27,7 +29,7 @@ import java.util.List;
  * Created by idyuzheva on 04.12.2015.
  */
 @EActivity(R.layout.composer_activity)
-public class ComposerActivity  extends ScannerBaseActivity implements ComposerItemListFragment.IComposerCallback {
+public class ComposerActivity extends ScannerBaseActivity implements ComposerItemListFragment.IComposerCallback {
 
     public static final String RESULT_OK = "RESULT_OK";
 
@@ -73,7 +75,7 @@ public class ComposerActivity  extends ScannerBaseActivity implements ComposerIt
         if (redirectBarcodeResult) {
             Fragment fragment = getSupportFragmentManager().getFragments().get(1);
             if (fragment != null && fragment instanceof BarcodeReceiver) {
-                BarcodeReceiver editFragment = (BarcodeReceiver)fragment;
+                BarcodeReceiver editFragment = (BarcodeReceiver) fragment;
                 editFragment.onBarcodeReceived(barcode);
             }
         } else {
@@ -96,7 +98,7 @@ public class ComposerActivity  extends ScannerBaseActivity implements ComposerIt
     private void addOrEdit(final ComposerExModel unit, List<ComposerExModel> composers, String serial) {
         redirectBarcodeResult = true;
 
-        /* //FIXME idyuzhevaComposerEditFragment.show(this, model.guid, unit, composers, new ComposerEditFragment.ComposerCallback() {
+        ComposerEditFragment.show(this, model.guid, unit, composers, new ComposerEditFragment.ComposerCallback() {
             @Override
             public void handleSuccess(ComposerModel parent) {
                 hide();
@@ -111,7 +113,7 @@ public class ComposerActivity  extends ScannerBaseActivity implements ComposerIt
 
             @Override
             public void handleError(String message) {
-                //FIXME idyuzheva AlertDialogFragment.showAlert(self(), R.string.item_activity_alert_composer_msg, message);
+                AlertDialogFragment.showAlert(self(), R.string.item_activity_alert_composer_msg, message);
                 showSnack(message);
             }
 
@@ -122,13 +124,13 @@ public class ComposerActivity  extends ScannerBaseActivity implements ComposerIt
             }
 
             private void hide() {
-                //FIXME idyuzheva ComposerEditFragment.hide(self());
+                ComposerEditFragment.hide(self());
             }
 
             private void snack() {
                 showSnack(unit == null ? getString(R.string.composer_add_success) : getString(R.string.composer_edit_success));
             }
-        });*/
+        });
     }
 
     @Override
@@ -148,7 +150,7 @@ public class ComposerActivity  extends ScannerBaseActivity implements ComposerIt
             return;
         }
 
-        /*FIXME idyuzheva RemoveComposerCommand.start(self(), units.remove(0), new RemoveComposerCommand.ComposerCallback() {
+        RemoveComposerCommand.start(self(), units.remove(0), new RemoveComposerCommand.ComposerCallback() {
             @Override
             protected void handleSuccess() {
                 onDelete(units);
@@ -160,6 +162,6 @@ public class ComposerActivity  extends ScannerBaseActivity implements ComposerIt
                 AlertDialogFragment.showAlert(self(), R.string.item_activity_alert_composer_msg, message);
                 showSnack(message);
             }
-        });*/
+        });
     }
 }

@@ -192,4 +192,10 @@ public class ItemModel implements Serializable, IValueModel {
 		return description;
 	}
 
+    public ContentValues toQtyValues() {
+        ContentValues values = new ContentValues();
+        values.put(ItemTable.TMP_AVAILABLE_QTY, _decimalQty(availableQty));
+        values.put(ItemTable.COST, _decimal(cost));
+        return values;
+    }
 }

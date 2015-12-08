@@ -12,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.rey.material.widget.SnackBar
+    <!--com.rey.material.widget.SnackBar
         android:id="@+id/snack"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="bottom"
-        android:visibility="gone" />
+        android:visibility="gone" /-->
 </LinearLayout>

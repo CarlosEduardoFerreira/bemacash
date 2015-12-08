@@ -3118,6 +3118,41 @@ public abstract class ShopStore {
         String TABLE_ITEM = "item_table";
     }
 
+    @RawQuery(RecalcQtyQuery.VIEW_NAME)
+    public interface RecalcQtyQuery {
+
+        String VIEW_NAME = "recalc_qty_item";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "recalc_qty_item";
+
+        String T1 = "T1";
+
+        String GROUP_BY = " GROUP BY ";
+
+        String ON = " ON ";
+
+        String AND = " AND ";
+        String FROM = " FROM ";
+        String SELECT = " SELECT ";
+        String JOIN = " JOIN ";
+
+        String coma = ",";
+
+        @SqlQuery
+        String QUERY = SELECT + ItemMovementTable.ITEM_GUID + coma + ItemMovementTable.ITEM_UPDATE_QTY_FLAG + coma + "SUM ( " + ItemMovementTable.QTY + " ) " +
+                FROM + ItemMovementTable.TABLE_NAME
+                + JOIN + "(" + SELECT + ItemTable.UPDATE_QTY_FLAG + FROM + ItemTable.TABLE_NAME + ") " + T1
+                + ON + ItemMovementTable.ITEM_UPDATE_QTY_FLAG + " = " + T1 + "." + ItemTable.UPDATE_QTY_FLAG + AND + ItemMovementTable.ITEM_GUID + " = ? "
+                + GROUP_BY + ItemMovementTable.ITEM_UPDATE_QTY_FLAG;
+
+        //// ****************************************            READABLE          ****************************************** //////
+//        SELECT ITEM_ID, sum(QTY), ITEM_UPDATE_QTY_FLAG FROM ITEM_MOVEMENT
+//                                                            join (SELECT ID, UPDATE_QTY_FLAG FROM ITEM) T1
+//        ON ITEM_UPDATE_QTY_FLAG = T1.UPDATE_QTY_FLAG  GROUP BY ITEM_UPDATE_QTY_FLAG
+        //// ****************************************            READABLE           ****************************************** //////
+    }
+
     /*@SimpleView(InventoryView.VIEW_NAME)
     public static interface InventoryView {
 

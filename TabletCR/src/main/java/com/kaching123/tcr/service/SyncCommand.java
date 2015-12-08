@@ -1677,7 +1677,7 @@ public class SyncCommand implements Runnable {
 
         abstract void onFinish();
     }
-    
+
     public enum Table {
         //NOTE: don't change order - stored as int in db
         REGISTER(RegisterTable.TABLE_NAME, true),
