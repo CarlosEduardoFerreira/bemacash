@@ -1677,8 +1677,7 @@ public class SyncCommand implements Runnable {
 
         abstract void onFinish();
     }
-
-    //fixme idyuzheva
+    
     public enum Table {
         //NOTE: don't change order - stored as int in db
         REGISTER(RegisterTable.TABLE_NAME, true),
@@ -1693,6 +1692,8 @@ public class SyncCommand implements Runnable {
         DEPARTMENT(DepartmentTable.TABLE_NAME, true),
         CATEGORY(CategoryTable.TABLE_NAME, true),
         ITEM(ItemTable.TABLE_NAME, true),
+        COMPOSER(ComposerTable.TABLE_NAME, true),
+        MODIFIER_GROUP(ShopStore.ModifierGroupTable.TABLE_NAME, true),
         MODIFIER(ModifierTable.TABLE_NAME, true),
         ITEM_MOVEMENT(ItemMovementTable.TABLE_NAME, true),
         UNIT(UnitTable.TABLE_NAME, true),
