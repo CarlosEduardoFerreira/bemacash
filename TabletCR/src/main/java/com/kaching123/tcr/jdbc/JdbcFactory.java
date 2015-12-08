@@ -5,6 +5,7 @@ import com.kaching123.tcr.jdbc.converters.BillPaymentDescriptionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CashDrawerMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CategoryJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CommissionsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ComposerJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CreditReceiptJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CustomerJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.DepartmentJdbcConverter;
@@ -31,6 +32,7 @@ import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CashDrawerMovementModel;
 import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.model.CommissionsModel;
+import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.CreditReceiptModel;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.DepartmentModel;
@@ -80,6 +82,7 @@ import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
+import com.kaching123.tcr.store.ShopStore.ComposerTable;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.util.HashMap;
@@ -173,6 +176,13 @@ public class JdbcFactory {
 
         API_METHOD.put(UnitTable.TABLE_NAME, "units");
         API_METHOD2.put(Unit.class, "units");
+
+        //FIXME idyuzheva
+        CONVERTERS.put(ComposerTable.TABLE_NAME, c = new ComposerJdbcConverter());
+        CONVERTERS2.put(ComposerModel.class, c);
+
+        API_METHOD.put(ComposerTable.TABLE_NAME, "composer");
+        API_METHOD2.put(ComposerModel.class, "composer");
 
         CONVERTERS.put(ShiftTable.TABLE_NAME, c = new ShiftJdbcConverter());
         CONVERTERS2.put(ShiftModel.class, c);

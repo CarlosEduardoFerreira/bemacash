@@ -2,11 +2,17 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -62,6 +68,13 @@ public class EditItemActivity extends BaseItemActivity {
         super.updateStockTrackingBlock(isChecked);
         recollect();
     }
+
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.action_composer);
+        menuItem.setIcon(buildCounterDrawable(countWithNoRestrickted, android.R.drawable.ic_dialog_dialer));
+        return super.onCreateOptionsMenu(menu);
+    }*/
 
     private void recollect() {
         if (model.isSerializable()) {
@@ -119,6 +132,7 @@ public class EditItemActivity extends BaseItemActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.action_serial).setVisible(model.isSerializable());
+        menu.findItem(R.id.action_composer).setVisible(!model.isSerializable() && !model.isAComposer);
         return true;
     }
 

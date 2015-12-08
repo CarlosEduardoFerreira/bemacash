@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-          package="com.kaching123.tcr"
-          android:versionCode="13"
-          android:versionName="1.03">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.kaching123.tcr"
+    android:versionCode="13"
+    android:versionName="1.03">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -10,6 +10,7 @@
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -22,6 +23,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
     <permission
         android:name="android.permission.HARDWARE_TEST"
         android:label="hardware/permlab_hardware_test"
@@ -30,30 +32,31 @@
     <application
         android:name=".TcrApplication_"
         android:allowBackup="true"
-        tools:replace="android:icon"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon">
         <activity
             android:name=".activity.UsbEventReceiverActivity"
-            android:theme="@style/Theme.Transparent"
-            android:noHistory="true"
             android:excludeFromRecents="true"
-            android:taskAffinity="com.example.taskAffinityUsbEventReceiver"
-            android:process=":UsbEventReceiverActivityProcess"
             android:exported="false"
-            >
+            android:noHistory="true"
+            android:process=":UsbEventReceiverActivityProcess"
+            android:taskAffinity="com.example.taskAffinityUsbEventReceiver"
+            android:theme="@style/Theme.Transparent">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
-            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/usb_device_filter" />
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/usb_device_filter" />
         </activity>
         <activity
             android:name=".activity.DashboardActivity_"
-            android:label="@string/dashboard_activity_label"
-            android:screenOrientation="sensorLandscape"
-            android:launchMode="singleTask"
             android:clearTaskOnLaunch="true"
+            android:label="@string/dashboard_activity_label"
+            android:launchMode="singleTask"
+            android:screenOrientation="sensorLandscape"
             android:stateNotNeeded="true"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -73,13 +76,13 @@
         <activity
             android:name=".activity.SettingsActivity_"
             android:label="@string/settings_activity_label"
-            android:theme="@style/AppTheme.Settings"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.Settings" />
         <activity
             android:name=".activity.InventoryActivity_"
             android:label="@string/inventory_activity_label"
-            android:theme="@style/AppTheme.DarkSpinner"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.DarkSpinner" />
 
         <activity
             android:name=".activity.EditItemActivity_"
@@ -92,10 +95,9 @@
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.ModifiersActivity_"
+            android:name=".activity.ComposerActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape" />
-
         <activity
             android:name=".activity.ModifierActivity_"
             android:label="@string/inventory_activity_label"
@@ -122,9 +124,9 @@
         <activity
             android:name=".activity.HistoryActivity_"
             android:label="@string/history_activity_label"
+            android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Holo.NoCapsTabText"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="sensorLandscape" />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.CategoriesActivity_"
             android:label="@string/inventory_activity_label"
@@ -163,8 +165,8 @@
         <activity
             android:name=".activity.EmployeeTimeAttendanceActivity_"
             android:label="@string/employees_attendance_activity_label"
-            android:theme="@style/AppTheme.Holo.NoCapsTabText"
             android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.Holo.NoCapsTabText"
             android:windowSoftInputMode="stateHidden" />
 
         <activity
@@ -186,8 +188,8 @@
         <activity
             android:name=".activity.ReportsActivity_"
             android:label="@string/reports_activity_label"
-            android:theme="@style/AppTheme.Holo.NoCapsTabText"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.Holo.NoCapsTabText" />
 
         <activity
             android:name=".activity.XReportActivity_"
@@ -205,8 +207,8 @@
         <activity
             android:name=".activity.CreditReceiptsActivity_"
             android:label="@string/credit_receipt_activity"
-            android:theme="@style/AppTheme.Holo.NoCapsTabText"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.Holo.NoCapsTabText" />
 
         <activity
             android:name=".activity.ActivationActivity_"
@@ -224,18 +226,18 @@
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.PrepaidActivity.PrepaidProcessorActivity_"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
         <activity
             android:name=".activity.PrepaidActivity.PrepaidLongDistanceActivity_"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
         <activity
             android:name=".activity.PrepaidActivity.PrepaidSunPassActivity_"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
         <service
             android:name="com.telly.groundy.GroundyService"
@@ -275,16 +277,15 @@
         <service
             android:name=".service.SerialPortScannerService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true"></service>
         <service
             android:name=".AutoUpdateService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
-        <service android:name=".service.ScaleService"
-                 android:enabled="true"
-                 android:exported="true"></service>
+            android:exported="true"></service>
+        <service
+            android:name=".service.ScaleService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

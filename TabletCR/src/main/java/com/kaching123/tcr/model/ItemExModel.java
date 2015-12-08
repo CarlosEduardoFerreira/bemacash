@@ -21,6 +21,9 @@ public class ItemExModel extends ItemModel {
     public BigDecimal tax;
 
     public String shortCut;
+    
+        public boolean isAComposisiton;
+    public boolean isAComposer;
 
     public ItemExModel(){
         super();
@@ -88,6 +91,23 @@ public class ItemExModel extends ItemModel {
         this.optionalCount = optionalCount;
         this.departmentGuid = departmentGuid;
         this.tax = tax;
+    }
+
+    /*public ItemExModel(String guid, String departmentId, String categoryId, String description, String code, String eanCode, PriceType priceType, BigDecimal price, BigDecimal qty, String unitsLabel, boolean isStockTracking, boolean isActiveStatus, boolean isDiscountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal cost, BigDecimal recommendeQty, int modifiersCount, int addonsCount, int optionalCount) {
+        super(guid, departmentId, categoryId, description, code, eanCode, priceType, price, qty, unitsLabel, isStockTracking, isActiveStatus, isDiscountable, discount, discountType, isTaxable, cost, recommendeQty);
+        this.modifiersCount = modifiersCount;
+        this.addonsCount = addonsCount;
+        this.optionalCount = optionalCount;
+    }*/
+
+    public ItemExModel setIsAComposisiton(boolean isAComposisiton) {
+        this.isAComposisiton = isAComposisiton;
+        return this;
+    }
+
+    public ItemExModel setIsAComposer(boolean isAComposer) {
+        this.isAComposer = isAComposer;
+        return this;
     }
 
     public boolean hasModificators() {

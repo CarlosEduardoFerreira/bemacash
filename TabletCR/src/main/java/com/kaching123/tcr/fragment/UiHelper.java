@@ -277,19 +277,18 @@ public final class UiHelper {
         }
     }
 
-    public static String concatFullname(String firstName, String lastName){
+    public static String concatFullname(String firstName, String lastName) {
         boolean firstEmpty = TextUtils.isEmpty(firstName);
         boolean lastEmpty = TextUtils.isEmpty(lastName);
 
-        if (firstEmpty && lastEmpty){
+        if (firstEmpty && lastEmpty) {
             return null;
-        } else if (firstEmpty){
+        } else if (firstEmpty) {
             return lastName;
-        } else if (lastEmpty){
+        } else if (lastEmpty) {
             return firstName;
         } else {
             return firstName + " " + lastName;
         }
     }
-
 }

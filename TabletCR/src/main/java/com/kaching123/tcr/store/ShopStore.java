@@ -233,8 +233,6 @@ public abstract class ShopStore {
         );
     }
 
-
-
     @Table(UnitTable.TABLE_NAME)
     @Indexes({
             @Index(name = "item", columns = UnitTable.ITEM_ID),
@@ -468,6 +466,7 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String CODE_TYPE = "code_type";
 
+        //FIXME idyuzheva
         @NotNull
         @Column(type = Type.INTEGER, defVal = "0")
         String ITEM_REF_TYPE = "item_ref_type";
@@ -2056,6 +2055,14 @@ public abstract class ShopStore {
         @Columns(TaxGroupTable.TAX)
         @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID)
         String TABLE_TAX_GROUP = "tax_group_table";
+
+        @Columns(ComposerTable.ID)
+        @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_HOST_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
+        String TABLE_CHILD_COMPOSER = "child_composer_table";
+
+        @Columns(ComposerTable.ID)
+        @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_CHILD_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
+        String TABLE_HOST_COMPOSER = "host_composer_table";
 
     }
 

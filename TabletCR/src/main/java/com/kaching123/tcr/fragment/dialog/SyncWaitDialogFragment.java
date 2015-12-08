@@ -36,6 +36,7 @@ import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.ShopStore.WirelessTable;
+import com.kaching123.tcr.store.ShopStore.ComposerTable;
 import com.kaching123.tcr.util.ReceiverWrapper;
 
 import org.androidannotations.annotations.EFragment;
@@ -137,6 +138,7 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(ItemTable.TABLE_NAME, R.string.sync_item);
         TABLE_NAMES.put(ModifierTable.TABLE_NAME, R.string.sync_modifier);
         TABLE_NAMES.put(ItemMovementTable.TABLE_NAME, R.string.sync_item_movement);
+        TABLE_NAMES.put(ComposerTable.TABLE_NAME, R.string.sync_item_composition); 
 
         TABLE_NAMES.put(SaleOrderTable.TABLE_NAME, R.string.sync_sale_order);
         TABLE_NAMES.put(SaleItemTable.TABLE_NAME, R.string.sync_sale_order_item);

@@ -7,6 +7,12 @@
         android:showAsAction="always"
         android:orderInCategory="@integer/menu_order_first"/>
     <item
+        android:icon="@android:drawable/ic_dialog_dialer"
+        android:id="@+id/action_composer"
+        android:title="@string/cashier_action_composer"
+        android:showAsAction="always"
+        android:orderInCategory="@integer/menu_order_default"/>
+    <item
         android:icon="@drawable/ic_action_delete"
         android:id="@+id/action_remove"
         android:title="@string/cashier_action_delete"

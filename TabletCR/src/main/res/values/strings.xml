@@ -1727,10 +1727,6 @@
     <string name="upload_notify_message_error_db_version_invalid">There\'s a newer version of BemaCash available. Please update to be eligible for upload!</string>
     <string name="upload_notify_message_error_db_version_failed">Failed to check BemaCash version. Please try again later</string>
 
-    <string name="contextual_action_default">Mark default</string>
-    <string name="wireless_contextual_action_edit">edit</string>
-    <string name="wireless_contextual_action_delete">delete</string>
-
     <string name="modifier_selection">Modifiers selected: %d</string>
     <string name="addon_selection">Add-ons selected: %d</string>
     <string name="optional_selection">No-options selected: %d</string>
@@ -1746,8 +1742,11 @@
     <string name="modifier_dialog_group_add_title">Add a modifier Group</string>
     <string name="modifier_dialog_group_edit_title">Modify modifier Group</string>
 
-    <string name="composer_dialog_text">Please determine the composer details</string>
     <string name="composer_dialog_item">Please choose a composer</string>
+    <string name="modifier_dialog_item">Specify an item</string>
+
+    <string name="composer_dialog_add_title">Add a composer</string>
+    <string name="composer_dialog_edit_title">Modify composer</string>
     <string name="composer_header_track">Track item inventory</string>
     <string name="composer_header_free">Restrict host quantity</string>
     <string name="composer_header_cost">Item cost</string>
@@ -1778,5 +1777,10 @@
     </plurals>
     <string name="units_activity_label">Unit labels</string>
 
+    <string name="contextual_action_default">Mark default</string>
+    <string name="wireless_contextual_action_edit">edit</string>
+    <string name="wireless_contextual_action_delete">delete</string>
+    <string name="composer_selections" formatted="false">Selected %s\'s composition items: %s</string>
+    <string name="composer_dialog_text">Please determine the composer details</string>
 
 </resources>

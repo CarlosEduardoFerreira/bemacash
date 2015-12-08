@@ -118,8 +118,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
-    //@OptionsMenuItem(R.id.action_composer) //fixme idyuzheva
-    //protected MenuItem composer;
+    @OptionsMenuItem(R.id.action_composer)
+    protected MenuItem composer;
 
     static {
         permissions.add(Permission.INVENTORY_MODULE);
@@ -248,6 +248,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     private boolean duplicateProductCode;
 
     protected static final int TAG_RESULT = 12;
+    protected static final int TAG_RESULT_COMPOSER = 13;
     protected static final int TAG_RESULT_MODIFIER = 14;
 
     @OptionsItem
@@ -257,6 +258,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         } else {
             Toast.makeText(this, R.string.cashier_action_serial_disabled, Toast.LENGTH_LONG).show();
         }
+    }
+
+    @OptionsItem
+    protected void actionComposerSelected() {
+        ComposerActivity.start(this, model, TAG_RESULT_COMPOSER);
     }
 
     @OnActivityResult(TAG_RESULT)
@@ -500,6 +506,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 return 0;
         }
     }
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         switch (i) {
@@ -1337,6 +1344,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             enableForSaleParams(isChecked);
         }
     }
+
     private class UpcLoader implements LoaderCallbacks<Cursor> {
 
         @Override

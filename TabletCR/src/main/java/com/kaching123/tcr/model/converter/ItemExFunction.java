@@ -6,6 +6,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
@@ -64,7 +65,9 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             ItemTable.SERIALIZABLE,
             ItemTable.CODE_TYPE,
             ItemTable.ELIGIBLE_FOR_COMMISSION,
-            ItemTable.COMMISSION
+            ItemTable.COMMISSION,
+            ShopSchema2.ItemExtView2.ChildComposerTable.ID,
+            ShopSchema2.ItemExtView2.HostComposerTable.ID
     };
 
     @Override
@@ -108,8 +111,9 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                 _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                _decimal(c, indexHolder.get(ItemTable.COMMISSION))
-        );
+                _decimal(c, indexHolder.get(ItemTable.COMMISSION)))
+                .setIsAComposer(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.HostComposerTable.ID)) != null)
+                .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null);
     }
 
     public static class Wrap implements Function<Cursor, Optional<ItemExModel>> {
