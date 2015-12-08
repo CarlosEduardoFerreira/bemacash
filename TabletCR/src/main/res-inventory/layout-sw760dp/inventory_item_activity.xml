@@ -173,14 +173,11 @@
                 </FrameLayout>
 
 
-                <EditText
-                    style="@style/EditItem.Table.Edittext"
-                    android:inputType="textImeMultiLine"
+                <Spinner
                     android:id="@+id/units_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="pcs" />
+                    android:layout_weight="1" />
 
 
             </TableRow>
@@ -744,7 +741,7 @@
             android:background="@drawable/inventory_title_line"
             android:layout_below="@id/monitoring_table"
             android:layout_marginTop="@dimen/edit_item_table_margin_top"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp" android:visibility="gone">
 
             <ImageView
                 android:layout_height="wrap_content"
@@ -765,7 +762,7 @@
             android:layout_height="fill_parent"
             android:scrollbars="none"
             android:layout_below="@id/modification_label"
-            android:layout_above="@id/button">
+            android:layout_above="@id/button" android:visibility="gone">
 
             <TableLayout
                 android:id="@+id/modifiers_table"

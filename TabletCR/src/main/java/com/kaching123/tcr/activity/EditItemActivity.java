@@ -161,7 +161,6 @@ public class EditItemActivity extends BaseItemActivity {
         description.setText(model.description);
         ean.setText(model.eanCode);
         productCode.setText(model.productCode);
-        unitsLabel.setText(model.unitsLabel);
         active.setChecked(model.isActiveStatus);
         serializationType.setSelection(getIndexForType(model.codeType));
 

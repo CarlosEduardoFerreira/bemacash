@@ -126,6 +126,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     @OptionsMenuItem(R.id.action_composer)
     protected MenuItem composer;
 
+    @OptionsMenuItem(R.id.action_modifier)
+    protected MenuItem modifier;
+
     static {
         permissions.add(Permission.INVENTORY_MODULE);
     }
@@ -154,6 +157,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected static final int UPC_LOADER_ID = 4;
     protected static final int PRINTER_ALIAS_LOADER_ID = 5;
     protected static final int PRODUCT_CODE_LOADER_ID = 6;
+    protected static final int UNITS_LABEL_LOADER = 7;
 
     @ViewById
     protected TableRow serializationHolder;
@@ -170,7 +174,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     @ViewById
     protected EditText productCode;
     @ViewById
-    protected EditText unitsLabel;
+   protected Spinner unitsLabel;
     @ViewById
     protected Spinner priceType;
     @ViewById
@@ -274,6 +278,16 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         ComposerActivity.start(this, model, TAG_RESULT_COMPOSER);
     }
 
+    @OptionsItem
+    protected void actionModifierSelected() {
+        if (!PlanOptions.isModifiersAllowed()) {
+            AlertDialogFragment.showAlert(BaseItemActivity.this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        } else {
+            ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
+        }
+
+    }
+
     @OnActivityResult(TAG_RESULT)
     protected void onResult(Intent data) {
         if (data == null) {
@@ -367,16 +381,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         getSupportLoaderManager().restartLoader(MODIFIERS_LOADER, null, new ModifierModelLoader());
 
-        unitsLabel.setOnEditorActionListener(new OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (EditorInfo.IME_ACTION_NEXT == actionId) {
-                    salesPrice.requestFocus();
-                    return true;
-                }
-                return false;
-            }
-        });
+        unitsLabelAdapter = new UnitsLabelAdapter(this);
+        unitsLabel.setAdapter(unitsLabelAdapter);
+
 
         buttonViewBlock.setVisibility(getApp().getShopInfo().viewType == ViewType.QUICK_SERVICE ? View.VISIBLE : View.GONE);
         buttonView.getBackground().setLevel(0);
@@ -387,6 +394,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         getSupportLoaderManager().initLoader(DEPARTMENT_LOADER_ID, null, this);
         getSupportLoaderManager().initLoader(TAX_GROUP_LOADER_ID, null, this);
         getSupportLoaderManager().initLoader(PRINTER_ALIAS_LOADER_ID, null, new PrinterAliasLoader());
+        getSupportLoaderManager().initLoader(UNITS_LABEL_LOADER, null, new UnitsLabelLoader());
 
         fillModifierLabels(0, 0, 0);
 
@@ -746,20 +754,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             }
         });
 
-        unitsLabel.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                changed = true;
-            }
-        });
         active.setOnCheckedChangeListener(checkedChangeListener);
         availableQty.addTextChangedListener(textChangeListener);
         minimumQty.addTextChangedListener(textChangeListener);
@@ -896,7 +890,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         model.productCode = this.productCode.getText().toString();
 
-        model.unitsLabel = this.unitsLabel.getText().toString();
+        model.unitsLabelId = ((UnitLabelModel) this.unitsLabel.getSelectedItem()).guid;
 
         model.priceType = ((PriceTypeHolder) this.priceType.getSelectedItem()).type;
 
@@ -992,24 +986,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             return false;
         }
 
-/*        if (this.taxGroup.getSelectedItem() == null && salableChBox.isChecked()) {
-            Toast.makeText(this, getString(R.string.item_activity_alert_tax_group_empty_error), Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (TextUtils.isEmpty(model.ncmTaxId) && (salableChBox.isChecked() || model.refType == ItemRefType.Reference)) {
-            Toast.makeText(this, getString(R.string.item_activity_alert_ncm_empty_error), Toast.LENGTH_SHORT).show();
-            return false;
-        }*/
-
-        if (TextUtils.isEmpty(unitsLabel.getText())) {
-            Toast.makeText(this, R.string.item_activity_alert_units_label_msg, Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (priceType.getSelectedItem().toString().equalsIgnoreCase("Unit Price") &&
-                !Arrays.asList(UNITS_LABEL).contains(unitsLabel.getText().toString().toUpperCase())) {
-            Toast.makeText(this, R.string.item_activity_alert_units_label_not_match_msg, Toast.LENGTH_SHORT).show();
-            return false;
-        }
         PriceType pt = ((PriceTypeHolder) priceType.getSelectedItem()).type;
         if (pt != PriceType.OPEN && salableChBox.isChecked()) {
             BigDecimal priceValue = parseBigDecimal(salesPrice.getText().toString(), null);

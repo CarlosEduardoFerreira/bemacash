@@ -13,6 +13,13 @@
         android:showAsAction="always"
         android:orderInCategory="@integer/menu_order_default"/>
     <item
+        android:icon="@drawable/edit_item_modifications"
+        android:id="@+id/action_modifier"
+        android:title="@string/cashier_action_modifier"
+        android:showAsAction="always"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
         android:icon="@drawable/ic_action_delete"
         android:id="@+id/action_remove"
         android:title="@string/cashier_action_delete"

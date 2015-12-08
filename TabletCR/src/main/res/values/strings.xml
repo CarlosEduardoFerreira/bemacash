@@ -237,6 +237,7 @@
     <string name="btn_login">Login</string>
     <string name="cashier_action_serial">Serial management</string>
     <string name="cashier_action_composer">Composition items management</string>
+    <string name="cashier_action_modifier">Modification items management</string>
     <string name="cashier_action_serial_disabled">This item is not serial.</string>
     <string name="cashier_msg_error_changing_price">Discount per item has already applied, to change open price you need to reset discount per item</string>
     <string name="cashier_msg_error_changing_discount">Order discount was already applied, to apply discount per item you need to reset order discount firstly</string>

@@ -34,7 +34,6 @@ public class AddItemActivity extends BaseItemActivity {
         if (!TextUtils.isEmpty(model.tmpBarcode)) {
             ItemCodeChooserAlertDialogFragment.show(AddItemActivity.this, filterBarcodes(model.tmpBarcode));
         }
-        unitsLabel.setText(UnitUtil.PCS_LABEL);
         updateStockTrackingBlock(false);
         setFieldsChangeListeners();
     }

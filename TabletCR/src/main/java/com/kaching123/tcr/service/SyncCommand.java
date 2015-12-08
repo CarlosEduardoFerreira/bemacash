@@ -1704,9 +1704,7 @@ public class SyncCommand implements Runnable {
         CATEGORY(CategoryTable.TABLE_NAME, true),
         ITEM(ItemTable.TABLE_NAME, true),
 
-        COMPOSER(ShopStore.ComposerTable.TABLE_NAME, true),
         MODIFIER_GROUP(ShopStore.ModifierGroupTable.TABLE_NAME, true),
-        UNIT_LABEL(UnitLabelTable.TABLE_NAME, true),
         MODIFIER(ModifierTable.TABLE_NAME, true),
         ITEM_MOVEMENT(ItemMovementTable.TABLE_NAME, true),
         UNIT(UnitTable.TABLE_NAME, true),
@@ -1721,7 +1719,9 @@ public class SyncCommand implements Runnable {
         CREDIT_RECEIPT(CreditReceiptTable.TABLE_NAME, true),
         EMPLOYEE_TIPS(EmployeeTipsTable.TABLE_NAME, true),
         REFUND_EMPLOYEE_TIPS(EmployeeTipsTable.TABLE_NAME, false),
-        EMPLOYEE_COMMISSIONS(EmployeeCommissionsTable.TABLE_NAME, true);
+        EMPLOYEE_COMMISSIONS(EmployeeCommissionsTable.TABLE_NAME, true),
+        COMPOSER(ShopStore.ComposerTable.TABLE_NAME, true),
+        UNIT_LABEL(ShopStore.UnitLabelTable.TABLE_NAME, true);
 
         public final String tableName;
         public final boolean isParent;
