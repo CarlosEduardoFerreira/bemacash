@@ -48,6 +48,11 @@ public final class UiHelper {
         priceFormat.setParseBigDecimal(true);
         priceFormat.setRoundingMode(RoundingMode.UNNECESSARY);
 
+        priceInputFormat.setDecimalFormatSymbols(symbols);
+        priceInputFormat.setRoundingMode(RoundingMode.UNNECESSARY);
+        priceInputFormat.setParseBigDecimal(true);
+
+
         percentFormat.setDecimalFormatSymbols(otherSymbols);
         integralIntegerFormat.setDecimalFormatSymbols(otherSymbols);
         quantityFormat.setDecimalFormatSymbols(otherSymbols);

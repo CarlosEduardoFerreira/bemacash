@@ -14,10 +14,10 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelListener;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
-import com.kaching123.tcr.model.converter.ModifierExFunction;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.converter.ModifierExFunction;
 import com.kaching123.tcr.store.ShopSchema2;
 
 import org.androidannotations.annotations.EFragment;
@@ -74,20 +74,25 @@ public class ModificationItemListFragment extends ModifierItemListFragment {
         menu.findItem(R.id.action_default).setVisible(shouldShowMarkDefault);
     }
 
+    private Fragment getGroupFragment() {
+        List<Fragment> fragmentsList = getFragmentManager().getFragments();
+        List<Fragment> childFragment = getChildFragmentManager().getFragments();
+        fragmentsList.addAll(childFragment);
+        if (!fragmentsList.isEmpty()) {
+            for (Fragment fr : fragmentsList) {
+                if (fr instanceof ModifierGroupItemFragment) {
+                    return fr;
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     protected void attachViews() {
         super.attachViews();
-        List<Fragment> fragmentsList = getFragmentManager().getFragments();
-        //List<Fragment> fragmentsList = getChildFragmentManager().getFragments();
-        if(fragmentsList !=null) {
-            for(Fragment fr:fragmentsList) {
-                if(fr instanceof ModifierGroupItemFragment){
-                    groupFragment = (ModifierGroupItemFragment) fr;
-                    break;
-                }
-            }
-            //groupFragment = (ModifierGroupItemFragment) fragmentsList.get(3);
-            if(groupFragment != null) {
+        groupFragment = (ModifierGroupItemFragment) getGroupFragment();
+        if (groupFragment != null) {
             groupFragment.setListener(new GroupCallback() {
 
                 @Override
@@ -107,7 +112,6 @@ public class ModificationItemListFragment extends ModifierItemListFragment {
                 }
             });
             groupFragment.setItemGuid(model.guid);
-            }
         } else {
             Logger.e("ModifierGroupItemFragment isn't in list");
         }
