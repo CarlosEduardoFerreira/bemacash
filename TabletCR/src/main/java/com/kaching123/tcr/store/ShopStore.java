@@ -400,7 +400,6 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String SALE_PRICE = "sale_price";
 
-        @NotNull
         @Column(type = Column.Type.TEXT)
         String UNITS_LABEL = "units_label";
 
@@ -2130,7 +2129,7 @@ public abstract class ShopStore {
     }
 
     @RawQuery(SearchItemWithModifierView.QUERY_NAME)
-    public static interface SearchItemWithModifierView {
+    public interface SearchItemWithModifierView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "search_item_with_modifier_view";

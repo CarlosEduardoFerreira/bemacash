@@ -921,6 +921,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.productCode = this.productCode.getText().toString();
 
         model.unitsLabelId = ((UnitLabelModel) this.unitsLabel.getSelectedItem()).guid;
+        if (!TextUtils.isEmpty(model.unitsLabelId) && !TextUtils.isEmpty(model.unitsLabel)) {
+            model.unitsLabel = null;
+        }
 
         model.priceType = ((PriceTypeHolder) this.priceType.getSelectedItem()).type;
 
