@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -105,6 +108,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
+import static com.kaching123.tcr.fragment.UiHelper.showBrandQty;
+import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showIntegralInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
@@ -245,6 +250,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     protected long lastBackPressedTime;
 
+    protected int countWithNoRestrickted;
+
     @Extra
     protected ItemExModel model;
 
@@ -263,6 +270,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     protected UnitsLabelAdapter unitsLabelAdapter;
 
+    protected int count;
 
     @OptionsItem
     protected void actionSerialSelected() {
@@ -838,7 +846,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     protected void updateStockTrackingBlock(boolean isChecked) {
-        availableQty.setEnabled(isChecked);
+        /*availableQty.setEnabled(isChecked);
         availableQtyBlock.setEnabled(isChecked);
         availableQtyPencil.setEnabled(isChecked);
         recommendedQty.setEnabled(isChecked);
@@ -852,7 +860,29 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             recommendedQty.setText(null);
             availableQty.setText(null);
             minimumQty.setText(null);
+        }*/
+
+        View [] views = {recommendedQty, minimumQty};
+        for (View view: views) {
+            view.setEnabled(isChecked);
         }
+
+        if (!isChecked) {
+            model.recommendedQty = null;
+            model.availableQty = null;
+            model.minimumQty = null;
+
+            recommendedQty.setText(null);
+            availableQty.setText(null);
+            minimumQty.setText(null);
+        } else {
+            if (count > 0) {
+                recollectComposerInfo();
+            }
+        }
+    }
+
+    protected void recollectComposerInfo() {
     }
 
     @Override
@@ -898,15 +928,18 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         model.printerAliasGuid = ((PrinterAliasModel) this.printerAlias.getSelectedItem()).guid;
 
+        //String qty = this.availableQty.getText().toString();
+        //model.availableQty = parseBigDecimal(qty, BigDecimal.ZERO);
 
-        String qty = this.availableQty.getText().toString();
-        model.availableQty = parseBigDecimal(qty, BigDecimal.ZERO);
+        //String minimumQty = this.minimumQty.getText().toString();
+        //model.minimumQty = parseBigDecimal(minimumQty, BigDecimal.ZERO);
 
-        String minimumQty = this.minimumQty.getText().toString();
-        model.minimumQty = parseBigDecimal(minimumQty, BigDecimal.ZERO);
+        //String recommendedQty = this.recommendedQty.getText().toString();
+        //model.recommendedQty = parseBigDecimal(recommendedQty, BigDecimal.ZERO);
 
-        String recommendedQty = this.recommendedQty.getText().toString();
-        model.recommendedQty = parseBigDecimal(recommendedQty, BigDecimal.ZERO);
+        model.availableQty = UiHelper.getDecimalValue(this.availableQty);
+        model.minimumQty = UiHelper.getDecimalValue(this.minimumQty);
+        model.recommendedQty = UiHelper.getDecimalValue(this.recommendedQty);
 
         model.isStockTracking = this.stockTrackingFlag.isChecked();
 
@@ -949,6 +982,33 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.serializable = model.codeType != null;
 
         model.commissionEligible = this.commissionsEligible.isChecked();
+    }
+
+    protected void setQuantities(BigDecimal qty) {
+        if (model == null) {
+            return;
+        }
+        if (isPcs()) {
+            if (qty != null) {
+                showBrandQtyInteger(availableQty, qty.setScale(0, BigDecimal.ROUND_FLOOR));
+            } else if (model.availableQty != null) {
+                showBrandQtyInteger(availableQty, model.availableQty.setScale(0, BigDecimal.ROUND_FLOOR));
+            }
+            if (model.minimumQty != null) {
+                showBrandQtyInteger(minimumQty, model.minimumQty.setScale(0, BigDecimal.ROUND_FLOOR));
+            }
+            if (model.recommendedQty != null) {
+                showBrandQtyInteger(recommendedQty, model.recommendedQty.setScale(0, BigDecimal.ROUND_FLOOR));
+            }
+        } else {
+            if (qty != null) {
+                showBrandQty(availableQty, qty.setScale(3, BigDecimal.ROUND_FLOOR));
+            } else if (model.availableQty != null) {
+                showBrandQty(availableQty, model.availableQty.setScale(3, BigDecimal.ROUND_FLOOR));
+            }
+            showBrandQty(minimumQty, model.minimumQty);
+            showBrandQty(recommendedQty, model.recommendedQty);
+        }
     }
 
     protected boolean validateForm() {
@@ -1454,7 +1514,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         }
     };
 
-    /*protected Drawable buildCounterDrawable(int count, int backgroundImageId) {
+    protected Drawable buildCounterDrawable(int count, int backgroundImageId) {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.badge, null);
         view.setBackgroundResource(backgroundImageId);
@@ -1478,6 +1538,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         view.setDrawingCacheEnabled(false);
 
         return new BitmapDrawable(getResources(), bitmap);
-    }*/
+    }
 
 }

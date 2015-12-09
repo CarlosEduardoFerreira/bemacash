@@ -43,7 +43,6 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
         } catch (IllegalArgumentException noItem) {
             shortCut = null;
         }
-
         return new ItemExModel(
                 c.getString(indexHolder.get(ItemChildTable.GUID)),
                 null,
@@ -56,7 +55,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemChildTable.UNITS_LABEL)),
                 c.getString(indexHolder.get(ItemChildTable.UNIT_LABEL_ID)),
-                //shortCut,
+                shortCut,
                 c.getInt(indexHolder.get(ItemChildTable.STOCK_TRACKING)) == 1,
                 c.getInt(indexHolder.get(ItemChildTable.ACTIVE_STATUS)) == 1,
                 false,

@@ -49,7 +49,7 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemHostTable.UNITS_LABEL)),
                 c.getString(indexHolder.get(ItemHostTable.UNIT_LABEL_ID)),
-                //shortcut null,
+                null,
                 c.getInt(indexHolder.get(ItemHostTable.STOCK_TRACKING)) == 1,
                 c.getInt(indexHolder.get(ItemHostTable.ACTIVE_STATUS)) == 1,
                 false,

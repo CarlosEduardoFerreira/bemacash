@@ -12,6 +12,7 @@ import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.UploadTask;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopStore.CashDrawerMovementTable;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
@@ -138,7 +139,8 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(ItemTable.TABLE_NAME, R.string.sync_item);
         TABLE_NAMES.put(ModifierTable.TABLE_NAME, R.string.sync_modifier);
         TABLE_NAMES.put(ItemMovementTable.TABLE_NAME, R.string.sync_item_movement);
-        TABLE_NAMES.put(ComposerTable.TABLE_NAME, R.string.sync_item_composition); 
+        TABLE_NAMES.put(ModifierGroupTable.TABLE_NAME, R.string.sync_units);
+        TABLE_NAMES.put(ComposerTable.TABLE_NAME, R.string.sync_item_composition);
 
         TABLE_NAMES.put(SaleOrderTable.TABLE_NAME, R.string.sync_sale_order);
         TABLE_NAMES.put(SaleItemTable.TABLE_NAME, R.string.sync_sale_order_item);

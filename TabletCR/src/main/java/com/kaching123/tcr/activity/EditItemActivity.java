@@ -16,21 +16,26 @@ import android.widget.TextView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
 import com.kaching123.tcr.commands.wireless.CollectUnitsCommand;
+import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.inventory.ItemCodeChooserAlertDialogFragment;
 import com.kaching123.tcr.fragment.wireless.UnitsEditFragment;
+import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.store.composer.RecalculateHostCompositionMetadataCommand;
 import com.kaching123.tcr.util.UnitUtil;
 
 import java.math.BigDecimal;
@@ -47,6 +52,10 @@ import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
 @OptionsMenu(R.menu.items_actions)
 public class EditItemActivity extends BaseItemActivity {
 
+    @InstanceState
+    protected boolean hasLoadedComposerInfo;
+
+    protected boolean ignoreMovementupdate;
 
     @AfterViews
     @Override
@@ -60,7 +69,15 @@ public class EditItemActivity extends BaseItemActivity {
         fillFields();
 
         Logger.d(String.format("[%s]%d", model.description, model.orderNum));
-//        recollect();
+
+        hasLoadedComposerInfo = true;
+        recollectComposerInfo();
+    }
+
+    @Override
+    protected void collectDataToModel(ItemModel model) {
+        super.collectDataToModel(model);
+        model.ignoreMovementupdate = ignoreMovementupdate;
     }
 
     @Override
@@ -69,12 +86,12 @@ public class EditItemActivity extends BaseItemActivity {
         recollect();
     }
 
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.action_composer);
         menuItem.setIcon(buildCounterDrawable(countWithNoRestrickted, android.R.drawable.ic_dialog_dialer));
         return super.onCreateOptionsMenu(menu);
-    }*/
+    }
 
     private void recollect() {
         if (model.isSerializable()) {
@@ -281,5 +298,56 @@ public class EditItemActivity extends BaseItemActivity {
 
     public static void start(Context context, ItemExModel model) {
         EditItemActivity_.intent(context).model(model).start();
+    }
+
+    protected void setQtyPencilVisibility() {
+        if (hasLoadedComposerInfo) {
+            //monitoringQntEditRow.setVisibility(model.codeType == null && count == 0 ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    @Override
+    protected void recollectComposerInfo() {
+        hasLoadedComposerInfo = false;
+        RecalculateHostCompositionMetadataCommand.start(this, model.guid, new RecalculateHostCompositionMetadataCommand.ComposerCallback() {
+
+            @Override
+            protected void handleSuccess(List<ComposerModel> unit, BigDecimal qty, BigDecimal cost) {
+                countWithNoRestrickted = unit.size();
+                count = 0;
+                invalidateOptionsMenu();
+                for (ComposerModel item : unit) {
+                    if (item.restricted) {
+                        count++;
+                    }
+                }
+                ignoreMovementupdate = count != 0;
+                if (countWithNoRestrickted > 0) {
+                    self().cost.setEnabled(false);
+                    self().cost.setText(UiHelper.valueOf(cost));
+                } else {
+                    self().cost.setEnabled(true);
+                }
+
+//                if (count > 0 || (countWithNoRestrickted > 0 && qty != null)) {
+//                    model.availableQty = qty;
+//                }
+                setQuantities(qty);
+                hasLoadedComposerInfo = true;
+                //setQtyPencilVisibility();
+            }
+
+            @Override
+            protected void handleError() {
+                count = 0;
+                hasLoadedComposerInfo = true;
+                //setQtyPencilVisibility();
+            }
+        });
+    }
+
+    @Override
+    protected EditItemActivity self() {
+        return EditItemActivity.this;
     }
 }

@@ -7,6 +7,7 @@ import com.google.common.base.Optional;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
@@ -39,6 +40,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             ItemTable.TMP_AVAILABLE_QTY,
             ItemTable.UNITS_LABEL,
             ItemTable.UNIT_LABEL_ID,
+            UnitLabelTable.SHORTCUT,
             ItemTable.STOCK_TRACKING,
             ItemTable.ACTIVE_STATUS,
             ItemTable.DISCOUNTABLE,
@@ -73,6 +75,12 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
     @Override
     public ItemExModel apply(Cursor c) {
         super.apply(c);
+        String shortCut;
+        try {
+            shortCut = c.getString(indexHolder.get(UnitLabelTable.SHORTCUT));
+        } catch (IllegalArgumentException noItem) {
+            shortCut = null;
+        }
         return new ItemExModel(
                 c.getString(indexHolder.get(ItemTable.GUID)),
                 c.getString(indexHolder.get(ItemTable.CATEGORY_ID)),
@@ -86,6 +94,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemTable.UNITS_LABEL)),
                 c.getString(c.getColumnIndex(ItemTable.UNIT_LABEL_ID)),
+                shortCut,
                 c.getInt(indexHolder.get(ItemTable.STOCK_TRACKING)) == 1,
                 c.getInt(indexHolder.get(ItemTable.ACTIVE_STATUS)) == 1,
                 c.getInt(indexHolder.get(ItemTable.DISCOUNTABLE)) == 1,

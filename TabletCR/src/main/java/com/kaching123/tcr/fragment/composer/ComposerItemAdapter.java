@@ -21,12 +21,12 @@ public class ComposerItemAdapter extends ObjectsCursorAdapter<ComposerExModel> {
 
     @Override
     protected View newView(int position, ViewGroup parent) {
-        return null;//FIXME idyuzheva ComposerItemView_.build(getContext());
+        return ComposerItemView_.build(getContext());
     }
 
     @Override
     protected View bindView(View convertView, int position, final ComposerExModel item) {
-        ComposerItemView itemView = null;//FIXME idyuzheva (ComposerItemView_) convertView;
+        ComposerItemView itemView = (ComposerItemView_) convertView;
         ItemExModel model = item.getChildItem();
         itemView.bind(item.tracked,
                 item.restricted,
@@ -35,7 +35,7 @@ public class ComposerItemAdapter extends ObjectsCursorAdapter<ComposerExModel> {
                 item.qty,
                 model == null ? BigDecimal.ZERO : model.availableQty,
                 item.getChildItem().cost,
-                null, //model == null, FIXME idyuzheva ? item.guid : model.shortCut,
+                model == null ? item.guid : model.shortCut,
                 item.getChildItem().cost.multiply(item.qty),
                 model.priceType);
         return convertView;

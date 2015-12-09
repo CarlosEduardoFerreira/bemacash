@@ -4,6 +4,8 @@ package com.kaching123.tcr.model;
  * Created by gdubina on 19/11/13.
  */
 
+import android.text.TextUtils;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -21,11 +23,11 @@ public class ItemExModel extends ItemModel {
     public BigDecimal tax;
 
     public String shortCut;
-    
-        public boolean isAComposisiton;
+
+    public boolean isAComposisiton;
     public boolean isAComposer;
 
-    public ItemExModel(){
+    public ItemExModel() {
         super();
         this.modifiersCount = 0;
         this.addonsCount = 0;
@@ -43,6 +45,7 @@ public class ItemExModel extends ItemModel {
                        BigDecimal availableQty,
                        String unitsLabel,
                        String unitsLabelId,
+                       String shortCut,
                        boolean isStockTracking,
                        boolean isActiveStatus,
                        boolean isDiscountable,
@@ -91,6 +94,11 @@ public class ItemExModel extends ItemModel {
         this.optionalCount = optionalCount;
         this.departmentGuid = departmentGuid;
         this.tax = tax;
+        if (TextUtils.isEmpty(unitsLabelId)) {
+            this.shortCut = unitsLabel;
+        } else {
+            this.shortCut = shortCut;
+        }
     }
 
     /*public ItemExModel(String guid, String departmentId, String categoryId, String description, String code, String eanCode, PriceType priceType, BigDecimal price, BigDecimal qty, String unitsLabel, boolean isStockTracking, boolean isActiveStatus, boolean isDiscountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal cost, BigDecimal recommendeQty, int modifiersCount, int addonsCount, int optionalCount) {
@@ -119,6 +127,6 @@ public class ItemExModel extends ItemModel {
     }
 
     public boolean isSerializable() {
-       return serializable && codeType != null;
+        return serializable && codeType != null;
     }
 }

@@ -42,6 +42,7 @@ public class QuickModifyFragment extends BaseItemModifiersFragment {
     private final static int LOADER_ID = 4;
     private final Uri URI_ITEMS = ShopProvider.getContentUri(ItemExtView.URI_CONTENT);
 
+
     private static final String[] PROJECTION = new String[]{
             ItemTable.SALE_PRICE,
             ItemTable.DESCRIPTION,

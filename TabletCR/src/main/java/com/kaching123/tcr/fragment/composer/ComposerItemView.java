@@ -88,7 +88,6 @@ public class ComposerItemView extends FrameLayout {
         this.code.setText(code);
         this.unitQtyLabel.setText(label);
         this.itemQtyLabel.setText(label);
-
     }
 
 }

@@ -41,6 +41,7 @@ public class CategoryItemViewModel extends ItemExModel{
                 qty,
                 unitsLabel,
                 unitsLabelId,
+                null,
                 isStockTracking, isActiveStatus,
                 isDiscountable,
                 isSalable,

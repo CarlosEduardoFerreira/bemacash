@@ -33,7 +33,6 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
         String defaultGuid = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemHostTable.DEFAULT_MODIFIER_GUID));
 
 
-
         ItemExModel child;
         ModifierGroupModel group;
         boolean isDefault;
@@ -49,12 +48,12 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.CODE)),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.EAN_CODE)),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.PRODUCT_CODE)),
-                    //_productType(c, c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.PRODUCT_TYPE)),
                     _priceType(c, c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.PRICE_TYPE)),
                     _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.SALE_PRICE))),
                     _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.TMP_AVAILABLE_QTY))),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UNITS_LABEL)),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UNIT_LABEL_ID)),
+                    shortCut,
                     c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.STOCK_TRACKING)) == 1,
                     c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.ACTIVE_STATUS)) == 1,
                     false,

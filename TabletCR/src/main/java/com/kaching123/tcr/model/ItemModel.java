@@ -56,6 +56,8 @@ public class ItemModel implements Serializable, IValueModel {
     public BigDecimal commission;
     public boolean isSalable;
 
+    public boolean ignoreMovementupdate;
+
     public ItemModel(){
         this.guid = UUID.randomUUID().toString();
     }
