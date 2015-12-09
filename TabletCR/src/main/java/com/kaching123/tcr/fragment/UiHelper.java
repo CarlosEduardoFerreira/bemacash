@@ -14,6 +14,8 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.Locale;
 
+import static com.kaching123.tcr.util.CalculationUtil.negativeQty;
+
 /**
  * Created by gdubina on 06/11/13.
  */
@@ -21,7 +23,7 @@ public final class UiHelper {
 
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private static final DecimalFormat integerFormat = new DecimalFormat("0.##");
-    private static final DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
+    private static final DecimalFormat priceFormat = new DecimalFormat("0.00");
     private static final DecimalFormat percentFormat = new DecimalFormat("0.##");
     private static final DecimalFormat integralIntegerFormat = new DecimalFormat("0");
     private static final DecimalFormat quantityFormat = new DecimalFormat("0.000");
@@ -94,6 +96,7 @@ public final class UiHelper {
             return def;
         }
     }
+
     public static BigDecimal parseBrandDecimalInput(String text) {
         BigDecimal value = BigDecimal.ZERO;
         try {
@@ -103,6 +106,7 @@ public final class UiHelper {
         }
         return value;
     }
+
     public static void showBrandQty(TextView textView, BigDecimal price) {
         if (textView == null) {
             return;
@@ -113,6 +117,7 @@ public final class UiHelper {
             textView.setText(brandQtyFormat.format(price));
         }
     }
+
     public static void showBrandQtyInteger(TextView textView, BigDecimal price) {
         if (textView == null) {
             return;
@@ -121,6 +126,19 @@ public final class UiHelper {
             textView.setText(null);
         } else {
             textView.setText(brandQrtyIntFormat.format(price));
+        }
+    }
+
+    public static BigDecimal getDecimalValue(TextView editText) {
+        String text = editText.getText().toString().replaceAll("\\.", "").replaceAll(",", ".");
+        try {
+            if (text.endsWith("-")) {
+                return negativeQty(new BigDecimal(text.substring(0, text.length() - 1)));
+            } else {
+                return new BigDecimal(text);
+            }
+        } catch (Exception e) {
+            return BigDecimal.ZERO;
         }
     }
 
@@ -186,7 +204,6 @@ public final class UiHelper {
         }
         return brandQrtyIntFormat.format(qty);
     }
-
 
 
     public static void showAddonPrice(TextView textView, BigDecimal price) {
