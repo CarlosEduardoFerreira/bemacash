@@ -769,7 +769,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:src="@drawable/edit_item_modifications"/>
+                android:src="@drawable/edit_item_modifications_grey"/>
 
             <TextView
                 android:layout_width="wrap_content"

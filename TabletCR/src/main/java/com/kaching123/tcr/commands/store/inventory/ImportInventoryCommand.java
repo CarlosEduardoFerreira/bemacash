@@ -371,11 +371,37 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             }
             categories.put(categoryName, categoryGuid);
         }
-        //create model
-        String guid = (String) fields.get(FIELD_CODE);
+
+        // Read Unit Label
         String oldUnitLabel = (String) fields.get(FIELD_UNITS_LABEL);
         String unitLabelId = null;
         UnitLabelModel unitLabelModel;
+        if (!TextUtils.isEmpty(oldUnitLabel)) { // if not empty
+            if (!UnitUtil.isContainInvalidChar(oldUnitLabel) || oldUnitLabel.length() > UnitUtil.MAX_LENGTH) { // if valid imported UL
+                unitLabelModel = UnitLabelModel.getByShortcut(getContext(), oldUnitLabel);
+
+                if (unitLabelModel != null) { // if found
+                    unitLabelId = unitLabelModel.guid;
+                    oldUnitLabel = null;
+                } else { // if not found
+                    fireInvalidData(description, productCode);
+                    Logger.d("[IMPORT] Can't found unit label: %s", oldUnitLabel);
+                }
+            } else { // if not valid imported UL
+                fireInvalidData(description, productCode);
+                Logger.d("[IMPORT] Unit label contains invalid chars: %s", oldUnitLabel);
+            }
+        } else { // if imported UL was empty
+            oldUnitLabel = TcrApplication.get().getShopInfo().defUnitLabelShortcut;
+        }
+
+
+
+        //create model
+        String guid = (String) fields.get(FIELD_CODE);
+        if (guid == null) {
+            guid = UUID.randomUUID().toString();
+        }
         if (!TextUtils.isEmpty(oldUnitLabel)) { // if not empty
             if (!UnitUtil.isContainInvalidChar(oldUnitLabel) || oldUnitLabel.length() > UnitUtil.MAX_LENGTH) { // if valid imported UL
                 unitLabelModel = UnitLabelModel.getByShortcut(getContext(), oldUnitLabel);

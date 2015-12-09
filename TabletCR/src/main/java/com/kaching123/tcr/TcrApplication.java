@@ -563,6 +563,8 @@ public class TcrApplication extends MultiDexApplication {
                 .commissionControl().put(info.commissionControl)
                 .defaultStoreCommission().put(_decimal(info.defaultStoreCommission))
                 .offlinePeriodHours().put(info.offlinePeriodHours)
+                .unitLabelDefaultShortcut().put(info.defUnitLabelShortcut)
+                .unitLabelDefaultDescription().put(info.defUnitLabelDescription)
                 .printerTwoCopiesReceipt().put(info.printerTwoCopiesReceipt)
                 .printDetailReceipt().put(info.printDetailReceipt)
                 .printReceiptTwice().put(info.printReceiptTwice)

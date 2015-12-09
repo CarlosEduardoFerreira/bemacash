@@ -188,7 +188,8 @@ public final class UiHelper {
         if (price == null) {
             textView.setText(null);
         } else {
-            textView.setText(priceFormat.format(price));
+            String formattedPrice = priceFormat.format(price);
+            textView.setText(formattedPrice);
         }
     }
 

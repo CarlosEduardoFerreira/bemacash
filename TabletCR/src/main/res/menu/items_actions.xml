@@ -13,7 +13,7 @@
         android:showAsAction="always"
         android:orderInCategory="@integer/menu_order_default"/>
     <item
-        android:icon="@drawable/edit_item_modifications"
+        android:icon="@drawable/edit_item_modifications_white"
         android:id="@+id/action_modifier"
         android:title="@string/cashier_action_modifier"
         android:showAsAction="always"
