@@ -28,6 +28,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -179,7 +180,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     @ViewById
     protected EditText productCode;
     @ViewById
-   protected Spinner unitsLabel;
+    protected Spinner unitsLabel;
+    @ViewById
+    protected Button unitsButton;
     @ViewById
     protected Spinner priceType;
     @ViewById
@@ -630,6 +633,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             if (saveItem())
                 addModifierClicked(ModifierType.OPTIONAL);
         }
+    }
+
+    @Click(R.id.units_button)
+    protected void unitsButtonClicked() {
+        UnitLabelActivity.start(this);
     }
 
     @Click

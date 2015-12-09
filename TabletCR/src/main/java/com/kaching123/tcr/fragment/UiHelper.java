@@ -93,7 +93,11 @@ public final class UiHelper {
         try {
             return new BigDecimal(str);
         } catch (Exception e) {
-            return def;
+            try {
+                return new BigDecimal(str.replaceAll(",", "."));
+            } catch (Exception e2) {
+                return def;
+            }
         }
     }
 
