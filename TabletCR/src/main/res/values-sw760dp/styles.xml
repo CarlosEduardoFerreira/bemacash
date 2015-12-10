@@ -337,7 +337,7 @@
         <item name="windowBackground">@drawable/popup_window</item>
         <item name="dialogBackground">@drawable/popup_repeat_bg</item>
 
-        <item name="titleTextColor">@color/dlg_title_color</item>
+        <item name="sdlTitleTextColor">@color/dlg_title_color</item>
         <item name="titleSeparatorColor">@color/dlg_title_color</item>
         <item name="buttonSeparatorColor">@color/dlg_btn_separator_color</item>
         <item name="buttonTextColor">@color/dlg_btn_text_color</item>

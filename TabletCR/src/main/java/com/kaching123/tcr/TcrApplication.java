@@ -1,9 +1,11 @@
 package com.kaching123.tcr;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.provider.Settings.Secure;
+import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -144,6 +146,12 @@ public class TcrApplication extends MultiDexApplication {
 
         lazyInstantiateShopPref();
         initPref();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     public synchronized SyncOpenHelper getSyncOpenHelper() {

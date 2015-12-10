@@ -10,7 +10,6 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.widget.CompoundButton;
@@ -89,12 +88,12 @@ public class CustomSwitch extends CompoundButton {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Switch, defStyle, 0);
         this.textLeft = a.getText(R.styleable.Switch_textLeft);
         this.textRight = a.getText(R.styleable.Switch_textRight);
-        this.switchMinWidth = a.getDimensionPixelSize(R.styleable.Switch_switchMinWidth, 250);
+        this.switchMinWidth = a.getDimensionPixelSize(R.styleable.Switch_customSwitchMinWidth, 250);
         this.textColorUnChecked = a.getColor(R.styleable.Switch_colorUnChecked, Color.WHITE);
         this.textColorChecked = a.getColor(R.styleable.Switch_colorChecked, Color.WHITE);
         this.drawableBackground = a.getDrawable(R.styleable.Switch_backgroundDrawable);
         this.drawableSwitch = a.getDrawable(R.styleable.Switch_switchDrawable);
-        this.switchPadding = a.getDimensionPixelSize(R.styleable.Switch_switchPadding, 32);
+        this.switchPadding = a.getDimensionPixelSize(R.styleable.Switch_customSwitchPadding, 32);
         this.innerPadding = a.getDimensionPixelSize(R.styleable.Switch_innerPadding, 20);
         this.setChecked(a.getBoolean(R.styleable.Switch_isChecked, false));
         this.setTypeface(null, Typeface.BOLD);
@@ -220,7 +219,8 @@ public class CustomSwitch extends CompoundButton {
      * @return The layout
      */
     private Layout makeLayout(CharSequence text) {
-        return new StaticLayout(text, this.getPaint(), (int) FloatMath.ceil(Layout.getDesiredWidth(text, this.getPaint())), Layout.Alignment.ALIGN_NORMAL, 1f, 0, true);
+        return new StaticLayout(text, this.getPaint(), (int) Math.ceil(Layout.getDesiredWidth(text, this.getPaint())),
+                Layout.Alignment.ALIGN_NORMAL, 1f, 0, true);
     }
 
     @Override

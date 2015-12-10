@@ -10,7 +10,7 @@
 	<declare-styleable name="DialogStyle">
         <attr name="windowBackground" format="reference" />
 		<attr name="dialogBackground" format="reference" />
-		<attr name="titleTextColor" format="color|reference" />
+		<attr name="sdlTitleTextColor" format="color|reference" />
 		<attr name="titleSeparatorColor" format="color|reference" />
 		<attr name="messageTextColor" format="color|reference" />
 		<attr name="buttonTextColor" format="color|reference" />

@@ -16,6 +16,7 @@ import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.store.composer.RemoveComposerCommand;
+import com.kaching123.tcr.util.SnackUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
