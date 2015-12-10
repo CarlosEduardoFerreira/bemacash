@@ -17,6 +17,7 @@ import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.store.composer.RemoveComposerCommand;
 import com.kaching123.tcr.util.SnackUtils;
+import com.rey.material.widget.SnackBar;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -46,8 +47,8 @@ public class ComposerActivity extends ScannerBaseActivity implements ComposerIte
     @FragmentById
     protected ComposerItemListFragment listFragment;
 
-    //FIXME idyuzheva @ViewById
-    //FIXME idyuzheva protected SnackBar snack;
+    @ViewById
+    protected SnackBar snack;
 
     protected boolean redirectBarcodeResult;
 
@@ -68,7 +69,7 @@ public class ComposerActivity extends ScannerBaseActivity implements ComposerIte
     }
 
     private void showSnack(String msg) {
-        //SnackUtils.showSnackClose(snack, self(), msg);
+        SnackUtils.showSnackClose(snack, self(), msg);
     }
 
     @Override
