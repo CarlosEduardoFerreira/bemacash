@@ -446,6 +446,7 @@
     <string name="item_activity_hide_item_dialog_title">Delete item</string>
     <string name="item_activity_hide_item_dialog_message">Are you sure you want to delete item?</string>
     <string name="item_activity_alert_description_msg">Name is empty!</string>
+    <string name="item_activity_alert_unit_label">Label Unit is empty!</string>
     <string name="item_activity_alert_category_msg">Category is empty!</string>
     <string name="item_activity_alert_ean_msg" formatted="false">Ean should be %d to %d symbols!</string>
     <string name="item_activity_alert_ean_error" formatted="false">EAN\\UPC Code should be numeric and can\'t be more than %d digits</string>

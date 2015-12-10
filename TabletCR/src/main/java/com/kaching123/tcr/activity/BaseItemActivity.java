@@ -928,7 +928,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         model.productCode = this.productCode.getText().toString();
 
+
         model.unitsLabelId = ((UnitLabelModel) this.unitsLabel.getSelectedItem()).guid;
+
         if (!TextUtils.isEmpty(model.unitsLabelId) && !TextUtils.isEmpty(model.unitsLabel)) {
             model.unitsLabel = null;
         }
@@ -1093,6 +1095,12 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 return false;
             }
         }
+
+        if (unitsLabel.getAdapter().isEmpty()) {
+            Toast.makeText(this, R.string.item_activity_alert_unit_label, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
 
         return true;
     }
@@ -1423,6 +1431,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
             models.addAll(data);
 
+            if(models.isEmpty()) {
+                models.add(UnitLabelModelFactory.getSimpleModel(TcrApplication.get().getShopInfo().defUnitLabelShortcut));
+            }
+
             unitsLabelAdapter.changeCursor(models);
 
             if (!TextUtils.isEmpty(oldUnitLabel)) {
@@ -1438,6 +1450,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         @Override
         public void onLoaderReset(Loader<List<UnitLabelModel>> loader) {
+            unitsLabelAdapter.changeCursor(null);
         }
     }
 
