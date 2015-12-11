@@ -1055,8 +1055,8 @@
     <string name="zreport_refunds">Refunds:</string>
 
     <string name="zreport_drops_payouts">Transaction Total:</string>
-    <string name="zreport_drops">Cash Drops:</string>
-    <string name="zreport_payouts">Cash Buys:</string>
+    <string name="zreport_drops">Drops:</string>
+    <string name="zreport_payouts">Payouts:</string>
 
     <string name="zreport_ebt_cash">EBT Cash:</string>
     <string name="zreport_ebt_foodstamp">EBT Foodstamp:</string>
