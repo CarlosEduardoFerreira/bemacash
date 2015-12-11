@@ -54,6 +54,9 @@
     <dimen name="modify_container_padding">6dp</dimen>
     <dimen name="modify_container_margin_left">12dp</dimen>
     <dimen name="modify_container_space">16dp</dimen>
+    <dimen name="modify_container_margin">10dp</dimen>
+    <dimen name="modify_dialog_max_width">1000dp</dimen>
+
     <dimen name="modify_button_width">82dp</dimen>
     <dimen name="modify_button_height">84dp</dimen>
     <dimen name="modify_button_price_zone_height">18dp</dimen>

@@ -179,6 +179,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.75" />
                 <Button
+                    style="@style/LocalizableButton.Green"
+                    android:background="@drawable/save_btn_bg"
+
                     android:id="@+id/units_button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

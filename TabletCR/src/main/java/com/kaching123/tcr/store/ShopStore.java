@@ -2052,9 +2052,13 @@ public abstract class ShopStore {
         @Join(joinTable = DepartmentTable.TABLE_NAME, joinColumn = DepartmentTable.GUID, onTableAlias = TABLE_CATEGORY, onColumn = CategoryTable.DEPARTMENT_GUID)
         String TABLE_DEPARTMENT = "department_table";
 
-        @Columns({ModifierTable.TYPE, ModifierTable.MODIFIER_GUID, ModifierTable.EXTRA_COST})
         @Join(type = Join.Type.LEFT, joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.ITEM_GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
         String TABLE_MODIFIER = "modifier_table";
+
+        @Columns({ItemTable.SALE_PRICE})
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_MODIFIER, onColumn = ModifierTable.ITEM_SUB_GUID)
+        String TABLE_MODIFIER_SUB_ITEM = "modifier_sub_item_table";
+
 
         @Columns(TaxGroupTable.TAX)
         @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID)
@@ -2795,7 +2799,8 @@ public abstract class ShopStore {
         String TABLE_SALE_ADDON = "sale_addon_table";
 
         @Columns(ModifierTable.TITLE)
-        @Join(joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.MODIFIER_GUID, onTableAlias = TABLE_SALE_ADDON, onColumn = SaleAddonTable.ADDON_GUID)
+        @Join(joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.MODIFIER_GUID,
+                onTableAlias = TABLE_SALE_ADDON, onColumn = SaleAddonTable.ADDON_GUID)
         String TABLE_MODIFIER = "modifier_table";
     }
 

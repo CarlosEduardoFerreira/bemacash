@@ -1,29 +1,33 @@
 package com.kaching123.tcr.component;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.jess.ui.TwoWayGridView;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-import com.jess.ui.TwoWayGridView;
-import com.kaching123.tcr.R;
-import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand.SelectedModifierExModel;
+import com.kaching123.tcr.model.ModifierExModel;
+import com.kaching123.tcr.model.ModifierType;
 
 /**
  * Created by vkompaniets on 18.11.13.
  */
 @EViewGroup(R.layout.modify_container)
-public abstract class BaseAddonContainerView<T> extends FrameLayout {
+public class ModifierContainerView extends FrameLayout {
 
     @ViewById
     protected TwoWayGridView buttonGrid;
@@ -31,59 +35,86 @@ public abstract class BaseAddonContainerView<T> extends FrameLayout {
     @ViewById
     protected TextView containerTitle;
 
+    private ButtonsAdapter adapter;
 
-    private ButtonsAdapter<T> adapter;
-
-    public BaseAddonContainerView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public ModifierContainerView(Context context) {
+        super(context);
     }
 
     @AfterViews
     protected void init() {
-        adapter = createAdapter();
+        Logger.e("BaseAddonContainerView: init()");
+        adapter = new ButtonsAdapter(getContext());
         buttonGrid.setAdapter(adapter);
     }
 
-    protected abstract ButtonsAdapter<T> createAdapter();
-
-    public void setContainerTitle(String title) {
-        this.containerTitle.setText(title);
+    public void setList(List<SelectedModifierExModel> modifiers) {
+        cleanSelection();
+        ModifierExModel firstItem = modifiers.get(0);
+        setContainerTitle(firstItem);
+        adapter.singleMode = firstItem.type == ModifierType.MODIFIER;
+        for (SelectedModifierExModel modifier : modifiers){
+            if (modifier.isSelected){
+                adapter.selectedItems.add(modifier.getGuid());
+            }
+        }
+        adapter.changeCursor(modifiers);
     }
 
-    public void setList(List<T> modifiers) {
-        adapter.changeCursor(modifiers);
+    public ModifierType getModifierType(){
+        if (adapter.getCount() == 0){
+            return null;
+        }
+
+        return adapter.getItem(0).type;
     }
 
     public Set<String> getSelectedItems() {
         return adapter.selectedItems;
     }
 
-    protected void setSelectedItems(List<String> selectedItemGuids) {
-        adapter.setSelectedItems(selectedItemGuids);
+    private void setContainerTitle(ModifierExModel firstItem) {
+        if (firstItem.getGroup() != null){
+            this.containerTitle.setText(firstItem.getGroup().title);
+            return;
+        }
+
+        int title = 0;
+        switch (firstItem.type){
+            case MODIFIER:
+                title = R.string.dlg_section_modifier;
+                break;
+            case ADDON:
+                title = R.string.dlg_section_addon;
+                break;
+            case OPTIONAL:
+                title = R.string.dlg_section_optional;
+                break;
+        }
+        this.containerTitle.setText(title);
     }
 
     public void cleanSelection() {
         adapter.setSelectedItems(null);
     }
 
-    public abstract class ButtonsAdapter<T> extends ObjectsCursorAdapter<T> {
+    public class ButtonsAdapter extends ObjectsCursorAdapter<SelectedModifierExModel> {
 
-        private HashSet<String> selectedItems = new HashSet<String>();
+        private HashSet<String> selectedItems = new HashSet<>();
 
         private boolean singleMode;
 
-        public ButtonsAdapter(Context context, boolean singleMode) {
+        public ButtonsAdapter(Context context) {
             super(context);
-            this.singleMode = singleMode;
         }
 
         @Override
-        public void changeCursor(List<T> list) {
+        public void changeCursor(List<SelectedModifierExModel> list) {
             super.changeCursor(list);
             if (singleMode && list != null && !list.isEmpty() && selectedItems.isEmpty()) {
-                selectedItems.add(getGuid(list.get(0)));
-                onChangeSelections();
+                selectedItems.add(list.get(0).getGuid());
             }
+            onChangeSelections();
         }
 
         private void onChangeSelections() {
@@ -100,18 +131,11 @@ public abstract class BaseAddonContainerView<T> extends FrameLayout {
         }
 
         @Override
-        protected View bindView(View convertView, int position, T item) {
+        protected View bindView(View convertView, int position, SelectedModifierExModel item) {
             ModifyButton view = (ModifyButton) convertView;
-            BigDecimal price = getCost(item);
-            view.bind(getGuid(item), getTitle(item), price, selectedItems.contains(getGuid(item)));
+            view.bind(item.getGuid(), item.getTitle(), item.getCost(), selectedItems.contains(item.getGuid()));
             return view;
         }
-
-        protected abstract String getTitle(T item);
-
-        protected abstract BigDecimal getCost(T item);
-
-        protected abstract String getGuid(T item);
 
         private void setSelectedItems(List<String> selectedItemGuids) {
             selectedItems.clear();

@@ -377,7 +377,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 */
 
             @Override
-            public void onEditItemModifiers(String saleItemGuid, String itemGuid, int modifiersCount, int addonsCount, int optionalsCount, String selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
+            public void onEditItemModifiers(String saleItemGuid,
+                                            String itemGuid,
+                                            int modifiersCount, int addonsCount, int optionalsCount,
+                                            String selectedModifierGuid,
+                                            ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
                 showEditItemModifiers(
                         saleItemGuid,
                         itemGuid,
@@ -480,7 +484,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         return (!TextUtils.isEmpty(getApp().getShopPref().usbMSRName().get()));
     }
 
-    protected abstract void showEditItemModifiers(final String saleItemGuid, final String itemGuid, final int modifiersCount, final int addonsCount, final int optionalsCount, final String selectedModifierGuid, final ArrayList<String> selectedAddonsGuids, final ArrayList<String> selectedOptionalsGuids);
+    protected abstract void showEditItemModifiers(final String saleItemGuid,
+                                                  final String itemGuid, final int modifiersCount,
+                                                  final int addonsCount, final int optionalsCount,
+                                                  final String selectedModifierGuid,
+                                                  final ArrayList<String> selectedAddonsGuids,
+                                                  final ArrayList<String> selectedOptionalsGuids);
 
     protected void tryToAddItem(final ItemExModel model) {
         tryToAddItem(model, null, null, null);

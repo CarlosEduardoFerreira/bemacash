@@ -270,9 +270,19 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
         return batch;
     }
 
-    public static void start(Context context, String saleItemGuid, String itemGuid, String modifierGiud, ArrayList<String> addonsGuid, ArrayList<String> optionalGuid, BaseUpdateSaleItemAddonsCallback callback) {
+    public static void start(Context context,
+                             String saleItemGuid,
+                             String itemGuid,
+                             String modifierGiud,
+                             ArrayList<String> addonsGuid,
+                             ArrayList<String> optionalGuid,
+                             BaseUpdateSaleItemAddonsCallback callback) {
         create(UpdateSaleItemAddonsCommand.class)
-                .args(args(saleItemGuid, itemGuid, modifierGiud, addonsGuid, optionalGuid))
+                .args(args(saleItemGuid,
+                        itemGuid,
+                        modifierGiud,
+                        addonsGuid,
+                        optionalGuid))
                 .callback(callback)
                 .queueUsing(context);
     }
@@ -289,7 +299,12 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
         return args(saleItemGuid, itemGuid, modifierGiud, addonsGuid, optionalGuid, false);
     }
 
-    public static Bundle args(String saleItemGuid, String itemGuid, String modifierGiud, ArrayList<String> addonsGuid, ArrayList<String> optionalGuid, boolean skipNotify) {
+    public static Bundle args(String saleItemGuid,
+                              String itemGuid,
+                              String modifierGiud,
+                              ArrayList<String> addonsGuid,
+                              ArrayList<String> optionalGuid,
+                              boolean skipNotify) {
         Bundle bundle = new Bundle();
         bundle.putString(ARG_SALE_ITEM_GUID, saleItemGuid);
         bundle.putString(ARG_ITEM_GUID, itemGuid);

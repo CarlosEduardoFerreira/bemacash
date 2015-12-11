@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
@@ -54,17 +55,16 @@ public class QuickModifyFragment extends BaseItemModifiersFragment {
 
     @ViewById
     protected TextView itemTitle;
-
     @ViewById
     protected TextView itemPriceValue;
     @ViewById
     protected TextView itemPriceLabel;
-
     @ViewById
     protected TextView totalPriceValue;
-
     @ViewById
     protected TextView addonsPriceValue;
+    @ViewById
+    protected RelativeLayout modifyContainer;
 
     private OnCancelListener cancelListener;
 
@@ -73,7 +73,7 @@ public class QuickModifyFragment extends BaseItemModifiersFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getView().findViewById(R.id.modify_container).setOnClickListener(null);
+        modifyContainer.setOnClickListener(null);
         modifiers.setOnChangeListener(new OnChangeListener() {
             @Override
             public void onChanged() {
@@ -84,10 +84,11 @@ public class QuickModifyFragment extends BaseItemModifiersFragment {
         addons.setOnChangeListener(new OnChangeListener() {
             @Override
             public void onChanged() {
-                selectedAddonsGuids = new ArrayList<String>(addons.getSelectedItems());
+                selectedAddonsGuids = new ArrayList<>(addons.getSelectedItems());
                 restartLoader();
             }
         });
+
         updateInfoPanel(null);
     }
 
@@ -99,7 +100,7 @@ public class QuickModifyFragment extends BaseItemModifiersFragment {
 
     private void restartLoader(){
         if(TextUtils.isEmpty(itemGuid)){
-           return;
+            return;
         }
         getLoaderManager().restartLoader(LOADER_ID, null, itemLoader);
     }
@@ -217,7 +218,7 @@ public class QuickModifyFragment extends BaseItemModifiersFragment {
 
 
                 if(TextUtils.isEmpty(modifierGuid)){
-                   continue;
+                    continue;
                 }
 
                 ModifierType modifierType = _modifierType(c, indexHolder.get(ModifierTable.TYPE));

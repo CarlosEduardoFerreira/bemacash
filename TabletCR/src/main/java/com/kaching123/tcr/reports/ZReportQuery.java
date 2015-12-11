@@ -7,6 +7,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.print.SaleReportsProcessor;
+import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DepartsSale;
 import com.kaching123.tcr.model.DiscountType;
@@ -554,7 +555,8 @@ public final class ZReportQuery extends XReportQuery {
                 .perform(context);
 
             while (c.moveToNext()){
-                if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED)) {//REJECTED
+                if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
+                        ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED)) {//REJECTED
                     voidCount++;
                 } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)) {
                     salesCount++;
@@ -572,7 +574,8 @@ public final class ZReportQuery extends XReportQuery {
                 .perform(context);
 
         while (c.moveToNext()) {
-            if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED)) {//REJECTED
+            if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
+                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED)) {//REJECTED
                 voidCount++;
             } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)) {
                 salesCount++;
