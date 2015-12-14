@@ -10,6 +10,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.model.PlanOptions;
 import com.mobeta.android.dslv.DragSortListView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -61,7 +62,12 @@ public class ScaleFragment extends SuperBaseFragment {
 
     @OptionsItem
     protected void actionSearchSelected() {
-        FindDeviceFragment.show(getActivity(), findDisplayListener, FindDeviceFragment.Mode.SCALE);
+        if (!PlanOptions.isExportInventoryAllowed()) {
+            AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        } else {
+            FindDeviceFragment.show(getActivity(), findDisplayListener, FindDeviceFragment.Mode.SCALE);
+        }
+
     }
 
     private FindDeviceFragment.FindDeviceListener findDisplayListener = new FindDeviceFragment.FindDeviceListener() {
