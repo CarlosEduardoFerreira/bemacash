@@ -2,7 +2,6 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.InputFilter;
@@ -25,7 +24,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
@@ -142,18 +140,18 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
         preset.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!isFirstSpinnerCall) {
-                    if (!PlanOptions.isCustomPermissionAllowed() &&
-                            presetDataList.get(i).getItem().getId() == PermissionPreset.CUSTOM.getId()) {
-                        AlertDialogFragment.showAlert(BaseEmployeeActivity.this,
-                                R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
-                        preset.setSelection(spinnerLastPos);
-                    } else {
-                        displayPermissions(i);
-                        spinnerLastPos = i;
-                    }
-                }
-                isFirstSpinnerCall = false;
+                //if (!isFirstSpinnerCall) {
+                //if (!PlanOptions.isCustomPermissionAllowed() &&
+                //        presetDataList.get(i).getItem().getId() == PermissionPreset.CUSTOM.getId()) {
+                //     AlertDialogFragment.showAlert(BaseEmployeeActivity.this,
+                //           R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+                //   preset.setSelection(spinnerLastPos);
+                //} else {
+                displayPermissions(i);
+                //spinnerLastPos = i;
+                //}
+                //}
+                //isFirstSpinnerCall = false;
             }
 
             @Override
