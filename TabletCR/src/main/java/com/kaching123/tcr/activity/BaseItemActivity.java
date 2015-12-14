@@ -18,7 +18,6 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,19 +36,9 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenuItem;
-import org.androidannotations.annotations.ViewById;
-
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -101,9 +90,16 @@ import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.UnitUtil;
 import com.kaching123.tcr.util.Validator;
 
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenuItem;
+import org.androidannotations.annotations.ViewById;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -409,6 +405,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         fillModifierLabels(0, 0, 0);
 
+        stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
     }
 
     protected void setQuantities() {

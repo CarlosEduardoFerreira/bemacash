@@ -39,6 +39,9 @@ public class PlanOptions {
     @SerializedName("inventory_limited_amount")
     public PlanOption inventoryLimit;
 
+    @SerializedName("inventory_tracking_allowed")
+    public PlanOption stockTracking;
+
     public PlanOptions() {
     }
 
@@ -53,6 +56,7 @@ public class PlanOptions {
                 .scalesConnection().put(scalesConnection.isAvailable())
                 .isInventoryLimited().put(isInventoryLimited.isAvailable())
                 .inventoryLimit().put(inventoryLimit.getValue())
+                .stockTracking().put(stockTracking.isAvailable())
                 .apply();
     }
 
@@ -70,6 +74,8 @@ public class PlanOptions {
                     return app.getShopPref().employeeCustomPermitissions().get();
                 case SCALE_CONNECTION:
                     return app.getShopPref().scalesConnection().get();
+                case STOCK_TRACKING:
+                    return app.getShopPref().stockTracking().get();
             }
         }
         return true;
@@ -106,6 +112,10 @@ public class PlanOptions {
 
     public static boolean isCustomPermissionAllowed() {
         return isAllowed(RestrictionType.EMPLOYEE_CUSTOM_PERMISSIONS);
+    }
+
+    public static boolean isStockTrackingAllowed() {
+        return isAllowed(RestrictionType.STOCK_TRACKING);
     }
 
     public static boolean isEmployeeLimited() {
@@ -176,6 +186,7 @@ public class PlanOptions {
         INVENTORY_LIMIT,
         EXPORT_INVENTORY,
         EMPLOYEE_CUSTOM_PERMISSIONS,
+        STOCK_TRACKING,
         SCALE_CONNECTION
     }
 }
