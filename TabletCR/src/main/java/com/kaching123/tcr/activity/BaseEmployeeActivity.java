@@ -228,12 +228,12 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
             return false;
         }
 
-        if(!checkPhoneNumber(phone.getText().toString())){
+    /*    if(isPhoneNumberExists(phone.getText().toString())){
             Toast.makeText(this, R.string.employee_edit_phone_confirm_error, Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        /*if (TextUtils.isEmpty(lastName.getText())) {
+        if (TextUtils.isEmpty(lastName.getText())) {
             Toast.makeText(this, R.string.employee_edit_last_name_error, Toast.LENGTH_SHORT).show();
             return false;
         }*/
@@ -250,7 +250,7 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
         }
 
         String emailText = email.getText().toString().trim();
-        if (!TextUtils.isEmpty(emailText) && !isValidEmail(emailText)) {
+        if (TextUtils.isEmpty(emailText) && !isValidEmail(emailText)) {
             Toast.makeText(this, R.string.employee_edit_email_not_valid_error, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -265,15 +265,6 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
         return true;
     }
 
-    private boolean checkPhoneNumber(String phone) {
-        Cursor c = ProviderAction
-                .query(URI_EMPLOYEE)
-                .where(ShopStore.EmployeeTable.PHONE + " = ?", phone)
-                .perform(getBaseContext());
-        boolean exists = c.moveToFirst();
-        c.close();
-        return exists;
-    }
 
     @Click
     protected void btnEditPermissionClicked() {

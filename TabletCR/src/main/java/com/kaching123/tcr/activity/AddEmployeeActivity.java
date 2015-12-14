@@ -64,7 +64,7 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
         }
 
 
-        if(!checkPhoneNumber(phone.getText().toString())){
+        if(isPhoneNumberExists(phone.getText().toString())){
             Toast.makeText(this, R.string.employee_edit_phone_confirm_error, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -86,7 +86,8 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
         }
         return true;
     }
-    private boolean checkPhoneNumber(String phone) {
+
+    private boolean isPhoneNumberExists(String phone) {
         Cursor c = ProviderAction
                 .query(URI_EMPLOYEE)
                 .where(ShopStore.EmployeeTable.PHONE + " = ?", phone)
@@ -96,6 +97,16 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
         return exists;
     }
 
+    /*   private boolean checkPhoneNumber(String phone) {
+        Cursor c = ProviderAction
+                .query(URI_EMPLOYEE)
+                .where(ShopStore.EmployeeTable.PHONE + " = ?", phone)
+                .perform(getBaseContext());
+        boolean exists = c.moveToFirst();
+        c.close();
+        return exists;
+    }
+*/
     @Override
     public void onResume() {
         super.onResume();
