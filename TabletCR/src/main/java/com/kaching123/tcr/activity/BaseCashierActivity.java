@@ -38,6 +38,10 @@ import android.widget.Toast;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
+import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.model.PlanOptions;
+import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
+import com.kaching123.tcr.service.ScaleService.ScaleBinder;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -487,26 +491,28 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
-        boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
-        if (!hasModifiers) {
-//            Logger.d("Item Name = "+model.description);
-            tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
-            return;
-        }
-        ModifyFragment.show(this,
-                model.guid,
-                model.modifiersCount,
-                model.addonsCount,
-                model.optionalCount,
-                model.defaultModifierGuid,
-                new OnAddonsChangedListener() {
-                    @Override
-                    public void onAddonsChanged(String modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
-                        tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
-                    }
-                }
-        );
+            boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
+            if (!hasModifiers) {
+                tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
+                return;
+            }
+            if (!PlanOptions.isModifiersAllowed()) {
+                ModifyFragment.show(this,
+                        model.guid,
+                        model.modifiersCount,
+                        model.addonsCount,
+                        model.optionalCount,
+                        model.defaultModifierGuid,
+                        new OnAddonsChangedListener() {
+                            @Override
+                            public void onAddonsChanged(String modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
+                                tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
+                            }
+                        }
+                );
+            }
     }
+
 
     protected void tryToAddCheckPriceType(final ItemExModel model,
                                           final String modifierGiud,
