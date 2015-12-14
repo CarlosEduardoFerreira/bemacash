@@ -19,6 +19,12 @@
         <item name="android:textColor">@color/text_green</item>
     </style>
 
+    <style name="LocalizableButton.Green.Wide">
+        <item name="android:textColor">@color/text_green</item>
+        <item name="android:paddingLeft">60dp</item>
+        <item name="android:paddingRight">60dp</item>
+    </style>
+
     <style name="LocalizableButton.Green2">
         <item name="android:textColor">@color/text_green2</item>
     </style>

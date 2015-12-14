@@ -609,7 +609,7 @@
         android:layout_marginLeft="@dimen/edit_item_table_margin_left">
 
         <Button
-            style="@style/LocalizableButton.Green"
+            style="@style/LocalizableButton.Green.Wide"
             android:textSize="26sp"
             android:paddingBottom="6dp"
             android:id="@+id/button"
