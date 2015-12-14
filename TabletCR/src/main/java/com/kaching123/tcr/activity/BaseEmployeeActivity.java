@@ -28,14 +28,12 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.SignedCurrencyFormatInputFilter;
-import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.model.LabaledEnum;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PermissionPreset;
-import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
@@ -266,12 +264,12 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
 
     @Click
     protected void btnEditPermissionClicked() {
-        if (!PlanOptions.isCustomPermissionAllowed()) {
-            AlertDialogFragment.showAlert(BaseEmployeeActivity.this,
-                    R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
-        } else {
-            PermissionActivity.start(this, PERMISSIONS_REQUEST_INDEX, permissions);
-        }
+        //if (!PlanOptions.isCustomPermissionAllowed()) {
+        //    AlertDialogFragment.showAlert(BaseEmployeeActivity.this,
+        //            R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+        //} else {
+        PermissionActivity.start(this, PERMISSIONS_REQUEST_INDEX, permissions);
+        //}
     }
 
     @OnActivityResult(PERMISSIONS_REQUEST_INDEX)
