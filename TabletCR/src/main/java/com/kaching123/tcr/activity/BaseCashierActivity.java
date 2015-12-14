@@ -38,9 +38,6 @@ import android.widget.Toast;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
-import com.kaching123.tcr.commands.payment.pax.PaxGateway;
-import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
-import com.kaching123.tcr.service.ScaleService.ScaleBinder;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -53,12 +50,12 @@ import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.commands.local.EndTransactionCommand;
 import com.kaching123.tcr.commands.local.StartTransactionCommand;
-import com.kaching123.tcr.commands.payment.GetIVULotoDataCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackRefundCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSaleCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackVoidCommand;
+import com.kaching123.tcr.commands.payment.pax.PaxGateway;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
@@ -116,28 +113,27 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.Unit;
-import com.kaching123.tcr.model.payment.GetIVULotoDataRequest;
+import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
-import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.processor.MoneybackProcessor;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
-import com.kaching123.tcr.processor.PaxBalanceProcessor;
 import com.kaching123.tcr.processor.PaymentProcessor;
 import com.kaching123.tcr.processor.PaymentProcessor.IPaymentProcessor;
-import com.kaching123.tcr.processor.PrepaidProcessor;
 import com.kaching123.tcr.service.DisplayService;
 import com.kaching123.tcr.service.DisplayService.Command;
 import com.kaching123.tcr.service.DisplayService.DisplayBinder;
 import com.kaching123.tcr.service.DisplayService.DisplayListener;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
 import com.kaching123.tcr.service.ScaleService;
+import com.kaching123.tcr.service.ScaleService.ScaleBinder;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
@@ -146,9 +142,6 @@ import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.util.DateUtils;
 import com.kaching123.tcr.util.KeyboardUtils;
-import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
-import com.kaching123.tcr.websvc.api.prepaid.Receipt;
-import com.kaching123.tcr.websvc.api.prepaid.WS_Enums;
 import com.telly.groundy.annotations.OnCancel;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
@@ -162,8 +155,6 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -315,7 +306,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private void bindToScaleService() {
         boolean scaleConfigured = !TextUtils.isEmpty(getApp().getShopPref().scaleName().get()); //Serial Port?
         if (scaleConfigured) {
-            ScaleService.bind(this,scaleServiceConnection);
+            ScaleService.bind(this, scaleServiceConnection);
         }
     }
 
@@ -828,7 +819,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 WaitDialogFragment.show(BaseCashierActivity.this, getString(R.string.wait_printing));
-                for(int i = 0; i < getApp().getShopPref().printReceiptTwice().get(); i++)
+                for (int i = 0; i < getApp().getShopPref().printReceiptTwice().get(); i++)
                     PrintOrderCommand.start(BaseCashierActivity.this, false, false, orderGuid, printOrderCallback, orderTitle, totalCostFragment.getOrderSubTotal(), totalCostFragment.getOrderDiscountTotal(), totalCostFragment.getOrderTaxTotal(), totalCostFragment.getOrderAmountTotal());
                 return true;
             }
@@ -1185,54 +1176,54 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void tryToAddSerializedItem(final ItemExModel model, final String modifierGiud, final ArrayList<String> addonsGuids,
                                         final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final boolean checkDrawerState) {
-        UnitsSaleFragment.show(BaseCashierActivity.this, model, null, UnitsSaleFragment.UnitActionType.ADD_TO_ORDER,
-                model.codeType, new UnitsSaleFragment.UnitSaleCallback() {
+            UnitsSaleFragment.show(BaseCashierActivity.this, model, null, UnitsSaleFragment.UnitActionType.ADD_TO_ORDER,
+                    model.codeType, new UnitsSaleFragment.UnitSaleCallback() {
 
-                    @Override
-                    public void handleSuccess(final Unit unit) {
-                        Toast.makeText(BaseCashierActivity.this, getString(R.string.unit_edit_completed), Toast.LENGTH_SHORT).show();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                addItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState, unit);
-                            }
-                        });
-                        hide();
-                    }
-
-                    @Override
-                    public void handleError(String message) {
-                        disconnectScanner();
-                        AlertDialogWithCancelFragment.show(BaseCashierActivity.this,
-                                R.string.wireless_already_item_title,
-                                message,
-                                R.string.btn_ok,
-                                new AlertDialogWithCancelFragment.OnDialogListener() {
-                                    @Override
-                                    public boolean onClick() {
-                                        tryReconnectScanner();
-                                        return true;
-                                    }
-
-                                    @Override
-                                    public boolean onCancel() {
-                                        tryReconnectScanner();
-                                        return true;
-                                    }
+                        @Override
+                        public void handleSuccess(final Unit unit) {
+                            Toast.makeText(BaseCashierActivity.this, getString(R.string.unit_edit_completed), Toast.LENGTH_SHORT).show();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    addItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState, unit);
                                 }
-                        );
-                        hide();
-                    }
+                            });
+                            hide();
+                        }
 
-                    @Override
-                    public void handleCancelling() {
-                    }
+                        @Override
+                        public void handleError(String message) {
+                            disconnectScanner();
+                            AlertDialogWithCancelFragment.show(BaseCashierActivity.this,
+                                    R.string.wireless_already_item_title,
+                                    message,
+                                    R.string.btn_ok,
+                                    new AlertDialogWithCancelFragment.OnDialogListener() {
+                                        @Override
+                                        public boolean onClick() {
+                                            tryReconnectScanner();
+                                            return true;
+                                        }
 
-                    private void hide() {
-                        UnitsSaleFragment.hide(BaseCashierActivity.this);
-                    }
+                                        @Override
+                                        public boolean onCancel() {
+                                            tryReconnectScanner();
+                                            return true;
+                                        }
+                                    }
+                            );
+                            hide();
+                        }
 
-                });
+                        @Override
+                        public void handleCancelling() {
+                        }
+
+                        private void hide() {
+                            UnitsSaleFragment.hide(BaseCashierActivity.this);
+                        }
+
+                    });
     }
 
     private void addItemModel(final ItemExModel model, final String modifierGiud, final ArrayList<String> addonsGuids,
@@ -1240,7 +1231,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (model == null)
             return;
 
-        if (model.serializable && model.tmpUnit.size() == 0) {
+        if (model.serializable && model.tmpUnit.size() == 0 && PlanOptions.isSerializableAllowed()) {
             tryToAddSerializedItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState);
             return;
         }
@@ -1251,8 +1242,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private void addItem(ItemExModel model, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, boolean checkDrawerState, Unit unit) {
         if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit))
             return;
-        if(model.priceType == PriceType.UNIT_PRICE && scaleServiceBound){
-            if(System.currentTimeMillis() - lastClickTime < 1000) {
+        if (model.priceType == PriceType.UNIT_PRICE && scaleServiceBound) {
+            if (System.currentTimeMillis() - lastClickTime < 1000) {
                 lastClickTime = System.currentTimeMillis();
                 return;
             }
@@ -1967,15 +1958,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
             //orderItemListFragment.needScrollToTheEnd();
             final SaleOrderItemViewModel model = getSaleItem(item.saleItemGuid);
-            if(item.priceType == PriceType.UNIT_PRICE) {
+            if (item.priceType == PriceType.UNIT_PRICE) {
                 if (scaleServiceBound && scaleService.getStatus() == 0 && scaleService.isUnitsLabelMatch(model.unitsLabel)) {
                     BigDecimal newQty = new BigDecimal(scaleService.readScale());
                     UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
-                }else {
+                } else {
                     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                             BaseCashierActivity.this);
                     alertDialogBuilder.setTitle("Scale Warning");
-                    String header = !scaleServiceBound || scaleService.getStatus() < 0 ? "Check connection to the scale":"Place " + item.description + " on the Scale";
+                    String header = !scaleServiceBound || scaleService.getStatus() < 0 ? "Check connection to the scale" : "Place " + item.description + " on the Scale";
                     header += " or enter the weight manually.";
                     alertDialogBuilder
                             .setMessage(header)
@@ -2000,35 +1991,35 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             })
                             .setPositiveButton("Manually", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    if(getOperatorPermissions().contains(Permission.CHANGE_QTY)){
+                                    if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) {
                                         QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
                                             @Override
                                             public void onConfirm(BigDecimal value) {
                                                 UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
                                             }
                                         }, orderItemListFragment);
-                                    }else{
+                                    } else {
                                         PermissionFragment.showCancelable(BaseCashierActivity.this, new OnDialogClickListener() {
-                                            @Override
-                                            public boolean onClick() {
-                                                if (item.qty.equals(BigDecimal.ZERO)) {
-                                                    orderItemListFragment.doRemoceClickLine(item.getGuid());
-                                                }
-                                                return true;
-                                            }
-                                        },
-                                                new BaseTempLoginListener(BaseCashierActivity.this) {
-                                            @Override
-                                            public void onLoginComplete() {
-                                                super.onLoginComplete();
-                                                QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
                                                     @Override
-                                                    public void onConfirm(BigDecimal value) {
-                                                        UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
+                                                    public boolean onClick() {
+                                                        if (item.qty.equals(BigDecimal.ZERO)) {
+                                                            orderItemListFragment.doRemoceClickLine(item.getGuid());
+                                                        }
+                                                        return true;
                                                     }
-                                                }, orderItemListFragment);
-                                            }
-                                        }, Permission.CHANGE_QTY);
+                                                },
+                                                new BaseTempLoginListener(BaseCashierActivity.this) {
+                                                    @Override
+                                                    public void onLoginComplete() {
+                                                        super.onLoginComplete();
+                                                        QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
+                                                            @Override
+                                                            public void onConfirm(BigDecimal value) {
+                                                                UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
+                                                            }
+                                                        }, orderItemListFragment);
+                                                    }
+                                                }, Permission.CHANGE_QTY);
                                     }
                                     return;
                                 }
@@ -2041,30 +2032,30 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             BigDecimal newQty = null;
                             while (scaleService != null) {
                                 newQty = new BigDecimal(scaleService.readScale());
-                                if(!alertDialog.isShowing())
+                                if (!alertDialog.isShowing())
                                     break;
 
-                                if(!scaleService.isUnitsLabelMatch(model.unitsLabel)){
+                                if (!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
                                     runOnUiThread(new Runnable() {
                                         public void run() {
                                             alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to " + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
                                             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
                                         }
                                     });
-                                }else if (newQty.compareTo(BigDecimal.ZERO) != 1) {
+                                } else if (newQty.compareTo(BigDecimal.ZERO) != 1) {
                                     runOnUiThread(new Runnable() {
                                         public void run() {
-                                            String header = !scaleServiceBound ? "Check connection to the scale":"Place " + item.description + " on the Scale";
+                                            String header = !scaleServiceBound ? "Check connection to the scale" : "Place " + item.description + " on the Scale";
                                             header += " or enter the weight manually.";
                                             alertDialog.setMessage(header);
                                             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
                                         }
                                     });
-                                }else{
+                                } else {
                                     // units label match && qty > 0
                                     break;
                                 }
-                                if(stop){
+                                if (stop) {
                                     runOnUiThread(new Runnable() {
                                         public void run() {
                                             orderItemListFragment.doRemoceClickLine(item.getGuid());
@@ -2090,16 +2081,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     });
                     alertDialog.show();
                     // hide button which not necessary
-                    if(scaleService.getStatus() >= 0){
+                    if (scaleService.getStatus() >= 0) {
                         alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.GONE);
-                        if(!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
-                            Logger.d("Status = "+scaleService.getStatus());
+                        if (!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
+                            Logger.d("Status = " + scaleService.getStatus());
                             alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to " + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
                             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
                         }
                     }
                     //if not bound to service, do not need start thread
-                    if(scaleService.getStatus() >= 0) {
+                    if (scaleService.getStatus() >= 0) {
                         thread.start();
                     }
                 }

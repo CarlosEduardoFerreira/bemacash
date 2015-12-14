@@ -353,7 +353,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         unitTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         serializationType.setAdapter(unitTypeAdapter);
 //        serializationType.setVisibility( ViewType.WIRELESS.toString().equals( getApp().getShopPref().shopViewType().get()) ? View.VISIBLE : View.GONE );
-        serializationHolder.setVisibility(getApp().getShopPref().acceptSerializableItems().get() ? View.VISIBLE : View.GONE);
+        serializationHolder.setVisibility(PlanOptions.isSerializableAllowed() ? View.VISIBLE : View.GONE);
         serializationType.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

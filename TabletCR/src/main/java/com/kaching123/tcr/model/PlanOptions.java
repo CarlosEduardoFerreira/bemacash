@@ -118,6 +118,10 @@ public class PlanOptions {
         return isAllowed(RestrictionType.STOCK_TRACKING);
     }
 
+    public static boolean isSerializableAllowed() {
+        return TcrApplication.get().getShopPref().acceptSerializableItems().get();
+    }
+
     public static boolean isEmployeeLimited() {
         return isLimited(RestrictionType.EMPLOYEE_LIMIT);
     }

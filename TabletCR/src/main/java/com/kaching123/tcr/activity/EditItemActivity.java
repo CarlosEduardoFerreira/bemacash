@@ -2,23 +2,12 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.TextView;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.InstanceState;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -34,9 +23,16 @@ import com.kaching123.tcr.fragment.wireless.UnitsEditFragment;
 import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.store.composer.RecalculateHostCompositionMetadataCommand;
 import com.kaching123.tcr.util.UnitUtil;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.InstanceState;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -148,7 +144,7 @@ public class EditItemActivity extends BaseItemActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_serial).setVisible(model.isSerializable());
+        menu.findItem(R.id.action_serial).setVisible(model.isSerializable() && PlanOptions.isSerializableAllowed());
         menu.findItem(R.id.action_composer).setVisible(!model.isSerializable() && !model.isAComposer);
         return true;
     }
