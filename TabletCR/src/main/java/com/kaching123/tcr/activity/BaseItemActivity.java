@@ -406,6 +406,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         fillModifierLabels(0, 0, 0);
 
         stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
+
+        availableQtyPencil.setEnabled(PlanOptions.isStockTrackingAllowed());
     }
 
     protected void setQuantities() {
@@ -867,7 +869,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             minimumQty.setText(null);
         }*/
 
-        View [] views = {recommendedQty, minimumQty};
+        View [] views = {availableQty, recommendedQty, minimumQty};
         for (View view: views) {
             view.setEnabled(isChecked);
         }
@@ -937,15 +939,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.isActiveStatus = this.active.isChecked();
 
         model.printerAliasGuid = ((PrinterAliasModel) this.printerAlias.getSelectedItem()).guid;
-
-        //String qty = this.availableQty.getText().toString();
-        //model.availableQty = parseBigDecimal(qty, BigDecimal.ZERO);
-
-        //String minimumQty = this.minimumQty.getText().toString();
-        //model.minimumQty = parseBigDecimal(minimumQty, BigDecimal.ZERO);
-
-        //String recommendedQty = this.recommendedQty.getText().toString();
-        //model.recommendedQty = parseBigDecimal(recommendedQty, BigDecimal.ZERO);
 
         model.availableQty = UiHelper.getDecimalValue(this.availableQty);
         model.minimumQty = UiHelper.getDecimalValue(this.minimumQty);
