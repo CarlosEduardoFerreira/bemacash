@@ -16,8 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.IObjectsAdapter;
@@ -32,6 +30,9 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.util.DrawableUtil;
 import com.kaching123.tcr.util.UnitUtil;
 import com.mobeta.android.dslv.DragSortListView;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
@@ -120,7 +121,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
             builder.where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY));
         }
 
-         if (forSale) {
+        if (forSale) {
             builder.where(ItemTable.SALABLE + " = ? ", "0");
         }
         Loader<List<ItemExModel>> loader = builder.transform(new ItemExFunction()).build(getActivity());
@@ -169,7 +170,11 @@ public class ItemsFragment extends BaseItemsPickFragment {
         }
 
         public void marks(LinearLayout holder,
-                          boolean forSale) {
+                          boolean composer,
+                          boolean composition,
+                          boolean forSale,
+                          boolean hasModifiers,
+                          boolean serial) {
             // Now the layout parameters, these are a little tricky at first
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -178,6 +183,20 @@ public class ItemsFragment extends BaseItemsPickFragment {
             params.rightMargin = 5;
             holder.removeAllViews();
 
+            if (composer) {
+                ImageView image = new ImageView(getContext());
+                image.setScaleType(ImageView.ScaleType.MATRIX);
+                image.setImageResource(R.drawable.ic_extension_black_18dp);
+                // Let's get the root layout and add our ImageView
+                holder.addView(image, 0, params);
+            }
+            if (composition) {
+                ImageView image = new ImageView(getContext());
+                image.setScaleType(ImageView.ScaleType.MATRIX);
+                image.setImageResource(R.drawable.ic_dashboard_black_18dp);
+                // Let's get the root layout and add our ImageView
+                holder.addView(image, 0, params);
+            }
             if (!forSale) {
                 ImageView image = new ImageView(getContext());
                 image.setScaleType(ImageView.ScaleType.MATRIX);
@@ -185,15 +204,29 @@ public class ItemsFragment extends BaseItemsPickFragment {
                 // Let's get the root layout and add our ImageView
                 holder.addView(image, 0, params);
             }
+            if (hasModifiers) {
+                ImageView image = new ImageView(getContext());
+                image.setScaleType(ImageView.ScaleType.MATRIX);
+                image.setImageResource(R.drawable.pie_chart_24);
+                // Let's get the root layout and add our ImageView
+                holder.addView(image, 0, params);
+            }
+            if (serial) {
+                ImageView image = new ImageView(getContext());
+                image.setScaleType(ImageView.ScaleType.MATRIX);
+                image.setImageResource(R.drawable.barcode_24);
+                // Let's get the root layout and add our ImageView
+                holder.addView(image, 0, params);
+            }
         }
 
-            @Override
+        @Override
         protected View newView(int position, ViewGroup parent) {
             View convertView = LayoutInflater.from(getContext()).inflate(R.layout.inventory_item_view, parent, false);
 
             ViewHolder holder = new ViewHolder();
 
-                holder.status = (LinearLayout) convertView.findViewById(R.id.status);
+            holder.status = (LinearLayout) convertView.findViewById(R.id.status);
             holder.description = (TextView) convertView.findViewById(R.id.description);
             holder.ean = (TextView) convertView.findViewById(R.id.ean);
             holder.cost = (TextView) convertView.findViewById(R.id.cost);
@@ -249,7 +282,12 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
             holder.drag.setVisibility(draggable ? View.VISIBLE : View.INVISIBLE);
 
-            marks(holder.status, item.isSalable);
+            marks(holder.status,
+                    item.isAComposer,
+                    item.isAComposisiton && !item.isSerializable(),
+                    item.isSalable,
+                    item.hasModificators(),
+                    item.isSerializable());
 
             return convertView;
         }
