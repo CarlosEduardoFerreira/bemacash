@@ -189,4 +189,7 @@
     <dimen name="add_edit_unit_label_dlg_width">400dp</dimen>
     <dimen name="add_edit_unit_label_dlg_heigth">300dp</dimen>
 
+    <dimen name="inventory_item_activity_units_button_width">32dp</dimen>
+    <dimen name="inventory_item_activity_units_button_height">32dp</dimen>
+
 </resources>
