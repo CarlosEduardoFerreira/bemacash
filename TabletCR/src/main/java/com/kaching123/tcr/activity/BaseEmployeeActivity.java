@@ -246,7 +246,7 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
         }
 
         String emailText = email.getText().toString().trim();
-        if (TextUtils.isEmpty(emailText) && !isValidEmail(emailText)) {
+        if (!isValidEmail(emailText)) {
             Toast.makeText(this, R.string.employee_edit_email_not_valid_error, Toast.LENGTH_SHORT).show();
             return false;
         }

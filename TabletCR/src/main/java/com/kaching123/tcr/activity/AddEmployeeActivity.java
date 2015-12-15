@@ -97,16 +97,6 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
         return exists;
     }
 
-    /*   private boolean checkPhoneNumber(String phone) {
-        Cursor c = ProviderAction
-                .query(URI_EMPLOYEE)
-                .where(ShopStore.EmployeeTable.PHONE + " = ?", phone)
-                .perform(getBaseContext());
-        boolean exists = c.moveToFirst();
-        c.close();
-        return exists;
-    }
-*/
     @Override
     public void onResume() {
         super.onResume();

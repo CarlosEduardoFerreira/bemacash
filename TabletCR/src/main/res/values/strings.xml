@@ -1785,8 +1785,8 @@
     <string name="units_activity_label">Unit labels</string>
 
     <string name="contextual_action_default">Mark default</string>
-    <string name="wireless_contextual_action_edit">edit</string>
-    <string name="wireless_contextual_action_delete">delete</string>
+    <string name="wireless_contextual_action_edit">Edit</string>
+    <string name="wireless_contextual_action_delete">Delete</string>
     <string name="composer_selections" formatted="false">Selected %s\'s composition items: %s</string>
     <string name="composer_dialog_text">Please determine the composer details</string>
 

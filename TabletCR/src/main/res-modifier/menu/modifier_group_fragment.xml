@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"  xmlns:myapp ="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:icon="@android:drawable/ic_menu_add"
         android:id="@+id/action_add_group"
         android:title="@string/cashier_action_add_group"
         android:showAsAction="always"
-        myapp:showAsAction="ifRoom"
         android:orderInCategory="@integer/menu_order_default"/>
     <item
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_printer_settings"
         android:orderInCategory="1"
         android:showAsAction="always|withText"
-        myapp:showAsAction="always|withText"
         android:title="@string/modifier_group_edit"/>
 
     <item
@@ -20,6 +18,5 @@
         android:icon="@drawable/delete_modifier_btn_bg"
         android:orderInCategory="1"
         android:showAsAction="always|withText"
-        myapp:showAsAction="always|withText"
         android:title="@string/modifier_group_delete"/>
 </menu>

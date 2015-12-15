@@ -97,8 +97,8 @@ public class ModifierItemListFragment extends ListFragment
     }
 
     protected void onMenuPrepared(Menu menu, boolean shouldShowEdit, boolean shouldShowDelete, boolean shouldShowMarkDefault) {
-        menu.findItem(R.id.action_edit).setVisible(shouldShowEdit);
-        menu.findItem(R.id.action_delete).setVisible(shouldShowDelete);
+        menu.findItem(R.id.action_edit).setVisible(shouldShowEdit).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);;
+        menu.findItem(R.id.action_delete).setVisible(shouldShowDelete).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
     }
 
     protected ModifierItemListFragment self() {

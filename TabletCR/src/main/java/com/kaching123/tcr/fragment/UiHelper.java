@@ -304,8 +304,8 @@ public final class UiHelper {
     }
 
     public static boolean isValidEmail(CharSequence target) {
-        if (target == null) {
-            return false;
+        if (TextUtils.isEmpty(target)) {
+            return true; //empty email do not forbidden
         } else {
             return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
         }
