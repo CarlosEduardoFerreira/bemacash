@@ -38,10 +38,6 @@ import android.widget.Toast;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
-import com.kaching123.tcr.commands.payment.pax.PaxGateway;
-import com.kaching123.tcr.model.PlanOptions;
-import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
-import com.kaching123.tcr.service.ScaleService.ScaleBinder;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -491,26 +487,24 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
-            boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
-            if (!hasModifiers) {
-                tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
-                return;
-            }
-            if (!PlanOptions.isModifiersAllowed()) {
-                ModifyFragment.show(this,
-                        model.guid,
-                        model.modifiersCount,
-                        model.addonsCount,
-                        model.optionalCount,
-                        model.defaultModifierGuid,
-                        new OnAddonsChangedListener() {
-                            @Override
-                            public void onAddonsChanged(String modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
-                                tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
-                            }
-                        }
-                );
-            }
+        boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
+        if (!hasModifiers || !PlanOptions.isModifiersAllowed()) {
+            tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
+            return;
+        }
+        ModifyFragment.show(this,
+                model.guid,
+                model.modifiersCount,
+                model.addonsCount,
+                model.optionalCount,
+                model.defaultModifierGuid,
+                new OnAddonsChangedListener() {
+                    @Override
+                    public void onAddonsChanged(String modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
+                        tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
+                    }
+                }
+        );
     }
 
 
@@ -1182,54 +1176,54 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void tryToAddSerializedItem(final ItemExModel model, final String modifierGiud, final ArrayList<String> addonsGuids,
                                         final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final boolean checkDrawerState) {
-            UnitsSaleFragment.show(BaseCashierActivity.this, model, null, UnitsSaleFragment.UnitActionType.ADD_TO_ORDER,
-                    model.codeType, new UnitsSaleFragment.UnitSaleCallback() {
+        UnitsSaleFragment.show(BaseCashierActivity.this, model, null, UnitsSaleFragment.UnitActionType.ADD_TO_ORDER,
+                model.codeType, new UnitsSaleFragment.UnitSaleCallback() {
 
-                        @Override
-                        public void handleSuccess(final Unit unit) {
-                            Toast.makeText(BaseCashierActivity.this, getString(R.string.unit_edit_completed), Toast.LENGTH_SHORT).show();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    addItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState, unit);
-                                }
-                            });
-                            hide();
-                        }
+                    @Override
+                    public void handleSuccess(final Unit unit) {
+                        Toast.makeText(BaseCashierActivity.this, getString(R.string.unit_edit_completed), Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                addItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState, unit);
+                            }
+                        });
+                        hide();
+                    }
 
-                        @Override
-                        public void handleError(String message) {
-                            disconnectScanner();
-                            AlertDialogWithCancelFragment.show(BaseCashierActivity.this,
-                                    R.string.wireless_already_item_title,
-                                    message,
-                                    R.string.btn_ok,
-                                    new AlertDialogWithCancelFragment.OnDialogListener() {
-                                        @Override
-                                        public boolean onClick() {
-                                            tryReconnectScanner();
-                                            return true;
-                                        }
-
-                                        @Override
-                                        public boolean onCancel() {
-                                            tryReconnectScanner();
-                                            return true;
-                                        }
+                    @Override
+                    public void handleError(String message) {
+                        disconnectScanner();
+                        AlertDialogWithCancelFragment.show(BaseCashierActivity.this,
+                                R.string.wireless_already_item_title,
+                                message,
+                                R.string.btn_ok,
+                                new AlertDialogWithCancelFragment.OnDialogListener() {
+                                    @Override
+                                    public boolean onClick() {
+                                        tryReconnectScanner();
+                                        return true;
                                     }
-                            );
-                            hide();
-                        }
 
-                        @Override
-                        public void handleCancelling() {
-                        }
+                                    @Override
+                                    public boolean onCancel() {
+                                        tryReconnectScanner();
+                                        return true;
+                                    }
+                                }
+                        );
+                        hide();
+                    }
 
-                        private void hide() {
-                            UnitsSaleFragment.hide(BaseCashierActivity.this);
-                        }
+                    @Override
+                    public void handleCancelling() {
+                    }
 
-                    });
+                    private void hide() {
+                        UnitsSaleFragment.hide(BaseCashierActivity.this);
+                    }
+
+                });
     }
 
     private void addItemModel(final ItemExModel model, final String modifierGiud, final ArrayList<String> addonsGuids,
