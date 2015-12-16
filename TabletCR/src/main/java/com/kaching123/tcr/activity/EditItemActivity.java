@@ -79,7 +79,7 @@ public class EditItemActivity extends BaseItemActivity {
     @Override
     protected void updateStockTrackingBlock(boolean isChecked) {
         super.updateStockTrackingBlock(isChecked);
-        recollect();
+        recollectUnitsInfo();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class EditItemActivity extends BaseItemActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void recollect() {
+    private void recollectUnitsInfo() {
         if (model.isSerializable()) {
             CollectUnitsCommand.start(this, null, model.guid, null, null, null, true, false, new CollectUnitsCommand.UnitCallback() {
                 @Override
@@ -113,7 +113,8 @@ public class EditItemActivity extends BaseItemActivity {
     @Override
     public void onResume() {
         super.onResume();
-        recollect();
+        recollectUnitsInfo();
+        recollectComposerInfo();
     }
 
     @Override
