@@ -188,8 +188,9 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
         final RefundAmount refundAmount = new RefundAmount(pickedValue, BigDecimal.ZERO);
         OrderTotalPriceCalculator.calculate(orderItems, null, new Handler() {
 
+
             @Override
-            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, String unitLabel, PriceType priceType, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
+            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
 
             }
 
@@ -285,7 +286,8 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
             return;
         }
 
-        UnitsSearchHistoryFragment.show(getActivity(), orderId, itemId, new UnitsSearchFragment.UnitCallback() {
+        UnitsSearchHistoryFragment.show(getActivity(),
+                orderId, itemId, new UnitsSearchFragment.UnitCallback() {
             @Override
             public void handleSuccess(String serialCode, ArrayList<Unit> unitList, ArrayList<SaleOrderViewModel> orderList) {
                 final Unit unit = unitList.get(0);

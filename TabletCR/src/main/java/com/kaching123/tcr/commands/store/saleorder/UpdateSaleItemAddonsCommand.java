@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.util.ContentValuesUtilBase._decimalQty;
 import static com.kaching123.tcr.util.CursorUtil._wrapOrNull;
 
 /**
@@ -60,7 +61,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
 
     private static final String PARAM_SALE_ITEM_GUID = "PARAM_SALE_ITEM_GUID";
 
-    private SaleOrderItemAddonModel modifier;
+    private List<SaleOrderItemAddonModel> modifier;
     private List<SaleOrderItemAddonModel> addons;
     private List<SaleOrderItemAddonModel> optionals;
     private String saleItemGuid;
@@ -74,7 +75,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
         saleItemGuid = getStringArg(ARG_SALE_ITEM_GUID);
         itemGuid = getStringArg(ARG_ITEM_GUID);
 
-        String modifierGuid = getStringArg(ARG_MODIFIER_GUID);
+        List<String> modifierGuid = getArgs().getStringArrayList(ARG_MODIFIER_GUID);
         List<String> addonsGuid = getArgs().getStringArrayList(ARG_ADDONS_GUIDS);
         List<String> optionalsGuid = getArgs().getStringArrayList(ARG_OPTIONALS_GUIDS);
 
@@ -83,19 +84,17 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
         final Set<String> oldAddons = loadOldAddons();
         final ImmutableSet.Builder<String> newAddonsBuilder = ImmutableSet.builder();
 
-        if (modifierGuid != null) {
-            newAddonsBuilder.add(modifierGuid);
-            if (oldAddons.contains(modifierGuid)) {
-                modifierGuid = null;
-            }
-        }
-
         Predicate filter = new Predicate<String>() {
             @Override
             public boolean apply(String s) {
                 return !oldAddons.contains(s);
             }
         };
+
+        if (modifierGuid != null && !modifierGuid.isEmpty()) {
+            newAddonsBuilder.addAll(modifierGuid);
+            modifierGuid = FluentIterable.from(modifierGuid).filter(filter).toImmutableList();
+        }
 
         if (addonsGuid != null && !addonsGuid.isEmpty()) {
             newAddonsBuilder.addAll(addonsGuid);
@@ -128,8 +127,8 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
         return it.toImmutableSet();
     }
 
-    private void initVariables(String modifierGuid, List<String> addonsGuid, List<String> optionalsGuid) {
-        modifier = loadModifier(modifierGuid);
+    private void initVariables(List<String> modifierGuid, List<String> addonsGuid, List<String> optionalsGuid) {
+        modifier = loadAddons(modifierGuid, ModifierType.MODIFIER);
         addons = loadAddons(addonsGuid, ModifierType.ADDON);
         optionals = loadAddons(optionalsGuid, ModifierType.OPTIONAL);
     }
@@ -152,7 +151,9 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
                                 c.getString(c.getColumnIndex(ModifierTable.MODIFIER_GUID)),
                                 saleItemGuid,
                                 _decimal(c, c.getColumnIndex(ModifierTable.EXTRA_COST)),
-                                ModifierType.MODIFIER);
+                                ModifierType.MODIFIER,
+                                c.getString(c.getColumnIndex(ModifierTable.ITEM_SUB_GUID)),
+                                _decimalQty(c, c.getColumnIndex(ModifierTable.ITEM_SUB_QTY)));
                     }
                 }
         );
@@ -177,7 +178,9 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
                                 c.getString(c.getColumnIndex(ModifierTable.MODIFIER_GUID)),
                                 saleItemGuid,
                                 _decimal(c, c.getColumnIndex(ModifierTable.EXTRA_COST)),
-                                type);
+                                type,
+                                c.getString(c.getColumnIndex(ModifierTable.ITEM_SUB_GUID)),
+                                _decimalQty(c, c.getColumnIndex(ModifierTable.ITEM_SUB_QTY)));
                     }
                 }
                 );
@@ -196,9 +199,11 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
         }
 
         if (modifier != null) {
-            operations.add(ContentProviderOperation.newInsert(URI_SALE_ADDONS_NO_NOTIFY)
-                    .withValues(modifier.toValues())
-                    .build());
+            for (SaleOrderItemAddonModel addon : modifier) {
+                operations.add(ContentProviderOperation.newInsert(URI_SALE_ADDONS_NO_NOTIFY)
+                        .withValues(addon.toValues())
+                        .build());
+            }
         }
         if (addons != null) {
             for (SaleOrderItemAddonModel addon : addons) {
@@ -251,7 +256,9 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
             batch.add(converter.deleteItemAddonsSQL(addonGuid, saleItemGuid, getAppCommandContext()));
         }
         if (modifier != null) {
-            batch.add(converter.insertSQL(modifier, getAppCommandContext()));
+            for (SaleOrderItemAddonModel a : modifier) {
+                batch.add(converter.insertSQL(a, getAppCommandContext()));
+            }
         }
         if (addons != null) {
             for (SaleOrderItemAddonModel a : addons) {
@@ -273,7 +280,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
     public static void start(Context context,
                              String saleItemGuid,
                              String itemGuid,
-                             String modifierGiud,
+                             ArrayList<String> modifierGiud,
                              ArrayList<String> addonsGuid,
                              ArrayList<String> optionalGuid,
                              BaseUpdateSaleItemAddonsCallback callback) {
@@ -287,28 +294,40 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
                 .queueUsing(context);
     }
 
-    public SyncResult sync(Context context, String saleItemGuid, String itemGuid, String modifierGiud, ArrayList<String> addonsGuid, ArrayList<String> optionalGuid, IAppCommandContext appCommandContext) {
+    public SyncResult sync(Context context,
+                           String saleItemGuid,
+                           String itemGuid,
+                           ArrayList<String> modifierGiud,
+                           ArrayList<String> addonsGuid,
+                           ArrayList<String> optionalGuid, IAppCommandContext appCommandContext) {
         return syncDependent(context, args(saleItemGuid, itemGuid, modifierGiud, addonsGuid, optionalGuid), appCommandContext);
     }
 
-    public SyncResult sync(Context context, String saleItemGuid, String itemGuid, String modifierGiud, ArrayList<String> addonsGuid, ArrayList<String> optionalGuid, boolean skipNotify, IAppCommandContext appCommandContext) {
+    public SyncResult sync(Context context, String saleItemGuid, String itemGuid,
+                           ArrayList<String> modifierGiud,
+                           ArrayList<String> addonsGuid,
+                           ArrayList<String> optionalGuid,
+                           boolean skipNotify, IAppCommandContext appCommandContext) {
         return syncDependent(context, args(saleItemGuid, itemGuid, modifierGiud, addonsGuid, optionalGuid, skipNotify), appCommandContext);
     }
 
-    private static Bundle args(String saleItemGuid, String itemGuid, String modifierGiud, ArrayList<String> addonsGuid, ArrayList<String> optionalGuid) {
+    private static Bundle args(String saleItemGuid, String itemGuid,
+                               ArrayList<String> modifierGiud,
+                               ArrayList<String> addonsGuid,
+                               ArrayList<String> optionalGuid) {
         return args(saleItemGuid, itemGuid, modifierGiud, addonsGuid, optionalGuid, false);
     }
 
     public static Bundle args(String saleItemGuid,
                               String itemGuid,
-                              String modifierGiud,
+                              ArrayList<String> modifierGiud,
                               ArrayList<String> addonsGuid,
                               ArrayList<String> optionalGuid,
                               boolean skipNotify) {
         Bundle bundle = new Bundle();
         bundle.putString(ARG_SALE_ITEM_GUID, saleItemGuid);
         bundle.putString(ARG_ITEM_GUID, itemGuid);
-        bundle.putString(ARG_MODIFIER_GUID, modifierGiud);
+        bundle.putStringArrayList(ARG_MODIFIER_GUID, modifierGiud);
         bundle.putStringArrayList(ARG_ADDONS_GUIDS, addonsGuid);
         bundle.putStringArrayList(ARG_OPTIONALS_GUIDS, optionalGuid);
         bundle.putBoolean(ARG_SKIP_NOTIFY, skipNotify);

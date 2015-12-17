@@ -19,6 +19,7 @@ import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.converter.ModifierFunction;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 
 import org.androidannotations.annotations.AfterViews;
@@ -38,8 +39,8 @@ import java.util.Set;
 @EFragment
 public class BaseItemModifiersFragment extends Fragment {
 
-    private static final Uri MODIFIER_URI = ShopProvider.getContentUri(ModifierTable.URI_CONTENT);
-    private static final Uri ADDON_URI = ShopProvider.getContentUri(ModifierTable.URI_CONTENT);
+    private static final Uri MODIFIER_URI = ShopProvider.contentUri(ModifierTable.URI_CONTENT);
+    private static final Uri ADDON_URI = ShopProvider.contentUri(ModifierTable.URI_CONTENT);
 
     private static final int LOADER_MODIFIERS = 1;
     private static final int LOADER_ADDONS = 2;
@@ -82,21 +83,19 @@ public class BaseItemModifiersFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    public void setupParams(String itemGuid, int numModifiers, int numAddons, int numOptionals, String selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
+    public void setupParams(String itemGuid, String selectedModifierGuid,
+                            ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
         this.itemGuid = itemGuid;
-        this.numModifiers = numModifiers;
-        this.numAddons = numAddons;
-        this.numOptionals = numOptionals;
 
         this.selectedModifierGuid = selectedModifierGuid;
         this.selectedAddonsGuids = selectedAddonsGuids;
         this.selectedOptionalsGuids = selectedOptionalsGuids;
 
         calcWindowWidth(numModifiers, numAddons, numOptionals);
-        reinitFragment(numModifiers, numAddons, numOptionals, selectedModifierGuid, selectedAddonsGuids, selectedOptionalsGuids);
+        reinitFragment(selectedModifierGuid, selectedAddonsGuids, selectedOptionalsGuids);
     }
 
-    public void reinitFragment(int numModifiers, int numAddons, int numOptionals, String selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
+    public void reinitFragment(String selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
         if (!TextUtils.isEmpty(selectedModifierGuid)) {
             modifiers.setSelectedModifier(selectedModifierGuid);
         } else {
@@ -135,11 +134,11 @@ public class BaseItemModifiersFragment extends Fragment {
     }
 
     public void onConfirm() {
-        String modifierGuid = modifiers.getSelectedModifier();
+        Set<String> modifierGuids = modifiers.getSelectedItems();
         Set<String> addonsGuids = addons.getSelectedItems();
         Set<String> optionalsGuids = optionals.getSelectedItems();
         if (onAddonsChangedListener != null) {
-            onAddonsChangedListener.onAddonsChanged(modifierGuid, new ArrayList<String>(addonsGuids), new ArrayList<String>(optionalsGuids));
+            onAddonsChangedListener.onAddonsChanged(new ArrayList<>(modifierGuids), new ArrayList<>(addonsGuids), new ArrayList<>(optionalsGuids));
         }
     }
 
@@ -217,8 +216,10 @@ public class BaseItemModifiersFragment extends Fragment {
 
     }
 
-    public static interface OnAddonsChangedListener {
-        void onAddonsChanged(String modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid);
+    public interface OnAddonsChangedListener {
+        void onAddonsChanged(ArrayList<String> modifierGuid,
+                             ArrayList<String> addonsGuid,
+                             ArrayList<String> optionalsGuid);
     }
 
     private int calcWindowWidth(int numModifiers, int numAddons, int numOptionals) {

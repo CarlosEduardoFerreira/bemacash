@@ -36,17 +36,12 @@ public final class OrderTotalPriceCalculator {
             if (orderInfo == null) {
                 orderInfo = new SaleOrderInfo(i.isTaxableOrder, i.orderDiscount, i.orderDiscountType, i.orderTransactionFee);
             }
-            String desc;
-            if(i.modifier != null){
-                desc = String.format("%s, %s", i.description, i.modifier.addonTitle);
-            }else{
-                desc = i.description;
-            }
+
             orderInfo.map.put(i.getSaleItemGuid(),
                     new SaleItemInfo(
                             i.getSaleItemGuid(),
                             i.itemModel.itemGuid,
-                            desc,
+                            i.description,
                             i.getQty(), i.getPrice(),
                             i.isDiscountable(), i.getDiscount(), i.getDiscountType(),
                             i.isTaxable(), i.getTax(),
@@ -73,7 +68,12 @@ public final class OrderTotalPriceCalculator {
                 BigDecimal itemSubTotal = getSubTotal(i.qty, i.totalPrice);
                 BigDecimal itemTotal = getSubTotal(i.qty, i.totalPrice, i.discount, i.discountType);
 
-                handler.handleItem(i.saleItemGuid, i.description, i.qty, i.totalPrice, i.unitLabel, i.priceType, itemSubTotal, itemTotal, itemFinalPrice, itemFinalDiscount, itemFinalTax);
+//                handler.handleItem(i.saleItemGuid, i.description,
+// i.qty, i.totalPrice, i.unitLabel, i.priceType, itemSubTotal,
+// itemTotal, itemFinalPrice, itemFinalDiscount, itemFinalTax);
+                handler.handleItem(i.saleItemGuid, i.description, i.qty, i.totalPrice,
+                        itemSubTotal, itemTotal, itemFinalPrice, itemFinalDiscount, itemFinalTax);
+
             }
         });
         handler.handleTotal(result.totalItemDiscount.add(result.tmpOderDiscountVal), result.subTotalItemTotal, result.totalTaxVatValue, result.totalOrderPrice, tips);
@@ -309,9 +309,15 @@ public final class OrderTotalPriceCalculator {
         }
     }
 
-    public static interface Handler {
+    public interface Handler {
 
-        void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons,String unitLabel, PriceType priceType, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax);
+        ///void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons,String unitLabel, PriceType priceType, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax);
+        void handleItem(String saleItemGuid,
+                        String description, BigDecimal qty,
+                        BigDecimal itemPriceWithAddons,
+                        BigDecimal itemSubTotal,
+                        BigDecimal itemTotal,
+                        BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax);
 
         void handleTotal(BigDecimal totalDiscount, BigDecimal subTotalItemTotal, BigDecimal totalTaxVatValue, BigDecimal totalOrderPrice, BigDecimal tipsValue);
 

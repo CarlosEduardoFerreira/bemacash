@@ -32,8 +32,9 @@ public class DisplayOrderCommand extends BaseDisplayCommand<DisplayPrinterWrappe
     protected void printBody(final Context context, final DisplayPrinterWrapper printerWrapper) {
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new Handler() {
 
+
             @Override
-            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, String unitLabel, PriceType priceType, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
+            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
 
             }
 

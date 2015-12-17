@@ -12,6 +12,8 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleOrderTable;
+import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.util.ContentValuesUtilBase;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -57,18 +59,19 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                     addonGuid,
                     c.getString(c.getColumnIndex(SaleAddonTable.ITEM_GUID)),
                     _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST)),
-                    _modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE))
+                    _modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)),
+                    c.getString(c.getColumnIndex(ShopStore.SaleAddonTable.CHILD_ITEM_ID)),
+                    ContentValuesUtilBase._decimalQty(c, c.getColumnIndex(ShopStore.SaleAddonTable.CHILD_ITEM_QTY))
             );
         }
 
         return new SaleOrderItemViewModel(
                 itemModel,
                 c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)),
+                null,//stub
                 c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
                 c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
                 c.getString(c.getColumnIndex(ItemTable.UNITS_LABEL)),
-                saleAddon,
-                saleAddon == null ? null : c.getString(c.getColumnIndex(ModifierTable.TITLE)),
                 _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
                 _bool(c, c.getColumnIndex(ItemTable.SERIALIZABLE)),
                 _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),

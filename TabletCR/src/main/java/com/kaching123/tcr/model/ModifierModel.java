@@ -69,15 +69,14 @@ public class ModifierModel implements IValueModel, Serializable {
         return values;
     }
 
-    public ContentValues toDefaultValues() {
-        ContentValues values = new ContentValues();
-        values.put(ShopStore.ModifierGroupTable.DEFAULT_GUID, modifierGuid);
-        return values;
-    }
-
     public static ContentValues toClearGroupValue() {
         ContentValues values = new ContentValues();
         values.put(ModifierTable.ITEM_GROUP_GUID, (String)null);
+        return values;
+    }
+    public ContentValues toDefaultValues() {
+        ContentValues values = new ContentValues();
+        values.put(ShopStore.ModifierGroupTable.DEFAULT_GUID, modifierGuid);
         return values;
     }
 

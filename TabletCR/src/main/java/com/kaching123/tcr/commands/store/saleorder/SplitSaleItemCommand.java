@@ -80,7 +80,9 @@ public class SplitSaleItemCommand extends AsyncCommand {
                 .projection(
                         SaleAddonTable.ADDON_GUID,
                         SaleAddonTable.EXTRA_COST,
-                        SaleAddonTable.TYPE
+                        SaleAddonTable.TYPE,
+                        SaleAddonTable.CHILD_ITEM_ID,
+                        SaleAddonTable.CHILD_ITEM_QTY
                 ).where(SaleAddonTable.ITEM_GUID + " = ?", saleItemGuid)
                 .perform(getContext())
                 .toFluentIterable(new Function<Cursor, SaleOrderItemAddonModel>() {
@@ -92,7 +94,9 @@ public class SplitSaleItemCommand extends AsyncCommand {
                                 c.getString(0),
                                 newModel.saleItemGuid,
                                 _decimal(c.getString(1)),
-                                _modifierType(c, 2)
+                                _modifierType(c, 2),
+                                c.getString(3),
+                                _decimal(c.getString(4))
                         );
                     }
                 });

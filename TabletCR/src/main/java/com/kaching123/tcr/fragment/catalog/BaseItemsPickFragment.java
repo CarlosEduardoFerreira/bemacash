@@ -52,7 +52,8 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
                 .where(ItemTable.IS_DELETED + " = ?", 0)
                 .where(ItemTable.CATEGORY_ID + " = ? ", categoryGuid == null ? "" : categoryGuid)
                 .projection(ItemExFunction.PROJECTION)
-                .orderBy(ItemTable.DESCRIPTION)
+                .orderBy(ItemTable.ORDER_NUM)
+                //.orderBy(ItemTable.DESCRIPTION)
                 .transform(new ItemExFunction()).build(getActivity());
     }
 

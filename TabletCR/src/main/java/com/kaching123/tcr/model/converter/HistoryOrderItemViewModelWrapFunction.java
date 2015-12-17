@@ -22,8 +22,10 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleOrderTable;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
+import com.kaching123.tcr.util.ContentValuesUtilBase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,10 +74,10 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                     item = new SaleOrderItemViewModel(
                             itemModel,
                             c.getString(descIndex),
+                            null,
                             c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
                             c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
                             c.getString(c.getColumnIndex(ItemTable.UNITS_LABEL)),
-                            null, null,
                             _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
                             _bool(c, c.getColumnIndex(ItemTable.SERIALIZABLE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),
@@ -99,11 +101,11 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                 if (modifier == null) {
                     continue;
                 }
-                if (modifier.addon.type == ModifierType.MODIFIER) {
+                /*if (modifier.addon.type == ModifierType.MODIFIER) {
                     item.setModifier(modifier);
                 } else if (modifier.addon.type == ModifierType.ADDON || modifier.addon.type == ModifierType.OPTIONAL) {
                     item.addAddon(modifier);
-                }
+                }*/
             } while (c.moveToNext());
         }
 
@@ -143,7 +145,10 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                             addonGuid,
                             c.getString(c.getColumnIndex(SaleAddonTable.ITEM_GUID)),
                             _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST)),
-                            _modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE))),
+                            _modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)),
+                            c.getString(c.getColumnIndex(SaleAddonTable.CHILD_ITEM_ID)),
+                            ContentValuesUtilBase._decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY))),
+
                     c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.TITLE))
             );
         }

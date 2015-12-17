@@ -75,14 +75,11 @@ public class PrintVoidProcessor extends BasePrintProcessor<PosOrderTextPrinter> 
 
             @Override
             public void handleItem(String saleItemGuid, String description, BigDecimal qty,
-                                   BigDecimal itemPriceWithAddons, String unitLabel, PriceType priceType, BigDecimal ignore1,
+                                   BigDecimal itemPriceWithAddons, BigDecimal ignore1,
                                    BigDecimal ignore2, BigDecimal itemFinalPrice,
                                    BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
                 BigDecimal itemTotal = CalculationUtil.getSubTotal(qty, itemFinalPrice);
-                if(true)
-                    printerWrapper.add(description, qty, CalculationUtil.negative(itemTotal), itemFinalPrice, unitLabel, priceType == PriceType.UNIT_PRICE, null);
-                else
-                    printerWrapper.add(description, qty, CalculationUtil.negative(itemTotal), null);
+                printerWrapper.add(description, qty, CalculationUtil.negative(itemTotal), null);
             }
 
             @Override

@@ -51,17 +51,17 @@
     <dimen name="listPreferredHeaderHeight">50dp</dimen>
     <dimen name="listPreferredSmallItemHeight">32dp</dimen>
     <dimen name="modify_container_row_count">3dp</dimen>
-    <dimen name="modify_container_padding">6dp</dimen>
+    <dimen name="modify_container_padding">12dp</dimen>
     <dimen name="modify_container_margin_left">12dp</dimen>
-    <dimen name="modify_container_space">16dp</dimen>
+    <dimen name="modify_container_space">14dp</dimen>
     <dimen name="modify_container_margin">10dp</dimen>
     <dimen name="modify_dialog_max_width">1000dp</dimen>
 
-    <dimen name="modify_button_width">82dp</dimen>
+    <dimen name="modify_button_width">78dp</dimen>
     <dimen name="modify_button_height">84dp</dimen>
     <dimen name="modify_button_price_zone_height">18dp</dimen>
     <dimen name="modify_dialog_height">500dp</dimen>
-    <dimen name="modify_dialog_min_width">180dp</dimen>
+    <dimen name="modify_dialog_min_width">340dp</dimen>
     <dimen name="copy_modify_dialog_width">984dp</dimen>
     <dimen name="copy_modify_dialog_height">560dp</dimen>
     <dimen name="edit_modify_dialog_width">330dp</dimen>

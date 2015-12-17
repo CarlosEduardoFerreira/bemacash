@@ -68,7 +68,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
     private SaleOrderItemViewModel existsItem;
     private Unit unit;
 
-    private String modifierGiud;
+    private ArrayList<String> modifierGiud;
     private ArrayList<String> addonGuids;
     private ArrayList<String> optionalGuids;
 
@@ -80,7 +80,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         Bundle args = getArgs();
         item = (SaleOrderItemModel) args.getSerializable(ARG_ITEM);
-        modifierGiud = args.getString(ARG_MODIFIER_GUID);
+        modifierGiud = args.getStringArrayList(ARG_MODIFIER_GUID);
         addonGuids = args.getStringArrayList(ARG_ADDONS_GUIDS);
         optionalGuids = args.getStringArrayList(ARG_OPTIONALS_GUIDS);
         unit = (Unit) args.getSerializable(ARG_UNIT);
@@ -96,14 +96,17 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
             fireAddOrderEvent(item.orderGuid);
         }
 
-        if (item.priceType != PriceType.UNIT_PRICE && TextUtils.isEmpty(modifierGiud) && (addonGuids == null || addonGuids.isEmpty()) && (optionalGuids == null || optionalGuids.isEmpty())) {
+        if (item.priceType != PriceType.UNIT_PRICE
+                && (modifierGiud == null || modifierGiud.isEmpty())
+                && (addonGuids == null || addonGuids.isEmpty()) && (optionalGuids == null || optionalGuids.isEmpty())) {
             tryCombineWithExistingItem();
         }
 
         item.sequence = System.currentTimeMillis();
 
         if (hasModifiers()) {
-            updateSaleItemAddonsResult = new UpdateSaleItemAddonsCommand().sync(getContext(), item.saleItemGuid,
+            updateSaleItemAddonsResult = new UpdateSaleItemAddonsCommand().sync(getContext(),
+                    item.saleItemGuid,
                     item.itemGuid,
                     modifierGiud,
                     addonGuids,
@@ -133,14 +136,13 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
                 .where(SaleItemTable.ORDER_GUID + " = ?", item.orderGuid)
                 .orderBy(SaleItemTable.SEQUENCE)
                 .perform(getContext()),
-                new SaleOrderItemViewModelWrapFunction(getContext(), false));
+                new SaleOrderItemViewModelWrapFunction(getContext()));
 
         for (SaleOrderItemViewModel i : items) {
             if (i != null
                     && item.tmpUnit.size() == 0
                     && comparePrice(i, item)
-                    && compareDiscount(i, item) && i.getModifier() == null
-                    && (i.getAddons() == null || i.getAddons().isEmpty())) {
+                    && compareDiscount(i, item) && i.hasModifiers()) {
                 i.itemModel.qty = i.itemModel.qty.add(item.qty);
                 item = i.itemModel;
                 this.existsItem = i;
@@ -173,7 +175,9 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
         return createSaleOrder(getContext(), getAppCommandContext().getRegisterId(), getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), OrderType.SALE, BigDecimal.ZERO);
     }
 
-    public static SaleOrderModel createSaleOrder(Context context, long registerId, String operatorGuid, String shiftGuid, OrderType type, BigDecimal transactionFee) {
+    public static SaleOrderModel createSaleOrder(Context context,
+                                                 long registerId,
+                                                 String operatorGuid, String shiftGuid, OrderType type, BigDecimal transactionFee) {
         Integer seq = _wrap(ProviderAction
                         .query(URI_ORDER)
                         .projection("max(" + SaleOrderTable.PRINT_SEQ_NUM + ")")
@@ -211,7 +215,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
     }
 
     private boolean hasModifiers() {
-        return !TextUtils.isEmpty(modifierGiud) || (addonGuids != null && !addonGuids.isEmpty()) || (optionalGuids != null && !optionalGuids.isEmpty());
+        return (modifierGiud != null && !modifierGiud.isEmpty()) || (addonGuids != null && !addonGuids.isEmpty()) || (optionalGuids != null && !optionalGuids.isEmpty());
     }
 
     @Override
@@ -255,7 +259,11 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
         return batch;
     }
 
-    public static void start(Context context, BaseAddItem2SaleOrderCallback callback, SaleOrderItemModel model, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, Unit unit) {
+    public static void start(Context context,
+                             BaseAddItem2SaleOrderCallback callback,
+                             SaleOrderItemModel model,
+                             ArrayList<String> modifierGiud,
+                             ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, Unit unit) {
         create(AddItem2SaleOrderCommand.class)
                 .arg(ARG_ITEM, model)
                 .arg(ARG_MODIFIER_GUID, modifierGiud)

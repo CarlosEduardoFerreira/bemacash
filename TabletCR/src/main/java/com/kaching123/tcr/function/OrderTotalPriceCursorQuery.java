@@ -137,19 +137,15 @@ public final class OrderTotalPriceCursorQuery {
     }
 
     private static void calculate(Context context, String orderGuid, String childOrderGuid,
-                                  List<SaleOrderItemViewModel> items, BigDecimal tips, PrintHandler handler, BigDecimal transactionFee) {
+                                  List<SaleOrderItemViewModel> items, BigDecimal tips,
+                                  PrintHandler handler, BigDecimal transactionFee) {
         BigDecimal totalSubtotal = BigDecimal.ZERO;
         BigDecimal totalDiscount = BigDecimal.ZERO;
         BigDecimal totalTax = BigDecimal.ZERO;
 
 
         for (SaleOrderItemViewModel item : items) {
-            String itemDescription = item.description;
-//            if (item.modifier != null) {
-//                itemDescription = itemDescription + ", " + item.modifier.addonTitle;
-//            }
-
-            final SaleOrderItemModel itemModel = item.itemModel;
+             final SaleOrderItemModel itemModel = item.itemModel;
             final BigDecimal itemQty = item.getQty();
             final BigDecimal itemSubtotal = getSubTotal(itemQty, itemModel.finalGrossPrice);
             final BigDecimal itemDiscount = getSubTotal(itemQty, itemModel.finalDiscount);
@@ -167,18 +163,17 @@ public final class OrderTotalPriceCursorQuery {
             } else {
                 units = null;
             }
-            ArrayList<SaleOrderItemViewModel.AddonInfo> addons = item.getAddons() == null ? new ArrayList<SaleOrderItemViewModel.AddonInfo>() : item.getAddons();
-            if(item.getModifier() != null)
-                addons.add(0,item.getModifier());
-            handler.handleItem(item.getSaleItemGuid(), itemDescription,item.unitsLabel,itemModel.priceType,
+
+            handler.handleItem(item.getSaleItemGuid(), item.description,
+                    item.unitsLabel,itemModel.priceType,
                     itemQty, itemSubtotal, itemDiscount,
-                    itemTax, singleItemPrice, units, addons, transactionFee, item.fullPrice, item.getNotes());
+                    itemTax, singleItemPrice, units, item.modifiers, transactionFee, item.getPrice(), item.getNotes());
         }
 
         handler.handleTotal(totalSubtotal, totalDiscount, totalTax, tips, transactionFee);
     }
 
-    public static interface PrintHandler {
+    public interface PrintHandler {
         void handleItem(String saleItemGuid, String description,
                         String unitLabel,
                         PriceType priceType, BigDecimal qty, BigDecimal itemSubtotal,
@@ -191,7 +186,7 @@ public final class OrderTotalPriceCursorQuery {
         void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee);
     }
 
-    public static interface LotteryHandler {
+    public interface LotteryHandler {
         void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee, BigDecimal totalCashBack);
     }
 

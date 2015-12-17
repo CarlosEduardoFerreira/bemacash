@@ -28,6 +28,8 @@ public class SaleOrderItemAddonJdbcConverter extends JdbcConverter<SaleOrderItem
     private static final String SALE_ITEM_ID = "SALE_ITEM_ID";
     private static final String EXTRA_COST = "EXTRA_COST";
     private static final String ADDON_TYPE = "ADDON_TYPE";
+    private static final String SALE_CHILD_ITEM_ID = "SALE_CHILD_ITEM_ID";
+    private static final String SALE_CHILD_ITEM_QTY = "SALE_CHILD_ITEM_QTY";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -36,7 +38,9 @@ public class SaleOrderItemAddonJdbcConverter extends JdbcConverter<SaleOrderItem
                 rs.getString(ADDON_ID),
                 rs.getString(SALE_ITEM_ID),
                 rs.getBigDecimal(EXTRA_COST),
-                _enum(ModifierType.class, rs.getString(ADDON_TYPE), ModifierType.ADDON)
+                _enum(ModifierType.class, rs.getString(ADDON_TYPE), ModifierType.ADDON),
+                rs.getString(SALE_CHILD_ITEM_ID),
+                rs.getBigDecimal(SALE_CHILD_ITEM_QTY)
         ).toValues();
     }
 
@@ -47,7 +51,9 @@ public class SaleOrderItemAddonJdbcConverter extends JdbcConverter<SaleOrderItem
                 rs.getString(ADDON_ID),
                 rs.getString(SALE_ITEM_ID),
                 rs.getBigDecimal(EXTRA_COST),
-                _enum(ModifierType.class, rs.getString(ADDON_TYPE), ModifierType.ADDON)
+                _enum(ModifierType.class, rs.getString(ADDON_TYPE), ModifierType.ADDON),
+                rs.getString(SALE_CHILD_ITEM_ID),
+                rs.getBigDecimal(SALE_CHILD_ITEM_QTY)
         );
     }
 
@@ -70,6 +76,8 @@ public class SaleOrderItemAddonJdbcConverter extends JdbcConverter<SaleOrderItem
                 .add(SALE_ITEM_ID, model.saleItemGuid)
                 .add(EXTRA_COST, model.extraCost)
                 .add(ADDON_TYPE, model.type)
+                .add(SALE_CHILD_ITEM_ID, model.childItemGuid)
+                .add(SALE_CHILD_ITEM_QTY, model.childItemQty)
                 .build(JdbcFactory.getApiMethod(model));
     }
 

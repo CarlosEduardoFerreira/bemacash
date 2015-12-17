@@ -26,7 +26,7 @@ import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.KeyboardView;
 import com.kaching123.tcr.fragment.itempick.DrawerCategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
-import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment.OnAddonsChangedListener;
+import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.service.UploadTask;
@@ -227,21 +227,16 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
     }
 
     @Override
-    protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid, int modifiersCount, int addonsCount, int optionalsCount, String selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
+    protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid) {
         ModifyFragment.show(
                 this,
-                itemGuid,
-                modifiersCount,
-                addonsCount,
-                optionalsCount,
-                selectedModifierGuid,
-                selectedAddonsGuids,
-                selectedOptionalsGuids,
-                new OnAddonsChangedListener() {
+                itemGuid, saleItemGuid,
+                new ItemModifiersFragment.OnAddonsChangedListener() {
                     @Override
-                    public void onAddonsChanged(String modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
+                    public void onAddonsChanged(ArrayList<String>  modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
 
-                        UpdateSaleItemAddonsCommand.start(CashierActivity.this, saleItemGuid, itemGuid, modifierGuid, addonsGuid, optionalsGuid, updateSaleItemAddonsCallback);
+                        UpdateSaleItemAddonsCommand.start(CashierActivity.this,
+                                saleItemGuid, itemGuid, modifierGuid, addonsGuid, optionalsGuid, updateSaleItemAddonsCallback);
                     }
                 }
         );

@@ -92,7 +92,7 @@ import com.kaching123.tcr.fragment.edit.PriceEditFragment.OnEditPriceListener;
 import com.kaching123.tcr.fragment.edit.QtyEditFragment;
 import com.kaching123.tcr.fragment.edit.SaleOrderDiscountEditFragment;
 import com.kaching123.tcr.fragment.edit.TaxEditFragment;
-import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment.OnAddonsChangedListener;
+import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.fragment.saleorder.HoldFragmentDialog;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
@@ -369,20 +369,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
             @Override
             public void onEditItemModifiers(String saleItemGuid,
-                                            String itemGuid,
-                                            int modifiersCount, int addonsCount, int optionalsCount,
-                                            String selectedModifierGuid,
-                                            ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
+                                            String itemGuid) {
                 showEditItemModifiers(
                         saleItemGuid,
-                        itemGuid,
-                        modifiersCount,
-                        addonsCount,
-                        optionalsCount,
-                        selectedModifierGuid,
-                        selectedAddonsGuids,
-                        selectedOptionalsGuids
-                );
+                        itemGuid);
             }
 
             @Override
@@ -476,11 +466,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     protected abstract void showEditItemModifiers(final String saleItemGuid,
-                                                  final String itemGuid, final int modifiersCount,
-                                                  final int addonsCount, final int optionalsCount,
-                                                  final String selectedModifierGuid,
-                                                  final ArrayList<String> selectedAddonsGuids,
-                                                  final ArrayList<String> selectedOptionalsGuids);
+                                                  final String itemGuid);
 
     protected void tryToAddItem(final ItemExModel model) {
         tryToAddItem(model, null, null, null);
@@ -494,14 +480,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
         ModifyFragment.show(this,
                 model.guid,
-                model.modifiersCount,
-                model.addonsCount,
-                model.optionalCount,
-                model.defaultModifierGuid,
-                new OnAddonsChangedListener() {
+                new ItemModifiersFragment.OnAddonsChangedListener() {
                     @Override
-                    public void onAddonsChanged(String modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
-                        tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
+                    public void onAddonsChanged(ArrayList<String> modifierGuid,
+                                                ArrayList<String> addonsGuid,
+                                                ArrayList<String> optionalsGuid) {
+                        tryToAddCheckPriceType(model, modifierGuid,
+                                addonsGuid, optionalsGuid, price, quantity, unit);
                     }
                 }
         );
@@ -509,7 +494,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
 
     protected void tryToAddCheckPriceType(final ItemExModel model,
-                                          final String modifierGiud,
+                                          final ArrayList<String>  modifierGiud,
                                           final ArrayList<String> addonsGuids,
                                           final ArrayList<String> optionalGuids,
                                           final BigDecimal price,
@@ -1163,7 +1148,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
      * * menu end ***
      */
 
-    private void addItemModel(ItemExModel model, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, Unit unit) {
+    private void addItemModel(ItemExModel model, ArrayList<String> modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, Unit unit) {
         addItemModel(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, false, unit);
     }
 
@@ -1174,7 +1159,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    private void tryToAddSerializedItem(final ItemExModel model, final String modifierGiud, final ArrayList<String> addonsGuids,
+    private void tryToAddSerializedItem(final ItemExModel model,
+                                        final ArrayList<String> modifierGiud,
+                                        final ArrayList<String> addonsGuids,
                                         final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final boolean checkDrawerState) {
         UnitsSaleFragment.show(BaseCashierActivity.this, model, null, UnitsSaleFragment.UnitActionType.ADD_TO_ORDER,
                 model.codeType, new UnitsSaleFragment.UnitSaleCallback() {
@@ -1226,7 +1213,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 });
     }
 
-    private void addItemModel(final ItemExModel model, final String modifierGiud, final ArrayList<String> addonsGuids,
+    private void addItemModel(final ItemExModel model, final ArrayList<String>  modifierGiud, final ArrayList<String> addonsGuids,
                               final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final boolean checkDrawerState, Unit unit) {
         if (model == null)
             return;
@@ -1239,7 +1226,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
 
-    private void addItem(ItemExModel model, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, boolean checkDrawerState, Unit unit) {
+    private void addItem(ItemExModel model,
+                         ArrayList<String>  modifierGiud,
+                         ArrayList<String> addonsGuids,
+                         ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, boolean checkDrawerState, Unit unit) {
         if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit))
             return;
         if (model.priceType == PriceType.UNIT_PRICE && scaleServiceBound) {
@@ -1294,7 +1284,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         );
     }
 
-    private boolean checkDrawerState(ItemExModel model, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, Unit unit) {
+    private boolean checkDrawerState(ItemExModel model,
+                                     ArrayList<String>  modifierGiud,
+                                     ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, Unit unit) {
         boolean creatingOrder = TextUtils.isEmpty(this.orderGuid);
         if (creatingOrder && getApp().getShopInfo().drawerClosedForSale) {
             WaitDialogFragment.show(this, getString(R.string.check_drawer_state_wait_dialog_message));
@@ -1312,7 +1304,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         GetPrinterStatusCommand.start(this, searchByMac, printerStatusCallback);
     }
 
-    private void skipDrawerStateCheck(final ItemExModel model, final String modifierGiud, final ArrayList<String> addonsGuids, final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
+    private void skipDrawerStateCheck(final ItemExModel model, final ArrayList<String> modifierGiud, final ArrayList<String> addonsGuids, final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
         if (!getApp().hasPermission(Permission.DROPS_AND_PAYOUTS)) {
             PermissionFragment.showCancelable(BaseCashierActivity.this,
                     new OnDialogClickListener() {
@@ -1336,7 +1328,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         addItemModel(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, false, unit);
     }
 
-    private void showDrawerStateErrorDialog(final ItemExModel itemModel, final String modifierGiud, final ArrayList<String> addonsGuids, final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
+    private void showDrawerStateErrorDialog(final ItemExModel itemModel, final ArrayList<String> modifierGiud, final ArrayList<String> addonsGuids, final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
         AlertDialogFragment.showAlertWithSkip(BaseCashierActivity.this, R.string.error_dialog_title, getString(R.string.check_drawer_state_error_dialog_message), R.string.btn_retry,
                 new OnDialogClickListener() {
                     @Override
@@ -1821,14 +1813,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private class PrinterStatusCallback extends BasePrinterStatusCallback {
 
         private ItemExModel itemModel;
-        private String modifierGiud;
+        private ArrayList<String>  modifierGiud;
         private ArrayList<String> addonsGuids;
         private ArrayList<String> optionalGuids;
         private BigDecimal price;
         private BigDecimal quantity;
         private Unit unit;
 
-        public void setItem(ItemExModel itemModel, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, Unit unit) {
+        public void setItem(ItemExModel itemModel,
+                            ArrayList<String> modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, Unit unit) {
             this.itemModel = itemModel;
             this.modifierGiud = modifierGiud;
             this.addonsGuids = addonsGuids;
@@ -2118,7 +2111,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         Cursor cursor = ProviderAction.query(URI_SALE_ITEMS)
                 .where(ShopSchema2.SaleOrderItemsView2.SaleItemTable.SALE_ITEM_GUID + " = ?", saleItemGuid)
                 .perform(this);
-        List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor, new SaleOrderItemViewModelWrapFunction(this, false));
+        List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor,
+                new SaleOrderItemViewModelWrapFunction(this));
         return saleItemsList == null || saleItemsList.isEmpty() ? null : saleItemsList.get(0);
     }
 
@@ -2430,12 +2424,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private static class SaleOrderItemModelWrapper {
         private final SaleOrderItemModel model;
-        private final String modifierGiud;
+        private final ArrayList<String> modifierGiud;
         private final ArrayList<String> addonsGuids;
         private final ArrayList<String> optionalGuids;
         private final Unit unit;
 
-        public SaleOrderItemModelWrapper(SaleOrderItemModel model, String modifierGiud, ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, Unit unit) {
+        public SaleOrderItemModelWrapper(SaleOrderItemModel model,
+                                         ArrayList<String> modifierGiud,
+                                         ArrayList<String> addonsGuids,
+                                         ArrayList<String> optionalGuids, Unit unit) {
             this.model = model;
             this.modifierGiud = modifierGiud;
             this.addonsGuids = addonsGuids;

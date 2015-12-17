@@ -26,7 +26,7 @@ import com.kaching123.tcr.model.ModifierType;
 /**
  * Created by vkompaniets on 18.11.13.
  */
-@EViewGroup(R.layout.modify_container)
+@EViewGroup(R.layout.modify_container_bra)
 public class ModifierContainerView extends FrameLayout {
 
     @ViewById

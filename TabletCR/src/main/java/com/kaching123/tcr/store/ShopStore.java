@@ -538,7 +538,7 @@ public abstract class ShopStore {
 
     @Table(ModifierTable.TABLE_NAME)
     @Index(name = "item", columns = ModifierTable.ITEM_GUID)
-    public static interface ModifierTable extends IBemaSyncTable {
+    public interface ModifierTable extends IBemaSyncTable {
 
         @URI(altNotify = {ModifierView.URI_CONTENT, ModifierGroupView.URI_CONTENT})
         String URI_CONTENT = "items_modifier";
@@ -821,12 +821,20 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.INTEGER)
         String TYPE = "addon_type";
+
+        @Column(type = Type.TEXT)
+        String CHILD_ITEM_ID = "child_item_guid";
+
+        @Column(type = Type.TEXT)
+        String CHILD_ITEM_QTY = "child_item_qty";
+
     }
 
     static {
         applyForeignKeys(SaleAddonTable.TABLE_NAME,
                 foreignKey(SaleAddonTable.ADDON_GUID, ModifierTable.TABLE_NAME, ModifierTable.MODIFIER_GUID),
-                foreignKey(SaleAddonTable.ITEM_GUID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, true)
+                foreignKey(SaleAddonTable.ITEM_GUID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, true),
+                foreignKey(SaleAddonTable.CHILD_ITEM_ID, ItemTable.TABLE_NAME, ItemTable.GUID)
         );
     }
 
@@ -1913,6 +1921,11 @@ public abstract class ShopStore {
 
         @Join(type = Join.Type.LEFT, joinTable = SaleAddonTable.TABLE_NAME, joinColumn = SaleAddonTable.ITEM_GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.SALE_ITEM_GUID)
         String TABLE_SALE_ORDER_ITEM_ADDON = "sale_addon_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({ItemTable.DESCRIPTION, ItemTable.SALE_PRICE})
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM_ADDON, onColumn = SaleAddonTable.CHILD_ITEM_ID)
+        String TABLE_SALE_ADDON_SUB_ITEM = "sale_addon_sub_item_table";
 
         @Columns(ModifierTable.TITLE)
         @Join(type = Join.Type.LEFT, joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.MODIFIER_GUID, onTableAlias = TABLE_SALE_ORDER_ITEM_ADDON, onColumn = SaleAddonTable.ADDON_GUID)

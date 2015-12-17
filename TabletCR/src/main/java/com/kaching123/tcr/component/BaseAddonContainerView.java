@@ -68,7 +68,7 @@ public abstract class BaseAddonContainerView<T> extends FrameLayout {
 
     public abstract class ButtonsAdapter<T> extends ObjectsCursorAdapter<T> {
 
-        private HashSet<String> selectedItems = new HashSet<String>();
+        private HashSet<String> selectedItems = new HashSet<>();
 
         private boolean singleMode;
 

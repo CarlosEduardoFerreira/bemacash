@@ -1,58 +1,44 @@
 package com.kaching123.tcr.model.converter;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.support.v4.content.Loader;
-import android.text.TextUtils;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.getbase.android.db.provider.ProviderAction;
-import com.getbase.android.db.provider.Query;
-import com.google.common.base.Function;
-import com.kaching123.tcr.function.OrderTotalPriceCalculator;
-import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
-import com.kaching123.tcr.function.UnitWrapFunction;
-import com.kaching123.tcr.model.ModifierType;
-import com.kaching123.tcr.model.OrderType;
-import com.kaching123.tcr.model.PriceType;
-import com.kaching123.tcr.model.SaleOrderItemAddonModel;
-import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
-import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
-import com.kaching123.tcr.model.Unit;
-import com.kaching123.tcr.model.payment.HistoryDetailedOrderItemModel;
-import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2;
-import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.BillPaymentDescriptionTable;
-import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
-import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
-import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleOrderTable;
-import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.ModifierTable;
-import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-
-import static com.kaching123.tcr.model.ContentValuesUtil._bool;
-import static com.kaching123.tcr.model.ContentValuesUtil._caseCount;
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
-import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
-import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
-import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
-import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
-import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
-import static com.kaching123.tcr.util.CursorUtil._wrap;
 
 /**
  * Created by gdubina on 03.12.13.
  */
+
+public class SaleOrderItemViewModelWrapFunction extends SaleItemWrapFunction {
+
+    public SaleOrderItemViewModelWrapFunction(Context context) {
+        super(context);
+    }
+
+    @Override
+    protected boolean loadSerialItems() {
+        return true;
+    }
+
+    @Override
+    protected boolean recalcSaleItems() {
+        return true;
+    }
+
+    public static Loader<List<SaleOrderItemViewModel>> createLoader(Context context, String orderGuid) {
+        return CursorLoaderBuilder.forUri(URI_ORDER_ITEMS)
+                .where(SaleItemTable.ORDER_GUID + " = ? ", orderGuid)
+                .orderBy(ORDER_BY)
+                .wrap(new SaleOrderItemViewModelWrapFunction(context))
+                .build(context);
+    }
+}
+
+/*
 public class SaleOrderItemViewModelWrapFunction implements Function<Cursor, List<SaleOrderItemViewModel>> {
 
     private static final Uri URI_ORDER_ITEMS = ShopProvider.getContentUri(SaleOrderItemsView.URI_CONTENT);
@@ -268,4 +254,4 @@ public class SaleOrderItemViewModelWrapFunction implements Function<Cursor, List
                 })
                 .build(context);
     }
-}
+}*/

@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * Created by vkompaniets on 6/23/2015.
  */
-@EFragment(R.layout.item_modifiers_inner_fragment)
+@EFragment(R.layout.item_modifiers_inner_fragment_bra)
 public class ItemModifiersFragment extends Fragment{
 
     private static String MODIFIERS_GROUP_ID = "modifiers";
@@ -213,11 +213,12 @@ public class ItemModifiersFragment extends Fragment{
         int padding = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_padding);
         int margin = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_margin);
         int space = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_space);
-        int size = columnCnt * btnWidth + (columnCnt - 1) * space + 2 * padding + 2 * margin;
-        return size;
+        return columnCnt * btnWidth + (columnCnt - 1) * space + 2 * padding + 2 * margin;
     }
 
     public interface OnAddonsChangedListener {
-        void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid);
+        void onAddonsChanged(ArrayList<String> modifierGuid,
+                             ArrayList<String> addonsGuid,
+                             ArrayList<String> optionalsGuid);
     }
 }

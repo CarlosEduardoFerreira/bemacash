@@ -13,7 +13,9 @@ import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleItemInfo;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderCostInfo;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderInfo;
 import com.kaching123.tcr.model.DiscountType;
+import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonSubItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
@@ -27,7 +29,9 @@ import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
+import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
+import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -50,6 +54,10 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             SaleItemTable.TAXABLE,
             SaleItemTable.TAX,
             SaleAddonTable.EXTRA_COST,
+            SaleAddonTable.TYPE,
+            SaleAddonTable.CHILD_ITEM_ID,
+            SaleAddonTable.CHILD_ITEM_QTY,
+            SaleAddonSubItemTable.SALE_PRICE,
             SaleOrderTable.TAXABLE,
             SaleOrderTable.DISCOUNT,
             SaleOrderTable.DISCOUNT_TYPE,
@@ -106,7 +114,14 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
         SaleOrderInfo info = readCursor(c);
         SaleOrderCostInfo result = OrderTotalPriceCalculator.calculate(info);
 
-        onCalcTotal(result.isTaxableOrder, result.orderDiscount, result.orderDiscountType, result.tmpOderDiscountVal, result.subTotalItemTotal, result.totalTaxVatValue, result.totalItemDiscount, result.totalOrderPrice, result.totalDiscountableItemTotal, info.transactionFee);
+        onCalcTotal(result.isTaxableOrder,
+                result.orderDiscount,
+                result.orderDiscountType,
+                result.tmpOderDiscountVal,
+                result.subTotalItemTotal,
+                result.totalTaxVatValue,
+                result.totalItemDiscount,
+                result.totalOrderPrice, result.totalDiscountableItemTotal, info.transactionFee);
     }
 
     private static SaleOrderInfo readCursor(Cursor c) {
@@ -148,10 +163,24 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
 
             result.map.put(saleItemId, value);
         }
+        /*
         BigDecimal extra = _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST));
         if (extra != null && value.totalPrice != null) {
             value.totalPrice = value.totalPrice.add(extra);
+        }*/
+        BigDecimal extra;
+        if (_modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)) == ModifierType.OPTIONAL){
+            extra = null;
+        } else if (c.getString(c.getColumnIndex(SaleAddonTable.CHILD_ITEM_ID)) != null) {
+            extra = getSubTotal(_decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY)), _decimal(c, c.getColumnIndex(SaleAddonSubItemTable.SALE_PRICE)));
+        } else {
+            extra = _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST));
         }
+
+        if (extra != null && value.totalPrice != null) {
+            value.totalPrice = value.totalPrice.add(extra);
+        }
+
     }
 
 

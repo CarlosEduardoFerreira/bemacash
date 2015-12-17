@@ -3,10 +3,10 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
@@ -16,26 +16,28 @@ import static com.kaching123.tcr.util.ContentValuesUtilBase._decimalQty;
 /**
  * Created by gdubina on 06/11/13.
  */
-public class SaleOrderItemAddonModel implements IValueModel, Serializable{
+public class SaleModifierModel implements IValueModel, Serializable{
 
     public String guid;
     public String addonGuid;
     public String saleItemGuid;
     public BigDecimal extraCost;
     public ModifierType type;
+
     // Item, that will be added via modifier, or Linked modifier item, that might be affected, e.g. with no-option.
     public String childItemGuid;
 
     // item to be added or to be removed. Should be positive
     public BigDecimal childItemQty;
 
-    public SaleOrderItemAddonModel(String guid,
-                                   String addonGuid,
-                                   String saleItemGuid,
-                                   BigDecimal extraCost,
-                                   ModifierType type,
-                                   String childItemGuid,
-                                   BigDecimal childItemQty) {
+
+    public SaleModifierModel(String guid,
+                             String addonGuid,
+                             String saleItemGuid,
+                             BigDecimal extraCost,
+                             ModifierType type,
+                             String childItemGuid,
+                             BigDecimal childItemQty) {
         this.guid = guid;
         this.addonGuid = addonGuid;
         this.saleItemGuid = saleItemGuid;
@@ -44,7 +46,8 @@ public class SaleOrderItemAddonModel implements IValueModel, Serializable{
         this.childItemGuid = childItemGuid;
         this.childItemQty = childItemQty;
     }
-    public SaleOrderItemAddonModel(Cursor c){
+
+    public SaleModifierModel(Cursor c){
         this(
                 c.getString(c.getColumnIndex(SaleAddonTable.GUID)),
                 c.getString(c.getColumnIndex(SaleAddonTable.ADDON_GUID)),
@@ -71,6 +74,7 @@ public class SaleOrderItemAddonModel implements IValueModel, Serializable{
         values.put(SaleAddonTable.TYPE, _enum(type));
         values.put(SaleAddonTable.CHILD_ITEM_ID, childItemGuid);
         values.put(SaleAddonTable.CHILD_ITEM_QTY, _decimalQty(childItemQty));
+
         return values;
     }
 }

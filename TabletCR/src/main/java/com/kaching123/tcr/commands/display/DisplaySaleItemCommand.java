@@ -41,7 +41,11 @@ public class DisplaySaleItemCommand extends BaseDisplayCommand<DisplayPrinterWra
     protected void printBody(Context context, DisplayPrinterWrapper printerWrapper) {
 
         SaleOrderItemViewModel saleItem = getSaleItem(context, saleItemGuid);
-        printerWrapper.add(saleItem.itemModel.qty, saleItem.description, CalculationUtil.getSubTotal(saleItem.itemModel.qty, saleItem.fullPrice, saleItem.itemModel.discount, saleItem.itemModel.discountType));
+        printerWrapper.add(saleItem.itemModel.qty, saleItem.description,
+                CalculationUtil.getSubTotal(saleItem.itemModel.qty,
+                        saleItem.getPrice(),//saleItem.fullPrice,
+                        saleItem.itemModel.discount,
+                        saleItem.itemModel.discountType));
     }
 
     private SaleOrderItemViewModel getSaleItem(Context context, String saleItemGuid) {
@@ -49,7 +53,8 @@ public class DisplaySaleItemCommand extends BaseDisplayCommand<DisplayPrinterWra
         Cursor cursor = ProviderAction.query(URI_SALE_ITEMS)
                 .where(SaleItemTable.SALE_ITEM_GUID + " = ?", saleItemGuid)
                 .perform(context);
-        List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor, new SaleOrderItemViewModelWrapFunction(context, false));
+        List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor,
+                new SaleOrderItemViewModelWrapFunction(context));
         return saleItemsList == null || saleItemsList.isEmpty() ? null : saleItemsList.get(0);
     }
 

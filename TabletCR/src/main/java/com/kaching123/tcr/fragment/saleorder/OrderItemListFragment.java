@@ -445,7 +445,19 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private void handleOnTitleClick(int pos) {
         SaleOrderItemViewModel item = adapter.getItem(pos);
-        int modifiersCount = item.modifiersCount;
+        if (!item.hasModifiers()) {
+            return;
+        }
+
+        if (itemsListHandler != null) {
+            itemsListHandler.onEditItemModifiers(
+                    item.itemModel.saleItemGuid,
+                    item.itemModel.itemGuid
+            );
+        }
+
+
+     /*   int modifiersCount = item.modifiersCount;
         int addonsCount = item.addonsCount;
         int optionalsCount = item.optionalsCount;
         boolean hasModifiers = modifiersCount > 0 || addonsCount > 0 || optionalsCount > 0;
@@ -482,7 +494,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                     selectedAddonsGuids,
                     selectedOptionalsGuids);
         }
-
+        */
     }
 
     public void setItemsListHandler(IItemsListHandlerHandler itemsListHandler) {
@@ -592,7 +604,14 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
         //void onBarcodeSearched(ItemExModel item, String barcode);
 
-        void onEditItemModifiers(String saleItemGuid, String itemGuid, int modifiersCount, int addonsCount, int optionalsCount, String selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids);
+        void onEditItemModifiers(String saleItemGuid,
+                                 String itemGuid);/*
+                                 int modifiersCount,
+                                 int addonsCount,
+                                 int optionalsCount,
+                                 String selectedModifierGuid,
+                                 ArrayList<String> selectedAddonsGuids,
+                                 ArrayList<String> selectedOptionalsGuids);*/
 
         void onRemoveLastItem();
 

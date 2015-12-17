@@ -163,7 +163,11 @@ public class ItemView extends FrameLayout {
         }
     }
 
-    public void bind(int position, Drawable pencilDrawable, Drawable pencilTransparent, String title, String ean, String productCode, String productCodes, BigDecimal qty, String unitsLabel, BigDecimal price, PriceType priceType, boolean discountable, BigDecimal discount, DiscountType discountType, Spannable subTitle, String notes, boolean hasNotes) {
+    public void bind(int position, Drawable pencilDrawable, Drawable pencilTransparent,
+                     String title, String ean, String productCode, String productCodes,
+                     BigDecimal qty, String unitsLabel, BigDecimal price, PriceType priceType,
+                     boolean discountable, BigDecimal discount, DiscountType discountType,
+                     Spannable subTitle, String notes, boolean hasNotes) {
         this.position = position;
 
         this.itemUnitPrice.setCompoundDrawables(null, null, priceType == PriceType.OPEN ? pencilDrawable : pencilTransparent, null);

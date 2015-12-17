@@ -53,7 +53,7 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
     }
 
     public BigDecimal getItemPrice(int pos) {
-        return getItem(pos).fullPrice;
+        return getItem(pos).getPrice();
     }
 
     public BigDecimal getItemDiscount(int pos) {
@@ -112,7 +112,7 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
                 item.getSerialCodesString(),
                 item.itemModel.qty,
                 item.isPcsUnit ? null : item.unitsLabel,
-                item.fullPrice,
+                item.getPrice(),
                 item.itemModel.priceType,
                 item.itemModel.discountable,
                 item.itemModel.discount,

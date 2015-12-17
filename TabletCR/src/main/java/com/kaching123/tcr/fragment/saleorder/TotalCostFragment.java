@@ -28,14 +28,10 @@ public class TotalCostFragment extends Fragment {
 
     @ViewById(R.id.total_cost_subtotal)
     protected TextView subTotal;
-
     @ViewById(R.id.total_cost_discount)
     protected TextView discount;
-
     @ViewById(R.id.total_cost_tax)
     protected TextView tax;
-
-
     @ViewById(R.id.total_cost_total)
     protected TextView orderTotal;
 

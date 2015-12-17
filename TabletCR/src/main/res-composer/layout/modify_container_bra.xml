@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:padding="6dp"
+    android:background="@drawable/addon_background"
+    android:layout_margin="@dimen/modify_container_margin">
+
+
+    <com.jess.ui.TwoWayGridView xmlns:grid="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/button_grid"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:paddingBottom="6dp"
+        android:fadeScrollbars="false"
+
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbarThumbHorizontal="@drawable/scrollbar_horizontal_thumb"
+        android:scrollbarTrackHorizontal="@drawable/scrollbar_horizontal_track"
+
+
+        grid:numRows="3"
+        grid:verticalSpacing="@dimen/modifier_list_vertical_spacing"
+        grid:horizontalSpacing="@dimen/modifier_list_horizontal_spacing"
+        grid:scrollDirectionLandscape="horizontal"/>
+
+    <View
+        android:layout_marginTop="6dp"
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:background="@drawable/qs_horizontal_divider" />
+
+    <TextView
+        android:id="@+id/container_title"
+        android:paddingTop="@dimen/modifier_padding_top"
+        android:gravity="center"
+        android:singleLine="true"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="#c3c3c3"
+        android:textSize="12sp"/>
+
+</LinearLayout>

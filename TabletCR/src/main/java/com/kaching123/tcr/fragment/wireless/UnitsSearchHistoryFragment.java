@@ -74,7 +74,7 @@ public class UnitsSearchHistoryFragment extends UnitsSearchFragment {
     @Override
     protected void configureUI() {
         super.configureUI();
-        adapter = new ArrayAdapter<Unit.Status>(getActivity(), android.R.layout.simple_spinner_item);
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item);
         adapter.add(Unit.Status.NEW);
         adapter.add(Unit.Status.USED);
         adapter.add(Unit.Status.BROKEN);
