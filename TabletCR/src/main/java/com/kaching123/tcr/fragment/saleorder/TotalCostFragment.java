@@ -37,19 +37,15 @@ public class TotalCostFragment extends Fragment {
 
     @ViewById
     protected View btnHold;
-
     @ViewById
     protected View btnVoid;
-
     @ViewById
     protected Button btnPay;
 
     @ViewById
     protected View taxBlock;
-
     @ViewById
     protected View orderDiscountBlock;
-
     @ColorRes(R.color.subtotal_table_text_main)
     protected int taxColorNormal;
 

@@ -233,7 +233,7 @@ public abstract class AsyncCommand extends PublicGroundyTask {
     /**
      * Represents result of sub-command
      */
-    protected static class SyncResult {
+    public static class SyncResult {
 
         private ISqlCommand sqlCmd;
         private ArrayList<ContentProviderOperation> localDbOperations;

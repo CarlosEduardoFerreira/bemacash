@@ -27,15 +27,17 @@ public class DeleteModifierCommand extends AsyncCommand {
     @Override
     protected TaskResult doCommand() {
         Logger.d("DeleteModifierCommand doCommand");
-        modifier = (ModifierModel) getArgs().getSerializable(ARG_MODIFIER);
+        if (modifier == null) {
+            modifier = (ModifierModel) getArgs().getSerializable(ARG_MODIFIER);
+        }
 
         return succeeded();
     }
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>(1);
-        operations.add(ContentProviderOperation.newUpdate(ShopProvider.getContentUri(ModifierTable.URI_CONTENT))
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>(1);
+        operations.add(ContentProviderOperation.newUpdate(ShopProvider.contentUri(ModifierTable.URI_CONTENT))
                 .withValues(ShopStore.DELETE_VALUES)
                 .withSelection(ModifierTable.MODIFIER_GUID + " = ?", new String[]{modifier.modifierGuid})
                 .build());
@@ -44,10 +46,15 @@ public class DeleteModifierCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.update(modifier, getAppCommandContext());
+        return JdbcFactory.delete(modifier, getAppCommandContext());
     }
 
     public static void start(Context context, ModifierModel modifier){
         create(DeleteModifierCommand.class).arg(ARG_MODIFIER, modifier).queueUsing(context);
+    }
+
+    public SyncResult sync(Context context, ModifierModel model, IAppCommandContext appCommandContext) {
+        this.modifier = model;
+        return syncDependent(context, appCommandContext);
     }
 }
