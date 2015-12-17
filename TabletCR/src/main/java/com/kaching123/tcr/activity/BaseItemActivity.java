@@ -261,7 +261,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     private boolean duplicateUpc;
 
-    private boolean duplicateProductCode;
+    protected boolean duplicateProductCode;
 
     protected static final int TAG_RESULT = 12;
     protected static final int TAG_RESULT_COMPOSER = 13;

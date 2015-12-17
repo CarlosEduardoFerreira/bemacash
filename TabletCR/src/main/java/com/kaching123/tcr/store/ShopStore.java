@@ -3005,6 +3005,22 @@ public abstract class ShopStore {
 
     }
 
+    @RawQuery(ProductCodeView.VIEW_NAME)
+    public interface ProductCodeView {
+
+        String VIEW_NAME = "product_code_view";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "product_code_view";
+
+        @SqlQuery
+        String SQL = "select " + ItemTable.PRODUCT_CODE
+                + " from " + ItemTable.TABLE_NAME
+                + " where UPPER(" + ItemTable.PRODUCT_CODE + ") = LOWER(" + ItemTable.PRODUCT_CODE + ")"
+                + " and LENGTH(" + ItemTable.PRODUCT_CODE + ") = " + 5
+                + " order by " + ItemTable.PRODUCT_CODE;
+    }
+
     @RawQuery(RecalcSaleItemTableView.VIEW_NAME)
     public static interface RecalcSaleItemTableView {
 
