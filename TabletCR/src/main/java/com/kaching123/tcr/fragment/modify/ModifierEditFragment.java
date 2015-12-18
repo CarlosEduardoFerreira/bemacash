@@ -470,8 +470,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
         @Override
         protected String getCustomSelection() {
             return ShopSchema2.ItemExtView2.ItemTable.GUID + " <> ? AND "
-                    + ShopSchema2.ModifierView2.ItemTable.CODE_TYPE + " IS NULL AND "
-                    + ShopSchema2.ModifierView2.ItemTable.ITEM_REF_TYPE + " == 0";
+                    + ShopSchema2.ModifierView2.ItemTable.CODE_TYPE + " IS NULL";
         }
 
         @Override

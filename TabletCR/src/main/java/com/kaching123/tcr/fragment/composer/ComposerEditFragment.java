@@ -313,8 +313,7 @@ public class ComposerEditFragment extends StyledDialogFragment implements Barcod
         protected String getCustomSelection() {
             return ShopSchema2.ItemExtView2.ItemTable.GUID + " <> ? AND "
                     + ShopSchema2.ItemExtView2.ItemTable.CODE_TYPE + " IS NULL AND "
-                    + ShopSchema2.ItemExtView2.ChildComposerTable.ID + " IS NULL AND "
-                    + ShopSchema2.ItemExtView2.ItemTable.ITEM_REF_TYPE + " == 0";
+                    + ShopSchema2.ItemExtView2.ChildComposerTable.ID + " IS NULL";
         }
 
         protected String whereInColumn() {

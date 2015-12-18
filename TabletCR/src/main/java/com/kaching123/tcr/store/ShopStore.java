@@ -465,14 +465,6 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String CODE_TYPE = "code_type";
 
-        //FIXME idyuzheva
-        @NotNull
-        @Column(type = Type.INTEGER, defVal = "0")
-        String ITEM_REF_TYPE = "item_ref_type";
-
-        @Column(type = Type.TEXT)
-        String REFERENCE_ITEM_ID = "reference_item_id";
-
         @NotNull
         @Column(type = Type.INTEGER, defVal = "1")
         String ELIGIBLE_FOR_COMMISSION = "eligible_for_commission";
@@ -1782,106 +1774,6 @@ public abstract class ShopStore {
         String UPDATE_TIME = "update_time";
     }
 
-    @Table(VariantItemTable.TABLE_NAME)
-    public interface VariantItemTable extends IBemaSyncTable {
-
-        String TABLE_NAME = "variant_item";
-
-        @URI(altNotify = {VariantsView.URI_CONTENT, VariantSubItemsCountView.URI_CONTENT, ItemExtView.URI_CONTENT})
-        String URI_CONTENT = TABLE_NAME;
-
-        @PrimaryKey
-        @NotNull
-        @Column(type = Type.INTEGER)
-        String ID = "_id";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        @Unique
-        String GUID = "guid";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        String ITEM_GUID = "item_guid";
-
-        @NotNull
-        @Column(type = Type.INTEGER)
-        String SHOP_ID = "shop_id";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        String NAME = "name";
-    }
-
-
-    @Table(VariantSubItemTable.TABLE_NAME)
-    public interface VariantSubItemTable extends IBemaSyncTable {
-
-        @URI(altNotify = {VariantsView.URI_CONTENT, VariantSubItemsCountView.URI_CONTENT, ItemExtView.URI_CONTENT})
-        String URI_CONTENT = "variant_sub_item";
-
-        String TABLE_NAME = "variant_sub_item";
-
-        @PrimaryKey
-        @NotNull
-        @Column(type = Type.INTEGER)
-        String ID = "_id";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        @Unique
-        String GUID = "guid";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        String VARIANT_ITEM_GUID = "variant_item_guid";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        String ITEM_GUID = "item_guid";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        String NAME = "name";
-
-    }
-
-    @Table(ItemMatrixTable.TABLE_NAME)
-    public interface ItemMatrixTable extends IBemaSyncTable {
-
-        String TABLE_NAME = "item_matrix";
-
-        @URI(altNotify = {ItemMatrixByChildView.URI_CONTENT, ItemMatrixByParentView.URI_CONTENT, ItemExtView.URI_CONTENT})
-        String URI_CONTENT = TABLE_NAME;
-
-        @PrimaryKey
-        @NotNull
-        @Column(type = Type.INTEGER)
-        String ID = "_id";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        @Unique
-        String GUID = "guid";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        String PARENT_GUID = "parent_guid";
-
-        @Column(type = Type.TEXT)
-        @NotNull
-        String NAME = "name";
-
-        @Column(type = Type.TEXT)
-        String CHILD_GUID = "child_guid";
-
-    }
-
-    static {
-        applyForeignKeys(ItemMatrixTable.TABLE_NAME,
-                foreignKey(ItemMatrixTable.PARENT_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
-    }
-
 
     /**
      * views *
@@ -2769,11 +2661,6 @@ public abstract class ShopStore {
         @Join(joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
 
-        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({ItemMatrixTable.PARENT_GUID})
-        @Join(type = Join.Type.LEFT, joinTable = ItemMatrixTable.TABLE_NAME, joinColumn = ItemMatrixTable.CHILD_GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
-        String TABLE_ITEM_MATRIX = "item_matrix_table";
-
     }
 
     @SimpleView(ExportSoldItemsView.VIEW_NAME)
@@ -2794,7 +2681,7 @@ public abstract class ShopStore {
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
         @Columns({ItemTable.DESCRIPTION, ItemTable.CATEGORY_ID, ItemTable.EAN_CODE,
-                ItemTable.PRODUCT_CODE, ItemTable.GUID, ItemTable.COST, ItemTable.REFERENCE_ITEM_ID})
+                ItemTable.PRODUCT_CODE, ItemTable.GUID, ItemTable.COST})
         @Join(joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
 
@@ -3145,117 +3032,6 @@ public abstract class ShopStore {
                 + " and LENGTH(" + ItemTable.PRODUCT_CODE + ") = " + 5
                 + " order by " + ItemTable.PRODUCT_CODE;
     }
-
-    @SimpleView(VariantsView.VIEW_NAME)
-    public interface VariantsView {
-
-        @URI
-        String URI_CONTENT = "variant_view";
-
-        String VIEW_NAME = "variant_view";
-
-        String VARIANT_SUB_ITEMS_COUNT = "variant_sub_items_count";
-
-        @From(VariantItemTable.TABLE_NAME)
-        String TABLE_VARIANT_ITEM = "variant_item_table";
-
-        @Join(type = Join.Type.LEFT, joinTable = VariantSubItemTable.TABLE_NAME, joinColumn = VariantSubItemTable.VARIANT_ITEM_GUID, onTableAlias = TABLE_VARIANT_ITEM, onColumn = VariantItemTable.GUID)
-        String TABLE_VARIANT_SUB_ITEM = "variant_sub_item";
-    }
-
-    @SimpleView(ItemMatrixByChildView.VIEW_NAME)
-    public interface ItemMatrixByChildView {
-
-        @URI(type = URI.Type.DIR, onlyQuery = true)
-        String URI_CONTENT = "item_matrix_view";
-
-        String VIEW_NAME = "item_matrix_view";
-
-
-        @From(ItemMatrixTable.TABLE_NAME)
-        String TABLE_ITEM_MATRIX = "item_matrix_table";
-
-        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_ITEM_MATRIX, onColumn = ItemMatrixTable.CHILD_GUID)
-        String TABLE_ITEM = "item_table";
-
-        String ITEM_MATRIX_PARENT_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.PARENT_GUID;
-        String ITEM_MATRIX_NAME = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.NAME;
-        String ITEM_DESCRIPTION = TABLE_ITEM + "_" + ItemTable.DESCRIPTION;
-        String CHILD_ITEM_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.CHILD_GUID;
-
-    }
-
-    @SimpleView(ItemMatrixByParentView.VIEW_NAME)
-    public interface ItemMatrixByParentView {
-
-        @URI(type = URI.Type.DIR, onlyQuery = true)
-        String URI_CONTENT = "item_matrix_view2";
-
-        String VIEW_NAME = "item_matrix_view2";
-
-
-        @From(ItemMatrixTable.TABLE_NAME)
-        String TABLE_ITEM_MATRIX = "item_matrix_table";
-
-        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_ITEM_MATRIX, onColumn = ItemMatrixTable.PARENT_GUID)
-        String TABLE_ITEM = "item_table";
-
-        String ITEM_DESCRIPTION = TABLE_ITEM + "_" + ItemTable.DESCRIPTION;
-        String CHILD_ITEM_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.CHILD_GUID;
-
-    }
-
-    /*will consist direct parent info and info through a matrix*/
-    @SimpleView(ItemWithParentInfoView.VIEW_NAME)
-    public interface ItemWithParentInfoView {
-
-        @URI(type = URI.Type.DIR, onlyQuery = true)
-        String URI_CONTENT = "item_with_parent_guid_view";
-
-        String VIEW_NAME = "item_with_parent_guid_view";
-
-        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({ItemTable.GUID, ItemTable.REFERENCE_ITEM_ID})
-        @From(ItemTable.TABLE_NAME)
-        String TABLE_ITEM = "item_table";
-
-        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({ItemMatrixTable.PARENT_GUID})
-        @Join(type = Join.Type.LEFT, joinTable = ItemMatrixTable.TABLE_NAME, joinColumn = ItemMatrixTable.CHILD_GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
-        String TABLE_ITEM_MATRIX = "item_matrix_table";
-
-        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({ItemTable.DESCRIPTION})
-        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.REFERENCE_ITEM_ID)
-        String TABLE_DIRECT_PARENT_ITEM_DESCRIPTION = "direct_parent_item_description_table";
-
-        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({ItemTable.DESCRIPTION})
-        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_ITEM_MATRIX, onColumn = ItemMatrixTable.PARENT_GUID)
-        String TABLE_PARENT_ITEM_THROUGH_MATRIX_DESCRIPTION = "parent_item_through_matrix_description_table";
-    }
-
-    @RawQuery(VariantSubItemsCountView.VIEW_NAME)
-    public interface VariantSubItemsCountView {
-
-        @URI
-        String URI_CONTENT = "variants_sub_items_count";
-
-        String VIEW_NAME = "variants_sub_items_count";
-        String VARIANT_ITEM_PARENT_GUID = VariantsView.TABLE_VARIANT_ITEM + "_" + VariantItemTable.ITEM_GUID;
-        String VARIANT_ITEM_SHOP_ID = VariantsView.TABLE_VARIANT_ITEM + "_" + VariantItemTable.SHOP_ID;
-        String VARIANT_ITEM_GUID = VariantsView.TABLE_VARIANT_ITEM + "_" + VariantItemTable.GUID;
-        String VARIANT_ITEM_NAME = VariantsView.TABLE_VARIANT_ITEM + "_" + VariantItemTable.NAME;
-        String VARIANT_SUB_ITEM_GUID = VariantsView.TABLE_VARIANT_SUB_ITEM + "_" + VariantSubItemTable.GUID;
-
-
-        String SUB_ITEMS_COUNT = "sum(case when " + VARIANT_SUB_ITEM_GUID + " IS NOT NULL then 1 else 0 end) as " + VariantsView.VARIANT_SUB_ITEMS_COUNT;
-        @SqlQuery
-        String QUERY = "select _id," + VARIANT_ITEM_GUID + "," +
-                VARIANT_ITEM_NAME + "," + SUB_ITEMS_COUNT + "," + VARIANT_ITEM_PARENT_GUID + " from " + VariantsView.VIEW_NAME + " where " + VARIANT_ITEM_PARENT_GUID + "=?" + " AND " + VARIANT_ITEM_SHOP_ID + "=?" + " group by " + VARIANT_ITEM_GUID;
-
-    }
-
 
 
     @RawQuery(RecalcSaleItemTableView.VIEW_NAME)
