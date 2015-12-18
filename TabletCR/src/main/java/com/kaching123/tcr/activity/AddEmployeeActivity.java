@@ -88,13 +88,17 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
     }
 
     private boolean isPhoneNumberExists(String phone) {
-        Cursor c = ProviderAction
-                .query(URI_EMPLOYEE)
-                .where(ShopStore.EmployeeTable.PHONE + " = ?", phone)
-                .perform(getBaseContext());
-        boolean exists = c.moveToFirst();
-        c.close();
-        return exists;
+        if(TextUtils.isEmpty(phone)) {
+            return false;
+        } else {
+            Cursor c = ProviderAction
+                    .query(URI_EMPLOYEE)
+                    .where(ShopStore.EmployeeTable.PHONE + " = ?", phone)
+                    .perform(getBaseContext());
+            boolean exists = c.moveToFirst();
+            c.close();
+            return exists;
+        }
     }
 
     @Override
