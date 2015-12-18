@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierModel;
 
 import java.util.HashSet;
@@ -19,7 +20,7 @@ import static com.kaching123.tcr.fragment.UiHelper.showPrice;
  * Created by vkompaniets on 12.12.13.
  */
 
-public class InnerFragmentAdapter  extends ObjectsCursorAdapter<ModifierModel> {
+public class InnerFragmentAdapter  extends ObjectsCursorAdapter<ModifierExModel> {
 
     private HashSet<String> selectedItems = new HashSet<String>();
 
@@ -42,16 +43,16 @@ public class InnerFragmentAdapter  extends ObjectsCursorAdapter<ModifierModel> {
     }
 
     @Override
-    protected View bindView(View convertView, int position, ModifierModel item) {
+    protected View bindView(View convertView, int position, ModifierExModel item) {
         ViewHolder holder = (ViewHolder) convertView.getTag();
-        final ModifierModel i = getItem(position);
+        final ModifierExModel i = getItem(position);
 
         if (i == null) {
             return convertView;
         }
 
-        holder.title.setText(i.title);
-        showPrice(holder.cost, i.cost);
+        holder.title.setText(i.getTitle());
+        showPrice(holder.cost, i.getCost());
         holder.checkbox.setActivated(selectedItems.contains(item.modifierGuid));
 
         return convertView;

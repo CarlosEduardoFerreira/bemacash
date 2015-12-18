@@ -43,27 +43,12 @@ public class CopyModifiersActivity extends SuperBaseActivity {
             public void onItemSelected(long id, String fromItem) {
                 ModifiersCopyDialog.show(self(), fromItem, CopyModifiersActivity.this.itemGuid);
             }
-        });/*
-            @Override
-            public void onItemSelected(long id, ItemExModel model) {
-                ModifiersCopyDialog.show(self(), "fromItem", model,new ModifiersCopyDialog.OnClosedListener() {
-                    @Override
-                    public void onDialogSuccessClosed() {
-                        closeSearch();
-                    }
-                });
-            }
-        });*/
+        });
 
         searchFragment.setItemGuid(itemGuid);
         searchFragment.setSearchText("");
     }
 
-    private void closeSearch() {
-        if (searchItem == null)
-            return;
-        searchItem.collapseActionView();
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         searchItem = menu.findItem(R.id.action_search);

@@ -18,11 +18,14 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.converter.ModifierExFunction;
 import com.kaching123.tcr.model.converter.ModifierFunction;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore.ModifierTable;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ModifierTable;
+import com.kaching123.tcr.store.ShopStore.ModifierView;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,9 +34,9 @@ import java.util.List;
  * Created by vkompaniets on 12.12.13.
  */
 @EFragment (R.layout.editmodifiers_copymodifier_inner_fragment)
-public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<ModifierModel>>{
+public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<ModifierExModel>>{
 
-    private static final Uri MODIFIER_URI = ShopProvider.getContentUri(ModifierTable.URI_CONTENT);
+    private static final Uri MODIFIER_URI = ShopProvider.contentUri(ModifierView.URI_CONTENT);
 
     @ViewById
     protected TextView typeTitle;
@@ -53,6 +56,7 @@ public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<
     private InnerFragmentAdapter adapter;
 
     private IItemClickListener listener;
+
     public InnerCopyFragment setListener(IItemClickListener listener) {
         this.listener = listener;
         return this;
@@ -105,21 +109,22 @@ public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<
     }
 
     @Override
-    public Loader<List<ModifierModel>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<List<ModifierExModel>> onCreateLoader(int i, Bundle bundle) {
         return CursorLoaderBuilder.forUri(MODIFIER_URI)
                 .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
-                .where(ModifierTable.TYPE + "= ?", type.ordinal())
-                .orderBy(ModifierTable.TITLE)
-                .transform(new ModifierFunction()).build(getActivity());
+                .where(ModifierTable.TYPE + " = ?", type.ordinal())
+                .transform(new ModifierExFunction()).build(getActivity());
     }
 
     @Override
-    public void onLoadFinished(Loader<List<ModifierModel>> listLoader, List<ModifierModel> modifierModels) {
+    public void onLoadFinished(Loader<List<ModifierExModel>> listLoader, List<ModifierExModel> modifierModels) {
+        checkboxAll.setEnabled(!modifierModels.isEmpty());
         adapter.changeCursor(modifierModels);
     }
 
     @Override
-    public void onLoaderReset(Loader<List<ModifierModel>> listLoader) {
+    public void onLoaderReset(Loader<List<ModifierExModel>> listLoader) {
+        checkboxAll.setEnabled(false);
         adapter.changeCursor(null);
     }
 
