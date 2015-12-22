@@ -10,7 +10,7 @@ import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand.BaseUpdateSaleItemAddonsCallback;
 import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
-import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment.OnAddonsChangedListener;
+import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickCategoriesFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickItemsFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
@@ -90,12 +90,18 @@ public class QuickServiceActivity extends BaseCashierActivity {
     @Override
     protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid
             ) {
-        modifyFragment.setupParams(itemGuid, saleItemGuid, new OnAddonsChangedListener() {
+        modifyFragment.setupParams(itemGuid, saleItemGuid, new ItemModifiersFragment.OnAddonsChangedListener() {
 
             @Override
             public void onAddonsChanged(ArrayList<String>  modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
                 hideModifiersFragment();
-                UpdateSaleItemAddonsCommand.start(QuickServiceActivity.this, saleItemGuid, itemGuid, modifierGuid, addonsGuid, optionalsGuid, updateSaleItemAddonsCallback);
+                UpdateSaleItemAddonsCommand.start(QuickServiceActivity.this,
+                        saleItemGuid,
+                        itemGuid,
+                        modifierGuid,
+                        addonsGuid,
+                        optionalsGuid,
+                        updateSaleItemAddonsCallback);
             }
         });
         showModifiersFragment();
@@ -162,7 +168,7 @@ public class QuickServiceActivity extends BaseCashierActivity {
             return;
         }
 
-        modifyFragment.setupParams(model.guid, model.defaultModifierGuid, new OnAddonsChangedListener() {
+        modifyFragment.setupParams(model.guid, new ItemModifiersFragment.OnAddonsChangedListener() {
 
             @Override
             public void onAddonsChanged(ArrayList<String>  modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
