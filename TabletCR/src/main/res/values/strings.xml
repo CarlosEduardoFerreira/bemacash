@@ -394,9 +394,13 @@
     <string name="pay_toast_zero">The charge can not be of zero value!</string>
     <string name="lots_o_dots">...........................................................................................................................................</string>
     <string name="total_cost_order_discount_label">Order discount:</string>
+
     <string name="qs_info_panel_label_tmpl">%s:</string>
+    <string name="qs_info_panel_item_label">Item price:</string>
+    <string name="qs_info_panel_modifiers_label">Modifiers:</string>
     <string name="qs_info_panel_addons_label">Add-ons:</string>
     <string name="qs_info_panel_total_label">Total:</string>
+
     <string name="inventory_action_add_item">Add Item</string>
     <string name="inventory_action_sort">Sorting Mode</string>
     <string name="inventory_action_manage_categories">Manage Categories</string>
