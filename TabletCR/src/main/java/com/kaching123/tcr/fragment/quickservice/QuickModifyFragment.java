@@ -77,7 +77,7 @@ public class QuickModifyFragment extends BaseItemModifiersFragment {
         modifiers.setOnChangeListener(new OnChangeListener() {
             @Override
             public void onChanged() {
-                selectedModifierGuid = new ArrayList<>(modifiers.getSelectedItems());
+                selectedModifierGuid = modifiers.getSelectedModifier();
                 restartLoader();
             }
         });
@@ -106,18 +106,15 @@ public class QuickModifyFragment extends BaseItemModifiersFragment {
     }
 
 
-    public void setupParams(String itemGuid, int modifiersCount, int addonsCount, int optionalsCount, ArrayList<String>  defaultModifierGuid, OnAddonsChangedListener onAddonsChangedListener) {
-        setupParams(itemGuid, modifiersCount, addonsCount, optionalsCount, defaultModifierGuid, null, null);
+    public void setupParams(String itemGuid, String defaultModifierGuid, OnAddonsChangedListener onAddonsChangedListener) {
+        setupParams(itemGuid, defaultModifierGuid, null, null);
         setOnAddonsChangedListener(onAddonsChangedListener);
         updateInfoPanel(null);
         restartLoader();
     }
 
-    public void setupParams(String itemGuid, int modifiersCount, int addonsCount, int optionalsCount,
-                            ArrayList<String> selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids,
-                            OnAddonsChangedListener onAddonsChangedListener) {
-        setupParams(itemGuid, modifiersCount, addonsCount, optionalsCount,
-                selectedModifierGuid, selectedAddonsGuids, selectedOptionalsGuids);
+    public void setupParams(String itemGuid, String selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids, OnAddonsChangedListener onAddonsChangedListener) {
+        setupParams(itemGuid, selectedModifierGuid, selectedAddonsGuids, selectedOptionalsGuids);
         setOnAddonsChangedListener(onAddonsChangedListener);
         updateInfoPanel(null);
         restartLoader();

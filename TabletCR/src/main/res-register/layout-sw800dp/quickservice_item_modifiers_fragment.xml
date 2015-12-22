@@ -161,15 +161,9 @@
         android:layout_height="match_parent"
         android:layout_width="15dp"
         android:background="@drawable/quick_left_panel_arrow"/>
-    <HorizontalScrollView
-        android:layout_toRightOf="@id/panel_divider"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:id="@+id/horizontalScrollView"
-        android:fadeScrollbars="false">
 
     <LinearLayout
+        android:layout_toRightOf="@id/panel_divider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
@@ -182,15 +176,7 @@
             android:id="@+id/modifiers"
             android:layout_height="match_parent"
             android:layout_width="wrap_content"/>
-        <LinearLayout
-            android:id="@+id/modifiers_group_holder"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" />
+
         <com.kaching123.tcr.component.AddonsContainerView_
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
@@ -209,6 +195,6 @@
             android:layout_height="match_parent"
             android:layout_width="wrap_content"/>
 
-    </LinearLayout>    </HorizontalScrollView>
+    </LinearLayout>
 
 </RelativeLayout>

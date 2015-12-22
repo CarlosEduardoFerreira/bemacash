@@ -14,12 +14,9 @@ import java.util.List;
  */
 
 public class SaleOrderItemViewModelWrapFunction extends SaleItemWrapFunction {
-    public SaleOrderItemViewModelWrapFunction(Context context) {
-        this(context, true);
-    }
 
-        public SaleOrderItemViewModelWrapFunction(Context context, boolean collectCounts) {
-        super(context, collectCounts);
+    public SaleOrderItemViewModelWrapFunction(Context context) {
+        super(context);
     }
 
     @Override

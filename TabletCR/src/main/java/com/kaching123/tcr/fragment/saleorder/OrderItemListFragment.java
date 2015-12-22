@@ -449,62 +449,52 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             return;
         }
 
-     /*   if (itemsListHandler != null) {
+        if (itemsListHandler != null) {
             itemsListHandler.onEditItemModifiers(
                     item.itemModel.saleItemGuid,
                     item.itemModel.itemGuid
             );
         }
-*/
 
-        int modifiersCount = item.modifiersCount;
+
+     /*   int modifiersCount = item.modifiersCount;
         int addonsCount = item.addonsCount;
         int optionalsCount = item.optionalsCount;
+        boolean hasModifiers = modifiersCount > 0 || addonsCount > 0 || optionalsCount > 0;
+        if (!hasModifiers) {
+            return;
+        }
 
-  /*      String selectedModifierGuid = null;
+        String selectedModifierGuid = null;
         if (item.getModifier() != null) {
             selectedModifierGuid = item.getModifier().addon.addonGuid;
         }
-*/
-        ArrayList<String> selectedModifiersGuids = new ArrayList<>();
-        ArrayList<String> selectedAddonsGuids = new ArrayList<>();
-        ArrayList<String> selectedOptionalsGuids = new ArrayList<>();
-        if (item.modifiers != null) {
-            for (SaleOrderItemViewModel.AddonInfo addonInfo : item.modifiers) {
-                if (addonInfo.addon.type == ModifierType.MODIFIER) {
-                    selectedModifiersGuids.add(addonInfo.addon.addonGuid);
-                } else if (addonInfo.addon.type == ModifierType.ADDON) {
+
+        ArrayList<String> selectedAddonsGuids = new ArrayList<String>();
+        ArrayList<String> selectedOptionalsGuids = new ArrayList<String>();
+        if (item.getAddons() != null) {
+            for (SaleOrderItemViewModel.AddonInfo addonInfo : item.getAddons()) {
+                if (addonInfo.addon.type == ModifierType.ADDON) {
                     selectedAddonsGuids.add(addonInfo.addon.addonGuid);
                 } else {
                     selectedOptionalsGuids.add(addonInfo.addon.addonGuid);
-                }/*
-            switch(addonInfo.addon.type) {
-                case MODIFIER:
-                    selectedModifiersGuids.add(addonInfo.addon.addonGuid);
-                    break;
-                case ADDON:
-                    selectedAddonsGuids.add(addonInfo.addon.addonGuid);
-                    break;
-                default:
-                    selectedOptionalsGuids.add(addonInfo.addon.addonGuid);
-                    break;
-            }*/
-
+                }
             }
         }
 
         if (itemsListHandler != null) {
+            //getListView().setItemChecked(pos, true);
             itemsListHandler.onEditItemModifiers(
                     item.itemModel.saleItemGuid,
                     item.itemModel.itemGuid,
                     modifiersCount,
                     addonsCount,
                     optionalsCount,
-                    selectedModifiersGuids,
+                    selectedModifierGuid,
                     selectedAddonsGuids,
                     selectedOptionalsGuids);
         }
-
+        */
     }
 
     public void setItemsListHandler(IItemsListHandlerHandler itemsListHandler) {
@@ -615,13 +605,13 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         //void onBarcodeSearched(ItemExModel item, String barcode);
 
         void onEditItemModifiers(String saleItemGuid,
-                                 String itemGuid,
+                                 String itemGuid);/*
                                  int modifiersCount,
                                  int addonsCount,
                                  int optionalsCount,
-                                 ArrayList<String> selectedModifierGuid,
+                                 String selectedModifierGuid,
                                  ArrayList<String> selectedAddonsGuids,
-                                 ArrayList<String> selectedOptionalsGuids);
+                                 ArrayList<String> selectedOptionalsGuids);*/
 
         void onRemoveLastItem();
 

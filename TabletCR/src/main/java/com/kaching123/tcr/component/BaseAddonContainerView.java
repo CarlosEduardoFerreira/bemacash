@@ -34,9 +34,6 @@ public abstract class BaseAddonContainerView<T> extends FrameLayout {
 
     private ButtonsAdapter<T> adapter;
 
-    public BaseAddonContainerView(Context context) {
-        super(context);
-    }
     public BaseAddonContainerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -51,10 +48,6 @@ public abstract class BaseAddonContainerView<T> extends FrameLayout {
 
     public void setContainerTitle(String title) {
         this.containerTitle.setText(title);
-    }
-
-    public String getContainerTitle() {
-        return containerTitle.getText().toString();
     }
 
     public void setList(List<T> modifiers) {

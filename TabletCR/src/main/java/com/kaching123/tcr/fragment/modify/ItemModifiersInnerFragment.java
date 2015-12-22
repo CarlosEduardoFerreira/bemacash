@@ -18,16 +18,7 @@ public class ItemModifiersInnerFragment extends BaseItemModifiersFragment {
     protected String argItemGuid;
 
     @FragmentArg
-    protected int argNumModifiers;
-
-    @FragmentArg
-    protected int argNumAddons;
-
-    @FragmentArg
-    protected int argNumOptionals;
-
-    @FragmentArg
-    protected ArrayList<String> argSelectedModifierGuid;
+    protected String argSelectedModifierGuid;
 
     @FragmentArg
     protected ArrayList<String> argSelectedAddonsGuids;
@@ -39,7 +30,6 @@ public class ItemModifiersInnerFragment extends BaseItemModifiersFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setupParams(argItemGuid,
-                argNumModifiers, argNumAddons, argNumOptionals,
                 argSelectedModifierGuid, argSelectedAddonsGuids, argSelectedOptionalsGuids);
     }
 

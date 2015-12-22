@@ -7,11 +7,9 @@ import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 import com.jess.ui.TwoWayGridView;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierModel;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -19,31 +17,28 @@ import java.util.Set;
  * Created by vkompaniets on 18.11.13.
  */
 @EViewGroup(R.layout.modify_container)
-public class ModifiersContainerView extends BaseAddonContainerView<ModifierExModel> {
+public class ModifiersContainerView extends BaseAddonContainerView<ModifierModel> {
 
-    public ModifiersContainerView(Context context) {
-        super(context);
-    }
     public ModifiersContainerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    protected ButtonsAdapter<ModifierExModel> createAdapter() {
-        return new ButtonsAdapter<ModifierExModel>(getContext(), true) {
+    protected ButtonsAdapter<ModifierModel> createAdapter() {
+        return new ButtonsAdapter<ModifierModel>(getContext(), true) {
 
             @Override
-            protected String getTitle(ModifierExModel item) {
-                return item.getTitle();
+            protected String getTitle(ModifierModel item) {
+                return item.title;
             }
 
             @Override
-            protected BigDecimal getCost(ModifierExModel item) {
-                return item.getCost();
+            protected BigDecimal getCost(ModifierModel item) {
+                return item.cost;
             }
 
             @Override
-            protected String getGuid(ModifierExModel item) {
+            protected String getGuid(ModifierModel item) {
                 return item.modifierGuid;
             }
         };
@@ -58,10 +53,6 @@ public class ModifiersContainerView extends BaseAddonContainerView<ModifierExMod
 
     public void setSelectedModifier(String selectedModifierGuid) {
         setSelectedItems(Arrays.asList(selectedModifierGuid));
-    }
-
-    public void setSelectedModifiersGuids (ArrayList<String> selectedModifiersGuids){
-        setSelectedItems(selectedModifiersGuids);
     }
 
     public void setColumnNums(int num) {
