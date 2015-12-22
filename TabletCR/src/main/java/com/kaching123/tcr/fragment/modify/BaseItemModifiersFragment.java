@@ -6,21 +6,22 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.AddonsContainerView;
 import com.kaching123.tcr.component.ModifiersContainerView;
+import com.kaching123.tcr.component.ModifiersContainerView_;
 import com.kaching123.tcr.component.NoOptionsContainerView;
-import com.kaching123.tcr.model.ModifierModel;
+import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierType;
-import com.kaching123.tcr.model.converter.ModifierFunction;
+import com.kaching123.tcr.model.converter.ModifierExFunction;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.ModifierTable;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2;
+import com.kaching123.tcr.store.ShopStore.ModifierView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -29,8 +30,12 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -39,15 +44,21 @@ import java.util.Set;
 @EFragment
 public class BaseItemModifiersFragment extends Fragment {
 
-    private static final Uri MODIFIER_URI = ShopProvider.contentUri(ModifierTable.URI_CONTENT);
-    private static final Uri ADDON_URI = ShopProvider.contentUri(ModifierTable.URI_CONTENT);
+    private static final Uri MODIFIER_URI = ShopProvider.contentUri(ModifierView.URI_CONTENT);
 
     private static final int LOADER_MODIFIERS = 1;
     private static final int LOADER_ADDONS = 2;
     private static final int LOADER_OPTIONALS = 3;
 
+    private static String MODIFIERS_GROUP_ID = "modifiers";
+    private static String ADDONS_GROUP_ID = "addons";
+    private static String OPTIONAL_GROUP_ID = "options";
+
     @ViewById
     protected ModifiersContainerView modifiers;
+
+    @ViewById
+    protected LinearLayout modifiersGroupHolder;
 
     @ViewById
     protected AddonsContainerView addons;
@@ -68,7 +79,7 @@ public class BaseItemModifiersFragment extends Fragment {
     protected int numOptionals;
 
     @InstanceState
-    protected String selectedModifierGuid;
+    protected ArrayList<String> selectedModifierGuid;
 
     @InstanceState
     protected ArrayList<String> selectedAddonsGuids;
@@ -83,24 +94,36 @@ public class BaseItemModifiersFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    public void setupParams(String itemGuid, String selectedModifierGuid,
-                            ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
+    public void setupParams(String itemGuid, int numModifiers, int numAddons, int numOptionals,
+                            ArrayList<String> selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
         this.itemGuid = itemGuid;
+
+        this.numModifiers = numModifiers;
+        this.numAddons = numAddons;
+        this.numOptionals = numOptionals;
 
         this.selectedModifierGuid = selectedModifierGuid;
         this.selectedAddonsGuids = selectedAddonsGuids;
         this.selectedOptionalsGuids = selectedOptionalsGuids;
 
         calcWindowWidth(numModifiers, numAddons, numOptionals);
-        reinitFragment(selectedModifierGuid, selectedAddonsGuids, selectedOptionalsGuids);
+        reinitFragment(numModifiers, numAddons, numOptionals, selectedModifierGuid, selectedAddonsGuids, selectedOptionalsGuids);
     }
 
-    public void reinitFragment(String selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
-        if (!TextUtils.isEmpty(selectedModifierGuid)) {
-            modifiers.setSelectedModifier(selectedModifierGuid);
-        } else {
-            modifiers.cleanSelection();
-        }
+    public void reinitFragment(int numModifiers, int numAddons, int numOptionals, ArrayList<String> selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
+
+      /*  if (modifiersGroupHolder.getChildCount() > 0) {
+            int n = modifiersGroupHolder.getChildCount();
+            for (int i = 0; i < n; i++) {
+                ModifiersContainerView view = (ModifiersContainerView) modifiersGroupHolder.getChildAt(i);
+                if (!TextUtils.isEmpty(selectedModifierGuid.get(i))) {
+                    view.setSelectedModifier(selectedModifierGuid.get(i));
+                } else {
+                    view.cleanSelection();
+                }
+            }
+        } */
+
 
         if (selectedAddonsGuids != null) {
             addons.setSelectedAddonsGuids(selectedAddonsGuids);
@@ -134,46 +157,161 @@ public class BaseItemModifiersFragment extends Fragment {
     }
 
     public void onConfirm() {
-        Set<String> modifierGuids = modifiers.getSelectedItems();
+        //Set<String> modifierGuids = modifiers.getSelectedItems();
+        Set<String> modifierGropsGuids = new HashSet<>();
         Set<String> addonsGuids = addons.getSelectedItems();
         Set<String> optionalsGuids = optionals.getSelectedItems();
+
+        int n = modifiersGroupHolder.getChildCount();
+        for (int i = 0; i < n; i++){
+            ModifiersContainerView view = (ModifiersContainerView) modifiersGroupHolder.getChildAt(i);
+            Set<String> selectedItems = view.getSelectedItems();
+            modifierGropsGuids.addAll(selectedItems);
+        }
+
+
         if (onAddonsChangedListener != null) {
-            onAddonsChangedListener.onAddonsChanged(new ArrayList<>(modifierGuids), new ArrayList<>(addonsGuids), new ArrayList<>(optionalsGuids));
+            onAddonsChangedListener.onAddonsChanged(new ArrayList<>(modifierGropsGuids), new ArrayList<>(addonsGuids), new ArrayList<>(optionalsGuids));
         }
     }
 
-    private class ModifierModelLoader implements LoaderCallbacks<List<ModifierModel>> {
+    private class ModifierModelLoader implements LoaderCallbacks<List<ModifierExModel>> {
 
         @Override
-        public Loader<List<ModifierModel>> onCreateLoader(int i, Bundle bundle) {
+        public Loader<List<ModifierExModel>> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(MODIFIER_URI)
-                    .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
-                    .where(ModifierTable.TYPE + "= ?", ModifierType.MODIFIER.ordinal())
-                    .orderBy(ModifierTable.TITLE)
-                    .transform(new ModifierFunction()).build(getActivity());
+                    .where(ModifierView2.ModifierTable.ITEM_GUID + " = ?", itemGuid)
+                    .where(ModifierView2.ModifierTable.TYPE + "= ?", ModifierType.MODIFIER.ordinal())
+                    .orderBy(ModifierView2.ModifierTable.TITLE)
+                    .transform(new ModifierExFunction()).build(getActivity());
         }
 
         @Override
-        public void onLoadFinished(Loader<List<ModifierModel>> listLoader, List<ModifierModel> modifierModels) {
+        public void onLoadFinished(Loader<List<ModifierExModel>> listLoader, List<ModifierExModel> modifierModels) {
             assert modifierModels != null;
             if (modifierModels.isEmpty()) {
                 modifiers.setVisibility(View.GONE);
             } else {
                 modifiers.setVisibility(View.VISIBLE);
             }
+
             int modifyMaxColumn = 2;
             modifiers.setList(modifierModels);
             modifiers.setColumnNums(modifierModels.size() < modifyMaxColumn ? modifierModels.size() : modifyMaxColumn);
+
+
+            Map<String, List<ModifierExModel>> sortedModifiers = sortModifiers(modifierModels);
+            fillViewWithContainers(sortedModifiers);
         }
 
         @Override
-        public void onLoaderReset(Loader<List<ModifierModel>> listLoader) {
+        public void onLoaderReset(Loader<List<ModifierExModel>> listLoader) {
             modifiers.setList(null);
         }
 
+        protected void fillViewWithContainers(Map<String, List<ModifierExModel>> groupedItems){
+
+            if (modifiersGroupHolder.getChildCount() > 0){
+                modifiersGroupHolder.removeAllViews();
+            }
+            int totalWidth = 0;
+            for (List<ModifierExModel> itemList : groupedItems.values()){
+                ModifiersContainerView child = ModifiersContainerView_.build(getActivity());
+                int width = calcContainerWidth(getActivity(), itemList.size());
+                totalWidth += width;
+                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
+                child.setLayoutParams(layoutParams);
+
+                int modifyMaxColumn = 2;
+                child.setList(itemList);
+                child.setColumnNums(itemList.size() < modifyMaxColumn ? itemList.size() : modifyMaxColumn);
+
+                String groupTitle;
+                if(itemList.get(0).getGroup()!=null) {
+                    groupTitle = itemList.get(0).getGroup().title;
+                } else {
+                    groupTitle = getString(R.string.dlg_section_modifier);
+                }
+
+                child.setContainerTitle(groupTitle);
+                modifiersGroupHolder.addView(child);
+            }
+
+       }
+
+        private  int calcContainerWidth(Context context, int addonCnt) {
+            if (addonCnt == 0) {
+                return 0;
+            }
+            int columnCnt = (addonCnt + 2) / context.getResources().getInteger(R.integer.modify_container_row_count);
+            int btnWidth = context.getResources().getDimensionPixelOffset(R.dimen.modify_button_width);
+            int padding = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_padding);
+            int margin = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_margin);
+            int space = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_space);
+
+            return columnCnt * btnWidth + (columnCnt - 1) * space + 2 * padding + 2 * margin;
+        }
+
+        private Map<String, List<ModifierExModel>> sortModifiers(List<ModifierExModel> modifiers){
+            Comparator<String> comparator = new Comparator<String>() {
+                @Override
+                public int compare(String lhs, String rhs) {
+                    int lhsNum = intRepresentation(lhs);
+                    int rhsNum = intRepresentation(rhs);
+
+                    return lhsNum - rhsNum;
+                }
+
+                private int intRepresentation(String s){
+                /* free_modifiers, mod_group1, mod_group2, ..., addons, oprionals */
+                    int i;
+                    if (s.equals(MODIFIERS_GROUP_ID)){
+                        i = 1;
+                    }else if (s.equals(ADDONS_GROUP_ID)){
+                        i = 3;
+                    }else if (s.equals(OPTIONAL_GROUP_ID)){
+                        i = 4;
+                    }else{
+                        i = 2;
+                    }
+                    return i;
+                }
+            };
+
+            HashMap<String, List<ModifierExModel>> groupedItems = new HashMap<>();
+            for (ModifierExModel item : modifiers){
+                String key;
+                switch (item.type){
+                    case ADDON:
+                        key = ADDONS_GROUP_ID;
+                        break;
+                    case OPTIONAL:
+                        key = OPTIONAL_GROUP_ID;
+                        break;
+                    default:
+                        key = item.modifierGroupGuid != null ? item.modifierGroupGuid : MODIFIERS_GROUP_ID;
+                        break;
+                }
+                if (!groupedItems.containsKey(key)) {
+                    groupedItems.put(key, new ArrayList<ModifierExModel>());
+                }
+                groupedItems.get(key).add(item);
+            }
+
+            ArrayList<String> keys = new ArrayList<>(groupedItems.keySet());
+            Collections.sort(keys, comparator);
+            LinkedHashMap<String, List<ModifierExModel>> groupedSortedItems = new LinkedHashMap<>(groupedItems.size());
+            for (String key : keys){
+                groupedSortedItems.put(key, groupedItems.get(key));
+            }
+
+            return groupedSortedItems;
+        }
+
+
     }
 
-    private class AddonModelLoader implements LoaderCallbacks<List<ModifierModel>> {
+    private class AddonModelLoader implements LoaderCallbacks<List<ModifierExModel>> {
 
         final AddonsContainerView containerView;
         final ModifierType type;
@@ -184,16 +322,16 @@ public class BaseItemModifiersFragment extends Fragment {
         }
 
         @Override
-        public Loader<List<ModifierModel>> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder.forUri(ADDON_URI)
-                    .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
-                    .where(ModifierTable.TYPE + "= ?", type.ordinal())
-                    .orderBy(ModifierTable.TITLE)
-                    .transform(new ModifierFunction()).build(getActivity());
+        public Loader<List<ModifierExModel>> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder.forUri(MODIFIER_URI)
+                    .where(ModifierView2.ModifierTable.ITEM_GUID + " = ?", itemGuid)
+                    .where(ModifierView2.ModifierTable.TYPE + "= ?", type.ordinal())
+                    .orderBy(ModifierView2.ModifierTable.TITLE)
+                    .transform(new ModifierExFunction()).build(getActivity());
         }
 
         @Override
-        public void onLoadFinished(Loader<List<ModifierModel>> listLoader, List<ModifierModel> addonsModels) {
+        public void onLoadFinished(Loader<List<ModifierExModel>> listLoader, List<ModifierExModel> addonsModels) {
             assert addonsModels != null;
             if (addonsModels.isEmpty()) {
                 containerView.setVisibility(View.GONE);
@@ -210,7 +348,7 @@ public class BaseItemModifiersFragment extends Fragment {
         }
 
         @Override
-        public void onLoaderReset(Loader<List<ModifierModel>> listLoader) {
+        public void onLoaderReset(Loader<List<ModifierExModel>> listLoader) {
             containerView.setList(null);
         }
 
@@ -273,7 +411,7 @@ public class BaseItemModifiersFragment extends Fragment {
         HashMap<ColumnInfo.Type, ColumnInfo> columnsInfo = new HashMap<ColumnInfo.Type, ColumnInfo>();
 
         ColumnInfo info;
-        ArrayList<ColumnInfo> items = new ArrayList<ColumnInfo>(3);
+        ArrayList<ColumnInfo> items = new ArrayList<>(3);
         items.add(info = new ColumnInfo(ColumnInfo.Type.M, numModifiers, modifyRowCount));
         columnsInfo.put(info.type, info);
         items.add(info = new ColumnInfo(ColumnInfo.Type.A, numAddons, addOnRowCount));
@@ -303,7 +441,7 @@ public class BaseItemModifiersFragment extends Fragment {
 
     public static class ColumnInfo implements Comparable<ColumnInfo> {
 
-        public static enum Type {M, A, O}
+        public enum Type {M, A, O}
 
         Type type;
         int columns;

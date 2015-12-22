@@ -27,6 +27,7 @@ import org.androidannotations.annotations.OptionsMenu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by gdubina on 22/11/13.
@@ -88,9 +89,13 @@ public class QuickServiceActivity extends BaseCashierActivity {
     }
 
     @Override
-    protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid
-            ) {
-        modifyFragment.setupParams(itemGuid, saleItemGuid, new OnAddonsChangedListener() {
+    protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid,
+                                         int modifiersCount, int addonsCount, int optionalsCount,
+                                         ArrayList<String> selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
+
+        modifyFragment.setupParams(itemGuid,
+                modifiersCount, addonsCount, optionalsCount,
+                selectedModifierGuid, selectedAddonsGuids, selectedOptionalsGuids, new OnAddonsChangedListener() {
 
             @Override
             public void onAddonsChanged(ArrayList<String>  modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
@@ -162,14 +167,18 @@ public class QuickServiceActivity extends BaseCashierActivity {
             return;
         }
 
-        modifyFragment.setupParams(model.guid, model.defaultModifierGuid, new OnAddonsChangedListener() {
+//fixme alboyko
+        modifyFragment.setupParams(model.guid,
+                model.modifiersCount, model.addonsCount, model.optionalCount,
+                new ArrayList<>(Arrays.asList(model.defaultModifierGuid)), new OnAddonsChangedListener() {
 
             @Override
-            public void onAddonsChanged(ArrayList<String>  modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
+            public void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
                 hideModifiersFragment();
                 tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
             }
         });
+
         showModifiersFragment();
     }
 

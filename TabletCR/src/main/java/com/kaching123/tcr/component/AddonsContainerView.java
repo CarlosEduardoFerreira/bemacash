@@ -7,6 +7,7 @@ import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 import com.jess.ui.TwoWayGridView;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierModel;
 
 import java.math.BigDecimal;
@@ -16,28 +17,28 @@ import java.util.ArrayList;
  * Created by vkompaniets on 18.11.13.
  */
 @EViewGroup (R.layout.addon_nooption_container)
-public class AddonsContainerView extends BaseAddonContainerView<ModifierModel> {
+public class AddonsContainerView extends BaseAddonContainerView<ModifierExModel> {
 
     public AddonsContainerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    protected ButtonsAdapter<ModifierModel> createAdapter() {
-        return new ButtonsAdapter<ModifierModel>(getContext(), false){
+    protected ButtonsAdapter<ModifierExModel> createAdapter() {
+        return new ButtonsAdapter<ModifierExModel>(getContext(), false){
 
             @Override
-            protected String getTitle(ModifierModel item) {
-                return item.title;
+            protected String getTitle(ModifierExModel item) {
+                return item.getTitle();
             }
 
             @Override
-            protected BigDecimal getCost(ModifierModel item) {
-                return item.cost;
+            protected BigDecimal getCost(ModifierExModel item) {
+                return item.getCost();
             }
 
             @Override
-            protected String getGuid(ModifierModel item) {
+            protected String getGuid(ModifierExModel item) {
                 return item.modifierGuid;
             }
         };

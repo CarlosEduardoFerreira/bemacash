@@ -30,7 +30,7 @@ public class SaleOrderItemViewModel implements IOrderItem {
 
     public ArrayList<Unit> tmpUnit = new ArrayList<Unit>();
 
-    private ArrayList<AddonInfo> addons;
+   // private ArrayList<AddonInfo> addons;
 
     public int modifiersCount;
     public int addonsCount;
@@ -104,10 +104,10 @@ public class SaleOrderItemViewModel implements IOrderItem {
         }
         return "";
     }
-    public ArrayList<AddonInfo> getAddons() {
+ /*   public ArrayList<AddonInfo> getAddons() {
         return addons;
     }
-
+*/
 
     @Override
     public String getSaleItemGuid() {

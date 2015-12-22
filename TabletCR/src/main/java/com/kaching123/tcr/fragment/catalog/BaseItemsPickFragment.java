@@ -75,7 +75,7 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
 
     public abstract void setListener(IItemListener listener);
 
-    public static interface IItemListener {
+    public interface IItemListener {
         void onItemSelected(long id, ItemExModel model);
     }
 

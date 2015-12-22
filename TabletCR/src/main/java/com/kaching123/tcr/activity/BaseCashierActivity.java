@@ -92,6 +92,7 @@ import com.kaching123.tcr.fragment.edit.PriceEditFragment.OnEditPriceListener;
 import com.kaching123.tcr.fragment.edit.QtyEditFragment;
 import com.kaching123.tcr.fragment.edit.SaleOrderDiscountEditFragment;
 import com.kaching123.tcr.fragment.edit.TaxEditFragment;
+import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.fragment.saleorder.HoldFragmentDialog;
@@ -360,19 +361,22 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         orderItemListFragment.setItemsListHandler(new IItemsListHandlerHandler() {
 
-/*
-            @Override
-            public void onBarcodeSearched(ItemExModel item, String barcode) {
-                tryToAddByBarcode(item, barcode);
-            }
-*/
-
             @Override
             public void onEditItemModifiers(String saleItemGuid,
-                                            String itemGuid) {
+                                            String itemGuid,
+                                            int modifiersCount, int addonsCount, int optionalsCount,
+                                            ArrayList<String> selectedModifierGuid,
+                                            ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
                 showEditItemModifiers(
                         saleItemGuid,
-                        itemGuid);
+                        itemGuid,
+                        modifiersCount,
+                        addonsCount,
+                        optionalsCount,
+                        selectedModifierGuid,
+                        selectedAddonsGuids,
+                        selectedOptionalsGuids
+                );
             }
 
             @Override
@@ -466,7 +470,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     protected abstract void showEditItemModifiers(final String saleItemGuid,
-                                                  final String itemGuid);
+                                                  final String itemGuid,
+                                                  final int modifiersCount,
+                                                  final int addonsCount, final int optionalsCount,
+                                                  final ArrayList<String> selectedModifierGuid,
+                                                  final ArrayList<String> selectedAddonsGuids,
+                                                  final ArrayList<String> selectedOptionalsGuids);
 
     protected void tryToAddItem(final ItemExModel model) {
         tryToAddItem(model, null, null, null);
@@ -480,13 +489,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
         ModifyFragment.show(this,
                 model.guid,
-                new ItemModifiersFragment.OnAddonsChangedListener() {
+                model.modifiersCount,
+                model.addonsCount,
+                model.optionalCount,
+                model.defaultModifierGuid,
+                new BaseItemModifiersFragment.OnAddonsChangedListener() {
                     @Override
-                    public void onAddonsChanged(ArrayList<String> modifierGuid,
-                                                ArrayList<String> addonsGuid,
-                                                ArrayList<String> optionalsGuid) {
-                        tryToAddCheckPriceType(model, modifierGuid,
-                                addonsGuid, optionalsGuid, price, quantity, unit);
+                    public void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
+                        tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
                     }
                 }
         );
@@ -2358,59 +2368,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             this.kitchenPrintStatus = kitchenPrintStatus;
         }
     }
-
-    //    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
-//
-//        @Override
-//        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
-//            return CursorLoaderBuilder.forUri(ORDER_URI)
-//                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-//                    .transform(new Function<Cursor, SaleOrderModel>() {
-//                        @Override
-//                        public SaleOrderModel apply(Cursor cursor) {
-//                            return new SaleOrderModel(cursor);
-//                        }
-//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
-//                        @Override
-//                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
-//                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
-//                                return new SaleOrderModelResult(null);
-//                            } else {
-//                                return new SaleOrderModelResult(saleOrderModels.get(0));
-//                            }
-//                        }
-//                    }).build(BaseCashierActivity.this);
-//        }
-//
-//        @Override
-//        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (saleOrderModel.model != null)
-//                        if (saleOrderModel.model.orderStatus != OrderStatus.COMPLETED && orderGuid != null)
-//                            if ((saleOrderModel.model.kitchenPrintStatus == PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
-//                                showVoidConfirmDialog();
-//                            else {
-//                                PermissionFragment.showCancelable(BaseCashierActivity.this, new BaseTempLoginListener(BaseCashierActivity.this) {
-//                                    @Override
-//                                    public void onLoginComplete() {
-//                                        super.onLoginComplete();
-//                                        showVoidConfirmDialog();
-//                                    }
-//                                }, Permission.VOID_SALES);
-//                            }
-//                }
-//            });
-//
-//
-//        }
-//
-//        @Override
-//        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
-//            updateTitle(null);
-//        }
-//    }
 
     private BroadcastReceiver syncGapReceiver = new BroadcastReceiver() {
 

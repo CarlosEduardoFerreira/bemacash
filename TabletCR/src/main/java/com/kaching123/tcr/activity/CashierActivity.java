@@ -26,6 +26,7 @@ import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.KeyboardView;
 import com.kaching123.tcr.fragment.itempick.DrawerCategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
+import com.kaching123.tcr.fragment.modify.BaseItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.model.ItemExModel;
@@ -227,11 +228,19 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
     }
 
     @Override
-    protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid) {
+    protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid,
+                                         int modifiersCount, int addonsCount, int optionalsCount,
+                                         ArrayList<String> selectedModifierGuid, ArrayList<String> selectedAddonsGuids, ArrayList<String> selectedOptionalsGuids) {
         ModifyFragment.show(
                 this,
-                itemGuid, saleItemGuid,
-                new ItemModifiersFragment.OnAddonsChangedListener() {
+                itemGuid,
+                modifiersCount,
+                addonsCount,
+                optionalsCount,
+                selectedModifierGuid,
+                selectedAddonsGuids,
+                selectedOptionalsGuids,
+                new BaseItemModifiersFragment.OnAddonsChangedListener() {
                     @Override
                     public void onAddonsChanged(ArrayList<String>  modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
 

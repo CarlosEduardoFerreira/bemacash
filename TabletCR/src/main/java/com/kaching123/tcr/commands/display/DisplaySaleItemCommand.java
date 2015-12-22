@@ -54,7 +54,7 @@ public class DisplaySaleItemCommand extends BaseDisplayCommand<DisplayPrinterWra
                 .where(SaleItemTable.SALE_ITEM_GUID + " = ?", saleItemGuid)
                 .perform(context);
         List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor,
-                new SaleOrderItemViewModelWrapFunction(context));
+                new SaleOrderItemViewModelWrapFunction(context, false));
         return saleItemsList == null || saleItemsList.isEmpty() ? null : saleItemsList.get(0);
     }
 

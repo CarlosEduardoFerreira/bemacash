@@ -136,7 +136,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
                 .where(SaleItemTable.ORDER_GUID + " = ?", item.orderGuid)
                 .orderBy(SaleItemTable.SEQUENCE)
                 .perform(getContext()),
-                new SaleOrderItemViewModelWrapFunction(getContext()));
+                new SaleOrderItemViewModelWrapFunction(getContext(), false));
 
         for (SaleOrderItemViewModel i : items) {
             if (i != null
