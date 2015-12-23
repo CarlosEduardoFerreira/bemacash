@@ -853,23 +853,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     protected void updateStockTrackingBlock(boolean isChecked) {
-        /*availableQty.setEnabled(isChecked);
-        availableQtyBlock.setEnabled(isChecked);
-        availableQtyPencil.setEnabled(isChecked);
-        recommendedQty.setEnabled(isChecked);
-        minimumQty.setEnabled(isChecked);
-        if (!isChecked) {
-            model.recommendedQty = null;
-            model.availableQty = null;
-            model.minimumQty = null;
-
-            availableQtyPencil.setText(null);
-            recommendedQty.setText(null);
-            availableQty.setText(null);
-            minimumQty.setText(null);
-        }*/
-
-        View [] views = {availableQty, recommendedQty, minimumQty};
+        View [] views = {availableQty, recommendedQty, minimumQty, availableQtyPencil};
         for (View view: views) {
             view.setEnabled(isChecked);
         }
@@ -882,6 +866,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             recommendedQty.setText(null);
             availableQty.setText(null);
             minimumQty.setText(null);
+            availableQtyPencil.setText(null);
         } else {
             if (count > 0) {
                 recollectComposerInfo();
