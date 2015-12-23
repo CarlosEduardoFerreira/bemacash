@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="modify_dialog_height">500dp</dimen>
-    <integer name="modify_container_row_count">2</integer>
     <integer name="quick_categories_columns">2</integer>
     <integer name="quick_grid_columns">9</integer>
     <integer name="quick_grid_1024_768_columns">7</integer>
