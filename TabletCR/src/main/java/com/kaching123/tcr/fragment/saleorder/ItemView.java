@@ -238,7 +238,7 @@ public class ItemView extends FrameLayout {
         UiHelper.showPrice(label, value);
     }
 
-    public static interface OnItemRemoveClick {
+    public interface OnItemRemoveClick {
         void onRemoveClicked(View v, int position);
 
         void onCancelClicked(View v, int position);

@@ -117,7 +117,7 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
                 item.itemModel.discountable,
                 item.itemModel.discount,
                 item.itemModel.discountType,
-                item.subTitle,
+                item.toAddonsString(),
                 item.itemModel.notes,
                 item.itemModel.hasNotes
         );

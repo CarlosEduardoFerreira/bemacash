@@ -25,16 +25,10 @@ public class SaleOrderItemViewModel implements IOrderItem {
     public String eanCode;
     public String productCode;
     public String unitsLabel;
- //   public AddonInfo modifier;
     public ArrayList<AddonInfo> modifiers;
 
     public ArrayList<Unit> tmpUnit = new ArrayList<Unit>();
 
-    private ArrayList<AddonInfo> addons;
-
-    public int modifiersCount;
-    public int addonsCount;
-    public int optionalsCount;
 
     public boolean isSerializable;
     public boolean isTaxableOrder;
@@ -43,7 +37,6 @@ public class SaleOrderItemViewModel implements IOrderItem {
     public BigDecimal orderTransactionFee;
 
     public boolean isPcsUnit;
-   // public BigDecimal fullPrice;
     public Spannable subTitle;
     public BigDecimal finalPrice;
 
@@ -54,8 +47,6 @@ public class SaleOrderItemViewModel implements IOrderItem {
                                   ArrayList<AddonInfo> modifiers,
                                   String eanCode,
                                   String productCode, String unitsLabel,
-                                  //SaleOrderItemAddonModel modificator,
-                                  //String addonTitle,
                                   boolean isTaxableOrder,
                                   boolean isSerializable,
                                   BigDecimal orderDiscount,
@@ -71,12 +62,7 @@ public class SaleOrderItemViewModel implements IOrderItem {
         this.orderDiscount = orderDiscount;
         this.orderDiscountType = orderDiscountType;
         this.orderTransactionFee = orderTransactionFee;
-     /*   if (modificator != null) {
-            this.modifier = new AddonInfo(modificator, addonTitle);
-        }*/
         this.isPcsUnit = UnitUtil.isPcs(itemModel.priceType);
-       // updateFullPrice();
-     //   updateAdditionalTitle();
         this.isTaxableOrder = isTaxableOrder;
         this.isKitchenPrintable = isKitchenPrintable;
         this.isSerializable = isSerializable;
@@ -104,10 +90,6 @@ public class SaleOrderItemViewModel implements IOrderItem {
         }
         return "";
     }
-    public ArrayList<AddonInfo> getAddons() {
-        return addons;
-    }
-
 
     @Override
     public String getSaleItemGuid() {
@@ -121,7 +103,7 @@ public class SaleOrderItemViewModel implements IOrderItem {
 
     @Override
     public BigDecimal getPrice() {
-        return getPriceWithMods();//this.fullPrice;
+        return getPriceWithMods();
     }
 
     public BigDecimal getPriceWithMods(){
