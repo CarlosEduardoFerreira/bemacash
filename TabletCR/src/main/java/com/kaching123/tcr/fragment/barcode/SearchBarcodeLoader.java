@@ -20,6 +20,7 @@ import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
+import com.kaching123.tcr.util.CalculationUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -203,6 +204,9 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
                         }
                     });
                 } else {
+                    if (price != null && quantity == null) {
+                        quantity = CalculationUtil.divide(price, model.price);
+                    }
                     onPostExecute(model, price, quantity);
                 }
             }
