@@ -74,6 +74,7 @@ public class AddItemActivity extends BaseItemActivity {
         menu.findItem(R.id.action_serial).setVisible(model.isSerializable());
         menu.findItem(R.id.action_serial).setEnabled(false);
         composer.setVisible(false);
+        modifier.setVisible(false);
         return true;
     }
 
