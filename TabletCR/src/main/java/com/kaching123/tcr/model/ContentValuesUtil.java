@@ -274,13 +274,6 @@ public final class ContentValuesUtil {
         return !TextUtils.isEmpty(c.getString(indexItemTable)) ? c.getString(indexItemTable) : c.getString(indexUnitLabelTable);
     }
 
-    /*public static <T> T _enum(T[] values, int order, T def) {
-        if (order >= values.length || order < 0) {
-            return def;
-        }
-        return values[order];
-    }*/
-
     public static ContentValues _putDiscount(ContentValues v, String key, DiscountType discountType) {
         if (discountType == null) {
             v.putNull(key);

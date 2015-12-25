@@ -508,7 +508,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         if (isSerializable) {
             stockTrackingFlag.setChecked(true);
         }
-        stockTrackingFlag.setEnabled(!isSerializable);
+        stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
     }
 
     protected void onSerializableSet(boolean isSerializable) {

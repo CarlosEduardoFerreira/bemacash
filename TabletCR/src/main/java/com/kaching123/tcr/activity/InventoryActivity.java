@@ -381,7 +381,9 @@ public class InventoryActivity extends ScannerBaseActivity {
                                     getString(type == ImportType.DELETE ? R.string.inventory_import_delete_success_msg : R.string.inventory_import_success_msg, count));
                         } else {
                             String message = getString(R.string.inventory_import_failed_items_max_count_msg_list, count);
-                            AlertDialogListFragment.show(InventoryActivity.this, message, new WrongImportInfoAdapter(InventoryActivity.this, wrongItems));
+                            AlertDialogListFragment
+                                    .show(InventoryActivity.this,
+                                            message, new WrongImportInfoAdapter(InventoryActivity.this, wrongItems));
                             wrongItems = null;
                         }
                         return true;

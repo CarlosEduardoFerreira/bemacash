@@ -88,7 +88,7 @@ public class Unit implements IValueModel, Serializable {
         return v;
     }
 
-    public static enum Status {
+    public enum Status {
         NEW, USED, BROKEN, SOLD;
 
         public static Status valueOf(int id) {
@@ -96,7 +96,7 @@ public class Unit implements IValueModel, Serializable {
         }
     }
 
-    public static enum CodeType {
+    public enum CodeType {
         SN, IMEI, ICCID;
 
         public static CodeType valueOf(int id) {

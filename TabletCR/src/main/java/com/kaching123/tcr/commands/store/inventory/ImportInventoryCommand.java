@@ -66,6 +66,24 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private static final String ERROR_EXTRA_PRODUCT_CODE = "ERROR_EXTRA_PRODUCT_CODE";
     private static final String ERROR_MAX_ITEMS_COUNT = "ERROR_MAX_ITEMS_COUNT";
 
+    private static final int FIELD_CODE = 0;
+    private static final int FIELD_DESCRIPTION = 1;
+    private static final int FIELD_DEPARTMENT = 2;
+    private static final int FIELD_CATEGORY = 3;
+    private static final int FIELD_UNITS_LABEL = 4;
+    private static final int FIELD_UPC = 5;
+    private static final int FIELD_PRODUCT_CODE = 6;
+    private static final int FIELD_PRICE = 7;
+    private static final int FIELD_DISCOUNTABLE = 8;
+    private static final int FIELD_SALABLE = 9;
+    private static final int FIELD_TAXABLE = 10;
+    private static final int FIELD_STOCK_TRACKING = 11;
+    private static final int FIELD_COST = 12;
+    private static final int FIELD_QTY = 13;
+    private static final int FIELD_ORDER_TRIGGER = 14;
+    private static final int FIELD_RECOMMENDED = 15;
+    private static final int FIELD_LAST_SOLD_DATE = 16;
+
     @Override
     protected TaskResult doInBackground() {
         String fileName = getStringArg(ARG_FILENAME);
@@ -536,23 +554,6 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         create(ImportInventoryCommand.class).arg(ARG_TYPE, type).arg(ARG_FILENAME, fileName).callback(callback).queueUsing(context);
     }
 
-    private static final int FIELD_CODE = 0;
-    private static final int FIELD_DESCRIPTION = 1;
-    private static final int FIELD_DEPARTMENT = 2;
-    private static final int FIELD_CATEGORY = 3;
-    private static final int FIELD_UNITS_LABEL = 4;
-    private static final int FIELD_UPC = 5;
-    private static final int FIELD_PRODUCT_CODE = 6;
-    private static final int FIELD_PRICE = 7;
-    private static final int FIELD_DISCOUNTABLE = 8;
-    private static final int FIELD_TAXABLE = 9;
-    private static final int FIELD_STOCK_TRACKING = 10;
-    private static final int FIELD_COST = 11;
-    private static final int FIELD_QTY = 12;
-    private static final int FIELD_ORDER_TRIGGER = 13;
-    private static final int FIELD_RECOMMENDED = 14;
-    private static final int FIELD_SALABLE = 15;
-
     private static CellProcessor[] getProcessors(ImportType type) {
         if (type == ImportType.DELETE) {
             return new CellProcessor[]{
@@ -578,7 +579,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                     new Optional(new ParseBigDecimal()),//qty on hand
                     new Optional(new ParseBigDecimal()),//order trigger
                     new Optional(new ParseBigDecimal()),//recommended order
-                    new Optional(new ParseDate("MM-dd-yyyy")),//last sold Data
+                    new Optional(),//last sold Data
             };
         } else {
             return new CellProcessor[]{
