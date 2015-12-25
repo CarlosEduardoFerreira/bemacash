@@ -1097,7 +1097,7 @@ public class TcrApplication extends MultiDexApplication {
                             rows
                     );
                 } else if (type == UploadResponseV1.class) {
-                    return new UploadResponseV1(response.getString("status"), response.getString("message"), null/*response.getJSONObject("data")*/);
+                    return new UploadResponseV1(response.getString("status"), response.getString("message"), response.getJSONObject("data"));
                 } else if (type == GetPrepaidOrderIdResponse.class) {
                     return new GetPrepaidOrderIdResponse(response.getString("status"), response.getString("message"), response.getString("data"));
                 } else if (type == GetCurrentTimestampResponse.class) {

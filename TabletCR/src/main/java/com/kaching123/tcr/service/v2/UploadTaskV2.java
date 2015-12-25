@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UploadTaskV2 {
 
@@ -249,10 +250,26 @@ public class UploadTaskV2 {
                 if (skippId == -1L)
                     return false;
             }
+
+
+            ArrayList<Long> currentTransactionsIds = new ArrayList<>();
+            for (UploadCommand comm : commands) {
+                currentTransactionsIds.add(comm.id);
+            }
+            final List<Long> failedIds = resp.getFailedTransactions(currentTransactionsIds);
+            for (Long l : failedIds) {
+                Logger.d("[UploadValidation] Transaction %d had been failed", l);
+            }
+
             for (UploadCommand c : commands) {
                 if (c.id == skippId) {
                     return false;
                 }
+
+                if (!failedIds.isEmpty() && failedIds.contains(c.id)) {
+                    continue;
+                }
+
                 if (c.subIds == null) {
                     cr.update(URI_SQL_COMMAND_NO_NOTIFY, sentValues, SqlCommandTable.ID + " = ?", new String[]{String.valueOf(c.id)});
                     continue;
