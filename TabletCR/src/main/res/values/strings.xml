@@ -714,6 +714,13 @@
     <string name="btn_logout">Logout</string>
     <string name="inventory_navigation_filter_all">All</string>
     <string name="inventory_navigation_filter_near_the_end">Low inventory items</string>
+    <string name="inventory_navigation_filter_composers">Composer items</string>
+    <string name="inventory_navigation_filter_compositions">Composed items</string>
+    <string name="inventory_navigation_filter_refs">Reference items</string>
+    <string name="inventory_navigation_filter_child">Children items</string>
+    <string name="inventory_navigation_filter_mods">With modifications</string>
+    <string name="inventory_navigation_not_for_sale">Not for sale</string>
+    <string name="inventory_navigation_serial">Serializable</string>
     <string name="cash_drawer_movement_dialog_comment_label">Comment</string>
     <string name="action_employee_add">Add employee</string>
     <string name="action_employee_tips_add">Add tips</string>

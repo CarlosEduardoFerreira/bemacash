@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.Menu;
@@ -20,14 +19,6 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
@@ -53,12 +44,17 @@ import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.inventory.ItemsFragment;
 import com.kaching123.tcr.fragment.itempick.DrawerCategoriesFragment;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
-import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,6 +70,14 @@ import static com.kaching123.tcr.util.KeyboardUtils.hideKeyboard;
 @EActivity(R.layout.inventory_activity)
 @OptionsMenu(R.menu.inventory_activity)
 public class InventoryActivity extends ScannerBaseActivity {
+
+    private final static int INVENTORY_NAVIGATION_FILTER_ALL = 0;
+    private final static int INVENTORY_NAVIGATION_FILTER_NEAR_THE_END = 1;
+    private final static int INVENTORY_NAVIGATION_FILTER_COMPOSERS = 2;
+    private final static int INVENTORY_NAVIGATION_FILTER_COMPOSITIONS = 3;
+    private final static int INVENTORY_NAVIGATION_FILTER_CHILD = 4;
+    private final static int INVENTORY_NAVIGATION_NOT_FOR_SALE = 5;
+    private final static int INVENTORY_NAVIGATION_SERIAL = 6;
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -159,10 +163,49 @@ public class InventoryActivity extends ScannerBaseActivity {
         super.onCreate(savedInstanceState);
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         getActionBar().setListNavigationCallbacks(new NavigationSpinnerAdapter(this), new OnNavigationListener() {
+
             @Override
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-                itemsFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
-                categoriesFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
+                switch (itemPosition) {
+                    case INVENTORY_NAVIGATION_FILTER_ALL:
+                    case INVENTORY_NAVIGATION_FILTER_NEAR_THE_END:
+                        itemsFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
+                        categoriesFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
+                        itemsFragment.setFilter(false, false, false, false, false, false, false);
+                        categoriesFragment.setFilter(false, false, false, false, false, false, false);
+                        break;
+                    case INVENTORY_NAVIGATION_FILTER_COMPOSERS:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(true, false, false, false, false, false, false);
+                        categoriesFragment.setFilter(true, false, false, false, false, false, false);
+                        break;
+                    case INVENTORY_NAVIGATION_FILTER_COMPOSITIONS:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(false, true, false, false, false, false, false);
+                        categoriesFragment.setFilter(false, true, false, false, false, false, false);
+                        break;
+                    case INVENTORY_NAVIGATION_FILTER_CHILD:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(false, false, false, false, false, false, true);
+                        categoriesFragment.setFilter(false, false, false, false, false, false, true);
+                        break;
+                    case INVENTORY_NAVIGATION_NOT_FOR_SALE:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(false, false, false, true, false, false, false);
+                        categoriesFragment.setFilter(false, false, false, true, false, false, false);
+                        break;
+                    case INVENTORY_NAVIGATION_SERIAL:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(false, false, false, true, false, true, false);
+                        categoriesFragment.setFilter(false, false, false, true, false, true, false);
+                        break;
+                }
+
                 return true;
             }
         });
@@ -346,7 +389,14 @@ public class InventoryActivity extends ScannerBaseActivity {
         public static final int NAVIGATION_NEAR_THE_END = 1;
 
         public NavigationSpinnerAdapter(Context context) {
-            super(context, R.layout.actionbar_spinner, new String[]{context.getString(R.string.inventory_navigation_filter_all), context.getString(R.string.inventory_navigation_filter_near_the_end)});
+            super(context, R.layout.actionbar_spinner,
+                    new String[]{context.getString(R.string.inventory_navigation_filter_all),
+                            context.getString(R.string.inventory_navigation_filter_near_the_end),
+                            context.getString(R.string.inventory_navigation_filter_composers),
+                            context.getString(R.string.inventory_navigation_filter_compositions),
+                            context.getString(R.string.inventory_navigation_filter_child),
+                            context.getString(R.string.inventory_navigation_not_for_sale),
+                            context.getString(R.string.inventory_navigation_serial)});
             setDropDownViewResource(R.layout.actionbar_spinner_drodown_item);
         }
     }

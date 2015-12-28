@@ -63,7 +63,13 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
     private String departmentGuid;
 
+    public boolean composer;
+    public boolean composition;
+    public boolean reference;
     public boolean forSale;
+    public boolean hasModifiers;
+    public boolean serial;
+    public boolean child;
 
     @Override
     protected IObjectsAdapter<ItemExModel> createAdapter() {
@@ -133,8 +139,20 @@ public class ItemsFragment extends BaseItemsPickFragment {
         getLoaderManager().restartLoader(0, null, this);
     }
 
-    public void setFilter(boolean forSale) {
+    public void setFilter(boolean composer,
+                          boolean composition,
+                          boolean reference,
+                          boolean forSale,
+                          boolean hasModifiers,
+                          boolean serial,
+                          boolean child) {
+        this.composer = composer;
+        this.composition = composition;
+        this.reference = reference;
         this.forSale = forSale;
+        this.hasModifiers = hasModifiers;
+        this.serial = serial;
+        this.child = child;
 
         getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
     }

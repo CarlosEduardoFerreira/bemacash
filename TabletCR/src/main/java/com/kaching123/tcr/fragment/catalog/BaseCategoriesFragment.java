@@ -13,8 +13,6 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.InstanceState;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.CategoryItemView;
@@ -22,6 +20,9 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.CategoryView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.CategoryView2.ItemTable;
 import com.kaching123.tcr.store.ShopStore.CategoryView;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.InstanceState;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._count;
@@ -45,7 +46,13 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
     protected CategoryItemView header;
 
     private boolean useOnlyNearTheEnd;
+    public boolean composer;
+    public boolean composition;
+    public boolean reference;
     public boolean forSale;
+    public boolean hasModifiers;
+    public boolean serial;
+    public boolean child;
 
     @InstanceState
     protected int selectedPosition;
@@ -98,9 +105,23 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
         getLoaderManager().restartLoader(0, null, this);
     }
-    public void setFilter(boolean forSale) {
+
+    public void setFilter(boolean composer,
+                          boolean composition,
+                          boolean reference,
+                          boolean forSale,
+                          boolean hasModifiers,
+                          boolean serial,
+                          boolean child) {
+        this.composer = composer;
+        this.composition = composition;
+        this.reference = reference;
         this.forSale = forSale;
-         getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
+        this.hasModifiers = hasModifiers;
+        this.serial = serial;
+        this.child = child;
+
+        getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
     }
 
     @Override
