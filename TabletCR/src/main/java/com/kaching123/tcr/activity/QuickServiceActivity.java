@@ -16,6 +16,7 @@ import com.kaching123.tcr.fragment.quickservice.QuickItemsFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment.OnCancelListener;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.service.UploadTask;
 import com.kaching123.tcr.service.v2.UploadTaskV2;
@@ -88,12 +89,11 @@ public class QuickServiceActivity extends BaseCashierActivity {
     }
 
     @Override
-    protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid
-            ) {
+    protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid) {
         modifyFragment.setupParams(itemGuid, saleItemGuid, new ItemModifiersFragment.OnAddonsChangedListener() {
 
             @Override
-            public void onAddonsChanged(ArrayList<String>  modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
+            public void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
                 hideModifiersFragment();
                 UpdateSaleItemAddonsCommand.start(QuickServiceActivity.this,
                         saleItemGuid,
@@ -163,7 +163,7 @@ public class QuickServiceActivity extends BaseCashierActivity {
     @Override
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
         boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
-        if (!hasModifiers) {
+        if (!hasModifiers || !PlanOptions.isModifiersAllowed()) {
             tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
             return;
         }
@@ -171,7 +171,7 @@ public class QuickServiceActivity extends BaseCashierActivity {
         modifyFragment.setupParams(model.guid, new ItemModifiersFragment.OnAddonsChangedListener() {
 
             @Override
-            public void onAddonsChanged(ArrayList<String>  modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
+            public void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
                 hideModifiersFragment();
                 tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
             }
