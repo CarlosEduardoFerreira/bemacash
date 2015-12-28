@@ -1,8 +1,10 @@
 package com.kaching123.tcr.fragment.inventory;
 
 import android.content.Context;
+import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -26,6 +28,7 @@ import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.converter.ItemExFunction;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.util.DrawableUtil;
 import com.kaching123.tcr.util.UnitUtil;
@@ -127,7 +130,13 @@ public class ItemsFragment extends BaseItemsPickFragment {
             builder.where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY));
         }
 
-        if (forSale) {
+        if (serial) {
+            builder.where(ItemTable.SERIALIZABLE + " = ? ", "1");
+        } else if (composer) {
+            builder.where(ShopSchema2.ItemExtView2.HostComposerTable.ID + " IS NOT NULL");
+        } else if (composition) {
+            builder.where(ShopSchema2.ItemExtView2.ChildComposerTable.ID + " IS NOT NULL");
+        } else if (forSale) {
             builder.where(ItemTable.SALABLE + " = ? ", "0");
         }
         Loader<List<ItemExModel>> loader = builder.transform(new ItemExFunction()).build(getActivity());
@@ -136,6 +145,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
     public void setTextFilter(String filter) {
         this.textFilter = filter;
+        Logger.d("[Loader] ItemsFragment setTextFilter");
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -153,18 +163,20 @@ public class ItemsFragment extends BaseItemsPickFragment {
         this.hasModifiers = hasModifiers;
         this.serial = serial;
         this.child = child;
-
+        Logger.d("[Loader] ItemsFragment setFilter");
         getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
     }
 
 
     public void setUseOnlyNearTheEnd(boolean useOnlyNearTheEnd) {
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
-        getLoaderManager().restartLoader(0, null, this);
+        Logger.d("[Loader] ItemsFragment setUseOnlyNearTheEnd");
+        //getLoaderManager().restartLoader(0, null, this);
     }
 
     public void sortByName(boolean sortByName) {
         this.sortByName = sortByName;
+        Logger.d("[Loader] ItemsFragment sortByName");
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -312,9 +324,20 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
         @Override
         public void drop(int from, int to) {
-            super.drop(from, to);
-
             updateItemOrder();
+            try {
+                super.drop(from, to);
+                HANDLER.removeCallbacksAndMessages(null);
+                HANDLER.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            updateItemOrder();
+                        } catch (Exception bunny) {}
+                    }
+                }, 3000);
+
+            } catch (CursorIndexOutOfBoundsException pokemon) {}
         }
 
         private void updateItemOrder() {
@@ -352,5 +375,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
             ImageView drag;
         }
     }
+
+    private final static Handler HANDLER = new Handler();
 
 }

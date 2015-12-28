@@ -7,7 +7,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.adapter.IObjectsAdapter;
 import com.kaching123.tcr.model.ItemExModel;
@@ -15,6 +14,8 @@ import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
+
+import org.androidannotations.annotations.EFragment;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
 
     @Override
     public Loader<List<ItemExModel>> onCreateLoader(int loaderId, Bundle args) {
-        Logger.d("ItemsListFragment onCreateLoader");
+        Logger.d("[Loader] BaseItemsPickFragment onCreateLoader");
         return CursorLoaderBuilder.forUri(URI_ITEMS)
                 .where(ItemTable.SALABLE + " = ?", 1)
                 .where(ItemTable.ACTIVE_STATUS + " = ?", 1)

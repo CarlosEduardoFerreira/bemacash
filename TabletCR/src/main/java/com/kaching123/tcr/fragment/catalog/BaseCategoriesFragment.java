@@ -13,6 +13,7 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.CategoryItemView;
@@ -67,9 +68,17 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
                 loadByPosition(v, pos);
             }
         });
+        getAdapterView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id) {
+                getAdapterView().performItemClick(v, pos, id);
+                return true;
+            }
+        });
         adapter = createAdapter();
         getAdapterView().setAdapter(adapter);
         if (loadImmediately()) {
+            Logger.d("[Loader] BaseCategoriesFragment initLoader");
             getLoaderManager().initLoader(0, null, this);
         }
     }
@@ -86,6 +95,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
     protected boolean loadImmediately() {
         return true;
     }
+
     protected void headerItemClicked() {
         if (this.listener != null) {
             this.listener.onCategoryChanged(AdapterView.INVALID_POSITION, null, null);
@@ -111,15 +121,13 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
                           boolean reference,
                           boolean forSale,
                           boolean hasModifiers,
-                          boolean serial,
-                          boolean child) {
+                          boolean serial) {
         this.composer = composer;
         this.composition = composition;
         this.reference = reference;
         this.forSale = forSale;
         this.hasModifiers = hasModifiers;
         this.serial = serial;
-        this.child = child;
 
         getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
     }

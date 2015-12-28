@@ -717,7 +717,6 @@
     <string name="inventory_navigation_filter_composers">Composer items</string>
     <string name="inventory_navigation_filter_compositions">Composed items</string>
     <string name="inventory_navigation_filter_refs">Reference items</string>
-    <string name="inventory_navigation_filter_child">Children items</string>
     <string name="inventory_navigation_filter_mods">With modifications</string>
     <string name="inventory_navigation_not_for_sale">Not for sale</string>
     <string name="inventory_navigation_serial">Serializable</string>

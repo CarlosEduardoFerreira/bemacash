@@ -55,6 +55,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,9 +76,8 @@ public class InventoryActivity extends ScannerBaseActivity {
     private final static int INVENTORY_NAVIGATION_FILTER_NEAR_THE_END = 1;
     private final static int INVENTORY_NAVIGATION_FILTER_COMPOSERS = 2;
     private final static int INVENTORY_NAVIGATION_FILTER_COMPOSITIONS = 3;
-    private final static int INVENTORY_NAVIGATION_FILTER_CHILD = 4;
-    private final static int INVENTORY_NAVIGATION_NOT_FOR_SALE = 5;
-    private final static int INVENTORY_NAVIGATION_SERIAL = 6;
+    private final static int INVENTORY_NAVIGATION_NOT_FOR_SALE = 4;
+    private final static int INVENTORY_NAVIGATION_SERIAL = 5;
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -172,37 +172,31 @@ public class InventoryActivity extends ScannerBaseActivity {
                         itemsFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
                         categoriesFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
                         itemsFragment.setFilter(false, false, false, false, false, false, false);
-                        categoriesFragment.setFilter(false, false, false, false, false, false, false);
+                        categoriesFragment.setFilter(false, false, false, false, false, false);
                         break;
                     case INVENTORY_NAVIGATION_FILTER_COMPOSERS:
                         itemsFragment.setUseOnlyNearTheEnd(false);
                         categoriesFragment.setUseOnlyNearTheEnd(false);
                         itemsFragment.setFilter(true, false, false, false, false, false, false);
-                        categoriesFragment.setFilter(true, false, false, false, false, false, false);
+                        categoriesFragment.setFilter(true, false, false, false, false, false);
                         break;
                     case INVENTORY_NAVIGATION_FILTER_COMPOSITIONS:
                         itemsFragment.setUseOnlyNearTheEnd(false);
                         categoriesFragment.setUseOnlyNearTheEnd(false);
                         itemsFragment.setFilter(false, true, false, false, false, false, false);
-                        categoriesFragment.setFilter(false, true, false, false, false, false, false);
-                        break;
-                    case INVENTORY_NAVIGATION_FILTER_CHILD:
-                        itemsFragment.setUseOnlyNearTheEnd(false);
-                        categoriesFragment.setUseOnlyNearTheEnd(false);
-                        itemsFragment.setFilter(false, false, false, false, false, false, true);
-                        categoriesFragment.setFilter(false, false, false, false, false, false, true);
+                        categoriesFragment.setFilter(false, true, false, false, false, false);
                         break;
                     case INVENTORY_NAVIGATION_NOT_FOR_SALE:
                         itemsFragment.setUseOnlyNearTheEnd(false);
                         categoriesFragment.setUseOnlyNearTheEnd(false);
                         itemsFragment.setFilter(false, false, false, true, false, false, false);
-                        categoriesFragment.setFilter(false, false, false, true, false, false, false);
+                        categoriesFragment.setFilter(false, false, false, true, false, false);
                         break;
                     case INVENTORY_NAVIGATION_SERIAL:
                         itemsFragment.setUseOnlyNearTheEnd(false);
                         categoriesFragment.setUseOnlyNearTheEnd(false);
                         itemsFragment.setFilter(false, false, false, true, false, true, false);
-                        categoriesFragment.setFilter(false, false, false, true, false, true, false);
+                        categoriesFragment.setFilter(false, false, false, true, false, true);
                         break;
                 }
 
@@ -270,7 +264,7 @@ public class InventoryActivity extends ScannerBaseActivity {
         });
     }*/
 
-    @OptionsItem
+    /*@OptionsItem
     protected void actionSortSelected() {
         int level = sortItem.getIcon().getLevel();
         if (level == 0) {
@@ -281,6 +275,22 @@ public class InventoryActivity extends ScannerBaseActivity {
         sortByName = level == 1;
         itemsFragment.sortByName(sortByName);
         sortItem.getIcon().setLevel(level);
+    }*/
+
+    private int level = 0;
+
+    @OptionsMenuItem(R.id.action_sort)
+    protected MenuItem sort;
+
+    @OptionsItem
+    protected void actionSortSelected() {
+        //level = sortItem.getIcon().getLevel();
+        level ^= 1;
+        final boolean sortByName = (level == 1);
+        itemsFragment.sortByName(sortByName);
+        sortItem.getIcon().setLevel(level);
+        //sortItem.setIcon(sortByName ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category);
+        sort.setIcon(getResources().getDrawable(sortByName ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
     }
 
     @OptionsItem
@@ -394,7 +404,6 @@ public class InventoryActivity extends ScannerBaseActivity {
                             context.getString(R.string.inventory_navigation_filter_near_the_end),
                             context.getString(R.string.inventory_navigation_filter_composers),
                             context.getString(R.string.inventory_navigation_filter_compositions),
-                            context.getString(R.string.inventory_navigation_filter_child),
                             context.getString(R.string.inventory_navigation_not_for_sale),
                             context.getString(R.string.inventory_navigation_serial)});
             setDropDownViewResource(R.layout.actionbar_spinner_drodown_item);
