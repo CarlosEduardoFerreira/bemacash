@@ -20,6 +20,7 @@ import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.UnitUtil;
+import com.kaching123.tcr.util.Validator;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnCallback;
@@ -50,11 +51,11 @@ import java.util.UUID;
  */
 public class ImportInventoryCommand extends PublicGroundyTask {
 
-    public static enum ImportType {ALL, QTY, PRICE, DELETE}
+    public enum ImportType {ALL, QTY, PRICE, DELETE}
 
-    private static final Uri URI_ITEM = ShopProvider.getContentUri(ItemTable.URI_CONTENT);
-    private static final Uri URI_CATEGORY = ShopProvider.getContentUri(CategoryTable.URI_CONTENT);
-    private static final Uri URI_DEPARTMENT = ShopProvider.getContentUri(DepartmentTable.URI_CONTENT);
+    private static final Uri URI_ITEM = ShopProvider.contentUri(ItemTable.URI_CONTENT);
+    private static final Uri URI_CATEGORY = ShopProvider.contentUri(CategoryTable.URI_CONTENT);
+    private static final Uri URI_DEPARTMENT = ShopProvider.contentUri(DepartmentTable.URI_CONTENT);
 
     private static final String ARG_FILENAME = "ARG_FILENAME";
     private static final String ARG_TYPE = "ARG_TYPE";
@@ -139,7 +140,11 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         int count = 0;
 
         while ((fields = listReader.read(processors)) != null) {
-            ItemModel item = readItem(departments, categoriesByDepartments, addDepartmentCommand, addCategoryCommand, fields);
+            ItemModel item = readItem(departments,
+                    categoriesByDepartments,
+                    addDepartmentCommand,
+                    addCategoryCommand,
+                    fields);
             if (item == null) {
                 Logger.d("[IMPORT] Can't read row #%d. Item is null. Continue", count);
                 continue;
@@ -151,30 +156,18 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 fireInvalidData(item);
                 continue;
             }
-            ItemModel oldModel = null;
-            if ((oldModel = findDuplicateEan(item)) != null) {
-                if (TextUtils.isEmpty(item.guid) || oldModel.guid.equals(item.guid)) {
-                    //Logger.d("[IMPORT] duplicate %s", item);
-                    copyOldToNew(oldModel, item);
-                    item.guid = oldModel.guid;//will be update by guid
-                    if (!editItemCommand.sync(getContext(), item, appCommandContext)) {
-                        Logger.d("[IMPORT] Can't update item %s", item);
-                        fireInvalidData(item);
-                        continue;
-                    }
-                } else {
-                    Logger.d("[IMPORT] fireDuplicateEan %s", item);
-                    fireInvalidData(item);
-                    continue;
-                }
-            } else if ((oldModel = findGuid(item)) != null) {
-                //Logger.d("[IMPORT] edit existing %s", item);
+             ItemModel oldModel;
+            if ((oldModel = findGuid(item)) != null) {
                 copyOldToNew(oldModel, item);
                 if (!editItemCommand.sync(getContext(), item, appCommandContext)) {
                     Logger.d("[IMPORT] Can't update item %s", item);
                     fireInvalidData(item);
                     continue;
                 }
+            } else if (findDuplicateProductCode(item) != null) {
+                Logger.d("[IMPORT] fireDuplicateProductCode %s", item);
+                fireInvalidData(item);
+                continue;
             } else {
                 item.guid = UUID.randomUUID().toString();// generate new GUID to prevent duplicates
                 AddItemResult addItemResult = addItemCommand.sync(getContext(), item, appCommandContext);
@@ -219,8 +212,18 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private void fireMaxItemsCountError() {
         callback(ERROR_MAX_ITEMS_COUNT);
     }
-
     private boolean isEanValid(ItemModel model) {
+        if (TextUtils.isEmpty(model.eanCode)) {
+            return true;
+        } else {
+            try {
+                return Validator.isEanValid(model.eanCode);
+            } catch (NumberFormatException badEan) {
+                return false;
+            }
+        }
+    }
+    private boolean isEanValid2(ItemModel model) {
         if (TextUtils.isEmpty(model.productCode/*eanCode*/)) {
             return true;
         }
@@ -250,6 +253,24 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         c.close();
         return existModel;
     }
+
+    private ItemModel findDuplicateProductCode(ItemModel model) {
+        if (TextUtils.isEmpty(model.productCode/*eanCode*/)) {
+            return null;
+        }
+        Cursor c = ProviderAction
+                .query(URI_ITEM)
+                        //.where(ItemTable.EAN_CODE + " = ?", model.eanCode)
+                .where(ItemTable.PRODUCT_CODE + " = ?", model.productCode)
+                .perform(getContext());
+        ItemModel existModel = null;
+        if (c.moveToFirst()) {
+            existModel = new ItemFunction().apply(c);
+        }
+        c.close();
+        return existModel;
+    }
+
 
     private ItemModel findGuid(ItemModel model) {
         if (TextUtils.isEmpty(model.guid)) {
@@ -420,26 +441,6 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         if (guid == null) {
             guid = UUID.randomUUID().toString();
         }
-        if (!TextUtils.isEmpty(oldUnitLabel)) { // if not empty
-            if (!UnitUtil.isContainInvalidChar(oldUnitLabel) || oldUnitLabel.length() > UnitUtil.MAX_LENGTH) { // if valid imported UL
-                unitLabelModel = UnitLabelModel.getByShortcut(getContext(), oldUnitLabel);
-
-                if (unitLabelModel != null) { // if found
-                    unitLabelId = unitLabelModel.guid;
-                    oldUnitLabel = null;
-                } else { // if not found
-                    fireInvalidData(description, productCode);
-                    Logger.d("[IMPORT] Can't found unit label: %s", oldUnitLabel);
-                }
-            } else { // if not valid imported UL
-                fireInvalidData(description, productCode);
-                Logger.d("[IMPORT] Unit label contains invalid chars: %s", oldUnitLabel);
-            }
-        } else { // if imported UL was empty
-            oldUnitLabel = TcrApplication.get().getShopInfo().defUnitLabelShortcut;
-        }
-
-
         BigDecimal quantity = (BigDecimal) fields.get(FIELD_QTY);
         if (quantity == null)
             quantity = BigDecimal.ZERO;
