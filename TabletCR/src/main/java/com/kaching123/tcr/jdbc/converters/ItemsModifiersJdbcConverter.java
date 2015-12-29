@@ -82,6 +82,9 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 .add(TYPE, model.type)
                 .add(TITLE, model.title)
                 .add(EXTRA_COST, model.cost)
+                .add(ITEM_SUB_GUID, model.childItemGuid)
+                .add(ITEM_SUB_QUANTITY, model.childItemQty)
+                .add(ITEM_GROUP_GUID, model.modifierGroupGuid)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -90,6 +93,9 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
         return _update(TABLE_NAME, appCommandContext)
                 .add(TITLE, model.title)
                 .add(EXTRA_COST, model.cost)
+                .add(ITEM_SUB_GUID, model.childItemGuid)
+                .add(ITEM_SUB_QUANTITY, model.childItemQty)
+                .add(ITEM_GROUP_GUID, model.modifierGroupGuid)
                 .where(MODIFIER_GUID, model.modifierGuid)
                 .build(JdbcFactory.getApiMethod(model));
     }
