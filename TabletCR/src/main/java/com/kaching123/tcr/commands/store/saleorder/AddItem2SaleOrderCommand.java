@@ -90,8 +90,10 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
             if (!new AddSaleOrderCommand().sync(getContext(), order, true, getAppCommandContext()))
                 return failed();
             item.orderGuid = order.guid;
-            if (unit != null)
+            if (unit != null) {
                 unit.orderId = order.guid;
+                unit.saleItemId = item.saleItemGuid;
+            }
 
             fireAddOrderEvent(item.orderGuid);
         }
@@ -111,8 +113,8 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
                     modifierGiud,
                     addonGuids,
                     optionalGuids,
-					false,
-					getAppCommandContext());
+                    false,
+                    getAppCommandContext());
             if (updateSaleItemAddonsResult == null)
                 return failed();
         }
@@ -132,10 +134,10 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
 
     private void tryCombineWithExistingItem() {
         List<SaleOrderItemViewModel> items = _wrap(ProviderAction.query(URI_ITEM_VIEW)
-                .where(SaleItemTable.ITEM_GUID + " = ?", item.itemGuid)
-                .where(SaleItemTable.ORDER_GUID + " = ?", item.orderGuid)
-                .orderBy(SaleItemTable.SEQUENCE)
-                .perform(getContext()),
+                        .where(SaleItemTable.ITEM_GUID + " = ?", item.itemGuid)
+                        .where(SaleItemTable.ORDER_GUID + " = ?", item.orderGuid)
+                        .orderBy(SaleItemTable.SEQUENCE)
+                        .perform(getContext()),
                 new SaleOrderItemViewModelWrapFunction(getContext()));
 
         for (SaleOrderItemViewModel i : items) {

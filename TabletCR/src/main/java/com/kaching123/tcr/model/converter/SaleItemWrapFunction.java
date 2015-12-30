@@ -59,6 +59,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
     }
 
     protected abstract boolean loadSerialItems();
+
     protected abstract boolean recalcSaleItems();
 
     @Override
@@ -103,9 +104,16 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                     }
                 }
                 if (item.isSerializable && loadSerialItems()) {
-                    List<Unit> units = _wrap(unitQuery(item.itemModel.orderGuid, item.itemModel.itemGuid)
+                    List<Unit> units = _wrap(unitQuery(item.itemModel.orderGuid, item.itemModel.itemGuid, item.getSaleItemGuid())
                             .perform(context), new UnitWrapFunction());
-                    item.tmpUnit.addAll(units);
+                    for (Unit unit : units) {
+                        if (item.getSaleItemGuid().equals(unit.saleItemId)) {
+                        //FIXME from idyuzheva to aboyko
+                        // probaly here is your fix for ACR-1502
+                            item.tmpUnit.add(unit);
+                        }
+                    }
+                    //item.tmpUnit.addAll(units);
                 }
 
                 AddonInfo modifier = readModifier(c);
@@ -152,13 +160,16 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
         return items;
     }
 
-    private static Query unitQuery(String orderId, String ItemId) {
+    private static Query unitQuery(String orderId, String itemId, String saleItemGuid) {
         Query query = ProviderAction.query(UNIT_URI);
         if (orderId != null) {
             query = query.where(ShopStore.UnitTable.SALE_ORDER_ID + " = ?", orderId);
         }
-        if (ItemId != null) {
-            query = query.where(ShopStore.UnitTable.ITEM_ID + " = ?", ItemId);
+        if (itemId != null) {
+            query = query.where(ShopStore.UnitTable.ITEM_ID + " = ?", itemId);
+        }
+        if (saleItemGuid != null) {
+            query = query.where(ShopStore.UnitTable.SALE_ITEM_ID + " = ?", saleItemGuid);
         }
         query = query.where(ShopStore.UnitTable.IS_DELETED + " = ?", 0);
         return query;
@@ -194,9 +205,9 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
 
             /*** SaleModifierModel ***/
             BigDecimal cost;
-            if (_modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)) == ModifierType.OPTIONAL){
+            if (_modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)) == ModifierType.OPTIONAL) {
                 cost = BigDecimal.ZERO;
-            } else if (childItemId != null){
+            } else if (childItemId != null) {
                 cost = getSubTotal(_decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY)), _decimal(c, c.getColumnIndex(SaleAddonSubItemTable.SALE_PRICE)));
             } else {
                 cost = _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST));
@@ -214,7 +225,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
 
             /*** title ***/
             String title;
-            if (childItemId != null){
+            if (childItemId != null) {
                 String modifierTitle = c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.TITLE));
                 String itemTitle = c.getString(c.getColumnIndex(SaleAddonSubItemTable.DESCRIPTION));
                 title = TextUtils.isEmpty(modifierTitle) ? String.format("[%s]", itemTitle) : modifierTitle;

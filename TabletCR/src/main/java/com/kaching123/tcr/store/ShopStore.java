@@ -236,7 +236,8 @@ public abstract class ShopStore {
     @Table(UnitTable.TABLE_NAME)
     @Indexes({
             @Index(name = "item", columns = UnitTable.ITEM_ID),
-            @Index(name = "sale_item", columns = UnitTable.SALE_ORDER_ID),
+            @Index(name = "sale_order", columns = UnitTable.SALE_ORDER_ID),
+            @Index(name = "sale_item", columns = UnitTable.SALE_ITEM_ID),
             @Index(name = "child_sale_item", columns = UnitTable.CHILD_ORDER_ID)
     })
     public static interface UnitTable extends IBemaSyncTable {
@@ -254,6 +255,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.TEXT)
         String ITEM_ID = "item_id";
+
+        @Column(type = Type.TEXT)
+        String SALE_ITEM_ID = "sale_item_id";
 
         @Column(type = Column.Type.TEXT)
         String SERIAL_CODE = "serial_code";

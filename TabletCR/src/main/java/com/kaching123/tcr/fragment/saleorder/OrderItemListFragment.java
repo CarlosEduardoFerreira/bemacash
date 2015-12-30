@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.Editable;
@@ -18,9 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
-import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
-import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -50,7 +47,6 @@ import com.kaching123.tcr.fragment.saleorder.ItemsAdapter.HighlightedColumn.Type
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.DiscountType;
-import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PriceType;
@@ -67,7 +63,6 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

@@ -4,9 +4,7 @@ import android.database.Cursor;
 
 import com.google.common.base.Function;
 import com.kaching123.tcr.model.Unit;
-import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.UnitsView2;
-import com.kaching123.tcr.store.ShopStore.UnitTable;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
 import static com.kaching123.tcr.model.ContentValuesUtil._statusType;
@@ -21,6 +19,7 @@ public class UnitViewFunction implements Function<Cursor, Unit> {
         return new Unit(
                 c.getString(c.getColumnIndex(UnitsView2.UnitTable.ID)),
                 c.getString(c.getColumnIndex(UnitsView2.UnitTable.ITEM_ID)),
+                c.getString(c.getColumnIndex(UnitsView2.UnitTable.SALE_ITEM_ID)),
                 c.getString(c.getColumnIndex(UnitsView2.UnitTable.SERIAL_CODE)),
                 _codeType(c, c.getColumnIndex(UnitsView2.UnitTable.CODE_TYPE)),
                 _statusType(c, c.getColumnIndex(UnitsView2.UnitTable.STATUS)),

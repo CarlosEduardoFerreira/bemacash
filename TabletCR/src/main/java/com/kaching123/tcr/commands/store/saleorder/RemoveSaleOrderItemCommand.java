@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
-	private static final Uri URI_ITEMS = ShopProvider.getContentUri(SaleItemTable.URI_CONTENT);
+    private static final Uri URI_ITEMS = ShopProvider.getContentUri(SaleItemTable.URI_CONTENT);
     private static final Uri URI_SALE_ADDONS = ShopProvider.getNoNotifyContentUri(SaleAddonTable.URI_CONTENT);
     private static final Uri URI_UNIT = ShopProvider.getContentUri(ShopStore.UnitTable.URI_CONTENT);
 
@@ -39,8 +39,8 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
     private SyncResult updateOrderResult;
 
-	@Override
-	protected TaskResult doCommand() {
+    @Override
+    protected TaskResult doCommand() {
         if (saleItemId == null)
             saleItemId = getStringArg(ARG_SALE_ITEM_GUID);
 
@@ -54,8 +54,8 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
         if (updateOrderResult == null)
             return failed();
 
-		return succeeded();
-	}
+        return succeeded();
+    }
 
     private boolean loadData() {
         Cursor c = ProviderAction.query(URI_ITEMS)
@@ -86,7 +86,11 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
         operations.add(ContentProviderOperation.newUpdate(URI_UNIT)
                 .withValue(UnitTable.SALE_ORDER_ID, null)
-                .withSelection(UnitTable.SALE_ORDER_ID + " = ? AND " + UnitTable.ITEM_ID + " = ?", new String[]{orderGuid, itemGuid})
+                .withValue(UnitTable.SALE_ITEM_ID, null)
+                .withSelection(UnitTable.SALE_ORDER_ID + " = ? AND "
+                                + UnitTable.ITEM_ID + " = ? AND "
+                                + UnitTable.SALE_ITEM_ID + " = ?",
+                        new String[]{orderGuid, itemGuid, saleItemId})
                 .build());
 
         operations.add(ContentProviderOperation.newUpdate(URI_ITEMS)
@@ -101,14 +105,14 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
     }
 
     @Override
-	protected ISqlCommand createSqlCommand() {
+    protected ISqlCommand createSqlCommand() {
         SaleOrderItemAddonJdbcConverter converter = (SaleOrderItemAddonJdbcConverter) JdbcFactory.getConverter(SaleAddonTable.TABLE_NAME);
         BatchSqlCommand batch = batchDelete(SaleOrderItemModel.class);
 
         batch.add(converter.deleteSaleItemAddons(saleItemId, getAppCommandContext()));
 
-        UnitsJdbcConverter unitConverter = (UnitsJdbcConverter)JdbcFactory.getConverter(UnitTable.TABLE_NAME);
-        batch.add(unitConverter.removeItemFromOrder(orderGuid, itemGuid, getAppCommandContext()));
+        UnitsJdbcConverter unitConverter = (UnitsJdbcConverter) JdbcFactory.getConverter(UnitTable.TABLE_NAME);
+        batch.add(unitConverter.removeItemFromOrder(orderGuid, itemGuid, saleItemId, getAppCommandContext()));
 
         SaleOrderItemModel model = new SaleOrderItemModel(saleItemId);
         batch.add(JdbcFactory.getConverter(model).deleteSQL(model, getAppCommandContext()));
@@ -117,18 +121,18 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
             batch.add(updateOrderResult.getSqlCmd());
 
         return batch;
-	}
+    }
 
-    public static void start(Context context, String saleItemGuid, Object callback){
-		create(RemoveSaleOrderItemCommand.class)
-		.arg(ARG_SALE_ITEM_GUID, saleItemGuid)
-        .callback(callback)
-		.queueUsing(context);
-	}
+    public static void start(Context context, String saleItemGuid, Object callback) {
+        create(RemoveSaleOrderItemCommand.class)
+                .arg(ARG_SALE_ITEM_GUID, saleItemGuid)
+                .callback(callback)
+                .queueUsing(context);
+    }
 
-	public SyncResult sync(Context context, String saleItemGuid, IAppCommandContext appCommandContext) {
+    public SyncResult sync(Context context, String saleItemGuid, IAppCommandContext appCommandContext) {
         this.saleItemId = saleItemGuid;
         skipOrderUpdate = true;
-		return syncDependent(context, appCommandContext);
-	}
+        return syncDependent(context, appCommandContext);
+    }
 }

@@ -29,6 +29,7 @@ public class UnitsJdbcConverter extends JdbcConverter<Unit> {
 
     private static final String ID = "ID";
     private static final String ITEM_ID = "ITEM_ID";
+    private static final String SALE_ITEM_ID = "SALE_ITEM_ID";
     private static final String SERIAL_CODE = "SERIAL_CODE";
     private static final String CODE_TYPE = "CODE_TYPE";
     private static final String STATUS = "STATUS";
@@ -41,6 +42,7 @@ public class UnitsJdbcConverter extends JdbcConverter<Unit> {
         return new Unit(
                 rs.getString(ID),
                 rs.getString(ITEM_ID),
+                rs.getString(SALE_ITEM_ID),
                 rs.getString(SERIAL_CODE),
                 _enum(CodeType.class, rs.getString(CODE_TYPE), CodeType.SN),
                 _enum(Status.class, rs.getString(STATUS), Status.NEW),
@@ -55,6 +57,7 @@ public class UnitsJdbcConverter extends JdbcConverter<Unit> {
         return new Unit(
                 rs.getString(ID),
                 rs.getString(ITEM_ID),
+                rs.getString(SALE_ITEM_ID),
                 rs.getString(SERIAL_CODE),
                 _enum(CodeType.class, rs.getString(CODE_TYPE), CodeType.SN),
                 _enum(Status.class, rs.getString(STATUS), Status.NEW),
@@ -82,6 +85,7 @@ public class UnitsJdbcConverter extends JdbcConverter<Unit> {
                 .add(CODE_TYPE, model.codeType)
                 .add(STATUS, model.status)
                 .add(ITEM_ID, model.itemId)
+                .add(SALE_ITEM_ID, model.saleItemId)
                 .add(WARRANTY_PERIOD, model.warrantyPeriod)
                 .add(SALE_ORDER_ID, model.orderId)
                 .add(CHILD_ORDER_ID, model.childOrderId)
@@ -102,6 +106,7 @@ public class UnitsJdbcConverter extends JdbcConverter<Unit> {
                 .add(STATUS, model.status)
                 .add(SERIAL_CODE, model.serialCode)
                 .add(SALE_ORDER_ID, model.orderId)
+                .add(SALE_ITEM_ID, model.saleItemId)
                 .add(WARRANTY_PERIOD, model.warrantyPeriod)
                 .add(CHILD_ORDER_ID, model.childOrderId)
                 .where(ID, model.guid)
@@ -111,15 +116,18 @@ public class UnitsJdbcConverter extends JdbcConverter<Unit> {
     public SingleSqlCommand removeFromOrder(String orderId, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
                 .add(SALE_ORDER_ID, (String) null)
+                .add(SALE_ITEM_ID, (String) null)
                 .where(SALE_ORDER_ID, orderId)
                 .build(JdbcFactory.getApiMethod(Unit.class));
     }
 
-    public SingleSqlCommand removeItemFromOrder(String orderId, String itemId, IAppCommandContext appCommandContext) {
+    public SingleSqlCommand removeItemFromOrder(String orderId, String itemId, String saleItemId, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
                 .add(SALE_ORDER_ID, (String) null)
+                .add(SALE_ITEM_ID, (String) null)
                 .where(SALE_ORDER_ID, orderId)
                 .where(ITEM_ID, itemId)
+                .where(SALE_ITEM_ID, saleItemId)
                 .build(JdbcFactory.getApiMethod(Unit.class));
     }
 

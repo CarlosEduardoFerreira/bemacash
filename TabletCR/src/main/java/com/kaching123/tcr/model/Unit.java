@@ -18,6 +18,7 @@ public class Unit implements IValueModel, Serializable {
 
     public String guid;
     public String itemId;
+    public String saleItemId;
     public String serialCode;
     public CodeType codeType;
     public Status status;
@@ -28,9 +29,10 @@ public class Unit implements IValueModel, Serializable {
     public Unit() {
     }
 
-    public Unit(String guid, String itemId, String serialCode, CodeType codeType, Status status, int warrantyPeriod, String orderId, String childOrderId) {
+    public Unit(String guid, String itemId, String saleItemId, String serialCode, CodeType codeType, Status status, int warrantyPeriod, String orderId, String childOrderId) {
         this.guid = guid;
         this.itemId = itemId;
+        this.saleItemId = saleItemId;
         this.serialCode = serialCode;
         this.codeType = codeType;
         this.status = status;
@@ -40,9 +42,9 @@ public class Unit implements IValueModel, Serializable {
     }
 
     public Unit(Cursor c) {
-
         this.guid = c.getString(c.getColumnIndex(UnitTable.ID));
         this.itemId = c.getString(c.getColumnIndex(UnitTable.ITEM_ID));
+        this.saleItemId = c.getString(c.getColumnIndex(UnitTable.SALE_ITEM_ID));
         this.serialCode = c.getString(c.getColumnIndex(UnitTable.SERIAL_CODE));
         this.codeType = _codeType(c, c.getColumnIndex(UnitTable.CODE_TYPE));
         this.status = _statusType(c, c.getColumnIndex(UnitTable.STATUS));
@@ -61,6 +63,7 @@ public class Unit implements IValueModel, Serializable {
         ContentValues v = new ContentValues();
         v.put(UnitTable.ID, guid);
         v.put(UnitTable.ITEM_ID, itemId);
+        v.put(UnitTable.SALE_ITEM_ID, saleItemId);
         v.put(UnitTable.SERIAL_CODE, serialCode);
         v.put(UnitTable.CODE_TYPE, _enum(codeType));
         v.put(UnitTable.STATUS, _enum(status));
@@ -72,19 +75,13 @@ public class Unit implements IValueModel, Serializable {
 
     public ContentValues toUpdateValues() {
         ContentValues v = new ContentValues();
+        v.put(UnitTable.SALE_ITEM_ID, saleItemId);
         v.put(UnitTable.SERIAL_CODE, serialCode);
         v.put(UnitTable.CODE_TYPE, _enum(codeType));
         v.put(UnitTable.SALE_ORDER_ID, orderId);
         v.put(UnitTable.STATUS, _enum(status));
         v.put(UnitTable.WARRANTY_PERIOD, warrantyPeriod);
         v.put(UnitTable.CHILD_ORDER_ID, childOrderId);
-        return v;
-    }
-
-    public ContentValues getUpdateOrderId() {
-        ContentValues v = new ContentValues(2);
-        v.put(UnitTable.SALE_ORDER_ID, orderId);
-        v.put(UnitTable.STATUS, _enum(status));
         return v;
     }
 

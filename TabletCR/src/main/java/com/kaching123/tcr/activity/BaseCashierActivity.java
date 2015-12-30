@@ -494,7 +494,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
 
     protected void tryToAddCheckPriceType(final ItemExModel model,
-                                          final ArrayList<String>  modifierGiud,
+                                          final ArrayList<String> modifierGiud,
                                           final ArrayList<String> addonsGuids,
                                           final ArrayList<String> optionalGuids,
                                           final BigDecimal price,
@@ -1213,7 +1213,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 });
     }
 
-    private void addItemModel(final ItemExModel model, final ArrayList<String>  modifierGiud, final ArrayList<String> addonsGuids,
+    private void addItemModel(final ItemExModel model, final ArrayList<String> modifierGiud, final ArrayList<String> addonsGuids,
                               final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final boolean checkDrawerState, Unit unit) {
         if (model == null)
             return;
@@ -1227,7 +1227,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
 
     private void addItem(ItemExModel model,
-                         ArrayList<String>  modifierGiud,
+                         ArrayList<String> modifierGiud,
                          ArrayList<String> addonsGuids,
                          ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, boolean checkDrawerState, Unit unit) {
         if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit))
@@ -1266,6 +1266,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         if (unit != null && orderGuid != null) {
             unit.orderId = orderGuid;
+            unit.saleItemId = itemModel.saleItemGuid;
         }
 
         if (this.orderGuid == null) {
@@ -1285,7 +1286,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     private boolean checkDrawerState(ItemExModel model,
-                                     ArrayList<String>  modifierGiud,
+                                     ArrayList<String> modifierGiud,
                                      ArrayList<String> addonsGuids, ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, Unit unit) {
         boolean creatingOrder = TextUtils.isEmpty(this.orderGuid);
         if (creatingOrder && getApp().getShopInfo().drawerClosedForSale) {
@@ -1805,7 +1806,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private class PrinterStatusCallback extends BasePrinterStatusCallback {
 
         private ItemExModel itemModel;
-        private ArrayList<String>  modifierGiud;
+        private ArrayList<String> modifierGiud;
         private ArrayList<String> addonsGuids;
         private ArrayList<String> optionalGuids;
         private BigDecimal price;
@@ -1918,8 +1919,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private void pushWaitList2Order(String guid) {
         for (SaleOrderItemModelWrapper item : waitList) {
             item.model.orderGuid = guid;
-            if (item.unit != null)
+            if (item.unit != null) {
                 item.unit.orderId = guid;
+                item.unit.saleItemId = item.model.saleItemGuid;
+            }
             AddItem2SaleOrderCommand.start(this, addItemCallback, item.model, item.modifierGiud, item.addonsGuids, item.optionalGuids, item.unit);
         }
         waitList.clear();
