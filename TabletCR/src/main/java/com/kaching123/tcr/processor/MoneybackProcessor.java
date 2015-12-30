@@ -821,7 +821,7 @@ public class MoneybackProcessor {
                                    final ArrayList<RefundSaleItemInfo> refundItemsInfo) {
         //TODO: interrupted refund not handled
         if ((refundItemsInfo != null && refundItemsInfo.size() > 0)) {
-            UpdateSaleOrderItemRefundQtyCommand.start(context, this, refundItemsInfo, UnitItemCache.get().getUnitsList(), childOrderModel);
+            UpdateSaleOrderItemRefundQtyCommand.start(context, this, childOrderModel, UnitItemCache.get().getUnitsList());
             UnitItemCache.get().reset();
         }
     }
@@ -838,22 +838,20 @@ public class MoneybackProcessor {
         }
     }
 
-    public static interface IRefundCallback {
+    public interface IRefundCallback {
 
-        public void onRefundComplete(SaleOrderModel childOrderModel);
+         void onRefundComplete(SaleOrderModel childOrderModel);
 
-        public void onRefundCancelled();
+         void onRefundCancelled();
 
-        public void onRefundFailure();
+         void onRefundFailure();
     }
 
-    public static interface IVoidCallback {
+    public interface IVoidCallback {
 
-        public void onVoidComplete(List<PaymentTransactionModel> completed, SaleOrderModel childOrderModel);
-
-        public void onVoidFailure(BigDecimal returned);
-
-        public void onVoidCancelled();
+         void onVoidComplete(List<PaymentTransactionModel> completed, SaleOrderModel childOrderModel);
+         void onVoidFailure(BigDecimal returned);
+         void onVoidCancelled();
     }
 
     public static class RefundSaleItemInfo implements Serializable {

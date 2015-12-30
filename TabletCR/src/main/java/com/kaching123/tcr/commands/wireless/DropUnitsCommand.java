@@ -11,12 +11,14 @@ import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMovementModel;
+import com.kaching123.tcr.model.ItemMovementModelFactory;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
+import com.kaching123.tcr.util.MovementUtils;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -78,7 +80,15 @@ public class DropUnitsCommand extends AsyncCommand  {
         /*****************************************************************************************************/
         if (parent.isStockTracking && parent.availableQty != null && parent.availableQty.compareTo(availableQty) != 0) {
             parent.updateQtyFlag = UUID.randomUUID().toString();
-            movementModel = new ItemMovementModel(parent.guid, parent.updateQtyFlag, parent.availableQty, true, new Date());
+            movementModel = ItemMovementModelFactory.getNewModel(
+                    parent.guid,
+                    parent.updateQtyFlag,
+                    MovementUtils.getJustification(ItemMovementModel.JustificationType.DROP),
+                    parent.availableQty,
+                    true,
+                    new Date()
+            );
+
         }
 
         jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemTable.TABLE_NAME);

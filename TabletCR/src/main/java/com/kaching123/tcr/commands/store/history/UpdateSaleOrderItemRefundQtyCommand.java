@@ -24,6 +24,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.util.CalculationUtil;
+import com.kaching123.tcr.util.MovementUtils;
 import com.telly.groundy.TaskResult;
 
 import java.math.BigDecimal;
@@ -45,8 +46,7 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(SaleItemTable.URI_CONTENT);
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(ItemTable.URI_CONTENT);
 
-    private static final String ARG_ITEMS = "arg_sale_item_guid";
-    private static final String ARG_UNITS = "arg_units";
+    private static final String ARG_UNIT = "ARG_UNIT";
 
     private ArrayList<ContentProviderOperation> operations;
 
@@ -54,33 +54,25 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
 
     private SyncResult addMovementsResult;
     private ArrayList<SyncResult> editUnitResults;
+    protected SaleOrderModel returnOrder;
 
     @Override
     protected TaskResult doCommand() {
-        operations = new ArrayList<ContentProviderOperation>();
+        operations = new ArrayList<>();
 
-        ArrayList<RefundSaleItemInfo> itemsInfo = (ArrayList<RefundSaleItemInfo>) getArgs().getSerializable(ARG_ITEMS);
-        ArrayList<Unit> units = (ArrayList<Unit>) getArgs().getSerializable(ARG_UNITS);
-
-        HashMap<String, BigDecimal> info = new HashMap<String, BigDecimal>();
-        for (RefundSaleItemInfo item : itemsInfo) {
-            info.put(item.saleItemGuid, item.qty);
-        }
+        returnOrder = (SaleOrderModel) getArgs().getSerializable(AddReturnOrderCommand.ARG_ORDER_MODEL_CHILD);
 
         returnItems = ProviderAction.query(URI_SALE_ITEMS)
-                .whereIn(SaleItemTable.SALE_ITEM_GUID, info.keySet())
+                .where(SaleItemTable.ORDER_GUID + " = ?", returnOrder.parentGuid)
                 .perform(getContext())
                 .toFluentIterable(new SaleOrderItemFunction())
                 .toImmutableList();
-
-        SaleOrderModel returnOrder = (SaleOrderModel) getArgs().getSerializable(AddReturnOrderCommand.ARG_ORDER_MODEL_CHILD);
-
 
         for (SaleOrderItemModel i : returnItems) {
             i.parentGuid = i.saleItemGuid;
             i.saleItemGuid = UUID.randomUUID().toString();
             i.orderGuid = returnOrder.guid;
-            i.qty = CalculationUtil.negativeQty(info.get(i.parentGuid));
+            i.qty = CalculationUtil.negativeQty(i.qty);
 
             operations.add(
                     ContentProviderOperation.newInsert(URI_SALE_ITEMS)
@@ -88,8 +80,10 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
                             .build());
         }
 
+        List<Unit> units = (List<Unit>) getArgs().getSerializable(ARG_UNIT);
+
         if (units != null && units.size() > 0) {
-            editUnitResults = new ArrayList<SyncResult>();
+            editUnitResults = new ArrayList<>();
             for (Unit unit: units) {
                 unit.childOrderId = returnOrder.guid;
                 SyncResult subResult = new EditUnitCommand().sync(getContext(), unit, getAppCommandContext());
@@ -113,36 +107,21 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
             items.add(item.itemGuid);
         }
 
-        Cursor c = ProviderAction.query(URI_ITEMS)
-                .projection(ItemTable.GUID, ItemTable.UPDATE_QTY_FLAG, ItemTable.STOCK_TRACKING)
-                .whereIn(ItemTable.GUID, items)
-                .perform(getContext());
-
-        ArrayList<ItemMovementModel> itemMovements = new ArrayList<ItemMovementModel>();
-        while (c.moveToNext()) {
-            String itemGuid = c.getString(0);
-            String flag = c.getString(1);
-            boolean stockTracking = _bool(c, 2);
-            if (!stockTracking) {
-                continue;
-            }
-            for (SaleOrderItemModel item : returnItems) {
-                if (!item.itemGuid.equals(itemGuid))
-                    continue;
-                itemMovements.add(new ItemMovementModel(itemGuid, flag, saleItems.get(item.getGuid()), false, new Date()));
-            }
-        }
-        c.close();
+        ArrayList<ItemMovementModel> itemMovements = new ArrayList<>();
+        MovementUtils.processAllRefund(
+                getContext(),
+                getAppCommandContext(),
+                returnOrder.parentGuid,
+                itemMovements,
+                MovementUtils.getJustification(ItemMovementModel.JustificationType.REFUND));
 
         if (itemMovements.isEmpty()) {
             return true;
         }
 
         addMovementsResult = new AddItemsMovementCommand().syncNow(getContext(), itemMovements, getAppCommandContext());
-        if (addMovementsResult == null)
-            return false;
+        return addMovementsResult != null;
 
-        return true;
     }
 
     @Override
@@ -175,11 +154,10 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
         return batch;
     }
 
-    public static void start(Context context, Object callback, ArrayList<RefundSaleItemInfo> items, ArrayList<Unit> units, SaleOrderModel childOrderModel) {
+    public static void start(Context context, Object callback, SaleOrderModel childOrderModel, ArrayList<Unit> units) {
         create(UpdateSaleOrderItemRefundQtyCommand.class)
                 .arg(AddReturnOrderCommand.ARG_ORDER_MODEL_CHILD, childOrderModel)
-                .arg(ARG_ITEMS, items)
-                .arg(ARG_UNITS, units)
+                .arg(ARG_UNIT, new ArrayList<>(units))
                 .callback(callback)
                 .queueUsing(context);
     }

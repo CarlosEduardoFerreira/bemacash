@@ -67,10 +67,6 @@ public class ItemMovementModel implements Serializable, IValueModel{
     public Date createTime;
     public String operatorGuid;
 
-    public ItemMovementModel(){
-        this.guid = UUID.randomUUID().toString();
-    }
-
     public ItemMovementModel(String guid,
                              String itemGuid,
                              String itemUpdateFlag,
@@ -82,14 +78,6 @@ public class ItemMovementModel implements Serializable, IValueModel{
         this.guid = guid;
         this.itemGuid = itemGuid;
         this.itemUpdateFlag = itemUpdateFlag;
-        this.qty = qty;
-        this.manual = manual;
-        this.createTime = createTime;
-    }
-
-    public ItemMovementModel(String itemGuid, String itemUpdateFlag, BigDecimal qty, boolean manual, Date createTime) {
-        this.guid = UUID.randomUUID().toString();
-        this.itemGuid = itemGuid;
         this.justification = justification;
         this.qty = qty;
         this.manual = manual;
