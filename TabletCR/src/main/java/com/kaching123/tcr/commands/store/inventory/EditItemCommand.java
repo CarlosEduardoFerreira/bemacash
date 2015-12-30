@@ -11,11 +11,13 @@ import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemMovementModel;
+import com.kaching123.tcr.model.ItemMovementModelFactory;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.util.InventoryUtils;
 import com.telly.groundy.TaskResult;
 
 import java.math.BigDecimal;
@@ -34,15 +36,21 @@ public class EditItemCommand extends AsyncCommand {
     private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ItemMovementTable.URI_CONTENT);
 
     private static final String ARG_ITEM = "arg_item";
+    private static final String ARG_JUSTIFICATION = "arg_justification";
 
     private ItemModel item;
     private ItemMovementModel movementModel;
+    private ArrayList<ContentProviderOperation> operations;
+    private BatchSqlCommand sql;
+    private String justification;
 
     @Override
     protected TaskResult doCommand() {
         Logger.d("EditItemCommand doCommand");
         if (item == null)
             item = (ItemModel)getArgs().getSerializable(ARG_ITEM);
+
+        justification = getArgs().getString(ARG_JUSTIFICATION);
         movementModel = null;
 
         BigDecimal availableQty = null;
@@ -55,43 +63,56 @@ public class EditItemCommand extends AsyncCommand {
             availableQty = _decimalQty(c, 0);
         }
         c.close();
-        if(item.isStockTracking && item.availableQty != null && item.availableQty.compareTo(availableQty) != 0){
+
+        if (item.isStockTracking && item.availableQty != null && item.availableQty.compareTo(availableQty) != 0 && !item.ignoreMovementupdate) {
             item.updateQtyFlag = UUID.randomUUID().toString();
-            movementModel = new ItemMovementModel(item.guid, item.updateQtyFlag, item.availableQty, true, new Date());
+            movementModel = ItemMovementModelFactory.getNewModel(
+                    item.guid,
+                    item.updateQtyFlag,
+                    justification,
+                    item.availableQty,
+                    true,
+                    new Date());
         }
+        operations = new ArrayList<>();
+
+        operations.add(ContentProviderOperation.newUpdate(ITEM_URI)
+                .withSelection(ItemTable.GUID + " = ?", new String[]{item.guid})
+                .withValues(item.toValues())
+                .build());
+        if (movementModel != null) {
+            operations.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI)
+                    .withValues(movementModel.toValues())
+                    .build());
+        }
+        sql = batchUpdate(item);
+        sql.add(JdbcFactory.getConverter(item).updateSQL(item, getAppCommandContext()));
+        if (movementModel != null) {
+            sql.add(JdbcFactory.getConverter(movementModel).insertSQL(movementModel, getAppCommandContext()));
+        }
+        if (item.serializable && !InventoryUtils.pollItem(item.guid, getContext(), getAppCommandContext(), operations, sql)) {
+            return failed();
+        }
+
 
         return succeeded();
     }
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
-
-        operations.add(ContentProviderOperation.newUpdate(ITEM_URI)
-                .withSelection(ItemTable.GUID + " = ?", new String[]{item.guid})
-                .withValues(item.toValues())
-                .build());
-        if(movementModel != null){
-            operations.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI)
-                    .withValues(movementModel.toValues())
-                    .build());
-        }
-
         return operations;
     }
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        BatchSqlCommand batch = batchUpdate(item);
-        batch.add(JdbcFactory.getConverter(item).updateSQL(item, getAppCommandContext()));
-        if(movementModel != null){
-            batch.add(JdbcFactory.getConverter(movementModel).insertSQL(movementModel, getAppCommandContext()));
-        }
-        return batch;
+        return sql;
     }
 
-    public static void start(Context context, ItemModel item){
-        create(EditItemCommand.class).arg(ARG_ITEM, item).queueUsing(context);
+    public static void start(Context context, ItemModel item, String justification){
+        create(EditItemCommand.class)
+                .arg(ARG_ITEM, item)
+                .arg(ARG_JUSTIFICATION, justification)
+                .queueUsing(context);
     }
 
     /** use in import. can be standalone **/

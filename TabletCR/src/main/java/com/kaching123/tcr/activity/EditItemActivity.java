@@ -139,7 +139,7 @@ public class EditItemActivity extends BaseItemActivity {
 
     @Override
     protected void callCommand(ItemModel model) {
-        EditItemCommand.start(this, model);
+        EditItemCommand.start(this, model, justificationMsg);
     }
 
     @Override

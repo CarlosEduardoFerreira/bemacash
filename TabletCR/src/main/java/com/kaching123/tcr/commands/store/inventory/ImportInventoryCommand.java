@@ -212,18 +212,8 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private void fireMaxItemsCountError() {
         callback(ERROR_MAX_ITEMS_COUNT);
     }
+
     private boolean isEanValid(ItemModel model) {
-        if (TextUtils.isEmpty(model.eanCode)) {
-            return true;
-        } else {
-            try {
-                return Validator.isEanValid(model.eanCode);
-            } catch (NumberFormatException badEan) {
-                return false;
-            }
-        }
-    }
-    private boolean isEanValid2(ItemModel model) {
         if (TextUtils.isEmpty(model.productCode/*eanCode*/)) {
             return true;
         }

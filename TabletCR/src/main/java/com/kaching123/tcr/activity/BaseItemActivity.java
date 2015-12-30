@@ -66,6 +66,7 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemCodeType;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.Permission;
@@ -87,6 +88,7 @@ import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
+import com.kaching123.tcr.util.MovementUtils;
 import com.kaching123.tcr.util.UnitUtil;
 import com.kaching123.tcr.util.Validator;
 
@@ -271,6 +273,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     protected int count;
 
+    protected String justificationMsg;
+
     @OptionsItem
     protected void actionSerialSelected() {
         if (model.isSerializable()) {
@@ -408,6 +412,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
 
         availableQtyPencil.setEnabled(PlanOptions.isStockTrackingAllowed());
+
+        justificationMsg = MovementUtils.getJustification(ItemMovementModel.JustificationType.NONE);
+
     }
 
     protected void setQuantities() {
@@ -1485,7 +1492,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             InventoryQtyEditDialog.show(BaseItemActivity.this, model.availableQty == null ? BigDecimal.ZERO : model.availableQty, isPcs(),
                     new InventoryQtyEditDialog.OnEditQtyListener() {
                         @Override
-                        public void onReplace(BigDecimal value) {
+                        public void onReplace(BigDecimal value, String justification) {
                             model.availableQty = value;
                             if (isPcs()) {
                                 showInteger(availableQty, model.availableQty);
@@ -1494,10 +1501,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                                 showQuantity(availableQty, model.availableQty);
                                 showQuantity(availableQtyPencil, model.availableQty);
                             }
+                            justificationMsg = justification;
                         }
 
                         @Override
-                        public void onAdjust(BigDecimal value) {
+                        public void onAdjust(BigDecimal value, String justification) {
                             BigDecimal old = model.availableQty == null ? BigDecimal.ZERO : model.availableQty;
                             model.availableQty = old.add(value);
                             if (isPcs()) {
@@ -1507,6 +1515,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                                 showQuantity(availableQty, model.availableQty);
                                 showQuantity(availableQtyPencil, model.availableQty);
                             }
+                            justificationMsg = justification;
                         }
                     }
             );

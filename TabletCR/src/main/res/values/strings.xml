@@ -1800,4 +1800,13 @@
     <string name="composer_selections" formatted="false">Selected %s\'s composition items: %s</string>
     <string name="composer_dialog_text">Please determine the composer details</string>
 
+    <!-- Justification for item movement-->
+    <string name="justification_none">None</string>
+    <string name="justification_sale">Sale</string>
+    <string name="justification_refund">Refund</string>
+    <string name="justification_drop">Drop</string>
+    <string name="justification_add_units">Add units</string>
+    <string name="justification_create_item">Create Item</string>
+    <string name="justification_from_import">From Import</string>
+
 </resources>

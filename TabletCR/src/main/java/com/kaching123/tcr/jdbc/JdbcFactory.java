@@ -50,6 +50,7 @@ import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.model.RegisterModel;
+import com.kaching123.tcr.model.SaleModifierModel;
 import com.kaching123.tcr.model.SaleOrderItemAddonModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -163,10 +164,10 @@ public class JdbcFactory {
         API_METHOD2.put(EmployeeModel.class, "employees");
 
         CONVERTERS.put(SaleAddonTable.TABLE_NAME, c = new SaleOrderItemAddonJdbcConverter());
-        CONVERTERS2.put(SaleOrderItemAddonModel.class, c);
+        CONVERTERS2.put(SaleModifierModel.class, c);
 
         API_METHOD.put(SaleAddonTable.TABLE_NAME, "sale_order_item_addons");
-        API_METHOD2.put(SaleOrderItemAddonModel.class, "sale_order_item_addons");
+        API_METHOD2.put(SaleModifierModel.class, "sale_order_item_addons");
 
         CONVERTERS.put(PaymentTransactionTable.TABLE_NAME, c = new PaymentTransactionJdbcConverter());
         CONVERTERS2.put(PaymentTransactionModel.class, c);

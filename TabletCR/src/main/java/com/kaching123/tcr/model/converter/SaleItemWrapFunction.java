@@ -8,18 +8,10 @@ import android.text.TextUtils;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.google.common.base.Function;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
 import com.kaching123.tcr.function.UnitWrapFunction;
 import com.kaching123.tcr.model.ModifierType;
-import com.kaching123.tcr.model.SaleModifierModel;
 import com.kaching123.tcr.model.SaleOrderItemAddonModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
@@ -35,6 +27,12 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;

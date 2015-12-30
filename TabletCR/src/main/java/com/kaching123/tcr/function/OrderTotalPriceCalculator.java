@@ -45,7 +45,8 @@ public final class OrderTotalPriceCalculator {
                             i.getQty(), i.getPrice(),
                             i.isDiscountable(), i.getDiscount(), i.getDiscountType(),
                             i.isTaxable(), i.getTax(),
-                            i.unitsLabel, i.itemModel.priceType
+                            i.unitsLabel, i.itemModel.priceType,
+                            i
                     )
             );
         }
@@ -366,12 +367,13 @@ public final class OrderTotalPriceCalculator {
         public final BigDecimal tax;
         public final String unitLabel;
         public final PriceType priceType;
-        public final ArrayList<Unit> tmpUnit = new ArrayList<Unit>();
-        public final ArrayList<SaleOrderItemViewModel.AddonInfo> addons = new ArrayList<SaleOrderItemViewModel.AddonInfo>();
+        public SaleOrderItemViewModel itemViewModel;
 
         public BigDecimal totalPrice;
 
-        public SaleItemInfo(String saleItemGiud, String itemGiud, String description, BigDecimal qty, BigDecimal totalPrice, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax, String unitLabel, PriceType priceType) {
+        public SaleItemInfo(String saleItemGiud, String itemGiud, String description, BigDecimal qty,
+                            BigDecimal totalPrice, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable,
+                            BigDecimal tax, String unitLabel, PriceType priceType, SaleOrderItemViewModel itemViewModel) {
             this.saleItemGuid = saleItemGiud;
             this.itemGiud = itemGiud;
             this.description = description;
@@ -384,9 +386,11 @@ public final class OrderTotalPriceCalculator {
             this.tax = tax;
             this.unitLabel = unitLabel;
             this.priceType = priceType;
+            this.itemViewModel = itemViewModel;
         }
 
-        public SaleItemInfo(String saleItemGiud, String itemGiud, String description, BigDecimal qty, BigDecimal totalPrice, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax) {
+        public SaleItemInfo(String saleItemGiud, String itemGiud, String description, BigDecimal qty, BigDecimal totalPrice,
+                            boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax) {
             this.saleItemGuid = saleItemGiud;
             this.itemGiud = itemGiud;
             this.description = description;
@@ -402,7 +406,7 @@ public final class OrderTotalPriceCalculator {
         }
 
         public SaleItemInfo copy(BigDecimal qty) {
-            return new SaleItemInfo(saleItemGuid, itemGiud, description, qty, totalPrice, discountable, discount, discountType, isTaxable, tax, unitLabel, priceType);
+            return new SaleItemInfo(saleItemGuid, itemGiud, description, qty, totalPrice, discountable, discount, discountType, isTaxable, tax, unitLabel, priceType, itemViewModel);
         }
     }
 

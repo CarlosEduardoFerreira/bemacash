@@ -12,11 +12,13 @@ import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemMovementModel;
+import com.kaching123.tcr.model.ItemMovementModelFactory;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.util.MovementUtils;
 import com.telly.groundy.TaskResult;
 
 import java.util.ArrayList;
@@ -38,17 +40,27 @@ public class AddItemCommand extends AsyncCommand {
 	@Override
 	protected TaskResult doCommand() {
 		Logger.d("AddItemCommand doCommand");
-        if (isMaxItemsCountError = !checkMaxItemsCount())
+        if (isMaxItemsCountError = !checkMaxItemsCount()) {
             return failed();
+        }
 
 		item = (ItemModel)getArgs().getSerializable(ARG_ITEM);
         movementModel = null;
-
         item.orderNum = 0;
         item.updateQtyFlag = UUID.randomUUID().toString();
-
         if(item.isStockTracking){
-            movementModel = new ItemMovementModel(item.guid, item.updateQtyFlag, item.availableQty, true, new Date());
+            /*movementModel = new ItemMovementModel(item.guid,
+                    item.updateQtyFlag,
+                    item.availableQty,
+                    true, new Date());*/
+            movementModel = ItemMovementModelFactory.getNewModel(
+                    item.guid,
+                    item.updateQtyFlag,
+                    MovementUtils.getJustification(ItemMovementModel.JustificationType.CREATE_ITEM),
+                    item.availableQty,
+                    true,
+                    new Date()
+            );
         }
 
 		return succeeded();

@@ -28,6 +28,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.util.CalculationUtil;
+import com.kaching123.tcr.util.MovementUtils;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
@@ -176,12 +177,12 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
     }
 
     private boolean updateItemMovement() {
-        HashSet<String> itemGuids = new HashSet<String>();
+        HashSet<String> itemGuids = new HashSet<>();
         for (SaleOrderItemModel saleItem : itemsModels) {
             itemGuids.add(saleItem.itemGuid);
         }
 
-        Cursor cursor = ProviderAction.query(URI_ITEM)
+    /*    Cursor cursor = ProviderAction.query(URI_ITEM)
                 .projection(
                         ShopStore.ItemTable.GUID,
                         ShopStore.ItemTable.UPDATE_QTY_FLAG,
@@ -190,7 +191,7 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
                 .whereIn(ShopStore.ItemTable.GUID, itemGuids)
                 .perform(getContext());
 
-        ArrayList<ItemMovementModel> itemMovements = new ArrayList<ItemMovementModel>();
+        ArrayList<ItemMovementModel> itemMovements = new ArrayList<>();
         while (cursor.moveToNext()) {
             String itemGuid = cursor.getString(0);
             String flag = cursor.getString(1);
@@ -205,6 +206,14 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
             }
         }
         cursor.close();
+*/
+        ArrayList<ItemMovementModel> itemMovements = new ArrayList<>();
+        MovementUtils.processAll(
+                getContext(),
+                getAppCommandContext(),
+                order.guid,
+                itemMovements,
+                MovementUtils.getJustification(ItemMovementModel.JustificationType.SALE));
 
         if (itemMovements.isEmpty())
             return true;

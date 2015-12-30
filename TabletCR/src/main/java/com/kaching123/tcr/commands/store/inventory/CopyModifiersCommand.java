@@ -56,13 +56,20 @@ public class CopyModifiersCommand extends AsyncCommand {
         //.toImmutableList();
 
         for (ModifierModel m : models) {
-            m.itemGuid = itemGuid;
-            m.modifierGuid = UUID.randomUUID().toString();
-
+            ModifierModel newModel = new ModifierModel(
+                    UUID.randomUUID().toString(),
+                    itemGuid,
+                    m.type,
+                    m.title,
+                    m.cost,
+                    m.childItemGuid,
+                    m.childItemQty,
+                    null
+            );
             operations.add(ContentProviderOperation.newInsert(URI)
-                    .withValues(m.toValues())
+                    .withValues(newModel.toValues())
                     .build());
-            sql.add(jdbc.insertSQL(m, this.getAppCommandContext()));
+            sql.add(jdbc.insertSQL(newModel, this.getAppCommandContext()));
         }
 
         return succeeded();

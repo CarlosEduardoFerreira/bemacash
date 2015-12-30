@@ -513,6 +513,13 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER)
         String ITEM_UPDATE_QTY_FLAG = "ITEM_UPDATE_QTY_FLAG";
 
+        @NotNull
+        @Column(type = Type.TEXT, defVal = "\'legacy\'")
+        String MOVEMENT_JUSTIFICATION = "movement_justification";
+
+        @Column(type = Type.TEXT)
+        String OPERATOR_GUID = "operator_guid";
+
         @Column(type = Type.INTEGER)
         String MANUAL = "manual";
 
@@ -3290,4 +3297,191 @@ public abstract class ShopStore {
                 + " ) as t1";
     }*/
 
+    @RawQuery(SaleOrderItemsMappingQuery.VIEW_NAME)
+    public interface SaleOrderItemsMappingQuery {
+
+        String VIEW_NAME = "mapping_order_item";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "mapping_order_item";
+
+        String ITEM_GUID = "ITEM_GUID_TAG";
+        String QUANTITY = "QUANTITY_TAG";
+        String ITEM_QUANTITY = "ITEM_QUANTITY";
+        String SOURCE = "SOURCE";
+        String MOD_QTY = "MOD_QTY";
+        String MOD_ID = "MOD_ID";
+        String COMPOSER_QUANTITY = "COMPOSER_QUANTITY";
+        String FLAG = "FLAG";
+
+        String ID = "ID_ALIAS";
+
+        String T1 = "T1";
+        String T2 = "T2";
+        String T3 = "T3";
+        String TT1 = "TT1";
+        String TT2 = "TT2";
+        String TT3 = "TT3";
+        String TT4 = "TT4";
+        String TTT1 = "TTT1";
+        String TTT2 = "TTT2";
+
+        String AS = " AS ";
+        String IS = " IS ";
+        String ON = " ON ";
+        String NOT = " NOT ";
+        String NULL = " NULL ";
+        String ALL = " ALL ";
+        String UNION = " UNION ";
+        String WHERE = " WHERE ";
+        String AND = " AND ";
+        String SUM = " SUM ";
+        String FROM = " FROM ";
+        String SELECT = " SELECT ";
+        String JOIN = " JOIN ";
+        String GROUP_BY = " GROUP BY ";
+
+        String coma = ", ";
+        String dot = ".";
+        String space = " ";
+        String equals = " = ";
+        String multiply = " * ";
+
+        @SqlQuery
+        String QUERY =
+                SELECT + ITEM_GUID + coma + " -1 * " + SUM + "(" + QUANTITY + ")" + coma + FLAG + coma + SOURCE + FROM + "("
+
+                        + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM_MODIFIER_ITEM\'" + AS + SOURCE + FROM + "("
+                        + SELECT + T1 + dot + SaleItemTable.SALE_ITEM_GUID + coma + SaleItemTable.ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + multiply + MOD_QTY + AS + QUANTITY
+                        + coma + MOD_ID + AS + ITEM_GUID + FROM + SaleItemTable.TABLE_NAME + space + T1
+                        + JOIN + "(" + SELECT + SaleAddonTable.ITEM_GUID + coma + SaleAddonTable.CHILD_ITEM_ID + AS + MOD_ID + coma + SaleAddonTable.CHILD_ITEM_QTY + AS + MOD_QTY + FROM + SaleAddonTable.TABLE_NAME + ")" + T2
+                        + ON + T2 + dot + SaleAddonTable.ITEM_GUID + equals + T1 + dot + SaleItemTable.SALE_ITEM_GUID + AND + MOD_ID + IS + NOT + NULL
+                        + WHERE + T1 + dot + SaleItemTable.ORDER_GUID + " = ?)" + TT1 + UNION + ALL
+
+
+                        + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM\'" + AS + SOURCE + FROM + "("
+                        + SELECT + SaleItemTable.ITEM_GUID + AS + ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + AS + QUANTITY + FROM + SaleItemTable.TABLE_NAME + space + T1
+                        + WHERE + T1 + dot + SaleItemTable.ORDER_GUID + " = ?)" + TT2 + UNION + ALL
+
+
+                        + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM_COMPOSER_ITEM\'" + AS + SOURCE + FROM + "("
+                        + SELECT + ComposerTable.ITEM_CHILD_ID + AS + ITEM_GUID + coma +  ComposerTable.STORE_TRACKING_ENABLED + coma + ComposerTable.QUANTITY + multiply + ITEM_QUANTITY + AS + QUANTITY + coma
+                        + ComposerTable.ITEM_HOST_ID + coma + IBemaSyncTable.IS_DELETED + FROM + ComposerTable.TABLE_NAME + space + T1
+                        + JOIN + "(" + SELECT + SaleItemTable.ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + AS + ITEM_QUANTITY + FROM + SaleItemTable.TABLE_NAME + ")" + T2
+                        + ON + T2 + dot + SaleItemTable.ITEM_GUID + equals + T1 + dot + ComposerTable.ITEM_HOST_ID
+                        + WHERE + T1 + dot + ComposerTable.STORE_TRACKING_ENABLED + " = 1" + AND + T1 + dot + IBemaSyncTable.IS_DELETED + " = 0" + AND + T2 + dot + SaleItemTable.ORDER_GUID + " = ?)" + TT3 + UNION + ALL
+
+
+                        + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM_MODIFIER_COMPOSER_ITEM\'" + AS + SOURCE + FROM + "("
+                        + SELECT + ITEM_GUID + coma + T1 + dot + SaleItemTable.SALE_ITEM_GUID + coma + SaleItemTable.ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma
+                        + SaleItemTable.QUANTITY + multiply + MOD_QTY + multiply + COMPOSER_QUANTITY + AS + QUANTITY + FROM + SaleItemTable.TABLE_NAME + space + T1
+                        + JOIN + "(" + SELECT + SaleAddonTable.ITEM_GUID + coma + SaleAddonTable.CHILD_ITEM_ID + AS + MOD_ID + coma + SaleAddonTable.CHILD_ITEM_QTY + AS + MOD_QTY + FROM + SaleAddonTable.TABLE_NAME + ")" + T2
+                        + ON + T2 + dot + SaleAddonTable.ITEM_GUID + equals + T1 + dot + SaleItemTable.SALE_ITEM_GUID + AND + MOD_ID + IS + NOT + NULL
+                        + JOIN + "(" + SELECT + ComposerTable.STORE_TRACKING_ENABLED
+                        + coma + ComposerTable.ITEM_CHILD_ID + AS + ITEM_GUID + coma + IBemaSyncTable.IS_DELETED + coma + ComposerTable.QUANTITY  + AS + COMPOSER_QUANTITY + coma
+                        + ComposerTable.ITEM_HOST_ID + FROM + ComposerTable.TABLE_NAME + ")" + T3
+                        + ON + T3 + dot + IBemaSyncTable.IS_DELETED + " = 0" + AND + T3 + dot + ComposerTable.STORE_TRACKING_ENABLED + " = 1" + AND + T2 + dot + MOD_ID + equals + T3 + dot + ComposerTable.ITEM_HOST_ID
+                        + WHERE + T1 + dot + SaleItemTable.ORDER_GUID + " = ?)" + TT4
+                        + ")" + TTT1
+
+
+                        + JOIN + "(" + SELECT + ItemTable.GUID + coma + ItemTable.UPDATE_QTY_FLAG + AS + FLAG + FROM + ItemTable.TABLE_NAME + ")" + TTT2
+                        + ON + TTT2 + dot + ItemTable.GUID + equals + ITEM_GUID
+                        + GROUP_BY + ITEM_GUID;
+
+        //// ****************************************            READABLE    V3   not valid anymore   ****************************************** //////
+
+//        SELECT ITEM_GUID, sum(QUANTITY), FLAG, SOURCE FROM (
+//                SELECT ITEM_GUID, QUANTITY, 'ITEM_MODIFIER_ITEM' AS SOURCE FROM (
+//                SELECT T1.SALE_ITEM_ID, ITEM_ID, ORDER_ID, QUANTITY * MOD_QTY AS QUANTITY, MOD_ID AS ITEM_GUID FROM SALE_ORDER_ITEM T1
+//                        JOIN (SELECT SALE_ITEM_ID, SALE_CHILD_ITEM_QTY AS MOD_QTY, SALE_CHILD_ITEM_ID AS MOD_ID FROM SALE_ORDER_ITEM_ADDON) T2
+//        ON T2.SALE_ITEM_ID = T1.SALE_ITEM_ID AND MOD_ID IS NOT NULL
+//        WHERE T1.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//                ) TT0
+//        UNION ALL
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM' AS SOURCE FROM (
+//                SELECT ITEM_ID AS ITEM_GUID, ORDER_ID, QUANTITY AS QUANTITY FROM SALE_ORDER_ITEM T1
+//                WHERE T1.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//        ) TT1
+//        UNION ALL
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM_COMPOSER_ITEM' AS SOURCE FROM (
+//                SELECT ITEM_CHILD_ID AS ITEM_GUID, STORE_TRACKING_ENABLED, QUANTITY * ITEM_QUANTITY AS QUANTITY, ITEM_HOST_ID FROM COMPOSER T1
+//                JOIN (SELECT ITEM_ID, ORDER_ID, QUANTITY AS ITEM_QUANTITY FROM SALE_ORDER_ITEM) T2
+//        ON T2.ITEM_ID = T1.ITEM_HOST_ID
+//        WHERE T2.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773' AND T1.STORE_TRACKING_ENABLED = 1
+//                ) TT2
+//        UNION ALL
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM_MODIFIER_COMPOSER_ITEM' AS SOURCE FROM (
+//                SELECT T1.SALE_ITEM_ID, ITEM_ID, ORDER_ID, QUANTITY * MOD_QTY * COMPOSER_QUANTITY AS QUANTITY, MOD_ID AS ITEM_GUID FROM SALE_ORDER_ITEM T1
+//                JOIN (SELECT SALE_ITEM_ID, SALE_CHILD_ITEM_QTY AS MOD_QTY, SALE_CHILD_ITEM_ID AS MOD_ID FROM SALE_ORDER_ITEM_ADDON) T2
+//        ON T2.SALE_ITEM_ID = T1.SALE_ITEM_ID AND MOD_ID IS NOT NULL
+//        JOIN (SELECT ITEM_CHILD_ID AS ITEM_GUID, QUANTITY AS COMPOSER_QUANTITY,STORE_TRACKING_ENABLED, ITEM_HOST_ID FROM COMPOSER) T3
+//        ON T2.MOD_ID = T3.ITEM_HOST_ID AND T3.STORE_TRACKING_ENABLED = 0
+//        WHERE T1.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//                ) TT3 ) TTT1
+//                        JOIN (SELECT ID, UPDATE_QTY_FLAG AS FLAG FROM ITEM) TTT2
+//        ON TTT2.ID = ITEM_GUID
+//        GROUP BY ITEM_GUID
+
+        //// ****************************************            READABLE    V2      ****************************************** //////
+
+//        SELECT ITEM_GUID, sum(QUANTITY), SOURCE FROM (
+//                SELECT ITEM_GUID, QUANTITY, 'ITEM_MODIFIER_ITEM' AS SOURCE FROM (
+//                SELECT T1.SALE_ITEM_ID, ITEM_ID, ORDER_ID, QUANTITY * MOD_QTY AS QUANTITY, MOD_ID AS ITEM_GUID FROM SALE_ORDER_ITEM T1
+//                        JOIN (SELECT SALE_ITEM_ID, SALE_CHILD_ITEM_QTY AS MOD_QTY, SALE_CHILD_ITEM_ID AS MOD_ID FROM SALE_ORDER_ITEM_ADDON) T2
+//        ON T2.SALE_ITEM_ID = T1.SALE_ITEM_ID AND MOD_ID IS NOT NULL
+//        WHERE T1.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//                ) TT0
+//        UNION ALL
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM' AS SOURCE FROM (
+//                SELECT ITEM_ID AS ITEM_GUID, ORDER_ID, QUANTITY AS QUANTITY FROM SALE_ORDER_ITEM T1
+//                WHERE T1.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//        ) TT1
+//        UNION ALL
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM_COMPOSER_ITEM' AS SOURCE FROM (
+//                SELECT ITEM_CHILD_ID AS ITEM_GUID, STORE_TRACKING_ENABLED, QUANTITY * ITEM_QUANTITY AS QUANTITY, ITEM_HOST_ID FROM COMPOSER T1
+//                JOIN (SELECT ITEM_ID, ORDER_ID, QUANTITY AS ITEM_QUANTITY FROM SALE_ORDER_ITEM) T2
+//        ON T2.ITEM_ID = T1.ITEM_HOST_ID
+//        WHERE T2.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773' AND T1.STORE_TRACKING_ENABLED = 1 AND T1.IS_DELETED
+//                ) TT2
+//        UNION ALL
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM_MODIFIER_COMPOSER_ITEM' AS SOURCE FROM (
+//                SELECT T1.SALE_ITEM_ID, ITEM_ID, ORDER_ID, QUANTITY * MOD_QTY * COMPOSER_QUANTITY AS QUANTITY, MOD_ID AS ITEM_GUID FROM SALE_ORDER_ITEM T1
+//                JOIN (SELECT SALE_ITEM_ID, SALE_CHILD_ITEM_QTY AS MOD_QTY, SALE_CHILD_ITEM_ID AS MOD_ID FROM SALE_ORDER_ITEM_ADDON) T2
+//        ON T2.SALE_ITEM_ID = T1.SALE_ITEM_ID AND MOD_ID IS NOT NULL
+//        JOIN (SELECT ITEM_CHILD_ID AS ITEM_GUID, QUANTITY AS COMPOSER_QUANTITY,STORE_TRACKING_ENABLED, ITEM_HOST_ID FROM COMPOSER) T3
+//        ON T2.MOD_ID = T3.ITEM_HOST_ID AND T3.STORE_TRACKING_ENABLED = 0
+//        WHERE T1.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//                ) TT3 ) TTT1 GROUP BY ITEM_GUID
+
+        //// ****************************************            READABLE    V1      ****************************************** //////
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM_MODIFIER_ITEM' AS SOURCE FROM (
+//                SELECT T1.SALE_ITEM_ID, ITEM_ID, ORDER_ID, QUANTITY * MOD_QTY AS QUANTITY, MOD_ID AS ITEM_GUID FROM SALE_ORDER_ITEM T1
+//                JOIN (SELECT SALE_ITEM_ID, SALE_CHILD_ITEM_QTY AS MOD_QTY, SALE_CHILD_ITEM_ID AS MOD_ID FROM SALE_ORDER_ITEM_ADDON) T2
+//        ON T2.SALE_ITEM_ID = T1.SALE_ITEM_ID AND MOD_ID IS NOT NULL
+//        WHERE T1.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//        ) TT0
+//        UNION ALL
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM' AS SOURCE FROM (
+//                SELECT ITEM_ID AS ITEM_GUID, ORDER_ID, QUANTITY AS QUANTITY FROM SALE_ORDER_ITEM T1
+//                WHERE T1.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//        ) TT1
+//        UNION ALL
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM_COMPOSER_ITEM' AS SOURCE FROM (
+//                SELECT ITEM_CHILD_ID AS ITEM_GUID, QUANTITY * ITEM_QUANTITY AS QUANTITY, ITEM_HOST_ID FROM COMPOSER T1
+//                JOIN (SELECT ITEM_ID, ORDER_ID, QUANTITY AS ITEM_QUANTITY FROM SALE_ORDER_ITEM) T2
+//        ON T2.ITEM_ID = T1.ITEM_HOST_ID
+//        WHERE T2.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//        ) TT2
+//        UNION ALL
+//        SELECT ITEM_GUID, QUANTITY, 'ITEM_MODIFIER_COMPOSER_ITEM' AS SOURCE FROM (
+//                SELECT T1.SALE_ITEM_ID, ITEM_ID, ORDER_ID, QUANTITY * MOD_QTY * COMPOSER_QUANTITY AS QUANTITY, MOD_ID AS ITEM_GUID FROM SALE_ORDER_ITEM T1
+//                JOIN (SELECT SALE_ITEM_ID, SALE_CHILD_ITEM_QTY AS MOD_QTY, SALE_CHILD_ITEM_ID AS MOD_ID FROM SALE_ORDER_ITEM_ADDON) T2
+//        ON T2.SALE_ITEM_ID = T1.SALE_ITEM_ID AND MOD_ID IS NOT NULL
+//        JOIN (SELECT ITEM_CHILD_ID AS ITEM_GUID, QUANTITY AS COMPOSER_QUANTITY, ITEM_HOST_ID FROM COMPOSER) T3
+//        ON T2.MOD_ID = T3.ITEM_HOST_ID
+//        WHERE T1.ORDER_ID = '6153c2b5-1dd5-48ef-aba5-4c1852e47773'
+//        ) TT3
+        //// ****************************************            READABLE           ****************************************** //////
+    }
 }

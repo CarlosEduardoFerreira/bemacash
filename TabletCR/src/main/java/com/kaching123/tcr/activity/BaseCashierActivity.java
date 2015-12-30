@@ -1601,14 +1601,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private void setupNewOrder() {
         startCommand(new DisplayWelcomeMessageCommand());
         setOrderGuid(null, true);
-        /*if (ordersCount != null && !ordersCount.isEmpty()) {
-            HoldFragmentDialog.show(this, null, null, new HoldFragmentDialog.IHoldListener() {
-                @Override
-                public void onSwap2Order(String holdName, String nextOrderGuid) {
-                    setOrderGuid(nextOrderGuid);
-                }
-            });
-        }*/
     }
 
     private void try2LoadActiveOrder(String curOrderGuid) {
