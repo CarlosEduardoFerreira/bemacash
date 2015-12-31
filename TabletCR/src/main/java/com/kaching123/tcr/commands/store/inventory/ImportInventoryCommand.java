@@ -354,7 +354,8 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         return item;
     }
 
-    private ItemModel readItem(HashMap<String, String> departments, HashMap<String, HashMap<String, String>> categoriesByDepartments, AddDepartmentCommand addDepartmentCommand, AddCategoryCommand addCategoryCommand, List<Object> fields) {
+    private ItemModel readItem(HashMap<String, String> departments, HashMap<String,
+            HashMap<String, String>> categoriesByDepartments, AddDepartmentCommand addDepartmentCommand, AddCategoryCommand addCategoryCommand, List<Object> fields) {
         String description = (String) fields.get(FIELD_DESCRIPTION);
         String eanCode = (String) fields.get(FIELD_UPC);
         String productCode = (String) fields.get(FIELD_PRODUCT_CODE);
@@ -412,7 +413,10 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 if (unitLabelModel != null) { // if found
                     unitLabelId = unitLabelModel.guid;
                     oldUnitLabel = null;
-                } else { // if not found
+                }  else if(TextUtils.equals(oldUnitLabel,  TcrApplication.get().getShopInfo().defUnitLabelShortcut)) {
+                    oldUnitLabel = null;
+                }
+                else { // if not found
                     fireInvalidData(description, productCode);
                     Logger.d("[IMPORT] Can't found unit label: %s", oldUnitLabel);
                 }
