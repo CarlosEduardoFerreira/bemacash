@@ -96,7 +96,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             listReader = new CsvListReader(new FileReader(fileName), CsvPreference.STANDARD_PREFERENCE);
             listReader.getHeader(true); // skip the header (can't be used with CsvListReader)
 
-            final CellProcessor[] processors = getProcessors(type);
+            final CellProcessor[] processors = getProcessors(ImportType.ALL);
             int count = 0;
 
             switch (type) {
@@ -165,7 +165,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                     continue;
                 }
             } else if (findDuplicateProductCode(item) != null) {
-                Logger.d("[IMPORT] fireDuplicateProductCode %s", item);
+                Logger.d("[IMPORT] fireDuplicateProductCode %s, %s", item, item.guid);
                 fireInvalidData(item);
                 continue;
             } else {
@@ -284,14 +284,14 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         List<Object> fields;
         int count = 0;
         while ((fields = listReader.read(processors)) != null) {
-            String guid = (String) fields.get(0);
-            String description = (String) fields.get(1);
+            String guid = (String) fields.get(FIELD_CODE);
+            String description = (String) fields.get(FIELD_DESCRIPTION);
             if (TextUtils.isEmpty(guid)) {
                 Logger.d("[IMPORT] empty updatePriceData skipped");
                 fireInvalidData(description, null);
                 continue;
             }
-            BigDecimal value = (BigDecimal) fields.get(2);
+            BigDecimal value = (BigDecimal) fields.get(FIELD_PRICE);
             Logger.d("[IMPORT] updatePriceData %s = %s", guid, value);
             int result = updatePriceCommand.sync(getContext(), guid, value, getAppCommandContext());
             if (result == 0)
@@ -301,27 +301,34 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         }
         return count;
     }
+/*
+*     private int importAllRecords(final ICsvListReader listReader, final CellProcessor[] processors, IAppCommandContext appCommandContext) throws IOException {
+        HashMap<String, String> departments = readDepartments();
+        HashMap<String, HashMap<String, String>> categoriesByDepartments = readCategoriesByDepartments();
+        AddDepartmentCommand addDepartmentCommand = new AddDepartmentCommand();
+        AddCategoryCommand addCategoryCommand = new AddCategoryCommand();
+        AddItemCommand addItemCommand = new AddItemCommand();
+        EditItemCommand editItemCommand = new EditItemCommand();
 
+        List<Object> fields;
+        int count = 0;
+
+        while ((fields = listReader.read(processors)) != null) {
+*/
     private int updateQtyData(final ICsvListReader listReader, final CellProcessor[] processors) throws IOException {
         UpdateItemQtyCommand updateItemQtyCommand = new UpdateItemQtyCommand();
 
         List<Object> fields;
         int count = 0;
         while ((fields = listReader.read(processors)) != null) {
-            String guid = (String) fields.get(0);
-            String description = (String) fields.get(1);
+            String guid = (String) fields.get(FIELD_CODE);
+            String description = (String) fields.get(FIELD_DESCRIPTION);
             if (TextUtils.isEmpty(guid)) {
                 Logger.d("[IMPORT] empty updateQtyData skipped");
                 fireInvalidData(description, null);
                 continue;
             }
-            /*ItemModel nonStockableItem = null;
-            if ((nonStockableItem = getItemIfNonStockable(guid)) != null) {
-                Logger.d("[IMPORT] empty fireNonStockableItem");
-                fireInvalidData(nonStockableItem);
-                continue;
-            }*/
-            BigDecimal value = (BigDecimal) fields.get(2);
+            BigDecimal value = (BigDecimal) fields.get(FIELD_QTY);
             if (value == null)
                 value = BigDecimal.ZERO;
             Logger.d("[IMPORT] updateQtyData %s = %s", guid, value);
@@ -359,7 +366,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         String description = (String) fields.get(FIELD_DESCRIPTION);
         String eanCode = (String) fields.get(FIELD_UPC);
         String productCode = (String) fields.get(FIELD_PRODUCT_CODE);
-        BigDecimal price = (BigDecimal) fields.get(FIELD_PRICE);
+        BigDecimal price = fields.get(FIELD_PRICE) == null ? new BigDecimal(0) : (BigDecimal) fields.get(FIELD_PRICE);
         //TODO: validate if not const
         PriceType priceType = price == null || BigDecimal.ZERO.compareTo(price) == 0 ? PriceType.OPEN : PriceType.FIXED;
         String departmentName = (String) fields.get(FIELD_DEPARTMENT);
