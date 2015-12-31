@@ -31,7 +31,7 @@ public class AddItemCommand extends AsyncCommand {
     private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ItemMovementTable.URI_CONTENT);
 
 	public static final String ARG_ITEM = "arg_item";
-    
+
 	private ItemModel item;
     private ItemMovementModel movementModel;
 
@@ -49,10 +49,6 @@ public class AddItemCommand extends AsyncCommand {
         item.orderNum = 0;
         item.updateQtyFlag = UUID.randomUUID().toString();
         if(item.isStockTracking){
-            /*movementModel = new ItemMovementModel(item.guid,
-                    item.updateQtyFlag,
-                    item.availableQty,
-                    true, new Date());*/
             movementModel = ItemMovementModelFactory.getNewModel(
                     item.guid,
                     item.updateQtyFlag,
