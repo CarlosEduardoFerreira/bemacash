@@ -15,11 +15,8 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._putDiscount;
 import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
 
-public class ItemModel implements Serializable, IValueModel {
+public class ItemModel extends BaseItemModel implements Serializable, IValueModel {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     public String guid;

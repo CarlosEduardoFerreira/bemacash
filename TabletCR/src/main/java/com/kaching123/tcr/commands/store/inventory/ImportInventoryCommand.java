@@ -67,7 +67,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private static final String ERROR_EXTRA_PRODUCT_CODE = "ERROR_EXTRA_PRODUCT_CODE";
     private static final String ERROR_MAX_ITEMS_COUNT = "ERROR_MAX_ITEMS_COUNT";
 
-    private static final int FIELD_CODE = 0;
+    private static final int FIELD_GUID = 0;
     private static final int FIELD_DESCRIPTION = 1;
     private static final int FIELD_DEPARTMENT = 2;
     private static final int FIELD_CATEGORY = 3;
@@ -159,11 +159,21 @@ public class ImportInventoryCommand extends PublicGroundyTask {
              ItemModel oldModel;
             if ((oldModel = findGuid(item)) != null) {
                 copyOldToNew(oldModel, item);
-                if (!editItemCommand.sync(getContext(), item, appCommandContext)) {
+                if (oldModel.isDeleted()) {
+                    //showYesNoDialog
+                    //callbackYes {
+                    // item.setIsDeleted(true);
+                    // }
+                    //callbackNo {
+                    //// item.setIsDeleted(false); or continue;
+                    //}
+
+                    if (!editItemCommand.sync(getContext(), item, appCommandContext)) {
                     Logger.d("[IMPORT] Can't update item %s", item);
                     fireInvalidData(item);
                     continue;
                 }
+             }
             } else if (findDuplicateProductCode(item) != null) {
                 Logger.d("[IMPORT] fireDuplicateProductCode %s, %s", item, item.guid);
                 fireInvalidData(item);
@@ -273,6 +283,9 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         ItemModel existModel = null;
         if (c.moveToFirst()) {
             existModel = new ItemFunction().apply(c);
+            if (existModel != null) {
+                existModel.setIsDeleted(c.getInt(c.getColumnIndex(ItemTable.IS_DELETED)) == 1);
+            }
         }
         c.close();
         return existModel;
@@ -284,7 +297,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         List<Object> fields;
         int count = 0;
         while ((fields = listReader.read(processors)) != null) {
-            String guid = (String) fields.get(FIELD_CODE);
+            String guid = (String) fields.get(FIELD_GUID);
             String description = (String) fields.get(FIELD_DESCRIPTION);
             if (TextUtils.isEmpty(guid)) {
                 Logger.d("[IMPORT] empty updatePriceData skipped");
@@ -321,7 +334,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         List<Object> fields;
         int count = 0;
         while ((fields = listReader.read(processors)) != null) {
-            String guid = (String) fields.get(FIELD_CODE);
+            String guid = (String) fields.get(FIELD_GUID);
             String description = (String) fields.get(FIELD_DESCRIPTION);
             if (TextUtils.isEmpty(guid)) {
                 Logger.d("[IMPORT] empty updateQtyData skipped");
@@ -438,7 +451,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
 
 
         //create model
-        String guid = (String) fields.get(FIELD_CODE);
+        String guid = (String) fields.get(FIELD_GUID);
         if (guid == null) {
             guid = UUID.randomUUID().toString();
         }
