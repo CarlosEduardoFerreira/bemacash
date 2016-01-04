@@ -87,8 +87,38 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
     private void updateReportDetails(ReportType type) {
         getActionBar().setTitle(type.getLabelRes());
         Fragment fragment;
+        switch (type) {
+            case SALES_SUMMARY:
+                fragment = ReportsChartFragment.instance();
+            break;
+
+            case EMPLOYEE_ATTENDANCE:
+            case EMPLOYEE_TIPS:
+                fragment = EmployeeReportsDetailsFragment.instance(type);
+                break;
+
+            case EMPLOYEE_PAYROLL:
+                fragment = EmployeeReportsDetailsExtFragment.instance(type);
+                break;
+            case REORDER_INVENTORY:
+                fragment = ReorderReportFragment.instance();
+                break;
+            case INVENTORY_VALUE:
+                fragment = InventoryValueFragment.instance();
+                break;
+            case SALES_BY_CUSTOMERS:
+                fragment = CustomersReportsFragment.instance();
+                break;
+            case INVENTORY_STATUS:
+                fragment = InventoryStatusReportFragment.instance();
+                break;
+            default:
+                fragment = RegisterReportsDetailsFragment.instance(type);
+                break;
+
+        }/*
         if (type == ReportType.SALES_SUMMARY) {
-            fragment = ReportsChartFragment.instance();///*getChartFragmentMode(getActionBar().getSelectedTab())*/
+            fragment = ReportsChartFragment.instance();
         } else if (type == ReportType.EMPLOYEE_ATTENDANCE || type == ReportType.EMPLOYEE_TIPS) {
             fragment = EmployeeReportsDetailsFragment.instance(type);
         } else if (type == ReportType.EMPLOYEE_PAYROLL) {
@@ -103,7 +133,7 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
             fragment = InventoryStatusReportFragment.instance();
         } else {
             fragment = RegisterReportsDetailsFragment.instance(type);
-        }
+        }*/
 
         getSupportFragmentManager().beginTransaction().replace(R.id.report_details, fragment).addToBackStack(type.name()).commit();
     }
@@ -121,7 +151,7 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
         }
     }
 
-    public static enum ReportType {
+    public enum ReportType {
 
         SALES_SUMMARY(R.string.report_type_sales_summary, R.string.report_category_sales),
         SOLD_ORDERS(R.string.report_type_sold_orders, R.string.report_category_sales),

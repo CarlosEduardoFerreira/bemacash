@@ -320,4 +320,65 @@ public interface ShopPref {
     int inventoryLimit();
 
     boolean stockTracking();
+
+    boolean isZReportFiltersAllowed();
+
+    boolean isPurchaseOrdersAviable();
+
+    boolean isJustZReportAllowed();
+
+    boolean isXReportAllowed();
+
+    boolean isSalesReportAllowed();
+
+    boolean isSalesByItemReportAllowed();
+
+    boolean isPrepaidItemsSalesReportAllowed();
+
+    boolean isToptenSoldRevenuesReportAllowed();
+
+    boolean isToptenPrepaidRevenuesReportAllowed();
+
+    boolean isToptenSoldItemsReportAllowed();
+
+    boolean isSalesByDepartmentReportAllowed();
+
+    boolean isSalesByTenderTypeReportAllowed();
+
+    boolean isSalesByCustomersReportAllowed();
+
+    boolean isSalesReturnsReportAllowed();
+
+    boolean isReturnedItemsReportAllowed();
+
+    boolean isRestockReportReportAllowed();
+
+    boolean isInventoryValueReportAllowed();
+
+    boolean isItemQuantityLogReportAllowed();
+
+    boolean isInventoryStatusReportAllowed();
+
+    boolean isEmployeeAttendanceReportAllowed();
+
+    boolean isEmployeePayrollReportAllowed();
+
+    boolean isEmployeeShiftReportAllowed();
+
+    boolean isEmployeeCommissionsReportAllowed();
+
+    boolean isPurchaseOrdersReportAllowed();
+
+    boolean isItemsPurchaseHistoryReportAllowed();
+
+    boolean isReStockReportAllowed();
+
+    boolean isShiftGratuityReportAllowed();
+
+    boolean isSummaryGratuityReportAllowed();
+
+    boolean isDropsAndPayoutsReportAllowed();
+
+    boolean isSalesSummaryReportReportAllowed();
+
 }
