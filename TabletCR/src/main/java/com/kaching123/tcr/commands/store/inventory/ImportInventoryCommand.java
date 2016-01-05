@@ -16,6 +16,7 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.ItemFunction;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
@@ -53,7 +54,8 @@ public class ImportInventoryCommand extends PublicGroundyTask {
 
     public enum ImportType {ALL, QTY, PRICE, DELETE}
 
-    private static final Uri URI_ITEM = ShopProvider.contentUri(ItemTable.URI_CONTENT);
+//    private static final Uri URI_ITEM = ShopProvider.contentUri(ItemTable.URI_CONTENT);
+    private static final Uri URI_ITEM_WITH_IS_DELETED = ShopProvider.contentUri(ShopStore.ItemTableAllColumns.QUERY_NAME);
     private static final Uri URI_CATEGORY = ShopProvider.contentUri(CategoryTable.URI_CONTENT);
     private static final Uri URI_DEPARTMENT = ShopProvider.contentUri(DepartmentTable.URI_CONTENT);
 
@@ -242,7 +244,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             return null;
         }
         Cursor c = ProviderAction
-                .query(URI_ITEM)
+                .query(URI_ITEM_WITH_IS_DELETED)
                         //.where(ItemTable.EAN_CODE + " = ?", model.eanCode)
                 .where(ItemTable.PRODUCT_CODE + " = ?", model.productCode)
                 .perform(getContext());
@@ -259,8 +261,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             return null;
         }
         Cursor c = ProviderAction
-                .query(URI_ITEM)
-                        //.where(ItemTable.EAN_CODE + " = ?", model.eanCode)
+                .query(URI_ITEM_WITH_IS_DELETED)
                 .where(ItemTable.PRODUCT_CODE + " = ?", model.productCode)
                 .perform(getContext());
         ItemModel existModel = null;
@@ -277,7 +278,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             return null;
         }
         Cursor c = ProviderAction
-                .query(URI_ITEM)
+                .query(URI_ITEM_WITH_IS_DELETED)
                 .where(ItemTable.GUID + " = ?", model.guid)
                 .perform(getContext());
         ItemModel existModel = null;
@@ -357,7 +358,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private ItemModel getItemIfNonStockable(String guid) {
         ItemModel item = null;
 
-        Cursor c = ProviderAction.query(URI_ITEM)
+        Cursor c = ProviderAction.query(URI_ITEM_WITH_IS_DELETED)
                 .projection(ItemTable.EAN_CODE, ItemTable.PRODUCT_CODE, ItemTable.DESCRIPTION)
                 .where(ItemTable.GUID + " = ?", guid)
                 .where("(" + ItemTable.STOCK_TRACKING + " IS NULL OR " + ItemTable.STOCK_TRACKING + " = 0)")

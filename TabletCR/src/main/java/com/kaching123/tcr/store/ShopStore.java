@@ -487,6 +487,18 @@ public abstract class ShopStore {
         applyTmpFields(ItemTable.TABLE_NAME, ItemTable.TMP_AVAILABLE_QTY);
     }
 
+    @RawQuery(ItemTableAllColumns.QUERY_NAME)
+    public static interface ItemTableAllColumns{
+
+        String QUERY_NAME = "item_table_all_columns";
+
+        @URI
+        String CONTENT_PATH = "item_table_all_columns";
+
+        @SqlQuery
+        String QUERY = "select * from " + ItemTable.TABLE_NAME;
+    }
+
     @Table(ItemMovementTable.TABLE_NAME)
     @PrimaryKey(columns = {ItemMovementTable.GUID, ItemMovementTable.ITEM_GUID})
     @Indexes({
