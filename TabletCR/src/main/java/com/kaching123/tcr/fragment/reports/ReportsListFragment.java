@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -160,6 +161,11 @@ public class ReportsListFragment extends SuperBaseFragment {
     }
 
     private boolean isOptionAllowed(ReportType type) {
+
+        if(!TcrApplication.get().isFreemium()) {
+            return true;
+        }
+
         switch (type) {
             case SALES_SUMMARY:
                 if (!PlanOptions.isSalesSummaryReportReportAllowed()) {

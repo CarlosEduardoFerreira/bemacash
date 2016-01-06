@@ -21,7 +21,6 @@ import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.UnitUtil;
-import com.kaching123.tcr.util.Validator;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnCallback;
@@ -33,7 +32,6 @@ import com.telly.groundy.annotations.Param;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseBigDecimal;
 import org.supercsv.cellprocessor.ParseBool;
-import org.supercsv.cellprocessor.ParseDate;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.ICsvListReader;
@@ -67,7 +65,12 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private static final String ERROR_INVALID_DATA = "INVALID_DATA";
     private static final String ERROR_EXTRA_DESCRIPTION = "ERROR_EXTRA_DESCRIPTION";
     private static final String ERROR_EXTRA_PRODUCT_CODE = "ERROR_EXTRA_PRODUCT_CODE";
+
     private static final String ERROR_MAX_ITEMS_COUNT = "ERROR_MAX_ITEMS_COUNT";
+
+    private static final String MSG_EXTRA_DESCRIPTION = "MSG_EXTRA_DESCRIPTION";
+    private static final String MSG_EXTRA_PRODUCT_GUID = "MSG_EXTRA_PRODUCT_GUID";
+    private static final String MSG_IS_DELETED_ITEMS = "MSG_IS_DELETED_ITEMS";
 
     private static final int FIELD_GUID = 0;
     private static final int FIELD_DESCRIPTION = 1;
@@ -138,6 +141,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         AddItemCommand addItemCommand = new AddItemCommand();
         EditItemCommand editItemCommand = new EditItemCommand();
 
+
         List<Object> fields;
         int count = 0;
 
@@ -153,7 +157,6 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             }
 
             if (!isEanValid(item)) {
-                //Logger.d("[IMPORT] wrong ean %s [%s]", item, item.eanCode);
                 Logger.d("[IMPORT] fireWrongEan %s", item);
                 fireInvalidData(item);
                 continue;
@@ -162,19 +165,25 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             if ((oldModel = findGuid(item)) != null) {
                 copyOldToNew(oldModel, item);
                 if (oldModel.isDeleted()) {
-                    //showYesNoDialog
-                    //callbackYes {
-                    // item.setIsDeleted(true);
-                    // }
-                    //callbackNo {
-                    //// item.setIsDeleted(false); or continue;
-                    //}
+                    collectItemWithIsDeletedFlag(item);
 
-                    if (!editItemCommand.sync(getContext(), item, appCommandContext)) {
+                    //update deleted items could be done from callback in InventoryActivity of from here
+                    //if we need to run update here uncomment and delete call from InventoryActivity
+                    /*
+                    UpdateDeletedItemCommand updateDeletedItemCommand = new UpdateDeletedItemCommand();
+                    int result = updateDeletedItemCommand.sync(getContext(), item.getGuid(), getAppCommandContext());
+                    if (result == 0) {
+                        fireInvalidData(item.description, null);
+                    }
+                        else {
+                        count += result;
+                    }*/
+                    continue;
+                } else  if (!editItemCommand.sync(getContext(), item, appCommandContext)) {
                     Logger.d("[IMPORT] Can't update item %s", item);
                     fireInvalidData(item);
                     continue;
-                }
+
              }
             } else if (findDuplicateProductCode(item) != null) {
                 Logger.d("[IMPORT] fireDuplicateProductCode %s, %s", item, item.guid);
@@ -216,9 +225,15 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private void fireInvalidData(String description, String productCode) {
         Bundle args = new Bundle(2);
         args.putString(ERROR_EXTRA_DESCRIPTION, description);
-        //args.putString(ERROR_EXTRA_EAN, eanCode);
         args.putString(ERROR_EXTRA_PRODUCT_CODE, productCode);
         callback(ERROR_INVALID_DATA, args);
+    }
+
+    private void collectItemWithIsDeletedFlag(ItemModel item) {
+        Bundle args = new Bundle(2);
+        args.putString(MSG_EXTRA_DESCRIPTION, item.description);
+        args.putString(MSG_EXTRA_PRODUCT_GUID, item.getGuid());
+        callback(MSG_IS_DELETED_ITEMS, args);
     }
 
     private void fireMaxItemsCountError() {
@@ -623,11 +638,6 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             handleFailure();
         }
 
-        /*@OnCallback(value = ImportInventoryCommand.class, name = ERROR_DUPLICATE)
-        public void onErrorDuplicate(@Param(ERROR_EXTRA_DESCRIPTION) String description){
-            handleDuplicate(description);
-        }*/
-
         @OnCallback(value = ImportInventoryCommand.class, name = ERROR_INVALID_DATA)
         public void onErrorInvalidData(@Param(ERROR_EXTRA_DESCRIPTION) String description, @Param(ERROR_EXTRA_PRODUCT_CODE) String productCode) {
             handleInvalidData(new WrongImportInfo(description, productCode));
@@ -638,7 +648,10 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             handleMaxItemsCountError();
         }
 
-        //protected abstract void handleDuplicate(String description);
+        @OnCallback(value = ImportInventoryCommand.class, name = MSG_IS_DELETED_ITEMS)
+        public void onIsDeletedItemFound(@Param(MSG_EXTRA_DESCRIPTION) String description, @Param(MSG_EXTRA_PRODUCT_GUID) String productGuid) {
+            handleIsDeletedItemFound(new WrongImportInfo(description, productGuid));
+        }
 
         protected abstract void handleStart();
 
@@ -649,11 +662,12 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         protected abstract void handleFailure();
 
         protected abstract void handleMaxItemsCountError();
+
+        protected abstract void handleIsDeletedItemFound(final WrongImportInfo info);
     }
 
     public static class WrongImportInfo {
         public final String description;
-        //public final String ean;
         public final String productCode;
 
         private WrongImportInfo(String description, String productCode) {

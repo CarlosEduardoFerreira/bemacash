@@ -58,6 +58,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String HAS_NOTES = "HAS_NOTES";
     private static final String ELIGIBLE_FOR_COMMISSION = "ELIGIBLE_FOR_COMMISSION";
     private static final String COMMISSION = "COMMISSION";
+    private static final String IS_DELETED = "IS_DELETED";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -258,6 +259,13 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     public SingleSqlCommand updateQtyFlagSQL(String guid, String updateFlag, IAppCommandContext appCommandContext) {
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(UPDATE_QTY_FLAG, updateFlag)
+                .where(ID, guid)
+                .build(JdbcFactory.getApiMethod(ItemModel.class));
+    }
+
+    public SingleSqlCommand updateIsDeletedSQL(String guid, boolean isDeleted, IAppCommandContext appCommandContext) {
+        return _update(ITEM_TABLE_NAME, appCommandContext)
+                .add(IS_DELETED, isDeleted)
                 .where(ID, guid)
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
     }

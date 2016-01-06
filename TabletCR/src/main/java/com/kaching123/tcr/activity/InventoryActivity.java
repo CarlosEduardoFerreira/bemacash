@@ -29,6 +29,7 @@ import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.BaseImportCommandCallback;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.ImportType;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.WrongImportInfo;
+import com.kaching123.tcr.commands.store.inventory.UpdateDeletedItemCommand;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
@@ -224,10 +225,10 @@ public class InventoryActivity extends ScannerBaseActivity {
                 ImportTypeFragment.show(InventoryActivity.this, new OnTypeChosenListener() {
                     @Override
                     public void onTypeChosen(ImportInventoryCommand.ImportType type) {
-                        if (type == ImportType.ALL && !checkMaxItemsCount()) {
+                      /*  if (type == ImportType.ALL && !checkMaxItemsCount()) {
                             AlertDialogFragment.showAlert(InventoryActivity.this, R.string.error_dialog_title, getString(R.string.error_message_max_items_count));
                             return;
-                        }
+                        }*/
 
                         importCallback.type = type;
                         WaitDialogFragment.show(InventoryActivity.this, getString(R.string.inventory_import_wait));
@@ -308,12 +309,7 @@ public class InventoryActivity extends ScannerBaseActivity {
     }
 
     private boolean checkMaxItemsCount() {
-        if (PlanOptions.isInventoryLimited()) {
-            return itemsCount < PlanOptions.getInventoryLimit();
-        } else {
-            return true;
-        }
-        //return itemsCount < getApp().getShopInfo().maxItemsCount;
+        return !PlanOptions.isInventoryLimited() || itemsCount < PlanOptions.getInventoryLimit();
     }
 
     @OptionsItem
@@ -412,13 +408,15 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     public class ImportCallback extends BaseImportCommandCallback {
 
-        ArrayList<WrongImportInfo> wrongItems;
-        ImportType type;
-        boolean isMaxItemsCountError;
+        private ArrayList<WrongImportInfo> wrongItems;
+        private ArrayList<WrongImportInfo> isDeletedItems;
+        private ImportType type;
+        private boolean isMaxItemsCountError;
 
         @Override
         protected void handleStart() {
-            wrongItems = new ArrayList<WrongImportInfo>();
+            wrongItems = new ArrayList<>();
+            isDeletedItems = new ArrayList<>();
             isMaxItemsCountError = false;
         }
 
@@ -459,6 +457,11 @@ public class InventoryActivity extends ScannerBaseActivity {
                 wrongItems = null;
             }
 
+            if (isDeletedItems != null && !isDeletedItems.isEmpty()) {
+                for(WrongImportInfo item: isDeletedItems) {
+                   UpdateDeletedItemCommand.start(InventoryActivity.this, item.productCode);
+                }
+            }
         }
 
         @Override
@@ -470,6 +473,26 @@ public class InventoryActivity extends ScannerBaseActivity {
         @Override
         protected void handleMaxItemsCountError() {
             isMaxItemsCountError = true;
+        }
+
+        @Override
+        protected void handleIsDeletedItemFound(final WrongImportInfo info) {
+         /*  AlertDialogFragment.showAlertWithSkip(InventoryActivity.this, R.string.dlg_import_is_deleted_items_title, "message", R.string.btn_ok,
+                    new StyledDialogFragment.OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
+                            isDeletedItems.add(info);
+                            return true;
+                        }
+                    },
+                    new StyledDialogFragment.OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
+                            //skip
+                            return true;
+                        }
+                    });*/
+            isDeletedItems.add(info);
         }
     }
 

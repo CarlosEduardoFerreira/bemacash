@@ -305,6 +305,8 @@
     <string name="dlg_void_fail_title">Void Fail</string>
     <string name="dlg_void_msg">Are you sure you want to void order?</string>
     <string name="dlg_void_forbidden_msg">This order had been Kichen-Printed, cannot be avoided. Need to ask Manager for Permission</string>
+    <string name="dlg_import_is_deleted_items_title">Are you sure you want to</string>
+
     <string name="btn_item_remove">Remove</string>
     <string name="btn_item_cancel">Cancel</string>
     <string name="cashier_order_title_tmpl">Order: %s</string>

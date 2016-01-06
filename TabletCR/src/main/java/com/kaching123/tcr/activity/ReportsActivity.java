@@ -115,25 +115,7 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
             default:
                 fragment = RegisterReportsDetailsFragment.instance(type);
                 break;
-
-        }/*
-        if (type == ReportType.SALES_SUMMARY) {
-            fragment = ReportsChartFragment.instance();
-        } else if (type == ReportType.EMPLOYEE_ATTENDANCE || type == ReportType.EMPLOYEE_TIPS) {
-            fragment = EmployeeReportsDetailsFragment.instance(type);
-        } else if (type == ReportType.EMPLOYEE_PAYROLL) {
-            fragment = EmployeeReportsDetailsExtFragment.instance(type);
-        } else if (type == ReportType.REORDER_INVENTORY) {
-            fragment = ReorderReportFragment.instance();
-        } else if (type == ReportType.INVENTORY_VALUE) {
-            fragment = InventoryValueFragment.instance();
-        } else if (type == ReportType.SALES_BY_CUSTOMERS) {
-            fragment = CustomersReportsFragment.instance();
-        } else if (type == ReportType.INVENTORY_STATUS) {
-            fragment = InventoryStatusReportFragment.instance();
-        } else {
-            fragment = RegisterReportsDetailsFragment.instance(type);
-        }*/
+        }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.report_details, fragment).addToBackStack(type.name()).commit();
     }

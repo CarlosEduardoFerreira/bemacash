@@ -13,6 +13,7 @@ import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ItemMovementModelFactory;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -40,7 +41,8 @@ public class AddItemCommand extends AsyncCommand {
 	@Override
 	protected TaskResult doCommand() {
 		Logger.d("AddItemCommand doCommand");
-        if (isMaxItemsCountError = !checkMaxItemsCount()) {
+        if (isMaxItemsCountError = isInventoryLimitReached()) {
+            Logger.d("AddItemCommand doCommand. InventoryLimitReached");
             return failed();
         }
 
@@ -62,7 +64,7 @@ public class AddItemCommand extends AsyncCommand {
 		return succeeded();
 	}
 
-    private boolean checkMaxItemsCount() {
+    private boolean isInventoryLimitReached() {
         long itemsCount = 0;
         Cursor c = ProviderAction.query(ITEM_URI)
                 .projection("count(" + ItemTable.GUID + ")")
@@ -70,7 +72,9 @@ public class AddItemCommand extends AsyncCommand {
         if (c.moveToFirst())
             itemsCount = c.getLong(0);
         c.close();
-        return itemsCount < getAppCommandContext().getMaxItemsCount();
+        Logger.d("AddItemCommand InventoryLimitReached. itemsCount = " + itemsCount
+                + ", inventoryLimit() = " + PlanOptions.getInventoryLimit()+ ", PlanOptions.isInventoryLimited() = " + PlanOptions.isInventoryLimited());
+        return  PlanOptions.isInventoryLimited() && itemsCount >= PlanOptions.getInventoryLimit();
     }
 
     @Override
