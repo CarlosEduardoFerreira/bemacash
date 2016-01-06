@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.google.common.base.Optional;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel.PrepaidType;
@@ -270,8 +271,8 @@ public final class ContentValuesUtil {
         return def;
     }
 
-    public static String _unitLabelShortcut(Cursor c, int indexItemTable, int indexUnitLabelTable) {
-        return !TextUtils.isEmpty(c.getString(indexItemTable)) ? c.getString(indexItemTable) : c.getString(indexUnitLabelTable);
+    public static String _unitLabelShortcut(Cursor c, int indexItemTable) {
+        return !TextUtils.isEmpty(c.getString(indexItemTable)) ? c.getString(indexItemTable) : TcrApplication.get().getShopInfo().defUnitLabelShortcut;
     }
 
     public static ContentValues _putDiscount(ContentValues v, String key, DiscountType discountType) {

@@ -76,7 +76,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
         columns.add(c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)));
         columns.add(c.getString(c.getColumnIndex(DepartmentTable.TITLE)));
         columns.add(c.getString(c.getColumnIndex(CategoryTable.TITLE)));
-        columns.add(_unitLabelShortcut(c, c.getColumnIndex(ItemTable.UNITS_LABEL), c.getColumnIndex(UnitLabelTable.SHORTCUT)));
+        columns.add(_unitLabelShortcut(c, c.getColumnIndex(ItemTable.UNITS_LABEL)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.EAN_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.SALE_PRICE)));
