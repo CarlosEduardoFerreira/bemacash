@@ -144,7 +144,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
             if (i != null
                     && item.tmpUnit.size() == 0
                     && comparePrice(i, item)
-                    && compareDiscount(i, item) && i.hasModifiers()) {
+                    && compareDiscount(i, item) && !i.hasModifiers()) {
                 i.itemModel.qty = i.itemModel.qty.add(item.qty);
                 item = i.itemModel;
                 this.existsItem = i;
