@@ -91,6 +91,24 @@ public class SaleOrderItemViewModel implements IOrderItem {
         return "";
     }
 
+    public String getUniqSerialCodesString() {
+        final ArrayList<Unit> units = tmpUnit;
+        if (!units.isEmpty()) {
+            final StringBuilder builder = new StringBuilder();
+            for (Unit unit : units) {
+                if (!TextUtils.isEmpty(unit.serialCode)) {
+                    if(!builder.toString().contains(unit.serialCode + "\n")) {
+                        builder.append(unit.serialCode).append("\n");
+                    }
+                }
+            }
+            return builder.toString();
+        }
+        return "";
+    }
+
+
+
     @Override
     public String getSaleItemGuid() {
         return this.itemModel.saleItemGuid;

@@ -109,7 +109,7 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
                 item.description,
                 item.eanCode,
                 item.productCode,
-                item.getSerialCodesString(),
+                item.getUniqSerialCodesString(),
                 item.itemModel.qty,
                 item.isPcsUnit ? null : item.unitsLabel,
                 item.getPrice(),
@@ -125,7 +125,7 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
         itemView.itemUnitPrice.setActivated(false);
         itemView.discountBlock.setActivated(false);
 
-        showSerialCodes(item.getSerialCodesString(), itemView);
+        showSerialCodes(item.getUniqSerialCodesString(), itemView);
 
         if (highlightedColumn != null && highlightedColumn.saleItemGuid.equals(item.itemModel.saleItemGuid)) {
             if (highlightedColumn.startTime == 0) {

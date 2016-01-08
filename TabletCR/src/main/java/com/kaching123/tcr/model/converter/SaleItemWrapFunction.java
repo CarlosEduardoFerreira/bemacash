@@ -107,20 +107,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 if (item.isSerializable && loadSerialItems()) {
                     List<Unit> units = _wrap(unitQuery(item.itemModel.orderGuid, item.itemModel.itemGuid, item.getSaleItemGuid())
                             .perform(context), new UnitWrapFunction());
-                    for (Unit unit : units) {
-                        if (item.getSaleItemGuid().equals(unit.saleItemId)) {
-                        //FIXME from idyuzheva to aboyko
-                        // probaly here is your fix for ACR-1502
-                            Logger.d("SaleItemWrapFunction apply."
-                                    + " serialCode=" + unit.serialCode
-                                    + ", guid=" + unit.guid
-                                    + ", childOrderId=" + unit.childOrderId
-                                    + ", itemId=" + unit.itemId
-                                    + ", toString=" + unit.toString());
-                            item.tmpUnit.add(unit);
-                        }
-                    }
-                    //item.tmpUnit.addAll(units);
+                    item.tmpUnit.addAll(units);
                 }
 
                 AddonInfo modifier = readModifier(c);
