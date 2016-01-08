@@ -137,58 +137,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private static final Handler handler = new Handler();
 
-//    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
-//
-//        @Override
-//        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
-//            return CursorLoaderBuilder.forUri(ORDER_URI)
-//                    .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-//                    .transform(new Function<Cursor, SaleOrderModel>() {
-//                        @Override
-//                        public SaleOrderModel apply(Cursor cursor) {
-//                            return new SaleOrderModel(cursor);
-//                        }
-//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
-//                        @Override
-//                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
-//                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
-//                                return new SaleOrderModelResult(null);
-//                            } else {
-//                                return new SaleOrderModelResult(saleOrderModels.get(0));
-//                            }
-//                        }
-//                    }).build(getActivity());
-//        }
-//
-//        @Override
-//        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (saleOrderModel.model != null) {
-//                        if ((saleOrderModel.model.kitchenPrintStatus != PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
-//                            doRemoceClickLine();
-//                        else
-//                        {
-//                                PermissionFragment.showCancelable(getActivity(), new BaseTempLoginListener(getActivity()) {
-//                                    @Override
-//                                    public void onLoginComplete() {
-//                                        super.onLoginComplete();
-//                                        doRemoceClickLine();
-//                                    }
-//                                }, Permission.ADMIN);
-//                        }
-//                    }
-//                }
-//            });
-//
-//
-//        }
-//
-//        @Override
-//        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
-//        }
-//    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -451,45 +399,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             );
         }
 
-
-     /*   int modifiersCount = item.modifiersCount;
-        int addonsCount = item.addonsCount;
-        int optionalsCount = item.optionalsCount;
-        boolean hasModifiers = modifiersCount > 0 || addonsCount > 0 || optionalsCount > 0;
-        if (!hasModifiers) {
-            return;
-        }
-
-        String selectedModifierGuid = null;
-        if (item.getModifier() != null) {
-            selectedModifierGuid = item.getModifier().addon.addonGuid;
-        }
-
-        ArrayList<String> selectedAddonsGuids = new ArrayList<String>();
-        ArrayList<String> selectedOptionalsGuids = new ArrayList<String>();
-        if (item.getAddons() != null) {
-            for (SaleOrderItemViewModel.AddonInfo addonInfo : item.getAddons()) {
-                if (addonInfo.addon.type == ModifierType.ADDON) {
-                    selectedAddonsGuids.add(addonInfo.addon.addonGuid);
-                } else {
-                    selectedOptionalsGuids.add(addonInfo.addon.addonGuid);
-                }
-            }
-        }
-
-        if (itemsListHandler != null) {
-            //getListView().setItemChecked(pos, true);
-            itemsListHandler.onEditItemModifiers(
-                    item.itemModel.saleItemGuid,
-                    item.itemModel.itemGuid,
-                    modifiersCount,
-                    addonsCount,
-                    optionalsCount,
-                    selectedModifierGuid,
-                    selectedAddonsGuids,
-                    selectedOptionalsGuids);
-        }
-        */
     }
 
     public void setItemsListHandler(IItemsListHandlerHandler itemsListHandler) {

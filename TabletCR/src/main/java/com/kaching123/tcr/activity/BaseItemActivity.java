@@ -1407,15 +1407,15 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             ArrayList<UnitLabelModel> models = new ArrayList<UnitLabelModel>(data.size() + 1);
 
             String oldUnitLabel = model.unitsLabel;
+
+            models.add(UnitLabelModelFactory.getSimpleModel(TcrApplication.get().getShopInfo().defUnitLabelShortcut));
+
             if (!TextUtils.isEmpty(oldUnitLabel)) {
                 models.add(UnitLabelModelFactory.getSimpleModel(oldUnitLabel));
             }
 
             models.addAll(data);
 
-            if(models.isEmpty()) {
-                models.add(UnitLabelModelFactory.getSimpleModel(TcrApplication.get().getShopInfo().defUnitLabelShortcut));
-            }
 
             unitsLabelAdapter.changeCursor(models);
 

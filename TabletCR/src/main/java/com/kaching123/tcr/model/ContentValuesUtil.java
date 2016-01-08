@@ -271,8 +271,18 @@ public final class ContentValuesUtil {
         return def;
     }
 
-    public static String _unitLabelShortcut(Cursor c, int indexItemTable) {
-        return !TextUtils.isEmpty(c.getString(indexItemTable)) ? c.getString(indexItemTable) : TcrApplication.get().getShopInfo().defUnitLabelShortcut;
+    public static String _unitLabelShortcut(Cursor c, int indexItemTable, int indexUnitLabelTable) {
+        String unitLabel = c.getString(indexItemTable);
+        String unitLabelShortcut = c.getString(indexUnitLabelTable);
+        String defaultUnitLabel = TcrApplication.get().getShopInfo().defUnitLabelShortcut;
+
+        if(!TextUtils.isEmpty(unitLabel)) {
+            return unitLabel;
+        } else if(!TextUtils.isEmpty(unitLabelShortcut)) {
+            return unitLabelShortcut;
+        } else{
+            return defaultUnitLabel;
+        }
     }
 
     public static ContentValues _putDiscount(ContentValues v, String key, DiscountType discountType) {

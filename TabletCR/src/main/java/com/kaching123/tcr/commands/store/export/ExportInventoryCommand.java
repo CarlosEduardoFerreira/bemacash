@@ -71,12 +71,12 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
 
     @Override
     protected List<Object> readRow(Cursor c) {
-        ArrayList<Object> columns = new ArrayList<Object>(16);
+        ArrayList<Object> columns = new ArrayList<>(16);
         columns.add(c.getString(c.getColumnIndex(ItemTable.GUID)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)));
         columns.add(c.getString(c.getColumnIndex(DepartmentTable.TITLE)));
         columns.add(c.getString(c.getColumnIndex(CategoryTable.TITLE)));
-        columns.add(_unitLabelShortcut(c, c.getColumnIndex(ItemTable.UNITS_LABEL)));
+        columns.add(_unitLabelShortcut(c, c.getColumnIndex(ItemTable.UNITS_LABEL), c.getColumnIndex(UnitLabelTable.SHORTCUT)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.EAN_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.SALE_PRICE)));

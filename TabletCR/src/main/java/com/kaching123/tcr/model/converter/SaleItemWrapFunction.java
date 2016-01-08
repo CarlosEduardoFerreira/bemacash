@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.google.common.base.Function;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
 import com.kaching123.tcr.function.UnitWrapFunction;
@@ -110,6 +111,12 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                         if (item.getSaleItemGuid().equals(unit.saleItemId)) {
                         //FIXME from idyuzheva to aboyko
                         // probaly here is your fix for ACR-1502
+                            Logger.d("SaleItemWrapFunction apply."
+                                    + " serialCode=" + unit.serialCode
+                                    + ", guid=" + unit.guid
+                                    + ", childOrderId=" + unit.childOrderId
+                                    + ", itemId=" + unit.itemId
+                                    + ", toString=" + unit.toString());
                             item.tmpUnit.add(unit);
                         }
                     }
