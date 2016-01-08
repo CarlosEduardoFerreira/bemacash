@@ -213,7 +213,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private AddSaleOrderCallback addOrderCallback = new AddSaleOrderCallback();
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
-//    private ItemPrintInfoLoader checkItemPrintStatusLoader = new ItemPrintInfoLoader();
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;

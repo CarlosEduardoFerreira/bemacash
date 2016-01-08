@@ -80,9 +80,9 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
         Logger.d("ItemsListFragment onCreateLoader");
         return CursorLoaderBuilder.forUri(URI_ITEMS)
                 .projection(ItemConverter.PROJECTION)
-                .where(ItemTable.SALABLE + " = ?", 1)
-                .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
-                .where(ItemTable.DESCRIPTION + " like ?" + " OR " + ItemTable.PRODUCT_CODE/*EAN_CODE*/ + " like ?", "%" + searchText + "%", "%" + searchText + "%")
+                .where(ItemTable.ACTIVE_STATUS + " = ? AND " + ItemTable.SALABLE + " = ? AND ( " + ItemTable.DESCRIPTION
+                                + " like ?" + " OR " + ItemTable.PRODUCT_CODE + " like ? )", 1, 1,
+                        "%" + searchText + "%", "%" + searchText + "%")
                 .orderBy(ItemTable.CATEGORY_ID + ", " + ItemTable.ORDER_NUM)
                 .transform(new ItemConverter()).build(getActivity());
 
@@ -117,15 +117,14 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 ItemTable.PRODUCT_CODE,
                 ItemTable.PRICE_TYPE,
                 ItemTable.SALE_PRICE,
-                //ItemTable.QUANTITY,
                 ItemTable.TMP_AVAILABLE_QTY,
                 ItemTable.UNITS_LABEL,
                 ItemTable.UNIT_LABEL_ID,
                 ItemTable.STOCK_TRACKING,
                 ItemTable.ACTIVE_STATUS,
                 ItemTable.DISCOUNTABLE,
-                ItemTable.DISCOUNT,
                 ItemTable.SALABLE,
+                ItemTable.DISCOUNT,
                 ItemTable.DISCOUNT_TYPE,
                 ItemTable.TAXABLE,
                 ItemTable.TAX_GROUP_GUID,
@@ -159,7 +158,6 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getString(indexHolder.get(ItemTable.PRODUCT_CODE)),
                     PriceType.valueOf(c.getInt(indexHolder.get(ItemTable.PRICE_TYPE))),
                     _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
-                    //_decimal(c.getString(indexHolder.get(ItemTable.QUANTITY))),
                     _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
                     c.getString(indexHolder.get(ItemTable.UNITS_LABEL)),
                     c.getString(indexHolder.get(ItemTable.UNIT_LABEL_ID)),
