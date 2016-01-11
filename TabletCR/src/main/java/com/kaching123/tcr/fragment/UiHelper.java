@@ -65,6 +65,7 @@ public final class UiHelper {
         brandQrtyIntFormat.setDecimalFormatSymbols(symbols);
         brandQrtyIntFormat.setParseBigDecimal(true);
         brandQrtyIntFormat.setRoundingMode(RoundingMode.FLOOR);
+
         brandQtyFormat.setDecimalFormatSymbols(symbols);
         brandQtyFormat.setParseBigDecimal(true);
         brandQtyFormat.setRoundingMode(RoundingMode.FLOOR);
@@ -259,10 +260,12 @@ public final class UiHelper {
 
     public static BigDecimal parseBrandQtyInput(String text) {
         BigDecimal value = BigDecimal.ZERO;
+        if(!TextUtils.isEmpty(text)) {
         try {
             value = (BigDecimal) brandQrtyIntFormat.parseObject(text);
         } catch (ParseException e) {
             Logger.e("Parse error: " + e.toString());
+        }
         }
         return value;
     }

@@ -50,7 +50,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
     private static final Uri URI_ITEM = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
     private static final Uri URI_ITEM_NO_NOTIFY = ShopProvider.getNoNotifyContentUri(ShopStore.SaleItemTable.URI_CONTENT);
 
-    private static final Uri URI_ITEM_VIEW = ShopProvider.getContentUri(SaleOrderItemsView.URI_CONTENT);
+    private static final Uri URI_ITEM_VIEW = ShopProvider.contentUri(SaleOrderItemsView.URI_CONTENT);
 
     private static final String CALLBACK_ADD_ORDER = "CALLBACK_ADD_ORDER";
     private static final String EXTRA_CALLBACK_ORDER = "EXTRA_CALLBACK_ORDER";

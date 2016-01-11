@@ -104,20 +104,24 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                         existsItems.add(item);
                     }
                 }
+
+                AddonInfo modifier = readModifier(c);
+                if (modifier != null) {
+
+                    if (item.modifiers == null)
+                        item.modifiers = new ArrayList<>();
+
+                    item.modifiers.add(modifier);
+                }
+
                 if (item.isSerializable && loadSerialItems()) {
-                    List<Unit> units = _wrap(unitQuery(item.itemModel.orderGuid, item.itemModel.itemGuid, item.getSaleItemGuid())
+                    List<Unit> units = _wrap(unitQuery(item.itemModel.orderGuid, item.itemModel.itemGuid, item.getSaleItemGuid(), item.hasModifiers())
                             .perform(context), new UnitWrapFunction());
                     item.tmpUnit.addAll(units);
                 }
 
-                AddonInfo modifier = readModifier(c);
-                if (modifier == null)
-                    continue;
 
-                if (item.modifiers == null)
-                    item.modifiers = new ArrayList<>();
 
-                item.modifiers.add(modifier);
             } while (c.moveToNext());
         }
 
@@ -154,7 +158,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
         return items;
     }
 
-    private static Query unitQuery(String orderId, String itemId, String saleItemGuid) {
+    private static Query unitQuery(String orderId, String itemId, String saleItemGuid, boolean hasModifiers) {
         Query query = ProviderAction.query(UNIT_URI);
         if (orderId != null) {
             query = query.where(ShopStore.UnitTable.SALE_ORDER_ID + " = ?", orderId);
@@ -162,7 +166,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
         if (itemId != null) {
             query = query.where(ShopStore.UnitTable.ITEM_ID + " = ?", itemId);
         }
-        if (saleItemGuid != null) {
+        if (saleItemGuid != null && hasModifiers) {
             query = query.where(ShopStore.UnitTable.SALE_ITEM_ID + " = ?", saleItemGuid);
         }
         query = query.where(ShopStore.UnitTable.IS_DELETED + " = ?", 0);
