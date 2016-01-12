@@ -212,8 +212,7 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
                 getContext(),
                 getAppCommandContext(),
                 order.guid,
-                itemMovements,
-                MovementUtils.getJustification(ItemMovementModel.JustificationType.SALE));
+                itemMovements);
 
         if (itemMovements.isEmpty())
             return true;

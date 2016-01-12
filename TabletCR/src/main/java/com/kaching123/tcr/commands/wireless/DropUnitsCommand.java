@@ -83,7 +83,6 @@ public class DropUnitsCommand extends AsyncCommand  {
             movementModel = ItemMovementModelFactory.getNewModel(
                     parent.guid,
                     parent.updateQtyFlag,
-                    MovementUtils.getJustification(ItemMovementModel.JustificationType.DROP),
                     parent.availableQty,
                     true,
                     new Date()

@@ -49,7 +49,6 @@ public class UpdateItemQtyCommand extends AsyncCommand {
         movementModel = ItemMovementModelFactory.getNewModel(
                 guid,
                 updateFlag,
-                MovementUtils.getJustification(ItemMovementModel.JustificationType.FROM_IMPORT),
                 qty,
                 false,
                 new Date()

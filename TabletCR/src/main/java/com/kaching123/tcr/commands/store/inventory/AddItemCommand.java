@@ -54,7 +54,6 @@ public class AddItemCommand extends AsyncCommand {
             movementModel = ItemMovementModelFactory.getNewModel(
                     item.guid,
                     item.updateQtyFlag,
-                    MovementUtils.getJustification(ItemMovementModel.JustificationType.CREATE_ITEM),
                     item.availableQty,
                     true,
                     new Date()

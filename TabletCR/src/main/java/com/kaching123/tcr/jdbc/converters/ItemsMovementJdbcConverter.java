@@ -25,7 +25,6 @@ public class ItemsMovementJdbcConverter extends JdbcConverter<ItemMovementModel>
     private static final String ITEM_ID = "ITEM_ID";
     private static final String QTY = "QTY";
     private static final String ITEM_UPDATE_QTY_FLAG = "ITEM_UPDATE_QTY_FLAG";
-    private static final String MOVEMENT_JUSTIFICATION = "MOVEMENT_JUSTIFICATION";
     private static final String OPERATOR_GUID = "OPERATOR_GUID";
     private static final String MANUAL = "MANUAL";
     private static final String CREATE_TIME = "CREATE_TIME";
@@ -37,7 +36,6 @@ public class ItemsMovementJdbcConverter extends JdbcConverter<ItemMovementModel>
                 rs.getString(MOVEMENT_ID),
                 rs.getString(ITEM_ID),
                 rs.getString(ITEM_UPDATE_QTY_FLAG),
-                rs.getString(MOVEMENT_JUSTIFICATION),
                 rs.getBigDecimal(QTY),
                 rs.getBoolean(MANUAL),
                 rs.getString(OPERATOR_GUID),
@@ -52,7 +50,6 @@ public class ItemsMovementJdbcConverter extends JdbcConverter<ItemMovementModel>
                 rs.getString(MOVEMENT_ID),
                 rs.getString(ITEM_ID),
                 rs.getString(ITEM_UPDATE_QTY_FLAG),
-                rs.getString(MOVEMENT_JUSTIFICATION),
                 rs.getBigDecimal(QTY, ContentValuesUtil.QUANTITY_SCALE),
                 rs.getBoolean(MANUAL),
                 rs.getString(OPERATOR_GUID),
@@ -76,7 +73,6 @@ public class ItemsMovementJdbcConverter extends JdbcConverter<ItemMovementModel>
                 .add(MOVEMENT_ID, item.guid)
                 .add(ITEM_ID, item.itemGuid)
                 .add(ITEM_UPDATE_QTY_FLAG, item.itemUpdateFlag)
-                .add(MOVEMENT_JUSTIFICATION, item.justification)
                 .add(QTY, item.qty, ContentValuesUtil.QUANTITY_SCALE)
                 .add(MANUAL, item.manual)
                 .add(OPERATOR_GUID, item.operatorGuid)

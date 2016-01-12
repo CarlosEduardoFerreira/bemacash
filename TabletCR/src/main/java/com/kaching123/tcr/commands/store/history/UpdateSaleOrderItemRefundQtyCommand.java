@@ -112,8 +112,7 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
                 getContext(),
                 getAppCommandContext(),
                 returnOrder.parentGuid,
-                itemMovements,
-                MovementUtils.getJustification(ItemMovementModel.JustificationType.REFUND));
+                itemMovements);
 
         if (itemMovements.isEmpty()) {
             return true;

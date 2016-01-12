@@ -36,13 +36,11 @@ public class EditItemCommand extends AsyncCommand {
     private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ItemMovementTable.URI_CONTENT);
 
     private static final String ARG_ITEM = "arg_item";
-    private static final String ARG_JUSTIFICATION = "arg_justification";
 
     private ItemModel item;
     private ItemMovementModel movementModel;
     private ArrayList<ContentProviderOperation> operations;
     private BatchSqlCommand sql;
-    private String justification;
 
     @Override
     protected TaskResult doCommand() {
@@ -50,7 +48,6 @@ public class EditItemCommand extends AsyncCommand {
         if (item == null)
             item = (ItemModel)getArgs().getSerializable(ARG_ITEM);
 
-        justification = getArgs().getString(ARG_JUSTIFICATION);
         movementModel = null;
 
         BigDecimal availableQty = null;
@@ -69,7 +66,6 @@ public class EditItemCommand extends AsyncCommand {
             movementModel = ItemMovementModelFactory.getNewModel(
                     item.guid,
                     item.updateQtyFlag,
-                    justification,
                     item.availableQty,
                     true,
                     new Date());
@@ -108,10 +104,9 @@ public class EditItemCommand extends AsyncCommand {
         return sql;
     }
 
-    public static void start(Context context, ItemModel item, String justification){
+    public static void start(Context context, ItemModel item){
         create(EditItemCommand.class)
                 .arg(ARG_ITEM, item)
-                .arg(ARG_JUSTIFICATION, justification)
                 .queueUsing(context);
     }
 

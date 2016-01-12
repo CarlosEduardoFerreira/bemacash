@@ -20,9 +20,8 @@ public class MovementUtils {
     public static void processAllRefund(Context context,
                                   PublicGroundyTask.IAppCommandContext appcontext,
                                   String orderGuid,
-                                  List<ItemMovementModel> itemMovements,
-                                  String movementJustification) {
-        processAll(context, appcontext, orderGuid, itemMovements, movementJustification);
+                                  List<ItemMovementModel> itemMovements) {
+        processAll(context, appcontext, orderGuid, itemMovements);
         for (ItemMovementModel item : itemMovements) {
             item.qty = restrictABS(CalculationUtil.negativeQty(item.qty), false);
         }
@@ -31,8 +30,7 @@ public class MovementUtils {
     public static void processAll(Context context,
                                    PublicGroundyTask.IAppCommandContext appcontext,
                                    String orderGuid,
-                                   List<ItemMovementModel> itemMovements,
-                                   String movementJustification) {
+                                   List<ItemMovementModel> itemMovements) {
 
         List<OrderTreeManagementCommand.MovementMetadata> result = new OrderTreeManagementCommand().sync(context, orderGuid, appcontext);
 
@@ -42,7 +40,6 @@ public class MovementUtils {
                 itemMovements.add(ItemMovementModelFactory.getNewModel(
                                 item.getGuid(),
                                 item.getFlag(),
-                                movementJustification,
                                 restrictABS(item.getMovement(), true),
                                 false,
                                 new Date())
@@ -56,8 +53,4 @@ public class MovementUtils {
         return sales ? value.min(BigDecimal.ZERO) : value.max(BigDecimal.ZERO);
     }
 
-    public static String getJustification(ItemMovementModel.JustificationType type) {
-        int resId = ItemMovementModel.JustificationType.toValue(type);
-        return TcrApplication.get().getApplicationContext().getString(resId);
-    }
 }

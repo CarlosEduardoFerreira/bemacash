@@ -529,10 +529,6 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER)
         String ITEM_UPDATE_QTY_FLAG = "ITEM_UPDATE_QTY_FLAG";
 
-        @NotNull
-        @Column(type = Type.TEXT, defVal = "\'legacy\'")
-        String MOVEMENT_JUSTIFICATION = "movement_justification";
-
         @Column(type = Type.TEXT)
         String OPERATOR_GUID = "operator_guid";
 

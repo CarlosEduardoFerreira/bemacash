@@ -14,7 +14,6 @@ public class ItemMovementModelFactory {
     public static final ItemMovementModel getNewModel(String guid,
                                                       String itemGuid,
                                                       String itemUpdateFlag,
-                                                      String justification,
                                                       BigDecimal qty,
                                                       boolean manual,
                                                       String operatorGuid,
@@ -24,7 +23,6 @@ public class ItemMovementModelFactory {
                 guid,
                 itemGuid,
                 itemUpdateFlag,
-                justification,
                 qty,
                 manual,
                 operatorGuid,
@@ -34,7 +32,6 @@ public class ItemMovementModelFactory {
     public static final ItemMovementModel getNewModel(String guid,
                                                       String itemGuid,
                                                       String itemUpdateFlag,
-                                                      String justification,
                                                       BigDecimal qty,
                                                       boolean manual,
                                                       Date createTime) {
@@ -43,7 +40,6 @@ public class ItemMovementModelFactory {
                 guid,
                 itemGuid,
                 itemUpdateFlag,
-                justification,
                 qty,
                 manual,
                 TcrApplication.get().getOperatorGuid(),
@@ -53,7 +49,6 @@ public class ItemMovementModelFactory {
 
     public static final ItemMovementModel getNewModel(String itemGuid,
                                                       String itemUpdateFlag,
-                                                      String justification,
                                                       BigDecimal qty,
                                                       boolean manual,
                                                       Date createTime) {
@@ -62,7 +57,6 @@ public class ItemMovementModelFactory {
                 UUID.randomUUID().toString(),
                 itemGuid,
                 itemUpdateFlag,
-                justification,
                 qty,
                 manual,
                 TcrApplication.get().getOperatorGuid(),

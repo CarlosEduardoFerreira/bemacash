@@ -124,7 +124,6 @@ public class AddUnitsCommand extends AsyncCommand  {
             movementModel = ItemMovementModelFactory.getNewModel(
                     parent.guid,
                     parent.updateQtyFlag,
-                    MovementUtils.getJustification(ItemMovementModel.JustificationType.ADD_UNITS),
                     parent.availableQty,
                     true,
                     new Date()

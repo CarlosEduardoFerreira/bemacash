@@ -97,13 +97,7 @@ public class InventoryQtyEditDialog extends QtyEditFragment {
             if (value == null)
                 return false;
             if(listener != null){
-                //// FIXME: 30.12.2015
-                // merge from Bra code
-                // need to investigate.
-                // for now we send empty string
-                //
-                String justification = "";
-                listener.onAdjust(value, justification);
+                listener.onAdjust(value);
             }
             return true;
         }
@@ -116,13 +110,7 @@ public class InventoryQtyEditDialog extends QtyEditFragment {
             if (value == null)
                 return false;
             if(listener != null){
-                //// FIXME: 30.12.2015
-                // merge from Bra code
-                // need to investigate.
-                // for now we send empty string
-                //
-                String justification = "";
-                listener.onReplace(value, justification);
+                 listener.onReplace(value);
             }
             return true;
         }
@@ -134,8 +122,8 @@ public class InventoryQtyEditDialog extends QtyEditFragment {
     }
 
     public interface OnEditQtyListener{
-        void onReplace(BigDecimal value, String justification);
-        void onAdjust(BigDecimal value, String justification);
+        void onReplace(BigDecimal value);
+        void onAdjust(BigDecimal value);
     }
 
 }

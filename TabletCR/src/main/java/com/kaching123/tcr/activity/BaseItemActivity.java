@@ -273,8 +273,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     protected int count;
 
-    protected String justificationMsg;
-
     @OptionsItem
     protected void actionSerialSelected() {
         if (model.isSerializable()) {
@@ -412,8 +410,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
 
         availableQtyPencil.setEnabled(PlanOptions.isStockTrackingAllowed());
-
-        justificationMsg = MovementUtils.getJustification(ItemMovementModel.JustificationType.NONE);
 
     }
 
@@ -1492,7 +1488,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             InventoryQtyEditDialog.show(BaseItemActivity.this, model.availableQty == null ? BigDecimal.ZERO : model.availableQty, isPcs(),
                     new InventoryQtyEditDialog.OnEditQtyListener() {
                         @Override
-                        public void onReplace(BigDecimal value, String justification) {
+                        public void onReplace(BigDecimal value) {
                             model.availableQty = value;
                             if (isPcs()) {
                                 showInteger(availableQty, model.availableQty);
@@ -1501,11 +1497,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                                 showQuantity(availableQty, model.availableQty);
                                 showQuantity(availableQtyPencil, model.availableQty);
                             }
-                            justificationMsg = justification;
                         }
 
                         @Override
-                        public void onAdjust(BigDecimal value, String justification) {
+                        public void onAdjust(BigDecimal value) {
                             BigDecimal old = model.availableQty == null ? BigDecimal.ZERO : model.availableQty;
                             model.availableQty = old.add(value);
                             if (isPcs()) {
@@ -1515,7 +1510,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                                 showQuantity(availableQty, model.availableQty);
                                 showQuantity(availableQtyPencil, model.availableQty);
                             }
-                            justificationMsg = justification;
                         }
                     }
             );
