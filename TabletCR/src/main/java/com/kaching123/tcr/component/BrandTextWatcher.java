@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  */
 public class BrandTextWatcher implements TextWatcher {
 
-    private static final char DECIMAL_SEPARATOR = ',';
+    private static final char DECIMAL_SEPARATOR = '.';
 
     private boolean isDeleting;
     protected boolean isEditMode;
@@ -53,7 +53,7 @@ public class BrandTextWatcher implements TextWatcher {
         if (isInput()) {
             if (isSeparatorCharacter(value)) {
                 isDecimalPart = true;
-                String intPart = value.replaceAll("\\.", "").replaceAll(String.valueOf(DECIMAL_SEPARATOR), "");
+                String intPart = value.replaceAll("\\,", "").replaceAll(String.valueOf("\\."), "");
                 if (TextUtils.isEmpty(intPart)){
                     intPart = "0";
                 }
@@ -66,9 +66,9 @@ public class BrandTextWatcher implements TextWatcher {
             } else if (isDecimalPart) {
                 final String decimalPart = value.substring(value.indexOf(DECIMAL_SEPARATOR) + 1);
                 if (decimalPart.length() > 2) {
-                    String intPart = value.replaceAll("\\.", "");
+                    String intPart = value.replaceAll("\\,", "");
                     intPart = intPart.substring(0, intPart.indexOf(DECIMAL_SEPARATOR) + 4);
-                    String[] sp = intPart.split(String.valueOf(DECIMAL_SEPARATOR));
+                    String[] sp = intPart.split(String.valueOf("\\."));
 
                     String integerPart = sp[0];
                     if (integerPart.length() > MAX_INT) {

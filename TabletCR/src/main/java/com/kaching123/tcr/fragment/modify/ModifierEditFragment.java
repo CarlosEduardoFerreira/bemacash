@@ -495,8 +495,8 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
 
     public class QtyFormatInputFilter extends RegexpFormatInputFilter {
 
-        private static final String REGEXP = "^(\\d{0,7}(.)*)?(\\,[0-9]{1,2})?$";
-
+      //  private static final String REGEXP = "^(\\d{0,7}(.)*)?(\\,[0-9]{1,2})?$";
+        private static final String REGEXP = "(^(\\d{0,7})?(\\,[0-9]{0,3})?-?$)|(^(-?\\d{0,7})?(\\,[0-9]{0,3})?(\\.[0-9]{0,3})?$)";
         public QtyFormatInputFilter() {
             super(REGEXP);
         }

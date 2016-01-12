@@ -26,7 +26,8 @@ public final class UiHelper {
     private static final DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
     private static final DecimalFormat percentFormat = new DecimalFormat("0.##");
     private static final DecimalFormat integralIntegerFormat = new DecimalFormat("0");
-    private static final DecimalFormat quantityFormat = new DecimalFormat("0.000");
+
+    private static final DecimalFormat quantityFormat = new DecimalFormat("#,##0.00");//("0.000");
     private static final DecimalFormat quantityIntegerFormat = new DecimalFormat("0.###");
 
     private static final DecimalFormat brandQtyFormat = new DecimalFormat("#,##0.000");
@@ -93,6 +94,7 @@ public final class UiHelper {
         if (TextUtils.isEmpty(str))
             return def;
         try {
+            str = str.replaceAll(",","");
             return new BigDecimal(str);
         } catch (Exception e) {
             try {
@@ -136,7 +138,8 @@ public final class UiHelper {
     }
 
     public static BigDecimal getDecimalValue(TextView editText) {
-        String text = editText.getText().toString().replaceAll("\\.", "").replaceAll(",", ".");
+   //     String text = editText.getText().toString().replaceAll("\\.", "").replaceAll(",", ".");
+        String text = editText.getText().toString().replaceAll("\\,", "");//.replaceAll(".", ",");
         try {
             if (text.endsWith("-")) {
                 return negativeQty(new BigDecimal(text.substring(0, text.length() - 1)));

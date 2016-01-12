@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  */
 public class CurrencyTextWatcher implements TextWatcher {
 
-    private static final char DECIMAL_SEPARATOR = ',';
+    private static final char DECIMAL_SEPARATOR = '.';
 
     private boolean isDeleting;
     protected boolean isEditMode;
@@ -50,7 +50,7 @@ public class CurrencyTextWatcher implements TextWatcher {
         if (isInput()) {
             if (isSeparatorCharacter(value)) {
                 isDecimalPart = true;
-                String intPart = value.replaceAll("\\.", "").replaceAll(",", "");
+                String intPart = value.replaceAll("\\,", "").replaceAll(String.valueOf("\\."), "");
                 if (TextUtils.isEmpty(intPart)){
                     intPart = "0";
                 }
@@ -63,7 +63,7 @@ public class CurrencyTextWatcher implements TextWatcher {
             } else if (isDecimalPart) {
                 final String decimalPart = value.substring(value.indexOf(DECIMAL_SEPARATOR) + 1);
                 if (decimalPart.length() > 2) {
-                    String intPart = value.replaceAll("\\.", "");
+                    String intPart = value.replaceAll("\\,", "");
                     intPart = intPart.substring(0, intPart.indexOf(DECIMAL_SEPARATOR) + 3);
                     final String priceFormattedString = UiHelper.priceFormat(UiHelper.parseBrandDecimalInput(intPart));
                     isEditMode = true;

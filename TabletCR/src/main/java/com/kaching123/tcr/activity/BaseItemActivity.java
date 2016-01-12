@@ -937,7 +937,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?
                 BigDecimal.ZERO.toString() : this.salesPrice.getText().toString();
 
-        model.price = parseBigDecimal(price, BigDecimal.ZERO);
+        model.price = parseBigDecimal(price.replaceAll(",",""), BigDecimal.ZERO);
 
         model.isDiscountable = this.discountable.isChecked();
 

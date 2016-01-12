@@ -5,7 +5,9 @@ package com.kaching123.tcr.component;
  */
 public class SignedQuantityFormatInputFilter extends RegexpFormatInputFilter{
 
-    private static final String REGEXP = "(^(\\d{0,7})?(\\.[0-9]{0,3})?-?$)|(^(-?\\d{0,7})?(\\.[0-9]{0,3})?$)";
+  //  private static final String REGEXP = "(^(\\d{0,7})?(\\,[0-9]{0,3})?-?$)|(^(-?\\d{0,7})?(\\,[0-9]{0,3})?$)";
+    private static final String REGEXP = "(^(\\d{0,7})?(\\,[0-9]{0,3})?-?$)|(^(-?\\d{0,7})?(\\,[0-9]{0,3})?(\\.[0-9]{0,3})?$)";
+//    private static final String REGEXP = "(^(\\d{0,7})?(\\.[0-9]{0,3})?-?$)|(^(-?\\d{0,7})?(\\.[0-9]{0,3})?$)";
 
     public SignedQuantityFormatInputFilter() {
         super(REGEXP);
