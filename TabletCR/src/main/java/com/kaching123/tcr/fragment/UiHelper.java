@@ -23,7 +23,7 @@ public final class UiHelper {
 
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private static final DecimalFormat integerFormat = new DecimalFormat("0.##");
-    private static final DecimalFormat priceFormat = new DecimalFormat("0.00");
+    private static final DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
     private static final DecimalFormat percentFormat = new DecimalFormat("0.##");
     private static final DecimalFormat integralIntegerFormat = new DecimalFormat("0");
     private static final DecimalFormat quantityFormat = new DecimalFormat("0.000");
@@ -43,9 +43,10 @@ public final class UiHelper {
         decimalFormat.setDecimalFormatSymbols(otherSymbols);
         integerFormat.setDecimalFormatSymbols(otherSymbols);
 
+
         final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setDecimalSeparator(',');
-        symbols.setGroupingSeparator('.');
+        symbols.setDecimalSeparator('.');
+        symbols.setGroupingSeparator(',');
         priceFormat.setDecimalFormatSymbols(symbols);
         priceFormat.setParseBigDecimal(true);
         priceFormat.setRoundingMode(RoundingMode.UNNECESSARY);
