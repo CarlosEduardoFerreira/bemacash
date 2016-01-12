@@ -3,9 +3,6 @@ package com.kaching123.tcr.fragment.wireless;
 import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.wireless.AddUnitsCommand;
 import com.kaching123.tcr.commands.wireless.EditUnitCommand;
@@ -14,6 +11,10 @@ import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.CodeType;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 
 import java.util.UUID;
 
@@ -54,8 +55,9 @@ public class UnitsEditFragment extends UnitEditFragmentBase {
         if (unit != null) {
             try {
                 unit.warrantyPeriod = Integer.parseInt(warrEditbox.getText().toString());
-            } catch (NumberFormatException ignore) { }
-            catch (NullPointerException ignore) { }
+            } catch (NumberFormatException ignore) {
+            } catch (NullPointerException ignore) {
+            }
             String dataInField = etSerial.getText().toString();
             EditUnitCommand.start(getActivity(), unit, dataInField, new EditUnitCommand.UnitCallback() {
                 @Override
@@ -92,46 +94,47 @@ public class UnitsEditFragment extends UnitEditFragmentBase {
             u.codeType = type;
             try {
                 u.warrantyPeriod = Integer.parseInt(warrEditbox.getText().toString());
-            } catch (NumberFormatException ignore) { }
-            catch (NullPointerException ignore) { }
+            } catch (NumberFormatException ignore) {
+            } catch (NullPointerException ignore) {
+            }
             u.serialCode = etSerial.getText().toString();
             u.itemId = item.guid;
             u.status = Unit.Status.NEW;
             u.guid = UUID.randomUUID().toString();
             AddUnitsCommand.start(getActivity(),
-                add = purposeSwitch.isChecked(),
-                u, item,
-                new AddUnitsCommand.UnitCallback() {
-                    @Override
-                    protected void handleSuccess(ItemExModel model) {
-                        callback.handleSuccess(add, model);
-                    }
+                    add = purposeSwitch.isChecked(),
+                    u, item,
+                    new AddUnitsCommand.UnitCallback() {
+                        @Override
+                        protected void handleSuccess(ItemExModel model) {
+                            callback.handleSuccess(add, model);
+                        }
 
-                    @Override
-                    protected void handleError(String message) {
-                        callback.handleScannedSwitch(false);
+                        @Override
+                        protected void handleError(String message) {
+                            callback.handleScannedSwitch(false);
 
-                        AlertDialogWithCancelFragment.show(getActivity(),
-                                R.string.wireless_already_item_title,
-                                message,
-                                R.string.btn_ok,
-                                new AlertDialogWithCancelFragment.OnDialogListener() {
-                                    @Override
-                                    public boolean onClick() {
-                                        callback.handleScannedSwitch(true);
-                                        return true;
+                            AlertDialogWithCancelFragment.show(getActivity(),
+                                    R.string.wireless_already_item_title,
+                                    message,
+                                    R.string.btn_ok,
+                                    new AlertDialogWithCancelFragment.OnDialogListener() {
+                                        @Override
+                                        public boolean onClick() {
+                                            callback.handleScannedSwitch(true);
+                                            return true;
+                                        }
+
+                                        @Override
+                                        public boolean onCancel() {
+                                            callback.handleScannedSwitch(true);
+                                            return true;
+                                        }
                                     }
-
-                                    @Override
-                                    public boolean onCancel() {
-                                        callback.handleScannedSwitch(true);
-                                        return true;
-                                    }
-                                }
-                        );
+                            );
 //                            callback.handleError(message);
+                        }
                     }
-                }
             );
         }
         return true;
@@ -140,11 +143,15 @@ public class UnitsEditFragment extends UnitEditFragmentBase {
     @Override
     protected int getDialogTitle() {
         if (type != null) switch (type) {
-            case ICCID: return R.string.dlg_unit_iccid_edit;
-                case IMEI: return R.string.dlg_unit_imei_edit;
-                    case SN:
-                        default: return R.string.dlg_unit_sn_edit;
-        } else return R.string.dlg_unit_sn_edit;
+            case ICCID:
+                return R.string.dlg_unit_iccid_edit;
+            case IMEI:
+                return R.string.dlg_unit_imei_edit;
+            case SN:
+            default:
+                return R.string.dlg_unit_sn_edit;
+        }
+        else return R.string.dlg_unit_sn_edit;
     }
 
     @Override

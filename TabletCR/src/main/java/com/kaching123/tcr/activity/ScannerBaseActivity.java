@@ -2,6 +2,7 @@ package com.kaching123.tcr.activity;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
 
@@ -14,6 +15,9 @@ import com.kaching123.tcr.service.ScannerService;
 import com.kaching123.tcr.service.ScannerService.IScannerBinder;
 import com.kaching123.tcr.service.ScannerService.ScannerBinder;
 import com.kaching123.tcr.service.ScannerService.ScannerListener;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by pkabakov on 14.03.14.
@@ -34,6 +38,14 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final BarcodeTimerTask myTask = new BarcodeTimerTask();
+        final Timer myTimer = new Timer();
+        //myTimer.schedule(myTask, 10000);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
 
@@ -47,7 +59,7 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         if (scannerConfigured) {
             if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_SCANNER_ADDRESS))
                 setUSBScanner(true);
-            else if(!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
+            else if (!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
                 ScannerService.bind(this, scannerServiceConnection);
         } else
             Logger.d("ScannerBaseActivity: bindToScannerService(): failed - scanner is not configured!");
@@ -57,8 +69,7 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         isUSBScanner = flag;
     }
 
-    private boolean getUSBScanner()
-    {
+    private boolean getUSBScanner() {
         return isUSBScanner;
     }
 
@@ -154,5 +165,17 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         }
 
     };
+
+    class BarcodeTimerTask extends TimerTask {
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    scannerListener.onBarcodeReceived("2303970001000");
+                }
+            });
+        }
+    }
+
 
 }

@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.google.common.base.Function;
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
 import com.kaching123.tcr.function.UnitWrapFunction;
@@ -119,7 +118,6 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                             .perform(context), new UnitWrapFunction());
                     item.tmpUnit.addAll(units);
                 }
-
 
 
             } while (c.moveToNext());
