@@ -475,6 +475,13 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String COMMISSION = "commission";
+
+        @NotNull
+        @Column(type = Type.INTEGER, defVal = "0")
+        String ITEM_REF_TYPE = "item_ref_type";
+
+        @Column(type = Type.TEXT)
+        String REFERENCE_ITEM_ID = "reference_item_id";
     }
 
     static {
@@ -1793,6 +1800,106 @@ public abstract class ShopStore {
         String UPDATE_TIME = "update_time";
     }
 
+    @Table(VariantItemTable.TABLE_NAME)
+    public interface VariantItemTable extends IBemaSyncTable {
+
+        String TABLE_NAME = "variant_item";
+
+        @URI(altNotify = {VariantsView.URI_CONTENT, VariantSubItemsCountView.URI_CONTENT, ItemExtView.URI_CONTENT})
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        @Unique
+        String GUID = "guid";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String ITEM_GUID = "item_guid";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String SHOP_ID = "shop_id";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String NAME = "name";
+    }
+
+
+    @Table(VariantSubItemTable.TABLE_NAME)
+    public interface VariantSubItemTable extends IBemaSyncTable {
+
+        @URI(altNotify = {VariantsView.URI_CONTENT, VariantSubItemsCountView.URI_CONTENT, ItemExtView.URI_CONTENT})
+        String URI_CONTENT = "variant_sub_item";
+
+        String TABLE_NAME = "variant_sub_item";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        @Unique
+        String GUID = "guid";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String VARIANT_ITEM_GUID = "variant_item_guid";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String ITEM_GUID = "item_guid";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String NAME = "name";
+
+    }
+
+    @Table(ItemMatrixTable.TABLE_NAME)
+    public interface ItemMatrixTable extends IBemaSyncTable {
+
+        String TABLE_NAME = "item_matrix";
+
+        @URI(altNotify = {ItemMatrixByChildView.URI_CONTENT, ItemMatrixByParentView.URI_CONTENT, ItemExtView.URI_CONTENT})
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        @Unique
+        String GUID = "guid";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String PARENT_GUID = "parent_guid";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String NAME = "name";
+
+        @Column(type = Type.TEXT)
+        String CHILD_GUID = "child_guid";
+
+    }
+
+    static {
+        applyForeignKeys(ItemMatrixTable.TABLE_NAME,
+                foreignKey(ItemMatrixTable.PARENT_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
+    }
+
 
     /**
      * views *
@@ -1893,6 +2000,240 @@ public abstract class ShopStore {
 
         @Join(type = Join.Type.LEFT, joinTable = CustomerTable.TABLE_NAME, joinColumn = CustomerTable.GUID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.CUSTOMER_GUID)
         String TABLE_CUSTOMER = "customer_table";
+    }
+
+    @SimpleView(VariantsView.VIEW_NAME)
+    public interface VariantsView {
+
+        @URI
+        String URI_CONTENT = "variant_view";
+
+        String VIEW_NAME = "variant_view";
+
+        String VARIANT_SUB_ITEMS_COUNT = "variant_sub_items_count";
+
+        @From(VariantItemTable.TABLE_NAME)
+        String TABLE_VARIANT_ITEM = "variant_item_table";
+
+        @Join(type = Join.Type.LEFT, joinTable = VariantSubItemTable.TABLE_NAME, joinColumn = VariantSubItemTable.VARIANT_ITEM_GUID, onTableAlias = TABLE_VARIANT_ITEM, onColumn = VariantItemTable.GUID)
+        String TABLE_VARIANT_SUB_ITEM = "variant_sub_item";
+    }
+
+    @SimpleView(ItemMatrixByChildView.VIEW_NAME)
+    public interface ItemMatrixByChildView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "item_matrix_view";
+
+        String VIEW_NAME = "item_matrix_view";
+
+
+        @From(ItemMatrixTable.TABLE_NAME)
+        String TABLE_ITEM_MATRIX = "item_matrix_table";
+
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_ITEM_MATRIX, onColumn = ItemMatrixTable.CHILD_GUID)
+        String TABLE_ITEM = "item_table";
+
+        String ITEM_MATRIX_PARENT_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.PARENT_GUID;
+        String ITEM_MATRIX_NAME = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.NAME;
+        String ITEM_DESCRIPTION = TABLE_ITEM + "_" + ItemTable.DESCRIPTION;
+        String CHILD_ITEM_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.CHILD_GUID;
+
+    }
+
+    @SimpleView(ItemMatrixByParentView.VIEW_NAME)
+    public interface ItemMatrixByParentView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "item_matrix_view2";
+
+        String VIEW_NAME = "item_matrix_view2";
+
+
+        @From(ItemMatrixTable.TABLE_NAME)
+        String TABLE_ITEM_MATRIX = "item_matrix_table";
+
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_ITEM_MATRIX, onColumn = ItemMatrixTable.PARENT_GUID)
+        String TABLE_ITEM = "item_table";
+
+        String ITEM_DESCRIPTION = TABLE_ITEM + "_" + ItemTable.DESCRIPTION;
+        String CHILD_ITEM_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.CHILD_GUID;
+
+    }
+
+    /*will consist direct parent info and info through a matrix*/
+    @SimpleView(ItemWithParentInfoView.VIEW_NAME)
+    public interface ItemWithParentInfoView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "item_with_parent_guid_view";
+
+        String VIEW_NAME = "item_with_parent_guid_view";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({ItemTable.GUID, ItemTable.REFERENCE_ITEM_ID})
+        @From(ItemTable.TABLE_NAME)
+        String TABLE_ITEM = "item_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({ItemMatrixTable.PARENT_GUID})
+        @Join(type = Join.Type.LEFT, joinTable = ItemMatrixTable.TABLE_NAME, joinColumn = ItemMatrixTable.CHILD_GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
+        String TABLE_ITEM_MATRIX = "item_matrix_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({ItemTable.DESCRIPTION})
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.REFERENCE_ITEM_ID)
+        String TABLE_DIRECT_PARENT_ITEM_DESCRIPTION = "direct_parent_item_description_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({ItemTable.DESCRIPTION})
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_ITEM_MATRIX, onColumn = ItemMatrixTable.PARENT_GUID)
+        String TABLE_PARENT_ITEM_THROUGH_MATRIX_DESCRIPTION = "parent_item_through_matrix_description_table";
+    }
+
+    @RawQuery(VariantSubItemsCountView.VIEW_NAME)
+    public interface VariantSubItemsCountView {
+
+        @URI
+        String URI_CONTENT = "variants_sub_items_count";
+
+        String VIEW_NAME = "variants_sub_items_count";
+        String VARIANT_ITEM_PARENT_GUID = VariantsView.TABLE_VARIANT_ITEM + "_" + VariantItemTable.ITEM_GUID;
+        String VARIANT_ITEM_SHOP_ID = VariantsView.TABLE_VARIANT_ITEM + "_" + VariantItemTable.SHOP_ID;
+        String VARIANT_ITEM_GUID = VariantsView.TABLE_VARIANT_ITEM + "_" + VariantItemTable.GUID;
+        String VARIANT_ITEM_NAME = VariantsView.TABLE_VARIANT_ITEM + "_" + VariantItemTable.NAME;
+        String VARIANT_SUB_ITEM_GUID = VariantsView.TABLE_VARIANT_SUB_ITEM + "_" + VariantSubItemTable.GUID;
+
+
+        String SUB_ITEMS_COUNT = "sum(case when " + VARIANT_SUB_ITEM_GUID + " IS NOT NULL then 1 else 0 end) as " + VariantsView.VARIANT_SUB_ITEMS_COUNT;
+        @SqlQuery
+        String QUERY = "select _id," + VARIANT_ITEM_GUID + "," +
+                VARIANT_ITEM_NAME + "," + SUB_ITEMS_COUNT + "," + VARIANT_ITEM_PARENT_GUID + " from " + VariantsView.VIEW_NAME + " where " + VARIANT_ITEM_PARENT_GUID + "=?" + " AND " + VARIANT_ITEM_SHOP_ID + "=?" + " group by " + VARIANT_ITEM_GUID;
+
+    }
+
+    @RawQuery(RecalcComposersQuery.VIEW_NAME)
+    public interface RecalcComposersQuery {
+
+        String VIEW_NAME = "recalc_compose_item";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "recalc_compose_item";
+
+        String ID = "ID_ALIAS";
+        String CHILD_ID = "CHILD_ID";
+        String HOST_ID = "HOST_ID";
+
+        String QTY_CHILD = "QTY_CHILD";
+        String QTY_PARENT = "QTY_PARENT";
+
+        String QTY_COMPOSER = "QTY_COMPOSER";
+
+        String PRECIOUS_RESULT = "PRECIOUS_RESULT";
+        String ACTUAL_RESULT = "ACTUAL_RESULT";
+
+        String T1 = "T1";
+        String T2 = "T2";
+        String T3 = "T3";
+        String T4 = "T4";
+
+        String GROUP_BY = " GROUP BY ";
+        String ORDER_BY = " ORDER BY ";
+
+        String ON = " ON ";
+        String AS = " AS ";
+        String AND = " AND ";
+
+        String ASC = " DESC ";
+        String FROM = " FROM ";
+        String SELECT = " SELECT ";
+        String WHERE = " WHERE ";
+        String JOIN = " JOIN ";
+
+        String coma = ",";
+
+        @SqlQuery
+        String QUERY = SELECT + ID + coma + PRECIOUS_RESULT + FROM + "("
+                + SELECT + ID + coma + "(" + QTY_CHILD + "/" + QTY_COMPOSER + ")" + AS + PRECIOUS_RESULT + coma + QTY_PARENT + AS + ACTUAL_RESULT
+                + FROM + "("
+                + SELECT + ComposerTable.ITEM_HOST_ID + AS + ID + coma + ComposerTable.ITEM_CHILD_ID + coma + ComposerTable.QUANTITY + AS + QTY_COMPOSER + coma + ComposerTable.FREE_OF_CHARGE_COMPOSER + coma + IBemaSyncTable.IS_DELETED
+                + FROM + ComposerTable.TABLE_NAME + WHERE + ComposerTable.FREE_OF_CHARGE_COMPOSER + " = 1 " + AND + IBemaSyncTable.IS_DELETED + " = 0)" + T1
+                + JOIN + "(" + SELECT + ItemTable.GUID + AS + CHILD_ID + coma + ItemTable.TMP_AVAILABLE_QTY + AS + QTY_CHILD + coma + IBemaSyncTable.IS_DELETED + FROM + ItemTable.TABLE_NAME + ") " + T3
+                + ON + "(" + T3 + "." + IBemaSyncTable.IS_DELETED + " = 0 AND " + CHILD_ID + " = " + T1 + "." + ComposerTable.ITEM_CHILD_ID + ")"
+                + JOIN + "(" + SELECT + ItemTable.GUID + AS + HOST_ID + coma + ItemTable.TMP_AVAILABLE_QTY + AS + QTY_PARENT + FROM + ItemTable.TABLE_NAME + ") " + T2
+                + ON + "(" + ID + " = " + HOST_ID + ")"
+                + ORDER_BY + PRECIOUS_RESULT + ASC + ") " + T4 + WHERE + "(" + ACTUAL_RESULT + " <> " + PRECIOUS_RESULT + ")" + GROUP_BY + ID;
+
+        //// ****************************************            READABLE   V2        ****************************************** //////
+//        SELECT GUID, PRECIOUS_RESULT, ACTUAL_RESULT FROM (
+//                SELECT GUID, (QTY_CHILD / QTY ) AS PRECIOUS_RESULT, QTY_HOST AS ACTUAL_RESULT FROM (
+//        SELECT ITEM_HOST_ID as GUID, ITEM_CHILD_ID, COMPOSER.QUANTITY as QTY, FREE_OF_CHARGE_COMPOSER FROM COMPOSER WHERE FREE_OF_CHARGE_COMPOSER = 1) T1
+//        JOIN ( SELECT ID as CHILD_ID, SALE_PRICE as QTY_CHILD FROM ITEM) T3
+//        ON (CHILD_ID = T1.ITEM_CHILD_ID)
+//        JOIN ( SELECT ID as HOST_ID, SALE_PRICE as QTY_HOST FROM ITEM) T5
+//        ON (HOST_ID = GUID)
+//        ORDER BY PRECIOUS_RESULT ASC
+//        ) T4 WHERE (ACTUAL_RESULT <> PRECIOUS_RESULT) GROUP BY GUID;
+        //// ****************************************            READABLE           ****************************************** //////
+    }
+
+    @RawQuery(RecalcCostQuery.VIEW_NAME)
+    public interface RecalcCostQuery {
+
+        String VIEW_NAME = "recalc_cost_item";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "recalc_cost_item";
+
+        String ID = "ID_ALIAS";
+        String CHILD_ID = "CHILD_ID";
+        String HOST_ID = "HOST_ID";
+
+        String COST_CHILD = "COST_CHILD";
+        String COST_HOST = "COST_HOST";
+
+        String QTY_COMPOSER = "QTY_COMPOSER";
+
+        String PRECIOUS_RESULT = "PRECIOUS_RESULT";
+        String ACTUAL_RESULT = "ACTUAL_RESULT";
+
+        String T1 = "T1";
+        String T2 = "T2";
+        String T3 = "T3";
+
+        String ORDER_BY = " ORDER BY ";
+
+        String ON = " ON ";
+        String AS = " AS ";
+        String WHERE = " WHERE ";
+
+        String ASC = " ASC ";
+        String FROM = " FROM ";
+        String SELECT = " SELECT ";
+        String JOIN = " JOIN ";
+
+        String coma = ",";
+
+        @SqlQuery
+        String QUERY = SELECT + ID + coma + "(" + COST_CHILD + "*" + QTY_COMPOSER + ")" + AS + PRECIOUS_RESULT + coma + COST_HOST + AS + ACTUAL_RESULT
+                + FROM + "("
+                + SELECT + ComposerTable.ITEM_HOST_ID + AS + ID + coma + ComposerTable.ITEM_CHILD_ID + coma + ComposerTable.QUANTITY + AS + QTY_COMPOSER + coma + IBemaSyncTable.IS_DELETED
+                + FROM + ComposerTable.TABLE_NAME + WHERE + IBemaSyncTable.IS_DELETED + " = 0)" + T1
+                + JOIN + "(" + SELECT + ItemTable.GUID + AS + CHILD_ID + coma + ItemTable.COST + AS + COST_CHILD + coma + IBemaSyncTable.IS_DELETED + FROM + ItemTable.TABLE_NAME + ") " + T3
+                + ON + "(" + T3 + "." + IBemaSyncTable.IS_DELETED + " = 0 AND " + CHILD_ID + " = " + T1 + "." + ComposerTable.ITEM_CHILD_ID + ")"
+                + JOIN + "(" + SELECT + ItemTable.GUID + AS + HOST_ID + coma + ItemTable.COST + AS + COST_HOST + FROM + ItemTable.TABLE_NAME + ") " + T2
+                + ON + "(" + ID + " = " + HOST_ID + ")"
+                + ORDER_BY + ID + ASC;
+
+        //// ****************************************            READABLE          ****************************************** //////
+//        SELECT GUID, (COST_CHILD * QTY ) AS PRECIOUS_RESULT, COST_HOST AS ACTUAL_RESULT FROM (
+//                SELECT ITEM_HOST_ID as GUID, ITEM_CHILD_ID, COMPOSER.QUANTITY as QTY, FREE_OF_CHARGE_COMPOSER FROM COMPOSER WHERE FREE_OF_CHARGE_COMPOSER = 1) T1
+//        JOIN ( SELECT ID as CHILD_ID, COST as COST_CHILD FROM ITEM) T3
+//        ON (CHILD_ID = T1.ITEM_CHILD_ID)
+//        JOIN ( SELECT ID as HOST_ID, COST as COST_HOST FROM ITEM) T5
+//        ON (HOST_ID = GUID)
+//        ORDER BY GUID ASC;
+        //// ****************************************            READABLE           ****************************************** //////
     }
 
     @SimpleView(PrinterView.VIEW_NAME)
