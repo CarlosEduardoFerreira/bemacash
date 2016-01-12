@@ -1936,6 +1936,152 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     };
 
+    private void onScaleItemAdded(final SaleOrderItemModel item) {
+        final SaleOrderItemViewModel model = getSaleItem(item.saleItemGuid);
+        if (scaleService.getStatus() == 0 && scaleService.isUnitsLabelMatch(model.unitsLabel)) {
+            BigDecimal newQty = new BigDecimal(scaleService.readScale());
+            UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
+        } else {
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    BaseCashierActivity.this);
+            alertDialogBuilder.setTitle("Scale Warning");
+            String header = !scaleServiceBound || scaleService.getStatus() < 0 ? "Check connection to the scale" : "Place " + item.description + " on the Scale";
+            header += " or enter the weight manually.";
+            alertDialogBuilder
+                    .setMessage(header)
+                    .setCancelable(false)
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if (item.qty.equals(BigDecimal.ZERO)) {
+                                orderItemListFragment.doRemoceClickLine(item.getGuid());
+                            }
+                            dialog.cancel();
+                            return;
+                        }
+                    })
+                    .setNeutralButton("Setting", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if (item.qty.equals(BigDecimal.ZERO)) {
+                                orderItemListFragment.doRemoceClickLine(item.getGuid());
+                            }
+                            dialog.cancel();
+                            SettingsActivity.start(BaseCashierActivity.this);
+                        }
+                    })
+                    .setPositiveButton("Manually", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) {
+                                QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(),
+                                        item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
+                                            @Override
+                                            public void onConfirm(BigDecimal value) {
+                                                UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this,
+                                                        item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
+                                            }
+                                        }, orderItemListFragment);
+                            } else {
+                                PermissionFragment.showCancelable(BaseCashierActivity.this, new OnDialogClickListener() {
+                                            @Override
+                                            public boolean onClick() {
+                                                if (item.qty.equals(BigDecimal.ZERO)) {
+                                                    orderItemListFragment.doRemoceClickLine(item.getGuid());
+                                                }
+                                                return true;
+                                            }
+                                        },
+                                        new BaseTempLoginListener(BaseCashierActivity.this) {
+                                            @Override
+                                            public void onLoginComplete() {
+                                                super.onLoginComplete();
+                                                QtyEditFragment.showCancelable(BaseCashierActivity.this,
+                                                        item.getGuid(), item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
+                                                            @Override
+                                                            public void onConfirm(BigDecimal value) {
+                                                                UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this,
+                                                                        item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
+                                                            }
+                                                        }, orderItemListFragment);
+                                            }
+                                        }, Permission.CHANGE_QTY);
+                            }
+                            return;
+                        }
+                    });
+
+            final AlertDialog alertDialog = alertDialogBuilder.create();
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    BigDecimal newQty = null;
+                    while (scaleService != null) {
+                        newQty = new BigDecimal(scaleService.readScale());
+                        if (!alertDialog.isShowing())
+                            break;
+
+                        if (!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to "
+                                            + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
+                                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
+                                }
+                            });
+                        } else if (newQty.compareTo(BigDecimal.ZERO) != 1) {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    String header = !scaleServiceBound ? "Check connection to the scale" : "Place " + item.description + " on the Scale";
+                                    header += " or enter the weight manually.";
+                                    alertDialog.setMessage(header);
+                                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+                                }
+                            });
+                        } else {
+                            // units label match && qty > 0
+                            break;
+                        }
+                        if (stop) {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    orderItemListFragment.doRemoceClickLine(item.getGuid());
+                                    alertDialog.dismiss();
+                                }
+                            });
+                            break;
+                        }
+                    }
+                    // dialog shown, not been dismissed.
+                    if (alertDialog.isShowing()) {
+                        final BigDecimal finalNewQty = newQty;
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(),
+                                        item.qty.add(finalNewQty), updateQtySaleOrderItemCallback);
+                                alertDialog.dismiss();
+//                                        Toast.makeText(BaseCashierActivity.this,"New qty = " + finalNewQty.toString(),Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        });
+                    }
+                }
+            });
+            alertDialog.show();
+            // hide button which not necessary
+            if (scaleService.getStatus() >= 0) {
+                alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.GONE);
+                if (!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
+                    Logger.d("Status = " + scaleService.getStatus());
+                    alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to "
+                            + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
+                }
+            }
+            //if not bound to service, do not need start thread
+            if (scaleService.getStatus() >= 0) {
+                thread.start();
+            }
+        }
+    }
+
     public class AddItem2SaleOrderCallback extends BaseAddItem2SaleOrderCallback {
 
         @Override
@@ -1943,146 +2089,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             if (isFinishing() || isDestroyed())
                 return;
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
-            //orderItemListFragment.needScrollToTheEnd();
-            final SaleOrderItemViewModel model = getSaleItem(item.saleItemGuid);
             if (item.priceType == PriceType.UNIT_PRICE) {
-                if (scaleServiceBound && scaleService.getStatus() == 0 && scaleService.isUnitsLabelMatch(model.unitsLabel)) {
-                    BigDecimal newQty = new BigDecimal(scaleService.readScale());
-                    UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
-                } else {
-                    final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                            BaseCashierActivity.this);
-                    alertDialogBuilder.setTitle("Scale Warning");
-                    String header = !scaleServiceBound || scaleService.getStatus() < 0 ? "Check connection to the scale" : "Place " + item.description + " on the Scale";
-                    header += " or enter the weight manually.";
-                    alertDialogBuilder
-                            .setMessage(header)
-                            .setCancelable(false)
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    if (item.qty.equals(BigDecimal.ZERO)) {
-                                        orderItemListFragment.doRemoceClickLine(item.getGuid());
-                                    }
-                                    dialog.cancel();
-                                    return;
-                                }
-                            })
-                            .setNeutralButton("Setting", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    if (item.qty.equals(BigDecimal.ZERO)) {
-                                        orderItemListFragment.doRemoceClickLine(item.getGuid());
-                                    }
-                                    dialog.cancel();
-                                    SettingsActivity.start(BaseCashierActivity.this);
-                                }
-                            })
-                            .setPositiveButton("Manually", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) {
-                                        QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
-                                            @Override
-                                            public void onConfirm(BigDecimal value) {
-                                                UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
-                                            }
-                                        }, orderItemListFragment);
-                                    } else {
-                                        PermissionFragment.showCancelable(BaseCashierActivity.this, new OnDialogClickListener() {
-                                                    @Override
-                                                    public boolean onClick() {
-                                                        if (item.qty.equals(BigDecimal.ZERO)) {
-                                                            orderItemListFragment.doRemoceClickLine(item.getGuid());
-                                                        }
-                                                        return true;
-                                                    }
-                                                },
-                                                new BaseTempLoginListener(BaseCashierActivity.this) {
-                                                    @Override
-                                                    public void onLoginComplete() {
-                                                        super.onLoginComplete();
-                                                        QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(), item.qty, item.priceType != PriceType.UNIT_PRICE, new QtyEditFragment.OnEditQtyListener() {
-                                                            @Override
-                                                            public void onConfirm(BigDecimal value) {
-                                                                UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(value), updateQtySaleOrderItemCallback);
-                                                            }
-                                                        }, orderItemListFragment);
-                                                    }
-                                                }, Permission.CHANGE_QTY);
-                                    }
-                                    return;
-                                }
-                            });
-
-                    final AlertDialog alertDialog = alertDialogBuilder.create();
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BigDecimal newQty = null;
-                            while (scaleService != null) {
-                                newQty = new BigDecimal(scaleService.readScale());
-                                if (!alertDialog.isShowing())
-                                    break;
-
-                                if (!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
-                                    runOnUiThread(new Runnable() {
-                                        public void run() {
-                                            alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to " + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
-                                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
-                                        }
-                                    });
-                                } else if (newQty.compareTo(BigDecimal.ZERO) != 1) {
-                                    runOnUiThread(new Runnable() {
-                                        public void run() {
-                                            String header = !scaleServiceBound ? "Check connection to the scale" : "Place " + item.description + " on the Scale";
-                                            header += " or enter the weight manually.";
-                                            alertDialog.setMessage(header);
-                                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
-                                        }
-                                    });
-                                } else {
-                                    // units label match && qty > 0
-                                    break;
-                                }
-                                if (stop) {
-                                    runOnUiThread(new Runnable() {
-                                        public void run() {
-                                            orderItemListFragment.doRemoceClickLine(item.getGuid());
-                                            alertDialog.dismiss();
-                                        }
-                                    });
-                                    break;
-                                }
-                            }
-                            // dialog shown, not been dismissed.
-                            if (alertDialog.isShowing()) {
-                                final BigDecimal finalNewQty = newQty;
-                                runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(finalNewQty), updateQtySaleOrderItemCallback);
-                                        alertDialog.dismiss();
-//                                        Toast.makeText(BaseCashierActivity.this,"New qty = " + finalNewQty.toString(),Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    alertDialog.show();
-                    // hide button which not necessary
-                    if (scaleService.getStatus() >= 0) {
-                        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.GONE);
-                        if (!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
-                            Logger.d("Status = " + scaleService.getStatus());
-                            alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to " + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
-                        }
-                    }
-                    //if not bound to service, do not need start thread
-                    if (scaleService.getStatus() >= 0) {
-                        thread.start();
-                    }
+                if (scaleServiceBound) {
+                    onScaleItemAdded(item);
                 }
             }
-            return;
         }
 
         @Override
