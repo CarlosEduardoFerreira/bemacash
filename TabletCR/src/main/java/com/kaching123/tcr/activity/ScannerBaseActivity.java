@@ -2,7 +2,6 @@ package com.kaching123.tcr.activity;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
 
@@ -15,9 +14,6 @@ import com.kaching123.tcr.service.ScannerService;
 import com.kaching123.tcr.service.ScannerService.IScannerBinder;
 import com.kaching123.tcr.service.ScannerService.ScannerBinder;
 import com.kaching123.tcr.service.ScannerService.ScannerListener;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by pkabakov on 14.03.14.
@@ -35,14 +31,6 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         super.onStart();
 
         bindToScannerService();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        final BarcodeTimerTask myTask = new BarcodeTimerTask();
-        final Timer myTimer = new Timer();
-        //myTimer.schedule(myTask, 10000);
     }
 
     @Override
@@ -165,17 +153,4 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         }
 
     };
-
-    class BarcodeTimerTask extends TimerTask {
-        public void run() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    scannerListener.onBarcodeReceived("2303970001000");
-                }
-            });
-        }
-    }
-
-
 }

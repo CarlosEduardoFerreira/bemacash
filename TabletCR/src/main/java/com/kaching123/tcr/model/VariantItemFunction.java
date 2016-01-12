@@ -4,8 +4,6 @@ import android.database.Cursor;
 
 import com.google.common.base.Function;
 
-import br.com.bematech.bemacash.model.VariantItemModel;
-
 /**
  * Created by aakimov on 29/04/15.
  */

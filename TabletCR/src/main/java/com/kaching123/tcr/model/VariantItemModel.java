@@ -3,14 +3,14 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import java.io.Serializable;
+import com.kaching123.tcr.store.ShopStore.VariantItemTable;
 
-import br.com.bematech.bemacash.store.ShopStore;
+import java.io.Serializable;
 
 /**
  * Created by aakimov on 23/04/15.
  */
-public class VariantItemModel implements Serializable, br.com.bematech.bemacash.model.IValueModel {
+public class VariantItemModel implements Serializable, IValueModel {
 
     public String guid;
     public String name;
@@ -29,9 +29,10 @@ public class VariantItemModel implements Serializable, br.com.bematech.bemacash.
     }
 
     public VariantItemModel(Cursor cursor) {
-        this(cursor.getString(cursor.getColumnIndex(ShopStore.VariantItemTable.GUID)),
-                cursor.getString(cursor.getColumnIndex(ShopStore.VariantItemTable.NAME)),
-                cursor.getString(cursor.getColumnIndex(ShopStore.VariantItemTable.ITEM_GUID)), cursor.getLong(cursor.getColumnIndex(ShopStore.VariantItemTable.SHOP_ID)));
+        this(cursor.getString(cursor.getColumnIndex(VariantItemTable.GUID)),
+                cursor.getString(cursor.getColumnIndex(VariantItemTable.NAME)),
+                cursor.getString(cursor.getColumnIndex(VariantItemTable.ITEM_GUID)),
+                cursor.getLong(cursor.getColumnIndex(VariantItemTable.SHOP_ID)));
 
     }
 
@@ -43,10 +44,10 @@ public class VariantItemModel implements Serializable, br.com.bematech.bemacash.
     @Override
     public ContentValues toValues() {
         ContentValues contentValues = new ContentValues(4);
-        contentValues.put(ShopStore.VariantItemTable.GUID, guid);
-        contentValues.put(ShopStore.VariantItemTable.NAME, name);
-        contentValues.put(ShopStore.VariantItemTable.ITEM_GUID, parentGuid);
-        contentValues.put(ShopStore.VariantItemTable.SHOP_ID, shopId);
+        contentValues.put(VariantItemTable.GUID, guid);
+        contentValues.put(VariantItemTable.NAME, name);
+        contentValues.put(VariantItemTable.ITEM_GUID, parentGuid);
+        contentValues.put(VariantItemTable.SHOP_ID, shopId);
         return contentValues;
     }
 

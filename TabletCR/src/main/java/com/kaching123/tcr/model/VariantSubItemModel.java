@@ -3,14 +3,15 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
+
 import java.io.Serializable;
 
-import br.com.bematech.bemacash.store.ShopStore;
 
 /**
  * Created by aakimov on 23/04/15.
  */
-public class VariantSubItemModel implements Serializable, br.com.bematech.bemacash.model.IValueModel {
+public class VariantSubItemModel implements Serializable, IValueModel {
 
     public String guid;
     public String name;
@@ -29,9 +30,10 @@ public class VariantSubItemModel implements Serializable, br.com.bematech.bemaca
     }
 
     public VariantSubItemModel(Cursor cursor) {
-        this(cursor.getString(cursor.getColumnIndex(ShopStore.VariantSubItemTable.GUID)),
-                cursor.getString(cursor.getColumnIndex(ShopStore.VariantSubItemTable.NAME)),
-                cursor.getString(cursor.getColumnIndex(ShopStore.VariantSubItemTable.VARIANT_ITEM_GUID)), cursor.getString(cursor.getColumnIndex(ShopStore.VariantSubItemTable.ITEM_GUID)));
+        this(cursor.getString(cursor.getColumnIndex(VariantSubItemTable.GUID)),
+                cursor.getString(cursor.getColumnIndex(VariantSubItemTable.NAME)),
+                cursor.getString(cursor.getColumnIndex(VariantSubItemTable.VARIANT_ITEM_GUID)),
+                cursor.getString(cursor.getColumnIndex(VariantSubItemTable.ITEM_GUID)));
     }
 
     @Override
@@ -42,10 +44,10 @@ public class VariantSubItemModel implements Serializable, br.com.bematech.bemaca
     @Override
     public ContentValues toValues() {
         ContentValues contentValues = new ContentValues(4);
-        contentValues.put(ShopStore.VariantSubItemTable.GUID, guid);
-        contentValues.put(ShopStore.VariantSubItemTable.NAME, name);
-        contentValues.put(ShopStore.VariantSubItemTable.VARIANT_ITEM_GUID, parentVariantItemGuid);
-        contentValues.put(ShopStore.VariantSubItemTable.ITEM_GUID, itemGuid);
+        contentValues.put(VariantSubItemTable.GUID, guid);
+        contentValues.put(VariantSubItemTable.NAME, name);
+        contentValues.put(VariantSubItemTable.VARIANT_ITEM_GUID, parentVariantItemGuid);
+        contentValues.put(VariantSubItemTable.ITEM_GUID, itemGuid);
         return contentValues;
     }
 }
