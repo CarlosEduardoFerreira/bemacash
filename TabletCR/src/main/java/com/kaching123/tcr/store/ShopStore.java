@@ -366,7 +366,7 @@ public abstract class ShopStore {
             @Index(name = "printer_alias", columns = ItemTable.PRINTER_ALIAS_GUID),
             @Index(name = "movements", columns = ItemTable.UPDATE_QTY_FLAG)
     })
-    public static interface ItemTable extends IBemaSyncTable {
+    public interface ItemTable extends IBemaSyncTable {
 
         @URI(altNotify = {ItemExtView.URI_CONTENT, CategoryView.URI_CONTENT, ModifierView.URI_CONTENT})
         String URI_CONTENT = "item";
@@ -378,7 +378,6 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String GUID = "guid";
 
-        @NotNull
         @Column(type = Column.Type.TEXT)
         String CATEGORY_ID = "category_id";
 
