@@ -34,8 +34,6 @@ public final class UiHelper {
     private static final DecimalFormat brandQrtyIntFormat = new DecimalFormat("#,###");
     private static final DecimalFormat priceInputFormat = new DecimalFormat("#,###.##");
 
-    //private static final DecimalFormat percentInBracketsFormat = new DecimalFormat(" (0.##)");
-
     static {
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
         otherSymbols.setDecimalSeparator('.');
@@ -138,8 +136,7 @@ public final class UiHelper {
     }
 
     public static BigDecimal getDecimalValue(TextView editText) {
-   //     String text = editText.getText().toString().replaceAll("\\.", "").replaceAll(",", ".");
-        String text = editText.getText().toString().replaceAll("\\,", "");//.replaceAll(".", ",");
+        String text = editText.getText().toString().replaceAll("\\,", "");
         try {
             if (text.endsWith("-")) {
                 return negativeQty(new BigDecimal(text.substring(0, text.length() - 1)));

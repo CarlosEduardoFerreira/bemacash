@@ -86,9 +86,9 @@ public class EditItemCommand extends AsyncCommand {
         if (movementModel != null) {
             sql.add(JdbcFactory.getConverter(movementModel).insertSQL(movementModel, getAppCommandContext()));
         }
-        if (item.serializable && !InventoryUtils.pollItem(item.guid, getContext(), getAppCommandContext(), operations, sql)) {
+       /* if (item.serializable && !InventoryUtils.pollItem(item.guid, getContext(), getAppCommandContext(), operations, sql)) {
             return failed();
-        }
+        }*/
 
 
         return succeeded();
