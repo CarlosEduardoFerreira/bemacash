@@ -102,7 +102,21 @@
             android:name=".activity.ModifierActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape" />
-
+        <activity
+            android:name=".activity.AddReferenceItemActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.EditReferenceItemActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.VariantsActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.SuperBaseActivity_"
             android:screenOrientation="sensorLandscape"

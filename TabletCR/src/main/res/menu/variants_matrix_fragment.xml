@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_populate"
+        android:orderInCategory="100"
+        android:showAsAction="always|withText"
+        android:title="@string/inventory_action_populate"
+        android:visible="false" />
+    <item
+        android:id="@+id/action_see_matrix"
+        android:icon="@android:drawable/ic_menu_rotate"
+        android:orderInCategory="200"
+        android:showAsAction="always"
+        android:title="@string/inventory_action_see_matrix" />
+</menu>

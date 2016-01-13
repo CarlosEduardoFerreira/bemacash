@@ -158,7 +158,16 @@ public class InventoryActivity extends ScannerBaseActivity {
         itemsFragment.setListener(new BaseItemsPickFragment.IItemListener() {
             @Override
             public void onItemSelected(long id, ItemExModel model) {
-                EditItemActivity.start(InventoryActivity.this, model);
+                switch (model.refType) {
+                    case Simple:
+                        EditItemActivity.start(InventoryActivity.this, model);
+                        break;
+                    case Reference:
+                        EditReferenceItemActivity.start(InventoryActivity.this, model);
+                        break;
+                    default:
+                        EditItemActivity.start(InventoryActivity.this, model);
+                }
             }
         });
 
@@ -273,6 +282,14 @@ public class InventoryActivity extends ScannerBaseActivity {
         sortItem.getIcon().setLevel(level);
         //sortItem.setIcon(sortByName ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category);
         sort.setIcon(getResources().getDrawable(sortByName ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
+    }
+
+    @OptionsItem
+    protected void actionAddReferenceItemSelected() {
+        ItemExModel model = new ItemExModel();
+        model.categoryId = selectedCategoryGuid;
+        model.departmentGuid = selectedDeartmentGuid;
+        AddReferenceItemActivity.start(InventoryActivity.this, model);
     }
 
     @OptionsItem

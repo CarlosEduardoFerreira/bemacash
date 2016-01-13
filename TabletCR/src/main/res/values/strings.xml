@@ -1823,5 +1823,13 @@
 
     <string name="inventory_action_add_reference_item">Add new reference</string>
 
+    <string name="variants_edit">Edit</string>
+    <string name="variants_add_child_item_title">Add a child item</string>//not translated
+    <string name="variants_add_parent_item_title">Add a parent item</string>//not translated
+
+    <string name="inventory_action_see_matrix">See matrix</string>
+    <string name="inventory_clear_matrix_msg">Please mention that clearing Matrix item DO NOT delete items in Inventory List</string>
+    <string name="inventory_action_populate">Populate</string>
+    <string name="item_matrix_filter">Find the matrix item</string>//not translated
 
 </resources>

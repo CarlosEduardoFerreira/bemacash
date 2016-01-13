@@ -1,6 +1,8 @@
 package com.kaching123.tcr.fragment;
 
+import android.content.Context;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.widget.TextView;
 
 import com.kaching123.tcr.Logger;
@@ -329,5 +331,11 @@ public final class UiHelper {
         } else {
             return firstName + " " + lastName;
         }
+    }
+
+    public static int dpToPx(Context context, int dp) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
     }
 }

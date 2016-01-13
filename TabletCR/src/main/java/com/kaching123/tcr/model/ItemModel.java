@@ -139,6 +139,45 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.refType = refType;
 	}
 
+    public ItemModel(ItemModel itemModel) {
+        super();
+        this.guid = itemModel.guid;
+        this.categoryId = itemModel.categoryId;
+        this.description = itemModel.description;
+        this.code = itemModel.code;
+        this.eanCode = itemModel.eanCode;
+        this.productCode = itemModel.productCode;
+        this.priceType = itemModel.priceType;
+        this.price = itemModel.price;
+        this.availableQty = itemModel.availableQty;
+        this.unitsLabel = itemModel.unitsLabel;
+        this.unitsLabelId = itemModel.unitsLabelId;
+        this.isStockTracking = itemModel.isStockTracking;
+        this.isActiveStatus = itemModel.isActiveStatus;
+        this.isDiscountable = itemModel.isDiscountable;
+        this.isSalable = itemModel.isSalable;
+        this.discount = itemModel.discount;
+        this.discountType = itemModel.discountType;
+        this.isTaxable = itemModel.isTaxable;
+        this.cost = itemModel.cost;
+        this.isPcsUnit = itemModel.isPcsUnit;
+        this.minimumQty = itemModel.minimumQty;
+        this.recommendedQty = itemModel.recommendedQty;
+        this.updateQtyFlag = itemModel.updateQtyFlag;
+        this.taxGroupGuid = itemModel.taxGroupGuid;
+        this.orderNum = itemModel.orderNum;
+        this.defaultModifierGuid = itemModel.defaultModifierGuid;
+        this.printerAliasGuid = itemModel.printerAliasGuid;
+        this.btnView = itemModel.btnView;
+        this.hasNotes = itemModel.hasNotes;
+        this.serializable = itemModel.serializable;
+        this.codeType = itemModel.codeType;
+        this.commissionEligible = itemModel.commissionEligible;
+        this.commission = itemModel.commission;
+        this.refType = itemModel.refType;
+        this.referenceItemGuid = itemModel.referenceItemGuid;
+    }
+
     @Override
     public String getGuid() {
         return guid;
