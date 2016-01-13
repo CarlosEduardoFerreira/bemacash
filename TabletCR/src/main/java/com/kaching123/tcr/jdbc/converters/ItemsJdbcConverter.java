@@ -6,6 +6,7 @@ import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -59,6 +60,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String ELIGIBLE_FOR_COMMISSION = "ELIGIBLE_FOR_COMMISSION";
     private static final String COMMISSION = "COMMISSION";
     private static final String IS_DELETED = "IS_DELETED";
+    private static final String ITEM_REF_TYPE = "ITEM_REF_TYPE";
+    private static final String REFERENCE_ITEM_ID = "REFERENCE_ITEM_ID";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -94,7 +97,9 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(SERIALIZABLE),
                 _enum(CodeType.class, rs.getString(CODE_TYPE), CodeType.SN),
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
-                rs.getBigDecimal(COMMISSION)
+                rs.getBigDecimal(COMMISSION),
+                rs.getString(REFERENCE_ITEM_ID),
+                _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple)
         );
         return model.toValues();
     }
@@ -133,7 +138,9 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(SERIALIZABLE),
                 _enum(CodeType.class, rs.getString(CODE_TYPE), null),
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
-                rs.getBigDecimal(COMMISSION)
+                rs.getBigDecimal(COMMISSION),
+                rs.getString(REFERENCE_ITEM_ID),
+                ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE))
         );
     }
 
@@ -180,6 +187,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(CODE_TYPE, item.codeType)
                 .add(ELIGIBLE_FOR_COMMISSION, item.commissionEligible)
                 .add(COMMISSION, item.commission)
+                .add(ITEM_REF_TYPE, item.refType.ordinal())
+                .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
                 .build(JdbcFactory.getApiMethod(item));
     }
 
@@ -217,6 +226,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(ELIGIBLE_FOR_COMMISSION, item.commissionEligible)
                 .add(COMMISSION, item.commission)
                 .where(ID, item.guid)
+                .add(ITEM_REF_TYPE, item.refType.ordinal())
+                .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
                 .build(JdbcFactory.getApiMethod(item));
     }
 

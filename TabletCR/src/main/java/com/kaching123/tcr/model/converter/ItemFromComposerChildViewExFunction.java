@@ -66,7 +66,6 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 _decimal(c.getString(indexHolder.get(ItemChildTable.COST))),
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.MINIMUM_QTY))),
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.RECOMMENDED_QTY))),
-                //null,
                 null,
                 null,
                 0,
@@ -82,6 +81,8 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 false,
                 null,
                 false,
+                null,
+                null,
                 null);
     }
 }

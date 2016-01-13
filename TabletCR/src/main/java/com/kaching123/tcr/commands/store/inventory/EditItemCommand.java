@@ -9,14 +9,18 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ItemMovementModelFactory;
+import com.kaching123.tcr.model.converter.ItemMatrixFunction;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.util.CursorUtil;
 import com.kaching123.tcr.util.InventoryUtils;
 import com.telly.groundy.TaskResult;
 
@@ -34,6 +38,7 @@ public class EditItemCommand extends AsyncCommand {
 
     private static final Uri ITEM_URI = ShopProvider.getContentUri(ItemTable.URI_CONTENT);
     private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ItemMovementTable.URI_CONTENT);
+    private static final Uri ITEM_MATRIX_URI = ShopProvider.contentUri(ShopStore.ItemMatrixTable.URI_CONTENT);
 
     private static final String ARG_ITEM = "arg_item";
 
@@ -46,7 +51,7 @@ public class EditItemCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         Logger.d("EditItemCommand doCommand");
         if (item == null)
-            item = (ItemModel)getArgs().getSerializable(ARG_ITEM);
+            item = (ItemModel) getArgs().getSerializable(ARG_ITEM);
 
         movementModel = null;
 
@@ -56,7 +61,7 @@ public class EditItemCommand extends AsyncCommand {
                 .projection(ItemTable.TMP_AVAILABLE_QTY)
                 .where(ItemTable.GUID + " = ?", item.guid)
                 .perform(getContext());
-        if(c.moveToFirst()){
+        if (c.moveToFirst()) {
             availableQty = _decimalQty(c, 0);
         }
         c.close();
@@ -84,13 +89,31 @@ public class EditItemCommand extends AsyncCommand {
         sql = batchUpdate(item);
         sql.add(JdbcFactory.getConverter(item).updateSQL(item, getAppCommandContext()));
         if (movementModel != null) {
-            sql.add(JdbcFactory.getConverter(movementModel).insertSQL(movementModel, getAppCommandContext()));
+            sql.add(JdbcFactory.getConverter(movementModel).insertSQL(movementModel,
+                    getAppCommandContext()));
         }
-       /* if (item.serializable && !InventoryUtils.pollItem(item.guid, getContext(), getAppCommandContext(), operations, sql)) {
+        if (item.serializable && !InventoryUtils.pollItem(item.guid, getContext(),
+                getAppCommandContext(), operations, sql)) {
             return failed();
-        }*/
+        }
+        TaskResult taskResult;
+        if (item.referenceItemGuid != null) {
+            taskResult = clearParentDuplicates();
+        } else {
+            taskResult = succeeded();
+        }
+        return taskResult;
+    }
 
-
+    private TaskResult clearParentDuplicates() {
+        Cursor c = ProviderAction.query(ITEM_MATRIX_URI).where(ShopStore.ItemMatrixTable.CHILD_GUID + "=?", item.guid).perform(getContext());
+        if (c.moveToFirst()) {
+            ItemMatrixModel itemMatrixModel = CursorUtil._wrap(c, new ItemMatrixFunction());
+            itemMatrixModel.childItemGuid = null;
+            SyncResult syncResult = new EditVariantMatrixItemCommand().syncDependent(getContext(), itemMatrixModel, getAppCommandContext());
+            operations.addAll(syncResult.getLocalDbOperations());
+            sql.add(syncResult.getSqlCmd());
+        }
         return succeeded();
     }
 
@@ -104,16 +127,23 @@ public class EditItemCommand extends AsyncCommand {
         return sql;
     }
 
-    public static void start(Context context, ItemModel item){
+    public static void start(Context context, ItemModel item) {
         create(EditItemCommand.class)
                 .arg(ARG_ITEM, item)
                 .queueUsing(context);
     }
 
-    /** use in import. can be standalone **/
+    /**
+     * use in import. can be standalone
+     **/
     public boolean sync(Context context, ItemModel item, IAppCommandContext appCommandContext) {
         this.item = item;
         TaskResult result = syncStandalone(context, appCommandContext);
         return !isFailed(result);
+    }
+
+    public SyncResult syncDependent(Context context, ItemModel item, IAppCommandContext appCommandContext) {
+        this.item = item;
+        return syncDependent(context, appCommandContext);
     }
 }

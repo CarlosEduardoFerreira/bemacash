@@ -10,16 +10,21 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand.AddItemResult;
+import com.kaching123.tcr.function.NextProductCodeQuery;
 import com.kaching123.tcr.model.DiscountType;
+import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.ItemFunction;
+import com.kaching123.tcr.model.converter.ItemMatrixFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.util.CursorUtil;
 import com.kaching123.tcr.util.UnitUtil;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
@@ -52,7 +57,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
 
     public enum ImportType {ALL, QTY, PRICE, DELETE}
 
-//    private static final Uri URI_ITEM = ShopProvider.contentUri(ItemTable.URI_CONTENT);
+    //    private static final Uri URI_ITEM = ShopProvider.contentUri(ItemTable.URI_CONTENT);
     private static final Uri URI_ITEM_WITH_IS_DELETED = ShopProvider.contentUri(ShopStore.ItemTableAllColumns.QUERY_NAME);
     private static final Uri URI_CATEGORY = ShopProvider.contentUri(CategoryTable.URI_CONTENT);
     private static final Uri URI_DEPARTMENT = ShopProvider.contentUri(DepartmentTable.URI_CONTENT);
@@ -80,15 +85,17 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private static final int FIELD_UPC = 5;
     private static final int FIELD_PRODUCT_CODE = 6;
     private static final int FIELD_PRICE = 7;
-    private static final int FIELD_DISCOUNTABLE = 8;
-    private static final int FIELD_SALABLE = 9;
-    private static final int FIELD_TAXABLE = 10;
-    private static final int FIELD_STOCK_TRACKING = 11;
-    private static final int FIELD_COST = 12;
-    private static final int FIELD_QTY = 13;
-    private static final int FIELD_ORDER_TRIGGER = 14;
-    private static final int FIELD_RECOMMENDED = 15;
-    private static final int FIELD_LAST_SOLD_DATE = 16;
+    private static final int FIELD_REFERENCE_ITEM = 8;
+    private static final int FIELD_DISCOUNTABLE = 9;
+    private static final int FIELD_SALABLE = 10;
+    private static final int FIELD_TAXABLE = 11;
+    private static final int FIELD_STOCK_TRACKING = 12;
+    private static final int FIELD_COST = 13;
+    private static final int FIELD_QTY = 14;
+    private static final int FIELD_ORDER_TRIGGER = 15;
+    private static final int FIELD_RECOMMENDED = 16;
+    private static final int FIELD_LAST_SOLD_DATE = 17;
+    private static final int FIELD_IS_REFERENCE = 18;
 
     @Override
     protected TaskResult doInBackground() {
@@ -161,7 +168,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 fireInvalidData(item);
                 continue;
             }
-             ItemModel oldModel;
+            ItemModel oldModel;
             if ((oldModel = findGuid(item)) != null) {
                 copyOldToNew(oldModel, item);
                 if (oldModel.isDeleted()) {
@@ -179,12 +186,12 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                         count += result;
                     }*/
                     continue;
-                } else  if (!editItemCommand.sync(getContext(), item, appCommandContext)) {
+                } else if (!editItemCommand.sync(getContext(), item, appCommandContext)) {
                     Logger.d("[IMPORT] Can't update item %s", item);
                     fireInvalidData(item);
                     continue;
 
-             }
+                }
             } else if (findDuplicateProductCode(item) != null) {
                 Logger.d("[IMPORT] fireDuplicateProductCode %s, %s", item, item.guid);
                 fireInvalidData(item);
@@ -330,20 +337,21 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         }
         return count;
     }
-/*
-*     private int importAllRecords(final ICsvListReader listReader, final CellProcessor[] processors, IAppCommandContext appCommandContext) throws IOException {
-        HashMap<String, String> departments = readDepartments();
-        HashMap<String, HashMap<String, String>> categoriesByDepartments = readCategoriesByDepartments();
-        AddDepartmentCommand addDepartmentCommand = new AddDepartmentCommand();
-        AddCategoryCommand addCategoryCommand = new AddCategoryCommand();
-        AddItemCommand addItemCommand = new AddItemCommand();
-        EditItemCommand editItemCommand = new EditItemCommand();
 
-        List<Object> fields;
-        int count = 0;
+    /*
+    *     private int importAllRecords(final ICsvListReader listReader, final CellProcessor[] processors, IAppCommandContext appCommandContext) throws IOException {
+            HashMap<String, String> departments = readDepartments();
+            HashMap<String, HashMap<String, String>> categoriesByDepartments = readCategoriesByDepartments();
+            AddDepartmentCommand addDepartmentCommand = new AddDepartmentCommand();
+            AddCategoryCommand addCategoryCommand = new AddCategoryCommand();
+            AddItemCommand addItemCommand = new AddItemCommand();
+            EditItemCommand editItemCommand = new EditItemCommand();
 
-        while ((fields = listReader.read(processors)) != null) {
-*/
+            List<Object> fields;
+            int count = 0;
+
+            while ((fields = listReader.read(processors)) != null) {
+    */
     private int updateQtyData(final ICsvListReader listReader, final CellProcessor[] processors) throws IOException {
         UpdateItemQtyCommand updateItemQtyCommand = new UpdateItemQtyCommand();
 
@@ -449,10 +457,9 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 if (unitLabelModel != null) { // if found
                     unitLabelId = unitLabelModel.guid;
                     oldUnitLabel = null;
-                }  else if(TextUtils.equals(oldUnitLabel,  TcrApplication.get().getShopInfo().defUnitLabelShortcut)) {
+                } else if (TextUtils.equals(oldUnitLabel, TcrApplication.get().getShopInfo().defUnitLabelShortcut)) {
                     oldUnitLabel = null;
-                }
-                else { // if not found
+                } else { // if not found
                     fireInvalidData(description, productCode);
                     Logger.d("[IMPORT] Can't found unit label: %s", oldUnitLabel);
                 }
@@ -464,13 +471,35 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             oldUnitLabel = TcrApplication.get().getShopInfo().defUnitLabelShortcut;
         }
 
-
-
+        ItemRefType itemRefType = ItemRefType.valueOf(((Boolean) fields.get(FIELD_IS_REFERENCE) ? 1 : 0));
         //create model
         String guid = (String) fields.get(FIELD_GUID);
         if (guid == null) {
             guid = UUID.randomUUID().toString();
         }
+
+        if (itemRefType == ItemRefType.Simple) {
+            if (TextUtils.isEmpty(productCode)) {
+                productCode = NextProductCodeQuery.getCode(getContext());
+            } else {
+                if (productCode.length() < 5 && isInteger(productCode)) {
+                    productCode = NextProductCodeQuery.format(Integer.valueOf(productCode));
+                }
+            }
+        }
+
+        String referenceItemGuid = null;
+        if (itemRefType != ItemRefType.Reference) {
+            String parentThroughItemMatrixGuid = parentThroughItemMatrix(guid);
+            Object directParentGuid = fields.get(FIELD_REFERENCE_ITEM);
+            referenceItemGuid = parentThroughItemMatrixGuid != null
+                    || directParentGuid == null ? null : (String) fields.get(FIELD_REFERENCE_ITEM);
+            if (directParentGuid != null && parentThroughItemMatrixGuid != null && !directParentGuid.equals(parentThroughItemMatrixGuid)) {
+                deleteItemFromItemMatrixChild(guid);
+                referenceItemGuid = (String) directParentGuid;
+            }
+        }
+
         BigDecimal quantity = (BigDecimal) fields.get(FIELD_QTY);
         if (quantity == null)
             quantity = BigDecimal.ZERO;
@@ -506,9 +535,40 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 false,
                 null,
                 true,
-                null
+                null,
+                referenceItemGuid,
+                itemRefType
         );
         return item;
+    }
+
+    private boolean isInteger(String s) {
+        if (s.isEmpty()) return false;
+        for (int i = 0; i < s.length(); i++) {
+            if (Character.digit(s.charAt(i), 10) < 0) return false;
+        }
+        return true;
+    }
+
+    private String parentThroughItemMatrix(String guid) {
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.ItemMatrixTable.URI_CONTENT)).where(ShopStore.ItemMatrixTable.CHILD_GUID + "=?", guid).perform(getContext());
+        String parentGuid = null;
+        if (c.moveToFirst()) {
+            parentGuid = c.getString(c.getColumnIndex(ShopStore.ItemMatrixTable.PARENT_GUID));
+        }
+        c.close();
+        return parentGuid;
+    }
+
+    private void deleteItemFromItemMatrixChild(String guid) {
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.ItemMatrixTable.URI_CONTENT)).where(ShopStore.ItemMatrixTable.CHILD_GUID + "=?", guid).perform(getContext());
+        if (c.moveToFirst()) {
+            ItemMatrixModel itemMatrixModel = CursorUtil._wrap(c, new ItemMatrixFunction());
+            itemMatrixModel.childItemGuid = null;
+            new EditVariantMatrixItemCommand().sync(getContext(), itemMatrixModel, getAppCommandContext());
+
+        }
+        c.close();
     }
 
     private boolean validateItemFields(String description, BigDecimal price, PriceType priceType, String departmentName, String categoryName) {
@@ -602,6 +662,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                     new Optional(), // upc code
                     new Optional(), // product code
                     new Optional(new ParseBigDecimal()),//price
+                    new Optional(), // reference item
                     new Optional(new ParseBool()),//discountable
                     new Optional(new ParseBool()),//salable
                     new Optional(new ParseBool()),//taxable
@@ -611,6 +672,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                     new Optional(new ParseBigDecimal()),//order trigger
                     new Optional(new ParseBigDecimal()),//recommended order
                     new Optional(),//last sold Data
+                    new Optional(new ParseBool())//is reference
             };
         } else {
             return new CellProcessor[]{

@@ -11,11 +11,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
@@ -25,6 +24,9 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
@@ -143,7 +145,9 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 ItemTable.SERIALIZABLE,
                 ItemTable.CODE_TYPE,
                 ItemTable.ELIGIBLE_FOR_COMMISSION,
-                ItemTable.COMMISSION
+                ItemTable.COMMISSION,
+                ItemTable.REFERENCE_ITEM_ID,
+                ItemTable.ITEM_REF_TYPE
         };
 
         @Override
@@ -183,9 +187,9 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                     _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                     _bool(c, c.getColumnIndex(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                    _decimal(c, c.getColumnIndex(ItemTable.COMMISSION))
-            );
+                    _decimal(c, c.getColumnIndex(ItemTable.COMMISSION)),
+                    c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
+                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))));
         }
     }
-
 }

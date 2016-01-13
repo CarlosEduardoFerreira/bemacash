@@ -67,6 +67,10 @@ public final class ContentValuesUtil {
         return _decimal(c.getString(columnIndex), QUANTITY_SCALE);
     }
 
+    public static ItemRefType _itemRefType(Cursor c, int index) {
+        return c.isNull(index) ? null : ItemRefType.values()[(c.getInt(index))];
+    }
+
     public static String _decimal(BigDecimal decimal, int scale) {
         if (decimal == null) {
             return "";
@@ -176,6 +180,15 @@ public final class ContentValuesUtil {
             Logger.e("Parse number error", e);
         }
         return BigDecimal.ZERO;
+    }
+
+    public static ContentValues _putItemRefType(ContentValues v, String key, ItemRefType itemRefType) {
+        if (itemRefType == null) {
+            v.putNull(key);
+        } else {
+            v.put(key, itemRefType.ordinal());
+        }
+        return v;
     }
 
     public static BigDecimal _decimalQty(String decimalValue) {

@@ -1821,5 +1821,7 @@
     <string name="variants_delete">Delete</string>
     <string name="variants_clear">Clear</string>
 
+    <string name="inventory_action_add_reference_item">Add new reference</string>
+
 
 </resources>

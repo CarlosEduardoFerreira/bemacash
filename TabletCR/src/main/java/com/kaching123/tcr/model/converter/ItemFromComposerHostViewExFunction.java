@@ -60,7 +60,6 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 _decimal(c.getString(indexHolder.get(ItemHostTable.COST))),
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.MINIMUM_QTY))),
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.RECOMMENDED_QTY))),
-                //null,
                 null,
                 null,
                 0,
@@ -76,6 +75,8 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 false,
                 null,
                 false,
+                null,
+                null,
                 null);
     }
 

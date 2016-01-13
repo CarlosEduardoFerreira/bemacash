@@ -2440,6 +2440,14 @@ public abstract class ShopStore {
                 onColumn = ItemTable.UNIT_LABEL_ID)
         String TABLE_UNIT_LABEL = "unit_label_table";
 
+        @Columns({ItemMatrixTable.PARENT_GUID})
+        @Join(type = Join.Type.LEFT,
+                joinTable = ItemMatrixTable.TABLE_NAME,
+                joinColumn = ItemMatrixTable.CHILD_GUID,
+                onTableAlias = TABLE_ITEM,
+                onColumn = ItemTable.GUID)
+        String TABLE_ITEM_MATRIX = "item_matrix_table";
+
         @Columns(ComposerTable.ID)
         @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_HOST_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
         String TABLE_CHILD_COMPOSER = "child_composer_table";

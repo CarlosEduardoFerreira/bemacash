@@ -22,6 +22,8 @@ public class ItemExModel extends ItemModel {
     public String departmentGuid;
     public BigDecimal tax;
 
+    public String matrixGuid;
+
     public String shortCut;
 
     public boolean isAComposisiton;
@@ -71,7 +73,9 @@ public class ItemExModel extends ItemModel {
                        boolean serializable,
                        Unit.CodeType codeType,
                        boolean commissionEligible,
-                       BigDecimal commission) {
+                       BigDecimal commission,
+                       String referenceItemGuid,
+                       ItemRefType itemRefType) {
         super(guid,
                 categoryId,
                 description,
@@ -87,8 +91,25 @@ public class ItemExModel extends ItemModel {
                 isActiveStatus,
                 isDiscountable,
                 isSalable,
-                discount, discountType, isTaxable, cost, minimumQty, recommendedQty, updateQtyFlag, taxGroupGuid, defaultModifierGuid,
-                orderNum, printerAliasGuid, btnView, hasNotes, serializable, codeType, commissionEligible, commission);
+                discount,
+                discountType,
+                isTaxable,
+                cost,
+                minimumQty,
+                recommendedQty,
+                updateQtyFlag,
+                taxGroupGuid,
+                defaultModifierGuid,
+                orderNum,
+                printerAliasGuid,
+                btnView,
+                hasNotes,
+                serializable,
+                codeType,
+                commissionEligible,
+                commission,
+                referenceItemGuid,
+                itemRefType);
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;
         this.optionalCount = optionalCount;
@@ -101,12 +122,10 @@ public class ItemExModel extends ItemModel {
         }
     }
 
-    /*public ItemExModel(String guid, String departmentId, String categoryId, String description, String code, String eanCode, PriceType priceType, BigDecimal price, BigDecimal qty, String unitsLabel, boolean isStockTracking, boolean isActiveStatus, boolean isDiscountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal cost, BigDecimal recommendeQty, int modifiersCount, int addonsCount, int optionalCount) {
-        super(guid, departmentId, categoryId, description, code, eanCode, priceType, price, qty, unitsLabel, isStockTracking, isActiveStatus, isDiscountable, discount, discountType, isTaxable, cost, recommendeQty);
-        this.modifiersCount = modifiersCount;
-        this.addonsCount = addonsCount;
-        this.optionalCount = optionalCount;
-    }*/
+    public ItemExModel setMatrixGuid(String matrixGuid) {
+        this.matrixGuid = matrixGuid;
+        return this;
+    }
 
     public ItemExModel setIsAComposisiton(boolean isAComposisiton) {
         this.isAComposisiton = isAComposisiton;

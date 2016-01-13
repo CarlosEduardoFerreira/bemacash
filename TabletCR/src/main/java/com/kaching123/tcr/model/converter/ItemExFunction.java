@@ -7,11 +7,12 @@ import com.google.common.base.Optional;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.store.ShopSchema2;
-import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemMatrixTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
@@ -20,6 +21,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
+import static com.kaching123.tcr.model.ContentValuesUtil._itemRefType;
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
 
 /**
@@ -69,7 +71,10 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             ItemTable.ELIGIBLE_FOR_COMMISSION,
             ItemTable.COMMISSION,
             ShopSchema2.ItemExtView2.ChildComposerTable.ID,
-            ShopSchema2.ItemExtView2.HostComposerTable.ID
+            ShopSchema2.ItemExtView2.HostComposerTable.ID,
+            ItemTable.REFERENCE_ITEM_ID,
+            ItemTable.ITEM_REF_TYPE,
+            ItemMatrixTable.PARENT_GUID
     };
 
     @Override
@@ -81,6 +86,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
         } catch (IllegalArgumentException noItem) {
             shortCut = null;
         }
+        String matrixGuid = c.getString(indexHolder.get(ItemMatrixTable.PARENT_GUID));
         return new ItemExModel(
                 c.getString(indexHolder.get(ItemTable.GUID)),
                 c.getString(indexHolder.get(ItemTable.CATEGORY_ID)),
@@ -120,9 +126,12 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                 _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                _decimal(c, indexHolder.get(ItemTable.COMMISSION)))
+                _decimal(c, indexHolder.get(ItemTable.COMMISSION)),
+                c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
+                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)))
                 .setIsAComposer(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.HostComposerTable.ID)) != null)
-                .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null);
+                .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null)
+                .setMatrixGuid(matrixGuid);
     }
 
     public static class Wrap implements Function<Cursor, Optional<ItemExModel>> {

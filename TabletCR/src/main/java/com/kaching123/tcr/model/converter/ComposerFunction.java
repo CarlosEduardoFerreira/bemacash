@@ -4,7 +4,6 @@ import android.database.Cursor;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-
 import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.store.ShopSchema2;
@@ -12,8 +11,6 @@ import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ComposerTable;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ItemHostTable;
 import com.kaching123.tcr.util.ContentValuesUtilBase;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
-import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
 
 /**
@@ -48,7 +45,6 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 ContentValuesUtilBase._decimalQty(c.getString(c.getColumnIndex(ItemHostTable.RECOMMENDED_QTY))),
                 c.getString(c.getColumnIndex(ItemHostTable.UPDATE_QTY_FLAG)),
                 null,
-                //null,
                 0, // modifiers count
                 0,
                 0,
@@ -62,6 +58,8 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 false,//serializable
                 null,
                 false,
+                null,
+                null,
                 null);
 
         String shortCut;
@@ -94,7 +92,6 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 ContentValuesUtilBase._decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.MINIMUM_QTY))),
                 ContentValuesUtilBase._decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.RECOMMENDED_QTY))),
                 c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.UPDATE_QTY_FLAG)),
-                //null,
                 null,
                 0,
                 0,
@@ -109,6 +106,8 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 false,
                 null,
                 false,
+                null,
+                null,
                 null);
 
         return new ComposerExModel(

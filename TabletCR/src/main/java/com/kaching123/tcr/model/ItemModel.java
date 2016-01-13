@@ -14,6 +14,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._putDiscount;
 import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
+import static com.kaching123.tcr.model.ContentValuesUtil._putItemRefType;
 
 public class ItemModel extends BaseItemModel implements Serializable, IValueModel {
 
@@ -52,6 +53,9 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public boolean commissionEligible = true;
     public BigDecimal commission;
     public boolean isSalable;
+
+    public ItemRefType refType;
+    public String referenceItemGuid;
 
     public boolean ignoreMovementupdate;
 
@@ -94,7 +98,9 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      boolean serializable,
                      CodeType codeType,
                      boolean commissionEligible,
-                     BigDecimal commission) {
+                     BigDecimal commission,
+                     String referenceItemGuid,
+                     ItemRefType refType) {
         super();
         this.guid = guid;
         this.categoryId = categoryId;
@@ -129,6 +135,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.codeType = codeType;
         this.commissionEligible = commissionEligible;
         this.commission = commission;
+        this.referenceItemGuid = referenceItemGuid;
+        this.refType = refType;
 	}
 
     @Override
@@ -182,6 +190,9 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
 
         values.put(ItemTable.ELIGIBLE_FOR_COMMISSION, commissionEligible);
         values.put(ItemTable.COMMISSION, _decimal(commission));
+
+        _putItemRefType(values, ItemTable.ITEM_REF_TYPE, refType);
+        values.put(ItemTable.REFERENCE_ITEM_ID, referenceItemGuid);
 
 		return values;
 	}

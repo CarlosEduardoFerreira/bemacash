@@ -10,6 +10,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
+import static com.kaching123.tcr.model.ContentValuesUtil._itemRefType;
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
 
 /**
@@ -50,7 +51,9 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
             ItemTable.SERIALIZABLE,
             ItemTable.CODE_TYPE,
             ItemTable.ELIGIBLE_FOR_COMMISSION,
-            ItemTable.COMMISSION
+            ItemTable.COMMISSION,
+            ItemTable.REFERENCE_ITEM_ID,
+            ItemTable.ITEM_REF_TYPE
     };
 
     @Override
@@ -89,7 +92,9 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                 _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                _decimal(c, indexHolder.get(ItemTable.COMMISSION))
+                _decimal(c, indexHolder.get(ItemTable.COMMISSION)),
+                c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
+                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE))
         );
     }
 
