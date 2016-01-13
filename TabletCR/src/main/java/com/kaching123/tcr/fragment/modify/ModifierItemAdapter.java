@@ -63,7 +63,7 @@ public class ModifierItemAdapter extends ObjectsCursorAdapter<ModifierExModel> {
             }
 
             productCode = itemModel.productCode;
-            totalPrice = UiHelper.valueOf(itemModel.price.multiply(item.childItemQty));
+            totalPrice = UiHelper.valueOf(item.getCost());
             priceLabel = itemModel.shortCut;
         }
 

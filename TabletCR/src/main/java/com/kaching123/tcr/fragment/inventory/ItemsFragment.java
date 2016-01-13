@@ -27,6 +27,7 @@ import com.kaching123.tcr.commands.store.inventory.UpdateItemOrderCommand.BaseUp
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.PriceType;
+import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
@@ -305,7 +306,8 @@ public class ItemsFragment extends BaseItemsPickFragment {
                 holder.units.setText(null);
             } else {
                 showQuantity(holder.qty, item.availableQty);
-                holder.units.setText(item.unitsLabel);
+                holder.units.setText(UnitLabelModel.getUnitLabelShortcut(getContext(), item));
+
             }
 
             showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));

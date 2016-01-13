@@ -1400,7 +1400,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         @Override
         public void onLoadFinished(Loader<List<UnitLabelModel>> loader, List<UnitLabelModel> data) {
-            ArrayList<UnitLabelModel> models = new ArrayList<UnitLabelModel>(data.size() + 1);
+            ArrayList<UnitLabelModel> models = new ArrayList<>(data.size() + 1);
 
             String oldUnitLabel = model.unitsLabel;
 
