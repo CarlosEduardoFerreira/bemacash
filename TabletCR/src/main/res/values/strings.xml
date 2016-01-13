@@ -1802,5 +1802,24 @@
     <string name="composer_selections" formatted="false">Selected %s\'s composition items: %s</string>
     <string name="composer_dialog_text">Please determine the composer details</string>
 
+    <string name="item_activity_alert_description_sales">Sales price should be positive</string>
+    <string name="edit_item_variants">Variants</string>
+
+    <string name="variants_activity_name">Name</string>
+    <string name="variants_activity_count">Count</string>
+    <string name="variants_count">Qty Variants</string>
+    <string name="variants">Variants</string>
+    <string name="variant">Variant</string>
+    <string name="value">Value</string>
+    <string name="adding" formatted="false">Adding %d/%d</string>
+    <string name="no_variants">No variants added</string>
+
+    <string name="item_activity_reference_item">Reference Item:</string>
+    <string name="name">Name</string>
+    <string name="inventory_item_description">Item description</string>
+    <string name="variants_add">Add</string>
+    <string name="variants_delete">Delete</string>
+    <string name="variants_clear">Clear</string>
+
 
 </resources>

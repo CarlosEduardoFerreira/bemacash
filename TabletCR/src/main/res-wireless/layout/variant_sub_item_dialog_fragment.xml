@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:maxWidth="@dimen/default_dlg_width"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/count_text"
+        style="@style/Variant.DialogTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/variant_dialog_margin"
+        android:gravity="center" />
+
+    <EditText
+        android:id="@+id/name_edit"
+        style="@style/Variant.EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/variant_dialog_margin"
+        android:layout_marginBottom="@dimen/variant_dialog_margin"
+        android:hint="@string/name" />
+
+
+</LinearLayout>

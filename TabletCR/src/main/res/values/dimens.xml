@@ -192,4 +192,10 @@
     <dimen name="inventory_item_activity_units_button_width">32dp</dimen>
     <dimen name="inventory_item_activity_units_button_height">32dp</dimen>
 
+    <dimen name="variant_dialog_margin">16dp</dimen>
+    <dimen name="inventory_item_edit_activity_padding_left">65dp</dimen>
+    <dimen name="inventory_item_edit_activity_padding_right">65dp</dimen>
+    <dimen name="inventory_matrix_item_padding_right">16dp</dimen>
+    <dimen name="variant_item_padding">16dp</dimen>
+
 </resources>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige"
+    android:orientation="horizontal"
+    android:paddingBottom="30dp"
+    android:paddingLeft="@dimen/inventory_item_edit_activity_padding_left"
+    android:paddingRight="@dimen/inventory_item_edit_activity_padding_right"
+    android:paddingTop="25dp">
+
+    <include layout="@layout/inventory_item_common_info" />
+
+    <include layout="@layout/inventory_item_price" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/edit_item_table_margin_left"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/button"
+            layout="@layout/inventory_item_button" />
+
+        <LinearLayout
+            android:id="@+id/variants_label"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/inventory_title_line"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/edit_item_monitoring" />
+
+            <TextView
+                style="@style/EditItem.Table.Header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/edit_item_variants" />
+
+            <ImageButton
+                android:id="@+id/variants_change"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@android:color/transparent"
+                android:padding="5dp"
+                android:src="@drawable/btn_edit_permission" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/variants_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_above="@+id/button"
+            android:layout_below="@+id/variants_label"
+            android:layout_weight="1" />
+    </RelativeLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/item_list_bg">
+
+    <LinearLayout
+        android:id="@+id/header"
+        style="@style/ItemList.HeaderLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/ItemList.HeaderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:gravity="center"
+            android:text="@string/variant" />
+
+
+        <TextView
+            style="@style/ItemList.HeaderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/variants_count" />
+    </LinearLayout>
+
+    <ExpandableListView
+        android:id="@+id/variants_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header"
+        android:cacheColorHint="@android:color/transparent"
+        android:groupIndicator="@null" />
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_variants"
+        android:textColor="@color/activity_gray_primary_text"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <include layout="@layout/variants_list_vertical_dividers" />
+</RelativeLayout>

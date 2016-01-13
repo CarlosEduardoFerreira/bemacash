@@ -1539,4 +1539,30 @@
         <item name="sb_actionText"></item>
         <item name="sb_duration">5000</item>
     </style>
+
+    <style name="Variant" />
+
+    <style name="Variant.EditText">
+        <item name="android:textStyle">italic</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">@dimen/dlg_edit_text_font_size</item>
+        <item name="android:background">@drawable/edit_text_holo_dark</item>
+        <item name="android:textCursorDrawable">@drawable/text_cursor_holo_dark</item>
+        <item name="android:textColor">@color/light_gray</item>
+        <item name="android:layout_marginLeft">@dimen/variant_dialog_margin</item>
+        <item name="android:layout_marginRight">@dimen/variant_dialog_margin</item>
+    </style>
+
+    <style name="Variant.DialogTextView">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/light_gray</item>
+        <item name="android:layout_marginLeft">@dimen/variant_dialog_margin</item>
+        <item name="android:layout_marginRight">@dimen/variant_dialog_margin</item>
+    </style>
+
+
+    <style name="Variant.ItemText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/activity_gray_primary_text</item>
+    </style>
 </resources>
