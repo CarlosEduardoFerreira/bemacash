@@ -18,6 +18,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.CategoryItemView;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.CategoryView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.CategoryView2.ItemTable;
 import com.kaching123.tcr.store.ShopStore.CategoryView;
@@ -88,7 +89,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         getLoaderManager().restartLoader(CATEGORY_LOADER_ID, Bundle.EMPTY, this);
     }
 
-    private void loadByPosition(AdapterView<?> v, int pos){
+    private void loadByPosition(AdapterView<?> v, int pos) {
         selectedPosition = pos;
         if (pos == 0 && isListViewWithHeader(v)) {
             headerItemClicked();
@@ -143,24 +144,34 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         boolean loadEmptyCategories = this instanceof CategoriesFragment;
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(URI_CATEGORIES);
-        builder.projection(CategoryTable.ID, CategoryTable.DEPARTMENT_GUID,
+        builder.projection(CategoryTable.ID,
+                CategoryTable.DEPARTMENT_GUID,
                 CategoryTable.GUID,
                 CategoryTable.TITLE,
                 CategoryTable.IMAGE,
                 _count(ItemTable.GUID, CategoryView.ITEM_COUNT));
-        if (useOnlyNearTheEnd){
+        if (useOnlyNearTheEnd) {
             builder.where(ItemTable.STOCK_TRACKING + " = ? ", "1");
             builder.where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY));
-    }
-        if (!loadEmptyCategories){
-            builder.where(ItemTable.GUID + " is not null");
         }
-
-        if (forSale) {
+        builder.where(ItemTable.IS_DELETED + " = ? ", "0");
+        if (serial) {
+            builder.where(ItemTable.SERIALIZABLE + " = ? ", "1");
+        } else if (composer) {
+            builder.where(ShopSchema2.CategoryView2.HostComposerTable.ID + " IS NOT NULL");
+        } else if (composition) {
+            builder.where(ShopSchema2.CategoryView2.ChildComposerTable.ID + " IS NOT NULL");
+        } else if (reference) {
+            builder.where(ItemTable.ITEM_REF_TYPE + " <> ? ", "0");
+        } else if (child) {
+            builder.where(ItemTable.REFERENCE_ITEM_ID + " IS NOT NULL OR " + ShopSchema2.CategoryView2.ItemMatrixTable.PARENT_GUID + " IS NOT NULL");
+        } else if (forSale) {
             builder.where(ItemTable.SALABLE + " = ? ", "0");
         }
-
-        if (!(this instanceof CategoriesFragment)){
+        if (!loadEmptyCategories) {
+            builder.where(ItemTable.GUID + " is not null");
+        }
+        if (!(this instanceof CategoriesFragment)) {
             builder.where(ItemTable.SALABLE + " = ? ", "1");
         }
 
@@ -175,7 +186,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         int n = getItemsCount(cursor);
-        if (header != null){
+        if (header != null) {
             header.bind(null, getString(R.string.inventory_categories_all_categories), n, true);
             header.invalidate();
         }
@@ -185,7 +196,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
 
     protected int getItemsCount(Cursor cursor) {
         int n = 0;
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             n += cursor.getInt(cursor.getColumnIndex(CategoryView.ITEM_COUNT));
         }
         return n;
@@ -204,10 +215,10 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         if (checkedPosition < 0 || checkedPosition >= adapter.getCount())
             checkedPosition = isListViewWithHeader(getAdapterView()) ? selectedPosition : 0;
 
-        if(isListViewWithHeader(getAdapterView()) || cursor.getCount() > 0){
+        if (isListViewWithHeader(getAdapterView()) || cursor.getCount() > 0) {
             getAdapterView().setItemChecked(checkedPosition, true);
             loadByPosition(getAdapterView(), checkedPosition);
-        }else {
+        } else {
             getAdapterView().setItemChecked(AdapterView.INVALID_POSITION, true);
         }
     }

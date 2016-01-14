@@ -3322,9 +3322,22 @@ public abstract class ShopStore {
         @Join(joinTable = DepartmentTable.TABLE_NAME, joinColumn = DepartmentTable.GUID, onTableAlias = TABLE_CATEGORY, onColumn = CategoryTable.DEPARTMENT_GUID)
         String TABLE_DEPARTMENT = "department_table";
 
-        @Columns({ItemTable.GUID, ItemTable.STOCK_TRACKING, ItemTable.TMP_AVAILABLE_QTY, ItemTable.MINIMUM_QTY, ItemTable.SALABLE})
-        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.CATEGORY_ID, onTableAlias = TABLE_CATEGORY, onColumn = CategoryTable.GUID)
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Join(joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.CATEGORY_ID, onTableAlias = TABLE_CATEGORY, onColumn = CategoryTable.GUID)
         String TABLE_ITEM = "item_table";
+
+        @Columns(ComposerTable.ID)
+        @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_HOST_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
+        String TABLE_CHILD_COMPOSER = "child_composer_table";
+
+        @Columns(ComposerTable.ID)
+        @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_CHILD_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
+        String TABLE_HOST_COMPOSER = "host_composer_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({ItemMatrixTable.PARENT_GUID})
+        @Join(type = Join.Type.LEFT, joinTable = ItemMatrixTable.TABLE_NAME, joinColumn = ItemMatrixTable.CHILD_GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
+        String TABLE_ITEM_MATRIX = "item_matrix_table";
 
     }
 
