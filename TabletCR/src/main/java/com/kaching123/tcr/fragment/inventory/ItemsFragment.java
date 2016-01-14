@@ -26,6 +26,7 @@ import com.kaching123.tcr.commands.store.inventory.UpdateItemOrderCommand;
 import com.kaching123.tcr.commands.store.inventory.UpdateItemOrderCommand.BaseUpdateItemOrderCommandCallback;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
@@ -207,9 +208,11 @@ public class ItemsFragment extends BaseItemsPickFragment {
         public void marks(LinearLayout holder,
                           boolean composer,
                           boolean composition,
+                          boolean reference,
                           boolean forSale,
                           boolean hasModifiers,
-                          boolean serial) {
+                          boolean serial,
+                          boolean child) {
             // Now the layout parameters, these are a little tricky at first
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -335,9 +338,11 @@ public class ItemsFragment extends BaseItemsPickFragment {
             marks(holder.status,
                     item.isAComposer,
                     item.isAComposisiton && !item.isSerializable(),
+                    item.refType == ItemRefType.Reference,
                     item.isSalable,
                     item.hasModificators(),
-                    item.isSerializable());
+                    item.isSerializable(),
+                    !TextUtils.isEmpty(item.referenceItemGuid) || !TextUtils.isEmpty(item.matrixGuid));
 
             return convertView;
         }
