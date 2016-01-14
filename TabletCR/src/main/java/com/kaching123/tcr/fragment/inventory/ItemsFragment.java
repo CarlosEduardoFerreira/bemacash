@@ -146,8 +146,8 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
     public void setTextFilter(String filter) {
         this.textFilter = filter;
-        Logger.d("[Loader] ItemsFragment setTextFilter");
-        getLoaderManager().restartLoader(0, null, this);
+        Logger.d("restartLoader from setTextFilter");
+        restartLoader();
     }
 
     public void setFilter(boolean composer,
@@ -164,21 +164,21 @@ public class ItemsFragment extends BaseItemsPickFragment {
         this.hasModifiers = hasModifiers;
         this.serial = serial;
         this.child = child;
-        Logger.d("[Loader] ItemsFragment setFilter");
-        getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
+        Logger.d("restartLoader from setFilter");
+        restartLoader();
     }
 
 
     public void setUseOnlyNearTheEnd(boolean useOnlyNearTheEnd) {
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
         Logger.d("[Loader] ItemsFragment setUseOnlyNearTheEnd");
-        //getLoaderManager().restartLoader(0, null, this);
+        restartLoader();
     }
 
     public void sortByName(boolean sortByName) {
         this.sortByName = sortByName;
-        Logger.d("[Loader] ItemsFragment sortByName");
-        getLoaderManager().restartLoader(0, null, this);
+        Logger.d("restartLoader from sortByName");
+        restartLoader();
     }
 
     private class Adapter extends ObjectCursorDragAdapter<ItemExModel> implements DragSortListView.DropListener {

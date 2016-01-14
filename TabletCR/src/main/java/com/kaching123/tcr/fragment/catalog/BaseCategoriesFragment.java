@@ -35,6 +35,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._count;
 public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.ICategoryListener> extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final Uri URI_CATEGORIES = ShopProvider.getContentUriGroupBy(CategoryView.URI_CONTENT, CategoryTable.GUID);
+    private static final int CATEGORY_LOADER_ID = 0;
 
     protected T listener;
 
@@ -79,8 +80,12 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         getAdapterView().setAdapter(adapter);
         if (loadImmediately()) {
             Logger.d("[Loader] BaseCategoriesFragment initLoader");
-            getLoaderManager().initLoader(0, null, this);
+            getLoaderManager().initLoader(CATEGORY_LOADER_ID, null, this);
         }
+    }
+
+    protected void restartLoader() {
+        getLoaderManager().restartLoader(CATEGORY_LOADER_ID, Bundle.EMPTY, this);
     }
 
     private void loadByPosition(AdapterView<?> v, int pos){
@@ -113,7 +118,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
 
     public void setUseOnlyNearTheEnd(boolean useOnlyNearTheEnd) {
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
-        getLoaderManager().restartLoader(0, null, this);
+        restartLoader();
     }
 
     public void setFilter(boolean composer,
@@ -129,7 +134,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         this.hasModifiers = hasModifiers;
         this.serial = serial;
 
-        getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
+        restartLoader();
     }
 
     @Override
@@ -195,7 +200,8 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
 
         int checkedPosition = selectedPosition;
         if (checkedPosition < 0 || checkedPosition >= adapter.getCount())
-            checkedPosition = 0;
+            checkedPosition = isListViewWithHeader(getAdapterView()) ? selectedPosition : 0;
+
         if(isListViewWithHeader(getAdapterView()) || cursor.getCount() > 0){
             getAdapterView().setItemChecked(checkedPosition, true);
             loadByPosition(getAdapterView(), checkedPosition);
