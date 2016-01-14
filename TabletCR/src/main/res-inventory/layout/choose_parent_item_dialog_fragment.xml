@@ -15,7 +15,7 @@
         android:imeOptions="actionDone"
         android:inputType="textVisiblePassword" />
 
-    <br.com.bematech.bemacash.component.ItemAutocompleteTextView
+    <com.kaching123.tcr.component.ItemAutocompleteTextView
         android:id="@+id/item_matrix_chooser"
         style="@style/StyledDialog.Content.EditText"
         android:layout_width="match_parent"

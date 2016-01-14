@@ -77,7 +77,6 @@ import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
-import com.kaching123.tcr.util.UnitUtil;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -309,7 +308,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         printerAliasAdapter = new PrinterAliasAdapter(this);
         printerAlias.setAdapter(printerAliasAdapter);
 
-        ArrayAdapter<PriceTypeHolder> priceTypeAdapter = new ArrayAdapter<PriceTypeHolder>(this, R.layout.spinner_item_light, new PriceTypeHolder[]{
+        ArrayAdapter<PriceTypeHolder> priceTypeAdapter = new ArrayAdapter<>(this,
+                R.layout.spinner_item_light, new PriceTypeHolder[]{
                 new PriceTypeHolder("Fixed", PriceType.FIXED),
                 new PriceTypeHolder("Open", PriceType.OPEN),
                 new PriceTypeHolder("Unit Price", PriceType.UNIT_PRICE),
@@ -319,16 +319,12 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         //*************************************************************************
         ArrayAdapter<SerializationTypeHolder> unitTypeAdapter =
-                new ArrayAdapter<SerializationTypeHolder>(this,
-                        R.layout.spinner_item_light,
-                        new SerializationTypeHolder[]
-                                {
-                                        new SerializationTypeHolder(null),
-                                        new SerializationTypeHolder(CodeType.SN),
-                                        new SerializationTypeHolder(CodeType.IMEI),
-                                        new SerializationTypeHolder(CodeType.ICCID),
-                                }
-                );
+                new ArrayAdapter<>(this, R.layout.spinner_item_light, new SerializationTypeHolder[]{
+                        new SerializationTypeHolder(null),
+                        new SerializationTypeHolder(CodeType.SN),
+                        new SerializationTypeHolder(CodeType.IMEI),
+                        new SerializationTypeHolder(CodeType.ICCID),
+                });
         unitTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         serializationType.setAdapter(unitTypeAdapter);
 //        serializationType.setVisibility( ViewType.WIRELESS.toString().equals( getApp().getShopPref().shopViewType().get()) ? View.VISIBLE : View.GONE );
@@ -660,8 +656,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     protected boolean isPcs() {
-        PriceType pt = ((PriceTypeHolder) priceType.getSelectedItem()).type;
-        return UnitUtil.isNotUnitPriceType(pt);
+// FIXME       PriceType pt = ((PriceTypeHolder) priceType.getSelectedItem()).type;
+  // FIXME     return UnitUtil.isNotUnitPriceType(pt);
+        return false;
     }
 
     /*protected void updateStockTrackingBlock(boolean isChecked) {
@@ -746,7 +743,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?
                 BigDecimal.ZERO.toString() : this.salesPrice.getText().toString();
 
-        model.price = parseBigDecimal(price.replaceAll(",",""), BigDecimal.ZERO);
+        model.price = parseBigDecimal(price.replaceAll(",", ""), BigDecimal.ZERO);
 
         model.isDiscountable = this.discountable.isChecked();
 
@@ -758,7 +755,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         String discount = this.discount.getText().toString();
         model.discount = parseBigDecimal(discount, BigDecimal.ZERO);
 
-        model.isTaxable = this.taxable.isChecked();
+        //model.isTaxable = this.taxable.isChecked();
         // c = (Cursor) this.taxGroup.getSelectedItem();
         //   model.taxGroupGuid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
 

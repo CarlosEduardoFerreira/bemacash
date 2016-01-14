@@ -33,7 +33,8 @@ public class AddItemActivity extends BaseCommonItemActivity {
     protected void init() {
         super.init();
         if (!TextUtils.isEmpty(model.tmpBarcode)) {
-            ItemCodeChooserAlertDialogFragment.show(AddItemActivity.this, filterBarcodes(model.tmpBarcode));
+            ItemCodeChooserAlertDialogFragment.show(AddItemActivity.this,
+                    filterBarcodes(model.tmpBarcode));
         }
         updateStockTrackingBlock(false);
         new GetNextProductCodeTask().execute();

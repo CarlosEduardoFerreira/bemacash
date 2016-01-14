@@ -137,6 +137,10 @@ public class ItemsFragment extends BaseItemsPickFragment {
             builder.where(ShopSchema2.ItemExtView2.HostComposerTable.ID + " IS NOT NULL");
         } else if (composition) {
             builder.where(ShopSchema2.ItemExtView2.ChildComposerTable.ID + " IS NOT NULL");
+        } else if (reference) {
+            builder.where(ItemTable.ITEM_REF_TYPE + " <> ? ", "0");
+        } else if (child) {
+            builder.where(ItemTable.REFERENCE_ITEM_ID + " IS NOT NULL OR " + ShopSchema2.ItemExtView2.ItemMatrixTable.PARENT_GUID + " IS NOT NULL");
         } else if (forSale) {
             builder.where(ItemTable.SALABLE + " = ? ", "0");
         }
@@ -225,6 +229,20 @@ public class ItemsFragment extends BaseItemsPickFragment {
                 ImageView image = new ImageView(getContext());
                 image.setScaleType(ImageView.ScaleType.MATRIX);
                 image.setImageResource(R.drawable.ic_dashboard_black_18dp);
+                // Let's get the root layout and add our ImageView
+                holder.addView(image, 0, params);
+            }
+            if (reference) {
+                ImageView image = new ImageView(getContext());
+                image.setScaleType(ImageView.ScaleType.MATRIX);
+                image.setImageResource(R.drawable.tree_structure_24);
+                // Let's get the root layout and add our ImageView
+                holder.addView(image, 0, params);
+            }
+            if (child) {
+                ImageView image = new ImageView(getContext());
+                image.setScaleType(ImageView.ScaleType.MATRIX);
+                image.setImageResource(R.drawable.broken_link_24);
                 // Let's get the root layout and add our ImageView
                 holder.addView(image, 0, params);
             }
@@ -335,11 +353,13 @@ public class ItemsFragment extends BaseItemsPickFragment {
                     public void run() {
                         try {
                             updateItemOrder();
-                        } catch (Exception bunny) {}
+                        } catch (Exception bunny) {
+                        }
                     }
                 }, 3000);
 
-            } catch (CursorIndexOutOfBoundsException pokemon) {}
+            } catch (CursorIndexOutOfBoundsException pokemon) {
+            }
         }
 
         private void updateItemOrder() {

@@ -12,6 +12,7 @@ import com.kaching123.tcr.jdbc.converters.DepartmentJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeeJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeeTimesheetJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ItemMatrixJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsModifierGroupsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsModifiersJdbcConverter;
@@ -28,6 +29,8 @@ import com.kaching123.tcr.jdbc.converters.TaxGroupJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.TipsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.UnitLabelJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.UnitsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.VariantItemJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.VariantSubItemJdbcConverter;
 import com.kaching123.tcr.model.ActivationCarrierModel;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CashDrawerMovementModel;
@@ -42,6 +45,7 @@ import com.kaching123.tcr.model.EmployeePermissionModel;
 import com.kaching123.tcr.model.EmployeeTimesheetModel;
 import com.kaching123.tcr.model.IValueModel;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ModifierExModel;
@@ -51,7 +55,6 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.model.RegisterModel;
 import com.kaching123.tcr.model.SaleModifierModel;
-import com.kaching123.tcr.model.SaleOrderItemAddonModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.ShiftModel;
@@ -59,13 +62,15 @@ import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.UnitLabelModel;
+import com.kaching123.tcr.model.VariantItemModel;
+import com.kaching123.tcr.model.VariantSubItemModel;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopStore.CashDrawerMovementTable;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
+import com.kaching123.tcr.store.ShopStore.ComposerTable;
 import com.kaching123.tcr.store.ShopStore.CreditReceiptTable;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
@@ -76,6 +81,7 @@ import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
@@ -86,7 +92,6 @@ import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
-import com.kaching123.tcr.store.ShopStore.ComposerTable;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.util.HashMap;
@@ -267,6 +272,24 @@ public class JdbcFactory {
 
         API_METHOD.put(ShopStore.UnitLabelTable.TABLE_NAME, "unit_label");
         API_METHOD2.put(UnitLabelModel.class, "unit_label");
+
+        CONVERTERS.put(ShopStore.VariantItemTable.TABLE_NAME, c = new VariantItemJdbcConverter());
+        CONVERTERS2.put(VariantItemModel.class, c);
+
+        API_METHOD.put(ShopStore.VariantItemTable.TABLE_NAME, "variants");
+        API_METHOD2.put(VariantItemModel.class, "variants");
+
+        CONVERTERS.put(ShopStore.VariantSubItemTable.TABLE_NAME, c = new VariantSubItemJdbcConverter());
+        CONVERTERS2.put(VariantSubItemModel.class, c);
+
+        API_METHOD.put(ShopStore.VariantSubItemTable.TABLE_NAME, "sub_variants");
+        API_METHOD2.put(VariantSubItemModel.class, "sub_variants");
+
+        CONVERTERS.put(ShopStore.ItemMatrixTable.TABLE_NAME, c = new ItemMatrixJdbcConverter());
+        CONVERTERS2.put(ItemMatrixModel.class, c);
+
+        API_METHOD.put(ShopStore.ItemMatrixTable.TABLE_NAME, "item_matrixes");
+        API_METHOD2.put(ItemMatrixModel.class, "item_matrixes");
 
     }
 

@@ -79,6 +79,8 @@ public class InventoryActivity extends ScannerBaseActivity {
     private final static int INVENTORY_NAVIGATION_FILTER_COMPOSITIONS = 3;
     private final static int INVENTORY_NAVIGATION_NOT_FOR_SALE = 4;
     private final static int INVENTORY_NAVIGATION_SERIAL = 5;
+    private final static int INVENTORY_NAVIGATION_FILTER_REFS = 6;
+    private final static int INVENTORY_NAVIGATION_FILTER_CHILD = 7;
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
     private static final int INITCOUNT_LOADER_ID = 0;
@@ -182,41 +184,53 @@ public class InventoryActivity extends ScannerBaseActivity {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
             actionBar.setListNavigationCallbacks(new NavigationSpinnerAdapter(this), new OnNavigationListener() {
 
-                @Override
-                public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-                    switch (itemPosition) {
-                        case INVENTORY_NAVIGATION_FILTER_ALL:
-                        case INVENTORY_NAVIGATION_FILTER_NEAR_THE_END:
-                            itemsFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
-                            categoriesFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
-                            itemsFragment.setFilter(false, false, false, false, false, false, false);
-                            categoriesFragment.setFilter(false, false, false, false, false, false);
-                            break;
-                        case INVENTORY_NAVIGATION_FILTER_COMPOSERS:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(true, false, false, false, false, false, false);
-                            categoriesFragment.setFilter(true, false, false, false, false, false);
-                            break;
-                        case INVENTORY_NAVIGATION_FILTER_COMPOSITIONS:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(false, true, false, false, false, false, false);
-                            categoriesFragment.setFilter(false, true, false, false, false, false);
-                            break;
-                        case INVENTORY_NAVIGATION_NOT_FOR_SALE:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(false, false, false, true, false, false, false);
-                            categoriesFragment.setFilter(false, false, false, true, false, false);
-                            break;
-                        case INVENTORY_NAVIGATION_SERIAL:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(false, false, false, true, false, true, false);
-                            categoriesFragment.setFilter(false, false, false, true, false, true);
-                            break;
-                    }
+            @Override
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                switch (itemPosition) {
+                    case INVENTORY_NAVIGATION_FILTER_ALL:
+                    case INVENTORY_NAVIGATION_FILTER_NEAR_THE_END:
+                        itemsFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
+                        categoriesFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
+                        itemsFragment.setFilter(false, false, false, false, false, false, false);
+                        categoriesFragment.setFilter(false, false, false, false, false, false, false);
+                        break;
+                    case INVENTORY_NAVIGATION_FILTER_COMPOSERS:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(true, false, false, false, false, false, false);
+                        categoriesFragment.setFilter(true, false, false, false, false, false, false);
+                        break;
+                    case INVENTORY_NAVIGATION_FILTER_COMPOSITIONS:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(false, true, false, false, false, false, false);
+                        categoriesFragment.setFilter(false, true, false, false, false, false, false);
+                        break;
+                    case INVENTORY_NAVIGATION_FILTER_REFS:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(false, false, true, false, false, false, false);
+                        categoriesFragment.setFilter(false, false, true, false, false, false, false);
+                        break;
+                    case INVENTORY_NAVIGATION_FILTER_CHILD:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(false, false, false, false, false, false, true);
+                        categoriesFragment.setFilter(false, false, false, false, false, false, true);
+                        break;
+                    case INVENTORY_NAVIGATION_NOT_FOR_SALE:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(false, false, false, true, false, false, false);
+                        categoriesFragment.setFilter(false, false, false, true, false, false, false);
+                        break;
+                    case INVENTORY_NAVIGATION_SERIAL:
+                        itemsFragment.setUseOnlyNearTheEnd(false);
+                        categoriesFragment.setUseOnlyNearTheEnd(false);
+                        itemsFragment.setFilter(false, false, false, true, false, true, false);
+                        categoriesFragment.setFilter(false, false, false, true, false, true, false);
+                        break;
+                }
 
                     return true;
                 }
@@ -399,7 +413,9 @@ public class InventoryActivity extends ScannerBaseActivity {
                             context.getString(R.string.inventory_navigation_filter_composers),
                             context.getString(R.string.inventory_navigation_filter_compositions),
                             context.getString(R.string.inventory_navigation_not_for_sale),
-                            context.getString(R.string.inventory_navigation_serial)});
+                            context.getString(R.string.inventory_navigation_serial),
+                            context.getString(R.string.inventory_navigation_filter_refs),
+                            context.getString(R.string.inventory_navigation_filter_child)});
             setDropDownViewResource(R.layout.actionbar_spinner_drodown_item);
         }
     }
@@ -456,8 +472,8 @@ public class InventoryActivity extends ScannerBaseActivity {
             }
 
             if (isDeletedItems != null && !isDeletedItems.isEmpty()) {
-                for(WrongImportInfo item: isDeletedItems) {
-                   UpdateDeletedItemCommand.start(InventoryActivity.this, item.productCode);
+                for (WrongImportInfo item : isDeletedItems) {
+                    UpdateDeletedItemCommand.start(InventoryActivity.this, item.productCode);
                 }
             }
         }

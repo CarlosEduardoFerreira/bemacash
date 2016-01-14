@@ -126,13 +126,15 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
                           boolean reference,
                           boolean forSale,
                           boolean hasModifiers,
-                          boolean serial) {
+                          boolean serial,
+                          boolean child) {
         this.composer = composer;
         this.composition = composition;
         this.reference = reference;
         this.forSale = forSale;
         this.hasModifiers = hasModifiers;
         this.serial = serial;
+        this.child = child;
 
         restartLoader();
     }

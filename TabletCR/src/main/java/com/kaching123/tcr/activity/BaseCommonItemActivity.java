@@ -110,7 +110,8 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
         referenceItem.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChooseParentItemDialogFragment.show(BaseCommonItemActivity.this, model.guid, new ChooseParentItemDialogFragment.OnItemChosenListener() {
+                ChooseParentItemDialogFragment.show(BaseCommonItemActivity.this, model.guid,
+                        new ChooseParentItemDialogFragment.OnItemChosenListener() {
                     @Override
                     public void onItemChosen(ItemExModel parentItem, ItemMatrixModel parentItemMatrix) {
                         referenceItem.setText(parentItem.description);

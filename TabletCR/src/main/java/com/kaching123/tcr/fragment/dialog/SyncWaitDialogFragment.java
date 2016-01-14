@@ -12,10 +12,10 @@ import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.UploadTask;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopStore.CashDrawerMovementTable;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
+import com.kaching123.tcr.store.ShopStore.ComposerTable;
 import com.kaching123.tcr.store.ShopStore.CreditReceiptTable;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
@@ -26,6 +26,7 @@ import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
@@ -35,9 +36,10 @@ import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
+import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
+import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.ShopStore.WirelessTable;
-import com.kaching123.tcr.store.ShopStore.ComposerTable;
 import com.kaching123.tcr.util.ReceiverWrapper;
 
 import org.androidannotations.annotations.EFragment;
@@ -139,6 +141,10 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(ItemTable.TABLE_NAME, R.string.sync_item);
         TABLE_NAMES.put(ModifierTable.TABLE_NAME, R.string.sync_modifier);
         TABLE_NAMES.put(ItemMovementTable.TABLE_NAME, R.string.sync_item_movement);
+        TABLE_NAMES.put(ShopStore.VariantItemTable.TABLE_NAME, R.string.sync_item_variant);
+        TABLE_NAMES.put(ShopStore.VariantSubItemTable.TABLE_NAME, R.string.sync_item_sub_variant);
+        TABLE_NAMES.put(ShopStore.ItemMatrixTable.TABLE_NAME, R.string.sync_item_matrix);
+
         TABLE_NAMES.put(ModifierGroupTable.TABLE_NAME, R.string.sync_units);
         TABLE_NAMES.put(ComposerTable.TABLE_NAME, R.string.sync_item_composition);
 
@@ -155,10 +161,10 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(ShiftTable.TABLE_NAME, R.string.sync_shift);
         TABLE_NAMES.put(CashDrawerMovementTable.TABLE_NAME, R.string.sync_cashdrawer_movemennt);
 
-        TABLE_NAMES.put(ShopStore.TaxGroupTable.TABLE_NAME, R.string.tax_group);
-        TABLE_NAMES.put(ShopStore.ModifierGroupTable.TABLE_NAME, R.string.sync_mod_groups_table);
+        TABLE_NAMES.put(TaxGroupTable.TABLE_NAME, R.string.tax_group);
+        TABLE_NAMES.put(ModifierGroupTable.TABLE_NAME, R.string.sync_mod_groups_table);
 
-        TABLE_NAMES.put(ShopStore.UnitLabelTable.TABLE_NAME, R.string.sync_unit_label_table);
+        TABLE_NAMES.put(UnitLabelTable.TABLE_NAME, R.string.sync_unit_label_table);
 
         TABLE_NAMES.put(RegisterTable.TABLE_NAME, R.string.register);
 
@@ -174,7 +180,7 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(EmployeeTipsTable.TABLE_NAME, R.string.sync_employee_tips);
         TABLE_NAMES.put(EmployeeCommissionsTable.TABLE_NAME, R.string.sync_employee_commissions);
 
-        TABLE_NAMES.put(ShopStore.UnitLabelTable.TABLE_NAME, R.string.sync_oomposer);
+        //TABLE_NAMES.put(UnitLabelTable.TABLE_NAME, R.string.sync_oomposer);
 
     }
 

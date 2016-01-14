@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<br.com.bematech.bemacash.component.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.kaching123.tcr.component.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeightSmall"
     android:background="@drawable/variant_list_item_bg"
@@ -23,4 +23,4 @@
         android:gravity="left"
         android:paddingLeft="24dp" />
 
-</br.com.bematech.bemacash.component.CheckableLinearLayout>
+</com.kaching123.tcr.component.CheckableLinearLayout>

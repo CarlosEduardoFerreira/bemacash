@@ -548,6 +548,32 @@
                     android:button="@drawable/checkbox_mint"
                     android:checked="true" />
             </TableRow>
+
+            <TableRow
+                android:id="@+id/reference_item_row"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <FrameLayout style="@style/EditItem.Table.LabelLayout.Price">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label"
+                        android:text="@string/item_activity_reference_item" />
+                </FrameLayout>
+
+                <EditText
+                    android:id="@+id/reference_item"
+                    style="@style/EditItem.Table.Edittext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false" />
+            </TableRow>
+
             <TableRow
                 android:id="@+id/commissions_eligible_container"
                 android:layout_width="fill_parent"
