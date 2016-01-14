@@ -11,6 +11,8 @@ import org.androidannotations.annotations.FragmentArg;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.component.BrandTextWatcher;
+import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.QuantityFormatInputFilter;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
@@ -50,9 +52,9 @@ public class QtyEditFragment extends DecimalEditFragment{
 
     @Override
     protected void attachViews() {
-        super.attachViews();
-        editText.setFilters(new InputFilter[]{new QuantityFormatInputFilter()});
-        if(!isEnable) {
+        editText.addTextChangedListener(new BrandTextWatcher(editText));
+       // editText.setFilters(new InputFilter[]{new QuantityFormatInputFilter()});
+    /*    if(!isEnable) {
             getNegativeButton().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -60,7 +62,17 @@ public class QtyEditFragment extends DecimalEditFragment{
                     dismiss();
                 }
             });
-        }
+        }*/
+        editText.setKeyboardSupportConteiner(this);
+        keyboard.attachEditView(editText);
+        keyboard.setDotEnabled(!isInteger);
+        editText.setEditListener(new CustomEditBox.IEditListener() {
+            @Override
+            public boolean onChanged(String text) {
+                callInternalListener(submitListener);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -76,7 +88,7 @@ public class QtyEditFragment extends DecimalEditFragment{
 
     @Override
     protected BigDecimal getDecimalValue() {
-        String text = editText.getText().toString();
+        String text = editText.getText().toString().replaceAll(",", "");;
         try {
             if (text.endsWith("-")){
                 return negativeQty(new BigDecimal(text.substring(0, text.length() - 1)));
@@ -108,7 +120,7 @@ public class QtyEditFragment extends DecimalEditFragment{
 
     public interface OnEditQtyListener {
 
-        public void onConfirm(BigDecimal qty);
+         void onConfirm(BigDecimal qty);
 
     }
 }

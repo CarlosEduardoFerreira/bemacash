@@ -12,6 +12,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
+import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.CustomEditBox;
 
 import java.math.BigDecimal;
@@ -39,15 +40,20 @@ public abstract class DecimalEditFragment extends KeyboardDialogFragment {
     @ColorRes(R.color.light_gray)
     protected int normalTextColor;
 
+    protected CurrencyTextWatcher currencyTextWatcher;
+
+
     @ColorRes(R.color.subtotal_tax_empty)
     protected int errorTextColor;
 
     @AfterViews
     protected void attachViews() {
+        currencyTextWatcher = new CurrencyTextWatcher(editText);
         editText.setKeyboardSupportConteiner(this);
         editText.setFilters(new InputFilter[]{new CurrencyFormatInputFilter()});
         keyboard.attachEditView(editText);
         keyboard.setDotEnabled(!isInteger);
+        editText.addTextChangedListener(currencyTextWatcher);
         editText.setEditListener(new CustomEditBox.IEditListener() {
             @Override
             public boolean onChanged(String text) {
@@ -85,8 +91,9 @@ public abstract class DecimalEditFragment extends KeyboardDialogFragment {
 
     protected boolean onSubmitForm() {
         BigDecimal value = validateForm();
-        if (value == null)
+        if (value == null) {
             return false;
+        }
         callCommand(saleItemGuid, value);
         if (onResultListener != null) {
             onResultListener.onComplete();
@@ -107,7 +114,7 @@ public abstract class DecimalEditFragment extends KeyboardDialogFragment {
     }
 
     protected BigDecimal getDecimalValue() {
-        String text = editText.getText().toString();
+        String text = editText.getText().toString().replaceAll("\\,", "");;
         try {
             if (text.endsWith("-")){
                 return negative(new BigDecimal(text.substring(0, text.length() - 1)));
@@ -124,10 +131,9 @@ public abstract class DecimalEditFragment extends KeyboardDialogFragment {
         super.onActivityCreated(savedInstanceState);
         editText.requestFocus();
         enablePositiveButtons(false);
-        //showDecimal(editText, decimalValue);
-    }
+     }
 
-    private OnDialogClickListener submitListener = new OnDialogClickListener() {
+    protected OnDialogClickListener submitListener = new OnDialogClickListener() {
         @Override
         public boolean onClick() {
             return onSubmitForm();

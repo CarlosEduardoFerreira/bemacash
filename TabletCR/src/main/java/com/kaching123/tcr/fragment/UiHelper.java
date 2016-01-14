@@ -27,12 +27,12 @@ public final class UiHelper {
     private static final DecimalFormat percentFormat = new DecimalFormat("0.##");
     private static final DecimalFormat integralIntegerFormat = new DecimalFormat("0");
 
-    private static final DecimalFormat quantityFormat = new DecimalFormat("#,##0.00");//("0.000");
+    private static final DecimalFormat quantityFormat = new DecimalFormat("#,##0.00");
     private static final DecimalFormat quantityIntegerFormat = new DecimalFormat("0.###");
 
     private static final DecimalFormat brandQtyFormat = new DecimalFormat("#,##0.000");
     private static final DecimalFormat brandQrtyIntFormat = new DecimalFormat("#,###");
-    private static final DecimalFormat priceInputFormat = new DecimalFormat("#,###.##");
+    private static final DecimalFormat priceInputFormat = new DecimalFormat("#,###0.00");
 
     static {
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
@@ -261,9 +261,10 @@ public final class UiHelper {
 
     public static BigDecimal parseBrandQtyInput(String text) {
         BigDecimal value = BigDecimal.ZERO;
+
         if(!TextUtils.isEmpty(text)) {
         try {
-            value = (BigDecimal) brandQrtyIntFormat.parseObject(text);
+            value = (BigDecimal) brandQrtyIntFormat.parseObject(text.replaceAll("\\,", ""));
         } catch (ParseException e) {
             Logger.e("Parse error: " + e.toString());
         }

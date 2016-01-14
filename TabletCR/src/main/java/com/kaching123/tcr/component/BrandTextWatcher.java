@@ -86,7 +86,7 @@ public class BrandTextWatcher implements TextWatcher {
             }
         }
         if (!isDecimalPart) {
-            String intPart = value.replaceAll("\\.", "");
+            String intPart = value.replaceAll("\\,", "");
             if (intPart.length() > MAX_INT) {
                 intPart = intPart.substring(0, MAX_INT);
             }

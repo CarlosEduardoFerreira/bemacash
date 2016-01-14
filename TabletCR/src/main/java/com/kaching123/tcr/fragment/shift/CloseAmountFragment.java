@@ -20,7 +20,7 @@ public class CloseAmountFragment extends DecimalEditFragment {
 
     private static final String DIALOG_NAME = CloseAmountFragment.class.getSimpleName();
 
-    private static final BigDecimal MAX_VALUE = new BigDecimal("9999999.99");
+    private static final BigDecimal MAX_VALUE = new BigDecimal("999999.99");
 
     private OnEditAmountListener editAmountListener;
 
@@ -84,7 +84,12 @@ public class CloseAmountFragment extends DecimalEditFragment {
     protected BigDecimal validateForm() {
         BigDecimal value = getDecimalValue();
         BigDecimal maxValue = getMaxValue();
-        return value != null && (maxValue == null || value.compareTo(maxValue) != 1) ? value : null;
+        return
+                value != null && (maxValue == null || value.compareTo(maxValue) != 1)
+                        ?
+                        value
+                        :
+                        null;
     }
 
     public void setEditAmountListener(OnEditAmountListener editAmountListener) {

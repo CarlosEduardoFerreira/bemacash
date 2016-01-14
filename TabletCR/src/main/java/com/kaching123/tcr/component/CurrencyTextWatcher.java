@@ -75,7 +75,7 @@ public class CurrencyTextWatcher implements TextWatcher {
             }
         }
         if (!isDecimalPart) {
-            final String intPart = value.replaceAll("\\.", "");
+            final String intPart = value.replaceAll("\\,", "");
             final String priceFormattedString = UiHelper.priceFormat(UiHelper.parseBrandDecimalInput(intPart));
             isEditMode = true;
             amount.clear();
