@@ -47,7 +47,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
 
     private static final Uri URI_ADDONS = ShopProvider.getContentUri(ModifierTable.URI_CONTENT);
 
-    private static final Uri URI_SALE_ADDONS_NO_NOTIFY = ShopProvider.getNoNotifyContentUri(SaleAddonTable.URI_CONTENT);
+    private static final Uri URI_SALE_ADDONS_NO_NOTIFY = ShopProvider.contentUriNoNotify(SaleAddonTable.URI_CONTENT);
     private static final Uri URI_SALE_ADDONS = ShopProvider.getContentUri(SaleAddonTable.URI_CONTENT);
 
     private static final String ARG_MODIFIER_GUID = "ARG_MODIFIER_GUID";
@@ -189,12 +189,12 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
         for (String addonGuid : needToDelete) {
             operations.add(ContentProviderOperation.newUpdate(URI_SALE_ADDONS_NO_NOTIFY)
                     .withValues(ShopStore.DELETE_VALUES)
-                    .withSelection(SaleAddonTable.ADDON_GUID + " = ?", new String[]{addonGuid})
+                    .withSelection(SaleAddonTable.ADDON_GUID + " = ? and " + SaleAddonTable.ITEM_GUID + " = ?", new String[]{addonGuid, saleItemGuid})
                     .build());
         }
 
@@ -234,7 +234,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
             if (isUpdate) {
                 operations.add(ContentProviderOperation.newUpdate(URI_SALE_ADDONS)
                         .withValues(ShopStore.DELETE_VALUES)
-                        .withSelection(SaleAddonTable.ADDON_GUID + " = ?", selectionArgs)
+                        .withSelection(SaleAddonTable.ADDON_GUID + " = ? and " + SaleAddonTable.ITEM_GUID + " = ?", selectionArgs)
                         .build());
             } else {
                 operations.add(ContentProviderOperation.newInsert(URI_SALE_ADDONS)
