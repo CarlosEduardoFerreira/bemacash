@@ -1832,4 +1832,8 @@
     <string name="inventory_action_populate">Populate</string>
     <string name="item_matrix_filter">Find the matrix item</string>//not translated
 
+    <string name="item_activity_alert_ean_bad_error">EAN\\UPC was not scanned properly.</string>
+    <string name="item_activity_alert_ean_invalid_error">EAN is not valid</string>
+    <string name="item_activity_alert_product_code_empty_error">Product code can not be empty</string>
+
 </resources>

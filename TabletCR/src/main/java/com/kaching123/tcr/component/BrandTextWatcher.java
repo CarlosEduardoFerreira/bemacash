@@ -21,13 +21,19 @@ public class BrandTextWatcher implements TextWatcher {
     protected boolean isEditMode;
     private boolean isDecimalPart;
 
-    private final static int MAX_INT = 6;
+    private static int MAX_INT = 6;
     private final static int MAX_DEC = 3;
 
     private final TextView view;
 
     public BrandTextWatcher(final TextView view) {
         this.view = view;
+    }
+
+    public BrandTextWatcher(final TextView view, boolean isEightMax) {
+        this.view = view;
+        if(isEightMax)
+            MAX_INT = 8;
     }
 
     @Override

@@ -2,17 +2,21 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
+import com.kaching123.tcr.commands.store.inventory.EditVariantMatrixItemCommand;
 import com.kaching123.tcr.commands.wireless.CollectUnitsCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -25,6 +29,8 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.composer.RecalculateHostCompositionMetadataCommand;
 import com.kaching123.tcr.util.UnitUtil;
 
@@ -37,6 +43,8 @@ import org.androidannotations.annotations.OptionsMenu;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.kaching123.tcr.fragment.UiHelper.showBrandQty;
+import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
@@ -46,7 +54,9 @@ import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
  */
 @EActivity(R.layout.inventory_item_activity)
 @OptionsMenu(R.menu.items_actions)
-public class EditItemActivity extends BaseItemActivity {
+public class EditItemActivity extends BaseCommonItemActivity {
+    private static final int ITEM_MATRIX_LOADER = 20;
+    private static final int ITEM_PARENT_LOADER = 21;
 
     @InstanceState
     protected boolean hasLoadedComposerInfo;
@@ -56,37 +66,26 @@ public class EditItemActivity extends BaseItemActivity {
     @AfterViews
     @Override
     protected void init() {
+        hasLoadedComposerInfo = true;
         super.init();
+
         availableQty.setVisibility(View.GONE);
-        availableQtyPencil.setVisibility(View.VISIBLE);
-        availableQtyPencil.setOnClickListener(updateQtyListener);
-        availableQtyPencil.setFocusable(false);
-        availableQtyPencil.setFocusableInTouchMode(false);
+        //availableQtyPencil.setVisibility(View.VISIBLE);
+        //availableQtyPencil.setOnClickListener(updateQtyListener);
+        //availableQtyPencil.setFocusable(false);
+        //availableQtyPencil.setFocusableInTouchMode(false);
         fillFields();
 
         Logger.d(String.format("[%s]%d", model.description, model.orderNum));
 
-        hasLoadedComposerInfo = true;
         recollectComposerInfo();
-    }
-
-    @Override
-    protected void collectDataToModel(ItemModel model) {
-        super.collectDataToModel(model);
-        model.ignoreMovementupdate = ignoreMovementupdate;
     }
 
     @Override
     protected void updateStockTrackingBlock(boolean isChecked) {
         super.updateStockTrackingBlock(isChecked);
+        availableQty.setEnabled(false);
         recollectUnitsInfo();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem menuItem = menu.findItem(R.id.action_composer);
-        menuItem.setIcon(buildCounterDrawable(countWithNoRestrickted, android.R.drawable.ic_dialog_dialer));
-        return super.onCreateOptionsMenu(menu);
     }
 
     private void recollectUnitsInfo() {
@@ -108,7 +107,6 @@ public class EditItemActivity extends BaseItemActivity {
             });
         }
     }
-
 
     @Override
     public void onResume() {
@@ -139,7 +137,28 @@ public class EditItemActivity extends BaseItemActivity {
 
     @Override
     protected void callCommand(ItemModel model) {
+        if (parentItemMatrix == null) {
+            if (parentItem != null) {
+                model.referenceItemGuid = parentItem.guid;
+            }
+        } else {
+            EditVariantMatrixItemCommand.start(EditItemActivity.this, parentItemMatrix);
+            model.referenceItemGuid = null;
+        }
         EditItemCommand.start(this, model);
+    }
+
+    @Override
+    protected void collectDataToModel(ItemModel model) {
+        super.collectDataToModel(model);
+        model.ignoreMovementupdate = ignoreMovementupdate;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.action_composer);
+        menuItem.setIcon(buildCounterDrawable(countWithNoRestrickted, android.R.drawable.ic_dialog_dialer));
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -148,159 +167,6 @@ public class EditItemActivity extends BaseItemActivity {
         menu.findItem(R.id.action_serial).setVisible(model.isSerializable() && PlanOptions.isSerializableAllowed());
         menu.findItem(R.id.action_composer).setVisible(!model.isSerializable() && !model.isAComposer);
         return true;
-    }
-
-    @OptionsItem
-    protected void actionRemoveSelected() {
-        AlertDialogFragment.show(
-                this,
-                DialogType.CONFIRM_NONE,
-                R.string.item_activity_hide_item_dialog_title,
-                getString(R.string.item_activity_hide_item_dialog_message),
-                R.string.btn_confirm,
-                new OnDialogClickListener() {
-                    @Override
-                    public boolean onClick() {
-                        DeleteItemCommand.start(EditItemActivity.this, model.guid);
-                        finish();
-                        return true;
-                    }
-                }
-        );
-
-    }
-
-    private void fillFields() {
-
-        description.setText(model.description);
-        ean.setText(model.eanCode);
-        productCode.setText(model.productCode);
-        active.setChecked(model.isActiveStatus);
-        serializationType.setSelection(getIndexForType(model.codeType));
-
-        //stockTrackingFlag.setChecked(model.isStockTracking);
-        showPrice(salesPrice, model.price);
-        discountable.setChecked(model.isDiscountable);
-        taxable.setChecked(model.isTaxable);
-        salableChBox.setChecked(model.isSalable);
-        enableForSaleParams(model.isSalable);
-        showPrice(cost, model.cost);
-
-        commissionsEligible.setChecked(model.commissionEligible);
-        showPrice(commissions, model.commission);
-
-        stockTrackingFlag.setChecked(model.isStockTracking);
-        updateStockTrackingBlock(model.isStockTracking);
-
-        if (model.discountType != null) {
-            int dType = 0;
-            switch (model.discountType) {
-                case PERCENT:
-                    discountType.setSelection(INDEX_DISCOUNT_PERCENT);
-                    dType = INDEX_DISCOUNT_PERCENT;
-                    break;
-                case VALUE:
-                    discountType.setSelection(INDEX_DISCOUNT_VALUE);
-                    dType = INDEX_DISCOUNT_VALUE;
-                    break;
-            }
-            discountType.setOnItemSelectedListener(new SpinnerChangeListener(dType));
-        }
-
-
-        showPrice(discount, model.discount);
-
-        buttonView.getBackground().setLevel(model.btnView);
-
-        hasNotes.setChecked(model.hasNotes);
-
-        setQuantities();
-
-        setFieldsChangeListeners();
-    }
-
-    protected void setQuantities() {
-        if (UnitUtil.isPcs(model.priceType)) {
-            showInteger(availableQty, model.availableQty);
-            showInteger(availableQtyPencil, model.availableQty);
-            showInteger(minimumQty, model.minimumQty);
-            showInteger(recommendedQty, model.recommendedQty);
-        } else {
-            showQuantity(availableQty, model.availableQty);
-            showQuantity(availableQtyPencil, model.availableQty);
-            showQuantity(minimumQty, model.minimumQty);
-            showQuantity(recommendedQty, model.recommendedQty);
-        }
-    }
-
-    @Override
-    protected void setPriceType() {
-        int pType = 0;
-        switch (model.priceType) {
-            case FIXED:
-                priceType.setSelection(INDEX_FIXED_PRICE);
-                pType = INDEX_FIXED_PRICE;
-                break;
-            case OPEN:
-                priceType.setSelection(INDEX_OPEN_PRICE);
-                pType = INDEX_OPEN_PRICE;
-                break;
-            case UNIT_PRICE:
-                priceType.setSelection(INDEX_UNIT_PRICE);
-                pType = INDEX_UNIT_PRICE;
-                break;
-        }
-        priceType.setOnItemSelectedListener(new SpinnerPriceTypeChangeListener(pType));
-    }
-
-    private boolean redirectBarcodeResult = false;
-
-    @Override
-    public void onBarcodeReceived(String barcode) {
-        if (redirectBarcodeResult) {
-            Fragment fragment = getSupportFragmentManager().getFragments().get(0);
-            assert fragment != null;
-            UnitsEditFragment editFragment = (UnitsEditFragment) fragment;
-            editFragment.onBarcodeReceived(barcode);
-        } else {
-            ItemCodeChooserAlertDialogFragment.show(EditItemActivity.this, barcode);
-            //super.onBarcodeReceived(barcode);
-        }
-    }
-
-    @Override
-    public void barcodeReceivedFromSerialPort(String barcode) {
-        Logger.d("EditItemActivity onReceive:" + barcode);
-
-        onBarcodeReceived(barcode);
-    }
-
-    private class SpinnerPriceTypeChangeListener extends SpinnerChangeListener {
-
-        SpinnerPriceTypeChangeListener(int position) {
-            super(position);
-        }
-
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            super.onItemSelected(adapterView, view, i, l);
-            onPcsCheck();
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-        }
-
-    }
-
-    public static void start(Context context, ItemExModel model) {
-        EditItemActivity_.intent(context).model(model).start();
-    }
-
-    protected void setQtyPencilVisibility() {
-        if (hasLoadedComposerInfo) {
-            //monitoringQntEditRow.setVisibility(model.codeType == null && count == 0 ? View.VISIBLE : View.GONE);
-        }
     }
 
     @Override
@@ -343,8 +209,220 @@ public class EditItemActivity extends BaseItemActivity {
         });
     }
 
+    @OptionsItem
+    protected void actionRemoveSelected() {
+        AlertDialogFragment.show(
+                this,
+                DialogType.CONFIRM_NONE,
+                R.string.item_activity_hide_item_dialog_title,
+                getString(R.string.item_activity_hide_item_dialog_message),
+                R.string.btn_confirm,
+                new OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        DeleteItemCommand.start(EditItemActivity.this, model.guid);
+                        finish();
+                        return true;
+                    }
+                }
+        );
+
+    }
+
+    private void fillFields() {
+
+        description.setText(model.description);
+        ean.setText(model.eanCode);
+        productCode.setText(model.productCode);
+        active.setChecked(model.isActiveStatus);
+        serializationType.setSelection(getIndexForType(model.codeType));
+
+        //stockTrackingFlag.setChecked(model.isStockTracking);
+        showPrice(salesPrice, model.price);
+        discountable.setChecked(model.isDiscountable);
+
+        salableChBox.setChecked(model.isSalable);
+        enableForSaleParams(model.isSalable);
+        //taxable.setChecked(model.isTaxable);
+        showPrice(cost, model.cost);
+
+        commissionsEligible.setChecked(model.commissionEligible);
+        showPrice(commissions, model.commission);
+
+        stockTrackingFlag.setChecked(model.isStockTracking);
+        updateStockTrackingBlock(model.isStockTracking);
+
+        if (model.discountType != null) {
+            int dType = 0;
+            switch (model.discountType) {
+                case PERCENT:
+                    discountType.setSelection(INDEX_DISCOUNT_PERCENT);
+                    dType = INDEX_DISCOUNT_PERCENT;
+                    break;
+                case VALUE:
+                    discountType.setSelection(INDEX_DISCOUNT_VALUE);
+                    dType = INDEX_DISCOUNT_VALUE;
+                    break;
+            }
+            discountType.setOnItemSelectedListener(new SpinnerChangeListener(dType));
+        }
+
+
+        showPrice(discount, model.discount);
+
+        buttonView.getBackground().setLevel(model.btnView);
+
+        hasNotes.setChecked(model.hasNotes);
+
+        setFieldsChangeListeners();
+
+        setQuantities(model);
+
+        if (model.referenceItemGuid == null) {
+            getSupportLoaderManager().restartLoader(ITEM_MATRIX_LOADER, null, cursorLoaderCallbacks);
+        } else {
+            getSupportLoaderManager().restartLoader(ITEM_PARENT_LOADER, null, cursorLoaderCallbacks);
+        }
+
+    }
+
+    protected void setQuantities(ItemExModel model) {
+        if (UnitUtil.isNotUnitPriceType(model.priceType)) {
+            showBrandQtyInteger(availableQty, model.availableQty);
+            showBrandQtyInteger(minimumQty, model.minimumQty);
+            showBrandQtyInteger(recommendedQty, model.recommendedQty);
+        } else {
+            showBrandQty(availableQty, model.availableQty);
+            showBrandQty(minimumQty, model.minimumQty);
+            showBrandQty(recommendedQty, model.recommendedQty);
+        }
+    }
+
+    private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            switch (id) {
+                case ITEM_MATRIX_LOADER:
+                    return CursorLoaderBuilder.forUri(ShopProvider.contentUri(ShopStore.ItemMatrixByParentView.URI_CONTENT))
+                            .where(ShopStore.ItemMatrixByParentView.CHILD_ITEM_GUID + " = ?", model.guid).build(EditItemActivity.this);
+                case ITEM_PARENT_LOADER:
+                    return CursorLoaderBuilder.forUri(ShopProvider.contentUri(ShopStore.ItemTable.URI_CONTENT))
+                            .where(ShopStore.ItemTable.GUID + " = ?", model.referenceItemGuid).build(EditItemActivity.this);
+                default:
+                    throw new IllegalArgumentException("Unsupported loader id: "
+                            + Integer.toHexString(id));
+            }
+
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            switch (loader.getId()) {
+                case ITEM_MATRIX_LOADER:
+                    if (data.moveToFirst()) {
+                        referenceItem.setText(data.getString(data.getColumnIndex(ShopStore.ItemMatrixByParentView.ITEM_DESCRIPTION)));
+                    }
+                    break;
+                case ITEM_PARENT_LOADER:
+                    if (data.moveToFirst()) {
+                        referenceItem.setText(data.getString(data.getColumnIndex(ShopStore.ItemTable.DESCRIPTION)));
+                    }
+                default:
+
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+        }
+    };
+
+    protected void setQuantities() {
+        if (UnitUtil.isPcs(model.priceType)) {
+            showInteger(availableQty, model.availableQty);
+            //showInteger(availableQtyPencil, model.availableQty);
+            showInteger(minimumQty, model.minimumQty);
+            showInteger(recommendedQty, model.recommendedQty);
+        } else {
+            showQuantity(availableQty, model.availableQty);
+            //showQuantity(availableQtyPencil, model.availableQty);
+            showQuantity(minimumQty, model.minimumQty);
+            showQuantity(recommendedQty, model.recommendedQty);
+        }
+    }
+
+    @Override
+    protected void setPriceType() {
+        int pType = 0;
+        switch (model.priceType) {
+            case FIXED:
+                priceType.setSelection(INDEX_FIXED_PRICE);
+                pType = INDEX_FIXED_PRICE;
+                break;
+            case OPEN:
+                priceType.setSelection(INDEX_OPEN_PRICE);
+                pType = INDEX_OPEN_PRICE;
+                break;
+            case UNIT_PRICE:
+                priceType.setSelection(INDEX_UNIT_PRICE);
+                pType = INDEX_UNIT_PRICE;
+                break;
+        }
+        priceType.setOnItemSelectedListener(new SpinnerPriceTypeChangeListener(pType));
+    }
+
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        Logger.d("EditItemActivity onReceive:" + barcode);
+
+        onBarcodeReceived(barcode);
+    }
+
+    protected void setQtyPencilVisibility() {
+        if (hasLoadedComposerInfo) {
+            //monitoringQntEditRow.setVisibility(model.codeType == null && count == 0 ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private boolean redirectBarcodeResult = false;
+
+    @Override
+    public void onBarcodeReceived(String barcode) {
+        if (redirectBarcodeResult) {
+            Fragment fragment = getSupportFragmentManager().getFragments().get(0);
+            assert fragment != null;
+            UnitsEditFragment editFragment = (UnitsEditFragment) fragment;
+            editFragment.onBarcodeReceived(barcode);
+        } else {
+            ItemCodeChooserAlertDialogFragment.show(EditItemActivity.this, barcode);
+            //super.onBarcodeReceived(barcode);
+        }
+    }
+
+    private class SpinnerPriceTypeChangeListener extends SpinnerChangeListener {
+
+        SpinnerPriceTypeChangeListener(int position) {
+            super(position);
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            super.onItemSelected(adapterView, view, i, l);
+            onPcsCheck();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+        }
+
+    }
+
     @Override
     protected EditItemActivity self() {
         return EditItemActivity.this;
+    }
+
+    public static void start(Context context, ItemExModel model) {
+        EditItemActivity_.intent(context).model(model).start();
     }
 }

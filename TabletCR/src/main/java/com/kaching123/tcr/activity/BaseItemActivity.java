@@ -21,9 +21,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -33,7 +31,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,51 +43,41 @@ import com.kaching123.tcr.activity.PrinterAliasActivity.PrinterAliasConverter;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.adapter.SpinnerAdapter;
 import com.kaching123.tcr.adapter.UnitsLabelAdapter;
-import com.kaching123.tcr.commands.wireless.CollectUnitsCommand;
-import com.kaching123.tcr.commands.wireless.DropUnitsCommand;
-import com.kaching123.tcr.commands.wireless.DropUnitsCommand.UnitCallback;
+import com.kaching123.tcr.component.BrandTextWatcher;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
-import com.kaching123.tcr.component.QuantityFormatInputFilter;
-import com.kaching123.tcr.component.SignedQuantityFormatInputFilter;
+import com.kaching123.tcr.component.CurrencyTextWatcher;
+import com.kaching123.tcr.component.PercentFormatInputFilter;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
-import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.editmodifiers.EditDialog;
 import com.kaching123.tcr.fragment.editmodifiers.EditDialog.OnEditListener;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment.IButtonViewDialogListener;
-import com.kaching123.tcr.fragment.inventory.InventoryQtyEditDialog;
 import com.kaching123.tcr.fragment.inventory.ItemCodeChooserAlertDialogFragment;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
 import com.kaching123.tcr.model.DiscountType;
-import com.kaching123.tcr.model.ItemCodeType;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
-import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.PrinterAliasModel;
-import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.UnitLabelModelFactory;
-import com.kaching123.tcr.model.converter.ModifierFunction;
 import com.kaching123.tcr.model.converter.UnitLabelFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
-import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
-import com.kaching123.tcr.util.MovementUtils;
 import com.kaching123.tcr.util.UnitUtil;
-import com.kaching123.tcr.util.Validator;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -107,18 +94,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
-import static com.kaching123.tcr.fragment.UiHelper.showBrandQty;
-import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
-import static com.kaching123.tcr.fragment.UiHelper.showInteger;
-import static com.kaching123.tcr.fragment.UiHelper.showIntegralInteger;
-import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /**
  * Created by vkompaniets on 02.12.13.
  */
 @EActivity(R.layout.inventory_item_activity)
-public abstract class BaseItemActivity extends ScannerBaseActivity implements LoaderManager.LoaderCallbacks<Cursor>, ItemCodeChooserAlertDialogFragment.ItemCodeTypeChooseListener {
+public abstract class BaseItemActivity extends ScannerBaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int REQ_MODIFIER = 1;
     private static final String[] UNITS_LABEL = {"PCS", "LB", "OZ"};
@@ -174,10 +156,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     @ViewById
     protected Spinner taxGroup;
     @ViewById
-    protected EditText ean;
-    @ViewById
-    protected EditText productCode;
-    @ViewById
     protected Spinner unitsLabel;
     @ViewById
     protected Button unitsButton;
@@ -189,10 +167,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected CheckBox active;
     @ViewById
     protected Spinner printerAlias;
-    @ViewById
-    protected TextView modifiers;
-    @ViewById
-    protected TextView modifiersLabel;
+    //@ViewById
+    //protected TextView modifiers;
+    //@ViewById
+    //protected TextView modifiersLabel;
     @ViewById
     protected TextView addons;
     @ViewById
@@ -201,14 +179,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected TextView optionals;
     @ViewById
     protected TextView optionalsLabel;
-    @ViewById
-    protected EditText minimumQty;
-    @ViewById
-    protected EditText recommendedQty;
-    @ViewById
-    protected EditText availableQty;
-    @ViewById
-    protected CheckBox stockTrackingFlag;
+    //@ViewById
+    //protected EditText availableQty;
     @ViewById
     protected EditText salesPrice;
     @ViewById
@@ -229,10 +201,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected View buttonView;
     @ViewById
     protected CheckBox hasNotes;
-    @ViewById
-    protected TableLayout modifiersTable;
-    @ViewById
-    protected TextView availableQtyPencil;
+    //@ViewById
+    //protected TableLayout modifiersTable;
+    //@ViewById
+    //protected TextView availableQtyPencil;
     @ViewById
     protected View availableQtyBlock;
     @ViewById
@@ -243,6 +215,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected CheckBox commissionsEligible;
     @ViewById
     protected EditText commissions;
+
+    @Extra
+    protected ItemExModel parentItem;
+    @Extra
+    protected ItemMatrixModel parentItemMatrix;
 
     protected DepartmentSpinnerAdapter departmentAdapter;
     protected CategorySpinnerAdapter categoryAdapter;
@@ -261,7 +238,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         return permissions;
     }
 
-    private boolean duplicateUpc;
+    protected boolean duplicateUpc;
 
     protected boolean duplicateProductCode;
 
@@ -377,7 +354,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         discountTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         discountType.setAdapter(discountTypeAdapter);
 
-        modifiersTable.setOnClickListener(new OnClickListener() {
+        /*modifiersTable.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!PlanOptions.isModifiersAllowed()) {
@@ -386,9 +363,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                     ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
                 }
             }
-        });
+        });*/
 
-        getSupportLoaderManager().restartLoader(MODIFIERS_LOADER, null, new ModifierModelLoader());
+        //getSupportLoaderManager().restartLoader(MODIFIERS_LOADER, null, new ModifierModelLoader());
 
         unitsLabelAdapter = new UnitsLabelAdapter(this);
         unitsLabel.setAdapter(unitsLabelAdapter);
@@ -405,11 +382,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         getSupportLoaderManager().initLoader(PRINTER_ALIAS_LOADER_ID, null, new PrinterAliasLoader());
         getSupportLoaderManager().initLoader(UNITS_LABEL_LOADER, null, new UnitsLabelLoader());
 
-        fillModifierLabels(0, 0, 0);
+        //fillModifierLabels(0, 0, 0);
 
-        stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
-
-        availableQtyPencil.setEnabled(PlanOptions.isStockTrackingAllowed());
+        //availableQtyPencil.setEnabled(PlanOptions.isStockTrackingAllowed());
 
     }
 
@@ -417,108 +392,16 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     }
 
-    @Override
-    public void onItemCodeTypeChosen(ItemCodeType codeType, String code) {
-        onItemCodeType(codeType, code);
-    }
-
-    protected void onItemCodeType(ItemCodeType codeType, String code) {
-        if (ItemCodeType.EAN_UPC == codeType) {
-            if (Validator.isEanValid(code)) {
-                ean.setText(code);
-            } else {
-                Toast.makeText(this, getString(R.string.item_activity_alert_ean_error, TcrApplication.EAN_UPC_CODE_MAX_LEN), Toast.LENGTH_SHORT).show();
-            }
-        } else if (ItemCodeType.PRODUCT_CODE == codeType) {
-            if (Validator.isProductCodeValid(code)) {
-                productCode.setText(code);
-            } else {
-                Toast.makeText(this, getString(R.string.item_activity_alert_product_code_error, TcrApplication.PRODUCT_CODE_MAX_LEN), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     protected void recalculateSerialization() {
-        final CodeType oldCodeType = model.codeType;
-        final CodeType newCodeType = getTypeForIndex(serializationType);
-        final boolean stockTrackEnabled = stockTrackingFlag.isChecked();
 
-        stockTrackingSetup(newCodeType);
 
-        CollectUnitsCommand.start(this, null, model.guid, null, null, null, false, false, new CollectUnitsCommand.UnitCallback() {
-            @Override
-            protected void handleSuccess(final List<Unit> unit) {
-
-                if (oldCodeType != null && newCodeType == null && !unit.isEmpty()) {
-                    AlertDialogWithCancelFragment.showWithTwo(BaseItemActivity.this,
-                            R.string.wireless_remove_items_title,
-                            getString(R.string.wireless_remove_items_body),
-                            R.string.btn_ok,
-                            new AlertDialogWithCancelFragment.OnDialogListener() {
-                                @Override
-                                public boolean onClick() {
-                                    model.codeType = newCodeType;
-                                    DropUnitsCommand.start(BaseItemActivity.this, (ArrayList<Unit>) unit, model, new UnitCallback() {
-                                        @Override
-                                        protected void handleSuccess(ItemExModel model) {
-                                            Toast.makeText(BaseItemActivity.this, getString(R.string.unit_drop_ok), Toast.LENGTH_LONG).show();
-                                            model.serializable = false;
-                                            onSerializableSet(false);
-                                            if (!stockTrackEnabled) {
-                                                model.availableQty = null;
-                                            }
-                                            BaseItemActivity.this.model = model;
-                                            setQuantities();
-                                            invalidateOptionsMenu();
-                                        }
-
-                                        @Override
-                                        protected void handleError() {
-                                            Toast.makeText(BaseItemActivity.this, getString(R.string.unit_drop_partially_faield), Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                    return true;
-                                }
-
-                                @Override
-                                public boolean onCancel() {
-                                    serializationType.setSelection(getIndexForType(oldCodeType));
-                                    return true;
-                                }
-                            }
-                    );
-
-                } else if (oldCodeType == null && newCodeType != null) {
-                    model.codeType = newCodeType;
-                    model.serializable = true;
-                    onSerializableSet(true);
-                    model.availableQty = stockTrackEnabled ? BigDecimal.ZERO : null;
-                    setQuantities();
-                    invalidateOptionsMenu();
-                }
-            }
-
-            @Override
-            protected void handleError() {
-                Toast.makeText(BaseItemActivity.this, getString(R.string.unit_drop_failed), Toast.LENGTH_LONG).show();
-            }
-        });
-
-    }
-
-    private void stockTrackingSetup(CodeType codeType) {
-        final boolean isSerializable = codeType != null;
-        if (isSerializable) {
-            stockTrackingFlag.setChecked(true);
-        }
-        stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
     }
 
     protected void onSerializableSet(boolean isSerializable) {
 
     }
 
-    private CodeType getTypeForIndex(Spinner position) {
+    protected CodeType getTypeForIndex(Spinner position) {
         return ((SerializationTypeHolder) position.getSelectedItem()).type;
     }
 
@@ -667,7 +550,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     protected abstract void callCommand(ItemModel model);
 
-    protected void fillModifierFields(List<ModifierModel> modifierModels) {
+    /*protected void fillModifierFields(List<ModifierModel> modifierModels) {
         clearlModifierFields();
 
         int modCount = 0;
@@ -690,32 +573,43 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         fillModifierLabels(modCount, addonCount, optionCount);
     }
 
-    protected void clearlModifierFields() {
+    /*protected void clearlModifierFields() {
         modifiers.setText(null);
         addons.setText(null);
         optionals.setText(null);
         fillModifierLabels(0, 0, 0);
-    }
+    }*
 
     protected void fillModifierLabels(int modCount, int addonCount, int optionCount) {
         modifiersLabel.setText(String.format(getString(R.string.item_activity_modifiers), modCount));
         addonsLabel.setText(String.format(getString(R.string.item_activity_addons), addonCount));
         optionalsLabel.setText(String.format(getString(R.string.item_activity_optionals), optionCount));
-    }
+    }*/
 
-    protected void setFieldsFilters() {
+    /*protected void setFieldsFilters() {
         InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
-        InputFilter[] quantityFilter = new InputFilter[]{new QuantityFormatInputFilter()};
-        InputFilter[] signedQuantityFilter = new InputFilter[]{new SignedQuantityFormatInputFilter()};
-        InputFilter[] productCodeFilter = new InputFilter[]{new InputFilter.LengthFilter(TcrApplication.PRODUCT_CODE_MAX_LEN), alphanumericFilter};
-        availableQty.setFilters(signedQuantityFilter);
-        minimumQty.setFilters(quantityFilter);
-        recommendedQty.setFilters(quantityFilter);
+        //InputFilter[] quantityFilter = new InputFilter[]{new QuantityFormatInputFilter()};
+        //InputFilter[] signedQuantityFilter = new InputFilter[]{new SignedQuantityFormatInputFilter()};
+        //InputFilter[] productCodeFilter = new InputFilter[]{new InputFilter.LengthFilter(TcrApplication.PRODUCT_CODE_MAX_LEN), alphanumericFilter};
+        //availableQty.setFilters(signedQuantityFilter);
+        //minimumQty.setFilters(quantityFilter);
+        //recommendedQty.setFilters(quantityFilter);
         salesPrice.setFilters(currencyFilter);
         cost.setFilters(currencyFilter);
         commissions.setFilters(currencyFilter);
         discount.setFilters(currencyFilter);
-        productCode.setFilters(productCodeFilter);
+    }*/
+
+    protected void setFieldsFilters() {
+        InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
+        InputFilter[] percentFilter = new InputFilter[]{new PercentFormatInputFilter()};
+        salesPrice.setFilters(currencyFilter);
+        salesPrice.addTextChangedListener(new CurrencyTextWatcher(salesPrice));
+        cost.setFilters(currencyFilter);
+        cost.addTextChangedListener(new CurrencyTextWatcher(cost));
+        commissions.setFilters(percentFilter);
+        commissions.addTextChangedListener(new CurrencyTextWatcher(commissions));
+        discount.addTextChangedListener(new CurrencyTextWatcher(discount));
     }
 
     final InputFilter alphanumericFilter = new InputFilter() {
@@ -736,63 +630,17 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         SalableCheckedChangeListener salableCheckedChangeListener = new SalableCheckedChangeListener();
 
         description.addTextChangedListener(textChangeListener);
-        ean.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                changed = true;
-                if (editable.length() >= TcrApplication.BARCODE_MIN_LEN) {
-                    getSupportLoaderManager().restartLoader(UPC_LOADER_ID, null, new UpcLoader());
-                }
-            }
-        });
-
-        productCode.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                changed = true;
-                if (editable.length() >= TcrApplication.BARCODE_MIN_LEN) {
-                    getSupportLoaderManager().restartLoader(PRODUCT_CODE_LOADER_ID, null, new ProductCodeLoader());
-                }
-            }
-        });
 
         active.setOnCheckedChangeListener(checkedChangeListener);
-        availableQty.addTextChangedListener(textChangeListener);
-        minimumQty.addTextChangedListener(textChangeListener);
-        recommendedQty.addTextChangedListener(textChangeListener);
-
-        stockTrackingFlag.setOnCheckedChangeListener(checkedChangeListener);
+        //availableQty.addTextChangedListener(textChangeListener);
         salesPrice.addTextChangedListener(textChangeListener);
         discountable.setOnCheckedChangeListener(checkedChangeListener);
-        taxable.setOnCheckedChangeListener(checkedChangeListener);
+        //taxable.setOnCheckedChangeListener(checkedChangeListener);
         salableChBox.setOnCheckedChangeListener(salableCheckedChangeListener);
         commissionsEligible.setOnCheckedChangeListener(checkedChangeListener);
         cost.addTextChangedListener(textChangeListener);
         commissions.addTextChangedListener(textChangeListener);
         discount.addTextChangedListener(textChangeListener);
-        stockTrackingFlag.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                changed = true;
-                updateStockTrackingBlock(isChecked);
-            }
-        });
         hasNotes.setOnCheckedChangeListener(checkedChangeListener);
 
         setPriceType();
@@ -809,53 +657,14 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     protected void onPcsCheck(boolean init) {
-        if (isPcs()) {
-            availableQty.setInputType(EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_SIGNED);
-            minimumQty.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-            recommendedQty.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-
-            if (init)
-                return;
-
-            try {
-                if (!TextUtils.isEmpty(availableQty.getText()))
-                    showIntegralInteger(availableQty, new BigDecimal(availableQty.getText().toString()));
-                if (!TextUtils.isEmpty(availableQtyPencil.getText()))
-                    showIntegralInteger(availableQtyPencil, new BigDecimal(availableQtyPencil.getText().toString()));
-                if (!TextUtils.isEmpty(minimumQty.getText()))
-                    showIntegralInteger(minimumQty, new BigDecimal(minimumQty.getText().toString()));
-                if (!TextUtils.isEmpty(recommendedQty.getText()))
-                    showIntegralInteger(recommendedQty, new BigDecimal(recommendedQty.getText().toString()));
-            } catch (NumberFormatException ignore) {
-            }
-        } else {
-            availableQty.setInputType(EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_SIGNED | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-            minimumQty.setInputType(EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-            recommendedQty.setInputType(EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-
-            if (init)
-                return;
-
-            try {
-                if (!TextUtils.isEmpty(availableQty.getText()))
-                    UiHelper.showQuantity(availableQty, new BigDecimal(availableQty.getText().toString()));
-                if (!TextUtils.isEmpty(availableQtyPencil.getText()))
-                    UiHelper.showQuantity(availableQtyPencil, new BigDecimal(availableQtyPencil.getText().toString()));
-                if (!TextUtils.isEmpty(minimumQty.getText()))
-                    UiHelper.showQuantity(minimumQty, new BigDecimal(minimumQty.getText().toString()));
-                if (!TextUtils.isEmpty(recommendedQty.getText()))
-                    UiHelper.showQuantity(recommendedQty, new BigDecimal(recommendedQty.getText().toString()));
-            } catch (NumberFormatException ignore) {
-            }
-        }
     }
 
     protected boolean isPcs() {
         PriceType pt = ((PriceTypeHolder) priceType.getSelectedItem()).type;
-        return UnitUtil.isPcs(pt);
+        return UnitUtil.isNotUnitPriceType(pt);
     }
 
-    protected void updateStockTrackingBlock(boolean isChecked) {
+    /*protected void updateStockTrackingBlock(boolean isChecked) {
         View [] views = {availableQty, recommendedQty, minimumQty, availableQtyPencil};
         for (View view: views) {
             view.setEnabled(isChecked);
@@ -875,7 +684,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 recollectComposerInfo();
             }
         }
-    }
+    }*/
 
     protected void recollectComposerInfo() {
     }
@@ -911,9 +720,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         c = (Cursor) this.category.getSelectedItem();
         model.categoryId = c == null ? null : c.getString(c.getColumnIndex(CategoryTable.GUID));
 
-        model.eanCode = this.ean.getText().toString();
+        //model.eanCode = this.ean.getText().toString();
 
-        model.productCode = this.productCode.getText().toString();
+        //model.productCode = this.productCode.getText().toString();
 
 
         model.unitsLabelId = ((UnitLabelModel) this.unitsLabel.getSelectedItem()).guid;
@@ -928,11 +737,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         model.printerAliasGuid = ((PrinterAliasModel) this.printerAlias.getSelectedItem()).guid;
 
-        model.availableQty = UiHelper.getDecimalValue(this.availableQty);
-        model.minimumQty = UiHelper.getDecimalValue(this.minimumQty);
-        model.recommendedQty = UiHelper.getDecimalValue(this.recommendedQty);
+        //model.availableQty = UiHelper.getDecimalValue(this.availableQty);
+        //model.minimumQty = UiHelper.getDecimalValue(this.minimumQty);
+        //model.recommendedQty = UiHelper.getDecimalValue(this.recommendedQty);
 
-        model.isStockTracking = this.stockTrackingFlag.isChecked();
+        //model.isStockTracking = this.stockTrackingFlag.isChecked();
 
         String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?
                 BigDecimal.ZERO.toString() : this.salesPrice.getText().toString();
@@ -975,35 +784,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.commissionEligible = this.commissionsEligible.isChecked();
     }
 
-    protected void setQuantities(BigDecimal qty) {
-        if (model == null) {
-            return;
-        }
-        if (isPcs()) {
-            if (qty != null) {
-                showBrandQtyInteger(availableQty, qty.setScale(0, BigDecimal.ROUND_FLOOR));
-            } else if (model.availableQty != null) {
-                showBrandQtyInteger(availableQty, model.availableQty.setScale(0, BigDecimal.ROUND_FLOOR));
-            }
-            if (model.minimumQty != null) {
-                showBrandQtyInteger(minimumQty, model.minimumQty.setScale(0, BigDecimal.ROUND_FLOOR));
-            }
-            if (model.recommendedQty != null) {
-                showBrandQtyInteger(recommendedQty, model.recommendedQty.setScale(0, BigDecimal.ROUND_FLOOR));
-            }
-        } else {
-            if (qty != null) {
-                showBrandQty(availableQty, qty.setScale(3, BigDecimal.ROUND_FLOOR));
-            } else if (model.availableQty != null) {
-                showBrandQty(availableQty, model.availableQty.setScale(3, BigDecimal.ROUND_FLOOR));
-            }
-            showBrandQty(minimumQty, model.minimumQty);
-            showBrandQty(recommendedQty, model.recommendedQty);
-        }
-    }
-
     protected boolean validateForm() {
-
         if (TextUtils.isEmpty(description.getText())) {
             Toast.makeText(this, R.string.item_activity_alert_description_msg, Toast.LENGTH_SHORT).show();
             return false;
@@ -1012,18 +793,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         Cursor c = (Cursor) this.category.getSelectedItem();
         if (c == null) {
             Toast.makeText(this, R.string.item_activity_alert_category_msg, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        String ean = this.ean.getText().toString();
-        if (!TextUtils.isEmpty(ean) && (ean.length() < TcrApplication.BARCODE_MIN_LEN || ean.length() > TcrApplication.BARCODE_MAX_LEN)) {
-            Toast.makeText(this, getString(R.string.item_activity_alert_ean_msg, TcrApplication.BARCODE_MIN_LEN, TcrApplication.BARCODE_MAX_LEN), Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        String productCode = this.productCode.getText().toString();
-        if (!TextUtils.isEmpty(productCode) && (productCode.length() < TcrApplication.BARCODE_MIN_LEN || productCode.length() > TcrApplication.PRODUCT_CODE_MAX_LEN)) {
-            Toast.makeText(this, getString(R.string.item_activity_alert_product_code_msg, TcrApplication.BARCODE_MIN_LEN, TcrApplication.PRODUCT_CODE_MAX_LEN), Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -1266,7 +1035,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     }
 
-    private class ModifierModelLoader implements LoaderCallbacks<List<ModifierModel>> {
+    /*private class ModifierModelLoader implements LoaderCallbacks<List<ModifierModel>> {
 
         @Override
         public Loader<List<ModifierModel>> onCreateLoader(int i, Bundle bundle) {
@@ -1284,7 +1053,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         public void onLoaderReset(Loader<List<ModifierModel>> listLoader) {
             clearlModifierFields();
         }
-    }
+    }*/
 
     private class PrinterAliasLoader implements LoaderCallbacks<List<PrinterAliasModel>> {
 
@@ -1371,7 +1140,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         }
     }
 
-    private class CheckedChangeListener implements OnCheckedChangeListener {
+    protected class CheckedChangeListener implements OnCheckedChangeListener {
 
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -1432,52 +1201,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         }
     }
 
-
-    private class UpcLoader implements LoaderCallbacks<Cursor> {
-
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ItemTable.URI_CONTENT))
-                    .projection(ItemTable.GUID)
-                    .where(ItemTable.EAN_CODE + " = ?", ean.getText().toString())
-                    .where(ItemTable.GUID + " <> ?", model.guid)
-                    .build(BaseItemActivity.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-            duplicateUpc = cursor.getCount() > 0;
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-        }
-    }
-
-    private class ProductCodeLoader implements LoaderCallbacks<Cursor> {
-
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ItemTable.URI_CONTENT))
-                    .projection(ItemTable.GUID)
-                    .where(ItemTable.PRODUCT_CODE + " = ?", productCode.getText().toString())
-                    .where(ItemTable.GUID + " <> ?", model.guid)
-                    .build(BaseItemActivity.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-            duplicateProductCode = cursor.getCount() > 0;
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-        }
-    }
-
-    protected OnClickListener updateQtyListener = new OnClickListener() {
+    /*protected OnClickListener updateQtyListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (model.isSerializable()) {
@@ -1492,10 +1216,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                             model.availableQty = value;
                             if (isPcs()) {
                                 showInteger(availableQty, model.availableQty);
-                                showInteger(availableQtyPencil, model.availableQty);
+                                //showInteger(availableQtyPencil, model.availableQty);
                             } else {
                                 showQuantity(availableQty, model.availableQty);
-                                showQuantity(availableQtyPencil, model.availableQty);
+                                //showQuantity(availableQtyPencil, model.availableQty);
                             }
                         }
 
@@ -1505,16 +1229,16 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                             model.availableQty = old.add(value);
                             if (isPcs()) {
                                 showInteger(availableQty, model.availableQty);
-                                showInteger(availableQtyPencil, model.availableQty);
+                                //showInteger(availableQtyPencil, model.availableQty);
                             } else {
                                 showQuantity(availableQty, model.availableQty);
-                                showQuantity(availableQtyPencil, model.availableQty);
+                                //showQuantity(availableQtyPencil, model.availableQty);
                             }
                         }
                     }
             );
         }
-    };
+    };*/
 
     protected Drawable buildCounterDrawable(int count, int backgroundImageId) {
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -1541,5 +1265,29 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         return new BitmapDrawable(getResources(), bitmap);
     }
+
+    protected class QtyTextChangeListener extends BrandTextWatcher {
+
+        public QtyTextChangeListener(TextView view) {
+            super(view);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            super.beforeTextChanged(charSequence, i, i2, i3);
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            super.onTextChanged(charSequence, i, i2, i3);
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            super.afterTextChanged(editable);
+            changed = true;
+        }
+    }
+
 
 }
