@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="32dp">
 
-    <br.com.bematech.bemacash.component.ItemAutocompleteTextView
+    <com.kaching123.tcr.component.ItemAutocompleteTextView
         android:id="@+id/item_chooser"
         style="@style/StyledDialog.Content.EditText"
         android:layout_width="match_parent"
