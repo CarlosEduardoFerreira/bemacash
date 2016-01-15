@@ -843,8 +843,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onPrepareOptionsMenu(menu);
         checkHoldInfo();
         menu.findItem(R.id.action_order_items).setVisible(!isCreateReturnOrder);
-        PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX_EBT_CASH.gateway();
-//        menu.findItem(R.id.action_balance).setVisible(getApp().isPaxConfigured() && paxGateway.acceptPaxEbtEnabled());
+        menu.findItem(R.id.action_balance).setVisible(false);
         menu.findItem(R.id.action_commission).setVisible(getApp().isCommissionsEnabled() && !isCreateReturnOrder);
         return true;
     }
@@ -1697,9 +1696,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public Loader<OrdersStatInfo> onCreateLoader(int arg0, Bundle arg1) {
-            CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(SaleOrderTable.URI_CONTENT))
-                    .projection("count(" + SaleOrderTable.GUID + ")");
-//                    .where(SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid() == null ? "" : getApp().getOperatorGuid());
+            CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.contentUri(SaleOrderTable.URI_CONTENT))
+                    .projection("count(" + SaleOrderTable.GUID + ")")
+                    .where(SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid() == null ? "" : getApp().getOperatorGuid());
             if (!TextUtils.isEmpty(orderGuid))
                 builder.where(SaleOrderTable.GUID + " <> ?", orderGuid);
             Date minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar);
@@ -1713,7 +1712,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         @Override
                         public OrdersStatInfo apply(Cursor cursor) {
                             if (cursor.moveToFirst()) {
-                                return new OrdersStatInfo(cursor.getInt(0)/*, cursor.getInt(1)*/);
+                                return new OrdersStatInfo(cursor.getInt(0));
                             }
                             return null;
                         }
@@ -1732,26 +1731,22 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public void onLoaderReset(Loader<OrdersStatInfo> loader) {
-            //updateCounter(null);
         }
 
     }
 
     private static class OrdersStatInfo {
-        //int activeCount;
-        //int holdCounts;
         int totalCounts;
 
-        public OrdersStatInfo(int activeCount/*, int holdCounts*/) {
-            //this.activeCount = activeCount;
-            /*this.holdCounts = holdCounts;*/
-            this.totalCounts = activeCount/* + holdCounts*/;
+        public OrdersStatInfo(int activeCount) {
+            this.totalCounts = activeCount;
         }
 
         public boolean isEmpty() {
             return totalCounts == 0;
         }
     }
+
 
     public boolean isOrderDiscounted() {
         final boolean isDiscounted = (saleOrderModel.discount.equals(BigDecimal.ZERO)) ? false : true;

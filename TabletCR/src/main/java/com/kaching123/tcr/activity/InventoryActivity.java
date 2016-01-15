@@ -491,21 +491,6 @@ public class InventoryActivity extends ScannerBaseActivity {
 
         @Override
         protected void handleIsDeletedItemFound(final WrongImportInfo info) {
-         /*  AlertDialogFragment.showAlertWithSkip(InventoryActivity.this, R.string.dlg_import_is_deleted_items_title, "message", R.string.btn_ok,
-                    new StyledDialogFragment.OnDialogClickListener() {
-                        @Override
-                        public boolean onClick() {
-                            isDeletedItems.add(info);
-                            return true;
-                        }
-                    },
-                    new StyledDialogFragment.OnDialogClickListener() {
-                        @Override
-                        public boolean onClick() {
-                            //skip
-                            return true;
-                        }
-                    });*/
             isDeletedItems.add(info);
         }
     }

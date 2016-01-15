@@ -116,7 +116,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(URI_ITEMS);
         builder.projection(ItemExFunction.PROJECTION);
 
-        builder.orderBy(sortByName ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
+        builder.orderBy(sortByName && LOAD_ALL_CATEGORIES.equals(categoryGuid)? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
 
         builder.where(ItemTable.IS_DELETED + " = ?", 0);
 
@@ -176,8 +176,6 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
     public void setUseOnlyNearTheEnd(boolean useOnlyNearTheEnd) {
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
-        Logger.d("[Loader] ItemsFragment setUseOnlyNearTheEnd");
-        restartLoader();
     }
 
     public void sortByName(boolean sortByName) {

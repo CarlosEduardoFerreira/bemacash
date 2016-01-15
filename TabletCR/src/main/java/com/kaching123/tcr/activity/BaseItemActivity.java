@@ -77,6 +77,8 @@ import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
+import com.kaching123.tcr.util.UnitUtil;
+import com.kaching123.tcr.util.Validator;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -380,7 +382,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         //fillModifierLabels(0, 0, 0);
 
-        //availableQtyPencil.setEnabled(PlanOptions.isStockTrackingAllowed());
+        stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
+
+        availableQtyPencil.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
 
     }
 
@@ -391,6 +395,14 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected void recalculateSerialization() {
 
 
+    }
+
+    private void stockTrackingSetup(CodeType codeType) {
+        final boolean isSerializable = codeType != null;
+        if (isSerializable) {
+            stockTrackingFlag.setChecked(true);
+        }
+        stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
     }
 
     protected void onSerializableSet(boolean isSerializable) {
@@ -664,7 +676,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     /*protected void updateStockTrackingBlock(boolean isChecked) {
         View [] views = {availableQty, recommendedQty, minimumQty, availableQtyPencil};
         for (View view: views) {
-            view.setEnabled(isChecked);
+            view.setEnabled(isChecked && TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
         }
 
         if (!isChecked) {
