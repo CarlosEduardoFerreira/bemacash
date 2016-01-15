@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
@@ -29,12 +30,14 @@ import com.kaching123.tcr.component.UnsignedQuantityFormatInputFilter;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.inventory.ChooseParentItemDialogFragment;
+import com.kaching123.tcr.fragment.inventory.InventoryQtyEditDialog;
 import com.kaching123.tcr.fragment.inventory.ItemCodeChooserAlertDialogFragment;
 import com.kaching123.tcr.function.NextProductCodeQuery;
 import com.kaching123.tcr.model.ItemCodeType;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -51,6 +54,8 @@ import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.showBrandQty;
 import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
+import static com.kaching123.tcr.fragment.UiHelper.showInteger;
+import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
 
 
 /**
@@ -69,6 +74,8 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
     protected EditText recommendedQty;
     @ViewById
     protected EditText availableQty;
+    @ViewById
+    protected TextView availableQtyPencil;
     @ViewById
     protected CheckBox stockTrackingFlag;
     @ViewById
@@ -112,15 +119,18 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
             public void onClick(View v) {
                 ChooseParentItemDialogFragment.show(BaseCommonItemActivity.this, model.guid,
                         new ChooseParentItemDialogFragment.OnItemChosenListener() {
-                    @Override
-                    public void onItemChosen(ItemExModel parentItem, ItemMatrixModel parentItemMatrix) {
-                        referenceItem.setText(parentItem.description);
-                        BaseCommonItemActivity.this.parentItem = parentItem;
-                        BaseCommonItemActivity.this.parentItemMatrix = parentItemMatrix;
-                    }
-                });
+                            @Override
+                            public void onItemChosen(ItemExModel parentItem, ItemMatrixModel parentItemMatrix) {
+                                referenceItem.setText(parentItem.description);
+                                BaseCommonItemActivity.this.parentItem = parentItem;
+                                BaseCommonItemActivity.this.parentItemMatrix = parentItemMatrix;
+                            }
+                        });
             }
         });
+
+        stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
+        availableQtyPencil.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
     }
 
     protected void recollectComposerInfo() {
@@ -229,7 +239,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
         if (isSerializable) {
             stockTrackingFlag.setChecked(true);
         }
-        stockTrackingFlag.setEnabled(!isSerializable);
+        stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
     }
 
     @Override
@@ -363,9 +373,9 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
 
     protected void updateStockTrackingBlock(boolean isChecked) {
 
-        View[] views = {recommendedQty, minimumQty};
+        View [] views = {availableQty, recommendedQty, minimumQty, availableQtyPencil};
         for (View view : views) {
-            view.setEnabled(isChecked);
+            view.setEnabled(isChecked && TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
         }
 
         if (!isChecked) {
@@ -448,6 +458,46 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
             }
         }
     }
+
+    protected OnClickListener updateQtyListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (model.isSerializable()) {
+                UnitActivity.start(BaseCommonItemActivity.this, model, TAG_RESULT);
+                return;
+            }
+
+            InventoryQtyEditDialog.show(BaseCommonItemActivity.this, model.availableQty == null ? BigDecimal.ZERO : model.availableQty, isPcs(),
+                    new InventoryQtyEditDialog.OnEditQtyListener() {
+                        @Override
+                        public void onReplace(BigDecimal value) {
+                            model.availableQty = value;
+                            if (isPcs()) {
+                                showInteger(availableQty, model.availableQty);
+                                showInteger(availableQtyPencil, model.availableQty);
+                            } else {
+                                showQuantity(availableQty, model.availableQty);
+                                showQuantity(availableQtyPencil, model.availableQty);
+                            }
+                        }
+
+                        @Override
+                        public void onAdjust(BigDecimal value) {
+                            BigDecimal old = model.availableQty == null ? BigDecimal.ZERO : model.availableQty;
+                            model.availableQty = old.add(value);
+                            if (isPcs()) {
+                                showInteger(availableQty, model.availableQty);
+                                showInteger(availableQtyPencil, model.availableQty);
+                            } else {
+                                showQuantity(availableQty, model.availableQty);
+                                showQuantity(availableQtyPencil, model.availableQty);
+                            }
+                        }
+                    }
+            );
+        }
+    };
+
 
     private class UpcLoader implements LoaderCallbacks<Cursor> {
 

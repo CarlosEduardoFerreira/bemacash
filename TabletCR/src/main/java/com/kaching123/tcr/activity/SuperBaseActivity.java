@@ -291,6 +291,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         super.onResume();
         //ViewServer.get(this).setFocusedWindow(this);
         progressReceiver.register(SuperBaseActivity.this);
+        invalidateOptionsMenu();
     }
 
     @Override

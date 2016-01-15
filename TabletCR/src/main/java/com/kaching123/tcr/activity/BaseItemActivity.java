@@ -77,8 +77,6 @@ import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
-import com.kaching123.tcr.util.UnitUtil;
-import com.kaching123.tcr.util.Validator;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -204,8 +202,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected CheckBox hasNotes;
     //@ViewById
     //protected TableLayout modifiersTable;
-    //@ViewById
-    //protected TextView availableQtyPencil;
     @ViewById
     protected View availableQtyBlock;
     @ViewById
@@ -382,9 +378,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         //fillModifierLabels(0, 0, 0);
 
-        stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
-
-        availableQtyPencil.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
+  //      stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
+  //      availableQtyPencil.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
 
     }
 
@@ -396,14 +391,14 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
 
     }
-
+/*
     private void stockTrackingSetup(CodeType codeType) {
         final boolean isSerializable = codeType != null;
         if (isSerializable) {
             stockTrackingFlag.setChecked(true);
         }
         stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
-    }
+    }*/
 
     protected void onSerializableSet(boolean isSerializable) {
 
@@ -1210,44 +1205,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         }
     }
 
-    /*protected OnClickListener updateQtyListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (model.isSerializable()) {
-                UnitActivity.start(BaseItemActivity.this, model, TAG_RESULT);
-                return;
-            }
-
-            InventoryQtyEditDialog.show(BaseItemActivity.this, model.availableQty == null ? BigDecimal.ZERO : model.availableQty, isPcs(),
-                    new InventoryQtyEditDialog.OnEditQtyListener() {
-                        @Override
-                        public void onReplace(BigDecimal value) {
-                            model.availableQty = value;
-                            if (isPcs()) {
-                                showInteger(availableQty, model.availableQty);
-                                //showInteger(availableQtyPencil, model.availableQty);
-                            } else {
-                                showQuantity(availableQty, model.availableQty);
-                                //showQuantity(availableQtyPencil, model.availableQty);
-                            }
-                        }
-
-                        @Override
-                        public void onAdjust(BigDecimal value) {
-                            BigDecimal old = model.availableQty == null ? BigDecimal.ZERO : model.availableQty;
-                            model.availableQty = old.add(value);
-                            if (isPcs()) {
-                                showInteger(availableQty, model.availableQty);
-                                //showInteger(availableQtyPencil, model.availableQty);
-                            } else {
-                                showQuantity(availableQty, model.availableQty);
-                                //showQuantity(availableQtyPencil, model.availableQty);
-                            }
-                        }
-                    }
-            );
-        }
-    };*/
 
     protected Drawable buildCounterDrawable(int count, int backgroundImageId) {
         LayoutInflater inflater = LayoutInflater.from(this);
