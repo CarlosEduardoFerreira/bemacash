@@ -7,6 +7,7 @@ import android.net.Uri;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.ItemMatrixTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.DepartmentTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.ItemTable;
@@ -57,6 +58,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                         ItemTable.EAN_CODE,
                         ItemTable.PRODUCT_CODE,
                         ItemTable.SALE_PRICE,
+                        ItemMatrixTable.PARENT_GUID,
                         ItemTable.DISCOUNTABLE,
                         ItemTable.SALABLE,
                         ItemTable.TAXABLE,
@@ -65,13 +67,15 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                         ItemTable.TMP_AVAILABLE_QTY,
                         ItemTable.MINIMUM_QTY,
                         ItemTable.RECOMMENDED_QTY,
+                        ItemTable.ITEM_REF_TYPE,
+                        ItemTable.REFERENCE_ITEM_ID,
                         "max(" + SaleOrderTable.CREATE_TIME + ") as " + SaleOrderTable.CREATE_TIME
                 );
     }
 
     @Override
     protected List<Object> readRow(Cursor c) {
-        ArrayList<Object> columns = new ArrayList<>(16);
+        ArrayList<Object> columns = new ArrayList<>();
         columns.add(c.getString(c.getColumnIndex(ItemTable.GUID)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)));
         columns.add(c.getString(c.getColumnIndex(DepartmentTable.TITLE)));
@@ -80,6 +84,10 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
         columns.add(c.getString(c.getColumnIndex(ItemTable.EAN_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.SALE_PRICE)));
+        String referenceItemGuid = c.isNull(c.getColumnIndex(ItemMatrixTable.PARENT_GUID)) ?
+                c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID))
+                : c.getString(c.getColumnIndex(ItemMatrixTable.PARENT_GUID));
+        columns.add(referenceItemGuid);
         columns.add(_bool(c, c.getColumnIndex(ItemTable.DISCOUNTABLE)));
         columns.add(_bool(c, c.getColumnIndex(ItemTable.SALABLE)));
         columns.add(_bool(c, c.getColumnIndex(ItemTable.TAXABLE)));
@@ -88,8 +96,8 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
         columns.add(c.getString(c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.MINIMUM_QTY)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.RECOMMENDED_QTY)));
+        columns.add(String.valueOf(_bool(c, c.getColumnIndex(ItemTable.ITEM_REF_TYPE))));
         columns.add(DateUtils.dateOnlyFormat(c.getLong(c.getColumnIndex(SaleOrderTable.CREATE_TIME))));
-
         return columns;
     }
 
@@ -104,6 +112,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                 "EAN\\UPC Code",
                 "Product Code",
                 "Price",
+                "Reference Product",
                 "Discountable",
                 "Salable",
                 "Taxable",
@@ -112,6 +121,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                 "Quantity on Hand",
                 "Order Trigger",
                 "Recommended Order",
+                "Is Reference",
                 "Last Sold Date"
         };
     }
@@ -127,6 +137,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                 null, //"UPC Code",
                 null, //"Product Code",
                 null, //"Price",
+                null, //"Reference Product",
                 null, //"Discountable",
                 null, //"Salable",
                 null, //"Taxable",
@@ -135,6 +146,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                 null, //"Quantity on Hand",
                 null, //"Order Trigger",
                 null, //"Recommended Order",
+                null, //"Is Reference",
                 null //"Last Sold Date",
 
         };

@@ -2822,12 +2822,6 @@ public abstract class ShopStore {
 
         String VIEW_NAME = "export_items_view";
 
-        //String MODIFIERS_COUNT = "mc";
-
-        //String ADDONS_COUNT = "ac";
-
-        //String OPTIONAL_COUNT = "oc";
-
         @From(ItemTable.TABLE_NAME)
         String TABLE_ITEM = "item_table";
 
@@ -2854,6 +2848,10 @@ public abstract class ShopStore {
                 onTableAlias = TABLE_ITEM,
                 onColumn = ItemTable.UNIT_LABEL_ID)
         String TABLE_UNIT_LABEL = "unit_label_table";
+
+        @Columns(ItemMatrixTable.PARENT_GUID)
+        @Join(type = Join.Type.LEFT, joinTable = ItemMatrixTable.TABLE_NAME, joinColumn = ItemMatrixTable.CHILD_GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
+        String TABLE_ITEM_MATRIX = "item_matrix_table";
     }
 
     @SimpleView(SaleReportItemsView.VIEW_NAME)
