@@ -68,23 +68,15 @@ public class EditItemActivity extends BaseCommonItemActivity {
     protected void init() {
         hasLoadedComposerInfo = true;
         super.init();
-
-        availableQty.setVisibility(View.GONE);
-        //availableQtyPencil.setVisibility(View.VISIBLE);
-        //availableQtyPencil.setOnClickListener(updateQtyListener);
-        //availableQtyPencil.setFocusable(false);
-        //availableQtyPencil.setFocusableInTouchMode(false);
         fillFields();
-
         Logger.d(String.format("[%s]%d", model.description, model.orderNum));
-
         recollectComposerInfo();
     }
 
     @Override
     protected void updateStockTrackingBlock(boolean isChecked) {
         super.updateStockTrackingBlock(isChecked);
-        availableQty.setEnabled(false);
+        availableQty.setEnabled(isChecked);
         recollectUnitsInfo();
     }
 

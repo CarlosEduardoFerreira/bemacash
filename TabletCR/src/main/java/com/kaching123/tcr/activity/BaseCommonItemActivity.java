@@ -404,52 +404,6 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
         return super.validateForm();
     }
 
-
-    /*@Click/*({R.id.monitoring_add, R.id.monitoring_reduce})  monitoringButtonsClick*
-    protected void monitoringAddClicked() {
-        BigDecimal old = model.availableQty == null ? BigDecimal.ZERO : model.availableQty;
-        ItemQtyAddReduceDialogFragment.show(self(), true, isPcs(), old.toPlainString(), new ItemQtyAddReduceDialogFragment.ItemQtyCallback() {
-            @Override
-            public void handleSuccess(BigDecimal qty, String justification) {
-                Toast.makeText(self(), R.string.item_activity_edit_quantity_on_success, Toast.LENGTH_SHORT).show();
-                adjustItemQty(qty);
-                justificationMsg = justification;
-            }
-
-        });
-    }
-
-    @Click
-    protected void monitoringReduceClicked() {
-        BigDecimal old = model.availableQty == null ? BigDecimal.ZERO : model.availableQty;
-        ItemQtyAddReduceDialogFragment.show(self(), false, isPcs(), old.toPlainString(), new ItemQtyAddReduceDialogFragment.ItemQtyCallback() {
-            @Override
-            public void handleSuccess(BigDecimal qty, String justification) {
-                Toast.makeText(self(), R.string.item_activity_edit_quantity_on_success, Toast.LENGTH_SHORT).show();
-                adjustItemQty(qty.negate());
-                //justificationMsg = justification;
-            }
-
-        });
-    }*/
-
-    protected void adjustItemQty(BigDecimal value) {
-        BigDecimal old = model.availableQty == null ? BigDecimal.ZERO : model.availableQty;
-        model.availableQty = old.add(value).compareTo(BigDecimal.valueOf(99_999_999)) == 1 ? old : old.add(value);
-
-        if (model.availableQty.compareTo(BigDecimal.valueOf(9_999_999).negate()) == -1) {
-            availableQty.setFilters(new InputFilter[]{new InputFilter.LengthFilter(11)});
-        } else {
-            availableQty.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
-        }
-
-        if (isPcs()) {
-            showBrandQtyInteger(availableQty, model.availableQty);
-        } else {
-            showBrandQty(availableQty, model.availableQty);
-        }
-    }
-
     @Override
     protected void collectDataToModel(ItemModel model) {
         super.collectDataToModel(model);
