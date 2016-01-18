@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
@@ -17,11 +19,15 @@ import com.kaching123.tcr.store.ShopStore.OldSaleOrdersQuery;
 import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
+import com.kaching123.tcr.store.helper.RecalcItemComposerTable;
+import com.kaching123.tcr.store.helper.RecalcItemCostTable;
 import com.kaching123.tcr.store.helper.RecalcItemMovementTable;
 import com.kaching123.tcr.store.helper.RecalcSaleAddonTable;
 import com.kaching123.tcr.store.helper.RecalcSaleItemTable;
 
 import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 /*import com.kaching123.tcr.store.ShopStore.MaxUpdateTableChildTimeQuery;
 import com.kaching123.tcr.store.ShopStore.MaxUpdateTableParentTimeQuery;*/
@@ -37,6 +43,23 @@ public class ShopProviderExt extends ShopProvider {
     protected final static int MATCH_OLD_ACTIVE_UNIT_ORDERS_QUERY = 0x669;
 
     final static String URI_PATH_RAW_TABLE_QUERY = "URI_RAW_TABLE_QUERY";
+
+    protected Handler calculator = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            composerHelper.recalcAfterSync();
+            costComposerHelper.recalcAfterSync();
+            contentResolver.notifyChange(contentUri("items_ext_view"), null);
+        }
+    };
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    protected void sheduleUpdate() {
+        calculator.removeMessages(1);
+        calculator.sendEmptyMessageDelayed(1, 500);
+    }
+
 
     /*public static Uri getRawTableQueryUri(String tableName) {
         return contentUri(URI_PATH_RAW_TABLE_QUERY, tableName);
@@ -110,6 +133,8 @@ public class ShopProviderExt extends ShopProvider {
     private RecalcSaleItemTable saleItemHelper;
     private RecalcSaleAddonTable saleItemAddonHelper;
     private ProviderQueryHelper providerQueryHelper;
+    private RecalcItemComposerTable composerHelper;
+    private RecalcItemCostTable costComposerHelper;
 
     @Override
     public boolean onCreate() {
@@ -118,6 +143,9 @@ public class ShopProviderExt extends ShopProvider {
         saleItemHelper = new RecalcSaleItemTable(getContext(), dbHelper);
         saleItemAddonHelper = new RecalcSaleAddonTable(getContext(), dbHelper);
         providerQueryHelper = new ProviderQueryHelper(AUTHORITY, dbHelper);
+        composerHelper = new RecalcItemComposerTable(getContext(), dbHelper);
+        costComposerHelper = new RecalcItemCostTable(getContext(), dbHelper);
+
         ShopStore.init();
         return b;
     }
@@ -253,8 +281,18 @@ public class ShopProviderExt extends ShopProvider {
         } else if (ItemMovementTable.URI_CONTENT.equals(path)) {
             //itemHelper.recalculateAvailableQty(values.getAsString(ItemMovementTable.ITEM_GUID));
             itemMovementHelper.recalculateMovementAvailableQty(values.getAsString(ItemMovementTable.ITEM_UPDATE_QTY_FLAG));
+            sheduleUpdate();
         }
         return result;
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        String path = getUriPath(uri);
+        if (ShopStore.ComposerTable.URI_CONTENT.equals(path)){
+            sheduleUpdate();
+        }
+        return super.delete(uri, selection, selectionArgs);
     }
 
     @Override
@@ -273,12 +311,16 @@ public class ShopProviderExt extends ShopProvider {
             } else if (ItemMovementTable.URI_CONTENT.equals(path)) {
                 Logger.d("recalculateAvailableQty: bulkInsert ItemMovementTable");
                 itemMovementHelper.bulkRecalcAvailableItemMovementTableAfterSync(false);
+                sheduleUpdate();
             } else if (ItemTable.URI_CONTENT.equals(path)) {
                 Logger.d("recalculateAvailableQty: bulkInsert ItemTable");
                 itemMovementHelper.bulkRecalcAvailableItemMovementTableAfterSync(true);
+                sheduleUpdate();
             } else if (SaleOrderTable.URI_CONTENT.equals(path)) {
                 Logger.d("recalculateAvailableQty: bulkInsert SaleOrderTable");
                 saleItemHelper.bulkRecalculateOrderTotalPriceAfterSync();
+            }else if (ShopStore.ComposerTable.URI_CONTENT.equals(path)){
+                sheduleUpdate();
             }
         }
 
@@ -291,10 +333,9 @@ public class ShopProviderExt extends ShopProvider {
             } else if (SaleOrderTable.URI_CONTENT.equals(path) && !values.containsKey(SaleOrderTable.TML_TOTAL_PRICE)
                     && !values.containsKey(SaleOrderTable.IS_TIPPED) && !isKitchenStatusUpdate(values)) {
                 saleItemHelper.recalculateOrderTotalPrice(selectionArgs[0]);
-            }/*else if (ItemTable.URI_CONTENT.equals(path) && !values.containsKey(ItemTable.TMP_AVAILABLE_QTY)
-                    && (!values.containsKey(SaleItemTable.IS_DELETED) || !(values.getAsInteger(SaleItemTable.IS_DELETED) != 0))) {
-                itemHelper.recalculateAvailableQty(selectionArgs[0]);
-            }*/
+            }else if (ItemTable.URI_CONTENT.equals(path)) {
+                sheduleUpdate();
+            }
         }
         return count;
     }

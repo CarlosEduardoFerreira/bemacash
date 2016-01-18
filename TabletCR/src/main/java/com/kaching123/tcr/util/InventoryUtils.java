@@ -58,6 +58,7 @@ public class InventoryUtils {
                 c.close();
             }
         }*/
+
         try {
             c = ProviderAction.query(ITEM_COMPOSER_URI).where(ShopStore.ComposerTable.ITEM_CHILD_ID  + " =? OR " + ShopStore.ComposerTable.ITEM_HOST_ID+ " =? ",
                     itemGuid, itemGuid).perform(context);
