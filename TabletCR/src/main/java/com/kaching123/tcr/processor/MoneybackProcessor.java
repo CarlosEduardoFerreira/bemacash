@@ -821,7 +821,7 @@ public class MoneybackProcessor {
                                    final ArrayList<RefundSaleItemInfo> refundItemsInfo) {
         //TODO: interrupted refund not handled
         if ((refundItemsInfo != null && refundItemsInfo.size() > 0)) {
-            UpdateSaleOrderItemRefundQtyCommand.start(context, this, childOrderModel, UnitItemCache.get().getUnitsList());
+            UpdateSaleOrderItemRefundQtyCommand.start(context, this, childOrderModel, UnitItemCache.get().getUnitsList(),refundItemsInfo);
             UnitItemCache.get().reset();
         }
     }
