@@ -129,8 +129,8 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
             }
         });
 
-        stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
-        availableQtyPencil.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
+        stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
+        availableQtyPencil.setEnabled(PlanOptions.isStockTrackingAllowed());
     }
 
     protected void recollectComposerInfo() {
@@ -239,7 +239,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
         if (isSerializable) {
             stockTrackingFlag.setChecked(true);
         }
-        stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
+        stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
     }
 
     @Override
@@ -375,7 +375,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
 
         View [] views = {availableQty, recommendedQty, minimumQty, availableQtyPencil};
         for (View view : views) {
-            view.setEnabled(isChecked && TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
+            view.setEnabled(isChecked && PlanOptions.isStockTrackingAllowed());
         }
 
         if (!isChecked) {

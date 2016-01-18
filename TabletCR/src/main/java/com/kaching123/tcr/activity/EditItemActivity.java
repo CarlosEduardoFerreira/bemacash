@@ -287,10 +287,12 @@ public class EditItemActivity extends BaseCommonItemActivity {
     protected void setQuantities(ItemExModel model) {
         if (UnitUtil.isNotUnitPriceType(model.priceType)) {
             showBrandQtyInteger(availableQty, model.availableQty);
+            showInteger(availableQtyPencil, model.availableQty);
             showBrandQtyInteger(minimumQty, model.minimumQty);
             showBrandQtyInteger(recommendedQty, model.recommendedQty);
         } else {
             showBrandQty(availableQty, model.availableQty);
+            showInteger(availableQtyPencil, model.availableQty);
             showBrandQty(minimumQty, model.minimumQty);
             showBrandQty(recommendedQty, model.recommendedQty);
         }
