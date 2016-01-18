@@ -34,7 +34,7 @@ public class InventoryUtils {
                                       BatchSqlCommand sql) {
 
         Cursor c = null;
-        try {
+        /*try {
             c = ProviderAction.query(ITEM_MODIFIER_URI).where(ShopStore.ModifierTable.ITEM_SUB_GUID + " =? OR " + ShopStore.ModifierTable.ITEM_GUID+ " =? ",
                     itemGuid, itemGuid).perform(context);
             if (c.moveToFirst()) {
@@ -57,7 +57,7 @@ public class InventoryUtils {
             if (c != null) {
                 c.close();
             }
-        }
+        }*/
         try {
             c = ProviderAction.query(ITEM_COMPOSER_URI).where(ShopStore.ComposerTable.ITEM_CHILD_ID  + " =? OR " + ShopStore.ComposerTable.ITEM_HOST_ID+ " =? ",
                     itemGuid, itemGuid).perform(context);

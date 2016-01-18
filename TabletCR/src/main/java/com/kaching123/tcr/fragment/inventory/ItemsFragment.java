@@ -41,6 +41,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
@@ -329,7 +330,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
                 showInteger(holder.qty, item.availableQty);
                 holder.units.setText(null);
             } else {
-                showQuantity(holder.qty, item.availableQty);
+                showBrandQtyInteger(holder.qty, item.availableQty);
                 holder.units.setText(UnitLabelModel.getUnitLabelShortcut(getContext(), item));
 
             }
