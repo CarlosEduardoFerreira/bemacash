@@ -9,12 +9,6 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"/>
 
-    <!--<fragment
-        android:name="com.kaching123.tcr.fragment.reports.ReportsFragment_"
-        android:id="@+id/reports_fragment"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"/>-->
-
     <View
         android:id="@+id/top_items_fragment_shadow"
         android:layout_height="match_parent"

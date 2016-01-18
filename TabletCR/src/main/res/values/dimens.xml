@@ -136,9 +136,11 @@
     <dimen name="dlg_edit_text_font_size">22sp</dimen>
     <dimen name="filemanager_width">568dp</dimen>
     <dimen name="filemanager_height">590dp</dimen>
-    <dimen name="bar_chart_bar_width">42dp</dimen>
+
     <dimen name="horizontal_bar_chart_bar_height">57dp</dimen>
-    <dimen name="bar_chart_spacing">8dp</dimen>
+    <dimen name="bar_chart_bar_width">35dp</dimen>
+    <dimen name="bar_chart_spacing">6dp</dimen>
+
     <dimen name="report_type_list_item_height">60dp</dimen>
     <dimen name="report_type_list_header_height">42dp</dimen>
     <dimen name="reports_details_header_height">88dp</dimen>

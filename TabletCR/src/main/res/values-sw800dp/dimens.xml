@@ -25,4 +25,8 @@
     <dimen name="modify_button_width">82dp</dimen>
     <dimen name="modify_button_height">84dp</dimen>
     <dimen name="modifier_padding_top">10dp</dimen>
+
+    <dimen name="bar_chart_bar_width">42dp</dimen>
+    <dimen name="horizontal_bar_chart_bar_height">57dp</dimen>
+    <dimen name="bar_chart_spacing">8dp</dimen>
 </resources>

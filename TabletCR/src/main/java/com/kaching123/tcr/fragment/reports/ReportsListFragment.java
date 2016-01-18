@@ -162,7 +162,7 @@ public class ReportsListFragment extends SuperBaseFragment {
 
     private boolean isOptionAllowed(ReportType type) {
 
-        if(!TcrApplication.get().isFreemium()) {
+        if (!TcrApplication.get().isFreemium()) {
             return true;
         }
 
@@ -172,26 +172,31 @@ public class ReportsListFragment extends SuperBaseFragment {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case SOLD_ORDERS:
                 if (!PlanOptions.isSalesReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case SALES_BY_ITEMS:
                 if (!PlanOptions.isSalesByItemReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case SALES_BY_DEPS:
                 if (!PlanOptions.isSalesByDepartmentReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case SALES_TOP_10_REVENUES:
                 if (!PlanOptions.isToptenSoldRevenuesReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case SALES_TOP_10_QTY:
                 if (!PlanOptions.isToptenSoldItemsReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
@@ -202,74 +207,86 @@ public class ReportsListFragment extends SuperBaseFragment {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case RETURNED_ORDERS:
                 if (!PlanOptions.isSalesReturnsReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case RETURNED_ITEMS:
                 if (!PlanOptions.isReturnedItemsReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case SALES_BY_CUSTOMERS:
                 if (!PlanOptions.isSalesByCustomersReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case DROPS_AND_PAYOUTS:
                 if (!PlanOptions.isDropsAndPayoutsReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case REORDER_INVENTORY:
                 if (!PlanOptions.isRestockReportReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case INVENTORY_VALUE:
                 if (!PlanOptions.isInventoryValueReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case INVENTORY_LOG:
                 if (!PlanOptions.isItemQuantityLogReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case INVENTORY_STATUS:
                 if (!PlanOptions.isInventoryStatusReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case EMPLOYEE_ATTENDANCE:
                 if (!PlanOptions.isEmployeeAttendanceReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case EMPLOYEE_PAYROLL:
                 if (!PlanOptions.isEmployeePayrollReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
-                //// FIXME: 04.01.2016 consider to change value's name
+                break;
+            //// FIXME: 04.01.2016 consider to change value's name
             case EMPLOYEE_TIPS:
                 if (!PlanOptions.isShiftGratuityReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
             case SHIFTS_REPORT:
                 if (PlanOptions.isJustZReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
                 break;
-
             case X_REPORT:
                 if (PlanOptions.isJustZReportAllowed() || !PlanOptions.isXReportAllowed()) {
                     AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
                     return false;
                 }
+                break;
         }
         return true;
     }
