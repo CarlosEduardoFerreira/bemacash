@@ -423,14 +423,14 @@ public class InventoryActivity extends ScannerBaseActivity {
     public class ImportCallback extends BaseImportCommandCallback {
 
         private ArrayList<WrongImportInfo> wrongItems;
-        private ArrayList<WrongImportInfo> isDeletedItems;
+        private ArrayList<WrongImportInfo> deletedItems;
         private ImportType type;
         private boolean isMaxItemsCountError;
 
         @Override
         protected void handleStart() {
             wrongItems = new ArrayList<>();
-            isDeletedItems = new ArrayList<>();
+            deletedItems = new ArrayList<>();
             isMaxItemsCountError = false;
         }
 
@@ -471,8 +471,8 @@ public class InventoryActivity extends ScannerBaseActivity {
                 wrongItems = null;
             }
 
-            if (isDeletedItems != null && !isDeletedItems.isEmpty()) {
-                for (WrongImportInfo item : isDeletedItems) {
+            if (deletedItems != null && !deletedItems.isEmpty()) {
+                for (WrongImportInfo item : deletedItems) {
                     UpdateDeletedItemCommand.start(InventoryActivity.this, item.productCode);
                 }
             }
@@ -491,7 +491,7 @@ public class InventoryActivity extends ScannerBaseActivity {
 
         @Override
         protected void handleIsDeletedItemFound(final WrongImportInfo info) {
-            isDeletedItems.add(info);
+            deletedItems.add(info);
         }
     }
 

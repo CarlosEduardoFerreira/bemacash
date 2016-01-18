@@ -26,7 +26,7 @@ import java.util.List;
 public abstract class BaseItemsPickFragment extends Fragment implements LoaderCallbacks<List<ItemExModel>> {
 
     protected static final Uri URI_ITEMS = ShopProvider.getContentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID);
-    private static final int INVENTORY_LOADER_ID = 0;
+    private static final int BASE_ITEMS_LOADER_ID = 0;
 
     protected String categoryGuid;
 
@@ -53,8 +53,8 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
         restartLoader();
     }
 
-    protected void restartLoader() {
-        getLoaderManager().restartLoader(INVENTORY_LOADER_ID, Bundle.EMPTY, this);
+    private void restartLoader() {
+        getLoaderManager().restartLoader(BASE_ITEMS_LOADER_ID, Bundle.EMPTY, this);
     }
 
     @Override

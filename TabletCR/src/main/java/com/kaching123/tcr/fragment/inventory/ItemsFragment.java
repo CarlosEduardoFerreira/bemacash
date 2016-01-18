@@ -54,6 +54,7 @@ import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 public class ItemsFragment extends BaseItemsPickFragment {
 
     public static final String LOAD_ALL_CATEGORIES = "load_all_categories";
+    private static final int ITEMS_LOADER_ID = 0;
 
     @ViewById
     protected DragSortListView list;
@@ -153,6 +154,10 @@ public class ItemsFragment extends BaseItemsPickFragment {
         this.textFilter = filter;
         Logger.d("restartLoader from setTextFilter");
         restartLoader();
+    }
+
+    private void restartLoader() {
+        getLoaderManager().restartLoader(ITEMS_LOADER_ID, Bundle.EMPTY, this);
     }
 
     public void setFilter(boolean composer,
