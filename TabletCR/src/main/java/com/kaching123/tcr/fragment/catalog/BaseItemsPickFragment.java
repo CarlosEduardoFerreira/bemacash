@@ -25,7 +25,8 @@ import java.util.List;
 @EFragment
 public abstract class BaseItemsPickFragment extends Fragment implements LoaderCallbacks<List<ItemExModel>> {
 
-    protected static final Uri URI_ITEMS = ShopProvider.getContentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID);
+    protected static final Uri URI_ITEMS = ShopProvider.contentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID);
+
     private static final int BASE_ITEMS_LOADER_ID = 0;
 
     protected String categoryGuid;

@@ -39,8 +39,10 @@ import com.mobeta.android.dslv.DragSortListView;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import static com.kaching123.tcr.fragment.UiHelper.showBrandQty;
 import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
@@ -326,14 +328,21 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
             holder.price.setCompoundDrawables(null, null, item.priceType == PriceType.OPEN ? pencilDrawable : pencilTransparent, null);
 
-            if (UnitUtil.isPcs(item.priceType)) {
-                showInteger(holder.qty, item.availableQty);
-                holder.units.setText(null);
+            if (item.refType == ItemRefType.Simple) {
+                if (UnitUtil.isNotUnitPriceType(item.priceType)) {
+                    showBrandQtyInteger(holder.qty, item.availableQty);
+                    holder.units.setText(null);
+                    showPrice(holder.totalCost, getSubTotal(item.availableQty.setScale(0, BigDecimal.ROUND_FLOOR), item.cost));
+                } else {
+                    showBrandQty(holder.qty, item.availableQty);
+                    holder.units.setText(UnitLabelModel.getUnitLabelShortcut(getContext(), item));
+                    showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
+                }
             } else {
-                showBrandQtyInteger(holder.qty, item.availableQty);
-                holder.units.setText(UnitLabelModel.getUnitLabelShortcut(getContext(), item));
-
+                holder.qty.setText("");
+                holder.totalCost.setText("");
             }
+
 
             showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
 
