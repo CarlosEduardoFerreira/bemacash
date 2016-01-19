@@ -318,23 +318,6 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
             }
         });
 
-//        PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX_EBT_CASH.gateway();
-//
-//        if (getApp().isPaxConfigured() && paxGateway.acceptPaxEbtEnabled()) {
-//
-//            MenuItem ebtItem =  menu.add(
-//                    Menu.CATEGORY_ALTERNATIVE,
-//                    Menu.NONE,
-//                    getResources().getInteger(R.integer.menu_order_last), R.string.cashier_action_balance);
-//            ebtItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-//                @Override
-//                public boolean onMenuItemClick(MenuItem item) {
-//                    PaxBalanceProcessor.get().checkBalance(SuperBaseActivity.this);
-//                    return true;
-//                }
-//            });
-//        }
-
         if (getApp().hasPrevOperator()) {
             MenuItem tempLoginItem = menu.add(Menu.NONE, Menu.NONE, getResources().getInteger(R.integer.menu_order_first), null);
             tempLoginItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);

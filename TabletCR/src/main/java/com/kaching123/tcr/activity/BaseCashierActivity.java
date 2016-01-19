@@ -337,6 +337,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     public void startCommand(Command displayCommand) {
         if (displayBinder != null)
             displayBinder.startCommand(displayCommand);
+        supportInvalidateOptionsMenu();
     }
 
     @Override
@@ -857,12 +858,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-//    @OptionsItem
-//    protected void actionBalanceSelected() {
-//        actionBarItemClicked();
-//        PaxBalanceProcessor.get().checkBalance(this);
-//    }
-
     protected void initSearchView() {
         final SearchView searchView = (SearchView) searchItem.getActionView();
         assert searchView != null;
@@ -1245,6 +1240,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 model.guid,
                 model.description,
                 quantity == null ? (model.priceType == PriceType.UNIT_PRICE ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
+                //fixme bra behavior
+                //quantity == null ? BigDecimal.ONE : quantity,
+                //
                 BigDecimal.ZERO,
                 isCreateReturnOrder ? PriceType.OPEN : model.priceType,
                 price == null ? model.price : price,
