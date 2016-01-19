@@ -24,6 +24,7 @@ import com.kaching123.tcr.commands.payment.cash.CashSaleCommand;
 import com.kaching123.tcr.component.CashAdjustableNumpadView;
 import com.kaching123.tcr.component.CashAdjustableNumpadView.IExactClickListener;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
+import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -47,7 +48,7 @@ import java.math.BigDecimal;
 public class PayCashFragmentDialog extends StyledDialogFragment implements CustomEditBox.IKeyboardSupport, IDrawerFriend {
 
     private static final String DIALOG_NAME = "PayCashFragmentDialog";
-
+    protected CurrencyTextWatcher currencyTextWatcher;
     @ViewById
     protected CustomEditBox charge;
 
@@ -119,8 +120,10 @@ public class PayCashFragmentDialog extends StyledDialogFragment implements Custo
     }
 
     private void setChargeView() {
+        currencyTextWatcher = new CurrencyTextWatcher(charge);
         charge.setKeyboardSupportConteiner(this);
         charge.setFilters(new InputFilter[]{new CurrencyFormatInputFilter()});
+        charge.addTextChangedListener(currencyTextWatcher);
         charge.setEditListener(new CustomEditBox.IEditListener() {
 
             @Override
@@ -151,16 +154,17 @@ public class PayCashFragmentDialog extends StyledDialogFragment implements Custo
     }
 
     @AfterTextChange
-    protected void chargeAfterTextChanged(Editable s) {
-        if (s == null) {
+    protected void chargeAfterTextChanged(Editable text) {
+        if (text == null) {
             turnPositiveButton(false);
             return;
         }
+        String amount = text.toString().replaceAll(",", "");
 
         BigDecimal tenderAmount = BigDecimal.ZERO;
         BigDecimal changeAmount = BigDecimal.ZERO;
         try {
-            tenderAmount = new BigDecimal(s.toString());
+            tenderAmount = new BigDecimal(amount);
             changeAmount = tenderAmount.subtract(transaction.getAmount());
 
             if (changeAmount.compareTo(BigDecimal.ZERO) >= 0) {
