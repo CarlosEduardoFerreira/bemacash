@@ -237,7 +237,7 @@ public class VariantsMatrixFragment extends Fragment {
                 itemModel.isSalable = true;
                 itemModel.productCode = productCodes[pcPos];
                 itemModel.eanCode = null;
-                itemModel.isStockTracking = true;
+                itemModel.isStockTracking = false;
 
                 callAddItemCommand(itemModel);
                 itemMatrixModel.childItemGuid = itemModel.guid;
