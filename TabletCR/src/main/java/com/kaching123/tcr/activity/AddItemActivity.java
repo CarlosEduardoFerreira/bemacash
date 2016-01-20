@@ -53,7 +53,8 @@ public class AddItemActivity extends BaseCommonItemActivity {
             availableQty.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialogFragment.showAlert(AddItemActivity.this, R.string.new_item_warning_dialog_title, "Item needs to be saved prior to quantity adjustment.");
+                    AlertDialogFragment.showAlert(AddItemActivity.this, R.string.new_item_warning_dialog_title,
+                            "Item needs to be saved prior to quantity adjustment.");
                 }
             });
         } else {

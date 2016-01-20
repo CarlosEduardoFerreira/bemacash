@@ -59,6 +59,7 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.Permission;
@@ -264,7 +265,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     @OptionsItem
     protected void actionModifierSelected() {
         if (!PlanOptions.isModifiersAllowed()) {
-            AlertDialogFragment.showAlert(BaseItemActivity.this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+            AlertDialogFragment.showAlert(BaseItemActivity.this, R.string.unavailable_option_title,
+                    getString(R.string.unavailable_option_message));
         } else {
             ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
         }
@@ -692,10 +694,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         c = (Cursor) this.taxGroup.getSelectedItem();
 
-        model.taxGroupGuid =
-                (c == null) ? null : (salableChBox.isChecked() ?
-                        c.getString(c.getColumnIndex(TaxGroupTable.GUID)) : null);
-
+        model.taxGroupGuid = (c == null) ? null : (salableChBox.isChecked() ?
+                c.getString(c.getColumnIndex(TaxGroupTable.GUID)) :
+                ((model.refType == ItemRefType.Reference)
+                        ? c.getString(c.getColumnIndex(TaxGroupTable.GUID)) : null));
 
         String cost = this.cost.getText().toString();
         model.cost = parseBigDecimal(cost, BigDecimal.ZERO);
