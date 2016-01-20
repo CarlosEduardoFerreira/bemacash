@@ -343,8 +343,21 @@ public class ItemsFragment extends BaseItemsPickFragment {
                 holder.totalCost.setText("");
             }
 
-
-            showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
+            if (item.refType == ItemRefType.Simple) {
+                if (UnitUtil.isNotUnitPriceType(item.priceType)) {
+                    showBrandQtyInteger(holder.qty, item.availableQty);
+                    holder.units.setText(null);
+                    showPrice(holder.totalCost, getSubTotal(item.availableQty.setScale(0, BigDecimal.ROUND_FLOOR), item.cost));
+                } else {
+                    showBrandQty(holder.qty, item.availableQty);
+                    holder.units.setText(UnitLabelModel.getUnitLabelShortcut(getContext(), item));
+                    showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
+                }
+            } else {
+                holder.qty.setText("");
+                holder.totalCost.setText("");
+            }
+>>>>>>> a9713589f227466ba6a2a1b928457c3140cef7b0
 
             holder.drag.setVisibility(draggable ? View.VISIBLE : View.INVISIBLE);
 
