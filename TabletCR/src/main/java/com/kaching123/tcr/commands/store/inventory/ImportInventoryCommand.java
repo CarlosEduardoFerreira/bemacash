@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.InventoryHelper;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand.AddItemResult;
@@ -15,7 +16,6 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemRefType;
-import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.ItemFunction;
@@ -193,7 +193,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
             }
             count++;
             Logger.d("[IMPORT] Add item %s", item);
-            if(PlanOptions.isInventoryLimited() && count >= PlanOptions.getInventoryLimit()) {
+            if(InventoryHelper.isLimited() && count >= InventoryHelper.getLimit()) {
                 fireMaxItemsCountError();
                 break;
             }

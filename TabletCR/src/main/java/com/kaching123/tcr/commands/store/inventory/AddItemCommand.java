@@ -2,24 +2,21 @@ package com.kaching123.tcr.commands.store.inventory;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.InventoryHelper;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ItemMovementModelFactory;
-import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
-import com.kaching123.tcr.util.MovementUtils;
 import com.telly.groundy.TaskResult;
 
 import java.util.ArrayList;
@@ -31,26 +28,26 @@ public class AddItemCommand extends AsyncCommand {
     private static final Uri ITEM_URI = ShopProvider.getContentUri(ItemTable.URI_CONTENT);
     private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ItemMovementTable.URI_CONTENT);
 
-	public static final String ARG_ITEM = "arg_item";
+    public static final String ARG_ITEM = "arg_item";
 
-	private ItemModel item;
+    private ItemModel item;
     private ItemMovementModel movementModel;
 
     private boolean isMaxItemsCountError;
 
-	@Override
-	protected TaskResult doCommand() {
-		Logger.d("AddItemCommand doCommand");
-        if (isMaxItemsCountError = isInventoryLimitReached()) {
+    @Override
+    protected TaskResult doCommand() {
+        Logger.d("AddItemCommand doCommand");
+        if (isMaxItemsCountError = InventoryHelper.isLimitReached(getContext())) {
             Logger.d("AddItemCommand doCommand. InventoryLimitReached");
             return failed();
         }
 
-		item = (ItemModel)getArgs().getSerializable(ARG_ITEM);
+        item = (ItemModel) getArgs().getSerializable(ARG_ITEM);
         movementModel = null;
         item.orderNum = 0;
         item.updateQtyFlag = UUID.randomUUID().toString();
-        if(item.isStockTracking){
+        if (item.isStockTracking) {
             movementModel = ItemMovementModelFactory.getNewModel(
                     item.guid,
                     item.updateQtyFlag,
@@ -60,20 +57,7 @@ public class AddItemCommand extends AsyncCommand {
             );
         }
 
-		return succeeded();
-	}
-
-    private boolean isInventoryLimitReached() {
-        long itemsCount = 0;
-        Cursor c = ProviderAction.query(ITEM_URI)
-                .projection("count(" + ItemTable.GUID + ")")
-                .perform(getContext());
-        if (c.moveToFirst())
-            itemsCount = c.getLong(0);
-        c.close();
-        Logger.d("AddItemCommand InventoryLimitReached. itemsCount = " + itemsCount
-                + ", inventoryLimit() = " + PlanOptions.getInventoryLimit()+ ", PlanOptions.isInventoryLimited() = " + PlanOptions.isInventoryLimited());
-        return  PlanOptions.isInventoryLimited() && itemsCount >= PlanOptions.getInventoryLimit();
+        return succeeded();
     }
 
     @Override
@@ -83,7 +67,7 @@ public class AddItemCommand extends AsyncCommand {
         operations.add(ContentProviderOperation.newInsert(ITEM_URI)
                 .withValues(item.toValues())
                 .build());
-        if(movementModel != null){
+        if (movementModel != null) {
             operations.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI)
                     .withValues(movementModel.toValues())
                     .build());
@@ -93,26 +77,28 @@ public class AddItemCommand extends AsyncCommand {
     }
 
     @Override
-	protected ISqlCommand createSqlCommand() {
+    protected ISqlCommand createSqlCommand() {
         BatchSqlCommand batch = batchInsert(item);
         batch.add(JdbcFactory.getConverter(item).insertSQL(item, getAppCommandContext()));
-        if(movementModel != null){
+        if (movementModel != null) {
             batch.add(JdbcFactory.getConverter(movementModel).insertSQL(movementModel, getAppCommandContext()));
         }
         return batch;
-	}
+    }
 
-	public static void start(Context context, ItemModel item){
-		create(AddItemCommand.class).arg(ARG_ITEM, item).queueUsing(context);
-	}
+    public static void start(Context context, ItemModel item) {
+        create(AddItemCommand.class).arg(ARG_ITEM, item).queueUsing(context);
+    }
 
-    /** use in import. can be standalone **/
+    /**
+     * use in import. can be standalone
+     **/
     public AddItemResult sync(Context context, ItemModel item, IAppCommandContext appCommandContext) {
         boolean isSuccess = !isFailed(syncStandalone(context, arg(item), appCommandContext));
         return new AddItemResult(isSuccess, isMaxItemsCountError);
     }
 
-    private static Bundle arg(ItemModel item){
+    private static Bundle arg(ItemModel item) {
         Bundle arg = new Bundle(1);
         arg.putSerializable(ARG_ITEM, item);
         return arg;

@@ -108,7 +108,7 @@
     <string name="composer_dialog_track">Item track-able</string>
     <string name="composer_dialog_free">Restricked host qty</string>
     <string name="composer_dialog_qty" formatted="false">Quantity (%s): </string>
-    <string name="composer_dialog_price_type" >Price type :</string>
+    <string name="composer_dialog_price_type">Price type :</string>
 
     <string name="modifier_hint">Short description</string>
 
@@ -1739,7 +1739,8 @@
     <string name="truncate_failed_message">Database truncation failed</string>
 
     <string name="order_searching_title">Order not found</string>
-    <string name="order_searching_message">Order not found in the local database. Do you want to search it on the back office?</string>    <string name="order_searching_error_message">Attempt to search failed</string>
+    <string name="order_searching_message">Order not found in the local database. Do you want to search it on the back office?</string>
+    <string name="order_searching_error_message">Attempt to search failed</string>
     <string name="order_searching_error_message_not_found">Order was not found on the server\u0020</string>
     <string name="order_searching_error_message_sync_locked">Searching on the server is currently not available, please try again later</string>
     <string name="order_searching_error_message_upload">Attempt to search failed: upload data error</string>
@@ -1839,5 +1840,7 @@
     <string name="item_activity_alert_ean_bad_error">EAN\\UPC was not scanned properly.</string>
     <string name="item_activity_alert_ean_invalid_error">EAN is not valid</string>
     <string name="item_activity_alert_product_code_empty_error">Product code can not be empty</string>
+
+    <string name="warning_inventory_matrix_limit">You\'ll exceed the inventory limit. Please decrease the number of variants</string>
 
 </resources>

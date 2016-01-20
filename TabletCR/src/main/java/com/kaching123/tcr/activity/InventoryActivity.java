@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
+import com.kaching123.tcr.InventoryHelper;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
@@ -45,6 +46,7 @@ import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.inventory.ItemsFragment;
 import com.kaching123.tcr.fragment.itempick.DrawerCategoriesFragment;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.store.ShopProvider;
@@ -180,57 +182,57 @@ public class InventoryActivity extends ScannerBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActionBar actionBar = getActionBar();
-        if(actionBar!=null) {
+        if (actionBar != null) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
             actionBar.setListNavigationCallbacks(new NavigationSpinnerAdapter(this), new OnNavigationListener() {
 
-            @Override
-            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-                switch (itemPosition) {
-                    case INVENTORY_NAVIGATION_FILTER_ALL:
-                    case INVENTORY_NAVIGATION_FILTER_NEAR_THE_END:
-                        itemsFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
-                        categoriesFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
-                        itemsFragment.setFilter(false, false, false, false, false, false, false);
-                        categoriesFragment.setFilter(false, false, false, false, false, false, false);
-                        break;
-                    case INVENTORY_NAVIGATION_FILTER_COMPOSERS:
-                        itemsFragment.setUseOnlyNearTheEnd(false);
-                        categoriesFragment.setUseOnlyNearTheEnd(false);
-                        itemsFragment.setFilter(true, false, false, false, false, false, false);
-                        categoriesFragment.setFilter(true, false, false, false, false, false, false);
-                        break;
-                    case INVENTORY_NAVIGATION_FILTER_COMPOSITIONS:
-                        itemsFragment.setUseOnlyNearTheEnd(false);
-                        categoriesFragment.setUseOnlyNearTheEnd(false);
-                        itemsFragment.setFilter(false, true, false, false, false, false, false);
-                        categoriesFragment.setFilter(false, true, false, false, false, false, false);
-                        break;
-                    case INVENTORY_NAVIGATION_FILTER_REFS:
-                        itemsFragment.setUseOnlyNearTheEnd(false);
-                        categoriesFragment.setUseOnlyNearTheEnd(false);
-                        itemsFragment.setFilter(false, false, true, false, false, false, false);
-                        categoriesFragment.setFilter(false, false, true, false, false, false, false);
-                        break;
-                    case INVENTORY_NAVIGATION_FILTER_CHILD:
-                        itemsFragment.setUseOnlyNearTheEnd(false);
-                        categoriesFragment.setUseOnlyNearTheEnd(false);
-                        itemsFragment.setFilter(false, false, false, false, false, false, true);
-                        categoriesFragment.setFilter(false, false, false, false, false, false, true);
-                        break;
-                    case INVENTORY_NAVIGATION_NOT_FOR_SALE:
-                        itemsFragment.setUseOnlyNearTheEnd(false);
-                        categoriesFragment.setUseOnlyNearTheEnd(false);
-                        itemsFragment.setFilter(false, false, false, true, false, false, false);
-                        categoriesFragment.setFilter(false, false, false, true, false, false, false);
-                        break;
-                    case INVENTORY_NAVIGATION_SERIAL:
-                        itemsFragment.setUseOnlyNearTheEnd(false);
-                        categoriesFragment.setUseOnlyNearTheEnd(false);
-                        itemsFragment.setFilter(false, false, false, true, false, true, false);
-                        categoriesFragment.setFilter(false, false, false, true, false, true, false);
-                        break;
-                }
+                @Override
+                public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                    switch (itemPosition) {
+                        case INVENTORY_NAVIGATION_FILTER_ALL:
+                        case INVENTORY_NAVIGATION_FILTER_NEAR_THE_END:
+                            itemsFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
+                            categoriesFragment.setUseOnlyNearTheEnd(NavigationSpinnerAdapter.NAVIGATION_NEAR_THE_END == itemPosition);
+                            itemsFragment.setFilter(false, false, false, false, false, false, false);
+                            categoriesFragment.setFilter(false, false, false, false, false, false, false);
+                            break;
+                        case INVENTORY_NAVIGATION_FILTER_COMPOSERS:
+                            itemsFragment.setUseOnlyNearTheEnd(false);
+                            categoriesFragment.setUseOnlyNearTheEnd(false);
+                            itemsFragment.setFilter(true, false, false, false, false, false, false);
+                            categoriesFragment.setFilter(true, false, false, false, false, false, false);
+                            break;
+                        case INVENTORY_NAVIGATION_FILTER_COMPOSITIONS:
+                            itemsFragment.setUseOnlyNearTheEnd(false);
+                            categoriesFragment.setUseOnlyNearTheEnd(false);
+                            itemsFragment.setFilter(false, true, false, false, false, false, false);
+                            categoriesFragment.setFilter(false, true, false, false, false, false, false);
+                            break;
+                        case INVENTORY_NAVIGATION_FILTER_REFS:
+                            itemsFragment.setUseOnlyNearTheEnd(false);
+                            categoriesFragment.setUseOnlyNearTheEnd(false);
+                            itemsFragment.setFilter(false, false, true, false, false, false, false);
+                            categoriesFragment.setFilter(false, false, true, false, false, false, false);
+                            break;
+                        case INVENTORY_NAVIGATION_FILTER_CHILD:
+                            itemsFragment.setUseOnlyNearTheEnd(false);
+                            categoriesFragment.setUseOnlyNearTheEnd(false);
+                            itemsFragment.setFilter(false, false, false, false, false, false, true);
+                            categoriesFragment.setFilter(false, false, false, false, false, false, true);
+                            break;
+                        case INVENTORY_NAVIGATION_NOT_FOR_SALE:
+                            itemsFragment.setUseOnlyNearTheEnd(false);
+                            categoriesFragment.setUseOnlyNearTheEnd(false);
+                            itemsFragment.setFilter(false, false, false, true, false, false, false);
+                            categoriesFragment.setFilter(false, false, false, true, false, false, false);
+                            break;
+                        case INVENTORY_NAVIGATION_SERIAL:
+                            itemsFragment.setUseOnlyNearTheEnd(false);
+                            categoriesFragment.setUseOnlyNearTheEnd(false);
+                            itemsFragment.setFilter(false, false, false, true, false, true, false);
+                            categoriesFragment.setFilter(false, false, false, true, false, true, false);
+                            break;
+                    }
 
                     return true;
                 }
@@ -309,6 +311,7 @@ public class InventoryActivity extends ScannerBaseActivity {
     @OptionsItem
     protected void actionAddItemSelected() {
         if (!checkMaxItemsCount()) {
+
             AlertDialogFragment.showAlert(this, R.string.error_dialog_title, getString(R.string.error_message_max_items_count));
             return;
         }
@@ -321,7 +324,7 @@ public class InventoryActivity extends ScannerBaseActivity {
     }
 
     private boolean checkMaxItemsCount() {
-        return !PlanOptions.isInventoryLimited() || itemsCount < PlanOptions.getInventoryLimit();
+        return !InventoryHelper.isLimited() || itemsCount < InventoryHelper.getLimit();
     }
 
     @OptionsItem
@@ -552,6 +555,7 @@ public class InventoryActivity extends ScannerBaseActivity {
             return CursorLoaderBuilder
                     .forUri(ITEMS_URI)
                     .projection("count(" + ItemTable.GUID + ")")
+                    .where(ItemTable.ITEM_REF_TYPE + " = ? ", ItemRefType.Simple.ordinal())
                     .wrap(new Function<Cursor, Integer>() {
                         @Override
                         public Integer apply(Cursor c) {
@@ -565,7 +569,7 @@ public class InventoryActivity extends ScannerBaseActivity {
 
         @Override
         public void onLoadFinished(Loader<Integer> integerLoader, Integer value) {
-            InventoryActivity.this.itemsCount = value == null ? 0 : value;
+            itemsCount = value == null ? 0 : value;
         }
 
         @Override

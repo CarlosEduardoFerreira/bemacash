@@ -21,12 +21,15 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.InventoryHelper;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
 import com.kaching123.tcr.commands.store.inventory.AddVariantMatrixItemsCommand;
 import com.kaching123.tcr.commands.store.inventory.DeleteVariantMatrixItemsCommand;
 import com.kaching123.tcr.commands.store.inventory.EditVariantMatrixItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditVariantMatrixItemsCommand;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.function.NextProductCodeQuery;
 import com.kaching123.tcr.function.VariantSubItemWrapFunction;
 import com.kaching123.tcr.model.ItemExModel;
@@ -36,6 +39,8 @@ import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.VariantSubItemModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.VariantItemTable;
+import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
 import com.kaching123.tcr.util.CursorUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -63,8 +68,8 @@ public class VariantsMatrixFragment extends Fragment {
     private final static String FTAG = VariantsMatrixFragment.class.getName();
     private static final Uri URI_VARIANT_MATRIX = ShopProvider.contentUri(ShopStore.ItemMatrixTable.URI_CONTENT);
     private static final Uri URI_ITEM_MATRIX_VIEW = ShopProvider.contentUri(ShopStore.ItemMatrixByChildView.URI_CONTENT);
-    private static final Uri URI_VARIANT_ITEMS = ShopProvider.contentUri(ShopStore.VariantItemTable.URI_CONTENT);
-    private static final Uri URI_VARIANT_SUB_ITEMS = ShopProvider.contentUri(ShopStore.VariantSubItemTable.URI_CONTENT);
+    private static final Uri URI_VARIANT_ITEMS = ShopProvider.contentUri(VariantItemTable.URI_CONTENT);
+    private static final Uri URI_VARIANT_SUB_ITEMS = ShopProvider.contentUri(VariantSubItemTable.URI_CONTENT);
     private final static int LOADER_TAG = 0x00000010;
 
     @FragmentArg
@@ -96,7 +101,9 @@ public class VariantsMatrixFragment extends Fragment {
     }
 
     protected void checkMatrixSizeAndPopulation() {
-        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX).where(ShopStore.ItemMatrixTable.PARENT_GUID + "=?", model.guid).perform(getActivity());
+        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX)
+                .where(ShopStore.ItemMatrixTable.PARENT_GUID + "=?", model.guid)
+                .perform(getActivity());
         if (!c.moveToFirst() || !hasEmptyChildId(c)) {
             displayPopulateAction(false);
         } else {
@@ -141,7 +148,24 @@ public class VariantsMatrixFragment extends Fragment {
 
     @OptionsItem
     protected void actionPopulateSelected() {
-        populate();
+        if (!limitIsExceeded()) {
+            populate();
+        } else {
+            AlertDialogFragment.showAlert(getActivity(), R.string.warning_dialog_title,
+                    getString(R.string.warning_inventory_matrix_limit));
+        }
+    }
+
+    private boolean limitIsExceeded() {
+        if (InventoryHelper.isLimited()) {
+            int currentCount = (int) InventoryHelper.getLimitedItemsCount(getContext());
+            Logger.d("[Inventory] current non-ref items count: %d", currentCount);
+            int maxMatrixCount = model.getMaxMatrixCount(getContext());
+            if (maxMatrixCount + currentCount > InventoryHelper.getLimit()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Background
@@ -155,11 +179,15 @@ public class VariantsMatrixFragment extends Fragment {
                 .perform(getActivity());
         boolean isPopulated = hasChildId(matrixCursor);
         if (c.getCount() > 0 && matrixCursor.getCount() == 0 && !isPopulated) {
-            List<List<VariantSubItemModel>> variants = new ArrayList<List<VariantSubItemModel>>(c.getCount());
+            List<List<VariantSubItemModel>> variants = new ArrayList<>(c.getCount());
             if (c.moveToFirst()) {
                 do {
-                    Cursor subCursor = ProviderAction.query(URI_VARIANT_SUB_ITEMS).where(ShopStore.VariantSubItemTable.VARIANT_ITEM_GUID + "=?", c.getString(c.getColumnIndex(ShopStore.VariantItemTable.GUID))).perform(getActivity());
-                    List<VariantSubItemModel> subItems = CursorUtil._wrap(subCursor, new VariantSubItemWrapFunction());
+                    Cursor subCursor = ProviderAction.query(URI_VARIANT_SUB_ITEMS)
+                            .where(ShopStore.VariantSubItemTable.VARIANT_ITEM_GUID + "=?",
+                                    c.getString(c.getColumnIndex(ShopStore.VariantItemTable.GUID)))
+                            .perform(getActivity());
+                    List<VariantSubItemModel> subItems = CursorUtil
+                            ._wrap(subCursor, new VariantSubItemWrapFunction());
                     if (subItems != null && subItems.size() > 0) {
                         variants.add(subItems);
                     }
@@ -173,7 +201,8 @@ public class VariantsMatrixFragment extends Fragment {
             ArrayList<ItemMatrixModel> models = new ArrayList<>(variantMatrix.size());
             for (int i = 0; i < variantMatrix.size(); i++) {
                 String itemMatrixName = variantMatrix.get(i);
-                models.add(new ItemMatrixModel(UUID.randomUUID().toString(), itemMatrixName, model.guid, null));
+                models.add(new ItemMatrixModel(UUID.randomUUID().toString(), itemMatrixName,
+                        model.guid, null));
             }
             callAddItemMatrixCommand(models);
         }
@@ -190,8 +219,10 @@ public class VariantsMatrixFragment extends Fragment {
 
     @Background
     protected void populate() {
-        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX).where(ShopStore.ItemMatrixTable.PARENT_GUID + "=?" + " AND "
-                + ShopStore.ItemMatrixTable.CHILD_GUID + " IS NULL", model.guid).perform(getActivity());
+        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX)
+                .where(ShopStore.ItemMatrixTable.PARENT_GUID + "= ? AND "
+                        + ShopStore.ItemMatrixTable.CHILD_GUID + " IS NULL", model.guid)
+                .perform(getActivity());
         if (c.moveToFirst()) {
             int matrixItemNameIdx = c.getColumnIndex(ShopStore.ItemMatrixTable.NAME);
             ArrayList<ItemMatrixModel> models = new ArrayList<>(c.getCount());
@@ -237,13 +268,14 @@ public class VariantsMatrixFragment extends Fragment {
     }
 
     protected void setActionMode(final ActionMode mode) {
-        actionModeRef = new WeakReference<ActionMode>(mode);
+        actionModeRef = new WeakReference<>(mode);
     }
 
     @UiThread
     protected void configureActionItems(boolean isPopulated) {
         if (getActionMode() != null) {
-            actionModeRef.get().getMenu().findItem(R.id.action_edit).setVisible(variantsMatrixListView.getCheckedItemIds().length == 1);
+            actionModeRef.get().getMenu().findItem(R.id.action_edit)
+                    .setVisible(variantsMatrixListView.getCheckedItemIds().length == 1);
             actionModeRef.get().getMenu().findItem(R.id.action_clear).setVisible(isPopulated);
             actionModeRef.get().getMenu().findItem(R.id.action_delete).setVisible(!isPopulated);
         }
@@ -251,7 +283,9 @@ public class VariantsMatrixFragment extends Fragment {
 
     @Background
     protected void configureActionMode() {
-        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX).where(ShopStore.ItemMatrixTable.PARENT_GUID + "=?", model.guid).perform(getActivity());
+        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX)
+                .where(ShopStore.ItemMatrixTable.PARENT_GUID + "=?", model.guid)
+                .perform(getActivity());
         configureActionItems(hasChildId(c));
         c.close();
     }
@@ -271,7 +305,6 @@ public class VariantsMatrixFragment extends Fragment {
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-
             return false;
         }
 
@@ -321,10 +354,12 @@ public class VariantsMatrixFragment extends Fragment {
                 sb.append(',');
             sb.append('?');
         }
-        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX).where(ShopStore.ItemMatrixTable.ID + " IN (" + sb.toString() + ")", ids).perform(getActivity());
+        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX)
+                .where(ShopStore.ItemMatrixTable.ID + " IN (" + sb.toString() + ")", ids)
+                .perform(getActivity());
 
         if (c.moveToFirst()) {
-            ArrayList<ItemMatrixModel> models = new ArrayList<ItemMatrixModel>(c.getCount());
+            ArrayList<ItemMatrixModel> models = new ArrayList<>(c.getCount());
             do {
                 models.add(new ItemMatrixModel(c));
             } while (c.moveToNext());
@@ -342,7 +377,9 @@ public class VariantsMatrixFragment extends Fragment {
                 sb.append(',');
             sb.append('?');
         }
-        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX).where(ShopStore.ItemMatrixTable.ID + " IN (" + sb.toString() + ")", ids).perform(getActivity());
+        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX)
+                .where(ShopStore.ItemMatrixTable.ID + " IN (" + sb.toString() + ")", ids)
+                .perform(getActivity());
         if (c.moveToFirst()) {
             ArrayList<ItemMatrixModel> models = new ArrayList<ItemMatrixModel>(c.getCount());
             do {
@@ -357,7 +394,9 @@ public class VariantsMatrixFragment extends Fragment {
 
     @Background
     protected void updateMatrixItem(long id) {
-        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX).where(ShopStore.ItemMatrixTable.ID + "=?", id).perform(getActivity());
+        Cursor c = ProviderAction.query(URI_VARIANT_MATRIX)
+                .where(ShopStore.ItemMatrixTable.ID + "=?", id)
+                .perform(getActivity());
         if (c.moveToFirst()) {
             changeChild(new ItemMatrixModel(c));
         }
@@ -392,7 +431,9 @@ public class VariantsMatrixFragment extends Fragment {
         public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
             switch (loaderId) {
                 case LOADER_TAG:
-                    return CursorLoaderBuilder.forUri(URI_ITEM_MATRIX_VIEW).where(ShopStore.ItemMatrixByChildView.ITEM_MATRIX_PARENT_GUID + "=?", model.guid)
+                    return CursorLoaderBuilder.forUri(URI_ITEM_MATRIX_VIEW)
+                            .where(ShopStore.ItemMatrixByChildView.ITEM_MATRIX_PARENT_GUID + " = ?"
+                                    , model.guid)
                             .build(getActivity());
 
                 default:
@@ -433,7 +474,8 @@ public class VariantsMatrixFragment extends Fragment {
         manager.beginTransaction().replace(R.id.container, f, FTAG).commit();
     }
 
-    protected void build(List<List<VariantSubItemModel>> list, int index, String s, List<String> variantMatrix) {
+    protected void build(List<List<VariantSubItemModel>> list, int index, String s,
+                         List<String> variantMatrix) {
         List<VariantSubItemModel> subs = list.get(index);
         String prevString = s;
 

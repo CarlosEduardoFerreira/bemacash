@@ -315,10 +315,6 @@ public class PlanOptions {
         return TcrApplication.get().getShopPref().employeeLimit().get();
     }
 
-    public static int getInventoryLimit() {
-        return TcrApplication.get().getShopPref().inventoryLimit().get();
-    }
-
     public static boolean isZReportFiltersAllowed() {
         return isAllowed(RestrictionType.Z_REPORT_FILTERS);
     }

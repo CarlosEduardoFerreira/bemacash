@@ -17,6 +17,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.CategoryItemView;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.CategoryView2.CategoryTable;
@@ -162,9 +163,10 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         } else if (composition) {
             builder.where(ShopSchema2.CategoryView2.ChildComposerTable.ID + " IS NOT NULL");
         } else if (reference) {
-            builder.where(ItemTable.ITEM_REF_TYPE + " <> ? ", "0");
+            builder.where(ItemTable.ITEM_REF_TYPE + " = ? ", ItemRefType.Reference.ordinal());
         } else if (child) {
-            builder.where(ItemTable.REFERENCE_ITEM_ID + " IS NOT NULL OR " + ShopSchema2.CategoryView2.ItemMatrixTable.PARENT_GUID + " IS NOT NULL");
+            builder.where(ItemTable.REFERENCE_ITEM_ID + " IS NOT NULL OR "
+                    + ShopSchema2.CategoryView2.ItemMatrixTable.PARENT_GUID + " IS NOT NULL");
         } else if (forSale) {
             builder.where(ItemTable.SALABLE + " = ? ", "0");
         }
