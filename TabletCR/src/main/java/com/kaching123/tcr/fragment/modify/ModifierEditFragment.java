@@ -351,10 +351,11 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
             } else {
                 model.childItemQty = parseBrandQtyInput(qtyEditbox.getText().toString());
             }
-        } else {
-            //// FIXME: 07.12.2015 java.lang.ClassCastException: java.lang.Long cannot be cast to java.math.BigDecimal
-            model.cost = parseBigDecimal(priceEditbox.getText().toString());
         }
+        model.cost = parseBigDecimal(priceEditbox.getText().toString());
+//        else {
+//            model.cost = parseBigDecimal(priceEditbox.getText().toString());
+//        }
         if (TextUtils.isEmpty(description.getText().toString())) {
             model.title = "";
         } else {
@@ -470,7 +471,8 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
         @Override
         protected String getCustomSelection() {
             return ShopSchema2.ItemExtView2.ItemTable.GUID + " <> ? AND "
-                    + ShopSchema2.ModifierView2.ItemTable.CODE_TYPE + " IS NULL";
+                    + ShopSchema2.ModifierView2.ItemTable.CODE_TYPE + " IS NULL AND "
+                    + ShopSchema2.ModifierView2.ItemTable.ITEM_REF_TYPE + " == 0";
         }
 
         @Override
