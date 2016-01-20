@@ -17,6 +17,8 @@ import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.CreateTaxGroup;
 import com.kaching123.tcr.commands.store.inventory.UpdateTaxGroup;
+import com.kaching123.tcr.component.CurrencyFormatInputFilter;
+import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.PercentFormatInputFilter;
 import com.kaching123.tcr.component.QuantityFormatInputFilter;
 import com.kaching123.tcr.fragment.UiHelper;
@@ -33,6 +35,7 @@ import java.math.BigDecimal;
 public class TaxGroupDialog extends StyledDialogFragment {
 
     public static final String DIALOG_NAME = TaxGroupDialog.class.getSimpleName();
+    protected CurrencyTextWatcher currencyTextWatcher;
 
     @FragmentArg
     protected TaxGroupModel model;
@@ -44,8 +47,10 @@ public class TaxGroupDialog extends StyledDialogFragment {
 
     @AfterViews
     protected void initViews() {
-        InputFilter[] decimalFilter = new InputFilter[]{new QuantityFormatInputFilter()};
+        currencyTextWatcher = new CurrencyTextWatcher(tax);
+        InputFilter[] decimalFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
         tax.setFilters(decimalFilter);
+        tax.addTextChangedListener(currencyTextWatcher);
         tax.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -110,7 +115,8 @@ public class TaxGroupDialog extends StyledDialogFragment {
         }
         if (fieldsValid()){
             final String title = this.title.getText().toString();
-            final BigDecimal tax = new BigDecimal(this.tax.getText().toString());
+            String value = this.tax.getText().toString().replaceAll(",", "");
+            final BigDecimal tax = new BigDecimal(value);
             if (model != null){
                 UpdateTaxGroup.start(getActivity(), null, model.guid, title, tax);
             }else{
@@ -123,13 +129,15 @@ public class TaxGroupDialog extends StyledDialogFragment {
 
     private boolean fieldsValid() {
         String title = this.title.getText().toString().trim();
-        BigDecimal tax = TextUtils.isEmpty(this.tax.getText().toString()) ? null : new BigDecimal(this.tax.getText().toString());
+        String value = this.tax.getText().toString().replaceAll(",", "");
+        BigDecimal tax = TextUtils.isEmpty(value) ? null : new BigDecimal(value);
         return !TextUtils.isEmpty(title) && tax != null && tax.compareTo(BigDecimal.ZERO) > 0;
     }
 
     private boolean isChanged(){
         String title = this.title.getText().toString().trim();
-        BigDecimal tax = TextUtils.isEmpty(this.tax.getText().toString()) ? null : new BigDecimal(this.tax.getText().toString());
+        String value = this.tax.getText().toString().replaceAll(",", "");
+        BigDecimal tax = TextUtils.isEmpty(value) ? null : new BigDecimal(value);
         return model == null || (!model.title.equals(title) || model.tax.compareTo(tax) != 0);
     }
 

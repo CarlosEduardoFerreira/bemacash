@@ -85,12 +85,6 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         }
     }
 
-    /*@BeforeTextChange
-    protected void testBeforeTextChanged(CharSequence s){
-        BCFormatter formatter = new BCFormatter();
-        s = formatter.format(s.toString());
-    }*/
-
     private void fillFields() {
         firstName.setText(model.firstName);
         lastName.setText(model.lastName);
@@ -208,22 +202,6 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
         }
     }
-
-//    private boolean updateLastSuccessfulLoginUser() {
-//
-//        Cursor c = ProviderAction.query(EMPLOYEE_URI)
-//                .projection(ShopStore.EmployeeTable.LOGIN, ShopStore.EmployeeTable.PASSWORD)
-//                .where(ShopStore.EmployeeTable.LOGIN + " !=?", model.login)
-//                .orderBy(ShopStore.EmployeeTable.UPDATE_TIME + " desc ")
-//                .perform(EditEmployeeActivity.this);
-//        if (c.moveToFirst()) {
-//            updateLastLogin(c.getString(0));
-//            updateLastPassword(c.getString(1));
-//        }
-//        c.close();
-//        return true;
-//
-//    }
 
     private void updateLastLogin(String login) {
         if (login == null)

@@ -114,7 +114,7 @@ public abstract class DecimalEditFragment extends KeyboardDialogFragment {
     }
 
     protected BigDecimal getDecimalValue() {
-        String text = editText.getText().toString().replaceAll("\\,", "");;
+        String text = editText.getText().toString().replaceAll(",", "");;
         try {
             if (text.endsWith("-")){
                 return negative(new BigDecimal(text.substring(0, text.length() - 1)));

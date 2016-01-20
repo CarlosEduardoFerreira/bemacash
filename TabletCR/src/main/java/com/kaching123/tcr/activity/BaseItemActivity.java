@@ -348,19 +348,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         discountTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         discountType.setAdapter(discountTypeAdapter);
 
-        /*modifiersTable.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!PlanOptions.isModifiersAllowed()) {
-                    AlertDialogFragment.showAlert(BaseItemActivity.this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
-                } else {
-                    ModifierActivity.start(BaseItemActivity.this, model, TAG_RESULT_MODIFIER);
-                }
-            }
-        });*/
-
-        //getSupportLoaderManager().restartLoader(MODIFIERS_LOADER, null, new ModifierModelLoader());
-
         unitsLabelAdapter = new UnitsLabelAdapter(this);
         unitsLabel.setAdapter(unitsLabelAdapter);
 
@@ -376,11 +363,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         getSupportLoaderManager().initLoader(PRINTER_ALIAS_LOADER_ID, null, new PrinterAliasLoader());
         getSupportLoaderManager().initLoader(UNITS_LABEL_LOADER, null, new UnitsLabelLoader());
 
-        //fillModifierLabels(0, 0, 0);
-
-  //      stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
-  //      availableQtyPencil.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
-
     }
 
     protected void setQuantities() {
@@ -391,14 +373,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
 
     }
-/*
-    private void stockTrackingSetup(CodeType codeType) {
-        final boolean isSerializable = codeType != null;
-        if (isSerializable) {
-            stockTrackingFlag.setChecked(true);
-        }
-        stockTrackingFlag.setEnabled(TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
-    }*/
 
     protected void onSerializableSet(boolean isSerializable) {
 
@@ -552,56 +526,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     protected abstract void callCommand(ItemModel model);
-
-    /*protected void fillModifierFields(List<ModifierModel> modifierModels) {
-        clearlModifierFields();
-
-        int modCount = 0;
-        int addonCount = 0;
-        int optionCount = 0;
-
-        for (ModifierModel mod : modifierModels) {
-            if (mod.type == ModifierType.MODIFIER) {
-                appendModifier(this.modifiers, mod);
-                modCount++;
-            } else if (mod.type == ModifierType.ADDON) {
-                appendModifier(this.addons, mod);
-                addonCount++;
-            } else if (mod.type == ModifierType.OPTIONAL) {
-                appendModifier(this.optionals, mod);
-                optionCount++;
-            }
-        }
-
-        fillModifierLabels(modCount, addonCount, optionCount);
-    }
-
-    /*protected void clearlModifierFields() {
-        modifiers.setText(null);
-        addons.setText(null);
-        optionals.setText(null);
-        fillModifierLabels(0, 0, 0);
-    }*
-
-    protected void fillModifierLabels(int modCount, int addonCount, int optionCount) {
-        modifiersLabel.setText(String.format(getString(R.string.item_activity_modifiers), modCount));
-        addonsLabel.setText(String.format(getString(R.string.item_activity_addons), addonCount));
-        optionalsLabel.setText(String.format(getString(R.string.item_activity_optionals), optionCount));
-    }*/
-
-    /*protected void setFieldsFilters() {
-        InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
-        //InputFilter[] quantityFilter = new InputFilter[]{new QuantityFormatInputFilter()};
-        //InputFilter[] signedQuantityFilter = new InputFilter[]{new SignedQuantityFormatInputFilter()};
-        //InputFilter[] productCodeFilter = new InputFilter[]{new InputFilter.LengthFilter(TcrApplication.PRODUCT_CODE_MAX_LEN), alphanumericFilter};
-        //availableQty.setFilters(signedQuantityFilter);
-        //minimumQty.setFilters(quantityFilter);
-        //recommendedQty.setFilters(quantityFilter);
-        salesPrice.setFilters(currencyFilter);
-        cost.setFilters(currencyFilter);
-        commissions.setFilters(currencyFilter);
-        discount.setFilters(currencyFilter);
-    }*/
 
     protected void setFieldsFilters() {
         InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};

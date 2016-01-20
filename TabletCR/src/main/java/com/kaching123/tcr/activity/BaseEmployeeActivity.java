@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
+import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.SignedCurrencyFormatInputFilter;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.EmployeeModel;
@@ -66,6 +67,7 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
     public static final int PASSWORD_MIN_LEN = 4;
 
     public static final int PERMISSIONS_REQUEST_INDEX = 1;
+    protected CurrencyTextWatcher currencyTextWatcher;
 
     @Extra
     protected EmployeeModel model;
@@ -173,7 +175,9 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
 
         InputFilter[] signedDecimalFilter = new InputFilter[]{new SignedCurrencyFormatInputFilter()};
         InputFilter[] decimalFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
+        currencyTextWatcher = new CurrencyTextWatcher(hourlyRate);
         hourlyRate.setFilters(signedDecimalFilter);
+        hourlyRate.addTextChangedListener(currencyTextWatcher);
         commissions.setFilters(decimalFilter);
 
         status.setAdapter(new StatusAdapter());
