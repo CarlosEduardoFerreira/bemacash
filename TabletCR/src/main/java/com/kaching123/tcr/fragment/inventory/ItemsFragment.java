@@ -44,9 +44,7 @@ import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.showBrandQty;
 import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
-import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
-import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
 import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 
@@ -357,7 +355,6 @@ public class ItemsFragment extends BaseItemsPickFragment {
                 holder.qty.setText("");
                 holder.totalCost.setText("");
             }
->>>>>>> a9713589f227466ba6a2a1b928457c3140cef7b0
 
             holder.drag.setVisibility(draggable ? View.VISIBLE : View.INVISIBLE);
 
