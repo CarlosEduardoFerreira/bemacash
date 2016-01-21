@@ -44,17 +44,17 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
     public void setCategory(String categoryGuid) {
         this.categoryGuid = categoryGuid;
         Logger.d("restartLoader from setCategory");
-        restartLoader();
+        restartItemsLoader();
     }
-
+/*
     @Override
     public void onResume() {
         super.onResume();
         Logger.d("restartLoader from onResume");
         restartLoader();
-    }
+    }*/
 
-    private void restartLoader() {
+    protected void restartItemsLoader() {
         getLoaderManager().restartLoader(BASE_ITEMS_LOADER_ID, Bundle.EMPTY, this);
     }
 

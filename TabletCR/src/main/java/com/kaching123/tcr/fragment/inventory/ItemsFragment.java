@@ -55,7 +55,6 @@ import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 public class ItemsFragment extends BaseItemsPickFragment {
 
     public static final String LOAD_ALL_CATEGORIES = "load_all_categories";
-    private static final int ITEMS_LOADER_ID = 0;
 
     @ViewById
     protected DragSortListView list;
@@ -118,7 +117,8 @@ public class ItemsFragment extends BaseItemsPickFragment {
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(URI_ITEMS);
         builder.projection(ItemExFunction.PROJECTION);
 
-        builder.orderBy(sortByName && LOAD_ALL_CATEGORIES.equals(categoryGuid)? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
+        //builder.orderBy(sortByName && LOAD_ALL_CATEGORIES.equals(categoryGuid)? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
+        builder.orderBy(sortByName ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
 
         builder.where(ItemTable.IS_DELETED + " = ?", 0);
 
@@ -154,11 +154,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
     public void setTextFilter(String filter) {
         this.textFilter = filter;
         Logger.d("restartLoader from setTextFilter");
-        restartLoader();
-    }
-
-    private void restartLoader() {
-        getLoaderManager().restartLoader(ITEMS_LOADER_ID, Bundle.EMPTY, this);
+        restartItemsLoader();
     }
 
     public void setFilter(boolean composer,
@@ -176,7 +172,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         this.serial = serial;
         this.child = child;
         Logger.d("restartLoader from setFilter");
-        restartLoader();
+        restartItemsLoader();
     }
 
 
@@ -187,7 +183,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
     public void sortByName(boolean sortByName) {
         this.sortByName = sortByName;
         Logger.d("restartLoader from sortByName");
-        restartLoader();
+        restartItemsLoader();
     }
 
     private class Adapter extends ObjectCursorDragAdapter<ItemExModel> implements DragSortListView.DropListener {
@@ -372,7 +368,6 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
         @Override
         public void drop(int from, int to) {
-            updateItemOrder();
             try {
                 super.drop(from, to);
                 HANDLER.removeCallbacksAndMessages(null);

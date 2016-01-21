@@ -37,7 +37,7 @@ public class UpdateItemOrderCommand extends AsyncCommand {
         ops = new ArrayList<ContentProviderOperation>();
         for (int i = 0; i < guids.length; i++){
             String guid = guids[i];
-            ops.add(ContentProviderOperation.newUpdate(ShopProvider.getContentUri(ItemTable.URI_CONTENT))
+            ops.add(ContentProviderOperation.newUpdate(ShopProvider.contentUri(ItemTable.URI_CONTENT))
                     .withSelection(ItemTable.GUID + " = ?", new String[]{guid})
                     .withValue(ItemTable.ORDER_NUM, i)
                     .build());
