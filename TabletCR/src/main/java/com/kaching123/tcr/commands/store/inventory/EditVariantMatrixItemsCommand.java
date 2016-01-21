@@ -36,10 +36,12 @@ public class EditVariantMatrixItemsCommand extends AsyncCommand {
         JdbcConverter<ItemMatrixModel> jdbc = JdbcFactory.getConverter(ShopStore.ItemMatrixTable.TABLE_NAME);
         operations = new ArrayList<>(models.size());
         sql = batchInsert(ItemMatrixModel.class);
-        List<String> childGuidsToNullify = new ArrayList<String>();
+        List<String> childGuidsToNullify = new ArrayList<>();
         for (ItemMatrixModel m : models) {
             operations.add(ContentProviderOperation.newUpdate(ITEM_MATRIX_URI)
-                    .withValues(m.toValues()).withSelection(ShopStore.ItemMatrixTable.GUID + "=?", new String[]{m.guid})
+                    .withValues(m.toValues())
+                    .withSelection(ShopStore.ItemMatrixTable.GUID + "=?",
+                            new String[]{m.guid})
                     .build());
             sql.add(jdbc.updateSQL(m, this.getAppCommandContext()));
             if (m.childItemGuid != null) {

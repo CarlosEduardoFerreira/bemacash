@@ -17,7 +17,7 @@ public class ItemMatrixWrapFunction implements Function<Cursor, List<ItemMatrixM
 
     @Override
     public List<ItemMatrixModel> apply(Cursor cursor) {
-        List<ItemMatrixModel> list = new ArrayList<ItemMatrixModel>(cursor.getCount());
+        List<ItemMatrixModel> list = new ArrayList<>(cursor.getCount());
         if (cursor.moveToFirst()) {
             do {
                 list.add(itemMatrixFunction.apply(cursor));
