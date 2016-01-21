@@ -590,28 +590,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     }
 
-    /*protected void updateStockTrackingBlock(boolean isChecked) {
-        View [] views = {availableQty, recommendedQty, minimumQty, availableQtyPencil};
-        for (View view: views) {
-            view.setEnabled(isChecked && TcrApplication.get().isFreemium() && PlanOptions.isStockTrackingAllowed());
-        }
-
-        if (!isChecked) {
-            model.recommendedQty = null;
-            model.availableQty = null;
-            model.minimumQty = null;
-
-            recommendedQty.setText(null);
-            availableQty.setText(null);
-            minimumQty.setText(null);
-            availableQtyPencil.setText(null);
-        } else {
-            if (count > 0) {
-                recollectComposerInfo();
-            }
-        }
-    }*/
-
     protected void recollectComposerInfo() {
     }
 
@@ -684,7 +662,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         String discount = this.discount.getText().toString();
         model.discount = parseBigDecimal(discount, BigDecimal.ZERO);
 
-        //model.isTaxable = this.taxable.isChecked();
+        model.isTaxable = this.taxable.isChecked();
         // c = (Cursor) this.taxGroup.getSelectedItem();
         //   model.taxGroupGuid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
 
