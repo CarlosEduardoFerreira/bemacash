@@ -3,6 +3,7 @@ package com.kaching123.tcr.commands.store.inventory;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
@@ -58,11 +59,12 @@ public class EditItemCommand extends AsyncCommand {
         BigDecimal availableQty = null;
 
         Cursor c = ProviderAction.query(ITEM_URI)
-                .projection(ItemTable.TMP_AVAILABLE_QTY)
+                .projection(ItemTable.TMP_AVAILABLE_QTY, ItemTable.DEFAULT_MODIFIER_GUID)
                 .where(ItemTable.GUID + " = ?", item.guid)
                 .perform(getContext());
         if (c.moveToFirst()) {
-            availableQty = _decimalQty(c, 0);
+            availableQty = _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY));//_decimalQty(c, 0);
+            item.defaultModifierGuid = c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID));
         }
         c.close();
 
