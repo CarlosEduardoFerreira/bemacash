@@ -147,6 +147,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected static final int UNITS_LABEL_LOADER = 7;
 
     @ViewById
+    protected CheckBox taxable;
+    @ViewById
     protected TableRow serializationHolder;
     @ViewById
     protected EditText description;
@@ -186,8 +188,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected Spinner discountType;
     @ViewById
     protected EditText discount;
-    @ViewById
-    protected CheckBox taxable;
     @ViewById
     protected EditText cost;
     @ViewById
@@ -506,7 +506,9 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     private void addModifierClicked(ModifierType modifierType) {
-        EditDialog.showWithType(this, new ModifierModel(UUID.randomUUID().toString(), model.guid, null, null, null, null, null, null), modifierType, new OnEditListener() {
+        EditDialog.showWithType(this, new ModifierModel(UUID.randomUUID().toString(), model.guid,
+                null, null, null, null, null, null), modifierType,
+                new OnEditListener() {
             @Override
             public void onDefaultModifierChanged(String modifierId, boolean useAsDefault, boolean resetDefaultModifier) {
                 if (useAsDefault) {
@@ -623,12 +625,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         c = (Cursor) this.category.getSelectedItem();
         model.categoryId = c == null ? null : c.getString(c.getColumnIndex(CategoryTable.GUID));
-
-        //model.eanCode = this.ean.getText().toString();
-
-        //model.productCode = this.productCode.getText().toString();
-
-
         model.unitsLabelId = ((UnitLabelModel) this.unitsLabel.getSelectedItem()).guid;
 
         if (!TextUtils.isEmpty(model.unitsLabelId) && !TextUtils.isEmpty(model.unitsLabel)) {
@@ -640,12 +636,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.isActiveStatus = this.active.isChecked();
 
         model.printerAliasGuid = ((PrinterAliasModel) this.printerAlias.getSelectedItem()).guid;
-
-        //model.availableQty = UiHelper.getDecimalValue(this.availableQty);
-        //model.minimumQty = UiHelper.getDecimalValue(this.minimumQty);
-        //model.recommendedQty = UiHelper.getDecimalValue(this.recommendedQty);
-
-        //model.isStockTracking = this.stockTrackingFlag.isChecked();
 
         String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?
                 BigDecimal.ZERO.toString() : this.salesPrice.getText().toString();
@@ -661,10 +651,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         String discount = this.discount.getText().toString();
         model.discount = parseBigDecimal(discount, BigDecimal.ZERO);
-
-        model.isTaxable = this.taxable.isChecked();
-        // c = (Cursor) this.taxGroup.getSelectedItem();
-        //   model.taxGroupGuid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
 
         c = (Cursor) this.taxGroup.getSelectedItem();
 

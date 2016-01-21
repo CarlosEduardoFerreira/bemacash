@@ -81,7 +81,8 @@ public class AddItemCommand extends AsyncCommand {
         BatchSqlCommand batch = batchInsert(item);
         batch.add(JdbcFactory.getConverter(item).insertSQL(item, getAppCommandContext()));
         if (movementModel != null) {
-            batch.add(JdbcFactory.getConverter(movementModel).insertSQL(movementModel, getAppCommandContext()));
+            batch.add(JdbcFactory.getConverter(movementModel)
+                    .insertSQL(movementModel, getAppCommandContext()));
         }
         return batch;
     }

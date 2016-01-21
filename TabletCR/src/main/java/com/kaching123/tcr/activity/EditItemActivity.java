@@ -241,7 +241,7 @@ public class EditItemActivity extends BaseCommonItemActivity {
 
         salableChBox.setChecked(model.isSalable);
         enableForSaleParams(model.isSalable);
-        //taxable.setChecked(model.isTaxable);
+        taxable.setChecked(model.isTaxable);
         showPrice(cost, model.cost);
 
         commissionsEligible.setChecked(model.commissionEligible);

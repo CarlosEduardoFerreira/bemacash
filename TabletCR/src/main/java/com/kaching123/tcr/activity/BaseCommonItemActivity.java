@@ -73,7 +73,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
     @ViewById
     protected EditText recommendedQty;
     @ViewById
-   protected EditText availableQty;
+    protected EditText availableQty;
     @ViewById
     protected TextView availableQtyPencil;
     @ViewById
@@ -264,7 +264,9 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
         QtyTextChangeListener availableQtyTextChangeListener = new QtyTextChangeListener(availableQty);
         QtyTextChangeListener minimumQtyTextChangeListener = new QtyTextChangeListener(minimumQty);
         QtyTextChangeListener recommendedQtyTextChangeListener = new QtyTextChangeListener(recommendedQty);
+
         CheckedChangeListener checkedChangeListener = new CheckedChangeListener();
+        taxable.setOnCheckedChangeListener(checkedChangeListener);
 
         if (this instanceof AddItemActivity_) {
             availableQty.addTextChangedListener(new BrandTextWatcher(availableQty, true));
@@ -386,7 +388,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
 
     protected void updateStockTrackingBlock(boolean isChecked) {
 
-        View [] views = {availableQty, recommendedQty, minimumQty, availableQty, availableQtyPencil};
+        View[] views = {availableQty, recommendedQty, minimumQty, availableQty, availableQtyPencil};
         for (View view : views) {
             view.setEnabled(isChecked && PlanOptions.isStockTrackingAllowed());
         }
@@ -421,7 +423,8 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
         }
 
         if (!TextUtils.isEmpty(productCode) && (productCode.length() < TcrApplication.BARCODE_MIN_LEN || productCode.length() > TcrApplication.PRODUCT_CODE_MAX_LEN)) {
-            Toast.makeText(this, getString(R.string.item_activity_alert_product_code_msg, TcrApplication.BARCODE_MIN_LEN, TcrApplication.PRODUCT_CODE_MAX_LEN), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.item_activity_alert_product_code_msg,
+                    TcrApplication.BARCODE_MIN_LEN, TcrApplication.PRODUCT_CODE_MAX_LEN), Toast.LENGTH_SHORT).show();
             return false;
         }
         return super.validateForm();
@@ -431,6 +434,8 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
     protected void collectDataToModel(ItemModel model) {
         super.collectDataToModel(model);
         model.eanCode = this.ean.getText().toString();
+
+        model.isTaxable = this.taxable.isChecked();
 
         model.productCode = this.productCode.getText().toString();
 
