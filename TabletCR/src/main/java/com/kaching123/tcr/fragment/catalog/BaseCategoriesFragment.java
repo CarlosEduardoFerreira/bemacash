@@ -134,7 +134,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         this.serial = serial;
         this.child = child;
 
-        getLoaderManager().restartLoader(0, Bundle.EMPTY, this);// restartLoader();
+        getLoaderManager().restartLoader(0, Bundle.EMPTY, this);
     }
 
     @Override

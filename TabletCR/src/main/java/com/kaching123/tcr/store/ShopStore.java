@@ -505,6 +505,18 @@ public abstract class ShopStore {
         String QUERY = "select * from " + ItemTable.TABLE_NAME;
     }
 
+    @RawQuery(SaleOrderTableAllColumns.QUERY_NAME)
+    public static interface SaleOrderTableAllColumns{
+
+        String QUERY_NAME = "sale_order_table_all_columns";
+
+        @URI
+        String CONTENT_PATH = "sale_order_table_all_columns";
+
+        @SqlQuery
+        String QUERY = "select * from " + SaleOrderTable.TABLE_NAME;
+    }
+
     @Table(ItemMovementTable.TABLE_NAME)
     @PrimaryKey(columns = {ItemMovementTable.GUID, ItemMovementTable.ITEM_GUID})
     @Indexes({

@@ -549,18 +549,21 @@ public final class ZReportQuery extends XReportQuery {
 
     private static void dailySVRCounter(Context context, long registerId){  //slaes, voids, refunds - S.V.R.
 
-        Cursor c = ProviderAction.query(URI_SALE_ORDER)
+        Cursor c = ProviderAction.query(URI_SALE_ORDER_WITH_DELETED)
                 .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
                 .where(ShopStore.SaleOrderTable.REGISTER_ID + " = ?", registerId)
                 .perform(context);
 
             while (c.moveToNext()){
                 if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
-                        ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED)) {//REJECTED
+                        ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) &&
+                        c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 1) {//REJECTED
                     voidCount++;
-                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)) {
+                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)&&
+                        c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 0) {
                     salesCount++;
-                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)) {
+                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)&&
+                        c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 0) {
                     returnsCount++;
                 }
             }
