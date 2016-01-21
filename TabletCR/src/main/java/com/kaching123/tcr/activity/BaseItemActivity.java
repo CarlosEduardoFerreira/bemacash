@@ -78,6 +78,7 @@ import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
+import com.kaching123.tcr.util.UnitUtil;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -167,10 +168,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected CheckBox active;
     @ViewById
     protected Spinner printerAlias;
-    //@ViewById
-    //protected TextView modifiers;
-    //@ViewById
-    //protected TextView modifiersLabel;
     @ViewById
     protected TextView addons;
     @ViewById
@@ -179,8 +176,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected TextView optionals;
     @ViewById
     protected TextView optionalsLabel;
-    //@ViewById
-    //protected EditText availableQty;
     @ViewById
     protected EditText salesPrice;
     @ViewById
@@ -201,8 +196,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected View buttonView;
     @ViewById
     protected CheckBox hasNotes;
-    //@ViewById
-    //protected TableLayout modifiersTable;
     @ViewById
     protected View availableQtyBlock;
     @ViewById
@@ -282,9 +275,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     protected void init() {
-
-        setFieldsFilters();
-
         departmentAdapter = new DepartmentSpinnerAdapter(this);
         department.setAdapter(departmentAdapter);
         department.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -365,6 +355,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         getSupportLoaderManager().initLoader(PRINTER_ALIAS_LOADER_ID, null, new PrinterAliasLoader());
         getSupportLoaderManager().initLoader(UNITS_LABEL_LOADER, null, new UnitsLabelLoader());
 
+        setFieldsFilters();
     }
 
     protected void setQuantities() {
@@ -589,9 +580,14 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     protected boolean isPcs() {
-// FIXME       PriceType pt = ((PriceTypeHolder) priceType.getSelectedItem()).type;
-  // FIXME     return UnitUtil.isNotUnitPriceType(pt);
-        return false;
+        PriceTypeHolder pth = (PriceTypeHolder) priceType.getSelectedItem();
+        if(pth!=null) {
+            PriceType pt = pth.type;
+            return UnitUtil.isNotUnitPriceType(pt);
+        } else {
+            return false;
+        }
+
     }
 
     /*protected void updateStockTrackingBlock(boolean isChecked) {

@@ -73,7 +73,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
     @ViewById
     protected EditText recommendedQty;
     @ViewById
-    protected EditText availableQty;
+   protected EditText availableQty;
     @ViewById
     protected TextView availableQtyPencil;
     @ViewById
@@ -324,10 +324,12 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
         if (isPcs()) {
 //            availableQty.setInputType(EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_SIGNED);
             availableQty.setInputType(InputType.TYPE_CLASS_NUMBER);
+            availableQtyPencil.setInputType(InputType.TYPE_CLASS_NUMBER);
             minimumQty.setInputType(InputType.TYPE_CLASS_NUMBER);
             recommendedQty.setInputType(InputType.TYPE_CLASS_NUMBER);
 
             availableQty.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
+            availableQtyPencil.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
             minimumQty.setFilters(new InputFilter[]{new InputFilter.LengthFilter(7)});
             recommendedQty.setFilters(new InputFilter[]{new InputFilter.LengthFilter(7)});
 
@@ -337,6 +339,8 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
             try {
                 if (!TextUtils.isEmpty(availableQty.getText()))
                     showBrandQtyInteger(availableQty, UiHelper.getDecimalValue(availableQty).setScale(0, BigDecimal.ROUND_FLOOR));
+                if (!TextUtils.isEmpty(availableQtyPencil.getText()))
+                    showBrandQtyInteger(availableQtyPencil, UiHelper.getDecimalValue(availableQtyPencil).setScale(0, BigDecimal.ROUND_FLOOR));
                 if (!TextUtils.isEmpty(minimumQty.getText()))
                     showBrandQtyInteger(minimumQty, UiHelper.getDecimalValue(minimumQty).setScale(0, BigDecimal.ROUND_FLOOR));
                 if (!TextUtils.isEmpty(recommendedQty.getText()))
@@ -345,10 +349,12 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
             }
         } else {
             availableQty.setInputType(InputType.TYPE_CLASS_PHONE);
+            availableQtyPencil.setInputType(InputType.TYPE_CLASS_PHONE);
             minimumQty.setInputType(InputType.TYPE_CLASS_PHONE);
             recommendedQty.setInputType(InputType.TYPE_CLASS_PHONE);
 //            recommendedQty.setInputType(EditorInfo.TYPE_CLASS_NUMBER  | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
             availableQty.setFilters(new InputFilter[]{new RegisterQtyFormatInputFilter()});
+            availableQtyPencil.setFilters(new InputFilter[]{new RegisterQtyFormatInputFilter()});
             minimumQty.setFilters(new InputFilter[]{new RegisterQtyFormatInputFilter()});
             recommendedQty.setFilters(new InputFilter[]{new RegisterQtyFormatInputFilter()});
 
@@ -362,6 +368,13 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
                     } else {
                         showBrandQty(availableQty, UiHelper.getDecimalValue(availableQty));
                     }
+                if (!TextUtils.isEmpty(availableQtyPencil.getText()))
+                    if (count > 0) {
+                        recollectComposerInfo();
+                    } else {
+                        showBrandQty(availableQtyPencil, UiHelper.getDecimalValue(availableQtyPencil));
+                    }
+
                 if (!TextUtils.isEmpty(minimumQty.getText()))
                     showBrandQty(minimumQty, UiHelper.getDecimalValue(minimumQty));
                 if (!TextUtils.isEmpty(recommendedQty.getText()))
@@ -373,7 +386,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
 
     protected void updateStockTrackingBlock(boolean isChecked) {
 
-        View [] views = {availableQty, recommendedQty, minimumQty, availableQtyPencil};
+        View [] views = {availableQty, recommendedQty, minimumQty, availableQty, availableQtyPencil};
         for (View view : views) {
             view.setEnabled(isChecked && PlanOptions.isStockTrackingAllowed());
         }

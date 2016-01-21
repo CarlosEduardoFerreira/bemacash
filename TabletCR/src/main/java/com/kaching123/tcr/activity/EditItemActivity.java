@@ -340,12 +340,12 @@ public class EditItemActivity extends BaseCommonItemActivity {
     protected void setQuantities() {
         if (UnitUtil.isPcs(model.priceType)) {
             showInteger(availableQty, model.availableQty);
-            //showInteger(availableQtyPencil, model.availableQty);
+            showInteger(availableQtyPencil, model.availableQty);
             showInteger(minimumQty, model.minimumQty);
             showInteger(recommendedQty, model.recommendedQty);
         } else {
             showQuantity(availableQty, model.availableQty);
-            //showQuantity(availableQtyPencil, model.availableQty);
+            showQuantity(availableQtyPencil, model.availableQty);
             showQuantity(minimumQty, model.minimumQty);
             showQuantity(recommendedQty, model.recommendedQty);
         }
