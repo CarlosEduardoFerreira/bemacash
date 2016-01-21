@@ -29,6 +29,7 @@ import org.androidannotations.annotations.InstanceState;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._count;
+import static com.kaching123.tcr.util.ContentValuesUtilBase._countDistinct;
 
 /**
  * Created by vkompaniets on 25.11.13.
@@ -86,10 +87,6 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         }
     }
 
-    protected void restartLoader() {
-        getLoaderManager().restartLoader(CATEGORY_LOADER_ID, Bundle.EMPTY, this);
-    }
-
     private void loadByPosition(AdapterView<?> v, int pos) {
         selectedPosition = pos;
         if (pos == 0 && isListViewWithHeader(v)) {
@@ -120,7 +117,6 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
 
     public void setUseOnlyNearTheEnd(boolean useOnlyNearTheEnd) {
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
-        restartLoader();
     }
 
     public void setFilter(boolean composer,
@@ -138,7 +134,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         this.serial = serial;
         this.child = child;
 
-        restartLoader();
+        getLoaderManager().restartLoader(0, Bundle.EMPTY, this);// restartLoader();
     }
 
     @Override
@@ -150,7 +146,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
                 CategoryTable.GUID,
                 CategoryTable.TITLE,
                 CategoryTable.IMAGE,
-                _count(ItemTable.GUID, CategoryView.ITEM_COUNT));
+                _countDistinct(ItemTable.GUID, CategoryView.ITEM_COUNT));//_count(ItemTable.GUID, CategoryView.ITEM_COUNT));
         if (useOnlyNearTheEnd) {
             builder.where(ItemTable.STOCK_TRACKING + " = ? ", "1");
             builder.where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY));
@@ -215,7 +211,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
 
         int checkedPosition = selectedPosition;
         if (checkedPosition < 0 || checkedPosition >= adapter.getCount())
-            checkedPosition = isListViewWithHeader(getAdapterView()) ? selectedPosition : 0;
+            checkedPosition = 0;//isListViewWithHeader(getAdapterView()) ? selectedPosition : 0;
 
         if (isListViewWithHeader(getAdapterView()) || cursor.getCount() > 0) {
             getAdapterView().setItemChecked(checkedPosition, true);
