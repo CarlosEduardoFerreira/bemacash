@@ -572,21 +572,25 @@ public final class ZReportQuery extends XReportQuery {
             c.close();
     }
     private static void shiftSVRCounter(Context context, String shiftGuid) {
-        Cursor c = ProviderAction.query(URI_SALE_ORDER)
+        Cursor c = ProviderAction.query(URI_SALE_ORDER_WITH_DELETED)
                 .where(ShopStore.SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .perform(context);
 
-        while (c.moveToNext()) {
-            if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
-                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED)) {//REJECTED
+        while (c.moveToNext()){
+            if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
+                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) &&
+                    c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 1) {//REJECTED
                 voidCount++;
-            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)) {
+            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)&&
+                    c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 0) {
                 salesCount++;
-            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)) {
+            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)&&
+                    c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 0) {
                 returnsCount++;
             }
         }
-            assert c != null;
+
+        assert c != null;
             c.close();
 
     }
