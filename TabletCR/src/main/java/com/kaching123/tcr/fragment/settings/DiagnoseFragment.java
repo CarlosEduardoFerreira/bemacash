@@ -131,8 +131,12 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                         task = new DisplayTask(itemPosition);
                         break;
                     case 4:
-                        FindDeviceFragment.show(getActivity(), findScaleListener, FindDeviceFragment.Mode.SCALE);
-                        task = new DisplayTask(itemPosition);
+                        if(getApp().isFreemium()) {
+                            AlertDialogFragment.showAlert(getActivity(), R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+                        } else {
+                            FindDeviceFragment.show(getActivity(), findScaleListener, FindDeviceFragment.Mode.SCALE);
+                            task = new DisplayTask(itemPosition);
+                        }
                         break;
                 }
             }
