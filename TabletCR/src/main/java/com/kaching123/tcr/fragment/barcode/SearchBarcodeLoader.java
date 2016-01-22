@@ -15,6 +15,7 @@ import com.kaching123.tcr.commands.wireless.CollectUnitsCommand.UnitCallback;
 import com.kaching123.tcr.commands.wireless.PickItemForUnitCommand;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter.BarcodePrefixes;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopProvider;
@@ -207,7 +208,11 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
                     if (price != null && quantity == null) {
                         quantity = CalculationUtil.divide(price, model.price);
                     }
-                    onPostExecute(model, price, quantity);
+                    if (model.priceType == PriceType.UNIT_PRICE) {
+                        onPostExecute(model, model.price, quantity);
+                    } else {
+                        onPostExecute(model, price, quantity);
+                    }
                 }
             }
         });
