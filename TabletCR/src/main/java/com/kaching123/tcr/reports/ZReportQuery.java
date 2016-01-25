@@ -421,7 +421,7 @@ public final class ZReportQuery extends XReportQuery {
                     creditCard = creditCard.add(amount);
                 } else if (gateway == PaymentGateway.CASH) {
                     cash = cash.add(amount);
-                } else if (gateway == PaymentGateway.CREDIT_RECEIPT) {
+                } else if (gateway == PaymentGateway.CREDIT_RECEIPT || gateway == PaymentGateway.CREDIT) {
                     tenderCreditReceipt = tenderCreditReceipt.add(amount);
                 } else if (gateway == PaymentGateway.OFFLINE_CREDIT) {
                     offlineCredit = offlineCredit.add(amount);
