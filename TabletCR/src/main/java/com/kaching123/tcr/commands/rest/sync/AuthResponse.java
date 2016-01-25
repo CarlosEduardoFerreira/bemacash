@@ -11,6 +11,8 @@ import com.kaching123.tcr.store.ShopStore.EmployeeTable;
 import com.kaching123.tcr.store.ShopStore.RegisterTable;
 import com.kaching123.tcr.util.JdbcJSONObject;
 
+import java.math.BigDecimal;
+
 /**
  * Created by gdubina on 19/03/14.
  */
@@ -28,10 +30,15 @@ public class AuthResponse extends JsonResponse {
         EmployeeJdbcConverter employeeJdbc = (EmployeeJdbcConverter) JdbcFactory.getConverter(EmployeeTable.TABLE_NAME);
         RegisterJdbcConverter registerJdbc = (RegisterJdbcConverter) JdbcFactory.getConverter(RegisterTable.TABLE_NAME);
         try {
+            EmployeeModel employee = entity.isNull(KEY_EMPLOYEE) ? null : employeeJdbc.toValues(entity.getJSONObject(KEY_EMPLOYEE));
+
+            if(employee!=null) {
+                employee.setInventoryItemCount(new BigDecimal(entity.getJSONObject(KEY_EMPLOYEE).getString("ITEMS_COUNT")));
+            }
+
             return new AuthInfo(
-                    entity.isNull(KEY_REGISTER) ? null : registerJdbc.toValues(entity.getJSONObject(KEY_REGISTER)),
-                    entity.isNull(KEY_EMPLOYEE) ? null : employeeJdbc.toValues(entity.getJSONObject(KEY_EMPLOYEE))
-            );
+                    entity.isNull(KEY_REGISTER) ? null : registerJdbc.toValues(entity.getJSONObject(KEY_REGISTER)),employee);
+
         } catch (Exception e) {
             Logger.e("AuthResponse error", e);
         }

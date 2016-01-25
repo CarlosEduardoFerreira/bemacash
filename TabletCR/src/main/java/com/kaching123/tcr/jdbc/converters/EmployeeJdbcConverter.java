@@ -53,6 +53,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
     private static final String COMMISSION = "COMMISSION";
     private static final String RESELLER_ID = "RESELLER_ID";
     private static final String IS_SYNC = "IS_SYNC";
+    private static final String ITEMS_COUNT = "ITEMS_COUNT";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {

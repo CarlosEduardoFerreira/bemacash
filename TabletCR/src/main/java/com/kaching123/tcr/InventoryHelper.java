@@ -19,7 +19,7 @@ public class InventoryHelper {
     }
 
     public static boolean isLimited() {
-        return PlanOptions.isInventoryLimited();
+        return !TcrApplication.get().isFreemium() || PlanOptions.isInventoryLimited();
     }
 
     public static boolean isLimitReached(Context context) {

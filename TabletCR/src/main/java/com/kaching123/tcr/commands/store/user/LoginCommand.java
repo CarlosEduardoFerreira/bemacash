@@ -299,6 +299,9 @@ public class LoginCommand extends GroundyTask {
                 Logger.e("Login web login error: response is empty");
                 return null;
             }
+
+            app.getShopPref().inventoryLimit().put(info.employee.getInventoryItemCount().intValue());
+
             return new RemoteLoginResult(info.register.status, info.employee);
         } catch (Exception e) {
             Logger.e("Remote login FAILED!", e);

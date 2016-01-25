@@ -13,11 +13,14 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.kaching123.tcr.InventoryHelper;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.CategoryItemView;
 import com.kaching123.tcr.model.ItemRefType;
+import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.CategoryView2.CategoryTable;

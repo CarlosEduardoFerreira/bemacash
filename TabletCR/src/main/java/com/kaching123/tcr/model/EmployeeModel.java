@@ -53,6 +53,8 @@ public class EmployeeModel implements IValueModel, Serializable{
 
     public boolean isSynced;
 
+    public BigDecimal inventoryItemCount;
+
     public EmployeeModel(String guid, String firstName, String lastName, String login){
         this.guid = guid;
         this.firstName = firstName;
@@ -170,5 +172,13 @@ public class EmployeeModel implements IValueModel, Serializable{
     public static boolean isLoginValid (String login){
         Pattern pattern = Pattern.compile("^[0-9]{3}$");
         return pattern.matcher(login).matches();
+    }
+
+    public BigDecimal getInventoryItemCount() {
+        return inventoryItemCount;
+    }
+
+    public void setInventoryItemCount(BigDecimal inventoryItemCount) {
+        this.inventoryItemCount = inventoryItemCount;
     }
 }
