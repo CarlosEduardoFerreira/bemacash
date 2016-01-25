@@ -66,10 +66,10 @@ public class EditReferenceItemCommand extends AsyncCommand {
 
     private boolean updateChildItems() {
         boolean success = true;
-        Cursor c = ProviderAction.query(ITEM_MATRIX_VIEW_URI).where(ShopStore.
-                ItemMatrixByChildView.ITEM_MATRIX_PARENT_GUID + "=?", newItem.guid)
+        Cursor c = ProviderAction.query(ITEM_MATRIX_VIEW_URI)
+                .where(ShopStore.ItemMatrixByChildView.ITEM_MATRIX_PARENT_GUID + "=?", newItem.guid)
                 .perform(getContext());
-        List<String> childGuids = new ArrayList<String>(c.getCount());
+        List<String> childGuids = new ArrayList<>(c.getCount());
         if (c.moveToFirst()) {
             int childGuidIdx = c.getColumnIndex(ShopStore.ItemMatrixByChildView.CHILD_ITEM_GUID);
             do {

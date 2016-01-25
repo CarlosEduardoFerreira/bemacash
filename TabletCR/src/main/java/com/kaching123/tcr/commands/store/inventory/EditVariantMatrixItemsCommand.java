@@ -56,7 +56,8 @@ public class EditVariantMatrixItemsCommand extends AsyncCommand {
             for (ItemMatrixModel m : modelsWithChildrenToNullify) {
                 m.childItemGuid = null;
                 operations.add(ContentProviderOperation.newUpdate(ITEM_MATRIX_URI)
-                        .withValues(m.toValues()).withSelection(ShopStore.ItemMatrixTable.GUID + "=?", new String[]{m.guid})
+                        .withValues(m.toValues())
+                        .withSelection(ShopStore.ItemMatrixTable.GUID + "=?", new String[]{m.guid})
                         .build());
                 sql.add(jdbc.updateSQL(m, this.getAppCommandContext()));
             }

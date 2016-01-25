@@ -3,7 +3,6 @@ package com.kaching123.tcr.commands.store.inventory;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
@@ -68,7 +67,8 @@ public class EditItemCommand extends AsyncCommand {
         }
         c.close();
 
-        if (item.isStockTracking && item.availableQty != null && item.availableQty.compareTo(availableQty) != 0 && !item.ignoreMovementupdate) {
+        if (item.isStockTracking && item.availableQty != null
+                && item.availableQty.compareTo(availableQty) != 0 && !item.ignoreMovementupdate) {
             item.updateQtyFlag = UUID.randomUUID().toString();
             movementModel = ItemMovementModelFactory.getNewModel(
                     item.guid,
@@ -108,7 +108,9 @@ public class EditItemCommand extends AsyncCommand {
     }
 
     private TaskResult clearParentDuplicates() {
-        Cursor c = ProviderAction.query(ITEM_MATRIX_URI).where(ShopStore.ItemMatrixTable.CHILD_GUID + "=?", item.guid).perform(getContext());
+        Cursor c = ProviderAction.query(ITEM_MATRIX_URI)
+                .where(ShopStore.ItemMatrixTable.CHILD_GUID + "=?", item.guid)
+                .perform(getContext());
         if (c.moveToFirst()) {
             ItemMatrixModel itemMatrixModel = CursorUtil._wrap(c, new ItemMatrixFunction());
             itemMatrixModel.childItemGuid = null;
