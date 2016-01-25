@@ -6,6 +6,8 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.IOrderItem;
 import com.kaching123.tcr.util.UnitUtil;
 
@@ -242,7 +244,7 @@ public class SaleOrderItemViewModel implements IOrderItem {
                 if (builder.length() > 0) {
                     start = builder.length() - 1;
                 }
-                builder.append("Sem-").append(a.addonTitle);
+                builder.append(TcrApplication.get().getResources().getString(R.string.sale_item_noopition_prefix)).append("-").append(a.addonTitle);
                 builder.setSpan(new ForegroundColorSpan(NO_OPTIONS_COLOR), start, builder.length(), 0);
             } else {
                 builder.append(a.addonTitle);

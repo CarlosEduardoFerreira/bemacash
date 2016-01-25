@@ -173,6 +173,7 @@
     <string name="upload_notify_message">Uploading local changes</string>
     <string name="upload_notify_message_success">Data was uploaded</string>
     <string name="upload_notify_message_error">Upload data error</string>
+    <string name="sale_item_noopition_prefix">No</string>
 
     <string name="unavailable_option_title">Functionality limit</string>
     <string name="unavailable_option_message">This functionality is not available for current plan</string>
