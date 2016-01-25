@@ -505,18 +505,6 @@ public abstract class ShopStore {
         String QUERY = "select * from " + ItemTable.TABLE_NAME;
     }
 
-    @RawQuery(SaleOrderTableAllColumns.QUERY_NAME)
-    public static interface SaleOrderTableAllColumns{
-
-        String QUERY_NAME = "sale_order_table_all_columns";
-
-        @URI
-        String CONTENT_PATH = "sale_order_table_all_columns";
-
-        @SqlQuery
-        String QUERY = "select * from " + SaleOrderTable.TABLE_NAME;
-    }
-
     @Table(ItemMovementTable.TABLE_NAME)
     @PrimaryKey(columns = {ItemMovementTable.GUID, ItemMovementTable.ITEM_GUID})
     @Indexes({
@@ -2915,26 +2903,50 @@ public abstract class ShopStore {
         @From(SaleItemTable.TABLE_NAME)
         String TABLE_SALE_ORDER_ITEM = "sale_item_table";
 
-        @Columns({SaleOrderTable.SHIFT_GUID, SaleOrderTable.STATUS, SaleOrderTable.TAXABLE, SaleOrderTable.DISCOUNT, SaleOrderTable.DISCOUNT_TYPE, SaleOrderTable.CREATE_TIME, SaleOrderTable.REGISTER_ID, SaleOrderTable.ORDER_TYPE, SaleOrderTable.TRANSACTION_FEE})
+        @Columns({SaleOrderTable.SHIFT_GUID, SaleOrderTable.STATUS, SaleOrderTable.TAXABLE,
+                SaleOrderTable.DISCOUNT, SaleOrderTable.DISCOUNT_TYPE, SaleOrderTable.CREATE_TIME,
+                SaleOrderTable.REGISTER_ID, SaleOrderTable.ORDER_TYPE, SaleOrderTable.TRANSACTION_FEE,
+                SaleOrderTable.KITCHEN_PRINT_STATUS})
         @Join(type = Join.Type.LEFT, joinTable = SaleOrderTable.TABLE_NAME, joinColumn = SaleOrderTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ORDER_GUID)
         String TABLE_SALE_ORDER = "sale_order_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({ItemTable.GUID, ItemTable.DESCRIPTION, ItemTable.EAN_CODE, ItemTable.PRODUCT_CODE, ItemTable.COST, ItemTable.CATEGORY_ID})
+        @Columns({ItemTable.GUID, ItemTable.DESCRIPTION, ItemTable.EAN_CODE, ItemTable.PRODUCT_CODE, ItemTable.COST, ItemTable.CATEGORY_ID,
+                ItemTable.PRINTER_ALIAS_GUID})
         @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
 
-        /*@Join(type = Join.Type.LEFT, joinTable = SaleAddonTable.TABLE_NAME, joinColumn = SaleAddonTable.ITEM_GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.SALE_ITEM_GUID)
-        String TABLE_SALE_ORDER_ITEM_ADDON = "sale_addon_table";*/
-
-/*        @Columns({CategoryTable.TITLE, CategoryTable.DEPARTMENT_GUID})
-        @Join(type = Join.Type.LEFT, joinTable = CategoryTable.TABLE_NAME, joinColumn = CategoryTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.CATEGORY_ID)
-        String TABLE_CATEGORY = "category_table";
-
-        @Columns({DepartmentTable.TITLE})
-        @Join(type = Join.Type.LEFT, joinTable = DepartmentTable.TABLE_NAME, joinColumn = DepartmentTable.GUID, onTableAlias = TABLE_CATEGORY, onColumn = CategoryTable.DEPARTMENT_GUID)
-        String TABLE_DEPARTMENT = "department_table";*/
     }
+
+    @SimpleView(ZReportView.VIEW_NAME)
+    public static interface ZReportView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "zreport_view";
+
+        String VIEW_NAME = "zreport_view";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({SaleOrderTable.SHIFT_GUID, SaleOrderTable.STATUS, SaleOrderTable.TAXABLE,
+                SaleOrderTable.DISCOUNT, SaleOrderTable.DISCOUNT_TYPE, SaleOrderTable.CREATE_TIME,
+                SaleOrderTable.REGISTER_ID, SaleOrderTable.ORDER_TYPE, SaleOrderTable.TRANSACTION_FEE,
+                SaleOrderTable.KITCHEN_PRINT_STATUS})
+        @From(SaleOrderTable.TABLE_NAME)
+        String TABLE_SALE_ORDER = "sale_order_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({SaleItemTable.ITEM_GUID, SaleItemTable.ORDER_GUID, SaleItemTable.KITCHEN_PRINTED_QTY })
+        @Join(type = Join.Type.LEFT, joinTable = SaleItemTable.TABLE_NAME, joinColumn = SaleItemTable.ORDER_GUID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.GUID)
+        String TABLE_SALE_ORDER_ITEM = "sale_order_item_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({ItemTable.GUID, ItemTable.DESCRIPTION, ItemTable.EAN_CODE, ItemTable.PRODUCT_CODE, ItemTable.COST, ItemTable.CATEGORY_ID,
+                ItemTable.PRINTER_ALIAS_GUID})
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
+        String TABLE_ITEM = "item_table";
+
+    }
+
 
     @SimpleView(SaleItemDeptView.VIEW_NAME)
     public static interface SaleItemDeptView {

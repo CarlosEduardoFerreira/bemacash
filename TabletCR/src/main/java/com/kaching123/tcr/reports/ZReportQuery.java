@@ -2,6 +2,7 @@ package com.kaching123.tcr.reports;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
@@ -16,6 +17,7 @@ import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.ZReportInfo;
 import com.kaching123.tcr.model.payment.MovementType;
+import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
@@ -48,6 +50,7 @@ public final class ZReportQuery extends XReportQuery {
     private ZReportQuery() {
         super();
     }
+    protected static final Uri URI_Z_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.ZReportView.URI_CONTENT);
 
 
     public static ZReportInfo loadZReport(Context context, String shiftGuid) {
@@ -549,21 +552,20 @@ public final class ZReportQuery extends XReportQuery {
 
     private static void dailySVRCounter(Context context, long registerId){  //slaes, voids, refunds - S.V.R.
 
-        Cursor c = ProviderAction.query(URI_SALE_ORDER_WITH_DELETED)
-                .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
-                .where(ShopStore.SaleOrderTable.REGISTER_ID + " = ?", registerId)
+        Cursor c = ProviderAction.query(URI_Z_SALE_ITEMS)
+                .where(ShopSchema2.ZReportView2.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
+                .where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
                 .perform(context);
 
             while (c.moveToNext()){
-                if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
-                        ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) &&
-                        c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 1) {//REJECTED
+                if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
+                        ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) &&
+                c.getString(c.getColumnIndex(ShopSchema2.ZReportView2.ItemTable.PRINTER_ALIAS_GUID))!=null  )
+                         {
                     voidCount++;
-                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)&&
-                        c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 0) {
+                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)) {
                     salesCount++;
-                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)&&
-                        c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 0) {
+                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)) {
                     returnsCount++;
                 }
             }
@@ -572,20 +574,18 @@ public final class ZReportQuery extends XReportQuery {
             c.close();
     }
     private static void shiftSVRCounter(Context context, String shiftGuid) {
-        Cursor c = ProviderAction.query(URI_SALE_ORDER_WITH_DELETED)
-                .where(ShopStore.SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
+        Cursor c = ProviderAction.query(URI_Z_SALE_ITEMS)
+                .where(ShopSchema2.ZReportView2.SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .perform(context);
 
         while (c.moveToNext()){
-            if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
-                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) &&
-                    c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 1) {//REJECTED
+            if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
+                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) &&
+                    c.getString(c.getColumnIndex(ShopSchema2.ZReportView2.ItemTable.PRINTER_ALIAS_GUID))!=null) {
                 voidCount++;
-            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)&&
-                    c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 0) {
+            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)) {
                 salesCount++;
-            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)&&
-                    c.getInt(c.getColumnIndex(ShopStore.SaleOrderTable.IS_DELETED)) == 0) {
+            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)) {
                 returnsCount++;
             }
         }

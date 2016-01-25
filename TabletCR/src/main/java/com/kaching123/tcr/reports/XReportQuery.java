@@ -63,9 +63,8 @@ import static com.kaching123.tcr.util.CalculationUtil.negative;
  */
 public class XReportQuery {
 
-    private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(XReportView.URI_CONTENT);
+    protected static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(XReportView.URI_CONTENT);
     protected static final Uri URI_SALE_ORDER = ShopProvider.contentUri(ShopStore.SaleOrderTable.URI_CONTENT);
-    protected static final Uri URI_SALE_ORDER_WITH_DELETED = ShopProvider.contentUri(ShopStore.SaleOrderTableAllColumns.QUERY_NAME);
     protected static final Uri URI_PAYMENTS = ShopProvider.getContentUri(PaymentTransactionView.URI_CONTENT);
     protected static final Uri URI_SHIFT = ShopProvider.getContentUri(ShiftTable.URI_CONTENT);
     private static final Uri URI_SHIFT_LIMITED = ShopProvider.getContentWithLimitUri(ShiftTable.URI_CONTENT, 1);
