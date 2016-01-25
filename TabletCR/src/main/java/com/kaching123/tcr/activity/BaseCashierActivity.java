@@ -55,7 +55,6 @@ import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackRefundCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSaleCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackVoidCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxGateway;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
@@ -1239,10 +1238,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 this.orderGuid,
                 model.guid,
                 model.description,
-                quantity == null ? (model.priceType == PriceType.UNIT_PRICE ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
-                //fixme bra behavior
-                //quantity == null ? BigDecimal.ONE : quantity,
-                //
+                quantity == null ? BigDecimal.ONE : quantity,
                 BigDecimal.ZERO,
                 isCreateReturnOrder ? PriceType.OPEN : model.priceType,
                 price == null ? model.price : price,
