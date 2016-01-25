@@ -4,16 +4,16 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Switch;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.SuperBaseActivity;
-import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.Permission;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 /**
  * Created by gdubina on 20/11/13.
@@ -31,6 +31,16 @@ public class TaxEditFragment extends StyledDialogFragment {
 
     @FragmentArg
     protected boolean oldStatus;
+
+    private SaleOrderTaxListener listener;
+
+    public void setTaxListener(SaleOrderTaxListener listener) {
+        this.listener = listener;
+    }
+
+    public interface SaleOrderTaxListener {
+        void onAppliedTax(String orderGuid, boolean isTaxSwitch);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -68,17 +78,26 @@ public class TaxEditFragment extends StyledDialogFragment {
             public boolean onClick() {
                 boolean editTaxtPermitted = getApp().hasPermission(Permission.SALES_TAX);
                 if (!editTaxtPermitted) {
-                    PermissionFragment.showCancelable(getActivity(), new SuperBaseActivity.BaseTempLoginListener(getActivity()), Permission.SALES_TAX);
+                    PermissionFragment.showCancelable(getActivity(),
+                            new SuperBaseActivity.BaseTempLoginListener(getActivity()), Permission.SALES_TAX);
                     return false;
                 }
-                UpdateSaleOrderTaxStatusCommand.start(getActivity(), orderGuid, taxSwitch.isChecked());
+                if (listener != null) {
+                    listener.onAppliedTax(orderGuid, taxSwitch.isChecked());
+                }
                 return true;
             }
         };
     }
 
-    public static void show(FragmentActivity activity, String orderGuid, boolean state){
-        DialogUtil.show(activity, DIALOG_NAME, TaxEditFragment_.builder().orderGuid(orderGuid).oldStatus(state).build());
+    public static void show(FragmentActivity activity, String orderGuid, boolean state,
+                            SaleOrderTaxListener listener) {
+        final TaxEditFragment fragment = TaxEditFragment_.builder()
+                .orderGuid(orderGuid)
+                .oldStatus(state)
+                .build();
+        fragment.setTaxListener(listener);
+        DialogUtil.show(activity, DIALOG_NAME, fragment);
     }
 
     public static void hide(FragmentActivity activity) {

@@ -71,6 +71,7 @@ import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand.BaseSuccessOrderCommandCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
@@ -1583,7 +1584,19 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             }, Permission.SALES_TAX);
             return;
         }
-        TaxEditFragment.show(this, orderGuid, saleOrderModel.taxable);
+        TaxEditFragment.show(this, orderGuid, saleOrderModel.taxable, new TaxEditFragment.SaleOrderTaxListener() {
+            @Override
+            public void onAppliedTax(String orderGuid, boolean isTaxSwitch) {
+                UpdateSaleOrderTaxStatusCommand.start(BaseCashierActivity.this, orderGuid, isTaxSwitch,
+                        new UpdateSaleOrderTaxStatusCommand.TaxCallback() {
+                            @Override
+                            protected void onSuccess(String orderGuid) {
+                                Logger.d("[SaleOrder] onTaxUpdate");
+                                totalCostFragment.setOrderGuid(orderGuid);
+                            }
+                        });
+            }
+        });
     }
 
     @OnSuccess(RemoveSaleOrderCommand.class)
