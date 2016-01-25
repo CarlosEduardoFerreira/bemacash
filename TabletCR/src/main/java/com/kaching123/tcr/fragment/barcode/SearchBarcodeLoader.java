@@ -91,7 +91,7 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
             isPrice = true;
         } else if (code == barcodePrefixes.code3DItem7DPrice) {
             codeLength = 3;
-            numberLength = 7;
+            numberLength = 5;
             numberDecimals = 2;
             isPrice = true;
         } else if (code == barcodePrefixes.code6DItem4DWeight3Dec) {
