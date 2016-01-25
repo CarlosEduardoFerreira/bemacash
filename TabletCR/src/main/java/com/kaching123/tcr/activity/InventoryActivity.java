@@ -196,42 +196,6 @@ public class InventoryActivity extends ScannerBaseActivity {
                             itemsFragment.setFilter(false, false, false, false, false, false, false);
                             categoriesFragment.setFilter(false, false, false, false, false, false, false);
                             break;
-                        case INVENTORY_NAVIGATION_FILTER_COMPOSERS:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(true, false, false, false, false, false, false);
-                            categoriesFragment.setFilter(true, false, false, false, false, false, false);
-                            break;
-                        case INVENTORY_NAVIGATION_FILTER_COMPOSITIONS:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(false, true, false, false, false, false, false);
-                            categoriesFragment.setFilter(false, true, false, false, false, false, false);
-                            break;
-                        case INVENTORY_NAVIGATION_FILTER_REFS:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(false, false, true, false, false, false, false);
-                            categoriesFragment.setFilter(false, false, true, false, false, false, false);
-                            break;
-                        case INVENTORY_NAVIGATION_FILTER_CHILD:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(false, false, false, false, false, false, true);
-                            categoriesFragment.setFilter(false, false, false, false, false, false, true);
-                            break;
-                        case INVENTORY_NAVIGATION_NOT_FOR_SALE:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(false, false, false, true, false, false, false);
-                            categoriesFragment.setFilter(false, false, false, true, false, false, false);
-                            break;
-                        case INVENTORY_NAVIGATION_SERIAL:
-                            itemsFragment.setUseOnlyNearTheEnd(false);
-                            categoriesFragment.setUseOnlyNearTheEnd(false);
-                            itemsFragment.setFilter(false, false, false, true, false, true, false);
-                            categoriesFragment.setFilter(false, false, false, true, false, true, false);
-                            break;
                     }
 
                     return true;
@@ -412,13 +376,7 @@ public class InventoryActivity extends ScannerBaseActivity {
         public NavigationSpinnerAdapter(Context context) {
             super(context, R.layout.actionbar_spinner,
                     new String[]{context.getString(R.string.inventory_navigation_filter_all),
-                            context.getString(R.string.inventory_navigation_filter_near_the_end),
-                            context.getString(R.string.inventory_navigation_filter_composers),
-                            context.getString(R.string.inventory_navigation_filter_compositions),
-                            context.getString(R.string.inventory_navigation_not_for_sale),
-                            context.getString(R.string.inventory_navigation_serial),
-                            context.getString(R.string.inventory_navigation_filter_refs),
-                            context.getString(R.string.inventory_navigation_filter_child)});
+                            context.getString(R.string.inventory_navigation_filter_near_the_end)});
             setDropDownViewResource(R.layout.actionbar_spinner_drodown_item);
         }
     }
