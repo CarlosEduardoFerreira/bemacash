@@ -3708,6 +3708,7 @@ public abstract class ShopStore {
         String MOD_ID = "MOD_ID";
         String COMPOSER_QUANTITY = "COMPOSER_QUANTITY";
         String FLAG = "FLAG";
+        String STOCK_TRACKING = "STOCK_TRACKING";
 
         String ID = "ID_ALIAS";
 
@@ -3744,7 +3745,7 @@ public abstract class ShopStore {
 
         @SqlQuery
         String QUERY =
-                SELECT + ITEM_GUID + coma + " -1 * " + SUM + "(" + QUANTITY + ")" + coma + FLAG + coma + SOURCE + FROM + "("
+                SELECT + ITEM_GUID + coma + " -1 * " + SUM + "(" + QUANTITY + ")" + coma + FLAG + coma + SOURCE + coma + STOCK_TRACKING + FROM + "("
 
                         + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM_MODIFIER_ITEM\'" + AS + SOURCE + FROM + "("
                         + SELECT + T1 + dot + SaleItemTable.SALE_ITEM_GUID + coma + SaleItemTable.ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + multiply + MOD_QTY + AS + QUANTITY
@@ -3780,7 +3781,7 @@ public abstract class ShopStore {
                         + ")" + TTT1
 
 
-                        + JOIN + "(" + SELECT + ItemTable.GUID + coma + ItemTable.UPDATE_QTY_FLAG + AS + FLAG + FROM + ItemTable.TABLE_NAME + ")" + TTT2
+                        + JOIN + "(" + SELECT + ItemTable.GUID + coma + ItemTable.UPDATE_QTY_FLAG + AS + FLAG + coma + ItemTable.STOCK_TRACKING + AS + STOCK_TRACKING + FROM + ItemTable.TABLE_NAME + ")" + TTT2
                         + ON + TTT2 + dot + ItemTable.GUID + equals + ITEM_GUID
                         + GROUP_BY + ITEM_GUID;
 

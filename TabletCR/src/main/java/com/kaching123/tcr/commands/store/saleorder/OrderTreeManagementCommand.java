@@ -62,7 +62,8 @@ public class OrderTreeManagementCommand extends AsyncCommand {
                 .projection(SaleOrderItemsMappingQuery.ITEM_GUID,
                         SaleOrderItemsMappingQuery.QUANTITY,
                         SaleOrderItemsMappingQuery.SOURCE,
-                        SaleOrderItemsMappingQuery.FLAG)
+                        SaleOrderItemsMappingQuery.FLAG,
+                        SaleOrderItemsMappingQuery.STOCK_TRACKING)
                 .where("", orderItemId, orderItemId, orderItemId, orderItemId)
                 .perform(getContext());
         try {
@@ -73,7 +74,7 @@ public class OrderTreeManagementCommand extends AsyncCommand {
             do {
                 MovementMetadata mv = new MovementMetadata();
                 mv.guid = c.getString(0);
-                mv.movement = _decimalQty(c, 1);
+                mv.movement = c.getInt(c.getColumnIndex(SaleOrderItemsMappingQuery.STOCK_TRACKING)) == 1 ? _decimalQty(c, 1): BigDecimal.ZERO;
                 mv.tag = c.getString(3);
                 mv.flag = c.getString(2);
                 result.add(mv);
