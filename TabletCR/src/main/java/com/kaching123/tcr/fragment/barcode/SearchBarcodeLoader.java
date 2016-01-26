@@ -205,10 +205,10 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
                         }
                     });
                 } else {
-                    if (price != null && quantity == null) {
-                        quantity = CalculationUtil.divide(price, model.price);
-                    }
                     if (model.priceType == PriceType.UNIT_PRICE) {
+                        if (price != null && quantity == null) {
+                            quantity = CalculationUtil.divide(price, model.price);
+                        }
                         onPostExecute(model, model.price, quantity);
                     } else {
                         onPostExecute(model, price, quantity);
