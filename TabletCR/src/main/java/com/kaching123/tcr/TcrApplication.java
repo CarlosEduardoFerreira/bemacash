@@ -176,7 +176,7 @@ public class TcrApplication extends MultiDexApplication {
 
     @Background
     public void initPref() {
-        Logger.d("PrintReceiptTwice = " + shopPref.printReceiptTwice().get());
+        Logger.d("[ShopPref] PrintReceiptTwice = " + shopPref.printReceiptTwice().get());
         synchronized (this) {
             shopInfo = new ShopInfo(
                     shopPref.shopId().get(),
@@ -589,10 +589,18 @@ public class TcrApplication extends MultiDexApplication {
                 .apply();
 
         setUsers();
+        saveInventoryLimit(info.maxItemsCount);
     }
 
     public synchronized void saveShopInfoInner(ShopInfo info) {
         shopInfo = info;
+    }
+
+    public void saveInventoryLimit(long value) {
+        shopPref.edit()
+                .inventoryLimit().put(value)
+                .apply();
+
     }
 
     public void saveBarcodePrefixes(BarcodePrefixes barcodePrefixes) {

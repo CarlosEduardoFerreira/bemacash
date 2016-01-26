@@ -14,7 +14,7 @@ public class InventoryHelper {
 
     private static final Uri ITEM_URI = ShopProvider.getContentUri(ItemTable.URI_CONTENT);
 
-    public static int getLimit() {
+    public static long getLimit() {
         return TcrApplication.get().getShopPref().inventoryLimit().get();
     }
 

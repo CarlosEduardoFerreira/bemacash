@@ -300,9 +300,7 @@ public class LoginCommand extends GroundyTask {
                 return null;
             }
 
-            app.getShopPref().inventoryLimit().put(info.employee.getInventoryItemCount().intValue());
-
-            return new RemoteLoginResult(info.register.status, info.employee);
+             return new RemoteLoginResult(info.register.status, info.employee);
         } catch (Exception e) {
             Logger.e("Remote login FAILED!", e);
         }

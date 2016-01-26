@@ -317,7 +317,7 @@ public interface ShopPref {
 
     boolean isInventoryLimited();
 
-    int inventoryLimit();
+    long inventoryLimit();
 
     boolean stockTracking();
 

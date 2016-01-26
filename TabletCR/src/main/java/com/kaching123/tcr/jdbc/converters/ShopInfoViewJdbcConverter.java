@@ -90,7 +90,7 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String PRINTER_DETAIL_RECEIPT = "PRINTER_DETAIL_RECEIPT";
 
-    public static final String MAX_ITEMS_COUNT = "MAX_ITEMS_COUNT";
+    public static final String ITEMS_COUNT = "ITEMS_COUNT";
 
     public static final String SHOP_STATUS = "STATUS";
 
@@ -171,7 +171,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
                 rs.getInt(PRINTER_RECEIPT_TWICE),
                 rs.getBoolean(PRINTER_DETAIL_RECEIPT),
-                rs.getLong(MAX_ITEMS_COUNT),
+                rs.getLong(ITEMS_COUNT),
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER),
                 rs.getBoolean(ENABLE_XREPORT_DEPART_SALE),
@@ -241,8 +241,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(PRINTER_TWO_COPIES_RECEIPT),
                 rs.getInt(PRINTER_RECEIPT_TWICE),
                 rs.getBoolean(PRINTER_DETAIL_RECEIPT),
-                //TODO delete
-                rs.optLong(MAX_ITEMS_COUNT, Long.MAX_VALUE),
+                rs.optLong(ITEMS_COUNT, Long.MAX_VALUE),
                 rs.getBoolean(PRINT_DROP_OR_PAYOUT),
                 rs.getLong(UPDATE_CHECK_TIMER),
                 rs.getBoolean(ENABLE_XREPORT_DEPART_SALE),
