@@ -182,31 +182,6 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
             itemGuids.add(saleItem.itemGuid);
         }
 
-    /*    Cursor cursor = ProviderAction.query(URI_ITEM)
-                .projection(
-                        ShopStore.ItemTable.GUID,
-                        ShopStore.ItemTable.UPDATE_QTY_FLAG,
-                        ShopStore.ItemTable.STOCK_TRACKING
-                )
-                .whereIn(ShopStore.ItemTable.GUID, itemGuids)
-                .perform(getContext());
-
-        ArrayList<ItemMovementModel> itemMovements = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            String itemGuid = cursor.getString(0);
-            String flag = cursor.getString(1);
-            boolean stockTracking = _bool(cursor, 2);
-            if (!stockTracking) {
-                continue;
-            }
-            for (SaleOrderItemModel saleItem : itemsModels) {
-                if (!saleItem.itemGuid.equals(itemGuid))
-                    continue;
-                itemMovements.add(new ItemMovementModel(itemGuid, flag, CalculationUtil.negativeQty(saleItem.qty), false, new Date()));
-            }
-        }
-        cursor.close();
-*/
         ArrayList<ItemMovementModel> itemMovements = new ArrayList<>();
         MovementUtils.processAll(
                 getContext(),
