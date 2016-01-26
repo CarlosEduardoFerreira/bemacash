@@ -13,9 +13,9 @@ import java.util.TreeMap;
  */
 public class ZReportInfo extends XReportInfo {
 
-    public int salesCounter;
-    public int voidsCounter;
-    public int refundsCounter;
+    public BigDecimal salesCounter;
+    public BigDecimal voidsCounter;
+    public BigDecimal refundsCounter;
 
     public ZReportInfo(Date begin,
                        Date end,
@@ -48,9 +48,9 @@ public class ZReportInfo extends XReportInfo {
                        TreeMap<String, DepartsSale> departsSales,
                        ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales,
                        BigDecimal totalValue,
-                       int salesCounter,
-                       int voidsCounter,
-                       int refundsCounter) {
+                       BigDecimal salesCounter,
+                       BigDecimal voidsCounter,
+                       BigDecimal refundsCounter) {
         super(begin, end, grossSales, discounts, returns, netSales, gratuity, tax, totalTender, cogs, grossMargin, grossMarginPercent, tenderCreditCard, tenderCash, tenderCreditReceipt, tenderOfflineCredit, tenderCheck, tenderEbtCash, tenderEbtFoodstamp, tenderDebit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, itemSales, totalValue);
         this.salesCounter = salesCounter;
         this.voidsCounter = voidsCounter;

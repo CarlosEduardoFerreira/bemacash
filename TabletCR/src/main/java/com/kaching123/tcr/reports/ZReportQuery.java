@@ -33,9 +33,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
+import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.ItemTable.PRINTER_ALIAS_GUID;
+import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.SaleOrderTable.KITCHEN_PRINT_STATUS;
+import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.SaleOrderTable.STATUS;
+import static com.kaching123.tcr.store.ShopStore.SaleItemTable.KITCHEN_PRINTED_QTY;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
 /**
@@ -43,14 +48,14 @@ import static com.kaching123.tcr.util.CalculationUtil.negative;
  */
 public final class ZReportQuery extends XReportQuery {
 
-    private static int salesCount;
-    private static int returnsCount;
-    private static int voidCount;
+    private static BigDecimal salesCount;
+    private static BigDecimal returnsCount;
+    private static BigDecimal voidCount;
 
     private ZReportQuery() {
         super();
     }
-    protected static final Uri URI_Z_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.ZReportView.URI_CONTENT);
+    protected static final Uri URI_Z_SALE_ITEMS = ShopProvider.contentUri(ShopStore.ZReportView.URI_CONTENT);
 
 
     public static ZReportInfo loadZReport(Context context, String shiftGuid) {
@@ -66,9 +71,9 @@ public final class ZReportQuery extends XReportQuery {
 
         TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
 
-        salesCount = 0;
-        returnsCount = 0;
-        voidCount = 0;
+        salesCount = BigDecimal.ZERO;
+        returnsCount = BigDecimal.ZERO;
+        voidCount = BigDecimal.ZERO;
 
         Cursor c = ProviderAction.query(URI_SHIFT)
                 .where(ShiftTable.GUID + " = ?", shiftGuid)
@@ -352,9 +357,9 @@ public final class ZReportQuery extends XReportQuery {
         BigDecimal positiveTips = BigDecimal.ZERO;
         BigDecimal negativeTips = BigDecimal.ZERO;
 
-        salesCount = 0;
-        returnsCount = 0;
-        voidCount = 0;
+        salesCount = BigDecimal.ZERO;
+        returnsCount = BigDecimal.ZERO;
+        voidCount = BigDecimal.ZERO;
 
         String lastShiftGuid = getLastShiftGuidDaily(context, registerId);
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
@@ -557,18 +562,19 @@ public final class ZReportQuery extends XReportQuery {
                 .where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
                 .perform(context);
 
-            while (c.moveToNext()){
-                if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
-                        ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) &&
-                c.getString(c.getColumnIndex(ShopSchema2.ZReportView2.ItemTable.PRINTER_ALIAS_GUID))!=null  )
-                         {
-                    voidCount++;
-                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)) {
-                    salesCount++;
-                } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)) {
-                    returnsCount++;
-                }
+        while (c.moveToNext()) {
+            BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY));
+            if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
+                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
+                    c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
+
+                voidCount = voidCount.add(itemQty);
+            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
+                salesCount = salesCount.add(itemQty);
+            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
+                returnsCount = returnsCount.add(itemQty);
             }
+        }
 
             assert c != null;
             c.close();
@@ -579,14 +585,15 @@ public final class ZReportQuery extends XReportQuery {
                 .perform(context);
 
         while (c.moveToNext()){
-            if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.CANCELED) &&
-                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.KITCHEN_PRINT_STATUS)).equals(PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) &&
-                    c.getString(c.getColumnIndex(ShopSchema2.ZReportView2.ItemTable.PRINTER_ALIAS_GUID))!=null) {
-                voidCount++;
-            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.COMPLETED)) {
-                salesCount++;
-            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderTable.STATUS)).equals(OrderStatus.RETURN)) {
-                returnsCount++;
+            BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY));
+            if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
+                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
+                    c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID))!=null) {
+                voidCount = voidCount.add(itemQty);
+            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
+                salesCount = salesCount.add(itemQty);
+            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
+                returnsCount = returnsCount.add(itemQty);
             }
         }
 
