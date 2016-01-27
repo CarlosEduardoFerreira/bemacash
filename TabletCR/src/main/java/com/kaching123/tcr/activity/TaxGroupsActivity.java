@@ -127,7 +127,7 @@ public class TaxGroupsActivity extends SuperBaseActivity {
             ViewHolder holder = (ViewHolder) convertView.getTag();
 
             holder.title.setText(item.title);
-            UiHelper.showQuantity(holder.tax, item.tax);
+            UiHelper.showPercent(holder.tax, item.tax);
 
             return convertView;
         }
