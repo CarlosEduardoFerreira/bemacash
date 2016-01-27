@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentProvider;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,6 +58,8 @@ import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSaleCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackVoidCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
+import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
+import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand;
@@ -106,7 +109,10 @@ import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
+import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -170,6 +176,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
+    private static final Uri URI_ITEMS = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
 
     static {
         permissions.add(Permission.SALES_TRANSACTION);
@@ -203,6 +210,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected View scannerWaitBlock;
 
     protected MenuItem searchItem;
+    protected MenuItem prepaidItem;
 
     private MenuItem holdCounterItem;
     private TextView holdCounterView;
@@ -263,6 +271,78 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @Override
     public void setDefaultBarcodeListener() {
         setBarcodeListener(defaultBarcodeListener);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        final String PREPAID_GUID = "3100e403-e51a-4bb4-8c85-665a11682af6";
+
+//        final String PREPAID_GUID = "8aa8fbb3-906f-4077-bfe3-2a29fcae9366";
+        if (resultCode == RESULT_OK) {
+            String action = data.getStringExtra("ACTION");
+            String error = data.getStringExtra("ERROR");
+            String errorMsg = data.getStringExtra("“ERRORMSG");
+            String transactionId = data.getStringExtra("TRANSACTIONID");
+            String itemName = data.getStringExtra("ITEMNAME");
+            String itemDetails = data.getStringExtra("ITEMDETAILS");
+            BigDecimal itemQty = new BigDecimal(data.getIntExtra("“ITEMQTY",1));
+            BigDecimal itemPrice = new BigDecimal(data.getStringExtra("ITEMPRICE"));
+            boolean itemTaxable = Boolean.parseBoolean(data.getStringExtra("ITEMTAXABLE"));
+//            Toast.makeText(this, action + " " + error + " " + errorMsg + " " + transactionId + " " + itemName + " " + itemDetails + " " + itemQty + " " +
+//                    itemPrice + " " + itemTaxable, Toast.LENGTH_LONG).show();
+            Logger.d("Prepaid item = " +action + " " + error + " " + errorMsg + " " + transactionId + " " + itemName + " " + itemDetails + " " + itemQty + " " +
+                    itemPrice + " " + itemTaxable);
+
+            ItemExModel model = new ItemExModel(UUID.randomUUID().toString(),
+                    "4845fb5f-f3cf-33d3-b4ab-658e2958065e",
+                    "Prepaid " + transactionId,
+                    null,
+                    null,
+                    null,
+                    PriceType.FIXED,
+                    itemPrice,
+                    itemQty,
+                    "pcs",
+                    null,
+                    null,
+                    false, true, // temp to true
+                    false,
+                    false,
+                    BigDecimal.ZERO,
+                    DiscountType.PERCENT,
+                    itemTaxable,
+                    null,
+                    null,
+                    null,
+                    UUID.randomUUID().toString(),
+                    null,
+                    0,
+                    0,
+                    0,
+                    "c4f7c1a4-cac0-968c-d099-658040e88cbb",
+                    null,
+                    null,
+                    0,
+                    null,
+                    0,
+                    false,
+                    false,
+                    null,
+                    true,
+                    null,
+                    null,
+                    ItemRefType.Simple,
+                    true);
+            Cursor c = ProviderAction
+                    .query(URI_ITEMS)
+                    .where(ShopStore.ItemTable.GUID + " = ?", PREPAID_GUID)
+                    .perform(getBaseContext());
+            if(c.moveToFirst())
+                EditItemCommand.start(this, model);
+            else
+                AddItemCommand.start(this,model);
+            tryToAddItem(model);
+        }
     }
 
     @Override
@@ -811,7 +891,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         });
         boolean b = super.onCreateOptionsMenu(menu);
         searchItem = menu.findItem(R.id.action_search);
+        prepaidItem = menu.findItem(R.id.action_prepaid);
         assert searchItem != null;
+        assert prepaidItem != null;
+
+        prepaidItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                callPrepaidMini("START", "all");
+                return false;
+            }
+        });
+
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
 
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
@@ -837,6 +928,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
         return b;
+    }
+
+    protected void callPrepaidMini(String state, String extra) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction("com.pinserve.prepaidmini");
+        sendIntent.putExtra("COMMAND", state);
+        sendIntent.putExtra("PRODUCT", extra);
+        startActivityForResult(sendIntent, 0);
     }
 
     @Override
@@ -870,7 +969,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                hideSearchFragment();
+                new Handler().post(new Runnable() {
+                    public void run() {
+                        hideSearchFragment();
+                    }
+                });
                 return true;
             }
         });
