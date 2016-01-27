@@ -40,7 +40,7 @@ public abstract class PublicGroundyTask extends GroundyTask {
                 .arg(ARG_APP_CONTEXT_EMPLOYEE_LOGIN, app.getOperatorLogin())
                 .arg(ARG_APP_CONTEXT_BLACKSTONE_USER, app.getBlackStoneUser())
                 .arg(ARG_APP_CONTEXT_EMPLOYEE_FULL_NAME, app.getOperatorFullName())
-                .arg(ARG_APP_CONTEXT_MAX_ITEMS_COUNT, app.getShopInfo().maxItemsCount);
+                .arg(ARG_APP_CONTEXT_MAX_ITEMS_COUNT, app.getShopInfo().inventoryLimit);
     }
 
     private IAppCommandContext appCommandContext;

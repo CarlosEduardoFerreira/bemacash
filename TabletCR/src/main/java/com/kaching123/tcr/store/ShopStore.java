@@ -3709,6 +3709,7 @@ public abstract class ShopStore {
         String COMPOSER_QUANTITY = "COMPOSER_QUANTITY";
         String FLAG = "FLAG";
         String STOCK_TRACKING = "STOCK_TRACKING";
+        String QUANTITY_RESULT = "QUANTITY_RESULT";
 
         String ID = "ID_ALIAS";
 
@@ -3745,7 +3746,7 @@ public abstract class ShopStore {
 
         @SqlQuery
         String QUERY =
-                SELECT + ITEM_GUID + coma + " -1 * " + SUM + "(" + QUANTITY + ")" + coma + FLAG + coma + SOURCE + coma + STOCK_TRACKING + FROM + "("
+                SELECT + ITEM_GUID + coma + " -1 * " + SUM + "(" + QUANTITY + ")" + AS + QUANTITY_RESULT + coma + FLAG + coma + SOURCE + coma + STOCK_TRACKING + FROM + "("
 
                         + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM_MODIFIER_ITEM\'" + AS + SOURCE + FROM + "("
                         + SELECT + T1 + dot + SaleItemTable.SALE_ITEM_GUID + coma + SaleItemTable.ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + multiply + MOD_QTY + AS + QUANTITY

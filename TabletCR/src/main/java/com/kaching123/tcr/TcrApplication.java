@@ -576,7 +576,7 @@ public class TcrApplication extends MultiDexApplication {
                 .printerTwoCopiesReceipt().put(info.printerTwoCopiesReceipt)
                 .printDetailReceipt().put(info.printDetailReceipt)
                 .printReceiptTwice().put(info.printReceiptTwice)
-                .maxItemsCount().put(info.maxItemsCount)
+                .maxItemsCount().put(info.inventoryLimit)
                 .printDropOrPayout().put(info.printDropOrPayout)
                 .updateCheckTimer().put(info.updateCheckTimer)
                 .enableEreportDepartSale().put(info.enableEreportDepartSale)
@@ -589,7 +589,7 @@ public class TcrApplication extends MultiDexApplication {
                 .apply();
 
         setUsers();
-        saveInventoryLimit(info.maxItemsCount);
+        saveInventoryLimit(info.inventoryLimit);
     }
 
     public synchronized void saveShopInfoInner(ShopInfo info) {

@@ -1,6 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -335,7 +334,7 @@ public class ShopInfoViewJdbcConverter {
 
         public final boolean printDetailReceipt;
 
-        public final long maxItemsCount;
+        public final long inventoryLimit;
 
         public final long updateCheckTimer;
 
@@ -406,7 +405,7 @@ public class ShopInfoViewJdbcConverter {
                         boolean printerTwoCopiesReceipt,
                         int printReceiptTwice,
                         boolean printDetailReceipt,
-                        long maxItemsCount,
+                        long inventoryLimit,
                         boolean printDropOrPayout,
                         long updateCheckTimer,
                         boolean enableEreportDepartSale,
@@ -483,7 +482,7 @@ public class ShopInfoViewJdbcConverter {
 
             this.printDetailReceipt = printDetailReceipt;
 
-            this.maxItemsCount = maxItemsCount;
+            this.inventoryLimit = inventoryLimit;
 
             this.printDropOrPayout = printDropOrPayout;
             this.updateCheckTimer = updateCheckTimer;

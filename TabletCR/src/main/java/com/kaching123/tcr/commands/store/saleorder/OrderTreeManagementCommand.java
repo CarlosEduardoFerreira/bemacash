@@ -21,6 +21,7 @@ import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsMappingQuery;
 
+import static com.kaching123.tcr.util.ContentValuesUtilBase._bool;
 import static com.kaching123.tcr.util.ContentValuesUtilBase._decimalQty;
 
 /**
@@ -73,10 +74,13 @@ public class OrderTreeManagementCommand extends AsyncCommand {
             result = new ArrayList<>(c.getCount());
             do {
                 MovementMetadata mv = new MovementMetadata();
-                mv.guid = c.getString(0);
-                mv.movement = c.getInt(c.getColumnIndex(SaleOrderItemsMappingQuery.STOCK_TRACKING)) == 1 ? _decimalQty(c, 1): BigDecimal.ZERO;
-                mv.tag = c.getString(3);
-                mv.flag = c.getString(2);
+                mv.guid = c.getString(c.getColumnIndex(SaleOrderItemsMappingQuery.ITEM_GUID));
+
+                boolean isStockTracking = _bool(c, c.getColumnIndex(SaleOrderItemsMappingQuery.STOCK_TRACKING));
+                mv.movement = isStockTracking ? _decimalQty(c, c.getColumnIndex(SaleOrderItemsMappingQuery.QUANTITY_RESULT)): BigDecimal.ZERO; // -1 *  SUM(QUANTITY_TAG) as QUANTITY_RESULT
+
+                mv.tag = c.getString(c.getColumnIndex(SaleOrderItemsMappingQuery.SOURCE));
+                mv.flag = c.getString(c.getColumnIndex(SaleOrderItemsMappingQuery.FLAG));
                 result.add(mv);
             } while (c.moveToNext());
             return result;

@@ -223,11 +223,6 @@ public class InventoryActivity extends ScannerBaseActivity {
                 ImportTypeFragment.show(InventoryActivity.this, new OnTypeChosenListener() {
                     @Override
                     public void onTypeChosen(ImportInventoryCommand.ImportType type) {
-                      /*  if (type == ImportType.ALL && !checkMaxItemsCount()) {
-                            AlertDialogFragment.showAlert(InventoryActivity.this, R.string.error_dialog_title, getString(R.string.error_message_max_items_count));
-                            return;
-                        }*/
-
                         importCallback.type = type;
                         WaitDialogFragment.show(InventoryActivity.this, getString(R.string.inventory_import_wait));
                         ImportInventoryCommand.start(InventoryActivity.this, type, file.getAbsolutePath(), importCallback);
@@ -274,8 +269,7 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @OptionsItem
     protected void actionAddItemSelected() {
-        if (!checkMaxItemsCount()) {
-
+        if (inventoryLimitReached()) {
             AlertDialogFragment.showAlert(this, R.string.error_dialog_title, getString(R.string.error_message_max_items_count));
             return;
         }
@@ -287,8 +281,8 @@ public class InventoryActivity extends ScannerBaseActivity {
         AddItemActivity.start(InventoryActivity.this, model);
     }
 
-    private boolean checkMaxItemsCount() {
-        return !InventoryHelper.isLimited() || itemsCount < InventoryHelper.getLimit();
+    private boolean inventoryLimitReached() {
+        return InventoryHelper.isLimited() && itemsCount >= InventoryHelper.getLimit();
     }
 
     @OptionsItem
