@@ -8,12 +8,12 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.print.SaleReportsProcessor;
-import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DepartsSale;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
+import com.kaching123.tcr.model.ShiftModel;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.ZReportInfo;
 import com.kaching123.tcr.model.payment.MovementType;
@@ -40,7 +40,6 @@ import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
 import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.ItemTable.PRINTER_ALIAS_GUID;
 import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.SaleOrderTable.KITCHEN_PRINT_STATUS;
 import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.SaleOrderTable.STATUS;
-import static com.kaching123.tcr.store.ShopStore.SaleItemTable.KITCHEN_PRINTED_QTY;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
 /**
@@ -55,46 +54,44 @@ public final class ZReportQuery extends XReportQuery {
     private ZReportQuery() {
         super();
     }
+
     protected static final Uri URI_Z_SALE_ITEMS = ShopProvider.contentUri(ShopStore.ZReportView.URI_CONTENT);
 
-
     public static ZReportInfo loadZReport(Context context, String shiftGuid) {
-
-        Date startDate = null;
-        Date endDate = null;
-
         BigDecimal openAmount = BigDecimal.ZERO;
         BigDecimal cashSale = BigDecimal.ZERO;
         BigDecimal safeDrops = BigDecimal.ZERO;
         BigDecimal payOuts = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
+        TreeMap<String, DepartsSale> departsSales = new TreeMap<>();
 
         salesCount = BigDecimal.ZERO;
         returnsCount = BigDecimal.ZERO;
         voidCount = BigDecimal.ZERO;
 
-        Cursor c = ProviderAction.query(URI_SHIFT)
-                .where(ShiftTable.GUID + " = ?", shiftGuid)
-                .perform(context);
+        Date startDate = null;
+        Date endDate = null;
 
-        if (c.moveToNext()) {
-            startDate = new Date(c.getLong(c.getColumnIndex(ShiftTable.START_TIME)));
-            endDate = new Date(c.getLong(c.getColumnIndex(ShiftTable.END_TIME)));
-            openAmount = _decimal(c.getString(c.getColumnIndex(ShiftTable.OPEN_AMOUNT)));
+        ShiftModel shiftModel = ShiftModel.getById(context, shiftGuid);
+        if (shiftModel != null) {
+            startDate = shiftModel.startTime;
+            endDate = shiftModel.endTime;
+            openAmount = shiftModel.openAmount;
         }
-        c.close();
 
         DepartsSale prepaidTotalSale = new DepartsSale("Prepaid", BigDecimal.ZERO);
-        ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
-        final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
+        ArrayList<SalesByItemsReportQuery.ReportItemInfo> result
+                = new ArrayList<>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
+        final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult
+                = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
         for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
             prepaidTotalSale.sales = prepaidTotalSale.sales.add(item.revenue);
         }
         departsSales.put(prepaidTotalSale.departTitle, prepaidTotalSale);
-        result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.SALE));
-        Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), shiftGuid);
+        result = new ArrayList<>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.SALE));
+        Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps =
+                new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), shiftGuid);
         totalValue = BigDecimal.ZERO;
         for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
             departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
@@ -197,7 +194,7 @@ public final class ZReportQuery extends XReportQuery {
             BigDecimal transactionAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.AMOUNT)));
             //BigDecimal transactionTip = _decimal(c.getString(c.getColumnIndex(EmployeeTipsTable.AMOUNT)));
             BigDecimal amount = transactionAmount;//.subtract(tips);
-            BigDecimal cashBackAmount =    _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK)));
+            BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK)));
             cashBack = cashBackAmount;
             PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.GATEWAY));
             if (gateway.isCreditCard()) {
@@ -499,7 +496,6 @@ public final class ZReportQuery extends XReportQuery {
         }
 
 
-
         BigDecimal drops = BigDecimal.ZERO;
         BigDecimal payouts = BigDecimal.ZERO;
         Cursor cashDrawerCursor = ProviderAction.query(URI_CASH_DRAWER_DATA)
@@ -539,8 +535,8 @@ public final class ZReportQuery extends XReportQuery {
 
         dailySVRCounter(context, registerId);
 
-        return new ZReportInfo(startDate, endDate, grossSale, discount, returned, netSale,gratuity,tax,
-                totalTender, cogs, grossMargin,grossMarginInPercent, creditCard, cash,tenderCreditReceipt,
+        return new ZReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax,
+                totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt,
                 offlineCredit, check,
                 ebtCash,
                 ebtFoodstamp,
@@ -548,14 +544,14 @@ public final class ZReportQuery extends XReportQuery {
                 transactionFee,
                 openAmount,
                 cashSale,
-                drops,payouts,
+                drops, payouts,
                 cashBack,
                 departsSales,
                 itemSales,
                 totalValue, salesCount, voidCount, returnsCount);
     }
 
-    private static void dailySVRCounter(Context context, long registerId){  //slaes, voids, refunds - S.V.R.
+    private static void dailySVRCounter(Context context, long registerId) {  //slaes, voids, refunds - S.V.R.
 
         Cursor c = ProviderAction.query(URI_Z_SALE_ITEMS)
                 .where(ShopSchema2.ZReportView2.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
@@ -576,29 +572,30 @@ public final class ZReportQuery extends XReportQuery {
             }
         }
 
-            assert c != null;
-            c.close();
+        assert c != null;
+        c.close();
     }
+
     private static void shiftSVRCounter(Context context, String shiftGuid) {
         Cursor c = ProviderAction.query(URI_Z_SALE_ITEMS)
                 .where(ShopSchema2.ZReportView2.SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .perform(context);
 
-        while (c.moveToNext()){
+        while (c.moveToNext()) {
             BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY));
-            if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
+            if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
                     ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
-                    c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID))!=null) {
+                    c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
                 voidCount = voidCount.add(itemQty);
-            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
+            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
                 salesCount = salesCount.add(itemQty);
-            } else if(ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
+            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
                 returnsCount = returnsCount.add(itemQty);
             }
         }
 
         assert c != null;
-            c.close();
+        c.close();
 
     }
 

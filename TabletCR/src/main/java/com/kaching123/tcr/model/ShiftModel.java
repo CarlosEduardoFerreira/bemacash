@@ -1,8 +1,11 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 
+import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 
 import java.math.BigDecimal;
@@ -38,7 +41,31 @@ public class ShiftModel implements IValueModel {
                 _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT)));
     }
 
-    public ShiftModel(String guid, Date startTime, Date endTime, String openManagerId, String closeManagerId, long registerId, BigDecimal openAmount, BigDecimal closeAmount) {
+    public static ShiftModel getInstance(Cursor cursor) {
+        return new ShiftModel(cursor.getString(cursor.getColumnIndex(ShiftTable.GUID)),
+                new Date(cursor.getLong(cursor.getColumnIndex(ShiftTable.START_TIME))),
+                new Date(cursor.getLong(cursor.getColumnIndex(ShiftTable.END_TIME))),
+                cursor.getString(cursor.getColumnIndex(ShiftTable.OPEN_MANAGER_ID)),
+                cursor.getString(cursor.getColumnIndex(ShiftTable.CLOSE_MANAGER_ID)),
+                cursor.getLong(cursor.getColumnIndex(ShiftTable.REGISTER_ID)),
+                _decimal(cursor, cursor.getColumnIndex(ShiftTable.OPEN_AMOUNT)),
+                _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT)));
+    }
+
+    public static ShiftModel getById(Context context, String guid) {
+        final Cursor c = ProviderAction.query(ShopProvider.getContentUri(ShiftTable.URI_CONTENT))
+                .where(ShiftTable.GUID + " = ?", guid)
+                .perform(context);
+        ShiftModel model = null;
+        if (c.moveToNext()) {
+            model = ShiftModel.getInstance(c);
+            c.close();
+        }
+        return model;
+    }
+
+    public ShiftModel(String guid, Date startTime, Date endTime, String openManagerId,
+                      String closeManagerId, long registerId, BigDecimal openAmount, BigDecimal closeAmount) {
         this.guid = guid;
         this.startTime = startTime;
         this.endTime = endTime;
