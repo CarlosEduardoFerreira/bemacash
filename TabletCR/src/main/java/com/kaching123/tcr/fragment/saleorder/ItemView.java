@@ -20,6 +20,7 @@ import com.kaching123.tcr.util.CalculationUtil;
 
 import java.math.BigDecimal;
 
+import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPercentInBrackets;
 import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
@@ -208,7 +209,7 @@ public class ItemView extends FrameLayout {
         this.itemUnits.setText(unitsLabel);
 //        this.itemUnits.setVisibility(unitsLabel == null ? View.GONE : View.VISIBLE);
         if (unitsLabel == null) {
-            showInteger(this.itemQty, qty);
+            showBrandQtyInteger(this.itemQty, qty);
         } else {
             showQuantity(this.itemQty, qty);
         }

@@ -24,6 +24,7 @@ import com.kaching123.tcr.store.ShopStore.ItemExtView;
 import com.kaching123.tcr.util.CalculationUtil;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -207,7 +208,7 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
                 } else {
                     if (model.priceType == PriceType.UNIT_PRICE) {
                         if (price != null && quantity == null) {
-                            quantity = CalculationUtil.divide(price, model.price);
+                            quantity = CalculationUtil.divide(price, model.price, 3);
                         }
                         onPostExecute(model, model.price, quantity);
                     } else {
