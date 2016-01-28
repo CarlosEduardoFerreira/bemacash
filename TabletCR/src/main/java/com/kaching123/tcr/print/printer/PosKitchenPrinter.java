@@ -83,4 +83,8 @@ public class PosKitchenPrinter extends PosOrderTextPrinter implements IKitchenPr
 
     }
 
+    @Override
+    public void barcode(String text) {
+    }
+
 }

@@ -26,7 +26,7 @@ public class PrintReportsCommand extends BasePrintCommand<PosReportsPrinter> {
 
     @Override
     protected PosReportsPrinter createTextPrinter() {
-        return getPrinter().printerType.equalsIgnoreCase("Terminal") ? new PosReportsPrinter():new PosReportsMatrixPrinter();
+        return getPrinter().printerType.equalsIgnoreCase("Thermal") ? new PosReportsPrinter():new PosReportsMatrixPrinter();
     }
 
     @Override

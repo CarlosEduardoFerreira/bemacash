@@ -1110,7 +1110,7 @@
     </string-array>
 
     <string-array name="printer_types">
-        <item>Terminal</item>
+        <item>Thermal</item>
         <item>Matrix</item>
     </string-array>
 
