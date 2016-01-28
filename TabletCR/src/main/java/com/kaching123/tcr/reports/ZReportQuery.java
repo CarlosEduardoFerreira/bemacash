@@ -21,7 +21,6 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
-import com.kaching123.tcr.store.ShopStore.ShiftTable;
 import com.kaching123.tcr.util.CalculationUtil;
 
 import java.math.BigDecimal;
@@ -164,7 +163,7 @@ public final class ZReportQuery extends XReportQuery {
             }
         }
 
-        c = ProviderAction.query(URI_PAYMENTS)
+        Cursor c = ProviderAction.query(URI_PAYMENTS)
                 .projection(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.AMOUNT,
                         ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.GATEWAY,
                         ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CARD_NAME,
