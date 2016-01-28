@@ -87,6 +87,21 @@ public class ShiftModel implements IValueModel {
         return guidList;
     }
 
+    public static String getLastDailyGuid(Context context, long registerId) {
+        String lastShiftGuid = null;
+        Cursor c = ProviderAction.query(URI_SHIFT)
+                .projection(ShiftTable.GUID)
+                .where(ShiftTable.REGISTER_ID + " = ?", registerId)
+                .orderBy(ShiftTable.START_TIME + " DESC")
+                .perform(context);
+
+        if (c.moveToFirst()) {
+            lastShiftGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));
+        }
+        c.close();
+        return lastShiftGuid;
+    }
+
     public ShiftModel(String guid, Date startTime, Date endTime, String openManagerId,
                       String closeManagerId, long registerId, BigDecimal openAmount, BigDecimal closeAmount) {
         this.guid = guid;

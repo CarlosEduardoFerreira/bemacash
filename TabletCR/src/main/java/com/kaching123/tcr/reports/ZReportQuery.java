@@ -36,6 +36,7 @@ import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCo
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
+import static com.kaching123.tcr.model.ShiftModel.getLastDailyGuid;
 import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.ItemTable.PRINTER_ALIAS_GUID;
 import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.SaleOrderTable.KITCHEN_PRINT_STATUS;
 import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.SaleOrderTable.STATUS;
@@ -124,7 +125,7 @@ public final class ZReportQuery extends XReportQuery {
         }
 
         BigDecimal discount = saleInfo.discount;
-        BigDecimal grossSale = saleInfo.grossSale.add(positiveTips);//.subtract(discount);
+        BigDecimal grossSale = saleInfo.grossSale;
 
         tipsCursor.close();
 
@@ -352,10 +353,10 @@ public final class ZReportQuery extends XReportQuery {
         BigDecimal cashSale = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
-        ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>();
+        TreeMap<String, DepartsSale> departsSales = new TreeMap<>();
+        ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales = new ArrayList<>();
 
-        HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
+        HashMap<String, BigDecimal> cards = new HashMap<>();
         BigDecimal positiveTips = BigDecimal.ZERO;
         BigDecimal negativeTips = BigDecimal.ZERO;
 
@@ -363,7 +364,7 @@ public final class ZReportQuery extends XReportQuery {
         returnsCount = BigDecimal.ZERO;
         voidCount = BigDecimal.ZERO;
 
-        String lastShiftGuid = getLastShiftGuidDaily(context, registerId);
+        String lastShiftGuid = getLastDailyGuid(context, registerId);
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
         transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerId));//returnInfo is negative
 
@@ -531,7 +532,7 @@ public final class ZReportQuery extends XReportQuery {
 
         Logger.d("||netSale:" + netSale);
 
-        totalTender = netSale;//.add(gratuity);//.add(tax)
+        totalTender = netSale.add(gratuity).add(tax);
         Logger.d("||totalTender:" + totalTender);
 
         grossMargin = totalTender.subtract(cogs);

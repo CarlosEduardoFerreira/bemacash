@@ -54,6 +54,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
+import static com.kaching123.tcr.model.ShiftModel.getLastDailyGuid;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 import static com.kaching123.tcr.util.DateUtils.getEndOfDay;
@@ -363,7 +364,7 @@ public class XReportQuery {
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>();
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
 
-        String lastShiftGuid = getLastShiftGuidDaily(context, registerId);
+        String lastShiftGuid = getLastDailyGuid(context, registerId);
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
         transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerId));//returnInfo is negative
 
@@ -538,22 +539,6 @@ public class XReportQuery {
         return openAmount;
     }
 
-    protected static String getLastShiftGuidDaily(Context context, long registerId) {
-        String lastShiftGuid = null;
-        Cursor c = ProviderAction.query(URI_SHIFT)
-                .projection(ShiftTable.GUID)
-                .where(ShiftTable.REGISTER_ID + " = ?", registerId)
-                .orderBy(ShiftTable.START_TIME + " DESC")
-                .perform(context);
-
-        if (c.moveToFirst()) {
-            lastShiftGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));
-        }
-        c.close();
-
-        return lastShiftGuid;
-    }
-
     protected static BigDecimal getShiftOrdersTransactionFee(Context context, String shiftGuid, OrderStatus type) {
         Cursor c = ProviderAction.query(URI_SALE_ORDER)
                 .projection(ShopStore.SaleOrderTable.TRANSACTION_FEE)
@@ -613,16 +598,16 @@ public class XReportQuery {
             }
 
             @Override
-            public void handleItem(SaleItemInfo i, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
+            public void handleItem(SaleItemInfo i, BigDecimal itemFinalPrice,
+                                   BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
                 SaleItemInfo2 i2 = (SaleItemInfo2) i;
-                statInfo.grossSale = statInfo.grossSale.add(CalculationUtil.getSubTotal(i.qty, i.totalPrice));
-                statInfo.cogs = statInfo.cogs.add(CalculationUtil.getSubTotal(i.qty, i2.itemCost));
+                statInfo.grossSale = statInfo.grossSale.add(getSubTotal(i.qty, i.totalPrice));
+                statInfo.cogs = statInfo.cogs.add(getSubTotal(i.qty, i2.itemCost));
             }
         };
 
         for (Entry<String, SaleOrderInfo> e : ordersInfo.entrySet()) {
             SaleOrderCostInfo result = calculate(e.getValue(), handler2);
-            //statInfo.grossSale2 = statInfo.grossSale2.add(result.subTotalItemTotal);
             statInfo.discount = statInfo.discount.add(result.totalDiscount);
             statInfo.tax = statInfo.tax.add(result.totalTax);
         }
@@ -668,9 +653,9 @@ public class XReportQuery {
 
     private static HashMap<String, SaleOrderInfo> readCursor(Cursor c) {
         if (c == null) {
-            return new HashMap<String, SaleOrderInfo>(0);
+            return new HashMap<>(0);
         }
-        HashMap<String, SaleOrderInfo> result = new HashMap<String, SaleOrderInfo>();
+        HashMap<String, SaleOrderInfo> result = new HashMap<>();
         if (c.moveToFirst()) {
             do {
                 String orderGuid = c.getString(c.getColumnIndex(SaleItemTable.ORDER_GUID));
@@ -729,20 +714,26 @@ public class XReportQuery {
 
     public static class SaleItemInfo2 extends SaleItemInfo {
 
-        public BigDecimal itemCost;
         public String departmentGuid;
         public String departmentTitle;
-        public String ean;
-        public String productCode;
-
         public String categoryGuid;
         public String categoryTitle;
 
+        public String ean;
+        public String productCode;
+
         public BigDecimal finalDiscount;
         public BigDecimal finalTax;
+        public BigDecimal itemCost;
 
-        public SaleItemInfo2(String saleItemGiud, String itemGiud, String description, String ean, String productCode, BigDecimal qty, BigDecimal totalPrice, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax, BigDecimal itemCost, String departmentGuid, String departmentTitle, String categoryGuid, String categoryTitle) {
-            super(saleItemGiud, itemGiud, description, qty, totalPrice, discountable, discount, discountType, isTaxable, tax);
+        public SaleItemInfo2(String saleItemGiud, String itemGiud, String description, String ean,
+                             String productCode, BigDecimal qty, BigDecimal totalPrice,
+                             boolean discountable, BigDecimal discount, DiscountType discountType,
+                             boolean isTaxable, BigDecimal tax, BigDecimal itemCost,
+                             String departmentGuid, String departmentTitle,
+                             String categoryGuid, String categoryTitle) {
+            super(saleItemGiud, itemGiud, description, qty, totalPrice, discountable, discount,
+                    discountType, isTaxable, tax);
             this.itemCost = itemCost;
             this.departmentGuid = departmentGuid;
             this.departmentTitle = departmentTitle;
@@ -754,7 +745,6 @@ public class XReportQuery {
     }
 
     public static class StatInfo {
-        //BigDecimal grossSale2 = BigDecimal.ZERO;
         BigDecimal grossSale = BigDecimal.ZERO;
         BigDecimal discount = BigDecimal.ZERO;
         BigDecimal tax = BigDecimal.ZERO;
