@@ -3,21 +3,27 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
+import static com.kaching123.tcr.util.DateUtils.getStartOfDay;
 
 /**
  * Created by gdubina on 03/12/13.
  */
 public class ShiftModel implements IValueModel {
+
+    protected static final Uri URI_SHIFT = ShopProvider.getContentUri(ShiftTable.URI_CONTENT);
 
     public String guid;
     public Date startTime;
@@ -53,7 +59,7 @@ public class ShiftModel implements IValueModel {
     }
 
     public static ShiftModel getById(Context context, String guid) {
-        final Cursor c = ProviderAction.query(ShopProvider.getContentUri(ShiftTable.URI_CONTENT))
+        final Cursor c = ProviderAction.query(URI_SHIFT)
                 .where(ShiftTable.GUID + " = ?", guid)
                 .perform(context);
         ShiftModel model = null;
@@ -62,6 +68,23 @@ public class ShiftModel implements IValueModel {
             c.close();
         }
         return model;
+    }
+
+    public static List<String> getDailyGuidList(Context context) {
+        final Cursor c = ProviderAction.query(URI_SHIFT)
+                .where(ShiftTable.START_TIME + " > ? OR " + ShiftTable.END_TIME + " > ? OR "
+                                + ShiftTable.END_TIME + " IS NULL", getStartOfDay().getTime(),
+                        getStartOfDay().getTime())
+                .perform(context);
+        final List<String> guidList = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                final String currentGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));
+                guidList.add(currentGuid);
+            } while (c.moveToNext());
+            c.close();
+        }
+        return guidList;
     }
 
     public ShiftModel(String guid, Date startTime, Date endTime, String openManagerId,

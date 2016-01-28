@@ -250,5 +250,19 @@ public final class DateUtils {
 
         return firstYear == secondYear && firstDayOfYear == secondDayOfYear;
     }
+
+    public static Date getStartOfDay() {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DATE), 0, 0, 0);
+        return calendar.getTime();
+    }
+
+    public static Date getEndOfDay() {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DATE), 23, 59, 59);
+        return calendar.getTime();
+    }
 }
 

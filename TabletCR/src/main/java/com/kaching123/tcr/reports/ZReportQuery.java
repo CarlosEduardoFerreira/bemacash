@@ -40,6 +40,8 @@ import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.ItemTable.PRINTE
 import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.SaleOrderTable.KITCHEN_PRINT_STATUS;
 import static com.kaching123.tcr.store.ShopSchema2.ZReportView2.SaleOrderTable.STATUS;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
+import static com.kaching123.tcr.util.DateUtils.getEndOfDay;
+import static com.kaching123.tcr.util.DateUtils.getStartOfDay;
 
 /**
  * Created by alboyko on 26.11.2015.
@@ -80,8 +82,10 @@ public final class ZReportQuery extends XReportQuery {
         }
 
         DepartsSale prepaidTotalSale = new DepartsSale("Prepaid", BigDecimal.ZERO);
+
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> result
-                = new ArrayList<>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
+                = new ArrayList<>(createQuery()
+                .getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
         final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult
                 = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
         for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
@@ -314,7 +318,9 @@ public final class ZReportQuery extends XReportQuery {
 
         final Date startDate = getStartOfDay();
         final Date endDate = getEndOfDay();
-        final List<String> guidList = getDailyShiftGuidList(context);
+
+        final List<String> guidList = ShiftModel.getDailyGuidList(context);
+
         BigDecimal grossSale = BigDecimal.ZERO;
         BigDecimal discount = BigDecimal.ZERO;
         BigDecimal returned = BigDecimal.ZERO;

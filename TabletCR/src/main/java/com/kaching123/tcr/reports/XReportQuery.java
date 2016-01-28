@@ -20,6 +20,7 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
+import com.kaching123.tcr.model.ShiftModel;
 import com.kaching123.tcr.model.TipsModel.PaymentType;
 import com.kaching123.tcr.model.XReportInfo;
 import com.kaching123.tcr.model.payment.MovementType;
@@ -39,7 +40,6 @@ import com.kaching123.tcr.util.CalculationUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,6 +56,8 @@ import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
+import static com.kaching123.tcr.util.DateUtils.getEndOfDay;
+import static com.kaching123.tcr.util.DateUtils.getStartOfDay;
 
 
 /**
@@ -69,7 +71,7 @@ public class XReportQuery {
     protected static final Uri URI_SHIFT = ShopProvider.getContentUri(ShiftTable.URI_CONTENT);
     private static final Uri URI_SHIFT_LIMITED = ShopProvider.getContentWithLimitUri(ShiftTable.URI_CONTENT, 1);
     protected static final Uri URI_TIPS = ShopProvider.getContentUri(EmployeeTipsTable.URI_CONTENT);
-    protected static final Uri URI_CASH_DRAWER_DATA =   ShopProvider.contentUri(ShopStore.CashDrawerMovementTable.URI_CONTENT);
+    protected static final Uri URI_CASH_DRAWER_DATA = ShopProvider.contentUri(ShopStore.CashDrawerMovementTable.URI_CONTENT);
     private static final Uri URI_SALE_ITEM_DEPARTMENT = ShopProvider.getContentUri(ShopStore.SaleItemDeptView.URI_CONTENT);
     private static final Uri URI_DEPARTMENT = ShopProvider.getContentUri(ShopStore.DepartmentTable.URI_CONTENT);
     protected static BigDecimal totalValue = BigDecimal.ZERO;
@@ -142,7 +144,7 @@ public class XReportQuery {
         }
         departsSales.put(prepaidTotalSale.departTitle, prepaidTotalSale);
         result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.SALE));
-        Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(),  shiftGuid);
+        Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), shiftGuid);
         totalValue = BigDecimal.ZERO;
         for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
             departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
@@ -325,37 +327,11 @@ public class XReportQuery {
                 payOuts, cashBack, departsSales, result, totalValue);
     }
 
-    protected static Date getStartOfDay() {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
-        return calendar.getTime();
-    }
-
-    protected static Date getEndOfDay() {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 23, 59, 59);
-        return calendar.getTime();
-    }
-
-    protected static List<String> getDailyShiftGuidList(Context context) {
-        final Cursor c = ProviderAction.query(URI_SHIFT)
-                .where(ShiftTable.START_TIME + " > ? OR " + ShiftTable.END_TIME + " > ? OR " + ShiftTable.END_TIME + " IS NULL", getStartOfDay().getTime(), getStartOfDay().getTime())
-                .perform(context);
-        final List<String> guidList = new ArrayList<String>();
-        if (c != null && c.moveToFirst()) {
-            do {
-                final String currentGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));
-                guidList.add(currentGuid);
-            } while (c.moveToNext());
-        }
-        return guidList;
-    }
-
     public static XReportInfo loadDailySalesXReport(Context context, long registerId) {
 
         final Date startDate = getStartOfDay();
         final Date endDate = getEndOfDay();
-        final List<String> guidList = getDailyShiftGuidList(context);
+        final List<String> guidList = ShiftModel.getDailyGuidList(context);
 
         BigDecimal grossSale = BigDecimal.ZERO;
         BigDecimal discount = BigDecimal.ZERO;
