@@ -24,7 +24,7 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
 
     @Override
     protected IXReportPrinter createTextPrinter() {
-        return getPrinter().printerType.equalsIgnoreCase("Terminal") ? new PosXReportTextPrinter(): new PosXReportTextMatrixPrinter();
+        return getPrinter().printerType.equalsIgnoreCase("Thermal") ? new PosXReportTextPrinter(): new PosXReportTextMatrixPrinter();
     }
 
     @Override

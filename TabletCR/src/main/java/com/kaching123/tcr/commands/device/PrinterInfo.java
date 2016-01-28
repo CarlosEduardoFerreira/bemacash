@@ -45,7 +45,7 @@ public class PrinterInfo implements Parcelable {
             this.fullAddress = USBPrinter.USB_DESC + " (" + USBPrinter.USB_MODELS + ")";
         else
             this.fullAddress = ip + ":" + port;
-        this.printerType = "Terminal";
+        this.printerType = "Thermal";
     }
 
     @Override

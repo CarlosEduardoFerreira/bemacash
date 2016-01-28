@@ -10,6 +10,6 @@ public abstract class BasePrintOrderCommand extends BasePrintCommand<PosOrderTex
 
     @Override
     protected PosOrderTextPrinter createTextPrinter() {
-        return getPrinter().printerType.equalsIgnoreCase("Terminal") ? new PosOrderTextPrinter(): new PosKitchenPrinter();
+        return getPrinter().printerType.equalsIgnoreCase("Thermal") ? new PosOrderTextPrinter(): new PosKitchenPrinter();
     }
 }
