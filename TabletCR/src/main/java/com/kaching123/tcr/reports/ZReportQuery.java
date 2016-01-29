@@ -572,7 +572,7 @@ public final class ZReportQuery extends XReportQuery {
                     ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
                     c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
 
-                voidCount = voidCount.add(itemPrintedQty);
+                voidCount = voidCount.add(itemQty);
             } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
                 salesCount = salesCount.add(itemQty);
             } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
@@ -596,7 +596,7 @@ public final class ZReportQuery extends XReportQuery {
             if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
                     ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
                     c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
-                voidCount = voidCount.add(itemPrintedQty);
+                voidCount = voidCount.add(itemQty);
             } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
                 salesCount = salesCount.add(itemQty);
             } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
