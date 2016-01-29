@@ -23,11 +23,9 @@ import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
-import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
-import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.MovementUtils;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -38,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 /**
@@ -186,7 +183,8 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
         MovementUtils.processAll(
                 getContext(),
                 getAppCommandContext(),
-                order.guid,
+                order.guid, null,
+                false,
                 itemMovements);
 
         if (itemMovements.isEmpty())

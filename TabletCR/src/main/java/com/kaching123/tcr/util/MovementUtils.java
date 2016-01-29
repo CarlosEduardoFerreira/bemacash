@@ -11,6 +11,7 @@ import com.telly.groundy.PublicGroundyTask;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Hans on 5/28/2015.
@@ -18,21 +19,21 @@ import java.util.List;
 public class MovementUtils {
 
     public static void processAllRefund(Context context,
-                                  PublicGroundyTask.IAppCommandContext appcontext,
-                                  String orderGuid,
-                                  List<ItemMovementModel> itemMovements) {
-        processAll(context, appcontext, orderGuid, itemMovements);
+                                        PublicGroundyTask.IAppCommandContext appcontext,
+                                        String orderGuid, String saleItemGuid,
+                                        List<ItemMovementModel> itemMovements) {
+        processAll(context, appcontext, orderGuid, saleItemGuid, true, itemMovements);
         for (ItemMovementModel item : itemMovements) {
             item.qty = restrictABS(CalculationUtil.negativeQty(item.qty), false);
         }
     }
 
     public static void processAll(Context context,
-                                   PublicGroundyTask.IAppCommandContext appcontext,
-                                   String orderGuid,
-                                   List<ItemMovementModel> itemMovements) {
+                                  PublicGroundyTask.IAppCommandContext appcontext,
+                                  String orderGuid, String saleItemGuid,
+                                  boolean isReturn, List<ItemMovementModel> itemMovements) {
 
-        List<OrderTreeManagementCommand.MovementMetadata> result = new OrderTreeManagementCommand().sync(context, orderGuid, appcontext);
+        List<OrderTreeManagementCommand.MovementMetadata> result = new OrderTreeManagementCommand().sync(context, orderGuid, saleItemGuid, isReturn, appcontext);
 
         if (result == null || result.isEmpty()) {
         } else {
