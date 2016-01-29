@@ -116,6 +116,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 if (skip && fromPrinter.equals(aliasGuid)) {
                     continue;
                 }
+                boolean qtyUpdated = new UpdateSaleItemKitchenQty().syncStandalone(getContext(), e.getValue(), getAppCommandContext());
                 return failed().add(PrintForKitchenCommand.EXTRA_ERROR_PRINTER, PrinterError.NOT_CONFIGURED).add(EXTRA_PRINTER, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
             }
             for (PrinterInfo p : pp) {

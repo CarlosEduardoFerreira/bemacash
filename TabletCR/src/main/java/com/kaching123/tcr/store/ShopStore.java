@@ -2935,7 +2935,7 @@ public abstract class ShopStore {
         String TABLE_SALE_ORDER = "sale_order_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({SaleItemTable.ITEM_GUID, SaleItemTable.ORDER_GUID, SaleItemTable.KITCHEN_PRINTED_QTY })
+        @Columns({SaleItemTable.ITEM_GUID, SaleItemTable.ORDER_GUID, SaleItemTable.KITCHEN_PRINTED_QTY, SaleItemTable.QUANTITY })
         @Join(type = Join.Type.LEFT, joinTable = SaleItemTable.TABLE_NAME, joinColumn = SaleItemTable.ORDER_GUID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.GUID)
         String TABLE_SALE_ORDER_ITEM = "sale_order_item_table";
 
