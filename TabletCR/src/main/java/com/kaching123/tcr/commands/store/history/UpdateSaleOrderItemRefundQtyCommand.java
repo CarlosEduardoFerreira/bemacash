@@ -4,7 +4,6 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.payment.AddReturnOrderCommand;
@@ -15,18 +14,15 @@ import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemJdbcConverter;
 import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ItemMovementModelFactory;
-import com.kaching123.tcr.model.SaleOrderItemAddonModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.Unit;
-import com.kaching123.tcr.model.converter.SaleOrderAddonItemFunction;
 import com.kaching123.tcr.model.converter.SaleOrderItemFunction;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.util.CalculationUtil;
@@ -73,7 +69,9 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
 
         info = new HashMap<>();
         for (RefundSaleItemInfo item : itemsInfo) {
-            info.put(item.saleItemGuid, item.qty);
+            if(!item.qty.equals(BigDecimal.ZERO)) {
+                info.put(item.saleItemGuid, item.qty);
+            }
         }
 
         returnOrder = (SaleOrderModel) getArgs().getSerializable(AddReturnOrderCommand.ARG_ORDER_MODEL_CHILD);
@@ -136,10 +134,10 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
     }
 */
     private boolean addMovementsPartial() {
-        HashMap<String, BigDecimal> saleItems = new HashMap<>(returnItems.size());
+      //  HashMap<String, BigDecimal> saleItems = new HashMap<>(returnItems.size());
         HashSet<String> items = new HashSet<>();
         for (SaleOrderItemModel item : returnItems) {
-            saleItems.put(item.saleItemGuid, CalculationUtil.negativeQty(item.qty));//item.qty is negative, we need to write positive value for return
+      //      saleItems.put(item.saleItemGuid, CalculationUtil.negativeQty(item.qty));//item.qty is negative, we need to write positive value for return
             items.add(item.itemGuid);
         }
         Cursor c = ProviderAction.query(URI_ITEMS)
@@ -162,9 +160,9 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
                 MovementUtils.processAllRefund(
                         getContext(),
                         getAppCommandContext(),
-                        returnOrder.parentGuid, item.saleItemGuid,
+                        returnOrder.parentGuid, item.parentGuid,
                         itemMovements);
-                itemMovements.add(ItemMovementModelFactory.getNewModel(itemGuid, flag, saleItems.get(item.getGuid()), false, new Date()));
+           //     itemMovements.add(ItemMovementModelFactory.getNewModel(itemGuid, flag, saleItems.get(item.getGuid()), false, new Date()));
             }
         }
         c.close();

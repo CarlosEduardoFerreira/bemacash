@@ -186,7 +186,8 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
         }
 
         final RefundAmount refundAmount = new RefundAmount(pickedValue, BigDecimal.ZERO);
-        OrderTotalPriceCalculator.calculate(orderItems, null, new Handler() {
+      //  OrderTotalPriceCalculator.calculate(refundItems, null, new Handler() {
+            OrderTotalPriceCalculator.calculate(orderItems, null, new Handler() {
 
 
             @Override
