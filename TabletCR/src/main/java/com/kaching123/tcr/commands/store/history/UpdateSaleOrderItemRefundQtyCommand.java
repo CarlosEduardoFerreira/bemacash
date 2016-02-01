@@ -157,12 +157,14 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
                 if (!item.itemGuid.equals(itemGuid)) {
                     continue;
                 }
+                ArrayList<ItemMovementModel> currentMovements = new ArrayList<>();
                 MovementUtils.processAllRefund(
                         getContext(),
                         getAppCommandContext(),
                         returnOrder.parentGuid, item.parentGuid,
-                        itemMovements);
+                        currentMovements);
            //     itemMovements.add(ItemMovementModelFactory.getNewModel(itemGuid, flag, saleItems.get(item.getGuid()), false, new Date()));
+                itemMovements.addAll(currentMovements);
             }
         }
         c.close();

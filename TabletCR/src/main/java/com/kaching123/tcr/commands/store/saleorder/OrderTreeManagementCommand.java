@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.kaching123.tcr.model.ContentValuesUtil;
-import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -125,20 +123,13 @@ public class OrderTreeManagementCommand extends AsyncCommand {
             result = new ArrayList<>(c.getCount());
             do {
                 MovementMetadata mv = new MovementMetadata();
-                mv.guid = c.getString(c.getColumnIndex(SaleOrderItemsMappingQuery.ITEM_GUID));
+                mv.guid = c.getString(c.getColumnIndex(ReturnOrderItemsMappingQuery.ITEM_GUID));
 
-                boolean isStockTracking = _bool(c, c.getColumnIndex(SaleOrderItemsMappingQuery.STOCK_TRACKING));
-                if(!isStockTracking) {
-                    continue;
-                }
-                mv.movement =  _decimalQty(c, c.getColumnIndex(SaleOrderItemsMappingQuery.QUANTITY_RESULT)); // -1 *  SUM(QUANTITY_TAG) as QUANTITY_RESULT
+                boolean isStockTracking = _bool(c, c.getColumnIndex(ReturnOrderItemsMappingQuery.STOCK_TRACKING));
+                mv.movement = isStockTracking ? _decimalQty(c, c.getColumnIndex(ReturnOrderItemsMappingQuery.QUANTITY_RESULT)): BigDecimal.ZERO; // -1 *  SUM(QUANTITY_TAG) as QUANTITY_RESULT
 
-                boolean stockTracking = ContentValuesUtil._bool(c, c.getColumnIndex(SaleOrderItemsMappingQuery.QUANTITY_RESULT));
-                if (!stockTracking) {
-                    continue;
-                }
-                mv.tag = c.getString(c.getColumnIndex(SaleOrderItemsMappingQuery.SOURCE));
-                mv.flag = c.getString(c.getColumnIndex(SaleOrderItemsMappingQuery.FLAG));
+                mv.tag = c.getString(c.getColumnIndex(ReturnOrderItemsMappingQuery.SOURCE));
+                mv.flag = c.getString(c.getColumnIndex(ReturnOrderItemsMappingQuery.FLAG));
                 result.add(mv);
             } while (c.moveToNext());
             return result;
