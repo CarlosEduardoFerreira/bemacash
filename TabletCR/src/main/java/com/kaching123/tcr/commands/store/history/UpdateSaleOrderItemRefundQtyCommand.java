@@ -47,7 +47,6 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
 
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(SaleItemTable.URI_CONTENT);
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(ItemTable.URI_CONTENT);
-    private static final Uri URI_COMPOSER_ITEMS = ShopProvider.getContentUri(ShopStore.ComposerTable.URI_CONTENT);
 
     private static final String ARG_ITEMS = "arg_sale_item_guid";
     private static final String ARG_UNITS = "arg_units";
@@ -113,31 +112,9 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
         return succeeded();
     }
 
-  /*  private boolean addMovementsReturnAll() {
-        ArrayList<ItemMovementModel> itemMovements = new ArrayList<>();
-
-        MovementUtils.processAllRefund(
-                getContext(),
-                getAppCommandContext(),
-                returnOrder.parentGuid,
-                itemMovements);
-
-        if (itemMovements.isEmpty()) {
-            return true;
-        }
-
-        addMovementsResult = new AddItemsMovementCommand().syncNow(getContext(), itemMovements, getAppCommandContext());
-        if (addMovementsResult == null)
-            return false;
-
-        return true;
-    }
-*/
     private boolean addMovementsPartial() {
-      //  HashMap<String, BigDecimal> saleItems = new HashMap<>(returnItems.size());
         HashSet<String> items = new HashSet<>();
         for (SaleOrderItemModel item : returnItems) {
-      //      saleItems.put(item.saleItemGuid, CalculationUtil.negativeQty(item.qty));//item.qty is negative, we need to write positive value for return
             items.add(item.itemGuid);
         }
         Cursor c = ProviderAction.query(URI_ITEMS)
@@ -163,7 +140,6 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
                         getAppCommandContext(),
                         returnOrder.parentGuid, item.parentGuid,
                         currentMovements);
-           //     itemMovements.add(ItemMovementModelFactory.getNewModel(itemGuid, flag, saleItems.get(item.getGuid()), false, new Date()));
                 itemMovements.addAll(currentMovements);
             }
         }

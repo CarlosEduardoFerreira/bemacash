@@ -126,7 +126,11 @@ public class OrderTreeManagementCommand extends AsyncCommand {
                 mv.guid = c.getString(c.getColumnIndex(ReturnOrderItemsMappingQuery.ITEM_GUID));
 
                 boolean isStockTracking = _bool(c, c.getColumnIndex(ReturnOrderItemsMappingQuery.STOCK_TRACKING));
-                mv.movement = isStockTracking ? _decimalQty(c, c.getColumnIndex(ReturnOrderItemsMappingQuery.QUANTITY_RESULT)): BigDecimal.ZERO; // -1 *  SUM(QUANTITY_TAG) as QUANTITY_RESULT
+                if(!isStockTracking) {
+                    continue;
+                }
+                //mv.movement = isStockTracking ? _decimalQty(c, c.getColumnIndex(ReturnOrderItemsMappingQuery.QUANTITY_RESULT)): BigDecimal.ZERO; // -1 *  SUM(QUANTITY_TAG) as QUANTITY_RESULT
+                mv.movement = _decimalQty(c, c.getColumnIndex(ReturnOrderItemsMappingQuery.QUANTITY_RESULT));
 
                 mv.tag = c.getString(c.getColumnIndex(ReturnOrderItemsMappingQuery.SOURCE));
                 mv.flag = c.getString(c.getColumnIndex(ReturnOrderItemsMappingQuery.FLAG));
