@@ -378,6 +378,7 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String GUID = "guid";
 
+        @NotNull
         @Column(type = Column.Type.TEXT)
         String CATEGORY_ID = "category_id";
 
@@ -403,6 +404,7 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String SALE_PRICE = "sale_price";
 
+        @NotNull
         @Column(type = Column.Type.TEXT)
         String UNITS_LABEL = "units_label";
 
