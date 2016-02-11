@@ -230,8 +230,6 @@ class UpdateBlock {
 
     static void update6_3to6_4(SQLiteDatabase db) {
         db.execSQL(SQL_INSERT_PRINTER_TYPE);
-        db.execSQL(SQL_DROP_PRINTER_VIEW);
-        db.execSQL(SQL_CREATE_PRINTER_VIEW);
         db.execSQL(SQL_CREATE_COMPOSER_TABLE);
         db.execSQL(SQL_ADD_COLUMN_IN_UNIT_TABLE);
         db.execSQL(SQL_ADD_COLUMN_IN_ITEM_TABLE_1);
@@ -248,6 +246,8 @@ class UpdateBlock {
         db.execSQL(SQL_CREATE_VARIANT_ITEM_TABLE);
         db.execSQL(SQL_CREATE_VARIANT_SUB_ITEM_TABLE);
         db.execSQL(SQL_CREATE_ITEM_MATRIX_TABLE);
+        db.execSQL(SQL_CREATE_ITEMS_MODIFIER_GROUP_TABLE);
+        db.execSQL(SQL_CREATE_UNIT_LABEL_TABLE);
         db.execSQL(SQL_CREATE_VARIANT_VIEW);
         db.execSQL(SQL_CREATE_ITEM_MATRIX_VIEW);
         db.execSQL(SQL_CREATE_ITEM_MATRIX_VIEW2);
@@ -264,10 +264,10 @@ class UpdateBlock {
         db.execSQL(SQL_CREATE_SO_COMPOSER_VIEW);
         db.execSQL(SQL_DROP_CATEGORY_VIEW);
         db.execSQL(SQL_CREATE_CATEGORY_VIEW_3);
-        db.execSQL(SQL_CREATE_ITEMS_MODIFIER_GROUP_TABLE);
         db.execSQL(SQL_CREATE_SO_MODIFIER_VIEW);
-        db.execSQL(SQL_CREATE_UNIT_LABEL_TABLE);
         db.execSQL(SQL_CREATE_MODIFIER_GROUP_VIEW);
+        db.execSQL(SQL_DROP_PRINTER_VIEW);
+        db.execSQL(SQL_CREATE_PRINTER_VIEW);
     }
 
     static void update5_9to6_1(SQLiteDatabase db) {
