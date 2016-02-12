@@ -80,6 +80,7 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActio
 import junit.framework.Assert;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -691,6 +692,7 @@ public class PaymentProcessor {
 
     public void onPaymentAmountSelected(final FragmentActivity context, final PaymentMethod method, BigDecimal amount) {
         Transaction transaction = null;
+        amount = amount.setScale(2, RoundingMode.HALF_UP);// for remove the last two digit decimal
         switch (method) {
             case CASH: {
                 transaction = PaymentGateway.CASH.gateway().createTransaction(context, amount, orderGuid);
