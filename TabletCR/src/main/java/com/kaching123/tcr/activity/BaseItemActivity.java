@@ -624,11 +624,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.description = this.description.getText().toString();
 
         c = (Cursor) this.category.getSelectedItem();
-        model.categoryId = c == null ? null : c.getString(c.getColumnIndex(CategoryTable.GUID));
+        model.categoryId = c == null ? "0" : c.getString(c.getColumnIndex(CategoryTable.GUID));
         model.unitsLabelId = ((UnitLabelModel) this.unitsLabel.getSelectedItem()).guid;
 
-        if (!TextUtils.isEmpty(model.unitsLabelId) && !TextUtils.isEmpty(model.unitsLabel)) {
-            model.unitsLabel = null;
+        if (TextUtils.isEmpty(model.unitsLabelId) && TextUtils.isEmpty(model.unitsLabel)) {
+            model.unitsLabel = "pcs";
         }
 
         model.priceType = ((PriceTypeHolder) this.priceType.getSelectedItem()).type;
