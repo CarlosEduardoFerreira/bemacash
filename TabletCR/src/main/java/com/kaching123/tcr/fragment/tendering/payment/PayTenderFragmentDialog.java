@@ -107,10 +107,10 @@ public class PayTenderFragmentDialog extends TenderFragmentDialogBase<PayTenderF
             if (paxGateway.acceptPaxDebitEnabled()) {
                 btnPaxDebit.setVisibility(View.VISIBLE);
             }
-//            if (paxGateway.acceptPaxEbtEnabled()) {
-//                btnPaxEbtCash.setVisibility(View.VISIBLE);
-//                btnPaxEbtFoodstamp.setVisibility(View.VISIBLE);
-//            }
+            if (paxGateway.acceptPaxEbtEnabled()) {
+                btnPaxEbtCash.setVisibility(View.VISIBLE);
+                btnPaxEbtFoodstamp.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -138,21 +138,21 @@ public class PayTenderFragmentDialog extends TenderFragmentDialogBase<PayTenderF
                 checkboxSingle.isChecked());
     }
 
-//    @Click
-//    protected void btnPaxEbtFoodstampClicked(){
-//        listener.onPaymentMethodSelected(PaymentMethod.PAX_EBT_FOODSTAMP,
-//                orderTotal,
-//                orderTotal.subtract(completedAmount),
-//                checkboxSingle.isChecked());
-//    }
+    @Click
+    protected void btnPaxEbtFoodstampClicked(){
+        listener.onPaymentMethodSelected(PaymentMethod.PAX_EBT_FOODSTAMP,
+                orderTotal,
+                orderTotal.subtract(completedAmount),
+                checkboxSingle.isChecked());
+    }
 
-//    @Click
-//    protected void btnPaxEbtCashClicked(){
-//        listener.onPaymentMethodSelected(PaymentMethod.PAX_EBT_CASH,
-//                orderTotal,
-//                orderTotal.subtract(completedAmount),
-//                checkboxSingle.isChecked());
-//    }
+    @Click
+    protected void btnPaxEbtCashClicked(){
+        listener.onPaymentMethodSelected(PaymentMethod.PAX_EBT_CASH,
+                orderTotal,
+                orderTotal.subtract(completedAmount),
+                checkboxSingle.isChecked());
+    }
 
     @Click
     protected void btnCashClicked(){
