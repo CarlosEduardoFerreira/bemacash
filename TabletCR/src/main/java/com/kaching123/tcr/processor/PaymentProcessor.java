@@ -693,6 +693,7 @@ public class PaymentProcessor {
     public void onPaymentAmountSelected(final FragmentActivity context, final PaymentMethod method, BigDecimal amount) {
         Transaction transaction = null;
         amount = amount.setScale(2, RoundingMode.HALF_UP);// for remove the last two digit decimal
+        Logger.d("Price send to Processor" + amount.toString());
         switch (method) {
             case CASH: {
                 transaction = PaymentGateway.CASH.gateway().createTransaction(context, amount, orderGuid);

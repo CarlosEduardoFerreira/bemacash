@@ -24,6 +24,7 @@ import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -121,7 +122,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                 result.subTotalItemTotal,
                 result.totalTaxVatValue,
                 result.totalItemDiscount,
-                result.totalOrderPrice, result.totalDiscountableItemTotal, info.transactionFee);
+                result.totalOrderPrice.setScale(2, RoundingMode.HALF_UP), result.totalDiscountableItemTotal, info.transactionFee);
     }
 
     private static SaleOrderInfo readCursor(Cursor c) {
