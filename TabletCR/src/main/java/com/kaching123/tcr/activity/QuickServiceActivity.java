@@ -45,6 +45,7 @@ public class QuickServiceActivity extends BaseCashierActivity {
 
     @FragmentById
     protected QuickModifyFragment modifyFragment;
+    private boolean isVisiable;
 
     @Override
     protected void init() {
@@ -118,12 +119,14 @@ public class QuickServiceActivity extends BaseCashierActivity {
     public void onResume() {
         super.onResume();
         progressReceiver.register(QuickServiceActivity.this);
+        isVisiable = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         progressReceiver.unregister(QuickServiceActivity.this);
+        isVisiable = false;
     }
 
     private ReceiverWrapper progressReceiver = new ReceiverWrapper(intentFilter) {
@@ -150,9 +153,11 @@ public class QuickServiceActivity extends BaseCashierActivity {
     public void hideModifiersFragment() {
         if (modifyFragment == null)
             return;
-        getSupportFragmentManager().beginTransaction().hide(modifyFragment).commit();
-        getSupportFragmentManager().popBackStack();
-        showQuickModifyFragment();
+        if(isVisiable) {
+            getSupportFragmentManager().beginTransaction().hide(modifyFragment).commit();
+            getSupportFragmentManager().popBackStack();
+            showQuickModifyFragment();
+        }
     }
 
     public void showModifiersFragment() {

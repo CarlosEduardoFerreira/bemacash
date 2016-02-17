@@ -715,11 +715,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
      * search fragment **
      */
     protected void showSearchFragment() {
-        getSupportFragmentManager().beginTransaction().show(searchResultFragment).commit();
+        getSupportFragmentManager().beginTransaction().show(searchResultFragment).commitAllowingStateLoss();
     }
 
     private void hideSearchFragment() {
-        getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commit();
+        getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commitAllowingStateLoss();
     }
 
     private void closeSearch() {
