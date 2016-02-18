@@ -581,7 +581,7 @@
     <string name="dlg_multiple_serial_codes_title">Multiple serial codes</string>
     <string name="btn_done">Done</string>
     <string name="print_order_power_by">Power by %s</string>
-    <string name="print_order_power_by_backstone">Blackstone</string>
+    <string name="print_order_power_by_backstone">bamaCash</string>
     <string name="print_order_power_by_paypal">Paypal</string>
     <string name="wait_dialog_title">Please wait...</string>
     <string name="scan_dialog_title">Please scan a barcode...</string>
@@ -1444,12 +1444,12 @@
     <string name="blackstone_settlement_failure_body_constructor" formatted="false">%s %s %s</string>
     <string name="blackstone_settlement_failure_body_3nd">There was a non-banking related issue: </string>
     <string name="blackstone_settlement_failure_reason_db_update">Settlement was executed but database wasn\'t updated</string>
-    <string name="blackstone_settlement_failure">One or more credit card transactions failed to settle. Please contact Blackstone Merchant Services for more details.</string>
+    <string name="blackstone_settlement_failure">One or more credit card transactions failed to settle. Please contact BamaCash Merchant Services for more details.</string>
     <string name="blackstone_settlement_alert_title">Credit Card Settlement</string>
     <string name="blackstone_settlement_alert_message">This operation will settle all open credit card transactions. After completion, tips cannot be added to these transactions. Do you want to proceed?</string>
     <string name="blackstone_pax_failure_reason_pax">Payment cancelled or connection problem.</string>
     <string name="blackstone_pax_failure_reason_wrong_gateway">Selected transaction was not created with PAX and can not be processed with it.</string>
-    <string name="blackstone_pax_failure_reason_tips_disabled">Contact Blackstone representative to enable tips in your pin pad.</string>
+    <string name="blackstone_pax_failure_reason_tips_disabled">Contact BamaCash representative to enable tips in your pin pad.</string>
     <string name="blackstone_pax_reload_failure_reason_service">The response is empty or related to another transaction, so the actual data is not going to be gathered.</string>
     <string name="blackstone_failure_reason_wrong_gateway">Selected transaction was not created with MSR and can not be processed with it.</string>
     <string name="close_transactions_list_fragment_title">Opened transactions</string>
