@@ -202,7 +202,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     @Override
     public void onCloseClick(ArrayList<PaymentTransactionModel> preauthTransactions, boolean isOrderTipped) {
-        if (getApp().isPaxConfigured()) {
+        if (getApp().isPaxConfigured() && !getApp().isTipsEnabled()) {
             AlertDialogFragment.showAlert(HistoryActivity.this, R.string.error_dialog_title, getString(R.string.blackstone_pax_failure_reason_tips_disabled));
             return;
         }
@@ -237,7 +237,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
             AlertDialogFragment.showAlert(HistoryActivity.this, R.string.refund_nothing_selected_title, getString(R.string.refund_nothing_selected_body));
             return;
         }
-        if (getApp().isPaxConfigured() && !getApp().isPaxTipsEnabled() && getApp().isBlackstonePax()) {
+        if (getApp().isPaxConfigured() && !getApp().isTipsEnabled()) {
             AlertDialogFragment.showAlert(this, R.string.error_dialog_title, getString(R.string.blackstone_pax_failure_reason_tips_disabled));
             return;
         }
@@ -449,7 +449,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
                 return;
             }
 
-            if (getApp().isPaxConfigured() && !getApp().isPaxTipsEnabled()) {
+            if (getApp().isPaxConfigured() && !getApp().isTipsEnabled()) {
                 AlertDialogFragment.showAlert(HistoryActivity.this, R.string.error_dialog_title, getString(R.string.blackstone_pax_failure_reason_tips_disabled));
                 return;
             }
