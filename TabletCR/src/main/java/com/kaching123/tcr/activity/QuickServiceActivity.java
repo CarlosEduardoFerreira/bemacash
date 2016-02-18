@@ -45,7 +45,7 @@ public class QuickServiceActivity extends BaseCashierActivity {
 
     @FragmentById
     protected QuickModifyFragment modifyFragment;
-    private boolean isVisiable;
+    private boolean isVisiable = true;
 
     @Override
     protected void init() {
