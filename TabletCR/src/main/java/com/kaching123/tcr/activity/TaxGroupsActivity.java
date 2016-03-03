@@ -15,11 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.commands.store.inventory.DeleteTaxGroupCommand;
@@ -34,9 +29,16 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.mobeta.android.dslv.DragSortListView;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.HashSet;
 import java.util.List;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /**
@@ -185,7 +187,8 @@ public class TaxGroupsActivity extends SuperBaseActivity {
             return new TaxGroupModel(
                     c.getString(indexHolder.get(ShopStore.TaxGroupTable.GUID)),
                     c.getString(indexHolder.get(ShopStore.TaxGroupTable.TITLE)),
-                    _decimal(c, indexHolder.get(ShopStore.TaxGroupTable.TAX))
+                    _decimal(c, indexHolder.get(ShopStore.TaxGroupTable.TAX)),
+                    _bool(c, indexHolder.get(ShopStore.TaxGroupTable.IS_DEFAULT))
             );
         }
     }

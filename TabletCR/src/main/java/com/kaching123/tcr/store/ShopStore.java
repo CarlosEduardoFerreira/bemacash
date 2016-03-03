@@ -1349,12 +1349,15 @@ public abstract class ShopStore {
         String GUID = "guid";
 
         @NotNull
-        @Column(type = Column.Type.TEXT)
+        @Column(type = Type.TEXT)
         String TITLE = "title";
 
         @NotNull
-        @Column(type = Column.Type.TEXT)
+        @Column(type = Type.TEXT)
         String TAX = "tax";
+
+        @Column(type = Type.INTEGER)
+        String IS_DEFAULT = "is_default";
     }
 
     @Table(RegisterTable.TABLE_NAME)

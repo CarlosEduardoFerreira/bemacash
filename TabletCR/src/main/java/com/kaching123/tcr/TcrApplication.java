@@ -870,6 +870,10 @@ public class TcrApplication extends MultiDexApplication {
         return result;
     }
 
+    public static boolean isEcuadorVersion() {
+        return true; // FIXME waiting for web team
+    }
+
     private Long getOfflineStartTime() {
         long offlineStartTime = shopPref.offlineStartTime().getOr(0L);
         if (offlineStartTime <= 0L) {

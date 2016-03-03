@@ -27,6 +27,7 @@ public class UpdateTaxGroup extends AsyncCommand {
     private static final String ARG_GUID = "ARG_GUID";
     private static final String ARG_TITLE = "ARG_TITLE";
     private static final String ARG_TAX = "ARG_TAX";
+    private static final String ARG_IS_DEFAULT = "ARG_IS_DEFAULT";
 
     private TaxGroupModel model;
 
@@ -35,12 +36,12 @@ public class UpdateTaxGroup extends AsyncCommand {
         String guid = getStringArg(ARG_GUID);
         String title = getStringArg(ARG_TITLE);
         BigDecimal tax = (BigDecimal) getArgs().getSerializable(ARG_TAX);
+        boolean isDefault = getBooleanArg(ARG_IS_DEFAULT);
         model = new TaxGroupModel(
                 guid,
                 title,
-                tax
-        );
-
+                tax,
+                isDefault);
         return succeeded();
     }
 
@@ -59,8 +60,15 @@ public class UpdateTaxGroup extends AsyncCommand {
         return JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext());
     }
 
-    public static void start(Context context, BaseUpdateTaxGroupCallback callback, String guid, String title, BigDecimal tax) {
-        create(UpdateTaxGroup.class).arg(ARG_GUID, guid).arg(ARG_TITLE, title).arg(ARG_TAX, tax).callback(callback).queueUsing(context);
+    public static void start(Context context, BaseUpdateTaxGroupCallback callback, String guid,
+                             String title, BigDecimal tax, boolean isDefault) {
+        create(UpdateTaxGroup.class)
+                .arg(ARG_GUID, guid)
+                .arg(ARG_TITLE, title)
+                .arg(ARG_TAX, tax)
+                .arg(ARG_IS_DEFAULT, isDefault)
+                .callback(callback)
+                .queueUsing(context);
     }
 
     public static abstract class BaseUpdateTaxGroupCallback {

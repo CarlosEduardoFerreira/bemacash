@@ -5,26 +5,28 @@ import android.support.v4.app.FragmentActivity;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.store.inventory.CreateTaxGroup;
+import com.kaching123.tcr.commands.store.inventory.UpdateTaxGroup;
+import com.kaching123.tcr.component.CurrencyFormatInputFilter;
+import com.kaching123.tcr.component.CurrencyTextWatcher;
+import com.kaching123.tcr.fragment.UiHelper;
+import com.kaching123.tcr.fragment.dialog.DialogUtil;
+import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.model.TaxGroupModel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
-import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.store.inventory.CreateTaxGroup;
-import com.kaching123.tcr.commands.store.inventory.UpdateTaxGroup;
-import com.kaching123.tcr.component.CurrencyFormatInputFilter;
-import com.kaching123.tcr.component.CurrencyTextWatcher;
-import com.kaching123.tcr.component.PercentFormatInputFilter;
-import com.kaching123.tcr.component.QuantityFormatInputFilter;
-import com.kaching123.tcr.fragment.UiHelper;
-import com.kaching123.tcr.fragment.dialog.DialogUtil;
-import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
-import com.kaching123.tcr.model.TaxGroupModel;
 
 import java.math.BigDecimal;
 
@@ -44,6 +46,8 @@ public class TaxGroupDialog extends StyledDialogFragment {
     protected EditText title;
     @ViewById
     protected EditText tax;
+    @ViewById
+    protected CheckBox isDefault;
 
     @AfterViews
     protected void initViews() {
@@ -54,7 +58,7 @@ public class TaxGroupDialog extends StyledDialogFragment {
         tax.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(EditorInfo.IME_ACTION_DONE == actionId){
+                if (EditorInfo.IME_ACTION_DONE == actionId) {
                     if (doClick()) {
                         dismiss();
                     }
@@ -63,6 +67,7 @@ public class TaxGroupDialog extends StyledDialogFragment {
                 return false;
             }
         });
+        isDefault.setVisibility(TcrApplication.isEcuadorVersion() ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -73,9 +78,12 @@ public class TaxGroupDialog extends StyledDialogFragment {
         params.width = getResources().getDimensionPixelOffset(R.dimen.tax_group_dialog_width);
         params.height = getResources().getDimensionPixelOffset(R.dimen.tax_group_dialog_height);
 
-        if (model != null){
+        if (model != null) {
             title.setText(model.title);
-            UiHelper.showQuantity(tax, model.tax);
+            UiHelper.showDecimal(tax, model.tax);
+            if (TcrApplication.isEcuadorVersion()) {
+                isDefault.setChecked(model.isDefault);
+            }
         }
     }
 
@@ -110,17 +118,18 @@ public class TaxGroupDialog extends StyledDialogFragment {
     }
 
     private boolean doClick() {
-        if(!isChanged()){
-            return true;
-        }
-        if (fieldsValid()){
+        if (fieldsValid()) {
+            if (!isChanged()) {
+                return true;
+            }
             final String title = this.title.getText().toString();
             String value = this.tax.getText().toString().replaceAll(",", "");
             final BigDecimal tax = new BigDecimal(value);
-            if (model != null){
-                UpdateTaxGroup.start(getActivity(), null, model.guid, title, tax);
-            }else{
-                CreateTaxGroup.start(getActivity(), null, title, tax);
+            boolean isDefault = this.isDefault.isChecked();
+            if (model != null) {
+                UpdateTaxGroup.start(getActivity(), null, model.guid, title, tax, isDefault);
+            } else {
+                CreateTaxGroup.start(getActivity(), null, title, tax, isDefault);
             }
             return true;
         }
@@ -134,16 +143,16 @@ public class TaxGroupDialog extends StyledDialogFragment {
         return !TextUtils.isEmpty(title) && tax != null && tax.compareTo(BigDecimal.ZERO) > 0;
     }
 
-    private boolean isChanged(){
+    private boolean isChanged() {
         String title = this.title.getText().toString().trim();
         String value = this.tax.getText().toString().replaceAll(",", "");
         BigDecimal tax = TextUtils.isEmpty(value) ? null : new BigDecimal(value);
-        return model == null || (!model.title.equals(title) || model.tax.compareTo(tax) != 0);
+        boolean isDefault = this.isDefault.isChecked();
+        return model == null || (!model.title.equals(title) || model.tax.compareTo(tax) != 0 || isDefault != model.isDefault);
     }
 
-    public static void show (FragmentActivity activity, TaxGroupModel model){
+    public static void show(FragmentActivity activity, TaxGroupModel model) {
         DialogUtil.show(activity, DIALOG_NAME, TaxGroupDialog_.builder().model(model).build());
     }
-
 
 }

@@ -27,6 +27,7 @@ public class CreateTaxGroup extends AsyncCommand {
 
     private static final String ARG_TITLE = "ARG_TITLE";
     private static final String ARG_TAX = "ARG_TAX";
+    private static final String ARG_IS_DEFAULT = "ARG_IS_DEFAULT";
 
     private TaxGroupModel model;
 
@@ -34,18 +35,18 @@ public class CreateTaxGroup extends AsyncCommand {
     protected TaskResult doCommand() {
         String title = getStringArg(ARG_TITLE);
         BigDecimal tax = (BigDecimal) getArgs().getSerializable(ARG_TAX);
+        boolean isDefault = getBooleanArg(ARG_IS_DEFAULT);
         model = new TaxGroupModel(
                 UUID.randomUUID().toString(),
                 title,
-                tax
-        );
-
+                tax,
+                isDefault);
         return succeeded();
     }
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>(1);
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>(1);
         operations.add(ContentProviderOperation.newInsert(TAX_GROUP_URI)
                 .withValues(model.toValues())
                 .build());
@@ -57,8 +58,14 @@ public class CreateTaxGroup extends AsyncCommand {
         return JdbcFactory.insert(model, getAppCommandContext());
     }
 
-    public static void start(Context context, BaseCreateTaxGroupCallback callback, String title, BigDecimal tax) {
-        create(CreateTaxGroup.class).arg(ARG_TITLE, title).arg(ARG_TAX, tax).callback(callback).queueUsing(context);
+    public static void start(Context context, BaseCreateTaxGroupCallback callback,
+                             String title, BigDecimal tax, boolean isDefault) {
+        create(CreateTaxGroup.class)
+                .arg(ARG_TITLE, title)
+                .arg(ARG_TAX, tax)
+                .arg(ARG_IS_DEFAULT, isDefault)
+                .callback(callback)
+                .queueUsing(context);
     }
 
     public static abstract class BaseCreateTaxGroupCallback {

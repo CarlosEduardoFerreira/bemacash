@@ -2,7 +2,7 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 
-import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -17,11 +17,17 @@ public class TaxGroupModel implements IValueModel, Serializable {
     public final String guid;
     public final String title;
     public final BigDecimal tax;
+    public boolean isDefault;
 
     public TaxGroupModel(String guid, String title, BigDecimal tax) {
+        this(guid, title, tax, false);
+    }
+
+    public TaxGroupModel(String guid, String title, BigDecimal tax, boolean isDefault) {
         this.guid = guid;
         this.title = title;
         this.tax = tax;
+        this.isDefault = isDefault;
     }
 
     @Override
@@ -32,16 +38,18 @@ public class TaxGroupModel implements IValueModel, Serializable {
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
-        values.put(ShopStore.TaxGroupTable.GUID, guid);
-        values.put(ShopStore.TaxGroupTable.TITLE, title);
-        values.put(ShopStore.TaxGroupTable.TAX, _decimal(tax,3));
+        values.put(TaxGroupTable.GUID, guid);
+        values.put(TaxGroupTable.TITLE, title);
+        values.put(TaxGroupTable.TAX, _decimal(tax, 3));
+        values.put(TaxGroupTable.IS_DEFAULT, isDefault ? 1 : 0);
         return values;
     }
 
     public ContentValues toUpdateValues() {
         ContentValues values = new ContentValues();
-        values.put(ShopStore.TaxGroupTable.TITLE, title);
-        values.put(ShopStore.TaxGroupTable.TAX, _decimal(tax,3));
+        values.put(TaxGroupTable.TITLE, title);
+        values.put(TaxGroupTable.TAX, _decimal(tax, 3));
+        values.put(TaxGroupTable.IS_DEFAULT, isDefault ? 1 : 0);
         return values;
     }
 
