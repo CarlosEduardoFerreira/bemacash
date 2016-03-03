@@ -908,14 +908,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 {
                     AlertDialogFragment.showAlert(BaseCashierActivity.this,
                             R.string.dlg_prepaid_app_missing_title,
-                            getString(R.string.dlg_prepaid_app_missing),
-                            new StyledDialogFragment.OnDialogClickListener() {
-                                @Override
-                                public boolean onClick() {
-                                    return true;
-                                }
-                            }
-                    );
+                            getString(R.string.dlg_prepaid_app_missing));
+
+
                 }
                 return false;
             }
