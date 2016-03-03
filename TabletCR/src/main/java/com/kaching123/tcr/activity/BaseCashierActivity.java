@@ -2,6 +2,8 @@ package com.kaching123.tcr.activity;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentProvider;
@@ -88,6 +90,7 @@ import com.kaching123.tcr.fragment.data.MsrDataFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
+import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment;
@@ -898,7 +901,22 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         prepaidItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                callPrepaidMini("START", "all");
+                try {
+                    callPrepaidMini("START", "all");
+                    return false;
+                }catch (ActivityNotFoundException exception)
+                {
+                    AlertDialogFragment.showAlert(BaseCashierActivity.this,
+                            R.string.dlg_prepaid_app_missing_title,
+                            getString(R.string.dlg_prepaid_app_missing),
+                            new StyledDialogFragment.OnDialogClickListener() {
+                                @Override
+                                public boolean onClick() {
+                                    return true;
+                                }
+                            }
+                    );
+                }
                 return false;
             }
         });
