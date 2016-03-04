@@ -449,6 +449,9 @@ public abstract class ShopStore {
         String TAX_GROUP_GUID = "tax_group_guid";
 
         @Column(type = Type.TEXT)
+        String TAX_GROUP_GUID2 = "tax_group_guid2";
+
+        @Column(type = Type.TEXT)
         String TMP_AVAILABLE_QTY = "tmp_available_qty";
 
         @NotNull

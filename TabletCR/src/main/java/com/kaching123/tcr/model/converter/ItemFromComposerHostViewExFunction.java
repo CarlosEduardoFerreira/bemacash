@@ -62,6 +62,7 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.RECOMMENDED_QTY))),
                 null,
                 null,
+                null,
                 0,
                 0,
                 0,

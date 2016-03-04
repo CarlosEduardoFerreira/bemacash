@@ -50,6 +50,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
 
     private static final String UPDATE_QTY_FLAG = "UPDATE_QTY_FLAG";
     private static final String TAX_GROUP_ID = "TAX_GROUP_ID";
+    private static final String TAX_GROUP_ID2 = "TAX_GROUP_ID2";
     private static final String CODE_TYPE = "CODE_TYPE";
     private static final String SERIALIZABLE = "SERIALIZABLE";
     private static final String ORDER_NUM = "ORDER_NUM";
@@ -89,6 +90,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBigDecimal(RECOMMENDED_QTY),
                 rs.getString(UPDATE_QTY_FLAG),
                 rs.getString(TAX_GROUP_ID),
+                rs.getString(TAX_GROUP_ID2),
                 rs.getString(DEFAULT_MODIFIER_ID),
                 rs.getInt(ORDER_NUM),
                 rs.getString(PRINTER_ID),
@@ -130,6 +132,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBigDecimal(RECOMMENDED_QTY, ContentValuesUtil.QUANTITY_SCALE),
                 rs.getString(UPDATE_QTY_FLAG),
                 rs.getString(TAX_GROUP_ID),
+                rs.getString(TAX_GROUP_ID2),
                 rs.getString(DEFAULT_MODIFIER_ID),
                 rs.getInt(ORDER_NUM),
                 rs.getString(PRINTER_ID),
@@ -179,6 +182,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(RECOMMENDED_QTY, item.recommendedQty, ContentValuesUtil.QUANTITY_SCALE)
                 .add(UPDATE_QTY_FLAG, item.updateQtyFlag)
                 .add(TAX_GROUP_ID, item.taxGroupGuid)
+                .add(TAX_GROUP_ID2, item.taxGroupGuid2)
                 .add(DEFAULT_MODIFIER_ID, item.defaultModifierGuid)
                 .add(ORDER_NUM, item.orderNum)
                 .add(PRINTER_ID, item.printerAliasGuid)
@@ -216,6 +220,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(RECOMMENDED_QTY, item.recommendedQty, ContentValuesUtil.QUANTITY_SCALE)
                 .add(UPDATE_QTY_FLAG, item.updateQtyFlag)
                 .add(TAX_GROUP_ID, item.taxGroupGuid)
+                .add(TAX_GROUP_ID2, item.taxGroupGuid2)
                 .add(DEFAULT_MODIFIER_ID, item.defaultModifierGuid)
                 .add(ORDER_NUM, item.orderNum)
                 .add(PRINTER_ID, item.printerAliasGuid)

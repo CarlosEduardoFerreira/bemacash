@@ -43,6 +43,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public BigDecimal recommendedQty;
     public String updateQtyFlag;
     public String taxGroupGuid;
+    public String taxGroupGuid2;
     public boolean isPcsUnit;
     public String defaultModifierGuid;
     public int orderNum;
@@ -90,6 +91,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      BigDecimal recommendedQty,
                      String updateQtyFlag,
                      String taxGroupGuid,
+                     String taxGroupGuid2,
                      String defaultModifierGuid,
                      int orderNum,
                      String printerAliasGuid,
@@ -126,6 +128,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.recommendedQty = recommendedQty;
         this.updateQtyFlag = updateQtyFlag;
         this.taxGroupGuid = taxGroupGuid;
+        this.taxGroupGuid2 = taxGroupGuid2;
         this.orderNum = orderNum;
         this.defaultModifierGuid = defaultModifierGuid;
         this.printerAliasGuid = printerAliasGuid;
@@ -165,6 +168,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.recommendedQty = itemModel.recommendedQty;
         this.updateQtyFlag = itemModel.updateQtyFlag;
         this.taxGroupGuid = itemModel.taxGroupGuid;
+        this.taxGroupGuid2 = itemModel.taxGroupGuid2;
         this.orderNum = itemModel.orderNum;
         this.defaultModifierGuid = itemModel.defaultModifierGuid;
         this.printerAliasGuid = itemModel.printerAliasGuid;
@@ -214,6 +218,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.RECOMMENDED_QTY, _decimalQty(recommendedQty));
         values.put(ItemTable.UPDATE_QTY_FLAG, updateQtyFlag);
         values.put(ItemTable.TAX_GROUP_GUID, taxGroupGuid);
+        values.put(ItemTable.TAX_GROUP_GUID2, taxGroupGuid2);
 
         values.put(ItemTable.DEFAULT_MODIFIER_GUID, defaultModifierGuid);
 

@@ -465,6 +465,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
+                <TextView
+                    android:id="@+id/taxGroupDefault"
+                    android:visibility="gone"
+                    android:layout_width="0dp"
+                    style="@style/EditItem.Table.Edittext"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
 
             </TableRow>
 

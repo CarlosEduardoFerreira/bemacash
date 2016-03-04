@@ -173,6 +173,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     _discountType(c, indexHolder.get(ItemTable.DISCOUNT_TYPE)),
                     c.getInt(indexHolder.get(ItemTable.TAXABLE)) == 1,
                     c.getString(indexHolder.get(ItemTable.TAX_GROUP_GUID)),
+                    c.getString(indexHolder.get(ItemTable.TAX_GROUP_GUID2)),
                     c.getInt(indexHolder.get(ItemExtView.MODIFIERS_COUNT)),
                     c.getInt(indexHolder.get(ItemExtView.ADDONS_COUNT)),
                     c.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT)),

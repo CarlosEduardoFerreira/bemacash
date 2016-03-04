@@ -54,6 +54,8 @@ import com.kaching123.tcr.fragment.editmodifiers.EditDialog.OnEditListener;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment.IButtonViewDialogListener;
 import com.kaching123.tcr.fragment.inventory.ItemCodeChooserAlertDialogFragment;
+import com.kaching123.tcr.fragment.taxgroup.ChooseTaxGroupsDialog;
+import com.kaching123.tcr.fragment.taxgroup.ChooseTaxGroupsDialog.ChooseTaxCallback;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
@@ -66,6 +68,7 @@ import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.PrinterAliasModel;
+import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.UnitLabelModelFactory;
@@ -158,6 +161,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected Spinner category;
     @ViewById
     protected Spinner taxGroup;
+    @ViewById
+    protected TextView taxGroupDefault;
     @ViewById
     protected Spinner unitsLabel;
     @ViewById
@@ -274,6 +279,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model = (ItemExModel) data.getSerializableExtra(UnitActivity.RESULT_OK);
     }
 
+    protected TaxGroupModel taxGroup1;
+    protected TaxGroupModel taxGroup2;
+
+
     protected void init() {
         departmentAdapter = new DepartmentSpinnerAdapter(this);
         department.setAdapter(departmentAdapter);
@@ -292,8 +301,32 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         categoryAdapter = new CategorySpinnerAdapter(this);
         category.setAdapter(categoryAdapter);
 
-        taxGroupAdapter = new TaxGroupSpinnerAdapter(this);
-        taxGroup.setAdapter(taxGroupAdapter);
+        if (TcrApplication.isEcuadorVersion()) {
+            taxGroupDefault.setVisibility(View.VISIBLE);
+            taxGroupDefault.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ChooseTaxGroupsDialog.show(BaseItemActivity.this, null, new ChooseTaxCallback() {
+                        @Override
+                        public void onTaxGroupsChosen(TaxGroupModel model1, TaxGroupModel model2) {
+                            taxGroup1 = model1;
+                            String displayText = "(" + _decimal(taxGroup1.tax) + " %) " + taxGroup1.title;
+                            taxGroup2 = model2;
+                            if (taxGroup2 != null) {
+                                displayText += "\n" + "(" + _decimal(taxGroup2.tax) + " %) " + taxGroup2.title;
+                            }
+                            taxGroupDefault.setText(displayText);
+                        }
+                    });
+                }
+            });
+            taxGroup.setVisibility(View.GONE);
+        } else {
+            taxGroupDefault.setVisibility(View.GONE);
+            taxGroup.setVisibility(View.VISIBLE);
+            taxGroupAdapter = new TaxGroupSpinnerAdapter(this);
+            taxGroup.setAdapter(taxGroupAdapter);
+        }
 
         printerAliasAdapter = new PrinterAliasAdapter(this);
         printerAlias.setAdapter(printerAliasAdapter);
@@ -403,9 +436,24 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                         .where(CategoryTable.DEPARTMENT_GUID + " = ?", model.departmentGuid)
                         .build(this);
             case TAX_GROUP_LOADER_ID:
-                return CursorLoaderBuilder.forUri(TAX_GROUP_URI)
-                        .projection(new String[]{TaxGroupTable.ID, TaxGroupTable.GUID, TaxGroupTable.TITLE, TaxGroupTable.TAX})
-                        .build(this);
+                if (TcrApplication.isEcuadorVersion()) {
+                    if (model.taxGroupGuid != null) {
+                        if (model.taxGroupGuid2 != null) {
+                            return CursorLoaderBuilder.forUri(TAX_GROUP_URI)
+                                    .projection(new String[]{TaxGroupTable.ID, TaxGroupTable.GUID, TaxGroupTable.TITLE, TaxGroupTable.TAX, TaxGroupTable.IS_DEFAULT})
+                                    .where(TaxGroupTable.GUID + " = ? OR " + TaxGroupTable.GUID + " = ?", model.taxGroupGuid, model.taxGroupGuid2)
+                                    .build(this);
+                        } else
+                            return CursorLoaderBuilder.forUri(TAX_GROUP_URI)
+                                    .projection(new String[]{TaxGroupTable.ID, TaxGroupTable.GUID, TaxGroupTable.TITLE, TaxGroupTable.TAX, TaxGroupTable.IS_DEFAULT})
+                                    .where(TaxGroupTable.GUID + " = ?", model.taxGroupGuid)
+                                    .build(this);
+                    }
+                } else {
+                    return CursorLoaderBuilder.forUri(TAX_GROUP_URI)
+                            .projection(new String[]{TaxGroupTable.ID, TaxGroupTable.GUID, TaxGroupTable.TITLE, TaxGroupTable.TAX})
+                            .build(this);
+                }
             default:
                 return null;
         }
@@ -421,7 +469,19 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 categoryAdapter.changeCursor(cursor);
                 break;
             case TAX_GROUP_LOADER_ID:
-                taxGroupAdapter.changeCursor(cursor);
+                if (TcrApplication.isEcuadorVersion()) {
+                    Logger.d("count = " + cursor.getCount());
+                    String displayText = "emptyyy";
+                    if (cursor.moveToFirst()) {
+                        do {
+                            TaxGroupModel model = new TaxGroupModel(cursor);
+                            displayText += "(" + _decimal(model.tax) + " %) " + model.title + "\n";
+                        } while (cursor.moveToNext());
+                    }
+                    taxGroupDefault.setText(displayText);
+                } else {
+                    taxGroupAdapter.changeCursor(cursor);
+                }
                 break;
         }
     }
@@ -436,7 +496,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 categoryAdapter.changeCursor(null);
                 break;
             case TAX_GROUP_LOADER_ID:
-                taxGroupAdapter.changeCursor(null);
+                if (TcrApplication.isEcuadorVersion()) {
+                    taxGroupDefault.setText("");
+                } else {
+                    taxGroupAdapter.changeCursor(null);
+                }
                 break;
         }
     }
@@ -507,17 +571,17 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     private void addModifierClicked(ModifierType modifierType) {
         EditDialog.showWithType(this, new ModifierModel(UUID.randomUUID().toString(), model.guid,
-                null, null, null, null, null, null), modifierType,
+                        null, null, null, null, null, null), modifierType,
                 new OnEditListener() {
-            @Override
-            public void onDefaultModifierChanged(String modifierId, boolean useAsDefault, boolean resetDefaultModifier) {
-                if (useAsDefault) {
-                    model.defaultModifierGuid = modifierId;
-                } else if (resetDefaultModifier) {
-                    model.defaultModifierGuid = null;
-                }
-            }
-        });
+                    @Override
+                    public void onDefaultModifierChanged(String modifierId, boolean useAsDefault, boolean resetDefaultModifier) {
+                        if (useAsDefault) {
+                            model.defaultModifierGuid = modifierId;
+                        } else if (resetDefaultModifier) {
+                            model.defaultModifierGuid = null;
+                        }
+                    }
+                });
     }
 
     protected abstract void callCommand(ItemModel model);
@@ -583,7 +647,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     protected boolean isPcs() {
         PriceTypeHolder pth = (PriceTypeHolder) priceType.getSelectedItem();
-        if(pth!=null) {
+        if (pth != null) {
             PriceType pt = pth.type;
             return UnitUtil.isNotUnitPriceType(pt);
         } else {
@@ -652,12 +716,23 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         String discount = this.discount.getText().toString();
         model.discount = parseBigDecimal(discount, BigDecimal.ZERO);
 
-        c = (Cursor) this.taxGroup.getSelectedItem();
+        if (TcrApplication.isEcuadorVersion()) {
+            if (salableChBox.isChecked()) {
+                if (taxGroup1 != null) {
+                    model.taxGroupGuid = taxGroup1.guid;
+                }
+                if (taxGroup2 != null) {
+                    model.taxGroupGuid2 = taxGroup2.guid;
+                }
+            }
+        } else {
+            c = (Cursor) this.taxGroup.getSelectedItem();
+            model.taxGroupGuid = (c == null) ? null : (salableChBox.isChecked() ?
+                    c.getString(c.getColumnIndex(TaxGroupTable.GUID)) :
+                    ((model.refType == ItemRefType.Reference)
+                            ? c.getString(c.getColumnIndex(TaxGroupTable.GUID)) : null));
+        }
 
-        model.taxGroupGuid = (c == null) ? null : (salableChBox.isChecked() ?
-                c.getString(c.getColumnIndex(TaxGroupTable.GUID)) :
-                ((model.refType == ItemRefType.Reference)
-                        ? c.getString(c.getColumnIndex(TaxGroupTable.GUID)) : null));
 
         String cost = this.cost.getText().toString();
         model.cost = parseBigDecimal(cost, BigDecimal.ZERO);
@@ -969,7 +1044,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
             printerAlias.setOnItemSelectedListener(new SpinnerChangeListener(aliasGuid != null ? printerAliasAdapter.getPosition(model.printerAliasGuid) : 0));
 
-
         }
 
         @Override
@@ -1069,7 +1143,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
             models.addAll(data);
 
-            if(models.isEmpty()) {
+            if (models.isEmpty()) {
                 models.add(UnitLabelModelFactory.getSimpleModel(TcrApplication.get().getShopInfo().defUnitLabelShortcut));
             }
 
@@ -1141,6 +1215,5 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             changed = true;
         }
     }
-
 
 }

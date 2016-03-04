@@ -68,6 +68,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.RECOMMENDED_QTY))),
                 null,
                 null,
+                null,
                 0,
                 0,
                 0,

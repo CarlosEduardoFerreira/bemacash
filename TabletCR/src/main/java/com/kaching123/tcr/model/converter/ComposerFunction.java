@@ -45,6 +45,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 ContentValuesUtilBase._decimalQty(c.getString(c.getColumnIndex(ItemHostTable.RECOMMENDED_QTY))),
                 c.getString(c.getColumnIndex(ItemHostTable.UPDATE_QTY_FLAG)),
                 null,
+                null,
                 0, // modifiers count
                 0,
                 0,
@@ -92,6 +93,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 ContentValuesUtilBase._decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.MINIMUM_QTY))),
                 ContentValuesUtilBase._decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.RECOMMENDED_QTY))),
                 c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.ItemChildTable.UPDATE_QTY_FLAG)),
+                null,
                 null,
                 0,
                 0,

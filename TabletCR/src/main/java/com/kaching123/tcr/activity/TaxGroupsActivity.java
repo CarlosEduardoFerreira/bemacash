@@ -80,6 +80,7 @@ public class TaxGroupsActivity extends SuperBaseActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TaxGroupModel model = adapter.getItem(i);
+                //adapter.getItems();
                 TaxGroupDialog.show(TaxGroupsActivity.this, model);
             }
         });
@@ -177,6 +178,29 @@ public class TaxGroupsActivity extends SuperBaseActivity {
         @Override
         public void onLoaderReset(Loader<List<TaxGroupModel>> listLoader) {
             adapter.changeCursor(null);
+        }
+    }
+
+    private int defCount;
+
+    private class DefaultTaxGroupsLoader implements LoaderCallbacks<List<TaxGroupModel>> {
+
+        @Override
+        public Loader<List<TaxGroupModel>> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder.forUri(URI_TAX_GROUPS)
+                    .where(ShopStore.TaxGroupTable.IS_DEFAULT + " = ? ", 1)
+                    .transform(new TaxGroupConverter())
+                    .build(TaxGroupsActivity.this);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<TaxGroupModel>> listLoader, List<TaxGroupModel> list) {
+            defCount = list.size();
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<TaxGroupModel>> listLoader) {
+            defCount = 0;
         }
     }
 

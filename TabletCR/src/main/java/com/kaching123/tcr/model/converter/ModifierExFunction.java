@@ -66,6 +66,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.RECOMMENDED_QTY))),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UPDATE_QTY_FLAG)),
                     null,
+                    null,
                     0,
                     0,
                     0,
