@@ -218,7 +218,7 @@ public final class OrderTotalPriceCalculator {
         if(discountDiff.compareTo(BigDecimal.ZERO) == 0)
             return calcItems;
 
-        BigDecimal cents = discountDiff.multiply(CalculationUtil.ONE_HUNDRED).setScale(0);
+        BigDecimal cents = discountDiff.multiply(CalculationUtil.ONE_HUNDRED).setScale(0,RoundingMode.HALF_UP);
         BigDecimal centsAbs = cents.abs();
         boolean negative = cents.compareTo(BigDecimal.ZERO) == -1;
 
