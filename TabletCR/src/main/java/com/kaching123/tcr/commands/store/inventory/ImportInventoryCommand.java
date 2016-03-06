@@ -525,7 +525,8 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 true,
                 null,
                 referenceItemGuid,
-                itemRefType
+                itemRefType,
+                false
         );
         return item;
     }

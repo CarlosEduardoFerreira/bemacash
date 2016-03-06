@@ -13,6 +13,7 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
@@ -74,6 +75,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             ShopSchema2.ItemExtView2.HostComposerTable.ID,
             ItemTable.REFERENCE_ITEM_ID,
             ItemTable.ITEM_REF_TYPE,
+            ItemTable.IS_PREPAID_ITEM,
             ItemMatrixTable.PARENT_GUID
     };
 
@@ -128,7 +130,8 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
                 _decimal(c, indexHolder.get(ItemTable.COMMISSION)),
                 c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
-                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)))
+                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
+                _bool(c, indexHolder.get(ItemTable.IS_PREPAID_ITEM)))
                 .setIsAComposer(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.HostComposerTable.ID)) != null)
                 .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null)
                 .setMatrixGuid(matrixGuid);

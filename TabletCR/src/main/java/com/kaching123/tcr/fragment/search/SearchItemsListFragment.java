@@ -189,7 +189,8 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     _bool(c, c.getColumnIndex(ItemTable.ELIGIBLE_FOR_COMMISSION)),
                     _decimal(c, c.getColumnIndex(ItemTable.COMMISSION)),
                     c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
-                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))));
+                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))),
+                    _bool(c, c.getColumnIndex(ItemTable.IS_PREPAID_ITEM)));
         }
     }
 }
