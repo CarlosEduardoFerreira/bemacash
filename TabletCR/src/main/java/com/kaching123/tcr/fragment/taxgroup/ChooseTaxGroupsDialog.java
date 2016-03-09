@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.ResourceCursorAdapter;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -46,10 +47,10 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
     private static final int LOADER_ID = 0;
 
     @FragmentArg
-    protected String modelId1;
+    protected String modelGuidFirst;
 
-    /*@FragmentArg
-    protected String modelId2;*/
+    @FragmentArg
+    protected String modelGuidSecond;
 
     private List<TaxGroupModel> models = new ArrayList<>(2);
 
@@ -145,6 +146,15 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
                     }
                 }
             });
+            if (!TextUtils.isEmpty(modelGuidFirst) && taxModel.getGuid().equals(modelGuidFirst)) {
+                holder.taxGroup.setChecked(true);
+            }
+            if (!TextUtils.isEmpty(modelGuidSecond) && taxModel.getGuid().equals(modelGuidSecond)) {
+                holder.taxGroup.setChecked(true);
+            }
+            if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond)) {
+               // setDef if exists
+            }
         }
     }
 
@@ -156,9 +166,11 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
         }
     }
 
-    public static void show(FragmentActivity activity, List<String> modelId, ChooseTaxCallback callback) {
+    public static void show(FragmentActivity activity, String modelId1, String modelId2, ChooseTaxCallback callback) {
         DialogUtil.show(activity, DIALOG_NAME, ChooseTaxGroupsDialog_
-                .builder()//model1
+                .builder()
+                .modelGuidFirst(modelId1)
+                .modelGuidSecond(modelId2)
                 .build()
                 .setCallback(callback));
     }
@@ -194,31 +206,4 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
             }
         };
     }
-
-   /*
-    @ColorRes(R.color.dlg_text_green)
-    protected int normalTextColor;
-    @ColorRes(R.color.gray_dark)
-    protected int badTextColor;
-
-    private void updateFromModel(TaxGroupModel model) {
-        if (model == null) {
-            return;
-        }
-        /*descrFirst.setText(getString(R.string.ncm_dialog_code_msg_exp,
-                model.code, model.ex,
-                _decimal(model.getTotalTax(ProductType.NATIONAL)),
-                _decimal(model.getTotalTax(ProductType.IMPORTED))));
-        descrSecond.setText(getString(R.string.ncm_dialog_general_msg_exp, model.description));*
-    }
-
-    @ItemClick(android.R.id.list)
-    protected void listViewItemClicked(int pos) {
-        final Cursor c = (Cursor) adapter.getItem(pos);
-        currentModel = new TaxGroupModel(c);
-        updateFromModel(currentModel);
-        getPositiveButton().setEnabled(true);
-        getPositiveButton().setTextColor(normalTextColor);
-    }
-*/
 }

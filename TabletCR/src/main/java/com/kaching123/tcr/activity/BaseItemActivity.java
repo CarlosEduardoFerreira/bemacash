@@ -306,13 +306,17 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             taxGroupDefault.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ChooseTaxGroupsDialog.show(BaseItemActivity.this, null, new ChooseTaxCallback() {
+                    ChooseTaxGroupsDialog.show(BaseItemActivity.this, model.taxGroupGuid, model.taxGroupGuid2, new ChooseTaxCallback() {
                         @Override
                         public void onTaxGroupsChosen(TaxGroupModel model1, TaxGroupModel model2) {
                             taxGroup1 = model1;
+                            if (taxGroup1 != null) {
+                                model.taxGroupGuid = taxGroup1.guid;
+                            }
                             String displayText = "(" + _decimal(taxGroup1.tax) + " %) " + taxGroup1.title;
                             taxGroup2 = model2;
                             if (taxGroup2 != null) {
+                                model.taxGroupGuid2 = taxGroup2.guid;
                                 displayText += "\n" + "(" + _decimal(taxGroup2.tax) + " %) " + taxGroup2.title;
                             }
                             taxGroupDefault.setText(displayText);

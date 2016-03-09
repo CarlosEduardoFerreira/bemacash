@@ -134,8 +134,8 @@ public class EditItemActivity extends BaseCommonItemActivity {
                     String displayText = "";
                     if (cursor.moveToFirst()) {
                         TaxGroupModel model = new TaxGroupModel(cursor);
-                        displayText = "(" + _decimal(model.tax) + " %) " + model.title ;
-                        if (cursor.moveToNext()){
+                        displayText = "(" + _decimal(model.tax) + " %) " + model.title;
+                        if (cursor.moveToNext()) {
                             TaxGroupModel model2 = new TaxGroupModel(cursor);
                             displayText += "\n" + "(" + _decimal(model.tax) + " %) " + model.title;
                         }
