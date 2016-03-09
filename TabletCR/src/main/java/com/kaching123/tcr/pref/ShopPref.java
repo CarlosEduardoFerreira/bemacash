@@ -242,6 +242,7 @@ public interface ShopPref {
 
     // Default Unit Label shortcut and description
     String unitLabelDefaultShortcut();
+
     String unitLabelDefaultDescription();
 
 
@@ -298,6 +299,8 @@ public interface ShopPref {
     boolean removeCheckAndOfflineCredit();
 
     long planId();
+
+    long countryId();
 
     /**
      * freemium settings

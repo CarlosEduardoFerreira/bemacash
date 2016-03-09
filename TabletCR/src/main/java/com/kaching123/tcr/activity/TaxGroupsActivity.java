@@ -18,6 +18,7 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.commands.store.inventory.DeleteTaxGroupCommand;
+import com.kaching123.tcr.commands.store.inventory.UpdateTaxGroup;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelListener;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
@@ -35,6 +36,7 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 
@@ -59,7 +61,7 @@ public class TaxGroupsActivity extends SuperBaseActivity {
     @ViewById
     protected DragSortListView list;
 
-    private TaxGroupsAdapter adapter;
+    protected TaxGroupsAdapter adapter;
 
     private TaxGroupsLoader loader = new TaxGroupsLoader();
 
@@ -74,40 +76,75 @@ public class TaxGroupsActivity extends SuperBaseActivity {
 
     @AfterViews
     protected void init() {
-        adapter = new TaxGroupsAdapter(this);
+        adapter = getAdapter();
         list.setAdapter(adapter);
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TaxGroupModel model = adapter.getItem(i);
-                //adapter.getItems();
-                TaxGroupDialog.show(TaxGroupsActivity.this, model);
+                showTaxGroupDialog(model);
             }
         });
-
         getSupportLoaderManager().restartLoader(0, null, loader);
+    }
+
+    protected TaxGroupsAdapter getAdapter() {
+        return new TaxGroupsAdapter(this);
+    }
+
+    protected void showTaxGroupDialog(TaxGroupModel model) {
+        TaxGroupDialog.show(this, model, changeListener);
+    }
+
+    protected TaxGroupDialog.TaxGroupListener changeListener = new TaxGroupDialog.TaxGroupListener() {
+        @Override
+        public void onTaxGroupChanged(String guid, String title, BigDecimal tax, boolean isDefault) {
+            onGroupChanged(guid, title, tax, isDefault);
+        }
+    };
+
+    private void onGroupChanged(String guid, String title, BigDecimal tax, boolean isDefault) {
+        UpdateTaxGroup.start(TaxGroupsActivity.this, new UpdateTaxGroup.BaseUpdateTaxGroupCallback() {
+            @Override
+            protected void onTaxGroupUpdated() {
+                onGroupUpdated();
+            }
+
+            @Override
+            protected void onTaxGroupUpdateError() {
+            }
+        }, guid, title, tax, isDefault);
+    }
+
+    protected void onGroupUpdated() {
     }
 
     @OptionsItem
     protected void actionAddSelected() {
-        TaxGroupDialog.show(this, null);
+        showTaxGroupDialog(null);
+    }
+
+    protected void onGroupDeleted() {
+        Toast.makeText(TaxGroupsActivity.this, getString(R.string.tax_group_delete_succeded_message,
+                tax2DeleteTitle), Toast.LENGTH_SHORT).show();
     }
 
     private class DeleteTaxGroupCallback extends DeleteTaxGroupCommand.BaseDeleteTaxGroupCallback {
 
         @Override
         protected void onTaxGroupDeleted() {
-            Toast.makeText(TaxGroupsActivity.this, getString(R.string.tax_group_delete_succeded_message, tax2DeleteTitle), Toast.LENGTH_SHORT).show();
+            onGroupDeleted();
         }
 
         @Override
         protected void onTaxGroupDeleteError() {
-            Toast.makeText(TaxGroupsActivity.this, getString(R.string.tax_group_delete_failed_message, tax2DeleteTitle), Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaxGroupsActivity.this, getString(R.string.tax_group_delete_failed_message,
+                    tax2DeleteTitle), Toast.LENGTH_SHORT).show();
             adapter.notifyDataSetChanged();
         }
     }
 
-    private class TaxGroupsAdapter extends ObjectsArrayAdapter<TaxGroupModel> implements DragSortListView.RemoveListener {
+    protected class TaxGroupsAdapter extends ObjectsArrayAdapter<TaxGroupModel> implements DragSortListView.RemoveListener {
 
         public TaxGroupsAdapter(Context context) {
             super(context);
@@ -116,22 +153,22 @@ public class TaxGroupsActivity extends SuperBaseActivity {
         @Override
         protected View newView(int position, ViewGroup parent) {
             View convertView = LayoutInflater.from(getContext()).inflate(R.layout.tax_group_list_item, parent, false);
-
             ViewHolder holder = new ViewHolder();
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.tax = (TextView) convertView.findViewById(R.id.tax);
-
             convertView.setTag(holder);
             return convertView;
+        }
+
+        protected void display(ViewHolder holder, TaxGroupModel item) {
+            holder.title.setText(item.title);
+            UiHelper.showPercent(holder.tax, item.tax);
         }
 
         @Override
         protected View bindView(View convertView, int position, TaxGroupModel item) {
             ViewHolder holder = (ViewHolder) convertView.getTag();
-
-            holder.title.setText(item.title);
-            UiHelper.showPercent(holder.tax, item.tax);
-
+            display(holder, item);
             return convertView;
         }
 
@@ -140,21 +177,23 @@ public class TaxGroupsActivity extends SuperBaseActivity {
             handleRemove(getItem(i));
         }
 
-        private class ViewHolder {
+        class ViewHolder {
             TextView title;
             TextView tax;
         }
     }
 
     private void handleRemove(final TaxGroupModel item) {
-        AlertDialogWithCancelListener.show(this, R.string.tax_group_delete_warning_dialog_title, getString(R.string.tax_group_delete_warning_dialog_message, item.title), R.string.btn_confirm, new OnDialogClickListener() {
-            @Override
-            public boolean onClick() {
-                tax2DeleteTitle = item.title;
-                deleteTaxGroup(item);
-                return true;
-            }
-        }, adapter);
+        AlertDialogWithCancelListener.show(this, R.string.tax_group_delete_warning_dialog_title,
+                getString(R.string.tax_group_delete_warning_dialog_message, item.title),
+                R.string.btn_confirm, new OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        tax2DeleteTitle = item.title;
+                        deleteTaxGroup(item);
+                        return true;
+                    }
+                }, adapter);
     }
 
     private void deleteTaxGroup(TaxGroupModel item) {
@@ -181,30 +220,7 @@ public class TaxGroupsActivity extends SuperBaseActivity {
         }
     }
 
-    private int defCount;
-
-    private class DefaultTaxGroupsLoader implements LoaderCallbacks<List<TaxGroupModel>> {
-
-        @Override
-        public Loader<List<TaxGroupModel>> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder.forUri(URI_TAX_GROUPS)
-                    .where(ShopStore.TaxGroupTable.IS_DEFAULT + " = ? ", 1)
-                    .transform(new TaxGroupConverter())
-                    .build(TaxGroupsActivity.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<TaxGroupModel>> listLoader, List<TaxGroupModel> list) {
-            defCount = list.size();
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<TaxGroupModel>> listLoader) {
-            defCount = 0;
-        }
-    }
-
-    private static class TaxGroupConverter extends ListConverterFunction<TaxGroupModel> {
+    protected static class TaxGroupConverter extends ListConverterFunction<TaxGroupModel> {
         @Override
         public TaxGroupModel apply(Cursor c) {
             super.apply(c);
