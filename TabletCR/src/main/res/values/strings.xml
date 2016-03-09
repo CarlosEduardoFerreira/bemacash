@@ -820,6 +820,7 @@
     <string name="tax_group_title">Title</string>
     <string name="tax_group_tax">Tax</string>
     <string name="tax_group_default">Default</string>
+    <string name="tax_group_choose_tax_goups">Choose Tax Groups</string>
     <string name="tax_group_delete_warning_dialog_title">Delete Tax Group</string>
     <string name="tax_group_delete_warning_dialog_message">You are about to delete tax group \'%s\', this will affect all items that linked to it. Do you want to proceed?</string>
     <string name="tax_group_delete_succeded_message">Tax group \'%s\' successfully deleted</string>

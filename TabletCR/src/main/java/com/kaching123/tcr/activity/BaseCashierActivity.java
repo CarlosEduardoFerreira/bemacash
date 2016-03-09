@@ -2,11 +2,9 @@ package com.kaching123.tcr.activity;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentProvider;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -90,7 +88,6 @@ import com.kaching123.tcr.fragment.data.MsrDataFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
-import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment;
@@ -114,7 +111,6 @@ import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
@@ -288,12 +284,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             String transactionId = data.getStringExtra("TRANSACTIONID");
             String itemName = data.getStringExtra("ITEMNAME");
             String itemDetails = data.getStringExtra("ITEMDETAILS");
-            BigDecimal itemQty = new BigDecimal(data.getIntExtra("“ITEMQTY",1));
+            BigDecimal itemQty = new BigDecimal(data.getIntExtra("“ITEMQTY", 1));
             BigDecimal itemPrice = new BigDecimal(data.getStringExtra("ITEMPRICE"));
             boolean itemTaxable = Boolean.parseBoolean(data.getStringExtra("ITEMTAXABLE"));
 //            Toast.makeText(this, action + " " + error + " " + errorMsg + " " + transactionId + " " + itemName + " " + itemDetails + " " + itemQty + " " +
 //                    itemPrice + " " + itemTaxable, Toast.LENGTH_LONG).show();
-            Logger.d("Prepaid item = " +action + " " + error + " " + errorMsg + " " + transactionId + " " + itemName + " " + itemDetails + " " + itemQty + " " +
+            Logger.d("Prepaid item = " + action + " " + error + " " + errorMsg + " " + transactionId + " " + itemName + " " + itemDetails + " " + itemQty + " " +
                     itemPrice + " " + itemTaxable);
 
             ItemExModel model = new ItemExModel(UUID.randomUUID().toString(),
@@ -319,6 +315,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     null,
                     UUID.randomUUID().toString(),
                     null,
+                    null,
                     0,
                     0,
                     0,
@@ -340,10 +337,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     .query(URI_ITEMS)
                     .where(ShopStore.ItemTable.GUID + " = ?", PREPAID_GUID)
                     .perform(getBaseContext());
-            if(c.moveToFirst())
+            if (c.moveToFirst())
                 EditItemCommand.start(this, model);
             else
-                AddItemCommand.start(this,model);
+                AddItemCommand.start(this, model);
             tryToAddItem(model);
         }
     }
@@ -904,8 +901,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 try {
                     callPrepaidMini("START", "all");
                     return false;
-                }catch (ActivityNotFoundException exception)
-                {
+                } catch (ActivityNotFoundException exception) {
                     AlertDialogFragment.showAlert(BaseCashierActivity.this,
                             R.string.dlg_prepaid_app_missing_title,
                             getString(R.string.dlg_prepaid_app_missing));

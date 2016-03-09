@@ -198,7 +198,10 @@
             android:name=".activity.TaxGroupsActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape" />
-
+        <activity
+            android:name=".activity.TaxGroupsEcuadorActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.ReportsActivity_"
             android:label="@string/reports_activity_label"

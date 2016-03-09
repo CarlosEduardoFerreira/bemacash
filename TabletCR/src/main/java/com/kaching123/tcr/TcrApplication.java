@@ -249,7 +249,8 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.terminalID().get(),
                     shopPref.terminalPassword().get(),
                     shopPref.removeCheckAndOfflineCredit().get(),
-                    shopPref.planId().get());
+                    shopPref.planId().get(),
+                    shopPref.countryId().get());
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -586,6 +587,7 @@ public class TcrApplication extends MultiDexApplication {
                 .terminalPassword().put(info.terminalPassword)
                 .removeCheckAndOfflineCredit().put(info.removeCheckAndOfflineCredit)
                 .planId().put(info.planId)
+                .countryId().put(info.countryId)
                 .apply();
 
         setUsers();
@@ -871,7 +873,7 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public static boolean isEcuadorVersion() {
-        return true; // FIXME waiting for web team
+        return TcrApplication.get().getShopPref().countryId().get() == 2;
     }
 
     private Long getOfflineStartTime() {

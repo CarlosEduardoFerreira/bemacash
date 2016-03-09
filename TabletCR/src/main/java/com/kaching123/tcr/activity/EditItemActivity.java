@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditVariantMatrixItemCommand;
@@ -28,6 +29,7 @@ import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.PlanOptions;
+import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -48,6 +50,7 @@ import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /**
  * Created by vkompaniets on 02.12.13.
@@ -127,8 +130,21 @@ public class EditItemActivity extends BaseCommonItemActivity {
                 category.setOnItemSelectedListener(new SpinnerChangeListener(catPos));
                 break;
             case TAX_GROUP_LOADER_ID:
-                final int pos = taxGroupAdapter.getPosition4Id(model.taxGroupGuid);
-                taxGroup.setSelection(pos);
+                if (TcrApplication.isEcuadorVersion()) {
+                    String displayText = "";
+                    if (cursor.moveToFirst()) {
+                        TaxGroupModel model = new TaxGroupModel(cursor);
+                        displayText = "(" + _decimal(model.tax) + " %) " + model.title ;
+                        if (cursor.moveToNext()){
+                            TaxGroupModel model2 = new TaxGroupModel(cursor);
+                            displayText += "\n" + "(" + _decimal(model.tax) + " %) " + model.title;
+                        }
+                    }
+                    taxGroupDefault.setText(displayText);
+                } else {
+                    final int pos = taxGroupAdapter.getPosition4Id(model.taxGroupGuid);
+                    taxGroup.setSelection(pos);
+                }
                 break;
         }
     }
@@ -374,7 +390,6 @@ public class EditItemActivity extends BaseCommonItemActivity {
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
         Logger.d("EditItemActivity onReceive:" + barcode);
-
         onBarcodeReceived(barcode);
     }
 

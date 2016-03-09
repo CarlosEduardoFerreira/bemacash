@@ -1,12 +1,14 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /**
@@ -28,6 +30,13 @@ public class TaxGroupModel implements IValueModel, Serializable {
         this.title = title;
         this.tax = tax;
         this.isDefault = isDefault;
+    }
+
+    public TaxGroupModel(Cursor c) {
+        this.guid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
+        this.title = c.getString(c.getColumnIndex(TaxGroupTable.TITLE));
+        this.tax = _decimal(c, c.getColumnIndex(TaxGroupTable.TAX));
+        this.isDefault = _bool(c, c.getColumnIndex(TaxGroupTable.IS_DEFAULT));
     }
 
     @Override

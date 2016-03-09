@@ -15,10 +15,10 @@ import android.widget.TextView;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.inventory.CreateTaxGroup;
-import com.kaching123.tcr.commands.store.inventory.UpdateTaxGroup;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.fragment.UiHelper;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment_;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.TaxGroupModel;
@@ -41,6 +41,9 @@ public class TaxGroupDialog extends StyledDialogFragment {
 
     @FragmentArg
     protected TaxGroupModel model;
+
+    @FragmentArg
+    protected boolean canBeDefault;
 
     @ViewById
     protected EditText title;
@@ -122,12 +125,18 @@ public class TaxGroupDialog extends StyledDialogFragment {
             if (!isChanged()) {
                 return true;
             }
+            if (TcrApplication.isEcuadorVersion() && !canBeDefault && this.isDefault.isChecked()) {
+                AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, "There have already been defined 2 default tax groups");
+                return false;
+            }
             final String title = this.title.getText().toString();
             String value = this.tax.getText().toString().replaceAll(",", "");
             final BigDecimal tax = new BigDecimal(value);
             boolean isDefault = this.isDefault.isChecked();
             if (model != null) {
-                UpdateTaxGroup.start(getActivity(), null, model.guid, title, tax, isDefault);
+                if (callback != null) {
+                    callback.onTaxGroupChanged(model.guid, title, tax, isDefault);
+                }
             } else {
                 CreateTaxGroup.start(getActivity(), null, title, tax, isDefault);
             }
@@ -151,8 +160,30 @@ public class TaxGroupDialog extends StyledDialogFragment {
         return model == null || (!model.title.equals(title) || model.tax.compareTo(tax) != 0 || isDefault != model.isDefault);
     }
 
-    public static void show(FragmentActivity activity, TaxGroupModel model) {
-        DialogUtil.show(activity, DIALOG_NAME, TaxGroupDialog_.builder().model(model).build());
+    public static void show(FragmentActivity activity, TaxGroupModel model, TaxGroupListener callback) {
+        DialogUtil.show(activity, DIALOG_NAME, TaxGroupDialog_.builder()
+                .model(model)
+                .build()
+                .setCallback(callback));
+    }
+
+    public static void show(FragmentActivity activity, TaxGroupModel model, boolean canBeDefault, TaxGroupListener callback) {
+        DialogUtil.show(activity, DIALOG_NAME, TaxGroupDialog_.builder()
+                .model(model)
+                .canBeDefault(canBeDefault)
+                .build()
+                .setCallback(callback));
+    }
+
+    public interface TaxGroupListener {
+        void onTaxGroupChanged(String guid, String title, BigDecimal tax, boolean isDefault);
+    }
+
+    private TaxGroupListener callback;
+
+    protected TaxGroupDialog setCallback(TaxGroupListener callback) {
+        this.callback = callback;
+        return this;
     }
 
 }

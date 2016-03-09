@@ -22,6 +22,7 @@ import com.google.common.base.Function;
 import com.kaching123.tcr.InventoryHelper;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.commands.store.export.ExportInventoryCommand;
 import com.kaching123.tcr.commands.store.export.ExportInventoryCommand.ExportCommandBaseCallback;
@@ -298,7 +299,11 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @OptionsItem
     protected void actionManageTaxGroupsSelected() {
-        TaxGroupsActivity.start(this);
+        if (TcrApplication.isEcuadorVersion()) {
+            TaxGroupsEcuadorActivity.start(this);
+        } else {
+            TaxGroupsActivity.start(this);
+        }
     }
 
     @OptionsItem
