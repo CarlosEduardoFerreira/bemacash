@@ -84,7 +84,8 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 false,
                 null,
                 null,
-                null);
+                null,
+                false);
     }
 }
 

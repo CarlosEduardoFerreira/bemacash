@@ -63,6 +63,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String IS_DELETED = "IS_DELETED";
     private static final String ITEM_REF_TYPE = "ITEM_REF_TYPE";
     private static final String REFERENCE_ITEM_ID = "REFERENCE_ITEM_ID";
+    private static final String IS_PREPAID_ITEM = "IS_PREPAID_ITEM";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -101,7 +102,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
                 rs.getBigDecimal(COMMISSION),
                 rs.getString(REFERENCE_ITEM_ID),
-                _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple)
+                _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple),
+                rs.getBoolean(IS_PREPAID_ITEM)
         );
         return model.toValues();
     }
@@ -143,7 +145,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
                 rs.getBigDecimal(COMMISSION),
                 rs.getString(REFERENCE_ITEM_ID),
-                ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE))
+                ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE)),
+                rs.getBoolean(IS_PREPAID_ITEM)
         );
     }
 
@@ -193,6 +196,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(COMMISSION, item.commission)
                 .add(ITEM_REF_TYPE, item.refType.ordinal())
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
+                .add(IS_PREPAID_ITEM, item.isPrepaidItem)
                 .build(JdbcFactory.getApiMethod(item));
     }
 
@@ -233,6 +237,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .where(ID, item.guid)
                 .add(ITEM_REF_TYPE, item.refType.ordinal())
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
+                .add(IS_PREPAID_ITEM, item.isPrepaidItem)
                 .build(JdbcFactory.getApiMethod(item));
     }
 

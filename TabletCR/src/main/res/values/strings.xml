@@ -226,7 +226,7 @@
     <string name="cashier_action_add_group">Add a modifier Group</string>
     <string name="cashier_action_settings">Settings</string>
     <string name="cashier_action_order_list">Order list</string>
-    <string name="cashier_action_prapaid">Prepaid</string>
+    <string name="cashier_action_prepaid">Prepaid</string>
     <string name="cashier_action_balance">EBT Balance</string>
     <string name="cashier_action_commission">Sales Person</string>
     <string name="cashier_action_search">Search</string>
@@ -301,12 +301,14 @@
     <string name="dlg_process_refund_title">Refund</string>
     <string name="dlg_process_software_update_title">Software Update</string>
     <string name="dlg_void_title">Void order</string>
+    <string name="dlg_prepaid_app_missing_title">Prepaid Mini</string>
     <string name="dlg_return_title">Return order</string>
     <string name="dlg_return_msg">Are you sure you want to return $ %1$s on order %2$s?</string>
     <string name="dlg_void_fail_title">Void Fail</string>
     <string name="dlg_void_msg">Are you sure you want to void order?</string>
     <string name="dlg_void_forbidden_msg">This order had been Kichen-Printed, cannot be avoided. Need to ask Manager for Permission</string>
     <string name="dlg_import_is_deleted_items_title">Are you sure you want to</string>
+    <string name="dlg_prepaid_app_missing">Please goes http://urun.me/prepaid website to download the Prepaid Mini app first. Thanks.</string>
 
     <string name="btn_item_remove">Remove</string>
     <string name="btn_item_cancel">Cancel</string>

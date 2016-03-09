@@ -60,6 +60,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
 
     public boolean ignoreMovementupdate;
 
+    public boolean isPrepaidItem;
+
     public ItemModel(){
         this.guid = UUID.randomUUID().toString();
     }
@@ -102,7 +104,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      boolean commissionEligible,
                      BigDecimal commission,
                      String referenceItemGuid,
-                     ItemRefType refType) {
+                     ItemRefType refType, boolean isPrepaidItem) {
         super();
         this.guid = guid;
         this.categoryId = categoryId;
@@ -140,6 +142,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.commission = commission;
         this.referenceItemGuid = referenceItemGuid;
         this.refType = refType;
+        this.isPrepaidItem = isPrepaidItem;
 	}
 
     public ItemModel(ItemModel itemModel) {
@@ -180,6 +183,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.commission = itemModel.commission;
         this.refType = itemModel.refType;
         this.referenceItemGuid = itemModel.referenceItemGuid;
+        this.isPrepaidItem = itemModel.isPrepaidItem;
     }
 
     @Override
@@ -237,6 +241,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
 
         _putItemRefType(values, ItemTable.ITEM_REF_TYPE, refType);
         values.put(ItemTable.REFERENCE_ITEM_ID, referenceItemGuid);
+        values.put(ItemTable.IS_PREPAID_ITEM, isPrepaidItem);
 
 		return values;
 	}

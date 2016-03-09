@@ -486,6 +486,10 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String REFERENCE_ITEM_ID = "reference_item_id";
+
+        @NotNull
+        @Column(type = Type.INTEGER, defVal = "0")
+        String IS_PREPAID_ITEM = "is_prepaid_item";
     }
 
     static {

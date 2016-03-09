@@ -10,6 +10,13 @@
         android:orderInCategory="@integer/menu_order_default"/>
 
     <item
+        android:icon="@drawable/prepaid_dashborad_button_bg"
+        android:id="@+id/action_prepaid"
+        android:showAsAction="always"
+        android:title="@string/cashier_action_prepaid"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
         android:icon="@drawable/action_bar_orders"
         android:actionLayout="@layout/actionbar_hold_counter"
         android:id="@+id/action_hold_counter"

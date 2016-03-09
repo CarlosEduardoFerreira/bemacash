@@ -1,6 +1,8 @@
 package com.kaching123.tcr.processor;
 
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.text.Spannable;
@@ -8,6 +10,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.widget.Toast;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -75,6 +78,9 @@ import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.model.payment.general.transaction.TransactionType;
 import com.kaching123.tcr.processor.MoneybackProcessor.IVoidCallback;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
 
 import junit.framework.Assert;
@@ -116,6 +122,7 @@ public class PaymentProcessor {
     private ArrayList<PaymentTransactionModel> successfullCCtransactionModels = new ArrayList<PaymentTransactionModel>();
 
     private String currentTransactionId;
+    private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
 
     private PaymentProcessor(String orderGuid, OrderType orderType, KitchenPrintStatus kitchenPrintStatus, String[] salesmanGuids) {
         this.currentTransactionId = UUID.randomUUID().toString();
@@ -1242,14 +1249,17 @@ public class PaymentProcessor {
                 }
             }, transactions, kitchenPrintStatus, orderChange, gateWay, isPrinterTwoCopiesReceipt());
         } else {
-            if (transactions != null && !transactions.isEmpty()) {
-                callback.onPrintValues(orderGuid, transactions, orderChange);
-            } else {
-                ArrayList<PaymentTransactionModel> transactionModels = new ArrayList<PaymentTransactionModel>();
-                lastTransaction.availableAmount = lastTransaction.amount;
-                transactionModels.add(lastTransaction);
-                callback.onPrintValues(orderGuid, transactionModels, orderChange);
-            }
+//            if (transactions != null && !transactions.isEmpty()) {
+//                callback.onPrintValues(orderGuid, transactions, orderChange);
+//            } else {
+//                ArrayList<PaymentTransactionModel> transactionModels = new ArrayList<PaymentTransactionModel>();
+//                lastTransaction.availableAmount = lastTransaction.amount;
+//                transactionModels.add(lastTransaction);
+//                callback.onPrintValues(orderGuid, transactionModels, orderChange);
+//            }
+            Cursor cursor = ProviderAction.query(URI_SALE_ITEMS)
+                    .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid)
+                    .perform(context);
         }
     }
 
