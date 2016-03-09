@@ -471,7 +471,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             case TAX_GROUP_LOADER_ID:
                 if (TcrApplication.isEcuadorVersion()) {
                     Logger.d("count = " + cursor.getCount());
-                    String displayText = "emptyyy";
+                    String displayText = "";
                     if (cursor.moveToFirst()) {
                         do {
                             TaxGroupModel model = new TaxGroupModel(cursor);

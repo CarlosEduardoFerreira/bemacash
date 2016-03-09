@@ -873,7 +873,6 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public static boolean isEcuadorVersion() {
-        Logger.d("isEcuadorVersion - " + (TcrApplication.get().getShopPref().countryId().get() == 2));
         return TcrApplication.get().getShopPref().countryId().get() == 2;
     }
 
