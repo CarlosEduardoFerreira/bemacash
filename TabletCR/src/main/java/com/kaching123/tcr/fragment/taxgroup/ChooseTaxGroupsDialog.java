@@ -152,8 +152,8 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
             if (!TextUtils.isEmpty(modelGuidSecond) && taxModel.getGuid().equals(modelGuidSecond)) {
                 holder.taxGroup.setChecked(true);
             }
-            if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond)) {
-               // setDef if exists
+            if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond) && taxModel.isDefault) {
+                holder.taxGroup.setChecked(true);
             }
         }
     }
