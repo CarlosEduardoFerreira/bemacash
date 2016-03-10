@@ -5,7 +5,6 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
-import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.util.CalculationUtil;
 
 import java.math.BigDecimal;
@@ -218,7 +217,7 @@ public final class OrderTotalPriceCalculator {
         if(discountDiff.compareTo(BigDecimal.ZERO) == 0)
             return calcItems;
 
-        BigDecimal cents = discountDiff.multiply(CalculationUtil.ONE_HUNDRED).setScale(0);
+        BigDecimal cents = discountDiff.multiply(CalculationUtil.ONE_HUNDRED).setScale(0, RoundingMode.HALF_UP);
         BigDecimal centsAbs = cents.abs();
         boolean negative = cents.compareTo(BigDecimal.ZERO) == -1;
 
