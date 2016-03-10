@@ -130,6 +130,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 ItemTable.DISCOUNT_TYPE,
                 ItemTable.TAXABLE,
                 ItemTable.TAX_GROUP_GUID,
+                ItemTable.TAX_GROUP_GUID2,
                 _caseCount(ModifierTable.TYPE, ModifierType.MODIFIER, ItemExtView.MODIFIERS_COUNT),
                 _caseCount(ModifierTable.TYPE, ModifierType.ADDON, ItemExtView.ADDONS_COUNT),
                 _caseCount(ModifierTable.TYPE, ModifierType.OPTIONAL, ItemExtView.OPTIONAL_COUNT),
