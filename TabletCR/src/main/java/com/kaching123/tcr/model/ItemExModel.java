@@ -88,7 +88,7 @@ public class ItemExModel extends ItemModel {
                        boolean commissionEligible,
                        BigDecimal commission,
                        String referenceItemGuid,
-                       ItemRefType itemRefType, boolean isPrepaidItem) {
+                       ItemRefType itemRefType) {
         super(guid,
                 categoryId,
                 description,
@@ -123,8 +123,8 @@ public class ItemExModel extends ItemModel {
                 commissionEligible,
                 commission,
                 referenceItemGuid,
-                itemRefType,
-                isPrepaidItem);
+                itemRefType
+                );
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;
         this.optionalCount = optionalCount;

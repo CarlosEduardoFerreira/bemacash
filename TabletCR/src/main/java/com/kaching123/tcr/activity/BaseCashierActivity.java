@@ -331,8 +331,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     true,
                     null,
                     null,
-                    ItemRefType.Simple,
-                    true);
+                    ItemRefType.Simple
+                    );
             Cursor c = ProviderAction
                     .query(URI_ITEMS)
                     .where(ShopStore.ItemTable.GUID + " = ?", PREPAID_GUID)

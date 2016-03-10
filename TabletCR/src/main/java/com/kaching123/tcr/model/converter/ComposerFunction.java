@@ -61,8 +61,8 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 false,
                 null,
                 null,
-                null,
-                false);
+                null
+                );
 
         String shortCut;
         try {
@@ -111,8 +111,8 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 false,
                 null,
                 null,
-                null,
-                false);
+                null
+                );
 
         return new ComposerExModel(
                 c.getString(c.getColumnIndex(ComposerTable.ID)),

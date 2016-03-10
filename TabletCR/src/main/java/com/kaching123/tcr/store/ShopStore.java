@@ -37,7 +37,7 @@ import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTriggers;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 303)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 304)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -486,10 +486,6 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String REFERENCE_ITEM_ID = "reference_item_id";
-
-        @NotNull
-        @Column(type = Type.INTEGER, defVal = "0")
-        String IS_PREPAID_ITEM = "is_prepaid_item";
     }
 
     static {

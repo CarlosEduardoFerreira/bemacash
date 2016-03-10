@@ -50,7 +50,7 @@ public class CategoryItemViewModel extends ItemExModel {
                                  boolean commissionEligible,
                                  BigDecimal commission,
                                  String referenceItemGuid,
-                                 ItemRefType itemRefType, boolean isPrepaidItem) {
+                                 ItemRefType itemRefType) {
         super(guid,
                 categoryId,
                 description,
@@ -90,7 +90,7 @@ public class CategoryItemViewModel extends ItemExModel {
                 commissionEligible,
                 commission,
                 referenceItemGuid,
-                itemRefType, isPrepaidItem);
+                itemRefType);
         this.categoryName = categoryName;
     }
 

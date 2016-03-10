@@ -27,6 +27,7 @@ public interface IUpdateContainer {
     int VERSION6_2 = 301; // build 170+
     int VERSION6_3 = 302; // build 184+
     int VERSION6_4 = 303; // build 250+
+    int VERSION6_5 = 304; // VERSION CODE 22
 
     void onUpdate(final SQLiteDatabase db);
 

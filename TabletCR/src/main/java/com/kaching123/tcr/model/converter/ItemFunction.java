@@ -94,8 +94,8 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
                 _decimal(c, indexHolder.get(ItemTable.COMMISSION)),
                 c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
-                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
-                _bool(c, indexHolder.get(ItemTable.IS_PREPAID_ITEM))
+                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE))
+
         );
     }
 

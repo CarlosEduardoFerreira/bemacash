@@ -102,8 +102,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
                 rs.getBigDecimal(COMMISSION),
                 rs.getString(REFERENCE_ITEM_ID),
-                _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple),
-                rs.getBoolean(IS_PREPAID_ITEM)
+                _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple)
+
         );
         return model.toValues();
     }
@@ -145,8 +145,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
                 rs.getBigDecimal(COMMISSION),
                 rs.getString(REFERENCE_ITEM_ID),
-                ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE)),
-                rs.getBoolean(IS_PREPAID_ITEM)
+                ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE))
         );
     }
 
@@ -196,7 +195,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(COMMISSION, item.commission)
                 .add(ITEM_REF_TYPE, item.refType.ordinal())
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
-                .add(IS_PREPAID_ITEM, item.isPrepaidItem)
                 .build(JdbcFactory.getApiMethod(item));
     }
 
@@ -237,7 +235,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .where(ID, item.guid)
                 .add(ITEM_REF_TYPE, item.refType.ordinal())
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
-                .add(IS_PREPAID_ITEM, item.isPrepaidItem)
                 .build(JdbcFactory.getApiMethod(item));
     }
 
