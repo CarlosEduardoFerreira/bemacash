@@ -190,7 +190,7 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
             @Override
             public boolean onClick() {
                 if (models.size() == 0) {
-                    AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, "Please select 1 or 2 tax groups");
+                    AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, getString(R.string.tax_group_dialog_msg));
                 } else if (models.size() == 1) {
                     callback.onTaxGroupsChosen(models.get(0), null);
                     dismiss();
@@ -200,7 +200,7 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
                     dismiss();
                     return true;
                 } else if (models.size() > 2) {
-                    AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, "Please select 1 or 2 tax groups");
+                    AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, getString(R.string.tax_group_dialog_msg));
                 }
                 return false;
             }
