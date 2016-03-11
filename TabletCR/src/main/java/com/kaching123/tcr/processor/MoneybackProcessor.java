@@ -55,6 +55,7 @@ import junit.framework.Assert;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -346,6 +347,7 @@ public class MoneybackProcessor {
     }
 
     private void proceedToRefund(FragmentActivity context, PaymentMethod method, List<PaymentTransactionModel> transactions, BigDecimal pendingAmountToReturn, User user) {
+        pendingAmountToReturn = pendingAmountToReturn.setScale(2, RoundingMode.HALF_UP);
         switch (method) {
             case CASH:
                 ArrayList<PaymentTransactionModel> blackstoneTransactions = new ArrayList<PaymentTransactionModel>();
