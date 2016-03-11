@@ -32,6 +32,7 @@ public class SaleOrderItemFunction implements Function<Cursor, SaleOrderItemMode
                 _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                 _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
+                _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),
                 c.getLong(c.getColumnIndex(SaleItemTable.SEQUENCE)),
                 c.getString(c.getColumnIndex(SaleItemTable.PARENT_GUID)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE)),

@@ -13,7 +13,6 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
@@ -63,6 +62,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             _caseCount(ModifierTable.TYPE, ModifierType.ADDON, ItemExtView.ADDONS_COUNT),
             _caseCount(ModifierTable.TYPE, ModifierType.OPTIONAL, ItemExtView.OPTIONAL_COUNT),
             TaxGroupTable.TAX,
+            ShopSchema2.ItemExtView2.TaxGroupTable2.TAX,
             ItemTable.ORDER_NUM,
             ItemTable.PRINTER_ALIAS_GUID,
             ItemTable.BUTTON_VIEW,
@@ -120,6 +120,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT)),
                 c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
                 _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX))),
+                _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX))),
                 c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID)),
                 c.getInt(indexHolder.get(ItemTable.ORDER_NUM)),
                 c.getString(indexHolder.get(ItemTable.PRINTER_ALIAS_GUID)),

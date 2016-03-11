@@ -23,7 +23,7 @@ public class ItemExModel extends ItemModel {
 
     private static final Uri URI_VARIANT_SUB_ITEMS = ShopProvider.contentUri(VariantSubItemTable.URI_CONTENT);
 
-    public ArrayList<Unit> tmpUnit = new ArrayList<Unit>();
+    public ArrayList<Unit> tmpUnit = new ArrayList<>();
 
     public String tmpBarcode;
 
@@ -33,6 +33,7 @@ public class ItemExModel extends ItemModel {
 
     public String departmentGuid;
     public BigDecimal tax;
+    public BigDecimal tax2;
 
     public String matrixGuid;
 
@@ -78,6 +79,7 @@ public class ItemExModel extends ItemModel {
                        int optionalCount,
                        String departmentGuid,
                        BigDecimal tax,
+                       BigDecimal tax2,
                        String defaultModifierGuid,
                        int orderNum,
                        String printerAliasGuid,
@@ -124,12 +126,13 @@ public class ItemExModel extends ItemModel {
                 commission,
                 referenceItemGuid,
                 itemRefType
-                );
+        );
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;
         this.optionalCount = optionalCount;
         this.departmentGuid = departmentGuid;
         this.tax = tax;
+        this.tax2 = tax2;
         if (TextUtils.isEmpty(unitsLabelId)) {
             this.shortCut = unitsLabel;
         } else {

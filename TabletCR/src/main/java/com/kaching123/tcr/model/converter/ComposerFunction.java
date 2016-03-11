@@ -52,6 +52,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 null,
                 null,
                 null,
+                null,
                 0,
                 null,//printer alias
                 0,//btnView
@@ -99,6 +100,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 0,
                 0,
                 0,
+                null,
                 null,
                 null,
                 null,

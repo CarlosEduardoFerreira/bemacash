@@ -2,7 +2,6 @@ package com.kaching123.tcr.jdbc.converters;
 
 import android.content.ContentValues;
 
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
@@ -39,6 +38,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     private static final String TAXABLE = "TAXABLE";
     private static final String SEQUENCE = "SEQUENCE";
     private static final String TAX = "TAX";
+    private static final String TAX2 = "TAX2";
     private static final String PARENT_ID = "PARENT_ID";
 
     private static final String FINAL_GROSS_PRICE = "FINAL_GROSS_PRICE";
@@ -62,6 +62,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT),
                 rs.getBoolean(TAXABLE),
                 rs.getBigDecimal(TAX),
+                rs.getBigDecimal(TAX2),
                 rs.getLong(SEQUENCE),
                 rs.getString(PARENT_ID),
                 rs.getBigDecimal(FINAL_GROSS_PRICE),
@@ -87,6 +88,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT),
                 rs.getBoolean(TAXABLE),
                 rs.getBigDecimal(TAX),
+                rs.getBigDecimal(TAX2),
                 rs.getLong(SEQUENCE),
                 rs.getString(PARENT_ID),
                 rs.getBigDecimal(FINAL_GROSS_PRICE),
@@ -119,7 +121,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(ORDER_ID, model.orderGuid)
                 .add(ITEM_ID, model.itemGuid)
                 .add(QUANTITY, model.qty, ContentValuesUtil.QUANTITY_SCALE)
-                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty == null ? BigDecimal.ZERO:model.kitchenPrintedQty, ContentValuesUtil.QUANTITY_SCALE)
+                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty == null ? BigDecimal.ZERO : model.kitchenPrintedQty, ContentValuesUtil.QUANTITY_SCALE)
                 .add(PRICE, model.price)
                 .add(PRICE_TYPE, model.priceType)
                 .add(DISCOUNTABLE, model.discountable)
@@ -127,6 +129,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(DISCOUNT_TYPE, model.discountType)
                 .add(TAXABLE, model.isTaxable)
                 .add(TAX, model.tax)
+                .add(TAX2, model.tax2)
                 .add(SEQUENCE, model.sequence)
                 .add(PARENT_ID, model.parentGuid)
 

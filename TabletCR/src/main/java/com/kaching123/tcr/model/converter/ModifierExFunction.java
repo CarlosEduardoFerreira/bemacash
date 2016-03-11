@@ -73,6 +73,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     null,
                     null,
                     null,
+                    null,
                     0,
                     null,
                     0,

@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SaleOrderItemAddonModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
@@ -22,7 +21,6 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleOrderTable;
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
 import com.kaching123.tcr.util.ContentValuesUtilBase;
@@ -126,6 +124,7 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                 _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                 _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
+                _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),
                 c.getLong(c.getColumnIndex(SaleItemTable.SEQUENCE)),
                 c.getString(c.getColumnIndex(SaleItemTable.PARENT_GUID)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE)),

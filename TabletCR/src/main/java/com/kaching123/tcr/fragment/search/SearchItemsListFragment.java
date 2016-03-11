@@ -19,6 +19,7 @@ import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
@@ -137,6 +138,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 CategoryTable.DEPARTMENT_GUID,
                 CategoryTable.TITLE,
                 TaxGroupTable.TAX,
+                ShopSchema2.ItemExtView2.TaxGroupTable2.TAX,
                 ItemTable.IS_DELETED,
                 ItemTable.DEFAULT_MODIFIER_GUID,
                 ItemTable.ORDER_NUM,
@@ -181,6 +183,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
                     c.getString(indexHolder.get(CategoryTable.TITLE)),
                     _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX))),
+                    _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX))),
                     c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID)),
                     c.getInt(indexHolder.get(ItemTable.ORDER_NUM)),
                     c.getString(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
@@ -192,7 +195,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     _decimal(c, c.getColumnIndex(ItemTable.COMMISSION)),
                     c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
                     ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE)))
-                  );
+            );
         }
     }
 }

@@ -2,7 +2,6 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 
 import java.io.Serializable;
@@ -33,6 +32,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public DiscountType discountType;
     public boolean isTaxable;
     public BigDecimal tax;
+    public BigDecimal tax2;
     public boolean discountable;
     public long sequence;
     public String parentGuid;
@@ -50,7 +50,9 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.saleItemGuid = saleItemGuid;
     }
 
-    public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, BigDecimal qty, BigDecimal kitchenPrintedQty, PriceType priceType, BigDecimal price, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax, long sequence, String parentGuid,
+    public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, BigDecimal qty, BigDecimal kitchenPrintedQty,
+                              PriceType priceType, BigDecimal price, boolean discountable, BigDecimal discount, DiscountType discountType,
+                              boolean isTaxable, BigDecimal tax, BigDecimal tax2, long sequence, String parentGuid,
                               BigDecimal finalGrossPrice,
                               BigDecimal finalTax,
                               BigDecimal finalDiscount,
@@ -71,6 +73,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.tmpRefundQty = tmpRefundQty;
         this.parentGuid = parentGuid;
         this.tax = tax;
+        this.tax2 = tax2;
         this.finalGrossPrice = finalGrossPrice;
         this.finalTax = finalTax;
         this.finalDiscount = finalDiscount;
@@ -79,7 +82,10 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.kitchenPrintedQty = kitchenPrintedQty;
     }
 
-    public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description, BigDecimal qty, BigDecimal kitchenPrintedQty, PriceType priceType, BigDecimal price, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax, long sequence, String parentGuid,
+    public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description,
+                              BigDecimal qty, BigDecimal kitchenPrintedQty, PriceType priceType,
+                              BigDecimal price, boolean discountable, BigDecimal discount, DiscountType discountType,
+                              boolean isTaxable, BigDecimal tax, BigDecimal tax2, long sequence, String parentGuid,
                               BigDecimal finalGrossPrice,
                               BigDecimal finalTax,
                               BigDecimal finalDiscount,
@@ -101,6 +107,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.tmpRefundQty = tmpRefundQty;
         this.parentGuid = parentGuid;
         this.tax = tax;
+        this.tax2 = tax2;
         this.finalGrossPrice = finalGrossPrice;
         this.finalTax = finalTax;
         this.finalDiscount = finalDiscount;
@@ -109,7 +116,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.kitchenPrintedQty = kitchenPrintedQty;
     }
 
-    public SaleOrderItemModel setUnitItemGuid( ArrayList<Unit>  tmpUnit) {
+    public SaleOrderItemModel setUnitItemGuid(ArrayList<Unit> tmpUnit) {
         this.tmpUnit = tmpUnit;
         return this;
     }
@@ -158,7 +165,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         return values;
     }
 
-    public BigDecimal getFinalPrice(){
+    public BigDecimal getFinalPrice() {
         return finalGrossPrice.add(finalTax).subtract(finalDiscount);
     }
 }

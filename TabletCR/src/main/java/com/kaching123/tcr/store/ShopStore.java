@@ -779,6 +779,9 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String TAX = "tax";
 
+        @Column(type = Type.TEXT)
+        String TAX2 = "tax2";
+
         @Column(type = Column.Type.INTEGER)
         String SEQUENCE = "sequence";
 
@@ -2439,6 +2442,10 @@ public abstract class ShopStore {
         @Columns(TaxGroupTable.TAX)
         @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID)
         String TABLE_TAX_GROUP = "tax_group_table";
+
+        @Columns(TaxGroupTable.TAX)
+        @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID2)
+        String TABLE_TAX_GROUP2 = "tax_group_table2";
 
         @Columns({UnitLabelTable.SHORTCUT})
         @Join(type = Join.Type.LEFT,

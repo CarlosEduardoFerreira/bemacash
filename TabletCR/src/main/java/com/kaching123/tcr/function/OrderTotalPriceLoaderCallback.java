@@ -8,15 +8,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleItemInfo;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderCostInfo;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderInfo;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonSubItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonSubItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleOrderTable;
@@ -30,7 +29,6 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
-import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 
 /**
@@ -53,6 +51,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             SaleItemTable.DISCOUNT_TYPE,
             SaleItemTable.TAXABLE,
             SaleItemTable.TAX,
+            SaleItemTable.TAX2,
             SaleAddonTable.EXTRA_COST,
             SaleAddonTable.TYPE,
             SaleAddonTable.CHILD_ITEM_ID,
@@ -159,7 +158,8 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                     _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT)),
                     _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                     _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX)));
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)));
 
             result.map.put(saleItemId, value);
         }
@@ -169,7 +169,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             value.totalPrice = value.totalPrice.add(extra);
         }*/
         BigDecimal extra;
-        if (_modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)) == ModifierType.OPTIONAL){
+        if (_modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)) == ModifierType.OPTIONAL) {
             extra = null;
         } else if (c.getString(c.getColumnIndex(SaleAddonTable.CHILD_ITEM_ID)) != null) {
             extra = getSubTotal(_decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY)), _decimal(c, c.getColumnIndex(SaleAddonSubItemTable.SALE_PRICE)));

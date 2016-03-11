@@ -2,6 +2,7 @@ package com.kaching123.tcr.function;
 
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
@@ -43,7 +44,7 @@ public final class OrderTotalPriceCalculator {
                             i.description,
                             i.getQty(), i.getPrice(),
                             i.isDiscountable(), i.getDiscount(), i.getDiscountType(),
-                            i.isTaxable(), i.getTax(),
+                            i.isTaxable(), i.getTax(), i.getTax2(),
                             i.unitsLabel, i.itemModel.priceType,
                             i
                     )
@@ -136,6 +137,10 @@ public final class OrderTotalPriceCalculator {
             BigDecimal itemFinalTax = BigDecimal.ZERO;
             if (i.isTaxable && info.isTaxableOrder) {
                 itemFinalTax = CalculationUtil.getTaxVatValue(itemFinalPrice, i.tax);
+                if (TcrApplication.isEcuadorVersion()) {
+                    itemFinalTax = CalculationUtil.getTaxVatValue(itemFinalPrice, i.tax)
+                            .add(CalculationUtil.getTaxVatValue(itemFinalPrice, i.tax2));
+                }
                 Logger.d("TotalCost: item tax: %s; from %s = %s", i.description, itemFinalPrice, itemFinalTax);
                 itemFinalPrice = itemFinalPrice.add(itemFinalTax);
             }
@@ -214,7 +219,7 @@ public final class OrderTotalPriceCalculator {
 
         BigDecimal qty = biggestOrderDiscount.itemInfo.qty;
         BigDecimal qtyInt = qty.setScale(0, RoundingMode.DOWN);
-        if(discountDiff.compareTo(BigDecimal.ZERO) == 0)
+        if (discountDiff.compareTo(BigDecimal.ZERO) == 0)
             return calcItems;
 
         BigDecimal cents = discountDiff.multiply(CalculationUtil.ONE_HUNDRED).setScale(0, RoundingMode.HALF_UP);
@@ -227,8 +232,8 @@ public final class OrderTotalPriceCalculator {
             CalcItemInfo splitedItem;
             Logger.d("TotalCost: cents and qty  = %s %s", centsAbs, qty);
             //cents > qty
-            if(centsAbs.compareTo(qty) == 1){
-                int d = centsAbs.intValue()/qty.intValue();
+            if (centsAbs.compareTo(qty) == 1) {
+                int d = centsAbs.intValue() / qty.intValue();
                 BigDecimal firstAdjust = d > 0 ? oneCent.multiply(new BigDecimal(d)) : oneCent;
                 Logger.d("TotalCost: cents > qty row will be splitted");
                 updateDiscount(biggestOrderDiscount, firstAdjust);
@@ -239,7 +244,7 @@ public final class OrderTotalPriceCalculator {
                 BigDecimal adjust = discountDiff.subtract(alreadyAdjusted);
                 Logger.d("TotalCost: add to splitted item %s", adjust);
                 updateDiscount(splitedItem, adjust);
-            }else{
+            } else {
                 Logger.d("TotalCost: cents < qty row will be splitted to %s and %s", centsAbs, biggestOrderDiscount.itemInfo.qty);
                 splitedItem = biggestOrderDiscount.split(centsAbs);
                 updateDiscount(splitedItem, oneCent);
@@ -300,6 +305,7 @@ public final class OrderTotalPriceCalculator {
 
         /**
          * split one to 2 rows - qty in returned row should newQty
+         *
          * @param newQty
          * @return
          */
@@ -364,6 +370,7 @@ public final class OrderTotalPriceCalculator {
         public final DiscountType discountType;
         public final boolean isTaxable;
         public final BigDecimal tax;
+        public final BigDecimal tax2;
         public final String unitLabel;
         public final PriceType priceType;
         public SaleOrderItemViewModel itemViewModel;
@@ -372,7 +379,7 @@ public final class OrderTotalPriceCalculator {
 
         public SaleItemInfo(String saleItemGiud, String itemGiud, String description, BigDecimal qty,
                             BigDecimal totalPrice, boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable,
-                            BigDecimal tax, String unitLabel, PriceType priceType, SaleOrderItemViewModel itemViewModel) {
+                            BigDecimal tax, BigDecimal tax2, String unitLabel, PriceType priceType, SaleOrderItemViewModel itemViewModel) {
             this.saleItemGuid = saleItemGiud;
             this.itemGiud = itemGiud;
             this.description = description;
@@ -383,13 +390,14 @@ public final class OrderTotalPriceCalculator {
             this.discountType = discountType;
             this.isTaxable = isTaxable;
             this.tax = tax;
+            this.tax2 = tax2;
             this.unitLabel = unitLabel;
             this.priceType = priceType;
             this.itemViewModel = itemViewModel;
         }
 
         public SaleItemInfo(String saleItemGiud, String itemGiud, String description, BigDecimal qty, BigDecimal totalPrice,
-                            boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax) {
+                            boolean discountable, BigDecimal discount, DiscountType discountType, boolean isTaxable, BigDecimal tax, BigDecimal tax2) {
             this.saleItemGuid = saleItemGiud;
             this.itemGiud = itemGiud;
             this.description = description;
@@ -400,12 +408,14 @@ public final class OrderTotalPriceCalculator {
             this.discountType = discountType;
             this.isTaxable = isTaxable;
             this.tax = tax;
+            this.tax2 = tax2;
             this.unitLabel = null;
             this.priceType = null;
         }
 
         public SaleItemInfo copy(BigDecimal qty) {
-            return new SaleItemInfo(saleItemGuid, itemGiud, description, qty, totalPrice, discountable, discount, discountType, isTaxable, tax, unitLabel, priceType, itemViewModel);
+            return new SaleItemInfo(saleItemGuid, itemGiud, description, qty, totalPrice, discountable,
+                    discount, discountType, isTaxable, tax, tax2, unitLabel, priceType, itemViewModel);
         }
     }
 
@@ -463,6 +473,8 @@ public final class OrderTotalPriceCalculator {
         boolean isSerializable();
 
         BigDecimal getTax();
+
+        BigDecimal getTax2();
 
         BigDecimal getDiscount();
 

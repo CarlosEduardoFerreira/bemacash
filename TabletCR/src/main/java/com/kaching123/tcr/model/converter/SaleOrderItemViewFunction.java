@@ -8,7 +8,6 @@ import com.kaching123.tcr.model.SaleOrderItemAddonModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
-import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleOrderTable;
@@ -42,6 +41,7 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                 _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                 _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
+                _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),
                 c.getLong(c.getColumnIndex(SaleItemTable.SEQUENCE)),
                 c.getString(c.getColumnIndex(SaleItemTable.PARENT_GUID)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE)),

@@ -158,6 +158,7 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
                     _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                     _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                     _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),
                     _decimal(c, c.getColumnIndex(ItemTable.COST)),
                     c.getString(c.getColumnIndex(CategoryTable.DEPARTMENT_GUID)),
                     c.getString(c.getColumnIndex(DepartmentTable.TITLE)),

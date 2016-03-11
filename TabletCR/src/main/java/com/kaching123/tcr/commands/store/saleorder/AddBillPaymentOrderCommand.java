@@ -22,7 +22,6 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
-import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
@@ -98,6 +97,7 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
                 null,
                 true,
                 getApp().getPrepaidTax(broker),
+                null,
                 System.currentTimeMillis(),
                 null,
                 amount,
@@ -188,11 +188,11 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
     protected ISqlCommand createSqlCommand() {
         return batchInsert(orderModel)
                 .add(JdbcFactory.getConverter(orderModel).insertSQL(orderModel, getAppCommandContext()))
-                .add(((BillPaymentDescriptionJdbcConverter)JdbcFactory.getConverter(prepaidModel)).updateOrderIdSQL(prepaidModel, getAppCommandContext()))
+                .add(((BillPaymentDescriptionJdbcConverter) JdbcFactory.getConverter(prepaidModel)).updateOrderIdSQL(prepaidModel, getAppCommandContext()))
                 .add(JdbcFactory.getConverter(itemModel).insertSQL(itemModel, getAppCommandContext()));
     }
 
-    public static void start(Context context, boolean isFixed, BigDecimal amount, String prepaidDescription, PrepaidType prepaidType, Broker broker,  BigDecimal transactionFee, BaseAddBillPaymentOrderCallback callback) {
+    public static void start(Context context, boolean isFixed, BigDecimal amount, String prepaidDescription, PrepaidType prepaidType, Broker broker, BigDecimal transactionFee, BaseAddBillPaymentOrderCallback callback) {
         create(AddBillPaymentOrderCommand.class)
                 .arg(ARG_IS_FIXED, isFixed)
                 .arg(ARG_AMOUNT, amount)

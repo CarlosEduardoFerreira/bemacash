@@ -29,7 +29,7 @@ public class SaleOrderItemViewModel implements IOrderItem {
     public String unitsLabel;
     public ArrayList<AddonInfo> modifiers;
 
-    public ArrayList<Unit> tmpUnit = new ArrayList<Unit>();
+    public ArrayList<Unit> tmpUnit = new ArrayList<>();
 
 
     public boolean isSerializable;
@@ -173,6 +173,10 @@ public class SaleOrderItemViewModel implements IOrderItem {
     @Override
     public BigDecimal getTax() {
         return this.itemModel.tax;
+    }
+
+    public BigDecimal getTax2() {
+        return this.itemModel.tax2;
     }
 
     @Override

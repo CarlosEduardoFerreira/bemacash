@@ -322,6 +322,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     "c4f7c1a4-cac0-968c-d099-658040e88cbb",
                     null,
                     null,
+                    null,
                     0,
                     null,
                     0,
@@ -332,7 +333,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     null,
                     null,
                     ItemRefType.Simple
-                    );
+            );
             Cursor c = ProviderAction
                     .query(URI_ITEMS)
                     .where(ShopStore.ItemTable.GUID + " = ?", PREPAID_GUID)
@@ -1360,6 +1361,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 model.isDiscountable ? model.discountType : null,
                 model.isTaxable,
                 TextUtils.isEmpty(model.taxGroupGuid) ? getApp().getTaxVat() : model.tax,
+                TextUtils.isEmpty(model.taxGroupGuid2) ? null : model.tax2,
                 0,
                 null,
                 BigDecimal.ZERO,

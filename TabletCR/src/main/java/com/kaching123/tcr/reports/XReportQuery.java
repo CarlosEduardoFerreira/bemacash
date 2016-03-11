@@ -693,6 +693,7 @@ public class XReportQuery {
                     _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                     _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                     _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),
                     TextUtils.isEmpty(itemGuid) ? price : _decimal(c, c.getColumnIndex(ItemTable.COST)),
                     null,
                     null,
@@ -729,11 +730,11 @@ public class XReportQuery {
         public SaleItemInfo2(String saleItemGiud, String itemGiud, String description, String ean,
                              String productCode, BigDecimal qty, BigDecimal totalPrice,
                              boolean discountable, BigDecimal discount, DiscountType discountType,
-                             boolean isTaxable, BigDecimal tax, BigDecimal itemCost,
+                             boolean isTaxable, BigDecimal tax, BigDecimal tax2, BigDecimal itemCost,
                              String departmentGuid, String departmentTitle,
                              String categoryGuid, String categoryTitle) {
             super(saleItemGiud, itemGiud, description, qty, totalPrice, discountable, discount,
-                    discountType, isTaxable, tax);
+                    discountType, isTaxable, tax, tax2);
             this.itemCost = itemCost;
             this.departmentGuid = departmentGuid;
             this.departmentTitle = departmentTitle;
@@ -748,6 +749,7 @@ public class XReportQuery {
         BigDecimal grossSale = BigDecimal.ZERO;
         BigDecimal discount = BigDecimal.ZERO;
         BigDecimal tax = BigDecimal.ZERO;
+        BigDecimal tax2 = BigDecimal.ZERO;
         BigDecimal cogs = BigDecimal.ZERO;
         BigDecimal transactionFee = BigDecimal.ZERO;
     }
