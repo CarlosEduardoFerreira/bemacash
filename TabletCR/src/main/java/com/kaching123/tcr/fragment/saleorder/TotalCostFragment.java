@@ -18,6 +18,7 @@ import com.kaching123.tcr.function.OrderTotalPriceLoaderCallback;
 import com.kaching123.tcr.model.DiscountType;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 
@@ -144,7 +145,6 @@ public class TotalCostFragment extends Fragment {
             BigDecimal totalItemDiscount,
             BigDecimal totalOrderPrice,
             BigDecimal availableDiscount) {
-
         if (orderDiscountVal == null || BigDecimal.ZERO.compareTo(orderDiscountVal) == 0) {
             showPrice(this.discount, totalItemDiscount);
             this.discount.setTextColor(discountColorNormal);

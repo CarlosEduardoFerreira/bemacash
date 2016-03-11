@@ -26,7 +26,7 @@ public final class UiHelper {
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private static final DecimalFormat integerFormat = new DecimalFormat("0.##");
     private static final DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
-    private static final DecimalFormat percentFormat = new DecimalFormat("0.00");
+    private static final DecimalFormat percentFormat = new DecimalFormat("0.000");
     private static final DecimalFormat integralIntegerFormat = new DecimalFormat("0");
 
     private static final DecimalFormat quantityFormat = new DecimalFormat("#,##0.000");
