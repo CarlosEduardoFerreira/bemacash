@@ -14,6 +14,8 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseCashierActivity;
+import com.kaching123.tcr.activity.ScannerBaseActivity;
 import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.commands.display.DisplayOrderCommand;
 import com.kaching123.tcr.commands.display.DisplayPartialTenderCommand;
@@ -66,8 +68,11 @@ import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
+import com.kaching123.tcr.model.PrepaidReleaseResult;
+import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.TipsModel;
+import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.PaymentMethod;
 import com.kaching123.tcr.model.payment.blackstone.pax.PaxTransaction;
 import com.kaching123.tcr.model.payment.blackstone.payment.ResponseBase;
@@ -91,10 +96,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.kaching123.tcr.util.CursorUtil._wrap;
+
 /**
  * @author Ivan v. Rikhmayer
  */
-public class PaymentProcessor {
+public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallback {
 
     //public static final BigDecimal CREDIT_RECEIPT_THRESHOLD = new BigDecimal(2000);
 
@@ -117,6 +124,10 @@ public class PaymentProcessor {
     private static final Handler handler = new Handler();
 
     private PrintSignatureOrderCommand.ReceiptType gateWay;
+
+    private ArrayList<PrepaidReleaseResult> releaseResultList;
+
+    private static final Uri URI_SALE_ITEMS_PREPAID = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
 
     // we will use the list of successed credit card transaction to print signature receipt.
     // This artifact is created in sake of saving the last four CC number digits, as it is againts the law and RO wish to save them anyway
@@ -156,9 +167,6 @@ public class PaymentProcessor {
         return this;
     }
 
-    interface test {
-        void teee();
-    }
 
     /**
      * Set the working context
@@ -637,7 +645,8 @@ public class PaymentProcessor {
                         @Override
                         public void run() {
                             hide();
-                            proceedToTipsApply(context, successfullCCtransactionModels);
+                            if(!needPrepaidBilling(context, successfullCCtransactionModels))
+                                proceedToTipsApply(context, successfullCCtransactionModels, null);
                         }
                     });
                 } else if (getDisplayBinder(context) != null)
@@ -808,7 +817,8 @@ public class PaymentProcessor {
                 applyAmount(amount);
                 if (orderTotal.compareTo(orderPayed) == 0) {
                     Logger.d("Payment complete! just closing");
-                    proceedToTipsApply(context, successfullCCtransactionModels);
+                    if(!needPrepaidBilling(context, successfullCCtransactionModels))
+                        proceedToTipsApply(context, successfullCCtransactionModels, null);
                 } else {
                     proceedToTender(context, 0);
                 }
@@ -930,7 +940,8 @@ public class PaymentProcessor {
                 hide();
                 if (orderTotal.compareTo(orderPayed) == 0) {
                     Logger.d("Payment complete! just closing");
-                    proceedToTipsApply(context, successfullCCtransactionModels);
+                    if(!needPrepaidBilling(context, successfullCCtransactionModels))
+                        proceedToTipsApply(context, successfullCCtransactionModels, null);
                 } else {
                     proceedToTender(context, 0);
                 }
@@ -1062,7 +1073,8 @@ public class PaymentProcessor {
                 hide();
                 if (orderTotal.compareTo(orderPayed) == 0) {
                     Logger.d("Payment complete! just closing");
-                    proceedToTipsApply(context, successfullCCtransactionModels);
+                    if(!needPrepaidBilling(context, successfullCCtransactionModels))
+                        proceedToTipsApply(context, successfullCCtransactionModels, null);
                 } else {
                     proceedToTender(context, 0);
                 }
@@ -1089,7 +1101,8 @@ public class PaymentProcessor {
                 hide();
                 if (orderTotal.compareTo(orderPayed) == 0) {
                     Logger.d("Payment complete! just closing");
-                    proceedToTipsApply(context, successfullCCtransactionModels);
+                    if(!needPrepaidBilling(context, successfullCCtransactionModels))
+                        proceedToTipsApply(context, successfullCCtransactionModels, null);
                 } else {
                     proceedToTender(context, 0);
                 }
@@ -1170,7 +1183,8 @@ public class PaymentProcessor {
                 hide();
                 if (success && orderTotal.compareTo(orderPayed) <= 0) {
                     Logger.d("Payment complete! just closing");
-                    proceedToTipsApply(context, successfullCCtransactionModels);
+                    if(!needPrepaidBilling(context, successfullCCtransactionModels))
+                         proceedToTipsApply(context, successfullCCtransactionModels, null);
                 } else {
                     proceedToTender(context, 0);
                 }
@@ -1182,7 +1196,40 @@ public class PaymentProcessor {
         });
     }
 
-    private void proceedToTipsApply(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions) {
+    //todo billing for prepaid
+    private boolean needPrepaidBilling(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions) {
+        Cursor cursor = ProviderAction.query(URI_SALE_ITEMS_PREPAID)
+                .where(ShopSchema2.SaleOrderItemsView2.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
+                .perform(context);
+
+        List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor,
+                new SaleOrderItemViewModelWrapFunction(context));
+
+        List<SaleOrderItemViewModel> prepaidList = getPrepaidSaleOrderItems(saleItemsList);
+        if (prepaidList.size() == 0) {
+            return false;
+        }
+        callback.onBilling(transactions, prepaidList);
+        return true;
+    }
+
+    private List<SaleOrderItemViewModel> getPrepaidSaleOrderItems(List<SaleOrderItemViewModel> saleItemsList) {
+        List<SaleOrderItemViewModel> list = new ArrayList<SaleOrderItemViewModel>();
+        for (SaleOrderItemViewModel item : saleItemsList) {
+            if (item.isPrepaidItem)
+                list.add(item);
+        }
+        return list;
+    }
+
+
+    private void startRefund() {
+//        final HistoryDetailedOrderItemListFragment.RefundAmount amount = orderItemsListFragment.getReturnAmount();
+
+    }
+
+    public void proceedToTipsApply(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions, ArrayList<PrepaidReleaseResult> list) {
+        releaseResultList = list;
         boolean tipsEnabled = ((TcrApplication) context.getApplicationContext()).isTipsEnabled();
         boolean tipsOnFlyEnabled = ((TcrApplication) context.getApplicationContext()).getShopInfo().tipsOnFlyEnabled;
         if (transactions == null || !tipsEnabled || !tipsOnFlyEnabled) {
@@ -1250,7 +1297,7 @@ public class PaymentProcessor {
                 public void onConfirmed() {
                     finish();
                 }
-            }, transactions, kitchenPrintStatus, orderChange, gateWay, isPrinterTwoCopiesReceipt());
+            }, transactions, kitchenPrintStatus, orderChange, gateWay, isPrinterTwoCopiesReceipt(), releaseResultList);
         } else {
 //            if (transactions != null && !transactions.isEmpty()) {
 //                callback.onPrintValues(orderGuid, transactions, orderChange);
@@ -1347,6 +1394,16 @@ public class PaymentProcessor {
         return null;
     }
 
+    @Override
+    public void onBillingSuccess(FragmentActivity context, PrepaidReleaseResult releaseResult) {
+        Logger.d("onBillingSuccess");
+    }
+
+    @Override
+    public void onBillingFailure() {
+
+    }
+
     public interface IPaymentProcessor {
 
         public void onSuccess();
@@ -1354,6 +1411,9 @@ public class PaymentProcessor {
         public void onCancel();
 
         public void onPrintValues(String order, ArrayList<PaymentTransactionModel> list, BigDecimal changeAmount);
+
+        public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList);
     }
+
 
 }

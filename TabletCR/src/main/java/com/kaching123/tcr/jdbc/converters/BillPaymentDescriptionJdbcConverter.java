@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel.PrepaidType;
+import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -14,6 +15,7 @@ import org.json.JSONException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
@@ -70,7 +72,15 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
 
     @Override
     public SingleSqlCommand insertSQL(BillPaymentDescriptionModel model, IAppCommandContext appCommandContext) {
-        throw new UnsupportedOperationException();
+        return _insert(TABLE_NAME, appCommandContext)
+                .add(ID, model.guid)
+                .add(DESCRIPTION, model.description)
+                .add(TYPE, model.type.name())
+                .add(TRANSACTION_ID, model.orderId)
+                .add(IS_VOIDED, model.isVoided)
+                .add(IS_FAILED, model.isFailed)
+                .add(ORDER_ID, model.saleOrderId)
+                .build(JdbcFactory.getApiMethod(CategoryModel.class));
     }
 
     @Override

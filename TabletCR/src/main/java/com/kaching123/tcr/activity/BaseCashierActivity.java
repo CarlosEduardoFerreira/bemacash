@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -56,10 +57,9 @@ import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackRefundCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSaleCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackVoidCommand;
+import com.kaching123.tcr.commands.prepaid.BillPaymentDescriptionCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
-import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
-import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand;
@@ -109,6 +109,7 @@ import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
+import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
@@ -119,6 +120,8 @@ import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
+import com.kaching123.tcr.model.PrepaidReleaseResult;
+import com.kaching123.tcr.model.PrepaidSendResult;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
@@ -252,6 +255,23 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private long lastClickTime;
     private boolean stop;
 
+    private final static int REQUEST_CODE_SEND = 0;
+    private final static int REQUEST_CODE_RELEASE = 1;
+    private final static String PREPAID_MINI_PACKAGE_ID = "com.pinserve.prepaidmini";
+    private final static String PREPAID_MINI_COMMAND = "COMMAND";
+    private final static String PREPAID_MINI_PRODUCT = "PRODUCT";
+    private final static String PREPAID_MINI_TRANSACTIONID = "TRANSACTIONID";
+    private final static String PREPAID_MINI_START = "START";
+    private final static String PREPAID_MINI_RELEASE = "RELEASE";
+    private final static String PREPAID_MINI_START_ALL = "all";
+
+    private boolean isPrepaidItemStart = false;
+    private boolean isPrepaidItemRelease = false;
+
+    private PaymentProcessor processor;
+    private ArrayList<PaymentTransactionModel> successfullCCtransactionModels;
+    private List<SaleOrderItemViewModel> prepaidList;
+    private ArrayList<PrepaidReleaseResult> releaseResultList;
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
         onBarcodeReceived(barcode);
@@ -274,33 +294,21 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
-        final String PREPAID_GUID = "3100e403-e51a-4bb4-8c85-665a11682af6";
-
-//        final String PREPAID_GUID = "8aa8fbb3-906f-4077-bfe3-2a29fcae9366";
-        if (resultCode == RESULT_OK) {
-            String action = data.getStringExtra("ACTION");
-            String error = data.getStringExtra("ERROR");
-            String errorMsg = data.getStringExtra("“ERRORMSG");
-            String transactionId = data.getStringExtra("TRANSACTIONID");
-            String itemName = data.getStringExtra("ITEMNAME");
-            String itemDetails = data.getStringExtra("ITEMDETAILS");
-            BigDecimal itemQty = new BigDecimal(data.getIntExtra("“ITEMQTY", 1));
-            BigDecimal itemPrice = new BigDecimal(data.getStringExtra("ITEMPRICE"));
-            boolean itemTaxable = Boolean.parseBoolean(data.getStringExtra("ITEMTAXABLE"));
-//            Toast.makeText(this, action + " " + error + " " + errorMsg + " " + transactionId + " " + itemName + " " + itemDetails + " " + itemQty + " " +
-//                    itemPrice + " " + itemTaxable, Toast.LENGTH_LONG).show();
-            Logger.d("Prepaid item = " + action + " " + error + " " + errorMsg + " " + transactionId + " " + itemName + " " + itemDetails + " " + itemQty + " " +
-                    itemPrice + " " + itemTaxable);
-
-            ItemExModel model = new ItemExModel(UUID.randomUUID().toString(),
-                    "4845fb5f-f3cf-33d3-b4ab-658e2958065e",
-                    "Prepaid " + transactionId,
+        if(data == null)
+            return;
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SEND) {
+            isPrepaidItemStart = true;
+            PrepaidSendResult result = new PrepaidSendResult(data);
+            result.print();
+            final ItemExModel model = new ItemExModel(UUID.randomUUID().toString(),
+                    null,
+                    result.itemName,
                     null,
                     null,
-                    null,
+                    result.transactionId,
                     PriceType.FIXED,
-                    itemPrice,
-                    itemQty,
+                    result.itemPrice,
+                    result.itemQty,
                     "pcs",
                     null,
                     null,
@@ -309,7 +317,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     false,
                     BigDecimal.ZERO,
                     DiscountType.PERCENT,
-                    itemTaxable,
+                    result.itemTaxable,
                     null,
                     null,
                     null,
@@ -319,7 +327,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     0,
                     0,
                     0,
-                    "c4f7c1a4-cac0-968c-d099-658040e88cbb",
+                    null,
                     null,
                     null,
                     null,
@@ -334,15 +342,29 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     null,
                     ItemRefType.Simple
             );
-            Cursor c = ProviderAction
-                    .query(URI_ITEMS)
-                    .where(ShopStore.ItemTable.GUID + " = ?", PREPAID_GUID)
-                    .perform(getBaseContext());
-            if (c.moveToFirst())
-                EditItemCommand.start(this, model);
-            else
-                AddItemCommand.start(this, model);
             tryToAddItem(model);
+
+        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_RELEASE) {
+//            callback.onBillingSuccess(BaseCashierActivity.this, releaseResult);
+            isPrepaidItemRelease = true;
+            PrepaidReleaseResult releaseResult = new PrepaidReleaseResult(data.getStringExtra(ScannerBaseActivity.EXTRA_ACTION),data.getStringExtra(ScannerBaseActivity.EXTRA_ERROR),data.getStringExtra(ScannerBaseActivity.EXTRA_ERRORMSG),data.getStringExtra(ScannerBaseActivity.EXTRA_RECEIPT));
+            releaseResultList.add(releaseResult);
+            if(--prepaidCount > 0)
+            {
+                callReleaseSingleMini(PREPAID_MINI_RELEASE, prepaidList.get(prepaidList.size() - prepaidCount).productCode);
+            }
+
+
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if(releaseResultList != null && releaseResultList.size() > 0 && !isPrepaidItemStart && isPrepaidItemRelease && prepaidCount == 0) {
+            isPrepaidItemRelease = false;
+            processor.proceedToTipsApply(this, successfullCCtransactionModels, releaseResultList);
+            releaseResultList = new ArrayList<PrepaidReleaseResult>();
         }
     }
 
@@ -501,6 +523,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         setDefaultBarcodeListener();
         //ScannerProcessor.get(barcodeListener).start();
+
+        releaseResultList = new ArrayList<PrepaidReleaseResult>();
+
     }
 
     private void initTitle() {
@@ -796,11 +821,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
      * search fragment **
      */
     protected void showSearchFragment() {
-        getSupportFragmentManager().beginTransaction().show(searchResultFragment).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().show(searchResultFragment).commit();
     }
 
     private void hideSearchFragment() {
-        getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commit();
     }
 
     private void closeSearch() {
@@ -900,7 +925,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 try {
-                    callPrepaidMini("START", "all");
+                    callPrepaidMini(PREPAID_MINI_START, PREPAID_MINI_START_ALL);
                     return false;
                 } catch (ActivityNotFoundException exception) {
                     AlertDialogFragment.showAlert(BaseCashierActivity.this,
@@ -942,10 +967,19 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void callPrepaidMini(String state, String extra) {
         Intent sendIntent = new Intent();
-        sendIntent.setAction("com.pinserve.prepaidmini");
-        sendIntent.putExtra("COMMAND", state);
-        sendIntent.putExtra("PRODUCT", extra);
-        startActivityForResult(sendIntent, 0);
+        sendIntent.setAction(PREPAID_MINI_PACKAGE_ID);
+        sendIntent.putExtra(PREPAID_MINI_COMMAND, state);
+        sendIntent.putExtra(PREPAID_MINI_PRODUCT, extra);
+        startActivityForResult(sendIntent, REQUEST_CODE_SEND);
+    }
+
+
+    protected void callReleaseSingleMini(String releaseValue, String transactionId) {
+        Intent releaseIntent = new Intent();
+        releaseIntent.setAction(PREPAID_MINI_PACKAGE_ID);
+        releaseIntent.putExtra(PREPAID_MINI_COMMAND, releaseValue);
+        releaseIntent.putExtra(PREPAID_MINI_TRANSACTIONID, transactionId);
+        startActivityForResult(releaseIntent, REQUEST_CODE_RELEASE);
     }
 
     @Override
@@ -1347,8 +1381,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
 
         orderItemListFragment.setNeed2ScrollList(true);
+        String saleOrderItemGuid = UUID.randomUUID().toString();
         SaleOrderItemModel itemModel = new SaleOrderItemModel(
-                UUID.randomUUID().toString(),
+                saleOrderItemGuid,
                 this.orderGuid,
                 model.guid,
                 model.description,
@@ -1369,27 +1404,49 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
                 null,
-                !isCreateReturnOrder && model.hasNotes);
+                !isCreateReturnOrder && model.hasNotes,
+                isPrepaidItemStart);
 
         if (unit != null && orderGuid != null) {
             unit.orderId = orderGuid;
             unit.saleItemId = itemModel.saleItemGuid;
         }
+        boolean isOrderGuid = true;
 
         if (this.orderGuid == null) {
             waitList.add(new SaleOrderItemModelWrapper(itemModel, modifierGiud, addonsGuids, optionalGuids, unit));
             generateOrderId();
-            return;
+            isOrderGuid = false;
+        }
+        if (isPrepaidItemStart) {
+            isPrepaidItemStart = false;
+            BillPaymentDescriptionModel billPaymentDescriptionModel = new BillPaymentDescriptionModel(UUID.randomUUID().toString(), model.description, BillPaymentDescriptionModel.PrepaidType.WIRELESS_TOPUP, Integer.parseInt(model.productCode), false, false, saleOrderItemGuid);
+            BillPaymentDescriptionCommand.start(this, billPaymentDescriptionModel, isOrderGuid, new BillPaymentDescriptionCommand.BillPaymentDescriptionCallback() {
+                @Override
+                protected void onSuccess(boolean isOrderGuid) {
+                    if (!isOrderGuid)
+                        return;
+                }
+
+                @Override
+                protected void onFailure() {
+                    //todo dealing with failure.
+                    return;
+                }
+            });
         }
 
-        AddItem2SaleOrderCommand.start(this,
-                addItemCallback,
-                itemModel,
-                modifierGiud,
-                addonsGuids,
-                optionalGuids,
-                unit
-        );
+        if (isOrderGuid) {
+            AddItem2SaleOrderCommand.start(this,
+                    addItemCallback,
+                    itemModel,
+                    modifierGiud,
+                    addonsGuids,
+                    optionalGuids,
+                    unit
+            );
+        }
+
     }
 
     private boolean checkDrawerState(ItemExModel model,
@@ -1461,6 +1518,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         );
     }
 
+    public interface PrepaidBillingCallback {
+        void onBillingSuccess(FragmentActivity context, PrepaidReleaseResult releaseResult);
+
+        void onBillingFailure();
+    }
+
+    public PrepaidBillingCallback callback;
+
+    public void setCallback(PrepaidBillingCallback callback) {
+        this.callback = callback;
+    }
+
     /**
      * buttons block **
      */
@@ -1479,8 +1548,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             SuccessOrderCommand.start(this, orderGuid, isCreateReturnOrder, new SuccessOrderCommand4ReturnCallback());
         } else if (!isPaying) {
             isPaying = true;
+
             StartTransactionCommand.start(BaseCashierActivity.this, orderGuid);
-            PaymentProcessor.create(orderGuid, OrderType.SALE, saleOrderModel.kitchenPrintStatus, salesmanGuids.toArray(new String[salesmanGuids.size()]))
+            processor = PaymentProcessor.create(orderGuid, OrderType.SALE, saleOrderModel.kitchenPrintStatus, salesmanGuids.toArray(new String[salesmanGuids.size()]))
                     .callback(new IPaymentProcessor() {
 
                         @Override
@@ -1510,9 +1580,27 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         public void onPrintValues(String order, ArrayList<PaymentTransactionModel> list, BigDecimal changeAmount) {
 
                         }
-                    })
-                    .init(this);
+
+                        @Override
+                        public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> list) {
+//                            callback.onBillingSuccess();
+                            prepaidList = list;
+                            prepaidCount = prepaidList.size();
+                            successfullCCtransactionModels = transactionModels;
+                            OnPrepaidBilling();
+                        }
+                    });
+            setCallback(processor);
+
+            processor.init(this);
+
         }
+    }
+
+    public int prepaidCount;
+
+    private void OnPrepaidBilling() {
+        callReleaseSingleMini(PREPAID_MINI_RELEASE, prepaidList.get(0).productCode);
     }
 
     private void try2ClockIn() {

@@ -3,7 +3,9 @@ package com.kaching123.tcr.commands.print.pos;
 import android.content.Context;
 
 import com.kaching123.pos.PosPrinter;
+import com.kaching123.tcr.activity.ScannerBaseActivity;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
 import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
@@ -43,6 +45,7 @@ public class PrintOrderCommand extends BasePrintOrderCommand {
         printProcessor.setTaxTotal(getStringArg(ARG_ORDER_TAXTOTAL));
         printProcessor.setPaxTransactions(transactions);
         printProcessor.setAmountTotal(getStringArg(ARG_ORDER_TOTALAMOUNT));
+        printProcessor.setPrepaidReleaseResults((ArrayList<PrepaidReleaseResult>) getArgs().getSerializable(ARG_PREPAID_RECEIPTS));
 
         printProcessor.print(getContext(), getApp(), printerWrapper);
     }
@@ -51,8 +54,8 @@ public class PrintOrderCommand extends BasePrintOrderCommand {
         return new PrintOrderProcessor(orderGuid, appCommandContext);
     }
 
-    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, ArrayList<PaymentTransactionModel> transactions, BasePrintCallback callback) {
-        create(PrintOrderCommand.class).arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning).arg(ARG_SEARCH_BY_MAC, searchByMac).arg(ARG_ORDER_GUID, orderGuid).arg(ARG_ORDER_TRANSACTIONS, transactions).callback(callback).queueUsing(context);
+    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, ArrayList<PaymentTransactionModel> transactions, ArrayList<PrepaidReleaseResult> receipts, BasePrintCallback callback) {
+        create(PrintOrderCommand.class).arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning).arg(ARG_PREPAID_RECEIPTS, receipts).arg(ARG_SEARCH_BY_MAC, searchByMac).arg(ARG_ORDER_GUID, orderGuid).arg(ARG_ORDER_TRANSACTIONS, transactions).callback(callback).queueUsing(context);
     }
 
     public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, BasePrintCallback callback, String title, String subTotal, String discountTotal, String taxTotal, String amountTotal) {

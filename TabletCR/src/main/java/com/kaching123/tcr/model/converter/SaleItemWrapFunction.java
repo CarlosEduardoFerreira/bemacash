@@ -18,6 +18,7 @@ import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonSubItemTable;
@@ -89,9 +90,14 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                             _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
-                            !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)));
+                            !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
+                            c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 0 ? false : true);
 
                     item.finalPrice = itemModel.finalGrossPrice.subtract(itemModel.finalDiscount);
+                    if(item.isPrepaidItem) {
+                        item.description = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.BillPaymentDescriptionTable.DESCRIPTION));
+                        item.productCode = c.getString(c.getColumnIndex(SaleOrderItemsView2.BillPaymentDescriptionTable.PREPAID_ORDER_ID));
+                    }
                     items.add(item);
                     saleItemsMap.put(saleItemGuid, item);
                     if (itemModel.itemGuid != null) {
@@ -193,7 +199,8 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT)),
                 _decimalQty(c, c.getColumnIndex(SaleItemTable.TMP_REFUND_QUANTITY)),
                 c.getString(c.getColumnIndex(SaleItemTable.NOTES)),
-                c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1);
+                c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
+                c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1);
     }
 
     private AddonInfo readModifier(Cursor c) {

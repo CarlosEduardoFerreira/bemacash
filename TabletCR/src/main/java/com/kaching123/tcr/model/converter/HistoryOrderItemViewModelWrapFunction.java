@@ -81,7 +81,10 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                             _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
-                            !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID))
+                            !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
+                            false
+
+
                     );
                     item.finalPrice = itemModel.finalGrossPrice.subtract(itemModel.finalDiscount).add(itemModel.finalTax);
                     items.add(item);
@@ -132,7 +135,8 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                 _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT)),
                 _decimalQty(c, c.getColumnIndex(SaleItemTable.TMP_REFUND_QUANTITY)),
                 c.getString(c.getColumnIndex(SaleItemTable.NOTES)),
-                c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1);
+                c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
+                c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1);
     }
 
     private AddonInfo readModifier(Cursor c) {

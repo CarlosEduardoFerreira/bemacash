@@ -4,12 +4,14 @@ import android.content.ContentValues;
 
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
 
+import java.io.Serializable;
+
 import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
 
 /**
  * Created by gdubina on 06/02/14.
  */
-public class BillPaymentDescriptionModel implements IValueModel{
+public class BillPaymentDescriptionModel implements Serializable, IValueModel{
 
     public String guid;
     public String description;

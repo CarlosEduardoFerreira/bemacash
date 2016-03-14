@@ -45,6 +45,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
 
     public String notes;
     public boolean hasNotes;
+    public boolean isPrepaidItem;
 
     public SaleOrderItemModel(String saleItemGuid) {
         this.saleItemGuid = saleItemGuid;
@@ -58,7 +59,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               BigDecimal finalDiscount,
                               BigDecimal tmpRefundQty,
                               String notes,
-                              boolean hasNotes) {
+                              boolean hasNotes,
+                              boolean isPrepaidItem) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -80,6 +82,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.notes = notes;
         this.hasNotes = hasNotes;
         this.kitchenPrintedQty = kitchenPrintedQty;
+        this.isPrepaidItem = isPrepaidItem;
     }
 
     public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description,
@@ -91,7 +94,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               BigDecimal finalDiscount,
                               BigDecimal tmpRefundQty,
                               String notes,
-                              boolean hasNotes) {
+                              boolean hasNotes,
+                              boolean isPrepaidItem) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -114,6 +118,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.notes = notes;
         this.hasNotes = hasNotes;
         this.kitchenPrintedQty = kitchenPrintedQty;
+        this.isPrepaidItem = isPrepaidItem;
     }
 
     public SaleOrderItemModel setUnitItemGuid(ArrayList<Unit> tmpUnit) {
@@ -152,6 +157,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         values.put(SaleItemTable.FINAL_DISCOUNT, _decimal(finalDiscount));
         values.put(SaleItemTable.NOTES, notes);
         values.put(SaleItemTable.HAS_NOTES, hasNotes);
+        values.put(SaleItemTable.IS_PREPAID_ITEM, isPrepaidItem);
 
         return values;
     }

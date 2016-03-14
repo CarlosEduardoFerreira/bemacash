@@ -43,6 +43,7 @@ public class SaleOrderItemViewModel implements IOrderItem {
     public BigDecimal finalPrice;
 
     public boolean isKitchenPrintable;
+    public boolean isPrepaidItem;
 
     public SaleOrderItemViewModel(SaleOrderItemModel itemModel,
                                   String description,
@@ -54,7 +55,8 @@ public class SaleOrderItemViewModel implements IOrderItem {
                                   BigDecimal orderDiscount,
                                   DiscountType orderDiscountType,
                                   BigDecimal orderTransactionFee,
-                                  boolean isKitchenPrintable) {
+                                  boolean isKitchenPrintable,
+                                  boolean isPrepaidItem) {
         this.itemModel = itemModel;
         this.description = description;
         this.modifiers = modifiers;
@@ -68,6 +70,7 @@ public class SaleOrderItemViewModel implements IOrderItem {
         this.isTaxableOrder = isTaxableOrder;
         this.isKitchenPrintable = isKitchenPrintable;
         this.isSerializable = isSerializable;
+        this.isPrepaidItem = isPrepaidItem;
     }
 
     public SaleOrderItemViewModel setItemModel(SaleOrderItemModel itemModel) {

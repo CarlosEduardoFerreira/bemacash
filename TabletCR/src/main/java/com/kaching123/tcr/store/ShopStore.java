@@ -805,6 +805,10 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String HAS_NOTES = "has_notes";
+
+        @NotNull
+        @Column(type = Type.INTEGER, defVal = "0")
+        String IS_PREPAID_ITEM = "is_prepaid_item";
     }
 
     static {
@@ -1431,11 +1435,6 @@ public abstract class ShopStore {
         String ORDER_ID = "sale_order_id";
     }
 
-    static {
-        applyForeignKeys(BillPaymentDescriptionTable.TABLE_NAME,
-                foreignKey(BillPaymentDescriptionTable.ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true)
-        );
-    }
 
     @Table(CustomerTable.TABLE_NAME)
     @Indexes({
@@ -2282,7 +2281,7 @@ public abstract class ShopStore {
         String TABLE_ITEM = "item_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Join(type = Join.Type.LEFT, joinTable = BillPaymentDescriptionTable.TABLE_NAME, joinColumn = BillPaymentDescriptionTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
+        @Join(type = Join.Type.LEFT, joinTable = BillPaymentDescriptionTable.TABLE_NAME, joinColumn = BillPaymentDescriptionTable.ORDER_ID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.SALE_ITEM_GUID)
         String TABLE_BILL_PAYMENT_DESCRIPTION = "bill_payment_description_table";
 
         @Join(type = Join.Type.LEFT, joinTable = SaleAddonTable.TABLE_NAME, joinColumn = SaleAddonTable.ITEM_GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.SALE_ITEM_GUID)

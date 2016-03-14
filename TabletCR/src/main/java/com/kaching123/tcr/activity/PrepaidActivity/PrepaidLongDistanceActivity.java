@@ -51,6 +51,7 @@ import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless.PrepaidWi
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.IPrePaidInfo;
@@ -337,6 +338,12 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
                             proceedToBillPaymentBilling(context, formedRequest, prepaidOrderId, chosenCategory, amount, transactionFee, orderGuid, list, chosenBillPaymentItem);
                         }
                     }
+
+                    @Override
+                    public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList) {
+
+                    }
+
                 }).setPrepaidMode().init(context);
 
             }

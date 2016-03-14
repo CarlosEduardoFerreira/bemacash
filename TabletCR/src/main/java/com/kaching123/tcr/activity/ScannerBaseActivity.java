@@ -1,6 +1,7 @@
 package com.kaching123.tcr.activity;
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.text.TextUtils;
@@ -15,6 +16,9 @@ import com.kaching123.tcr.service.ScannerService.IScannerBinder;
 import com.kaching123.tcr.service.ScannerService.ScannerBinder;
 import com.kaching123.tcr.service.ScannerService.ScannerListener;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+
 /**
  * Created by pkabakov on 14.03.14.
  */
@@ -25,6 +29,18 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
     protected abstract void onBarcodeReceived(String barcode);
 
     private boolean isUSBScanner;
+    protected static final String EXTRA_ACTION = "ACTION";
+    protected static final String EXTRA_ERROR = "ERROR";
+    protected static final String EXTRA_ERRORMSG = "ERRORMSG";
+    protected static final String EXTRA_TRANSACTIONID = "TRANSACTIONID";
+    protected static final String EXTRA_ITEMNAME = "ITEMNAME";
+    protected static final String EXTRA_ITEMDETAILS = "ITEMDETAILS";
+    protected static final String EXTRA_ITEMQTY = "ITEMQTY";
+    protected static final String EXTRA_ITEMPRICE = "ITEMPRICE";
+    protected static final String EXTRA_ITEMTAXABLE = "ITEMTAXABLE";
+    protected static final String EXTRA_SERVICEFEE = "SERVICEFEE";
+    protected static final String EXTRA_RECEIPT = "RECEIPT";
+
 
     @Override
     protected void onStart() {
@@ -153,4 +169,8 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         }
 
     };
+
+
+
+
 }
