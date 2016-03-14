@@ -8,11 +8,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.display.DisplayTenderCommand;
@@ -24,6 +19,11 @@ import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.edit.KeyboardDialogFragment;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.ColorRes;
 
 import java.math.BigDecimal;
 
@@ -85,34 +85,43 @@ public class PayChargeFragmentDialog extends KeyboardDialogFragment {
                 return tryProceed();
             }
         });
+        charge.addTextChangedListener(new ChargeTextWatcher(charge));
     }
 
-    @AfterTextChange
-    protected void chargeAfterTextChanged(Editable text) {
-        if (text == null) {
-            enablePositiveButtons(false);
-            return;
+    private class ChargeTextWatcher extends CurrencyTextWatcher {
+
+        public ChargeTextWatcher(TextView view) {
+            super(view);
         }
-        String string = text.toString().replaceAll(",", "");
-        BigDecimal entered = BigDecimal.ZERO;
-        try {
-            if (string.length() > 0 && pendingValue.compareTo(entered = new BigDecimal(string)) < 0) {
-                charge.setText(UiHelper.valueOf(entered = pendingValue));
+
+        @Override
+        public synchronized void afterTextChanged(Editable amount) {
+            super.afterTextChanged(amount);
+            final String value = charge.getText().toString();
+            BigDecimal entered = BigDecimal.ZERO;
+            try {
+                entered = UiHelper.parseBrandDecimalInput(value);
+                if (value.length() > 0 && pendingValue.compareTo(entered) < 0) {
+                    entered = pendingValue;
+                    isEditMode = true;
+                    charge.setText(UiHelper.valueOf(entered).toString());
+                }
+            } catch (NumberFormatException e) {
+                entered = BigDecimal.ZERO;
+                Logger.e("Number format mis parsing", e);
             }
-        } catch (NumberFormatException e) {
-            entered = BigDecimal.ZERO;
-            Logger.e("Number format mis parsing", e);
-        }
 
-        if (getDisplayBinder() != null) {
-            getDisplayBinder().startCommand(new DisplayTenderCommand(entered, null));
-        }
+            if (getDisplayBinder() != null) {
+                getDisplayBinder().startCommand(new DisplayTenderCommand(entered, null));
+            }
 
-        enablePositiveButtons(entered.compareTo(PaymentGateway.getCreditCardPaymentMethod().minimalAmount()) >= 0);
-        BigDecimal pending = pendingValue.subtract(entered);
-        PayChargeFragmentDialog.this.pending.setText(UiHelper.valueOf(pending));
-        PayChargeFragmentDialog.this.pending.setTextColor(pending.compareTo(BigDecimal.ZERO) > 0 ? colorPaymentPending : colorPaymentOk);
+            enablePositiveButtons(entered.compareTo(PaymentGateway.getCreditCardPaymentMethod().minimalAmount()) >= 0);
+            BigDecimal pending = pendingValue.subtract(entered);
+            PayChargeFragmentDialog.this.pending.setText(UiHelper.valueOf(pending));
+            PayChargeFragmentDialog.this.pending.setTextColor(pending.compareTo(BigDecimal.ZERO) > 0 ? colorPaymentPending : colorPaymentOk);
+        }
     }
+
 
     private IDisplayBinder getDisplayBinder() {
         if (getActivity() instanceof IDisplayBinder) {
