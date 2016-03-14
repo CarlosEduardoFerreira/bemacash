@@ -143,6 +143,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         _putDiscount(values, SaleItemTable.DISCOUNT_TYPE, discountType);
         values.put(SaleItemTable.TAXABLE, isTaxable);
         values.put(SaleItemTable.TAX, _decimal(tax));
+        values.put(SaleItemTable.TAX2, _decimal(tax2));
         values.put(SaleItemTable.SEQUENCE, sequence);
         values.put(SaleItemTable.PARENT_GUID, parentGuid);
 

@@ -138,8 +138,9 @@ public final class OrderTotalPriceCalculator {
             if (i.isTaxable && info.isTaxableOrder) {
                 itemFinalTax = CalculationUtil.getTaxVatValue(itemFinalPrice, i.tax);
                 if (TcrApplication.isEcuadorVersion()) {
-                    itemFinalTax = CalculationUtil.getTaxVatValue(itemFinalPrice, i.tax)
-                            .add(CalculationUtil.getTaxVatValue(itemFinalPrice, i.tax2));
+                    BigDecimal tax2 = CalculationUtil.getTaxVatValue(itemFinalPrice, i.tax2);
+                    Logger.d("TotalCost: [ecuador] tax2: %s;", tax2);
+                    itemFinalTax = itemFinalTax.add(tax2);
                 }
                 Logger.d("TotalCost: item tax: %s; from %s = %s", i.description, itemFinalPrice, itemFinalTax);
                 itemFinalPrice = itemFinalPrice.add(itemFinalTax);
@@ -187,7 +188,7 @@ public final class OrderTotalPriceCalculator {
         Logger.d("TotalCost: tmpOderDiscountPercent = %s", tmpOderDiscountPercent);
 
         Collection<SaleItemInfo> saleItemsInfo = map.values();
-        ArrayList<CalcItemInfo> calcItems = new ArrayList<CalcItemInfo>(saleItemsInfo.size());
+        ArrayList<CalcItemInfo> calcItems = new ArrayList<>(saleItemsInfo.size());
         if (saleItemsInfo.size() == 0) {
             return calcItems;
         }
