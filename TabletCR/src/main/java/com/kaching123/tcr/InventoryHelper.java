@@ -15,11 +15,13 @@ public class InventoryHelper {
     private static final Uri ITEM_URI = ShopProvider.getContentUri(ItemTable.URI_CONTENT);
 
     public static long getLimit() {
-        return TcrApplication.get().getShopPref().inventoryLimit().get();
+        long limit = TcrApplication.get().getShopPref().inventoryLimit().get();
+        Logger.d("[Inventory] limit = %d", limit);
+        return limit;
     }
 
     public static boolean isLimited() {
-        return !TcrApplication.get().isFreemium() || PlanOptions.isInventoryLimited();
+        return TcrApplication.get().isFreemium() || PlanOptions.isInventoryLimited();
     }
 
     public static boolean isLimitReached(Context context) {

@@ -2,6 +2,8 @@ package com.kaching123.tcr.fragment.taxgroup;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +22,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment_;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -132,6 +135,20 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
         }
 
         @Override
+        public void changeCursor(Cursor cursor) {
+            if (cursor == null) {
+                super.changeCursor(cursor);
+                return;
+            }
+            MatrixCursor extras = new MatrixCursor(new String[]{ShopStore.TaxGroupTable.ID, ShopStore.TaxGroupTable.GUID, ShopStore.TaxGroupTable.TITLE,
+                    ShopStore.TaxGroupTable.TAX, ShopStore.TaxGroupTable.IS_DEFAULT});
+            extras.addRow(new String[]{"0", null, getString(R.string.item_tax_group_default), ContentValuesUtil._decimal(getApp().getShopInfo().taxVat), "0"});
+            Cursor[] cursors = {extras, cursor};
+            Cursor extendedCursor = new MergeCursor(cursors);
+            super.changeCursor(extendedCursor);
+        }
+
+        @Override
         public void bindView(View v, Context context, Cursor c) {
             final TaxGroupModel taxModel = new TaxGroupModel(c);
             final UIHolder holder = (UIHolder) v.getTag();
@@ -146,16 +163,26 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
                     }
                 }
             });
-            if (!TextUtils.isEmpty(modelGuidFirst) && taxModel.getGuid().equals(modelGuidFirst)) {
-                holder.taxGroup.setChecked(true);
-            }
-            if (!TextUtils.isEmpty(modelGuidSecond) && taxModel.getGuid().equals(modelGuidSecond)) {
-                holder.taxGroup.setChecked(true);
-            }
-            if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond) && taxModel.isDefault) {
-                holder.taxGroup.setChecked(true);
+            if (isStoreTax(taxModel)) {
+                if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond)) {
+                    holder.taxGroup.setChecked(true);
+                }
+            } else {
+                if (!TextUtils.isEmpty(modelGuidFirst) && taxModel.getGuid().equals(modelGuidFirst)) {
+                    holder.taxGroup.setChecked(true);
+                }
+                if (!TextUtils.isEmpty(modelGuidSecond) && taxModel.getGuid().equals(modelGuidSecond)) {
+                    holder.taxGroup.setChecked(true);
+                }
+                if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond) && taxModel.isDefault) {
+                    holder.taxGroup.setChecked(true);
+                }
             }
         }
+    }
+
+    private boolean isStoreTax(TaxGroupModel model) {
+        return TextUtils.isEmpty(model.getGuid());
     }
 
     private static class UIHolder {
@@ -196,9 +223,13 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
                     dismiss();
                     return true;
                 } else if (models.size() == 2) {
-                    callback.onTaxGroupsChosen(models.get(0), models.get(1));
-                    dismiss();
-                    return true;
+                    if (TextUtils.isEmpty(models.get(0).getGuid()) || TextUtils.isEmpty(models.get(1).getGuid())) {
+                        AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, getString(R.string.tax_group_dialog_msg_error));
+                    } else {
+                        callback.onTaxGroupsChosen(models.get(0), models.get(1));
+                        dismiss();
+                        return true;
+                    }
                 } else if (models.size() > 2) {
                     AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, getString(R.string.tax_group_dialog_msg));
                 }

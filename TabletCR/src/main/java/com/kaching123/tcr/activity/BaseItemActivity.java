@@ -474,12 +474,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 break;
             case TAX_GROUP_LOADER_ID:
                 if (TcrApplication.isEcuadorVersion()) {
-                    if (cursor.moveToFirst()) {
-                        model.taxGroupGuid = new TaxGroupModel(cursor).guid;
-                        if (cursor.moveToNext()) {
-                            model.taxGroupGuid2 = new TaxGroupModel(cursor).guid;
-                        }
-                    }
                     taxGroupDefault.setText(TaxHelper.getItemTaxGroupDisplayText(cursor));
                 } else {
                     taxGroupAdapter.changeCursor(cursor);
