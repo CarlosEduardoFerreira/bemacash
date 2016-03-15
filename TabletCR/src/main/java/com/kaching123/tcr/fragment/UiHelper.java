@@ -34,7 +34,7 @@ public final class UiHelper {
 
     private static final DecimalFormat brandQtyFormat = new DecimalFormat("#,##0.000");
     private static final DecimalFormat brandQrtyIntFormat = new DecimalFormat("#,###");
-    private static final DecimalFormat priceInputFormat = new DecimalFormat("#,###0.00");
+    private static final DecimalFormat priceInputFormat = new DecimalFormat("#,##0.00");
 
     static {
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
