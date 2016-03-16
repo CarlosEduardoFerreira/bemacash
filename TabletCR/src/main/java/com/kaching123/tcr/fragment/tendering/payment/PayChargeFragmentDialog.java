@@ -227,7 +227,7 @@ public class PayChargeFragmentDialog extends KeyboardDialogFragment {
 
     protected BigDecimal getDecimalValue() {
         try {
-            return new BigDecimal(charge.getText().toString());
+            return UiHelper.parseBrandDecimalInput(charge.getText().toString());
         } catch (Exception e) {
             return BigDecimal.ZERO;
         }

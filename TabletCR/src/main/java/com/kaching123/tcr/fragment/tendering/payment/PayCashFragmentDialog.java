@@ -10,11 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.WaitForCashInDrawerCommand;
@@ -39,7 +34,15 @@ import com.telly.groundy.TaskHandler;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.ColorRes;
+
 import java.math.BigDecimal;
+
+import static com.kaching123.tcr.fragment.UiHelper.priceFormat;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -48,7 +51,7 @@ import java.math.BigDecimal;
 public class PayCashFragmentDialog extends StyledDialogFragment implements CustomEditBox.IKeyboardSupport, IDrawerFriend {
 
     private static final String DIALOG_NAME = "PayCashFragmentDialog";
-    protected CurrencyTextWatcher currencyTextWatcher;
+
     @ViewById
     protected CustomEditBox charge;
 
@@ -85,15 +88,10 @@ public class PayCashFragmentDialog extends StyledDialogFragment implements Custo
     }
 
     public void cancelWaitCashTask() {
-        if(waitCashTask != null){
+        if (waitCashTask != null) {
             waitCashTask.cancel(getActivity(), 0, null);
             waitCashTask = null;
         }
-        /*if (listener != null){
-            listener.onCancel();
-        }*/
-
-
     }
 
     @Override
@@ -120,10 +118,9 @@ public class PayCashFragmentDialog extends StyledDialogFragment implements Custo
     }
 
     private void setChargeView() {
-        currencyTextWatcher = new CurrencyTextWatcher(charge);
         charge.setKeyboardSupportConteiner(this);
         charge.setFilters(new InputFilter[]{new CurrencyFormatInputFilter()});
-        charge.addTextChangedListener(currencyTextWatcher);
+        charge.addTextChangedListener(new CurrencyTextWatcher(charge));
         charge.setEditListener(new CustomEditBox.IEditListener() {
 
             @Override
@@ -159,27 +156,29 @@ public class PayCashFragmentDialog extends StyledDialogFragment implements Custo
             turnPositiveButton(false);
             return;
         }
-        String amount = text.toString().replaceAll(",", "");
-
         BigDecimal tenderAmount = BigDecimal.ZERO;
         BigDecimal changeAmount = BigDecimal.ZERO;
+        String chargeStr = charge.getText().toString();
         try {
-            tenderAmount = new BigDecimal(amount);
-            changeAmount = tenderAmount.subtract(transaction.getAmount());
-
-            if (changeAmount.compareTo(BigDecimal.ZERO) >= 0) {
-                PayCashFragmentDialog.this.pending.setText(UiHelper.valueOf(changeAmount));
-                transaction.changeValue = changeAmount;
-                turnPositiveButton(true);
-            } else {
-                turnPositiveButton(false);
-            }
+            tenderAmount = UiHelper.parseBrandDecimalInput(chargeStr);
+            resumeNavigationButtons(tenderAmount);
         } catch (NumberFormatException e) {
             turnPositiveButton(false);
         }
-
         if (getDisplayBinder() != null) {
             getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
+        }
+    }
+
+    private void resumeNavigationButtons(final BigDecimal receivedAmount) {
+        BigDecimal changeAmount = receivedAmount.subtract(transaction.getAmount());
+        if (changeAmount.compareTo(BigDecimal.ZERO) >= 0) {
+            PayCashFragmentDialog.this.pending.setText(priceFormat(changeAmount));
+            transaction.changeValue = changeAmount;
+            turnPositiveButton(true);
+        } else {
+            turnPositiveButton(false);
+            PayCashFragmentDialog.this.pending.setText(priceFormat(BigDecimal.ZERO));
         }
     }
 
@@ -258,7 +257,7 @@ public class PayCashFragmentDialog extends StyledDialogFragment implements Custo
     @Override
     public boolean try2GetCash(boolean searchByMac) {
         Logger.d("PayCashFragmentDialog: try2GetCash()");
-        if (TextUtils.isEmpty(charge.getText())){
+        if (TextUtils.isEmpty(charge.getText())) {
             Toast.makeText(getActivity(), R.string.pay_toast_zero, Toast.LENGTH_LONG).show();
             return false;
         }
