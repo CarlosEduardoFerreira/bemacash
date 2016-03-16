@@ -41,6 +41,7 @@ import com.kaching123.tcr.fragment.prepaid.LongDistance.PrepaidLongDistanceProdu
 import com.kaching123.tcr.fragment.prepaid.LongDistance.PrepaidLongDistanceProductPopularSearchFragment;
 import com.kaching123.tcr.fragment.prepaid.LongDistance.PrepaidLongDistanceProductPopularSearchFragment_;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
+import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
 import com.kaching123.tcr.fragment.tendering.payment.INotificationConfirmListener;
 import com.kaching123.tcr.fragment.tendering.payment.PayNotificationFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.billpayment.BillingFragmentDialog;
@@ -341,6 +342,11 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
 
                     @Override
                     public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList) {
+
+                    }
+
+                    @Override
+                    public void onRefund(HistoryDetailedOrderItemListFragment.RefundAmount amount) {
 
                     }
 

@@ -28,6 +28,7 @@ import com.kaching123.tcr.fragment.prepaid.SunPass.SunPassTransponderConfirmatio
 import com.kaching123.tcr.fragment.prepaid.SunPass.SunPassTransponderCreditFragment;
 import com.kaching123.tcr.fragment.prepaid.SunPass.SunPassTransponderCreditFragment_;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
+import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
 import com.kaching123.tcr.fragment.tendering.payment.INotificationConfirmListener;
 import com.kaching123.tcr.fragment.tendering.payment.PayNotificationFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.billpayment.PaymentFragmentDialog;
@@ -272,6 +273,11 @@ public class PrepaidSunPassActivity extends PrepaidBaseFragmentActivity {
 
                     @Override
                     public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList) {
+
+                    }
+
+                    @Override
+                    public void onRefund(HistoryDetailedOrderItemListFragment.RefundAmount amount) {
 
                     }
 

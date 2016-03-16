@@ -12,12 +12,14 @@ public class PrepaidReleaseResult implements Serializable {
     public String error;
     public String errorMSG;
     public String receipt;
+    public SaleOrderItemViewModel model;
 
-    public PrepaidReleaseResult(String action, String error, String errorMSG, String receipt) {
+    public PrepaidReleaseResult(String action, String error, String errorMSG, String receipt, SaleOrderItemViewModel model) {
         this.action = action;
         this.error = error;
         this.errorMSG = errorMSG;
         this.receipt = receipt;
+        this.model = model;
     }
 
     public void print() {

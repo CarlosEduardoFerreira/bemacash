@@ -103,11 +103,13 @@ import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHan
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment.IOrderActionListener;
 import com.kaching123.tcr.fragment.search.SearchItemsListFragment;
+import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment.RefundAmount;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
+import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.DiscountType;
@@ -347,14 +349,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_RELEASE) {
 //            callback.onBillingSuccess(BaseCashierActivity.this, releaseResult);
             isPrepaidItemRelease = true;
-            PrepaidReleaseResult releaseResult = new PrepaidReleaseResult(data.getStringExtra(ScannerBaseActivity.EXTRA_ACTION),data.getStringExtra(ScannerBaseActivity.EXTRA_ERROR),data.getStringExtra(ScannerBaseActivity.EXTRA_ERRORMSG),data.getStringExtra(ScannerBaseActivity.EXTRA_RECEIPT));
+            PrepaidReleaseResult releaseResult = new PrepaidReleaseResult(data.getStringExtra(ScannerBaseActivity.EXTRA_ACTION),data.getStringExtra(ScannerBaseActivity.EXTRA_ERROR),data.getStringExtra(ScannerBaseActivity.EXTRA_ERRORMSG),data.getStringExtra(ScannerBaseActivity.EXTRA_RECEIPT), prepaidList.get(prepaidList.size() - prepaidCount));
             releaseResultList.add(releaseResult);
             if(--prepaidCount > 0)
             {
                 callReleaseSingleMini(PREPAID_MINI_RELEASE, prepaidList.get(prepaidList.size() - prepaidCount).productCode);
             }
-
-
         }
     }
 
@@ -363,7 +363,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onPostResume();
         if(releaseResultList != null && releaseResultList.size() > 0 && !isPrepaidItemStart && isPrepaidItemRelease && prepaidCount == 0) {
             isPrepaidItemRelease = false;
-            processor.proceedToTipsApply(this, successfullCCtransactionModels, releaseResultList);
+            processor.proceedToPrepaidCheck(this, successfullCCtransactionModels, releaseResultList);
             releaseResultList = new ArrayList<PrepaidReleaseResult>();
         }
     }
@@ -1584,10 +1584,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         @Override
                         public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> list) {
 //                            callback.onBillingSuccess();
+                            EndTransactionCommand.start(BaseCashierActivity.this);
+
                             prepaidList = list;
                             prepaidCount = prepaidList.size();
                             successfullCCtransactionModels = transactionModels;
                             OnPrepaidBilling();
+                        }
+
+                        @Override
+                        public void onRefund(RefundAmount a) {
+                            amount = a;
+                            getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
                         }
                     });
             setCallback(processor);
@@ -1602,6 +1610,27 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private void OnPrepaidBilling() {
         callReleaseSingleMini(PREPAID_MINI_RELEASE, prepaidList.get(0).productCode);
     }
+
+    private HistoryDetailedOrderItemListFragment.RefundAmount amount;
+    private LoaderManager.LoaderCallbacks<ArrayList<PaymentTransactionModel>> refundTransactionsLoaderCallback = new LoaderManager.LoaderCallbacks<ArrayList<PaymentTransactionModel>>() {
+        @Override
+        public Loader<ArrayList<PaymentTransactionModel>> onCreateLoader(int loaderId, Bundle args) {
+            return ReadPaymentTransactionsFunction.createLoaderOnlySaleOrderByAmount(BaseCashierActivity.this, orderGuid);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<ArrayList<PaymentTransactionModel>> listLoader, final ArrayList<PaymentTransactionModel> transactions) {
+            getWindow().getDecorView().post(new Runnable() {
+                @Override
+                public void run() {
+                    processor.initRefund(BaseCashierActivity.this, transactions, amount);
+                }
+            });
+        }
+
+        @Override
+        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {}
+    };
 
     private void try2ClockIn() {
         TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_IN, getString(R.string.timesheet_dialog_clarify_message), new TimesheetFragment.OnTimesheetListener() {
