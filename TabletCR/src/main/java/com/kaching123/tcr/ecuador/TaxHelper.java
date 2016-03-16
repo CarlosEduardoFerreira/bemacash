@@ -1,7 +1,10 @@
-package com.kaching123.tcr;
+package com.kaching123.tcr.ecuador;
 
 import android.database.Cursor;
 
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.TaxGroupModel;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -23,7 +26,7 @@ public class TaxHelper {
                 displayText += "\n" + "(" + _decimal(model2.tax) + " %) " + model2.title;
             }
         } else {
-            displayText = "(" + _decimal(TcrApplication.get().getShopInfo().taxVat) + " %) "
+            displayText = "(" + ContentValuesUtil._decimal(TcrApplication.get().getShopInfo().taxVat) + " %) "
                     + TcrApplication.get().getString(R.string.item_tax_group_default);
         }
         return displayText;

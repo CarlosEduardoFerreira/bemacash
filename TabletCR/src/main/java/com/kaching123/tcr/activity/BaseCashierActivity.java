@@ -78,6 +78,8 @@ import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusComma
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
+import com.kaching123.tcr.ecuador.AddEcuadorItemActivity;
+import com.kaching123.tcr.ecuador.EditEcuadorItemActivity;
 import com.kaching123.tcr.fragment.PrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.barcode.SearchBarcodeFragment;
@@ -274,6 +276,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private ArrayList<PaymentTransactionModel> successfullCCtransactionModels;
     private List<SaleOrderItemViewModel> prepaidList;
     private ArrayList<PrepaidReleaseResult> releaseResultList;
+
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
         onBarcodeReceived(barcode);
@@ -296,7 +299,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
-        if(data == null)
+        if (data == null)
             return;
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SEND) {
             isPrepaidItemStart = true;
@@ -351,8 +354,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             isPrepaidItemRelease = true;
             PrepaidReleaseResult releaseResult = new PrepaidReleaseResult(data.getStringExtra(ScannerBaseActivity.EXTRA_ACTION),data.getStringExtra(ScannerBaseActivity.EXTRA_ERROR),data.getStringExtra(ScannerBaseActivity.EXTRA_ERRORMSG),data.getStringExtra(ScannerBaseActivity.EXTRA_RECEIPT), prepaidList.get(prepaidList.size() - prepaidCount));
             releaseResultList.add(releaseResult);
-            if(--prepaidCount > 0)
-            {
+            if (--prepaidCount > 0) {
                 callReleaseSingleMini(PREPAID_MINI_RELEASE, prepaidList.get(prepaidList.size() - prepaidCount).productCode);
             }
         }
@@ -361,7 +363,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if(releaseResultList != null && releaseResultList.size() > 0 && !isPrepaidItemStart && isPrepaidItemRelease && prepaidCount == 0) {
+        if (releaseResultList != null && releaseResultList.size() > 0 && !isPrepaidItemStart && isPrepaidItemRelease && prepaidCount == 0) {
             isPrepaidItemRelease = false;
             processor.proceedToPrepaidCheck(this, successfullCCtransactionModels, releaseResultList);
             releaseResultList = new ArrayList<PrepaidReleaseResult>();
@@ -643,12 +645,20 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                     @Override
                                     public void onLoginComplete() {
                                         super.onLoginComplete();
-                                        AddItemActivity.start(BaseCashierActivity.this, barcode);
+                                        if (TcrApplication.isEcuadorVersion()) {
+                                            AddEcuadorItemActivity.start(BaseCashierActivity.this, barcode);
+                                        } else {
+                                            AddItemActivity.start(BaseCashierActivity.this, barcode);
+                                        }
                                     }
                                 }, Permission.INVENTORY_MODULE);
                                 return true;
                             }
-                            AddItemActivity.start(BaseCashierActivity.this, barcode);
+                            if (TcrApplication.isEcuadorVersion()) {
+                                AddEcuadorItemActivity.start(BaseCashierActivity.this, barcode);
+                            } else {
+                                AddItemActivity.start(BaseCashierActivity.this, barcode);
+                            }
                             return true;
                         }
                     },
@@ -685,12 +695,20 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                     @Override
                                     public void onLoginComplete() {
                                         super.onLoginComplete();
-                                        EditItemActivity.start(BaseCashierActivity.this, item);
+                                        if (TcrApplication.isEcuadorVersion()) {
+                                            EditEcuadorItemActivity.start(BaseCashierActivity.this, item);
+                                        } else {
+                                            EditItemActivity.start(BaseCashierActivity.this, item);
+                                        }
                                     }
                                 }, Permission.INVENTORY_MODULE);
                                 return true;
                             }
-                            EditItemActivity.start(BaseCashierActivity.this, item);
+                            if (TcrApplication.isEcuadorVersion()) {
+                                EditEcuadorItemActivity.start(BaseCashierActivity.this, item);
+                            } else {
+                                EditItemActivity.start(BaseCashierActivity.this, item);
+                            }
                             return true;
                         }
                     },

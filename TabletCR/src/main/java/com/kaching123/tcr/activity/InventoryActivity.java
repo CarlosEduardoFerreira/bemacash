@@ -32,6 +32,10 @@ import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.BaseIm
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.ImportType;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.WrongImportInfo;
 import com.kaching123.tcr.commands.store.inventory.UpdateDeletedItemCommand;
+import com.kaching123.tcr.ecuador.AddEcuadorItemActivity;
+import com.kaching123.tcr.ecuador.AddEcuadorReferenceItemActivity;
+import com.kaching123.tcr.ecuador.EditEcuadorItemActivity;
+import com.kaching123.tcr.ecuador.EditEcuadorReferenceItemActivity;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
@@ -165,13 +169,25 @@ public class InventoryActivity extends ScannerBaseActivity {
             public void onItemSelected(long id, ItemExModel model) {
                 switch (model.refType) {
                     case Simple:
-                        EditItemActivity.start(InventoryActivity.this, model);
+                        if (TcrApplication.isEcuadorVersion()) {
+                            EditEcuadorItemActivity.start(InventoryActivity.this, model);
+                        } else {
+                            EditItemActivity.start(InventoryActivity.this, model);
+                        }
                         break;
                     case Reference:
-                        EditReferenceItemActivity.start(InventoryActivity.this, model);
+                        if (TcrApplication.isEcuadorVersion()) {
+                            EditEcuadorReferenceItemActivity.start(InventoryActivity.this, model);
+                        } else {
+                            EditReferenceItemActivity.start(InventoryActivity.this, model);
+                        }
                         break;
                     default:
-                        EditItemActivity.start(InventoryActivity.this, model);
+                        if (TcrApplication.isEcuadorVersion()) {
+                            EditEcuadorItemActivity.start(InventoryActivity.this, model);
+                        } else {
+                            EditItemActivity.start(InventoryActivity.this, model);
+                        }
                 }
             }
         });
@@ -265,7 +281,12 @@ public class InventoryActivity extends ScannerBaseActivity {
         ItemExModel model = new ItemExModel();
         model.categoryId = selectedCategoryGuid;
         model.departmentGuid = selectedDeartmentGuid;
-        AddReferenceItemActivity.start(InventoryActivity.this, model);
+
+        if (TcrApplication.isEcuadorVersion()) {
+            AddEcuadorReferenceItemActivity.start(InventoryActivity.this, model);
+        } else {
+            AddReferenceItemActivity.start(InventoryActivity.this, model);
+        }
     }
 
     @OptionsItem
@@ -279,7 +300,11 @@ public class InventoryActivity extends ScannerBaseActivity {
         model.categoryId = selectedCategoryGuid;
         model.departmentGuid = selectedDeartmentGuid;
 
-        AddItemActivity.start(InventoryActivity.this, model);
+        if (TcrApplication.isEcuadorVersion()) {
+            AddEcuadorItemActivity.start(InventoryActivity.this, model);
+        } else {
+            AddItemActivity.start(InventoryActivity.this, model);
+        }
     }
 
     private boolean inventoryLimitReached() {

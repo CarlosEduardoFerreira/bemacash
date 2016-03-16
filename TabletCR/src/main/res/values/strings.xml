@@ -452,7 +452,6 @@
     <string name="item_activity_taxable">Taxable:</string>
     <string name="item_activity_cost">Cost:</string>
     <string name="tax_group_dialog_msg">Please select 1 or 2 tax groups</string>
-    <string name="tax_group_dialog_msg_error">Please select Store Tax only or other tax groups</string>
     <string name="item_activity_button_view">Button view:</string>
     <string name="item_activity_hide_item_dialog_title">Delete item</string>
     <string name="item_activity_hide_item_dialog_message">Are you sure you want to delete item?</string>

@@ -90,7 +90,17 @@
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".ecuador.EditEcuadorItemActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".activity.AddItemActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ecuador.AddEcuadorItemActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateHidden" />
@@ -108,7 +118,17 @@
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".ecuador.AddEcuadorReferenceItemActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".activity.EditReferenceItemActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ecuador.EditEcuadorReferenceItemActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateHidden" />

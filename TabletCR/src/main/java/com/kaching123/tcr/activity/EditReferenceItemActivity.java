@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TaxHelper;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditReferenceItemCommand;
@@ -126,14 +125,6 @@ public class EditReferenceItemActivity extends BaseReferenceItemActivity {
                 final int catPos = categoryAdapter.getPosition4Id(model.categoryId);
                 category.setSelection(catPos);
                 category.setOnItemSelectedListener(new SpinnerChangeListener(catPos));
-                break;
-            case TAX_GROUP_LOADER_ID:
-                if (TcrApplication.isEcuadorVersion()) {
-                    taxGroupDefault.setText(TaxHelper.getItemTaxGroupDisplayText(cursor));
-                } else {
-                    final int pos = taxGroupAdapter.getPosition4Id(model.taxGroupGuid);
-                    taxGroup.setSelection(pos);
-                }
                 break;
         }
     }

@@ -47,7 +47,7 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
 
     private static final Uri TAX_GROUP_URI = ShopProvider.contentUri(ShopStore.TaxGroupTable.URI_CONTENT);
 
-    private static final int LOADER_ID = 0;
+    private static final int LOADER_ID = 102;
 
     @FragmentArg
     protected String modelGuidFirst;
@@ -64,6 +64,8 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
 
     private ResourceCursorAdapter adapter;
 
+    private boolean existDefauls = false;
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(TAX_GROUP_URI);
@@ -72,6 +74,15 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        if (cursor.moveToFirst()) {
+            do {
+                TaxGroupModel model = new TaxGroupModel(cursor);
+                if (model.isDefault) {
+                    existDefauls = true;
+                    break;
+                }
+            } while (cursor.moveToNext());
+        }
         adapter.changeCursor(cursor);
     }
 
@@ -164,8 +175,12 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
                 }
             });
             if (isStoreTax(taxModel)) {
-                if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond)) {
-                    holder.taxGroup.setChecked(true);
+                if (TextUtils.isEmpty(modelGuidFirst)) {
+                    if (!TextUtils.isEmpty(modelGuidSecond)) {
+                        holder.taxGroup.setChecked(true);
+                    } else if (!existDefauls) {
+                        holder.taxGroup.setChecked(true);
+                    }
                 }
             } else {
                 if (!TextUtils.isEmpty(modelGuidFirst) && taxModel.getGuid().equals(modelGuidFirst)) {
@@ -223,13 +238,13 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
                     dismiss();
                     return true;
                 } else if (models.size() == 2) {
-                    if (TextUtils.isEmpty(models.get(0).getGuid()) || TextUtils.isEmpty(models.get(1).getGuid())) {
-                        AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, getString(R.string.tax_group_dialog_msg_error));
+                    if (isStoreTax(models.get(1))) {
+                        callback.onTaxGroupsChosen(models.get(1), models.get(0));
                     } else {
                         callback.onTaxGroupsChosen(models.get(0), models.get(1));
-                        dismiss();
-                        return true;
                     }
+                    dismiss();
+                    return true;
                 } else if (models.size() > 2) {
                     AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, getString(R.string.tax_group_dialog_msg));
                 }
