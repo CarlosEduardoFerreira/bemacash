@@ -133,6 +133,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
     private ArrayList<PrepaidReleaseResult> ReleaseResultList;
     private ArrayList<PrepaidReleaseResult> failReleaseResultList;
+    private final  int PREPAID_RELEASE_BILLING_SUCC = 200;
 
     private static final Uri URI_SALE_ITEMS_PREPAID = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
 
@@ -1239,7 +1240,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         failReleaseResultList = new ArrayList<PrepaidReleaseResult>();
         ReleaseResultList = list;
         for (PrepaidReleaseResult result : list) {
-            if (result.error != null)
+            if (Integer.parseInt(result.error) != PREPAID_RELEASE_BILLING_SUCC)
                 failReleaseResultList.add(result);
         }
 
@@ -1391,17 +1392,20 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             @Override
             public void onRefundComplete(SaleOrderModel childOrderModel) {
                 EndTransactionCommand.start(context, true);
+                callback.onUpdateOrderList();
             }
 
             @Override
             public void onRefundCancelled() {
                 // ignore
                 EndTransactionCommand.start(context);
+                callback.onUpdateOrderList();
             }
 
             @Override
             public void onRefundFailure() {
                 EndTransactionCommand.start(context);
+                callback.onUpdateOrderList();
             }
         }).initRefund(context, returnMethod, transactions, amount, getApp().getBlackStoneUser(), false);
     }
@@ -1535,6 +1539,8 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList);
 
         public void onRefund(final HistoryDetailedOrderItemListFragment.RefundAmount amount);
+
+        public void onUpdateOrderList();
     }
 
 

@@ -1597,6 +1597,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             amount = a;
                             getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
                         }
+
+                        @Override
+                        public void onUpdateOrderList() {
+                            getSupportLoaderManager().restartLoader(LOADER_ORDER_TITLE, null, orderInfoLoader);
+                        }
                     });
             setCallback(processor);
 

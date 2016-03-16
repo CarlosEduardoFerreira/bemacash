@@ -178,6 +178,11 @@ public class PrepaidProcessor {
 
                     }
 
+                    @Override
+                    public void onUpdateOrderList() {
+
+                    }
+
                 }).setPrepaidMode().init(context);
 
             }

@@ -350,6 +350,11 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
 
                     }
 
+                    @Override
+                    public void onUpdateOrderList() {
+
+                    }
+
                 }).setPrepaidMode().init(context);
 
             }
