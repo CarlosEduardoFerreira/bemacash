@@ -22,7 +22,11 @@ public class TaxHelper {
                 TaxGroupModel model2 = new TaxGroupModel(cursor);
                 displayText += "\n" + "(" + _decimal(model2.tax) + " %) " + model2.title;
             }
+        } else {
+            displayText = "(" + _decimal(TcrApplication.get().getShopInfo().taxVat) + " %) "
+                    + TcrApplication.get().getString(R.string.item_tax_group_default);
         }
         return displayText;
     }
+
 }
