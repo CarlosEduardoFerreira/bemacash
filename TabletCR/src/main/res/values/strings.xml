@@ -1848,5 +1848,8 @@
     <string name="item_activity_alert_product_code_empty_error">Product code can not be empty</string>
 
     <string name="warning_inventory_matrix_limit">You\'ll exceed the inventory limit. Please decrease the number of variants</string>
+    <string name="prepaid_mini_item_description">Prepaid Item:</string>
+    <string name="prepaid_mini_fail_error">Error:</string>
+    <string name="prepaid_mini_fail_error_msg">Error Msg:</string>
 
 </resources>

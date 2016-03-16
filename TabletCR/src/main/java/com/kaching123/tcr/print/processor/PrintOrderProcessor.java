@@ -189,20 +189,24 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
         if (prepaidReleaseResults != null)
             for (PrepaidReleaseResult result : prepaidReleaseResults) {
-                if(result.receipt != null)
-                {
-                   String[] prints = getFormattedLine(result.receipt);
-                    for(String line : prints)
-                    {
-                        printerWrapper.add(line);
+                if(result.error == null) {
+                    if (result.receipt != null) {
+                        String[] prints = getFormattedLine(result.receipt);
+                        for (String line : prints) {
+                            printerWrapper.add(line);
+                        }
                     }
+                }
+                else{
+                    printerWrapper.header(context.getString(R.string.prepaid_mini_item_description), result.model.description);
+                    printerWrapper.header(context.getString(R.string.prepaid_mini_fail_error), result.error);
+                    printerWrapper.header(context.getString(R.string.prepaid_mini_fail_error_msg), result.errorMSG);
                 }
 
             }
     }
 
-    private String[] getFormattedLine(String receipt)
-    {
+    private String[] getFormattedLine(String receipt) {
         String[] prints = receipt.split("\\n");
         return prints;
     }

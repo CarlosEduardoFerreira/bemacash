@@ -11,6 +11,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.IOrderItem;
 import com.kaching123.tcr.util.UnitUtil;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +20,7 @@ import java.util.Comparator;
 /**
  * Created by gdubina on 07/11/13.
  */
-public class SaleOrderItemViewModel implements IOrderItem {
+public class SaleOrderItemViewModel implements IOrderItem, Serializable{
     private static final int NO_OPTIONS_COLOR = Color.rgb(210, 49, 64);
 
     public SaleOrderItemModel itemModel;

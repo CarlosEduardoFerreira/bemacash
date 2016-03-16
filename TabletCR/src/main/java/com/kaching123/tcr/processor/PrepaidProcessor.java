@@ -10,6 +10,7 @@ import com.kaching123.tcr.commands.local.StartTransactionCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddBillPaymentOrderCommand.BaseAddBillPaymentOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
+import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.PrepaidTypeChoosingFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.PrepaidTypeChoosingFragmentDialog.PrepaidTypeChoosingFragmentDialogCallback;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.billpayment.PaymentFragmentDialog;
@@ -169,6 +170,11 @@ public class PrepaidProcessor {
 
                     @Override
                     public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList) {
+
+                    }
+
+                    @Override
+                    public void onRefund(HistoryDetailedOrderItemListFragment.RefundAmount amount) {
 
                     }
 
