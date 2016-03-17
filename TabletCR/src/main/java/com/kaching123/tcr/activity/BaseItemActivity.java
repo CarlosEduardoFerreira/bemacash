@@ -673,8 +673,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         c = (Cursor) this.category.getSelectedItem();
         model.categoryId = c == null ? "0" : c.getString(c.getColumnIndex(CategoryTable.GUID));
-        model.unitsLabelId = ((UnitLabelModel) this.unitsLabel.getSelectedItem()).guid;
 
+        UnitLabelModel unitLabel = (UnitLabelModel) this.unitsLabel.getSelectedItem();
+        model.unitsLabelId = unitLabel.guid;
+        model.unitsLabel = unitLabel.shortcut;
         if (TextUtils.isEmpty(model.unitsLabelId) && TextUtils.isEmpty(model.unitsLabel)) {
             model.unitsLabel = "pcs";
         }
