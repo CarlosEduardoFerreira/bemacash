@@ -1607,6 +1607,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             prepaidList = list;
                             prepaidCount = prepaidList.size();
                             successfullCCtransactionModels = transactionModels;
+
                             OnPrepaidBilling();
                         }
 
@@ -1618,7 +1619,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
                         @Override
                         public void onUpdateOrderList() {
-                            getSupportLoaderManager().restartLoader(LOADER_ORDER_TITLE, null, orderInfoLoader);
+                            isPaying = false;
+                            completeOrder();
+                            checkOfflineMode();
+                            getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
                         }
                     });
             setCallback(processor);
