@@ -189,7 +189,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
         if (prepaidReleaseResults != null)
             for (PrepaidReleaseResult result : prepaidReleaseResults) {
-                if(result.errorMSG == null) {
+                if(Integer.parseInt(result.error) == 200) {
                     if (result.receipt != null) {
                         String[] prints = getFormattedLine(result.receipt);
                         for (String line : prints) {
