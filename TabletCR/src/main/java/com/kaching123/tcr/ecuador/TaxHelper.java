@@ -18,7 +18,7 @@ public class TaxHelper {
 
     public static String getItemTaxGroupDisplayText(Cursor cursor) {
         String displayText = "";
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             TaxGroupModel model = new TaxGroupModel(cursor);
             displayText = "(" + _decimal(model.tax) + " %) " + model.title;
             if (cursor.moveToNext()) {

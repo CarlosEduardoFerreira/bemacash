@@ -52,9 +52,8 @@ public class EditEcuadorItemActivity extends EditItemActivity {
                         .where(TaxGroupTable.GUID + " = ?", model.taxGroupGuid)
                         .build(this);
         } else if (TextUtils.isEmpty(model.taxGroupGuid2)) {
-            return CursorLoaderBuilder.forUri(TAX_GROUP_URI)
-                    .where(TaxGroupTable.IS_DEFAULT + " = ?", 1)
-                    .build(this);
+            taxGroupDefault.setText(TaxHelper.getItemTaxGroupDisplayText(null));
+            return null;
         } else return null;
     }
 
@@ -64,8 +63,9 @@ public class EditEcuadorItemActivity extends EditItemActivity {
         taxGroupDefault.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean hasStoreTaxOnly = TextUtils.isEmpty(model.taxGroupGuid) && TextUtils.isEmpty(model.taxGroupGuid2);
                 ChooseTaxGroupsDialog.show(EditEcuadorItemActivity.this, model.taxGroupGuid,
-                        model.taxGroupGuid2, new ChooseTaxGroupsDialog.ChooseTaxCallback() {
+                        model.taxGroupGuid2, hasStoreTaxOnly, new ChooseTaxGroupsDialog.ChooseTaxCallback() {
                             @Override
                             public void onTaxGroupsChosen(TaxGroupModel model1, TaxGroupModel model2) {
                                 if (model1 != null) {
@@ -88,6 +88,12 @@ public class EditEcuadorItemActivity extends EditItemActivity {
 
     @Override
     protected void onTaxLoaded(Cursor cursor) {
+        if (cursor.moveToFirst()) {
+            model.taxGroupGuid = new TaxGroupModel(cursor).guid;
+            if (cursor.moveToNext()) {
+                model.taxGroupGuid2 = new TaxGroupModel(cursor).guid;
+            }
+        }
         taxGroupDefault.setText(TaxHelper.getItemTaxGroupDisplayText(cursor));
     }
 

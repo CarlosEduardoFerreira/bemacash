@@ -78,6 +78,7 @@ public abstract class AsyncCommand extends PublicGroundyTask {
         try {
             dbOperationResults = handleDbOperations(createDbOperations(), handleSqlCommand(createSqlCommand()));
         } catch (Exception e) {
+            Logger.e("dbOperationResults: " + e);
             return failed();
         }
         afterCommand(dbOperationResults);
@@ -146,7 +147,7 @@ public abstract class AsyncCommand extends PublicGroundyTask {
             return null;
         }
 
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
         if (localDbOperations != null)
             operations.addAll(localDbOperations);
@@ -172,7 +173,7 @@ public abstract class AsyncCommand extends PublicGroundyTask {
      */
     protected void afterCommand(ContentProviderResult[] dbOperationResults) {
 
-    };
+    }
 
     /**
      * prepare sql command to insert to external storage
@@ -182,18 +183,20 @@ public abstract class AsyncCommand extends PublicGroundyTask {
 
     /**
      * prepare local changes to insert to local storage
+     *
      * @return
      */
     protected abstract ArrayList<ContentProviderOperation> createDbOperations();
 
-   /* *//**
-     * @return object to store a list of ISqlCommand
+   /* */
+
+    /**
      * @param method
+     * @return object to store a list of ISqlCommand
      *//*
     protected BatchSqlCommand batch(String method) {
         return new BatchSqlCommand(method);
     }*/
-
     protected BatchSqlCommand batchDelete(String table) {
         return new BatchSqlCommand(JdbcFactory.METHOD_DELETE + JdbcFactory.getApiMethod(table));
     }
@@ -238,7 +241,8 @@ public abstract class AsyncCommand extends PublicGroundyTask {
         private ISqlCommand sqlCmd;
         private ArrayList<ContentProviderOperation> localDbOperations;
 
-        public SyncResult() {}
+        public SyncResult() {
+        }
 
         protected SyncResult(ISqlCommand sqlCmd, ArrayList<ContentProviderOperation> localDbOperations) {
             this.sqlCmd = sqlCmd;

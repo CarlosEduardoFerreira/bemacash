@@ -55,6 +55,9 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
     @FragmentArg
     protected String modelGuidSecond;
 
+    @FragmentArg
+    protected boolean hasStoreTaxOnly;
+
     private List<TaxGroupModel> models = new ArrayList<>(2);
 
     @ViewById(R.id.list)
@@ -178,7 +181,7 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
                 if (TextUtils.isEmpty(modelGuidFirst)) {
                     if (!TextUtils.isEmpty(modelGuidSecond)) {
                         holder.taxGroup.setChecked(true);
-                    } else if (!existDefauls) {
+                    } else if (!existDefauls || hasStoreTaxOnly) {
                         holder.taxGroup.setChecked(true);
                     }
                 }
@@ -189,7 +192,7 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
                 if (!TextUtils.isEmpty(modelGuidSecond) && taxModel.getGuid().equals(modelGuidSecond)) {
                     holder.taxGroup.setChecked(true);
                 }
-                if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond) && taxModel.isDefault) {
+                if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond) && taxModel.isDefault && !hasStoreTaxOnly) {
                     holder.taxGroup.setChecked(true);
                 }
             }
@@ -208,11 +211,12 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
         }
     }
 
-    public static void show(FragmentActivity activity, String modelId1, String modelId2, ChooseTaxCallback callback) {
+    public static void show(FragmentActivity activity, String modelId1, String modelId2, boolean hasStoreTaxOnly, ChooseTaxCallback callback) {
         DialogUtil.show(activity, DIALOG_NAME, ChooseTaxGroupsDialog_
                 .builder()
                 .modelGuidFirst(modelId1)
                 .modelGuidSecond(modelId2)
+                .hasStoreTaxOnly(hasStoreTaxOnly)
                 .build()
                 .setCallback(callback));
     }

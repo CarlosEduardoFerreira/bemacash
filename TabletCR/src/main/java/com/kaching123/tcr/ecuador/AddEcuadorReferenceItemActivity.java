@@ -3,6 +3,7 @@ package com.kaching123.tcr.ecuador;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
@@ -23,6 +24,8 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 @EActivity(R.layout.inventory_reference_item_activity)
 public class AddEcuadorReferenceItemActivity extends AddReferenceItemActivity {
 
+    private boolean hasStoreTaxOnly;
+
     @Override
     protected void initTaxes() {
         taxGroupDefault.setVisibility(View.VISIBLE);
@@ -30,7 +33,7 @@ public class AddEcuadorReferenceItemActivity extends AddReferenceItemActivity {
             @Override
             public void onClick(View v) {
                 ChooseTaxGroupsDialog.show(AddEcuadorReferenceItemActivity.this, model.taxGroupGuid,
-                        model.taxGroupGuid2, new ChooseTaxGroupsDialog.ChooseTaxCallback() {
+                        model.taxGroupGuid2, hasStoreTaxOnly, new ChooseTaxGroupsDialog.ChooseTaxCallback() {
                             @Override
                             public void onTaxGroupsChosen(TaxGroupModel model1, TaxGroupModel model2) {
                                 if (model1 != null) {
@@ -44,6 +47,7 @@ public class AddEcuadorReferenceItemActivity extends AddReferenceItemActivity {
                                     model.taxGroupGuid2 = null;
                                 }
                                 taxGroupDefault.setText(displayText);
+                                hasStoreTaxOnly = TextUtils.isEmpty(model.taxGroupGuid) && TextUtils.isEmpty(model.taxGroupGuid2);
                             }
                         });
             }
@@ -60,6 +64,12 @@ public class AddEcuadorReferenceItemActivity extends AddReferenceItemActivity {
 
     @Override
     protected void onTaxLoaded(Cursor cursor) {
+        if (cursor.moveToFirst()) {
+            model.taxGroupGuid = new TaxGroupModel(cursor).guid;
+            if (cursor.moveToNext()) {
+                model.taxGroupGuid2 = new TaxGroupModel(cursor).guid;
+            }
+        }
         taxGroupDefault.setText(TaxHelper.getItemTaxGroupDisplayText(cursor));
     }
 
