@@ -39,6 +39,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String CREATE_DATE = "CREATE_DATE";
     private static final String CONSENT_EMAIL = "CONSENT_EMAIL";
     private static final String NOTES = "NOTES";
+    private static final String CUSTOMER_IDENTIFICATION = "CUSTOMER_IDENTIFICATION";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -57,7 +58,8 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getBoolean(SEX),
                 _jdbcDate(rs.getTimestamp(CREATE_DATE)),
                 rs.getBoolean(CONSENT_EMAIL),
-                rs.getString(NOTES))
+                rs.getString(NOTES),
+                rs.getString(CUSTOMER_IDENTIFICATION))
                 .toValues();
     }
 
@@ -78,7 +80,8 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getBoolean(SEX),
                 rs.getDate(CREATE_DATE),
                 rs.getBoolean(CONSENT_EMAIL),
-                rs.getString(NOTES));
+                rs.getString(NOTES),
+                rs.getString(CUSTOMER_IDENTIFICATION));
     }
 
     @Override
@@ -109,6 +112,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(CREATE_DATE, model.createTime)
                 .add(CONSENT_EMAIL, model.consentPromotions)
                 .add(NOTES, model.notes)
+                .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -128,6 +132,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(SEX, model.sex)
                 .add(CONSENT_EMAIL, model.consentPromotions)
                 .add(NOTES, model.notes)
+                .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

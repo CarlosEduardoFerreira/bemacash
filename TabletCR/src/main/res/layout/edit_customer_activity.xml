@@ -6,18 +6,18 @@
     android:layout_height="match_parent">
 
     <TextView
-        style="@style/EditItem.Table.Label"
-        android:text="@string/unavailable_edit_option_message"
         android:id="@+id/availability_message"
+        style="@style/EditItem.Table.Label"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:text="@string/unavailable_edit_option_message" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/availability_message">
+        android:layout_below="@+id/availability_message"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -32,8 +32,8 @@
                 android:orientation="horizontal">
 
                 <TableLayout
-                    android:layout_height="match_parent"
                     android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1">
 
                     <TextView
@@ -42,11 +42,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/edit_item_row_margin_top"
                         android:layout_marginLeft="0dp"
+                        android:background="@drawable/inventory_title_line"
+                        android:drawableLeft="@drawable/user_information"
+                        android:drawablePadding="8dp"
                         android:paddingBottom="8dp"
                         android:paddingLeft="4dp"
-                        android:drawablePadding="8dp"
-                        android:drawableLeft="@drawable/user_information"
-                        android:background="@drawable/inventory_title_line"
                         android:text="@string/customer_label_personal_info" />
 
                     <TableRow
@@ -62,15 +62,15 @@
                         </FrameLayout>
 
                         <EditText
-                            style="@style/EditItem.Table.Edittext"
                             android:id="@+id/first_name"
+                            style="@style/EditItem.Table.Edittext"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:maxLength="@integer/name_max_length"
-                            android:singleLine="true"
                             android:inputType="textPersonName"
-                            android:nextFocusDown="@+id/last_name" />
+                            android:maxLength="@integer/name_max_length"
+                            android:nextFocusDown="@+id/last_name"
+                            android:singleLine="true" />
 
                     </TableRow>
 
@@ -87,15 +87,15 @@
                         </FrameLayout>
 
                         <EditText
-                            style="@style/EditItem.Table.Edittext"
                             android:id="@+id/last_name"
+                            style="@style/EditItem.Table.Edittext"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:maxLength="@integer/name_max_length"
-                            android:singleLine="true"
                             android:inputType="textPersonName"
-                            android:nextFocusDown="@+id/email" />
+                            android:maxLength="@integer/name_max_length"
+                            android:nextFocusDown="@+id/email"
+                            android:singleLine="true" />
 
                     </TableRow>
 
@@ -113,6 +113,28 @@
 
                         <Spinner
                             android:id="@+id/sex_spinner"
+                            style="@style/EditItem.Table.Edittext"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout style="@style/EditItem.Table.LabelLayout">
+
+                            <TextView
+                                style="@style/EditItem.Table.Label"
+                                android:text="@string/customer_label_identification" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/identification"
+                            style="@style/EditItem.Table.Edittext"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1" />
@@ -151,8 +173,8 @@
                 android:layout_weight="1">
 
                 <TableLayout
-                    android:layout_height="match_parent"
                     android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1">
 
                     <TableRow
@@ -168,27 +190,27 @@
                         </FrameLayout>
 
                         <EditText
-                            style="@style/EditItem.Table.Edittext"
-                            android:background="@drawable/gradient"
                             android:id="@+id/notes"
+                            style="@style/EditItem.Table.Edittext"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:background="@drawable/gradient"
                             android:inputType="textMultiLine"
+                            android:maxLength="@integer/notes_max_length"
                             android:maxLines="@integer/notes_max_lines"
                             android:minLines="@integer/notes_min_lines"
-                            android:maxLength="@integer/notes_max_length"
-                            android:scrollbars="vertical"
-                            android:nextFocusDown="@+id/street" />
+                            android:nextFocusDown="@+id/street"
+                            android:scrollbars="vertical" />
                     </TableRow>
                 </TableLayout>
             </LinearLayout>
         </LinearLayout>
 
         <TableLayout
-            android:layout_marginLeft="@dimen/edit_item_table_1024_768__margin_left"
-            android:layout_height="match_parent"
             android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/edit_item_table_1024_768__margin_left"
             android:layout_weight="1">
 
             <TextView
@@ -197,11 +219,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/edit_item_row_margin_top"
                 android:layout_marginLeft="0dp"
+                android:background="@drawable/inventory_title_line"
+                android:drawableLeft="@drawable/user_information"
+                android:drawablePadding="8dp"
                 android:paddingBottom="8dp"
                 android:paddingLeft="4dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/user_information"
-                android:background="@drawable/inventory_title_line"
                 android:text="@string/customer_label_contacts" />
 
             <TableRow
@@ -217,15 +239,15 @@
                 </FrameLayout>
 
                 <EditText
-                    style="@style/EditItem.Table.Edittext"
                     android:id="@+id/email"
+                    style="@style/EditItem.Table.Edittext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:singleLine="true"
                     android:inputType="textEmailAddress"
                     android:maxLength="@integer/email_max_length"
-                    android:nextFocusDown="@+id/phone" />
+                    android:nextFocusDown="@+id/phone"
+                    android:singleLine="true" />
             </TableRow>
 
             <TableRow
@@ -241,23 +263,23 @@
                 </FrameLayout>
 
                 <EditText
-                    style="@style/EditItem.Table.Edittext"
                     android:id="@+id/phone"
+                    style="@style/EditItem.Table.Edittext"
                     android:layout_width="0dp"
-                    android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="phone"
                     android:maxLength="@integer/phone_max_length"
-                    android:nextFocusDown="@+id/street" />
+                    android:nextFocusDown="@+id/street"
+                    android:singleLine="true" />
             </TableRow>
 
         </TableLayout>
 
         <TableLayout
-            android:layout_marginLeft="@dimen/edit_item_table_1024_768__margin_left"
-            android:layout_height="match_parent"
             android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/edit_item_table_1024_768__margin_left"
             android:layout_weight="1">
 
             <TextView
@@ -266,11 +288,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/edit_item_row_margin_top"
                 android:layout_marginLeft="0dp"
+                android:background="@drawable/inventory_title_line"
+                android:drawableLeft="@drawable/user_information"
+                android:drawablePadding="8dp"
                 android:paddingBottom="8dp"
                 android:paddingLeft="4dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/user_information"
-                android:background="@drawable/inventory_title_line"
                 android:text="@string/customer_label_address" />
 
             <TableRow
@@ -286,15 +308,15 @@
                 </FrameLayout>
 
                 <EditText
-                    style="@style/EditItem.Table.Edittext"
                     android:id="@+id/street"
+                    style="@style/EditItem.Table.Edittext"
                     android:layout_width="0dp"
-                    android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="textPostalAddress"
                     android:maxLength="@integer/address_max_length"
-                    android:nextFocusDown="@+id/complementary" />
+                    android:nextFocusDown="@+id/complementary"
+                    android:singleLine="true" />
             </TableRow>
 
             <TableRow
@@ -310,15 +332,15 @@
                 </FrameLayout>
 
                 <EditText
-                    style="@style/EditItem.Table.Edittext"
                     android:id="@+id/complementary"
+                    style="@style/EditItem.Table.Edittext"
                     android:layout_width="0dp"
-                    android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="textPostalAddress"
                     android:maxLength="@integer/address_max_length"
-                    android:nextFocusDown="@+id/city" />
+                    android:nextFocusDown="@+id/city"
+                    android:singleLine="true" />
             </TableRow>
 
             <TableRow
@@ -334,15 +356,15 @@
                 </FrameLayout>
 
                 <EditText
-                    style="@style/EditItem.Table.Edittext"
                     android:id="@+id/city"
+                    style="@style/EditItem.Table.Edittext"
                     android:layout_width="0dp"
-                    android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="textPostalAddress"
                     android:maxLength="@integer/address_max_length"
-                    android:nextFocusDown="@+id/state" />
+                    android:nextFocusDown="@+id/state"
+                    android:singleLine="true" />
             </TableRow>
 
             <TableRow
@@ -358,15 +380,15 @@
                 </FrameLayout>
 
                 <EditText
-                    style="@style/EditItem.Table.Edittext"
                     android:id="@+id/state"
+                    style="@style/EditItem.Table.Edittext"
                     android:layout_width="0dp"
-                    android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="textPostalAddress"
                     android:maxLength="@integer/address_max_length"
-                    android:nextFocusDown="@+id/country" />
+                    android:nextFocusDown="@+id/country"
+                    android:singleLine="true" />
             </TableRow>
 
             <TableRow
@@ -382,15 +404,15 @@
                 </FrameLayout>
 
                 <EditText
-                    style="@style/EditItem.Table.Edittext"
                     android:id="@+id/country"
+                    style="@style/EditItem.Table.Edittext"
                     android:layout_width="0dp"
-                    android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="textPostalAddress"
                     android:maxLength="@integer/address_max_length"
-                    android:nextFocusDown="@+id/zip" />
+                    android:nextFocusDown="@+id/zip"
+                    android:singleLine="true" />
             </TableRow>
 
             <TableRow
@@ -406,14 +428,14 @@
                 </FrameLayout>
 
                 <EditText
-                    style="@style/EditItem.Table.Edittext"
                     android:id="@+id/zip"
+                    style="@style/EditItem.Table.Edittext"
                     android:layout_width="0dp"
-                    android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="textPostalAddress"
-                    android:maxLength="@integer/address_max_length" />
+                    android:maxLength="@integer/address_max_length"
+                    android:singleLine="true" />
             </TableRow>
 
         </TableLayout>
@@ -421,16 +443,16 @@
     </LinearLayout>
 
     <Button
-        style="@style/LocalizableButton.Green"
-        android:text="@string/btn_save"
-        android:textSize="26sp"
-        android:paddingBottom="6dp"
         android:id="@+id/save_button"
+        style="@style/LocalizableButton.Green"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/save_btn_bg"
-        android:layout_marginTop="10dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/save_btn_bg"
+        android:paddingBottom="6dp"
+        android:text="@string/btn_save"
+        android:textSize="26sp" />
 
 </RelativeLayout>

@@ -127,6 +127,27 @@
 
                             <TextView
                                 style="@style/EditItem.Table.Label"
+                                android:text="@string/customer_label_identification" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/identification"
+                            style="@style/EditItem.Table.Edittext"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout style="@style/EditItem.Table.LabelLayout">
+
+                            <TextView
+                                style="@style/EditItem.Table.Label"
                                 android:text="@string/customer_label_consent_promotions" />
 
                         </FrameLayout>
@@ -147,7 +168,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_weight="0.6">
 
                 <TableLayout
                     android:layout_height="match_parent"
