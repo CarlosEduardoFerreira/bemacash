@@ -115,6 +115,8 @@ public class ShopInfoViewJdbcConverter {
 
     public static final String COUNTRY_ID = "COUNTRY_ID";
 
+    public static final String CUSTOMER_POPUP_SCREEN_ENABLED = "CUSTOMER_POPUP_SCREEN";
+
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
                 rs.getLong(ID),
@@ -182,7 +184,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getString(TERMINAL_PASSWORD),
                 rs.getBoolean(REMOVE_CHECK_AND_OFFLINECREDIT),
                 rs.getLong(PLAN_ID),
-                rs.getLong(COUNTRY_ID)
+                rs.getLong(COUNTRY_ID),
+                rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED)
         );
     }
 
@@ -253,7 +256,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getString(TERMINAL_PASSWORD),
                 rs.getBoolean(REMOVE_CHECK_AND_OFFLINECREDIT),
                 rs.getLong(PLAN_ID),
-                rs.getLong(COUNTRY_ID));
+                rs.getLong(COUNTRY_ID),
+                rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED));
     }
 
     public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException {
@@ -360,6 +364,8 @@ public class ShopInfoViewJdbcConverter {
 
         public final long countryId;
 
+        public final boolean customerPopupScreenEnabled;
+
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
@@ -421,7 +427,8 @@ public class ShopInfoViewJdbcConverter {
                         String terminalPassword,
                         boolean removeCheckAndOfflineCredit,
                         long planId,
-                        long countryId) {
+                        long countryId,
+                        boolean customerPopupScreenEnabled) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -507,6 +514,8 @@ public class ShopInfoViewJdbcConverter {
 
             this.planId = planId;
             this.countryId = countryId;
+
+            this.customerPopupScreenEnabled = customerPopupScreenEnabled;
         }
 
     }

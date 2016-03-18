@@ -250,7 +250,8 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.terminalPassword().get(),
                     shopPref.removeCheckAndOfflineCredit().get(),
                     shopPref.planId().get(),
-                    shopPref.countryId().get());
+                    shopPref.countryId().get(),
+                    shopPref.customerPopupScreenEnabled().get());
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -588,6 +589,7 @@ public class TcrApplication extends MultiDexApplication {
                 .removeCheckAndOfflineCredit().put(info.removeCheckAndOfflineCredit)
                 .planId().put(info.planId)
                 .countryId().put(info.countryId)
+                .customerPopupScreenEnabled().put(info.customerPopupScreenEnabled)
                 .apply();
 
         setUsers();

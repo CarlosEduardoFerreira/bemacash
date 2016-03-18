@@ -302,6 +302,8 @@ public interface ShopPref {
 
     long countryId();
 
+    boolean customerPopupScreenEnabled();
+
     /**
      * freemium settings
      */
