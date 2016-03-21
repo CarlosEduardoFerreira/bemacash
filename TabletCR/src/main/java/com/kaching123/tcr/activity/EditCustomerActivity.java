@@ -18,14 +18,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
-
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.user.AddCustomerCommand;
 import com.kaching123.tcr.commands.store.user.AddCustomerCommand.BaseAddCustomerCallback;
@@ -40,6 +32,14 @@ import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -92,6 +92,8 @@ public class EditCustomerActivity extends SuperBaseActivity {
     @ViewById
     protected EditText zip;
     @ViewById
+    protected EditText identification;
+    @ViewById
     protected EditText notes;
     @ViewById
     protected Spinner sexSpinner;
@@ -128,6 +130,7 @@ public class EditCustomerActivity extends SuperBaseActivity {
         country.setEnabled(flag);
         zip.setEnabled(flag);
         notes.setEnabled(flag);
+        identification.setEnabled(flag);
         sexSpinner.setEnabled(flag);
         consentPromotions.setEnabled(flag);
         saveButton.setEnabled(flag);
@@ -176,6 +179,7 @@ public class EditCustomerActivity extends SuperBaseActivity {
         sexSpinner.setSelection(model.sex ? Sex.MALE.ordinal() : Sex.FEMALE.ordinal());
         consentPromotions.setChecked(model.consentPromotions);
         notes.setText(model.notes);
+        identification.setText(model.customerIdentification);
     }
 
     @Override
@@ -278,6 +282,7 @@ public class EditCustomerActivity extends SuperBaseActivity {
         model.sex = sexSpinner.getSelectedItem() == Sex.MALE;
         model.consentPromotions = consentPromotions.isChecked();
         model.notes = notes.getText().toString().trim();
+        model.customerIdentification = identification.getText().toString().trim();
     }
 
     private void setResult() {
