@@ -131,6 +131,7 @@ public class EditItemActivity extends BaseCommonItemActivity {
 
     @Override
     protected void adjustTaxGroup() {
+        super.adjustTaxGroup();
         if (!salableChBox.isChecked()) {
             model.taxGroupGuid = null;
             model.taxGroupGuid2 = null;
