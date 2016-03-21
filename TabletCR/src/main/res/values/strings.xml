@@ -1229,6 +1229,7 @@
     <string name="customer_label_first_name">First name</string>
     <string name="customer_label_last_name">Last name</string>
     <string name="customer_label_sex">Sex</string>
+    <string name="customer_label_identification">Customer identification</string>
     <string name="customer_label_email">Email</string>
     <string name="customer_label_phone">Phone</string>
     <string name="customer_label_notes">Notes</string>

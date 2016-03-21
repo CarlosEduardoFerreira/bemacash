@@ -499,7 +499,7 @@ public abstract class ShopStore {
     }
 
     @RawQuery(ItemTableAllColumns.QUERY_NAME)
-    public static interface ItemTableAllColumns{
+    public static interface ItemTableAllColumns {
 
         String QUERY_NAME = "item_table_all_columns";
 
@@ -1480,6 +1480,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String EMAIL = "email";
+
+        @Column(type = Column.Type.TEXT)
+        String CUSTOMER_IDENTIFICATION = "customer_identification";
 
         @Column(type = Column.Type.TEXT)
         String PHONE = "phone";
@@ -2636,7 +2639,7 @@ public abstract class ShopStore {
         String ITEM_DESCRIPTION = "ITEM_DESCRIPTION2";
         String CATEGORY_GUID = "CATEGORY_GUID2";
         String CATEGORY_TITLE = "CATEGORY_TITLE2";
-        String MODIFIERS_COUNT = " sum(case when " + "m." +  ModifierTable.TYPE + " = 0 then 1 else 0 end) as " + ItemExtView.MODIFIERS_COUNT;
+        String MODIFIERS_COUNT = " sum(case when " + "m." + ModifierTable.TYPE + " = 0 then 1 else 0 end) as " + ItemExtView.MODIFIERS_COUNT;
         String ADDONS_COUNT = " sum(case when " + "m." + ModifierTable.TYPE + " = 1 then 1 else 0 end) as " + ItemExtView.ADDONS_COUNT;
         String OPTIONALS_COUNT = " sum(case when " + "m." + ModifierTable.TYPE + " = 2 then 1 else 0 end) as " + ItemExtView.OPTIONAL_COUNT;
 
@@ -2949,7 +2952,7 @@ public abstract class ShopStore {
         String TABLE_SALE_ORDER = "sale_order_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({SaleItemTable.ITEM_GUID, SaleItemTable.ORDER_GUID, SaleItemTable.KITCHEN_PRINTED_QTY, SaleItemTable.QUANTITY })
+        @Columns({SaleItemTable.ITEM_GUID, SaleItemTable.ORDER_GUID, SaleItemTable.KITCHEN_PRINTED_QTY, SaleItemTable.QUANTITY})
         @Join(type = Join.Type.LEFT, joinTable = SaleItemTable.TABLE_NAME, joinColumn = SaleItemTable.ORDER_GUID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.GUID)
         String TABLE_SALE_ORDER_ITEM = "sale_order_item_table";
 
@@ -3277,6 +3280,7 @@ public abstract class ShopStore {
         String TABLE_TIPS = "tips_table";
 
     }
+
     @SimpleView(ComposerView.VIEW_NAME)
     public interface ComposerView {
 
@@ -3776,7 +3780,7 @@ public abstract class ShopStore {
 
 
                         + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM_COMPOSER_ITEM\'" + AS + SOURCE + FROM + "("
-                        + SELECT + ComposerTable.ITEM_CHILD_ID + AS + ITEM_GUID + coma +  ComposerTable.STORE_TRACKING_ENABLED + coma + ComposerTable.QUANTITY + multiply + ITEM_QUANTITY + AS + QUANTITY + coma
+                        + SELECT + ComposerTable.ITEM_CHILD_ID + AS + ITEM_GUID + coma + ComposerTable.STORE_TRACKING_ENABLED + coma + ComposerTable.QUANTITY + multiply + ITEM_QUANTITY + AS + QUANTITY + coma
                         + ComposerTable.ITEM_HOST_ID + coma + IBemaSyncTable.IS_DELETED + FROM + ComposerTable.TABLE_NAME + space + T1
                         + JOIN + "(" + SELECT + SaleItemTable.ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + AS + ITEM_QUANTITY + FROM + SaleItemTable.TABLE_NAME + ")" + T2
                         + ON + T2 + dot + SaleItemTable.ITEM_GUID + equals + T1 + dot + ComposerTable.ITEM_HOST_ID
@@ -3789,7 +3793,7 @@ public abstract class ShopStore {
                         + JOIN + "(" + SELECT + SaleAddonTable.ITEM_GUID + coma + SaleAddonTable.CHILD_ITEM_ID + AS + MOD_ID + coma + SaleAddonTable.CHILD_ITEM_QTY + AS + MOD_QTY + FROM + SaleAddonTable.TABLE_NAME + ")" + T2
                         + ON + T2 + dot + SaleAddonTable.ITEM_GUID + equals + T1 + dot + SaleItemTable.SALE_ITEM_GUID + AND + MOD_ID + IS + NOT + NULL
                         + JOIN + "(" + SELECT + ComposerTable.STORE_TRACKING_ENABLED
-                        + coma + ComposerTable.ITEM_CHILD_ID + AS + ITEM_GUID + coma + IBemaSyncTable.IS_DELETED + coma + ComposerTable.QUANTITY  + AS + COMPOSER_QUANTITY + coma
+                        + coma + ComposerTable.ITEM_CHILD_ID + AS + ITEM_GUID + coma + IBemaSyncTable.IS_DELETED + coma + ComposerTable.QUANTITY + AS + COMPOSER_QUANTITY + coma
                         + ComposerTable.ITEM_HOST_ID + FROM + ComposerTable.TABLE_NAME + ")" + T3
                         + ON + T3 + dot + IBemaSyncTable.IS_DELETED + " = 0" + AND + T3 + dot + ComposerTable.STORE_TRACKING_ENABLED + " = 1" + AND + T2 + dot + MOD_ID + equals + T3 + dot + ComposerTable.ITEM_HOST_ID
                         + WHERE + T1 + dot + SaleItemTable.ORDER_GUID + " = ?)" + TT4
@@ -3974,7 +3978,7 @@ public abstract class ShopStore {
                         FROM + "(" + SELECT + ComposerTable.ITEM_CHILD_ID + AS + ITEM_GUID + coma + ComposerTable.STORE_TRACKING_ENABLED + coma + ComposerTable.QUANTITY + multiply + ITEM_QUANTITY + AS + QUANTITY + coma
                         + ComposerTable.ITEM_HOST_ID + coma + IBemaSyncTable.IS_DELETED + coma + SaleItemTable.SALE_ITEM_GUID +
                         FROM + ComposerTable.TABLE_NAME + space + T1
-                        + JOIN + "(" + SELECT + SaleItemTable.ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + AS + ITEM_QUANTITY +coma
+                        + JOIN + "(" + SELECT + SaleItemTable.ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + AS + ITEM_QUANTITY + coma
                         + SaleItemTable.SALE_ITEM_GUID + FROM + SaleItemTable.TABLE_NAME + ")" + T2
                         + ON + T2 + dot + SaleItemTable.ITEM_GUID + equals + T1 + dot + ComposerTable.ITEM_HOST_ID
                         + WHERE + T1 + dot + ComposerTable.STORE_TRACKING_ENABLED + " = 1" + AND + T1 + dot + IBemaSyncTable.IS_DELETED + " = 0" + AND + T2 + dot
