@@ -15,6 +15,7 @@ import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.payment.HistoryDetailedOrderItemModel;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
@@ -82,11 +83,15 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
                             !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
-                            false
+                            c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 0 ? false : true
 
 
                     );
                     item.finalPrice = itemModel.finalGrossPrice.subtract(itemModel.finalDiscount).add(itemModel.finalTax);
+                    if(item.isPrepaidItem) {
+                        item.description = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.BillPaymentDescriptionTable.DESCRIPTION));
+                        item.productCode = c.getString(c.getColumnIndex(SaleOrderItemsView2.BillPaymentDescriptionTable.PREPAID_ORDER_ID));
+                    }
                     items.add(item);
                     saleItemsMap.put(saleItemGuid, item);
                     if (itemModel.itemGuid != null) {

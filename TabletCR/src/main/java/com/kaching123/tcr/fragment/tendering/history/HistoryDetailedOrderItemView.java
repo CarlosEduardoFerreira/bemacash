@@ -9,10 +9,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EViewGroup;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.tendering.history.CheckBoxHeader.ICheckBoxListener;
@@ -20,6 +16,11 @@ import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.payment.HistoryDetailedOrderItemModel;
 import com.kaching123.tcr.util.CalculationUtil;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 
@@ -130,13 +131,13 @@ public class HistoryDetailedOrderItemView extends FrameLayout implements ICheckB
 
         if (saleItemModel.isPcsUnit) {
             showInteger(this.qty, itemModel.qty);
-            showInteger(this.maxRefundQty, availableQty);
-            showInteger(this.qtyRefund, historyItem.wantedQty);
+            showInteger(this.maxRefundQty, itemModel.isPrepaidItem ? itemModel.getFinalPrice() : availableQty);
+            showInteger(this.qtyRefund, itemModel.isPrepaidItem ? new BigDecimal(0) : historyItem.wantedQty);
 
         } else {
             showQuantityInteger(this.qty, itemModel.qty);
-            showQuantityInteger(this.maxRefundQty, availableQty);
-            showQuantityInteger(this.qtyRefund, historyItem.wantedQty);
+            showQuantityInteger(this.maxRefundQty, itemModel.isPrepaidItem ? new BigDecimal(0) : availableQty);
+            showQuantityInteger(this.qtyRefund, itemModel.isPrepaidItem ? new BigDecimal(0) :historyItem.wantedQty);
         }
 
         checkbox.setChecked(historyItem.wanted);
@@ -164,6 +165,10 @@ public class HistoryDetailedOrderItemView extends FrameLayout implements ICheckB
             checkbox.setClickable(true);
             /*checkbox.setChecked(true);*/
         }
+
+        //disenable refund for prepaid items
+        if(itemModel.isPrepaidItem)
+            checkbox.setEnabled(false);
 
         return this;
     }

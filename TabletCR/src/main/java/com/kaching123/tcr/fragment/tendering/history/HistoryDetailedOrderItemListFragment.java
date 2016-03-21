@@ -131,8 +131,21 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
     public void onLoadFinished(Loader<List<HistoryDetailedOrderItemModel>> listLoader, List<HistoryDetailedOrderItemModel> saleOrderModels) {
         Logger.d("HistoryDetailedOrderItemListFragment.onLoadFinished(): count " + (saleOrderModels == null ? 0 : saleOrderModels.size()));
         adapter.changeCursor(saleOrderModels);
+        boolean hasPrepaid = false;
+        for(HistoryDetailedOrderItemModel model : saleOrderModels)
+        {
+            if(model.saleItemModel.isPrepaidItem)
+            {
+                hasPrepaid = true;
+                break;
+            }
+        }
         if (firstLoad)
             header.checkbox.setChecked(true);
+        if(hasPrepaid) {
+            header.checkbox.setChecked(false);
+            header.checkbox.setEnabled(false);
+        }
         firstLoad = false;
         fireAmountChanged();
     }
