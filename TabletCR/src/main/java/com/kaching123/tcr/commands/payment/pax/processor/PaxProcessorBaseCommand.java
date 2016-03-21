@@ -101,7 +101,7 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
     public static final String ECRREFNUM_DEFAULT = "1";
 
     private static final int Half_Min = 30000;
-    public static final int CONNECTION_TIMEOUT = 1 * Half_Min;
+    public static final int CONNECTION_TIMEOUT = 4 * Half_Min;
 
     protected static final String ARG_DATA_PAX = "ARG_DATA_PAX";
 
