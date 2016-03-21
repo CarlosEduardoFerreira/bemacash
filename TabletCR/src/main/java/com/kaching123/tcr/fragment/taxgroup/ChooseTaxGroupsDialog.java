@@ -166,6 +166,7 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
         public void bindView(View v, Context context, Cursor c) {
             final TaxGroupModel taxModel = new TaxGroupModel(c);
             final UIHolder holder = (UIHolder) v.getTag();
+            holder.taxGroup.setChecked(false);
             holder.taxGroup.setText("(" + _decimal(taxModel.tax) + "%) " + taxModel.title);
             holder.taxGroup.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
