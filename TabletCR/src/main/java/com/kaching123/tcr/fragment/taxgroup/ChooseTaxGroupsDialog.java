@@ -11,6 +11,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -37,9 +38,6 @@ import java.util.List;
 
 import static com.kaching123.tcr.util.ContentValuesUtilBase._decimal;
 
-/**
- * Created by idyuzheva on 03.03.2016.
- */
 @EFragment
 public class ChooseTaxGroupsDialog extends StyledDialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -136,16 +134,10 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
 
     private class TaxGroupsAdapter extends ResourceCursorAdapter {
 
+        private int performedOperations = 0;
+
         public TaxGroupsAdapter(Context context) {
             super(context, R.layout.tax_group_choose_item_view, null, false);
-        }
-
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            TaxGroupModel taxModel = new TaxGroupModel(cursor);
-            View v = super.newView(context, cursor, parent);
-            v.setTag(new UIHolder((CheckBox) v.findViewById(R.id.tax_group_item)));
-            return v;
         }
 
         @Override
@@ -163,40 +155,55 @@ public class ChooseTaxGroupsDialog extends StyledDialogFragment implements Loade
         }
 
         @Override
-        public void bindView(View v, Context context, Cursor c) {
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            View view = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                    .inflate(R.layout.tax_group_choose_item_view, parent, false);
+            UIHolder holder = new UIHolder((CheckBox) view.findViewById(R.id.tax_group_item));
+            view.setTag(holder);
+            return view;
+        }
+
+        @Override
+        public void bindView(View v, Context context, final Cursor c) {
             final TaxGroupModel taxModel = new TaxGroupModel(c);
             final UIHolder holder = (UIHolder) v.getTag();
-            holder.taxGroup.setChecked(false);
             holder.taxGroup.setText("(" + _decimal(taxModel.tax) + "%) " + taxModel.title);
             holder.taxGroup.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        models.add(taxModel);
+                        if (!models.contains(taxModel)) {
+                            models.add(taxModel);
+                            performedOperations++;
+                        }
                     } else {
                         models.remove(taxModel);
+                        performedOperations++;
                     }
                 }
             });
-            if (isStoreTax(taxModel)) {
-                if (TextUtils.isEmpty(modelGuidFirst)) {
-                    if (!TextUtils.isEmpty(modelGuidSecond)) {
+            if (performedOperations < 2) {
+                if (isStoreTax(taxModel)) {
+                    if (TextUtils.isEmpty(modelGuidFirst)) {
+                        if (!TextUtils.isEmpty(modelGuidSecond)) {
+                            holder.taxGroup.setChecked(true);
+                        } else if (!existDefauls || hasStoreTaxOnly) {
+                            holder.taxGroup.setChecked(true);
+                        }
+                    }
+                } else {
+                    if (!TextUtils.isEmpty(modelGuidFirst) && taxModel.getGuid().equals(modelGuidFirst)) {
                         holder.taxGroup.setChecked(true);
-                    } else if (!existDefauls || hasStoreTaxOnly) {
+                    }
+                    if (!TextUtils.isEmpty(modelGuidSecond) && taxModel.getGuid().equals(modelGuidSecond)) {
+                        holder.taxGroup.setChecked(true);
+                    }
+                    if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond) && taxModel.isDefault && !hasStoreTaxOnly) {
                         holder.taxGroup.setChecked(true);
                     }
                 }
-            } else {
-                if (!TextUtils.isEmpty(modelGuidFirst) && taxModel.getGuid().equals(modelGuidFirst)) {
-                    holder.taxGroup.setChecked(true);
-                }
-                if (!TextUtils.isEmpty(modelGuidSecond) && taxModel.getGuid().equals(modelGuidSecond)) {
-                    holder.taxGroup.setChecked(true);
-                }
-                if (TextUtils.isEmpty(modelGuidFirst) && TextUtils.isEmpty(modelGuidSecond) && taxModel.isDefault && !hasStoreTaxOnly) {
-                    holder.taxGroup.setChecked(true);
-                }
             }
+            holder.taxGroup.setChecked(models.contains(taxModel));
         }
     }
 
