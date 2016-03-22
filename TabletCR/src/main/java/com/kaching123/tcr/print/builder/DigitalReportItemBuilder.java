@@ -452,7 +452,7 @@ public class DigitalReportItemBuilder extends BaseDigitalBuilder implements IRep
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String opratorTitle, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String opratorTitle, String operatorName, String customerTitle, String customerIdentification) {
 
     }
 }

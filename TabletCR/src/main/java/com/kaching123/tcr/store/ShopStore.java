@@ -2713,7 +2713,7 @@ public abstract class ShopStore {
         String TABLE_OPERATOR = "operator_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({CustomerTable.GUID, CustomerTable.FISRT_NAME, CustomerTable.LAST_NAME, CustomerTable.PHONE, CustomerTable.EMAIL})
+        @Columns({CustomerTable.GUID, CustomerTable.FISRT_NAME, CustomerTable.LAST_NAME, CustomerTable.PHONE, CustomerTable.EMAIL, CustomerTable.CUSTOMER_IDENTIFICATION})
         @Join(type = Join.Type.LEFT, joinTable = CustomerTable.TABLE_NAME, joinColumn = CustomerTable.GUID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.CUSTOMER_GUID)
         String TABLE_CUSTOMER = "customer_table";
 

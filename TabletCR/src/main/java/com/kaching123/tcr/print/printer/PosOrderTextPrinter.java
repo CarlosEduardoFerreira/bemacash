@@ -1,10 +1,11 @@
 package com.kaching123.tcr.print.printer;
 
+import android.text.TextUtils;
+
 import com.kaching123.pos.printer.PrintLineAction;
 import com.kaching123.pos.util.ITextPrinter;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import static com.kaching123.tcr.print.FormatterUtil.commaPriceFormat;
  * Created by gdubina on 03.12.13.
  */
 public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrinter {
-    public static final String[] LABELS = {"LB","OZ"};
+    public static final String[] LABELS = {"LB", "OZ"};
 
     protected String qtyHolderText;
     protected static final int SHIFTED_NUMBER_LENGTH = 19;
@@ -95,8 +96,8 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
     }
 
     @Override
-    public void add(String title, BigDecimal qty, BigDecimal price, BigDecimal unitPrice, String unitsLabel,boolean isUnitPrice, List<String> units) {
-        if(!isUnitPrice && qty.compareTo(BigDecimal.ONE) == 0)
+    public void add(String title, BigDecimal qty, BigDecimal price, BigDecimal unitPrice, String unitsLabel, boolean isUnitPrice, List<String> units) {
+        if (!isUnitPrice && qty.compareTo(BigDecimal.ONE) == 0)
             add(title, commaPriceFormat(price));
         else {
             add(new PrintLineAction(formatStringTitle(title)));
@@ -146,10 +147,13 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName, String customerTitle, String customerIdentification) {
         if (orderPrefix != null && !orderPrefix.equalsIgnoreCase(""))
             add(new PrintLineAction(formatString_Header(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_DATE_LEN, orderPrefix + " " + registerTitle + "-" + orderSeqNum, dateFormat.format(date))));
-        header(operatorTitle,operatorName);
+        header(operatorTitle, operatorName);
+        if (!TextUtils.isEmpty(customerIdentification)) {
+            header(customerTitle, customerIdentification);
+        }
     }
 
     @Override

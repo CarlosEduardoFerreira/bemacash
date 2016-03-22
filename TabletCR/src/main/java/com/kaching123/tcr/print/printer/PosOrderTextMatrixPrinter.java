@@ -1,5 +1,7 @@
 package com.kaching123.tcr.print.printer;
 
+import android.text.TextUtils;
+
 import com.kaching123.pos.printer.PrintLineAction;
 import com.kaching123.pos.util.ITextPrinter;
 
@@ -128,10 +130,15 @@ public class PosOrderTextMatrixPrinter extends PosOrderTextPrinter implements IT
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date,
+                       String operatorTitle, String operatorName,
+                       String customerTitle, String customerIdentification) {
         if (orderPrefix != null && !orderPrefix.equalsIgnoreCase(""))
             add(new PrintLineAction(formatString_Header(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_DATE_LEN, orderPrefix + " " + registerTitle + "-" + orderSeqNum, dateFormat.format(date))));
-        header(operatorTitle,operatorName);
+        header(operatorTitle, operatorName);
+        if (!TextUtils.isEmpty(customerIdentification)) {
+            header(customerTitle, customerIdentification);
+        }
     }
 
     @Override

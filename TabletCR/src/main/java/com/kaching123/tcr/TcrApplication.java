@@ -465,6 +465,10 @@ public class TcrApplication extends MultiDexApplication {
         setUsers(prepaidTid, blackstonePaymentCid);
     }
 
+    public boolean payWithCustomerEnabled() {
+        return shopPref.customerPopupScreenEnabled().get();
+    }
+
     public synchronized void setUsers(int prepaidTid, int blackstonePaymentCid) {
         prepaidUser = new PrepaidUser(prepaidUser.getPassword(), prepaidUser.getMid(), prepaidTid);
         blackstoneUser = new User(blackstoneUser.getUsername(), blackstoneUser.getPassword(), blackstoneUser.getMid(), blackstonePaymentCid, blackstoneUser.getAppkey(), blackstoneUser.getApptype());

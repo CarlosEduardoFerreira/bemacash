@@ -62,4 +62,24 @@ public class TaxGroupModel implements IValueModel, Serializable {
         return values;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TaxGroupModel that = (TaxGroupModel) o;
+
+        if (guid != null ? !guid.equals(that.guid) : that.guid != null) return false;
+        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        return !(tax != null ? !tax.equals(that.tax) : that.tax != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = guid != null ? guid.hashCode() : 0;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (tax != null ? tax.hashCode() : 0);
+        return result;
+    }
 }

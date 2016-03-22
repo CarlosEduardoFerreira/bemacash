@@ -9,13 +9,13 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.IHeaderFooterPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.ScannerBaseActivity;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.CustomerTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.OperatorTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
@@ -23,7 +23,6 @@ import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -123,7 +122,8 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
                         SaleOrderTable.CREATE_TIME,
                         OperatorTable.FIRST_NAME,
                         OperatorTable.LAST_NAME,
-                        SaleOrderTable.ORDER_TYPE)
+                        SaleOrderTable.ORDER_TYPE,
+                        CustomerTable.CUSTOMER_IDENTIFICATION)
                 .where(SaleOrderTable.GUID + " = ?", orderGuid)
                 .perform(context);
 
@@ -136,6 +136,10 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         long createTime = c.getLong(2);
         String operatorName = concatFullname(c.getString(3), c.getString(4));
         OrderType orderType = _orderType(c, 5);
+        String customerIdentification = c.getString(6);
+        if (TextUtils.isEmpty(customerIdentification)) {
+            customerIdentification = TcrApplication.isEcuadorVersion() ? "9999999999999" : "";
+        }
         c.close();
 
         orderNumber = registerTitle + "-" + seqNum;
@@ -168,9 +172,10 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 //        else
 //            printerWrapper.header("", "", 0, new Date(createTime), operatorName);
 
-        printerWrapper.header(context.getString(R.string.printer_order_num), registerTitle, seqNum, new Date(createTime),context.getString(R.string.printer_cashier) , operatorName != null ? operatorName : "");
+        printerWrapper.header(context.getString(R.string.printer_order_num), registerTitle, seqNum,
+                new Date(createTime), context.getString(R.string.printer_cashier), operatorName != null ? operatorName : "",
+                context.getString(R.string.printer_customer_identification), customerIdentification);
         printMidTid(context, app, printerWrapper, orderType);
-
         if (title != null && !title.equalsIgnoreCase("ARG_ORDER_TITLE"))
             printerWrapper.header(context.getString(R.string.printer_guest), title);
 

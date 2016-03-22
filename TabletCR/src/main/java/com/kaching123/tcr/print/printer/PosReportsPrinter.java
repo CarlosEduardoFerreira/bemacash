@@ -192,7 +192,7 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName, String customerTitle, String ci) {
 
     }
 

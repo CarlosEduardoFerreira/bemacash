@@ -1,6 +1,7 @@
 package com.kaching123.tcr.print.printer;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.kaching123.pos.printer.PrintLineAction;
 import com.kaching123.pos.util.ISignaturePrinter;
@@ -83,10 +84,13 @@ public class PosSignatureTextPrinter extends BasePosTextPrinter implements ISign
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date,String operatorTitle, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName, String customer, String ci) {
         add(new PrintLineAction(""));
         add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_DATE_LEN, orderPrefix + " " + registerTitle + "-" + orderSeqNum, dateFormat.format(date))));
-        header(operatorTitle,operatorName);
+        header(operatorTitle, operatorName);
+        if (!TextUtils.isEmpty(ci)) {
+            header(customer, ci);
+        }
     }
 
     @Override

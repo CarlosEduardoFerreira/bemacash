@@ -15,7 +15,6 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity;
-import com.kaching123.tcr.activity.ScannerBaseActivity;
 import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.commands.display.DisplayOrderCommand;
 import com.kaching123.tcr.commands.display.DisplayPartialTenderCommand;
@@ -38,6 +37,7 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickList
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.employee.EmployeeTipsFragmentDialog;
 import com.kaching123.tcr.fragment.employee.EmployeeTipsFragmentDialog.IAddTipsListener;
+import com.kaching123.tcr.fragment.tendering.CustomerPickerExtremeFragment;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
 import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase.ISaleProgressListener;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
@@ -77,7 +77,6 @@ import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
-import com.kaching123.tcr.model.payment.HistoryDetailedOrderItemModel;
 import com.kaching123.tcr.model.payment.PaymentMethod;
 import com.kaching123.tcr.model.payment.blackstone.pax.PaxTransaction;
 import com.kaching123.tcr.model.payment.blackstone.payment.ResponseBase;
@@ -133,7 +132,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
     private ArrayList<PrepaidReleaseResult> ReleaseResultList;
     private ArrayList<PrepaidReleaseResult> failReleaseResultList;
-    private final  int PREPAID_RELEASE_BILLING_SUCC = 200;
+    private final int PREPAID_RELEASE_BILLING_SUCC = 200;
 
     private static final Uri URI_SALE_ITEMS_PREPAID = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
 
@@ -181,8 +180,33 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
      */
     public PaymentProcessor init(final FragmentActivity context) {
         this.singleTenderEnabled = true;
-        proceedToTender(context, 0, singleTenderEnabled);
+        if (TcrApplication.get().payWithCustomerEnabled()) {
+            proceedToCpf(context);
+        } else {
+            proceedToTender(context, 0, singleTenderEnabled);
+        }
         return this;
+    }
+
+    private void proceedToCpf(final FragmentActivity context) {
+        CustomerPickerExtremeFragment.show(context, orderGuid, new CustomerPickerExtremeFragment.ExtremeCallback() {
+
+            @Override
+            public void onCancel() {
+                hide();
+                callback.onCancel();
+            }
+
+            @Override
+            public void onChosen(String email) {
+                hide();
+                proceedToTender(context, 0, singleTenderEnabled);
+            }
+
+            private void hide() {
+                CustomerPickerExtremeFragment.hide(context);
+            }
+        });
     }
 
     public PaymentProcessor callback(IPaymentProcessor callback) {
@@ -1363,8 +1387,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                             //todo onrefund
                             callback.onRefund(amount);
                         }
-                    }
-                    else
+                    } else
                         finish();
                 }
             }, transactions, kitchenPrintStatus, orderChange, gateWay, isPrinterTwoCopiesReceipt(), ReleaseResultList);

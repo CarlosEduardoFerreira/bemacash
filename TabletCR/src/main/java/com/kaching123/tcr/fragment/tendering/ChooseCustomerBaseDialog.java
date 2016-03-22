@@ -17,12 +17,6 @@ import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ItemClick;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.EditCustomerActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
@@ -38,6 +32,13 @@ import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
+
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 
@@ -59,7 +60,7 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
     @ViewById
     protected TextView customerFilter;
 
-    protected CustomerAdapter adapter;
+    protected ResourceCursorAdapter adapter;
 
     @FragmentArg
     protected ArrayList<PaymentTransactionModel> transactions;
@@ -115,9 +116,14 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
                         .getDimensionPixelOffset(R.dimen.holdon_dlg_width),
                 getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
 
-        listView.setAdapter(adapter = new CustomerAdapter(getActivity()));
+        setupAdapter();
         getLoaderManager().restartLoader(0, null, this);
     }
+
+    protected void setupAdapter() {
+        listView.setAdapter(adapter = new CustomerAdapter(getActivity()));
+    }
+
     protected ChooseCustomerBaseDialog setListener(emailSenderListener listener)
     {
         this.listener = listener;
@@ -150,11 +156,32 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(CUSTOMERS_URI)
-                .projection("0 as _id", CustomerTable.GUID, CustomerTable.FISRT_NAME, CustomerTable.LAST_NAME, CustomerTable.EMAIL, CustomerTable.PHONE);
+                .projection("0 as _id",
+                        CustomerTable.GUID,
+                        CustomerTable.FISRT_NAME,
+                        CustomerTable.LAST_NAME,
+                        CustomerTable.EMAIL,
+                        CustomerTable.PHONE,
+                        CustomerTable.CUSTOMER_IDENTIFICATION,
+                        CustomerTable.STREET,
+                        CustomerTable.COMPLEMENTARY,
+                        CustomerTable.CITY,
+                        CustomerTable.STATE,
+                        CustomerTable.COUNTRY,
+                        CustomerTable.SEX,
+                        CustomerTable.UPDATE_TIME,
+                        CustomerTable.ZIP,
+                        CustomerTable.CREATE_TIME,
+                        CustomerTable.CONSENT_PROMOTIONS,
+                        CustomerTable.NOTES
+                );
         String filter = customerFilter.getText().toString();
         if (!TextUtils.isEmpty(filter)) {
             filter = "%" + filter + "%";
-            builder.where(CustomerTable.FISRT_NAME + " LIKE ? OR " + CustomerTable.LAST_NAME + " LIKE ? OR " + CustomerTable.EMAIL + " LIKE ? OR " + CustomerTable.PHONE + " LIKE ?",
+            builder.where(CustomerTable.FISRT_NAME + " LIKE ? OR "
+                            + CustomerTable.LAST_NAME + " LIKE ? OR "
+                            + CustomerTable.EMAIL + " LIKE ? OR "
+                            + CustomerTable.PHONE + " LIKE ?",
                     filter, filter, filter, filter);
         }
         return builder.build(getActivity());

@@ -1,7 +1,8 @@
 package com.kaching123.tcr.print.builder;
 
+import android.text.TextUtils;
+
 import com.kaching123.pos.PosPrinter;
-import com.kaching123.pos.printer.PrintLineAction;
 import com.kaching123.pos.util.ITextPrinter;
 
 import java.io.IOException;
@@ -117,14 +118,14 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
 
     @Override
     public void add(String title, BigDecimal qty, BigDecimal price, BigDecimal unitPrice, String unitsLabel, boolean isUntiPrice, List<String> units) {
-        if(!isUntiPrice && qty.compareTo(BigDecimal.ONE) == 0)
+        if (!isUntiPrice && qty.compareTo(BigDecimal.ONE) == 0)
             add(title, commaPriceFormat(price));
         else {
             add(title);
             stringBuilder.append(_styled("table", TABLE_STYLE));
             stringBuilder.append("<tr>");
             stringBuilder.append("<td>");
-            stringBuilder.append("  ").append(qty).append(" "+unitsLabel).append(" @ ").append("1 "+unitsLabel).append(" /" + unitPrice);
+            stringBuilder.append("  ").append(qty).append(" " + unitsLabel).append(" @ ").append("1 " + unitsLabel).append(" /" + unitPrice);
             stringBuilder.append("</td>");
 
             stringBuilder.append(_styled("td", PRICE_STYLE));
@@ -189,7 +190,9 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     }
 
     @Override
-    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName) {
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date,
+                       String operatorTitle, String operatorName,
+                       String customerTitle, String customerIdentification) {
         stringBuilder.append(_styled("table", TABLE_STYLE));
         stringBuilder.append("<tr>");
         stringBuilder.append(_styled("td", HEADER_STYLE));
@@ -208,6 +211,17 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
         stringBuilder.append(operatorName);
         stringBuilder.append("</td>");
         stringBuilder.append("</tr>");
+
+        if (!TextUtils.isEmpty(customerIdentification)) {
+            stringBuilder.append("<tr>");
+            stringBuilder.append(_styled("td", HEADER_STYLE));
+            stringBuilder.append(customerTitle);
+            stringBuilder.append("</td>");
+            stringBuilder.append(_styled("td", HEADER_STYLE, RIGHT_STYLE));
+            stringBuilder.append(customerIdentification);
+            stringBuilder.append("</td>");
+            stringBuilder.append("</tr>");
+        }
 
 //        stringBuilder.append(_styled("div", HEADER_STYLE, RIGHT_STYLE)).append(operatorName).append("</div>").append("<br>");
         stringBuilder.append("</table>");

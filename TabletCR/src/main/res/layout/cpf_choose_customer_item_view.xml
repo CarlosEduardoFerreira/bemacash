@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants"
+    android:background="@drawable/wireless_item_bg"
+    android:gravity="center_vertical">
+
+    <TextView
+        style="@style/Hold.Item"
+        android:id="@+id/name"
+        android:singleLine="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        style="@style/Hold.Item.Sub"
+        android:id="@+id/phone"
+        android:singleLine="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        style="@style/Hold.Item.Sub"
+        android:id="@+id/cpf"
+        android:singleLine="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        style="@style/Hold.Item.Sub"
+        android:id="@+id/email"
+        android:singleLine="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

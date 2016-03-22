@@ -179,6 +179,7 @@
     <string name="unavailable_option_message">This functionality is not available for current plan</string>
     <string name="unavailable_employee_option_message">Not able to create more then %d employees in current plan</string>
     <string name="unavailable_edit_option_message">This functionality is available only in Read Only Mode for current plan</string>
+    <string name="user_no_cpf">You can\'t select a customer with no id for the order more then 10k. You can edit this customer or select manual input.</string>
 
     <string name="sync_success_title">Database syncing</string>
     <string name="sync_success_message">Data was synchronized</string>
@@ -493,6 +494,7 @@
     <string name="printer_order_num">Order</string>
     <string name="printer_guest">Guest:</string>
     <string name="printer_cashier">Cashier:</string>
+    <string name="printer_customer_identification">C.I.:</string>
     <string name="printer_refund_total">Total (tax included)</string>
     <string name="printer_refund_tips">     Tips</string>
     <string name="printer_signature_subtitle">Signature Receipt</string>
