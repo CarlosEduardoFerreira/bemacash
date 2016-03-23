@@ -60,6 +60,7 @@ import com.kaching123.tcr.commands.payment.blackstone.payment.BlackVoidCommand;
 import com.kaching123.tcr.commands.prepaid.BillPaymentDescriptionCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
+import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand;
@@ -116,6 +117,7 @@ import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
@@ -172,6 +174,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -581,25 +584,50 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
-        boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
-        if (!hasModifiers || !PlanOptions.isModifiersAllowed()) {
-            tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
-            return;
-        }
-        ModifyFragment.show(this,
-                model.guid,
-                new ItemModifiersFragment.OnAddonsChangedListener() {
-                    @Override
-                    public void onAddonsChanged(ArrayList<String> modifierGuid,
-                                                ArrayList<String> addonsGuid,
-                                                ArrayList<String> optionalsGuid) {
-                        tryToAddCheckPriceType(model, modifierGuid,
-                                addonsGuid, optionalsGuid, price, quantity, unit);
-                    }
-                }
-        );
+
+        CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+
     }
 
+    private CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {
+        @Override
+        public void onCollected(ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers, final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit, boolean hasAutoApply) {
+
+            if(hasAutoApply) {
+                tryToAddCheckPriceType(model, getModifiers(modifiers), null, null, price, quantity, unit);
+                return;
+            }
+
+            boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
+
+            if (!hasModifiers || !PlanOptions.isModifiersAllowed()) {
+                tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
+                return;
+            }
+            ModifyFragment.show(BaseCashierActivity.this,
+                    model.guid,
+                    new ItemModifiersFragment.OnAddonsChangedListener() {
+                        @Override
+                        public void onAddonsChanged(ArrayList<String> modifierGuid,
+                                                    ArrayList<String> addonsGuid,
+                                                    ArrayList<String> optionalsGuid) {
+                            tryToAddCheckPriceType(model, modifierGuid,
+                                    addonsGuid, optionalsGuid, price, quantity, unit);
+                        }
+                    }
+            );
+        }
+    };
+
+    protected ArrayList<String> getModifiers(ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers)
+    {
+        ArrayList<String> list = new ArrayList<>();
+        for(CollectModifiersCommand.SelectedModifierExModel item : modifiers)
+        {
+            list.add(item.modifierGuid);
+        }
+        return list;
+    }
 
     protected void tryToAddCheckPriceType(final ItemExModel model,
                                           final ArrayList<String> modifierGiud,

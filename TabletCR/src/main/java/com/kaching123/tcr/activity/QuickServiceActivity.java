@@ -7,10 +7,12 @@ import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
+import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand.BaseUpdateSaleItemAddonsCallback;
 import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
+import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickCategoriesFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickItemsFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
@@ -167,22 +169,37 @@ public class QuickServiceActivity extends BaseCashierActivity {
 
     @Override
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
-        boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
-        if (!hasModifiers || !PlanOptions.isModifiersAllowed()) {
-            tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
-            return;
-        }
 
-        modifyFragment.setupParams(model.guid, new ItemModifiersFragment.OnAddonsChangedListener() {
+        CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
 
-            @Override
-            public void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
-                hideModifiersFragment();
-                tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
-            }
-        });
-        showModifiersFragment();
     }
+
+    private CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {
+        @Override
+        public void onCollected(ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers, final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit, boolean hasAutoApply) {
+
+            if(hasAutoApply) {
+                tryToAddCheckPriceType(model, getModifiers(modifiers), null, null, price, quantity, unit);
+                return;
+            }
+
+            boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
+            if (!hasModifiers || !PlanOptions.isModifiersAllowed()) {
+                tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
+                return;
+            }
+
+            modifyFragment.setupParams(model.guid, new ItemModifiersFragment.OnAddonsChangedListener() {
+
+                @Override
+                public void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
+                    hideModifiersFragment();
+                    tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
+                }
+            });
+            showModifiersFragment();
+        }
+    };
 
     private BaseUpdateSaleItemAddonsCallback updateSaleItemAddonsCallback = new BaseUpdateSaleItemAddonsCallback() {
 

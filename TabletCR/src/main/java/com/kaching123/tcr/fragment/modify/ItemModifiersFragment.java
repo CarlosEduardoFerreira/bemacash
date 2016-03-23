@@ -15,11 +15,14 @@ import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
 import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand.SelectedModifierExModel;
 import com.kaching123.tcr.component.ModifierContainerView;
 import com.kaching123.tcr.component.ModifierContainerView_;
+import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.Unit;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -68,7 +71,7 @@ public class ItemModifiersFragment extends Fragment{
 
     private CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {
         @Override
-        public void onCollected(ArrayList<SelectedModifierExModel> modifiers) {
+        public void onCollected(ArrayList<SelectedModifierExModel> modifiers, ItemExModel model, BigDecimal price, BigDecimal quantity, Unit unit, boolean hasAutoApply) {
             Map<String, List<SelectedModifierExModel>> sortedModifiers = sortModifiers(modifiers);
             fillViewWithContainers(sortedModifiers);
         }
