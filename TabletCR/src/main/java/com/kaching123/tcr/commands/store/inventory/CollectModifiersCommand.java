@@ -98,7 +98,7 @@ public class CollectModifiersCommand extends PublicGroundyTask {
         public boolean isSelected;
 
         public SelectedModifierExModel(ModifierExModel model, boolean isSelected) {
-            super(model.getGuid(), model.itemGuid, model.type, model.title, model.cost, model.childItemGuid, model.childItemQty, model.modifierGroupGuid, model.getGroup(), model.getItem());
+            super(model.getGuid(), model.itemGuid, model.type, model.title, model.cost, model.childItemGuid, model.childItemQty, model.modifierGroupGuid, model.getGroup(), model.getItem(), model.autoApply);
             this.isSelected = isSelected;
         }
     }

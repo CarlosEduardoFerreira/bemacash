@@ -28,8 +28,9 @@ public class ModifierExModel extends ModifierModel {
                            BigDecimal childItemQty,
                            String modifierGroupGuid,
                            ModifierGroupModel group,
-                           ItemExModel childItem) {
-        super(modifierGuid, itemGuid, type, title, cost, childItemGuid, childItemQty, modifierGroupGuid);
+                           ItemExModel childItem,
+                           boolean autoApply) {
+        super(modifierGuid, itemGuid, type, title, cost, childItemGuid, childItemQty, modifierGroupGuid, autoApply);
         this.group = group;
         this.childItem = childItem;
     }

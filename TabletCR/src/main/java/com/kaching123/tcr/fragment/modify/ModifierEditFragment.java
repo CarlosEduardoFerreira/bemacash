@@ -83,7 +83,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
     protected Switch free;
 
     @ViewById
-    protected CheckBox childSelected;
+    protected CheckBox childSelected, autoApplySelected;
 
     @ViewById(R.id.spinner)
     protected Spinner itemGroupSpinner;
@@ -243,6 +243,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
             if (TextUtils.isEmpty(model.childItemGuid)) {
                 description.setText(model.title);
                 priceEditbox.setText(priceFormat(model.cost));
+                autoApplySelected.setChecked(model.autoApply);
             } else {
                 free.setChecked(true);
                 itemChooser.setText(model.getItem().description);
@@ -258,6 +259,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
             model.itemGuid = itemGuid;
             model.childItemQty = BigDecimal.ZERO;
             model.type = modType;
+            model.autoApply = autoApplySelected.isChecked();
             childSelected.setChecked(false);
             setQtyBox(null);
             refreshEnabled();
@@ -352,6 +354,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                 model.childItemQty = parseBrandQtyInput(qtyEditbox.getText().toString());
             }
         }
+        model.autoApply = autoApplySelected.isChecked();
         model.cost = parseBigDecimal(priceEditbox.getText().toString());
 //        else {
 //            model.cost = parseBigDecimal(priceEditbox.getText().toString());

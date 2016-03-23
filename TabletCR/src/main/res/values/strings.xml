@@ -109,6 +109,7 @@
     <string name="composer_dialog_free">Restricked host qty</string>
     <string name="composer_dialog_qty" formatted="false">Quantity (%s): </string>
     <string name="composer_dialog_price_type">Price type :</string>
+    <string name="composer_dialog_auto_apply">Auto Apply</string>
 
     <string name="modifier_hint">Short description</string>
 

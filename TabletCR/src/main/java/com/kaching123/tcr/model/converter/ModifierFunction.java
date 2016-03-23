@@ -25,7 +25,9 @@ public class ModifierFunction extends ListConverterFunction<ModifierModel>{
                 _decimal(c.getString(indexHolder.get(ModifierTable.EXTRA_COST))),
                 c.getString(indexHolder.get(ModifierTable.ITEM_SUB_GUID)),
                 _decimalQty(c.getString(indexHolder.get(ModifierTable.ITEM_SUB_QTY))),
-                c.getString(indexHolder.get(ModifierTable.ITEM_GROUP_GUID))
+                c.getString(indexHolder.get(ModifierTable.ITEM_GROUP_GUID)),
+                c.getInt(indexHolder.get(ModifierTable.AUTO_APPLY))==1
+
         );
     }
 }

@@ -547,7 +547,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     private void addModifierClicked(ModifierType modifierType) {
         EditDialog.showWithType(this, new ModifierModel(UUID.randomUUID().toString(), model.guid,
-                        null, null, null, null, null, null), modifierType,
+                        null, null, null, null, null, null, false), modifierType,
                 new OnEditListener() {
                     @Override
                     public void onDefaultModifierChanged(String modifierId, boolean useAsDefault, boolean resetDefaultModifier) {

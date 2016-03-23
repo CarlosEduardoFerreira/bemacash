@@ -602,6 +602,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String DEFAULT = "is_default";
+
+        @Column(type = Column.Type.INTEGER, defVal = "0")
+        String AUTO_APPLY ="auto_apply";
     }
 
     static {

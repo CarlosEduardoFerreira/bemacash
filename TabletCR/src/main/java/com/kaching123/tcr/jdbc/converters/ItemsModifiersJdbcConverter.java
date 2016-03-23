@@ -34,6 +34,7 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
     private static final String ITEM_SUB_GUID = "ITEM_SUB_GUID";
     private static final String ITEM_SUB_QUANTITY = "ITEM_SUB_QUANTITY";
     private static final String ITEM_GROUP_GUID = "ITEM_GROUP_GUID";
+    private static final String AUTO_APPLY = "AUTO_APPLY";
 
 
     @Override
@@ -46,7 +47,8 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 rs.getBigDecimal(EXTRA_COST),
                 rs.getString(ITEM_SUB_GUID),
                 rs.getBigDecimal(ITEM_SUB_QUANTITY),
-                rs.getString(ITEM_GROUP_GUID)
+                rs.getString(ITEM_GROUP_GUID),
+                rs.getBoolean(AUTO_APPLY)
         ).toValues();
     }
 
@@ -60,7 +62,8 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 rs.getBigDecimal(EXTRA_COST),
                 rs.getString(ITEM_SUB_GUID),
                 rs.getBigDecimal(ITEM_SUB_QUANTITY),
-                rs.getString(ITEM_GROUP_GUID)
+                rs.getString(ITEM_GROUP_GUID),
+                rs.getBoolean(AUTO_APPLY)
         );
     }
 
@@ -85,6 +88,7 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 .add(ITEM_SUB_GUID, model.childItemGuid)
                 .add(ITEM_SUB_QUANTITY, model.childItemQty)
                 .add(ITEM_GROUP_GUID, model.modifierGroupGuid)
+                .add(AUTO_APPLY, model.autoApply)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -96,6 +100,7 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 .add(ITEM_SUB_GUID, model.childItemGuid)
                 .add(ITEM_SUB_QUANTITY, model.childItemQty)
                 .add(ITEM_GROUP_GUID, model.modifierGroupGuid)
+                .add(AUTO_APPLY, model.autoApply)
                 .where(MODIFIER_GUID, model.modifierGuid)
                 .build(JdbcFactory.getApiMethod(model));
     }

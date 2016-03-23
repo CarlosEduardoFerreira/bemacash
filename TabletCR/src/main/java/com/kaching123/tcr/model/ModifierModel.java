@@ -22,6 +22,7 @@ public class ModifierModel implements IValueModel, Serializable {
     public ModifierType type;
     public BigDecimal cost;
     public String title;
+    public boolean autoApply;
 
     // Item, that will be added via modifier, or Linked modifier item, that might be affected, e.g. with no-option.
     public String childItemGuid;
@@ -34,7 +35,8 @@ public class ModifierModel implements IValueModel, Serializable {
                          ModifierType type, String title, BigDecimal cost,
                          String childItemGuid,
                          BigDecimal childItemQty,
-                         String modifierGroupGuid) {
+                         String modifierGroupGuid,
+                         boolean autoApply) {
         this.modifierGuid = modifierGuid;
         this.itemGuid = itemGuid;
         this.type = type;
@@ -43,7 +45,7 @@ public class ModifierModel implements IValueModel, Serializable {
         this.childItemGuid = childItemGuid;
         this.childItemQty = childItemQty;
         this.modifierGroupGuid = modifierGroupGuid;
-
+        this.autoApply = autoApply;
     }
 
     public ModifierModel() {
@@ -66,6 +68,7 @@ public class ModifierModel implements IValueModel, Serializable {
         values.put(ModifierTable.TYPE, _enum(type));
         values.put(ModifierTable.TITLE, title);
         values.put(ModifierTable.EXTRA_COST, _decimal(cost));
+        values.put(ModifierTable.AUTO_APPLY, autoApply);
         return values;
     }
 

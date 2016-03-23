@@ -110,6 +110,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                 _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.ITEM_SUB_QTY))),
                 itemGroupGuid,
                 group,
-                child).setDefaultItem(isDefault);
+                child,
+                c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.AUTO_APPLY)) == 1).setDefaultItem(isDefault);
     }
 }

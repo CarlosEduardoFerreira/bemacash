@@ -15,9 +15,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="15dp"
-        android:textSize="@dimen/modifier_edit_text_font_size"
         android:textOff="@string/modifier_off"
-        android:textOn="@string/modifier_on" />
+        android:textOn="@string/modifier_on"
+        android:textSize="@dimen/modifier_edit_text_font_size" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,18 +31,18 @@
             style="@style/CustomEditBox.Histry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/modifier_edit_text_font_size"
             android:background="@drawable/edit_text_holo_dark"
             android:gravity="start"
             android:hint="@string/modifier_hint"
-            android:inputType="text" />
+            android:inputType="text"
+            android:textSize="@dimen/modifier_edit_text_font_size" />
 
         <Spinner
             android:id="@+id/spinner"
-            android:enabled="false"
             style="@style/StyledDialog.Content.Spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:enabled="false">
 
         </Spinner>
 
@@ -54,20 +54,19 @@
             android:orientation="horizontal">
 
             <TextView
-                android:textColor="@color/gray_dark"
                 android:id="@+id/cost_label"
                 style="@style/StyledDialog.Content.Label.Light"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/modifier_edit_text_font_size"
-                android:text="@string/modifiers_edit_dialog_price_hint" />
+                android:text="@string/modifiers_edit_dialog_price_hint"
+                android:textColor="@color/gray_dark"
+                android:textSize="@dimen/modifier_edit_text_font_size" />
 
             <EditText
                 android:id="@+id/price_editbox"
                 style="@style/CustomEditBox.Decimal"
                 android:layout_width="0dp"
-                android:textSize="@dimen/modifier_edit_text_font_size"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
@@ -75,16 +74,17 @@
                 android:background="@drawable/edit_text_holo_dark"
                 android:digits="0123456789."
                 android:gravity="start"
-                android:inputType="phone" />
+                android:inputType="phone"
+                android:textSize="@dimen/modifier_edit_text_font_size" />
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
         android:background="@drawable/addon_background"
         android:orientation="vertical"
         android:padding="13dp">
@@ -109,12 +109,12 @@
                 style="@style/StyledDialog.Content.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start"
-                android:textSize="@dimen/modifier_edit_text_font_size"
                 android:enabled="false"
+                android:gravity="start"
                 android:hint="@string/composer_filter"
                 android:imeOptions="actionDone"
-                android:inputType="textVisiblePassword" />
+                android:inputType="textVisiblePassword"
+                android:textSize="@dimen/modifier_edit_text_font_size" />
         </LinearLayout>
 
         <LinearLayout
@@ -124,25 +124,25 @@
             android:orientation="horizontal">
 
             <TextView
-                android:textColor="@color/gray_dark"
                 android:id="@+id/price_type_msg"
                 style="@style/StyledDialog.Content.Label.Light"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/modifier_edit_text_font_size"
-                android:text="@string/composer_dialog_price_type" />
+                android:text="@string/composer_dialog_price_type"
+                android:textColor="@color/gray_dark"
+                android:textSize="@dimen/modifier_edit_text_font_size" />
 
             <TextView
                 android:id="@+id/price_type"
                 style="@style/StyledDialog.Content.Label.Light"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/modifier_edit_text_font_size"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:gravity="start" />
+                android:gravity="start"
+                android:textSize="@dimen/modifier_edit_text_font_size" />
         </LinearLayout>
 
         <LinearLayout
@@ -153,29 +153,66 @@
 
             <TextView
                 android:id="@+id/qty_textview"
-                android:textSize="@dimen/modifier_edit_text_font_size"
-                android:textColor="@color/gray_dark"
                 style="@style/StyledDialog.Content.Label.Light"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/order_header_quantity" />
+                android:text="@string/order_header_quantity"
+                android:textColor="@color/gray_dark"
+                android:textSize="@dimen/modifier_edit_text_font_size" />
 
             <EditText
                 android:id="@+id/qty_editbox"
-                android:textSize="@dimen/modifier_edit_text_font_size"
                 style="@style/CustomEditBox.Decimal"
                 android:layout_width="0dp"
-                android:enabled="false"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/edit_text_holo_dark"
                 android:digits="0123456789."
+                android:enabled="false"
                 android:gravity="start"
-                android:inputType="phone" />
+                android:inputType="phone"
+                android:textSize="@dimen/modifier_edit_text_font_size" />
         </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/addon_background"
+        android:orientation="vertical"
+        android:padding="13dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/auto_apply_selected"
+                style="@style/CheckBox.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:enabled="true"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/text_auto_apply"
+                style="@style/StyledDialog.Content.Label.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/composer_dialog_auto_apply"
+                android:textColor="@color/gray_dark"
+                android:textSize="@dimen/modifier_edit_text_font_size" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
