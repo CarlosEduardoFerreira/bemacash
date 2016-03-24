@@ -3,12 +3,12 @@ package com.kaching123.tcr.commands.print.pos;
 import android.content.Context;
 
 import com.kaching123.pos.PosPrinter;
-import com.kaching123.tcr.activity.ScannerBaseActivity;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.ecuador.EcuadorPrintProcessor;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
-import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
 import com.telly.groundy.TaskResult;
 
 import java.io.IOException;
@@ -51,7 +51,8 @@ public class PrintOrderCommand extends BasePrintOrderCommand {
     }
 
     protected PrintOrderProcessor getPrintOrderProcessor(String orderGuid, IAppCommandContext appCommandContext) {
-        return new PrintOrderProcessor(orderGuid, appCommandContext);
+        return TcrApplication.isEcuadorVersion() ?
+                new EcuadorPrintProcessor(orderGuid, appCommandContext) : new PrintOrderProcessor(orderGuid, appCommandContext);
     }
 
     public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, ArrayList<PaymentTransactionModel> transactions, ArrayList<PrepaidReleaseResult> receipts, BasePrintCallback callback) {

@@ -495,7 +495,16 @@
     <string name="printer_order_num">Order</string>
     <string name="printer_guest">Guest:</string>
     <string name="printer_cashier">Cashier:</string>
-    <string name="printer_customer_identification">C.I.:</string>
+    <string name="printer_customer_identification">Customer ID:</string>
+
+    <string name="printer_ec_date">Date / Time:</string>
+    <string name="printer_ec_customer_id">Customer ID:</string>
+    <string name="printer_ec_customer_name">Customer Name:</string>
+    <string name="printer_ec_store_address">Store Address:</string>
+    <string name="printer_ec_cashier">Cashier:</string>
+    <string name="printer_ec_email">Email:</string>
+    <string name="printer_ec_order">Order:</string>
+
     <string name="printer_refund_total">Total (tax included)</string>
     <string name="printer_refund_tips">     Tips</string>
     <string name="printer_signature_subtitle">Signature Receipt</string>

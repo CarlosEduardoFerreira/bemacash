@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,6 +22,13 @@ public final class DateUtils {
         @Override
         protected DateFormat initialValue() {
             return new SimpleDateFormat("MMM d HH:mm:ss");
+        }
+    };
+
+    private static final ThreadLocal<DateFormat> dateFormatThreadLocalEcuador = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
         }
     };
 
@@ -119,6 +127,12 @@ public final class DateUtils {
         if (date == null)
             return null;
         return dateFormatThreadLocalFull.get().format(date);
+    }
+
+    public static String formatEcuador(Date date) {
+        if (date == null)
+            return null;
+        return dateFormatThreadLocalEcuador.get().format(date);
     }
 
     public static String formatInterval(final long timestamp) {

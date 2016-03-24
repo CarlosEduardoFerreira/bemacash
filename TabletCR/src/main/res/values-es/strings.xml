@@ -31,7 +31,13 @@
     <string name="void_confirm_title">Anulaci\u00F3n Completa</string>
     <string name="refund_confirm_title_failed">Devoluci\u00F3n Fallida</string>
 
-
+    <string name="printer_ec_date">Fecha / Hora:</string>
+    <string name="printer_ec_customer_id">RUC / C. I.:</string>
+    <string name="printer_ec_customer_name">Cliente:</string>
+    <string name="printer_ec_store_address">Dirección:</string>
+    <string name="printer_ec_cashier">Usuario Caja:</string>
+    <string name="printer_ec_email">Correo:</string>
+    <string name="printer_ec_order">#:</string>
 
     <string name="wireless_header_oper">Operaciones</string>
     <string name="wireless_header_status">Estado</string>
@@ -49,11 +55,11 @@
     <string name="prepaid_dialog_payment_progress_title">Facturaci\u00F3n en progreso</string>
     <string name="prepaid_dialog_notification_title">Concluido Satisfactoriamente</string>
     <string name="prepaid_dialog_or"> - o -</string>
-    <string formatted = "false" name="prepaid_dialog_phone">Uste elegi\u00F3 %s. Por favor ingresar numero Telef\u00F3nico </string>
+    <string name="prepaid_dialog_phone" formatted="false">Uste elegi\u00F3 %s. Por favor ingresar numero Telef\u00F3nico </string>
     <string name="prepaid_dialog_custom_amount_hint">Ingresar monto deseada</string>
     <string name="prepaid_dialog_static_amount_hint">Escoger Monto</string>
     <string name="prepaid_dialog_amount_no_limitation">Sin limites en el ingreso del monto</string>
-    <string formatted = "false" name="prepaid_dialog_amount_limitations">Pago m\u00EDnimo: %s Máximo: %s</string>
+    <string name="prepaid_dialog_amount_limitations" formatted="false">Pago m\u00EDnimo: %s Máximo: %s</string>
     <!--<string name="sunpass_prepaid_dialog_credentials_title">Recarga para el dispositivo de trasmisi\u00F3n</string>-->
     <string name="sunpass_prepaid_dialog_custom_amount_hint">Ingresar monto</string>
     <string name="prepaid_topup_description">Completar art\u00EDculos</string>
@@ -71,7 +77,7 @@
     <string name="sunpass_prepaid_dialog_credentials">Numero del dispositivo de trasmisi\u00F3n SunPass</string>
     <string name="sunpass_prepaid_dialog_credentials_validate">Reingrese el numero del dispositivo de Trasmisi\u00F3n SunPass</string>
     <string name="sunpass_prepaid_dialog_amount_title">Cantidad para cargar SunPass</string>
-    <string formatted = "false" name="sunpass_amount_limitation">Min: %s, Max: %s</string>
+    <string name="sunpass_amount_limitation" formatted="false">Min: %s, Max: %s</string>
     <string name="wireless_dialog_cc">Especifique c\u00F3digo de pa\u00EDs</string>
     <string name="wireless_dialog_credentials">Numero telef\u00F3nico</string>
     <string name="orders_header_num">#</string>
@@ -82,7 +88,6 @@
     <string name="orders_header_status">Status</string>
     <string name="orders_header_tender_type">Tipo Pago</string>
     <string name="orders_header_prepaid">Pre-pago</string>
-
 
 
     <string name="orders_history_total">Ordenes Encontradas</string>
@@ -153,7 +158,7 @@
     <string name="btn_login">Iniciar sesi\u00F3n de acceso</string>
     <string name="login_wait">Inicio de acceso en el sistema</string>
     <string name="pax_instructions">Por favor, seguir instrucciones del PAX. Presionar  \"Cancel\"  para abortar.</string>
-    <string formatted = "false" name="pax_refund_instructions">Número de transacci\u00F3n es %s. Por favor, seguir instrucciones del PAX. Presionar  \"Cancel\"  para abortar.</string>
+    <string name="pax_refund_instructions" formatted="false">Número de transacci\u00F3n es %s. Por favor, seguir instrucciones del PAX. Presionar  \"Cancel\"  para abortar.</string>
     <string name="items_actions_title">Acci\u00F3n de Art\u00EDculos</string>
     <string name="action_cancel">Cancelar</string>
     <string name="btn_pay">Pagar</string>
@@ -220,15 +225,13 @@
     <string name="wireless_recursive_edit">Ud puede añadir más de un item acá.\nUsar el scanner o ingresar manualmente. \nContador finalizará la edicíon cuando terminado.</string>
 
 
-
     <string name="dlg_edit_qty">Por favor ingrese la cantidad</string>
     <string name="dlg_edit_price">Por favor ingrese el precio</string>
     <string name="dlg_si_discount_qty">Por favor ingrese el descuento</string>
     <string name="dlg_so_discount_qty">Por favor ingrese el descuento</string>
-    <string formatted="false" name="dlg_sn_descr">Actualmente hay %s artículos en stock. \n Para anadir o borrar items, use el código con formato %s.</string>
-    <string formatted="false" name="dlg_sn_add_descr">Actualmente hay %s artículos en stock .\Usar el scanner para añadir items o ingresar el código con formato %s.</string>
-    <string formatted="false" name="dlg_sn_remove_descr">Eses items son serializados. Por favor usar el scanner para remover el item o ingresar el código con formato %s.</string>
-
+    <string name="dlg_sn_descr" formatted="false">Actualmente hay %s artículos en stock. \n Para anadir o borrar items, use el código con formato %s.</string>
+    <string name="dlg_sn_add_descr" formatted="false">Actualmente hay %s artículos en stock .\Usar el scanner para añadir items o ingresar el código con formato %s.</string>
+    <string name="dlg_sn_remove_descr" formatted="false">Eses items son serializados. Por favor usar el scanner para remover el item o ingresar el código con formato %s.</string>
 
 
     <string name="dlg_edit_tax">Aplicar Descuento</string>
@@ -251,7 +254,7 @@
     <string name="blackstone_pay_success_body">Transacci\u00F3n ha sido finalizada satisfactoriamente</string>
     <string name="blackstone_pay_failure_body_1st">Transacci\u00F3n Fallida</string>
     <string name="blackstone_pay_failure_body_2nd">El servidor ha reportado error</string>
-    <string name="blackstone_pay_failure_body_constructor" formatted = "false">%s %s %s</string>
+    <string name="blackstone_pay_failure_body_constructor" formatted="false">%s %s %s</string>
     <string name="blackstone_pay_failure_body_3nd">Problema no relacionado con entidad bancaria</string>
     <string name="blackstone_pay_progress_body">Generating payment\u00F3n</string>
     <string name="blackstone_pay_total">Total</string>
@@ -259,7 +262,7 @@
     <string name="blackstone_pay_charge">Cambio Exacto</string>
     <string name="blackstone_pay_required_amount">Monto requerido</string>
     <string name="blackstone_pay_received_cash">Efectivo Recibido</string>
-    <string name="blackstone_pay_transaction_constructor" formatted = "false">Pagos %s</string>
+    <string name="blackstone_pay_transaction_constructor" formatted="false">Pagos %s</string>
     <string name="refund_CC_transactions_title">Transacciones a través de Tarjeta de Cr\u00e9dito</string>
     <string name="refund_CC_transactions_amount">Monto para devolver</string>
     <string name="refund_nothing_selected_title">Reintegro rechazado</string>
@@ -328,7 +331,7 @@
     <string name="item_activity_hide_item_dialog_message">Esta seguro que desea borrar el articulo</string>
     <string name="item_activity_alert_description_msg">Campo de Nombre vacio</string>
     <string name="item_activity_alert_category_msg">Campo de categor\u00EDa Vac\u00EDa </string>
-    <string name="item_activity_alert_ean_msg"  formatted="false">c\u00F3digo del producto desde %d hacia %d digitos/caracteres</string>
+    <string name="item_activity_alert_ean_msg" formatted="false">c\u00F3digo del producto desde %d hacia %d digitos/caracteres</string>
     <string name="item_activity_alert_ean_duplicate_msg">Articulo con dicho c\u00F3digo ya existe</string>
     <string name="item_activity_alert_units_label_msg">La etiqueta de unidades esta vac\u00EDa</string>
     <string name="item_activity_alert_price_empty_msg">El campo de precio esta vac\u00EDa</string>
@@ -503,7 +506,7 @@
     <string name="categories_delete_dialog_title">Borrar Categor\u00EDa</string>
     <string name="categories_delete_dialog_message">Esta seguro que desea borrar categor\u00EDa \'%s\'?</string>
     <string name="categories_toast_success_message">Categor\u00EDa \'%s\' satisfactoriamente borrada</string>
-    <string name="categories_toast_failed_message"  formatted="false">Error al borrar categor\u00EDa \'%s\'. Contiene %d art\u00EDculos.</string>
+    <string name="categories_toast_failed_message" formatted="false">Error al borrar categor\u00EDa \'%s\'. Contiene %d art\u00EDculos.</string>
     <string name="departments_delete_dialog_title">Borrar departamento</string>
     <string name="departments_delete_dialog_message">Esta seguro que desea borrar departamento \'%s\'?</string>
     <string name="departments_toast_success_message">Departamento \'%s\' satisfactoriamente borrado</string>
@@ -721,8 +724,8 @@
     <string name="inventory_import_type_qty">Actualizar la cantidad</string>
     <string name="inventory_import_type_price">Actualizar precio</string>
     <string name="inventory_import_type_delete">Grupo borrado</string>
-    <string name="dashboard_clock_in_msg" formatted = "false">%s clocked-in\n%s</string>
-    <string name="dashboard_clock_out_msg" formatted = "false">%s clocked-out\n%s</string>
+    <string name="dashboard_clock_in_msg" formatted="false">%s clocked-in\n%s</string>
+    <string name="dashboard_clock_out_msg" formatted="false">%s clocked-out\n%s</string>
     <string name="inventory_modifier_use_default">Usar como estándar</string>
     <string name="inventory_modifiers_list_default_tpl">%s (Estándar)</string>
     <string name="inventory_export_wait_msg">Exportar art\u00EDculos de Inventario</string>
@@ -1066,7 +1069,6 @@
     <string name="peprint_refund_receipt_success_message">Comprobante de devoluci\u00F3n impreso correctamente.</string>
 
 
-
     <!--    NEW MESSAGES -->
 
     <string name="about_version_label">Versión:</string>
@@ -1211,7 +1213,7 @@
 
     <string name="training_mode_title_tmpl">%s TRAINING MODE</string>
 
-    <string formatted="false" name="dashboard_activity_title_tmpl">%s - %s</string>
+    <string name="dashboard_activity_title_tmpl" formatted="false">%s - %s</string>
 
     <string name="training_mode_receipt_title">TRAINING MODE</string>
 
