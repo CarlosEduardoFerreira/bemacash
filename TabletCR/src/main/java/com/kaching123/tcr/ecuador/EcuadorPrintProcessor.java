@@ -19,6 +19,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
@@ -34,6 +35,7 @@ import com.telly.groundy.PublicGroundyTask;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
@@ -176,6 +178,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
     @Override
     protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
+        final HashMap<TaxGroupModel, BigDecimal> taxes = new HashMap<>();
+
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ?
@@ -312,8 +316,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             }
 
         Logger.d("LINES COUNT = " + linesCount);
-        if (linesCount < 50) {
-            printerWrapper.emptyLine(50 - linesCount - 7 - 5);
+        if (linesCount < 66) {
+            printerWrapper.emptyLine(66 - linesCount - 7 - 5);
         }
     }
 
