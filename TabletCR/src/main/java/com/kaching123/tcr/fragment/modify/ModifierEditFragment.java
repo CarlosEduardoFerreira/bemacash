@@ -12,6 +12,7 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.BaseItemExAdapter;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
@@ -162,6 +164,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
         if (modType != ModifierType.MODIFIER) {
             itemGroupSpinner.setVisibility(View.GONE);
         }
+        autoApplySelected.setChecked(model == null ? false : model.autoApply);
         customerAdapter = new ModifiersAdapter(modType, getActivity());
         groupAdapter = new ItemGroupAdapter(getActivity());
         qtyEditbox.addTextChangedListener(new TextWatcher() {
@@ -419,6 +422,8 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
             @Override
             public boolean onClick() {
                 final ModifierModel dataModel = collectData();
+                Logger.d("OnDialogClickListener: onClick "+model.autoApply);
+                Logger.d("OnDialogClickListener: onClick "+dataModel.autoApply);
                 if (mode == MODE.EDIT) {
                     EditModifiersCommand.start(getActivity(), model, false, false);
                     callback.handleSuccess();
