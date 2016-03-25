@@ -160,6 +160,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             @Override
             public void onQtyClicked(final View v, final int pos) {
                 final SaleOrderItemViewModel model = adapter.getItem(pos);
+                if(model.isPrepaidItem)
+                    return;
                 if (!model.isSerializable) {
                     final String saleItemGuid = adapter.getSaleItemGuid(pos);
                     if(model.itemModel.priceType == PriceType.UNIT_PRICE) {
