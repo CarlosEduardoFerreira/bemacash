@@ -1,7 +1,10 @@
 package com.kaching123.tcr.print.processor;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -15,6 +18,8 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
@@ -185,7 +190,15 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 //                printerWrapper.orderFooter(context.getString(R.string.printer_balance) + p.lastFour != null ? " (" + p.lastFour + ")" : "", p.balance, true);
                 printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
             }
+
+            int counts = getSaleItemAmount(orderGuid, context);
+            if(counts > 0)
+            {
+                printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
+            }
         }
+
+
 
         if (prepaidReleaseResults != null)
             for (PrepaidReleaseResult result : prepaidReleaseResults) {
@@ -209,6 +222,21 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
     private String[] getFormattedLine(String receipt) {
         String[] prints = receipt.split("\\n");
         return prints;
+    }
+    private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
+
+    private int getSaleItemAmount(String orderGuid, Context context)
+    {
+        int saleItemAmount = 0;
+        Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
+                .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
+                .perform(context);
+        while (c.moveToNext()) {
+            saleItemAmount++;
+        }
+        c.close();
+
+        return saleItemAmount;
     }
 
 }

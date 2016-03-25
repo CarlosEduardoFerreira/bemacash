@@ -492,6 +492,7 @@
     <string name="printer_total">Total</string>
     <string name="printer_tips">Tips</string>
     <string name="printer_balance">EBT Balance</string>
+    <string name="printer_sale_item_amount">Total Item Sold:</string>
     <string name="printer_order_num">Order</string>
     <string name="printer_guest">Guest:</string>
     <string name="printer_cashier">Cashier:</string>

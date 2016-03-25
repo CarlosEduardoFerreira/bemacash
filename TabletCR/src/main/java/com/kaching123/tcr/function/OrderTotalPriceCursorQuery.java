@@ -241,4 +241,5 @@ public final class OrderTotalPriceCursorQuery {
 
         return tips;
     }
+
 }
