@@ -112,8 +112,8 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     }
 
     @Override
-    public void add(String title, BigDecimal qty, BigDecimal price, List<String> units) {
-        add(title, quantityFormat.format(qty), priceFormat.format(price), units);
+    public void add(String title, BigDecimal qty, BigDecimal totalPrice, BigDecimal itemPrice, List<String> units) {
+        add(title, quantityFormat.format(qty), priceFormat.format(totalPrice), units);
     }
 
     @Override

@@ -51,34 +51,13 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
     private boolean reprint;
 
-    public void setTitle(String title) {
-        this.title = title;
+    private ITextPrinter printerWrapper;
+
+    public void setPrinterWrapper(ITextPrinter printerWrapper) {
+        this.printerWrapper = printerWrapper;
     }
 
-    public void setSubtotal(String subtotal) {
-        this.subTotal = subtotal;
-    }
-
-    public void setDiscountTotal(String discountTotal) {
-        this.discountTotal = discountTotal;
-    }
-
-    public void setTaxTotal(String taxTotal) {
-        this.taxTotal = taxTotal;
-    }
-
-    public void setPaxTransactions(ArrayList<PaymentTransactionModel> transactions) {
-        this.transactions = transactions;
-    }
-
-    public void setAmountTotal(String amountTotal) {
-        this.amountTotal = amountTotal;
-    }
-
-    public void setPrepaidReleaseResults(ArrayList<PrepaidReleaseResult> results) {
-        this.prepaidReleaseResults = results;
-    }
-
+    protected int linesCount = 0;
 
     public EcuadorPrintProcessor(String orderGuid, PublicGroundyTask.IAppCommandContext appCommandContext) {
         super(orderGuid, appCommandContext);
@@ -90,8 +69,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
     }
 
     private void printTopOffset(ITextPrinter printerWrapper) {
-        printerWrapper.emptyLine(12);// top offset 2.5 - 3 sm 0.4 mm per line
-        linesCount += 12;
+        printerWrapper.emptyLine(2);
+        linesCount += 2;
     }
 
     private String getCurrentDate(Cursor c) {
@@ -138,14 +117,25 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
         return builder.toString();
     }
 
-    private int linesCount = 0;
+    private void printNullable(Context context, int resId, String value) {
+        if (!TextUtils.isEmpty(value)) {
+            printNotNull(context, resId, value);
+        }
+    }
+
+    private void printNotNull(Context context, int resId, String value) {
+        printerWrapper.header(context.getString(resId), value);
+        linesCount++;
+    }
 
     @Override
     public void printHeader(Context context, TcrApplication app, ITextPrinter printerWrapper) {
+        setPrinterWrapper(printerWrapper);
         printTopOffset(printerWrapper);
         if (reprint) {
             printerWrapper.subTitle(context.getString(R.string.print_order_copy_header));
             printerWrapper.emptyLine();
+            linesCount += 2;
         }
         Cursor c = ProviderAction.query(URI_ORDER)
                 .projection(
@@ -162,44 +152,46 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 .perform(context);
 
         if (c.moveToFirst()) {
-            printerWrapper.header(context.getString(R.string.printer_ec_date), getCurrentDate(c));
-            printerWrapper.header(context.getString(R.string.printer_ec_customer_id), getCustomerId(c));
-            if (!TextUtils.isEmpty(getCustomerName(c))) {
-                printerWrapper.header(context.getString(R.string.printer_ec_customer_name), getCustomerName(c));
-            }
-            Logger.d("printer_ec_store_address: " + getStoreAddress(app));
-            printerWrapper.header(context.getString(R.string.printer_ec_store_address), getStoreAddress(app));
-            Logger.d("printer_ec_cashier: " + getOperatorName(c));
-            printerWrapper.header(context.getString(R.string.printer_ec_cashier), getOperatorName(c));
-            if (!TextUtils.isEmpty(app.getShopInfo().email)) {
-                printerWrapper.header(context.getString(R.string.printer_ec_email), app.getShopInfo().email);
-            }
-            Logger.d("printer_ec_order: " + getOrderNumber(c));
-            printerWrapper.header(context.getString(R.string.printer_ec_order), getOrderNumber(c));
+            printNotNull(context, R.string.printer_ec_date, getCurrentDate(c));
+            printNotNull(context, R.string.printer_ec_customer_id, getCustomerId(c));
+            printNullable(context, R.string.printer_ec_customer_name, getCustomerName(c));
+            printNullable(context, R.string.printer_ec_store_address, getStoreAddress(app));
+            printNotNull(context, R.string.printer_ec_cashier, getOperatorName(c));
+            printNullable(context, R.string.printer_ec_email, app.getShopInfo().email);
+            printNotNull(context, R.string.printer_ec_order, getOrderNumber(c));
         }
         OrderType orderType = _orderType(c, c.getColumnIndex(SaleOrderTable.ORDER_TYPE));
         c.close();
         printerWrapper.emptyLine();
         printMidTid(context, app, printerWrapper, orderType);
         printerWrapper.drawLine();
+        linesCount += 2;
     }
 
     @Override
     protected void printMidTid(ITextPrinter printer, String label, String value, boolean bold) {
         printer.addWithTab2(label, value, true, bold);
+        linesCount++;
     }
 
     @Override
     protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
-        final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ? transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
+        final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ?
+                transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
+
+        ((PosEcuadorOrderTextPrinter) printerWrapper).addHeaderTitle("Description", "Qty", "Total", "Unit Price");
+        linesCount++;
+
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new OrderTotalPriceCursorQuery.PrintHandler() {
             @Override
-            public void handleItem(String saleItemGuid, String description, String unitLabel, PriceType priceType, BigDecimal qty,
-                                   BigDecimal itemSubtotal, BigDecimal itemDiscount,
-                                   BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note) {
-                List<String> unitAsStrings = new ArrayList<String>(units.size());
+            public void handleItem(String saleItemGuid, String description, String unitLabel,
+                                   PriceType priceType, BigDecimal qty, BigDecimal itemSubtotal,
+                                   BigDecimal itemDiscount, BigDecimal itemTax, BigDecimal singleItemPrice,
+                                   List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons,
+                                   BigDecimal transactionFee, BigDecimal itemFullPrice, String note) {
+                List<String> unitAsStrings = new ArrayList<>(units.size());
                 for (Unit unit : units) {
                     unitAsStrings.add(unit.serialCode);
                 }
@@ -210,10 +202,13 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                         itemPrice = itemPrice.subtract(addon.addon.extraCost);
                     }
                 itemSubtotal = CalculationUtil.getSubTotal(qty, itemPrice);
-                if (app.getShopPref().printDetailReceipt().get())
+                if (app.getShopPref().printDetailReceipt().get()) {
                     printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
-                else
-                    printerWrapper.add(description, qty, itemSubtotal, unitAsStrings);
+                    linesCount++;
+                } else {
+                    printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitAsStrings);
+                    linesCount++;
+                }
                 if (addons != null && addons.size() != 0)
                     for (SaleOrderItemViewModel.AddonInfo addon : addons) {
                         String title = addon.addonTitle;
@@ -221,15 +216,20 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                             title = "NO " + addon.addonTitle;
                         BigDecimal newBD = addon.addon.extraCost.setScale(2);
                         printerWrapper.addAddsOn(title, newBD);
+                        linesCount++;
                     }
                 if (transactionFee.compareTo(BigDecimal.ZERO) > 0) {
                     printerWrapper.addAddsOn(TRANSACTION_FEE, transactionFee);
+                    linesCount++;
                 }
                 if (itemDiscount.compareTo(BigDecimal.ZERO) == 1) {
                     printerWrapper.addItemDiscount(itemDiscountText, negative(itemDiscount));
+                    linesCount++;
                 }
-                if (note != null)
+                if (note != null) {
                     printerWrapper.addNotes(note);
+                    linesCount++;
+                }
             }
 
             @Override
@@ -240,16 +240,20 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 for (PaymentTransactionModel p : payments) {
                     totalCashBack = totalCashBack.add(p.cashBack.negate());
                 }
-                if (totalCashBack.compareTo(BigDecimal.ZERO) > 0)
+                if (totalCashBack.compareTo(BigDecimal.ZERO) > 0) {
                     printerWrapper.orderFooter(context.getString(R.string.printer_cash_back), totalCashBack);
+                    linesCount++;
+                }
 
                 if (BigDecimal.ZERO.compareTo(totalDiscount) != 0) {
                     printerWrapper.orderFooter(context.getString(R.string.printer_discount), negative(totalDiscount));
+                    linesCount++;
                 }
-                if (subTotal == null)
+                if (subTotal == null) {
                     printerWrapper.orderFooter(context.getString(R.string.printer_subtotal), totalSubtotal.subtract(totalDiscount).add(transactionFee).add(totalCashBack));
-                else
+                } else {
                     printerWrapper.orderFooter(context.getString(R.string.printer_subtotal), (new BigDecimal(subTotal)).subtract(new BigDecimal(discountTotal).add(totalCashBack)));
+                }
 
                 if (taxTotal == null)
                     printerWrapper.orderFooter(context.getString(R.string.printer_tax), totalTax);
@@ -258,6 +262,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
                 if (BigDecimal.ZERO.compareTo(tipsAmount) != 0) {
                     printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
+                    linesCount++;
                 }
 
                 BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
@@ -266,6 +271,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 else
                     printerWrapper.orderFooter(context.getString(R.string.printer_total), new BigDecimal(amountTotal).add(transactionFee).add(totalCashBack), true);
                 printerWrapper.drawLine();
+                linesCount += 5;
             }
         });
 
@@ -274,13 +280,15 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
             boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
             printerWrapper.payment(p.cardName == null ? p.gateway.name() : p.cardName, isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
-
+            linesCount++;
             if (isChanged) {
                 printerWrapper.change(changeText, p.changeAmount);
+                linesCount++;
             }
             //rafael: add isEBTCash
             if (p.balance != null && p.gateway.isEbt()) {
                 printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
+                linesCount++;
             }
         }
 
@@ -291,15 +299,22 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                         String[] prints = getFormattedLine(result.receipt);
                         for (String line : prints) {
                             printerWrapper.add(line);
+                            linesCount++;
                         }
                     }
                 } else {
+                    linesCount += 3;
                     printerWrapper.header(context.getString(R.string.prepaid_mini_item_description), result.model.description);
                     printerWrapper.header(context.getString(R.string.prepaid_mini_fail_error), result.error);
                     printerWrapper.header(context.getString(R.string.prepaid_mini_fail_error_msg), result.errorMSG);
                 }
 
             }
+
+        Logger.d("LINES COUNT = " + linesCount);
+        if (linesCount < 50) {
+            printerWrapper.emptyLine(50 - linesCount - 7 - 5);
+        }
     }
 
     private String[] getFormattedLine(String receipt) {

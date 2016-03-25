@@ -91,8 +91,8 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
     }
 
     @Override
-    public void add(String title, BigDecimal qty, BigDecimal price, List<String> units) {
-        add(title, quantityFormat.format(qty), commaPriceFormat(price), units);
+    public void add(String title, BigDecimal qty, BigDecimal totalPrice, BigDecimal itemPrice, List<String> units) {
+        add(title, quantityFormat.format(qty), commaPriceFormat(totalPrice), units);
     }
 
     @Override

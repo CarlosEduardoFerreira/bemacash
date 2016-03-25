@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
@@ -14,7 +13,6 @@ import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
-import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
@@ -79,7 +77,7 @@ public class PrintVoidProcessor extends BasePrintProcessor<PosOrderTextPrinter> 
                                    BigDecimal ignore2, BigDecimal itemFinalPrice,
                                    BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
                 BigDecimal itemTotal = CalculationUtil.getSubTotal(qty, itemFinalPrice);
-                printerWrapper.add(description, qty, CalculationUtil.negative(itemTotal), null);
+                printerWrapper.add(description, qty, itemPriceWithAddons, CalculationUtil.negative(itemTotal), null);
             }
 
             @Override

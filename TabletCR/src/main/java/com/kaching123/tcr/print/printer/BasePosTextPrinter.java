@@ -189,15 +189,82 @@ public class BasePosTextPrinter implements IPrinter {
         return printTitle.toString();
     }
 
-    public static String formatLabelString(int maxLen, String qty, String unitPrice, String unitLabel, String price){
+    public static String formatString(int maxLen, int priceLen, int qtyLen, String title, String qty, String totalPrice, String itemPrice) {
+        if (title == null)
+            title = "";
+
+        StringBuilder printBuilder = new StringBuilder();
+        printBuilder.append(qty);
+        int maxLeftPart = maxLen - priceLen * 2;
+        printBuilder.append(' ');
+        int maxTitleLen = maxLeftPart - qtyLen;
+        if (title.length() > maxTitleLen) {
+            printBuilder.append(crop(maxTitleLen, title));
+        } else {
+            printBuilder.append(title);
+        }
+        if (printBuilder.length() < maxLeftPart) {
+            for (int i = printBuilder.length(); i < maxLeftPart; i++) {
+                printBuilder.append(' ');
+            }
+        }
+        printBuilder.append(itemPrice);
+        for (int i = 0; i < priceLen - itemPrice.length(); i++) {
+            printBuilder.append(' ');
+        }
+        printBuilder.append(totalPrice);
+        return printBuilder.toString();
+    }
+
+    public static String formatEcString(int maxLen, int priceLen, int qtyLen, String title, String price) {
+        if (title == null)
+            title = "";
+        StringBuilder printBuilder = new StringBuilder();
+        int maxLeftPart = maxLen - priceLen;
+        printBuilder.append("   ");
+        int maxTitleLen = maxLeftPart - qtyLen;
+        if (title.length() > maxTitleLen) {
+            printBuilder.append(crop(maxTitleLen, title));
+        } else {
+            printBuilder.append(title);
+        }
+        if (printBuilder.length() < maxLeftPart) {
+            for (int i = printBuilder.length(); i < maxLeftPart; i++) {
+                printBuilder.append(' ');
+            }
+        }
+        printBuilder.append(price);
+        return printBuilder.toString();
+    }
+
+    public static String formatEcCash(int maxLen, int priceLen, String title, String price) {
+        if (title == null)
+            title = "";
+        StringBuilder printBuilder = new StringBuilder();
+        int maxLeftPart = maxLen - priceLen;
+        if (title.length() > maxLeftPart) {
+            printBuilder.append(crop(maxLeftPart, title));
+        } else {
+            printBuilder.append(title);
+        }
+        if (printBuilder.length() < maxLeftPart) {
+            for (int i = printBuilder.length(); i < maxLeftPart; i++) {
+                printBuilder.append(' ');
+            }
+        }
+        printBuilder.append(price);
+        return printBuilder.toString();
+    }
+
+    public static String formatLabelString(int maxLen, String qty, String unitPrice, String unitLabel, String price) {
         StringBuilder printTitle = new StringBuilder();
         printTitle.append("  ");// space before qty;
         printTitle.append(qty);
-        printTitle.append(" "+unitLabel);
+        printTitle.append(" " + unitLabel);
         printTitle.append(" @ ");
         printTitle.append(unitPrice);
-        printTitle.append(" /"+unitLabel);
-        for(int i = printTitle.length(); i < maxLen - price.length(); i++){
+        printTitle.append(" /" + unitLabel);
+        for (int i = printTitle.length(); i < maxLen - price.length(); i++) {
             printTitle.append(' ');
         }
         printTitle.append(price);
@@ -381,8 +448,7 @@ public class BasePosTextPrinter implements IPrinter {
         return printTitle.toString();
     }
 
-    public static String formatIVUTitle(String label)
-    {
+    public static String formatIVUTitle(String label) {
         StringBuilder printTitle = new StringBuilder();
         if (label.length() < 15) {
 

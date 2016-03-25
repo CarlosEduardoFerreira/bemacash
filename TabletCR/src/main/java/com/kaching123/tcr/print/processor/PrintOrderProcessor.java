@@ -114,7 +114,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 if (app.getShopPref().printDetailReceipt().get())
                     printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                 else
-                    printerWrapper.add(description, qty, itemSubtotal, unitAsStrings);
+                    printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitAsStrings);
                 if (addons != null && addons.size() != 0)
                     for (SaleOrderItemViewModel.AddonInfo addon : addons) {
                         String title = addon.addonTitle;
