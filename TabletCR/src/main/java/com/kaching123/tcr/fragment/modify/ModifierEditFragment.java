@@ -431,6 +431,25 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
         };
     }
 
+    @Override
+    protected OnDialogClickListener getNegativeButtonListener()
+    {
+        return new OnDialogClickListener() {
+            @Override
+            public boolean onClick() {
+                final ModifierModel dataModel = collectData();
+                if (mode == MODE.EDIT) {
+                    EditModifiersCommand.start(getActivity(), model, false, false);
+                    callback.handleSuccess();
+                } else if (mode == MODE.ADD) {
+                    callback.handleSuccess();
+                    AddModifierCommand.start(getActivity(), model, false, false);
+                }
+                return true;
+            }
+        };
+    }
+
     public static void show(FragmentActivity activity,
                             String itemGuid,
                             String groupGuid,
