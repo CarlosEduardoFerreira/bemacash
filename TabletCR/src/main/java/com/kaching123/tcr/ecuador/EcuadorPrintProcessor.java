@@ -294,6 +294,12 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
                 linesCount++;
             }
+
+            int counts = getSaleItemAmount(orderGuid, context);
+            if(counts > 0)
+            {
+                printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
+            }
         }
 
         if (prepaidReleaseResults != null)
@@ -324,6 +330,22 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
     private String[] getFormattedLine(String receipt) {
         String[] prints = receipt.split("\\n");
         return prints;
+    }
+
+    private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
+
+    private int getSaleItemAmount(String orderGuid, Context context)
+    {
+        int saleItemAmount = 0;
+        Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
+                .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
+                .perform(context);
+        while (c.moveToNext()) {
+            saleItemAmount++;
+        }
+        c.close();
+
+        return saleItemAmount;
     }
 
 }
