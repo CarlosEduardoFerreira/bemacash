@@ -226,30 +226,20 @@ public class EditCustomerActivity extends SuperBaseActivity {
     }
 
     protected boolean validateForm() {
-
         if (TextUtils.isEmpty(firstName.getText().toString().trim())) {
             Toast.makeText(this, R.string.customer_edit_first_name_error, Toast.LENGTH_SHORT).show();
             return false;
         }
-
         String emailText = email.getText().toString().trim();
         String phoneText = phone.getText().toString().trim();
-
-        if (TextUtils.isEmpty(emailText) && TextUtils.isEmpty(phoneText)) {
-            Toast.makeText(this, R.string.customer_edit_email_phone_empty, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
         if (!TextUtils.isEmpty(emailText) && !isValidEmail(emailText)) {
             Toast.makeText(this, R.string.customer_edit_email_not_valid_error, Toast.LENGTH_SHORT).show();
             return false;
         }
-
         if (!TextUtils.isEmpty(phoneText) && !isValid(phoneText)) {
             Toast.makeText(this, R.string.customer_edit_phone_not_valid_error, Toast.LENGTH_SHORT).show();
             return false;
         }
-
         return true;
     }
 

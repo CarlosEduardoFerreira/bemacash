@@ -14,7 +14,6 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderCustomerCommand;
 import com.kaching123.tcr.commands.store.user.AddCustomerCommand;
 import com.kaching123.tcr.commands.store.user.DeleteCustomerCommand;
-import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.function.OrderTotalPriceLoaderCallback;
@@ -140,7 +139,6 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
 
             @Override
             public void onZeroValue() {
-
             }
 
             @Override
@@ -152,7 +150,6 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
                     getNeutralButton().setEnabled(false);
                     getNeutralButton().setTextColor(getResources().getColor(R.color.gray_dark));
                 }
-
             }
         });
     }
@@ -170,7 +167,6 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
             v.setTag(new UIHolder(
                     (TextView) v.findViewById(R.id.name),
                     (TextView) v.findViewById(R.id.email),
-                    (TextView) v.findViewById(R.id.phone),
                     (TextView) v.findViewById(R.id.cpf)));
             return v;
         }
@@ -190,14 +186,6 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
             } else {
                 holder.cpf.setText("");
             }
-
-            String phone = model.phone;
-            if (!TextUtils.isEmpty(phone)) {
-                holder.phone.setVisibility(View.VISIBLE);
-                UiHelper.showPhone(holder.phone, phone);
-            } else {
-                holder.phone.setVisibility(View.GONE);
-            }
         }
     }
 
@@ -205,12 +193,10 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
         TextView name;
         TextView email;
         TextView cpf;
-        TextView phone;
 
-        private UIHolder(TextView name, TextView email, TextView phone, TextView cpf) {
+        private UIHolder(TextView name, TextView email, TextView cpf) {
             this.name = name;
             this.email = email;
-            this.phone = phone;
             this.cpf = cpf;
         }
     }

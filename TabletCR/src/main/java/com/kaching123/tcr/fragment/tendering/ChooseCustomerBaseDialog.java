@@ -12,6 +12,8 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
@@ -58,7 +60,7 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
     protected ListView listView;
 
     @ViewById
-    protected TextView customerFilter;
+    protected EditText customerFilter;
 
     protected ResourceCursorAdapter adapter;
 
@@ -106,16 +108,18 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
         return null;
     }
 
-    public interface emailSenderListener{
+    public interface emailSenderListener {
         void onComplete();
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getDialog().getWindow().setLayout(getResources()
                         .getDimensionPixelOffset(R.dimen.holdon_dlg_width),
                 getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
-
+        getDialog().getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setupAdapter();
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -124,11 +128,11 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
         listView.setAdapter(adapter = new CustomerAdapter(getActivity()));
     }
 
-    protected ChooseCustomerBaseDialog setListener(emailSenderListener listener)
-    {
+    protected ChooseCustomerBaseDialog setListener(emailSenderListener listener) {
         this.listener = listener;
-        return (ChooseCustomerBaseDialog)this;
+        return (ChooseCustomerBaseDialog) this;
     }
+
     @ItemClick(android.R.id.list)
     protected void listViewItemClicked(int pos) {
         Cursor c = (Cursor) adapter.getItem(pos);
@@ -181,8 +185,9 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
             builder.where(CustomerTable.FISRT_NAME + " LIKE ? OR "
                             + CustomerTable.LAST_NAME + " LIKE ? OR "
                             + CustomerTable.EMAIL + " LIKE ? OR "
-                            + CustomerTable.PHONE + " LIKE ?",
-                    filter, filter, filter, filter);
+                            + CustomerTable.PHONE + " LIKE ? OR "
+                            + CustomerTable.CUSTOMER_IDENTIFICATION + " LIKE ?",
+                    filter, filter, filter, filter, filter);
         }
         return builder.build(getActivity());
     }
