@@ -16,6 +16,7 @@ import com.kaching123.tcr.model.SaleOrderItemAddonModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
+import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
@@ -78,6 +79,13 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 if (item == null) {
                     SaleOrderItemModel itemModel = readSaleItemModel(c);
                     int descIndex = c.getColumnIndex(ItemTable.DESCRIPTION);
+
+                    TaxGroupModel taxModel1 = new TaxGroupModel(c.getString(c.getColumnIndex(SaleOrderItemsView2.TaxGroupTable.GUID)),
+                            c.getString(c.getColumnIndex(SaleOrderItemsView2.TaxGroupTable.TITLE)),
+                            _decimal(c, c.getColumnIndex(SaleOrderItemsView2.TaxGroupTable.TAX)));
+                    TaxGroupModel taxModel2 = new TaxGroupModel(c.getString(c.getColumnIndex(SaleOrderItemsView2.TaxGroupTable2.GUID)),
+                            c.getString(c.getColumnIndex(SaleOrderItemsView2.TaxGroupTable2.TITLE)),
+                            _decimal(c, c.getColumnIndex(SaleOrderItemsView2.TaxGroupTable2.TAX)));
                     item = new SaleOrderItemViewModel(
                             itemModel,
                             c.getString(descIndex),
@@ -91,10 +99,11 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
                             !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
-                            c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 0 ? false : true);
+                            c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 0 ? false : true,
+                            taxModel1, taxModel2);
 
                     item.finalPrice = itemModel.finalGrossPrice.subtract(itemModel.finalDiscount);
-                    if(item.isPrepaidItem) {
+                    if (item.isPrepaidItem) {
                         item.description = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.BillPaymentDescriptionTable.DESCRIPTION));
                         item.productCode = c.getString(c.getColumnIndex(SaleOrderItemsView2.BillPaymentDescriptionTable.PREPAID_ORDER_ID));
                     }

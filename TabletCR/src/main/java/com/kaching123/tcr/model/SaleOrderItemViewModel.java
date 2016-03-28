@@ -20,7 +20,7 @@ import java.util.Comparator;
 /**
  * Created by gdubina on 07/11/13.
  */
-public class SaleOrderItemViewModel implements IOrderItem, Serializable{
+public class SaleOrderItemViewModel implements IOrderItem, Serializable {
     private static final int NO_OPTIONS_COLOR = Color.rgb(210, 49, 64);
 
     public SaleOrderItemModel itemModel;
@@ -32,6 +32,8 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable{
 
     public ArrayList<Unit> tmpUnit = new ArrayList<>();
 
+    public TaxGroupModel taxGroup1;
+    public TaxGroupModel taxGroup2;
 
     public boolean isSerializable;
     public boolean isTaxableOrder;
@@ -57,7 +59,9 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable{
                                   DiscountType orderDiscountType,
                                   BigDecimal orderTransactionFee,
                                   boolean isKitchenPrintable,
-                                  boolean isPrepaidItem) {
+                                  boolean isPrepaidItem,
+                                  TaxGroupModel taxGroup1,
+                                  TaxGroupModel taxGroup2) {
         this.itemModel = itemModel;
         this.description = description;
         this.modifiers = modifiers;
@@ -72,6 +76,8 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable{
         this.isKitchenPrintable = isKitchenPrintable;
         this.isSerializable = isSerializable;
         this.isPrepaidItem = isPrepaidItem;
+        this.taxGroup1 = taxGroup1;
+        this.taxGroup2 = taxGroup2;
     }
 
     public SaleOrderItemViewModel setItemModel(SaleOrderItemModel itemModel) {
@@ -79,7 +85,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable{
         return this;
     }
 
-    public boolean hasModifiers(){
+    public boolean hasModifiers() {
         return modifiers != null && !modifiers.isEmpty();
     }
 
@@ -103,7 +109,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable{
             final StringBuilder builder = new StringBuilder();
             for (Unit unit : units) {
                 if (!TextUtils.isEmpty(unit.serialCode)) {
-                    if(!builder.toString().contains(unit.serialCode + "\n")) {
+                    if (!builder.toString().contains(unit.serialCode + "\n")) {
                         builder.append(unit.serialCode).append("\n");
                     }
                 }
@@ -112,7 +118,6 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable{
         }
         return "";
     }
-
 
 
     @Override
@@ -130,7 +135,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable{
         return getPriceWithMods();
     }
 
-    public BigDecimal getPriceWithMods(){
+    public BigDecimal getPriceWithMods() {
         if (itemModel == null || itemModel.price == null)
             return null;
 
@@ -151,7 +156,6 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable{
         }
         return sum;
     }
-
 
 
     @Override
@@ -241,7 +245,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable{
 
         boolean needComa = false;
 
-        for (AddonInfo a : mods){
+        for (AddonInfo a : mods) {
             if (a.addonTitle == null)
                 continue;
             if (needComa) {

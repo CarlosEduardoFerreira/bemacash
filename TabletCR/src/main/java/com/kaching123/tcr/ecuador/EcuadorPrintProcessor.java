@@ -36,9 +36,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
+import static com.kaching123.tcr.fragment.UiHelper.formatPercent;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 import static com.kaching123.tcr.util.DateUtils.formatEcuador;
@@ -48,6 +51,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
     private static final Uri URI_ORDER = ShopProvider.getContentUri(ShopStore.SaleOrderView.URI_CONTENT);
 
     private static final String DEFAULT_CUSTOMER_ID = "9999999999999";
+
+    private static final String DEFAULT_CUSTOMER_NAME = "CONSUMIDOR FINAL";
 
     private final String TRANSACTION_FEE = "Transaction Fee";
 
@@ -91,7 +96,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
     private String getCustomerName(Cursor c) {
         String firstName = c.getString(c.getColumnIndex(CustomerTable.FISRT_NAME));
         String lastName = c.getString(c.getColumnIndex(CustomerTable.LAST_NAME));
-        return concatFullname(firstName, lastName);
+        String fullName = concatFullname(firstName, lastName);
+        return TextUtils.isEmpty(fullName) ? DEFAULT_CUSTOMER_NAME : fullName;
     }
 
     private String getOperatorName(Cursor c) {
@@ -237,7 +243,9 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             }
 
             @Override
-            public void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee) {
+            public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount,
+                                    BigDecimal totalTax, BigDecimal tipsAmount,
+                                    BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
                 BigDecimal totalCashBack = BigDecimal.ZERO;
 
                 printerWrapper.drawLine();
@@ -253,16 +261,42 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                     printerWrapper.orderFooter(context.getString(R.string.printer_discount), negative(totalDiscount));
                     linesCount++;
                 }
+
+
+                for (Iterator i = subtotals.keySet().iterator(); i.hasNext(); ) {
+                    TaxGroupModel key = (TaxGroupModel) i.next();
+                    if (!TextUtils.isEmpty(key.title)) {
+                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " ("
+                                + key.title + " " + formatPercent(key.tax) + ")", subtotals.get(key));
+                    } else {
+                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " ("
+                                + context.getString(R.string.item_tax_group_default) + " "
+                                + formatPercent(TcrApplication.get().getTaxVat()) + ")", subtotals.get(key));
+                    }
+                }
+
                 if (subTotal == null) {
                     printerWrapper.orderFooter(context.getString(R.string.printer_subtotal), totalSubtotal.subtract(totalDiscount).add(transactionFee).add(totalCashBack));
                 } else {
                     printerWrapper.orderFooter(context.getString(R.string.printer_subtotal), (new BigDecimal(subTotal)).subtract(new BigDecimal(discountTotal).add(totalCashBack)));
                 }
 
+                for (Iterator i = taxes.keySet().iterator(); i.hasNext(); ) {
+                    TaxGroupModel key = (TaxGroupModel) i.next();
+                    if (!TextUtils.isEmpty(key.title)) {
+                        printerWrapper.orderFooter(context.getString(R.string.printer_ec_tax_title)
+                                + " " + key.title + " " + formatPercent(key.tax), taxes.get(key));
+                    } else {
+                        printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default)
+                                + " " + formatPercent(TcrApplication.get().getTaxVat()), taxes.get(key));
+                    }
+                    linesCount++;
+                }
                 if (taxTotal == null)
                     printerWrapper.orderFooter(context.getString(R.string.printer_tax), totalTax);
                 else
                     printerWrapper.orderFooter(context.getString(R.string.printer_tax), new BigDecimal(taxTotal));
+
 
                 if (BigDecimal.ZERO.compareTo(tipsAmount) != 0) {
                     printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
@@ -275,7 +309,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 else
                     printerWrapper.orderFooter(context.getString(R.string.printer_total), new BigDecimal(amountTotal).add(transactionFee).add(totalCashBack), true);
                 printerWrapper.drawLine();
-                linesCount += 5;
+                linesCount += 4;
             }
         });
 
@@ -296,8 +330,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             }
 
             int counts = getSaleItemAmount(orderGuid, context);
-            if(counts > 0)
-            {
+            if (counts > 0) {
                 printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
             }
         }
@@ -322,8 +355,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             }
 
         Logger.d("LINES COUNT = " + linesCount);
-        if (linesCount < 66) {
-            printerWrapper.emptyLine(66 - linesCount - 7 - 5);
+        if (linesCount < 60) {
+            printerWrapper.emptyLine(60 - linesCount - 7 - 5);
         }
     }
 
@@ -334,8 +367,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
     private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
 
-    private int getSaleItemAmount(String orderGuid, Context context)
-    {
+    private int getSaleItemAmount(String orderGuid, Context context) {
         int saleItemAmount = 0;
         Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
                 .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)

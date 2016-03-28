@@ -2268,7 +2268,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(SaleOrderItemsView.VIEW_NAME)
-    public static interface SaleOrderItemsView {
+    public interface SaleOrderItemsView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "so_items_view";
@@ -2285,6 +2285,14 @@ public abstract class ShopStore {
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
         @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
+
+        @Columns({TaxGroupTable.GUID, TaxGroupTable.TITLE, TaxGroupTable.TAX})
+        @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID)
+        String TABLE_TAX_GROUP = "tax_group_table";
+
+        @Columns({TaxGroupTable.GUID, TaxGroupTable.TITLE, TaxGroupTable.TAX})
+        @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID2)
+        String TABLE_TAX_GROUP2 = "tax_group_table2";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
         @Join(type = Join.Type.LEFT, joinTable = BillPaymentDescriptionTable.TABLE_NAME, joinColumn = BillPaymentDescriptionTable.ORDER_ID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.SALE_ITEM_GUID)

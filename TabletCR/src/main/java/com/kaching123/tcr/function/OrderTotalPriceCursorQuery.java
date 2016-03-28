@@ -3,6 +3,7 @@ package com.kaching123.tcr.function;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
@@ -11,6 +12,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.store.ShopProvider;
@@ -21,10 +23,13 @@ import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
+import static com.kaching123.tcr.util.CalculationUtil.getTaxVatValueNoScale;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
 /**
@@ -143,14 +148,50 @@ public final class OrderTotalPriceCursorQuery {
         BigDecimal totalDiscount = BigDecimal.ZERO;
         BigDecimal totalTax = BigDecimal.ZERO;
 
+        Map<TaxGroupModel, BigDecimal> taxes = new HashMap<>();
+        Map<TaxGroupModel, BigDecimal> subtotals = new HashMap<>();
 
         for (SaleOrderItemViewModel item : items) {
-             final SaleOrderItemModel itemModel = item.itemModel;
+            final SaleOrderItemModel itemModel = item.itemModel;
             final BigDecimal itemQty = item.getQty();
             final BigDecimal itemSubtotal = getSubTotal(itemQty, itemModel.finalGrossPrice);
             final BigDecimal itemDiscount = getSubTotal(itemQty, itemModel.finalDiscount);
             final BigDecimal itemTax = getSubTotal(itemQty, itemModel.finalTax);
             final BigDecimal singleItemPrice = itemModel.finalGrossPrice.add(itemModel.finalTax).subtract(itemModel.finalDiscount);
+
+            final TaxGroupModel model1 = item.taxGroup1;
+            if (!TextUtils.isEmpty(model1.getGuid())) {
+                BigDecimal subTax = getTaxVatValueNoScale(itemModel.finalGrossPrice.subtract(itemModel.finalDiscount), itemModel.tax);
+                BigDecimal currentTax = getSubTotal(itemQty, subTax);
+                BigDecimal subTotal = getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount));
+                if (taxes.containsKey(model1)) {
+                    BigDecimal taxGroupValue = taxes.get(model1);
+                    currentTax = taxGroupValue.add(currentTax);
+
+                    BigDecimal sub = subtotals.get(model1);
+                    subTotal = sub.add(subTotal);
+                }
+                taxes.put(model1, currentTax);
+                subtotals.put(model1, subTotal);
+            } else { // store tax
+                taxes.put(model1, getSubTotal(itemQty, itemModel.tax));
+                subtotals.put(model1, getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount)));
+            }
+            final TaxGroupModel model2 = item.taxGroup2;
+            if (!TextUtils.isEmpty(model2.getGuid())) {
+                BigDecimal subTax = getTaxVatValueNoScale(itemModel.finalGrossPrice.subtract(itemModel.finalDiscount), itemModel.tax2);
+                BigDecimal currentTax = getSubTotal(itemQty, subTax);
+                BigDecimal subTotal = getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount));
+                if (taxes.containsKey(model2)) {
+                    BigDecimal taxGroupValue = taxes.get(model2);
+                    currentTax = taxGroupValue.add(currentTax);
+
+                    BigDecimal sub = subtotals.get(model2);
+                    subTotal = sub.add(subTotal);
+                }
+                taxes.put(model2, currentTax);
+                subtotals.put(model2, subTotal);
+            }
 
             totalSubtotal = totalSubtotal.add(itemSubtotal);
             totalDiscount = totalDiscount.add(itemDiscount);
@@ -165,25 +206,37 @@ public final class OrderTotalPriceCursorQuery {
             }
 
             handler.handleItem(item.getSaleItemGuid(), item.description,
-                    item.unitsLabel,itemModel.priceType,
+                    item.unitsLabel, itemModel.priceType,
                     itemQty, itemSubtotal, itemDiscount,
                     itemTax, singleItemPrice, units, item.modifiers, transactionFee, item.getPrice(), item.getNotes());
         }
 
-        handler.handleTotal(totalSubtotal, totalDiscount, totalTax, tips, transactionFee);
+        handler.handleTotal(totalSubtotal, subtotals, totalDiscount, totalTax, tips, transactionFee, taxes);
     }
 
     public interface PrintHandler {
-        void handleItem(String saleItemGuid, String description,
+        void handleItem(String saleItemGuid,
+                        String description,
                         String unitLabel,
-                        PriceType priceType, BigDecimal qty, BigDecimal itemSubtotal,
-                        BigDecimal itemDiscount, BigDecimal itemTax,
-                        BigDecimal singleItemPrice, List<Unit> units,
+                        PriceType priceType,
+                        BigDecimal qty,
+                        BigDecimal itemSubtotal,
+                        BigDecimal itemDiscount,
+                        BigDecimal itemTax,
+                        BigDecimal singleItemPrice,
+                        List<Unit> units,
                         ArrayList<SaleOrderItemViewModel.AddonInfo> addons,
-                        BigDecimal transactionFee, BigDecimal itemFullPrice,
+                        BigDecimal transactionFee,
+                        BigDecimal itemFullPrice,
                         String note);
 
-        void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee);
+        void handleTotal(BigDecimal totalSubtotal,
+                         Map<TaxGroupModel, BigDecimal> subtotals,
+                         BigDecimal totalDiscount,
+                         BigDecimal totalTax,
+                         BigDecimal tipsAmount,
+                         BigDecimal transactionFee,
+                         Map<TaxGroupModel, BigDecimal> taxes);
     }
 
     public interface LotteryHandler {
@@ -193,8 +246,6 @@ public final class OrderTotalPriceCursorQuery {
     private static List<SaleOrderItemViewModel> loadItems(Context context, String orderGuid) {
         assert context != null;
         assert orderGuid != null;
-
-
         return _wrap(ProviderAction
                         .query(SALE_ITEMS_URI)
                         .where(SaleItemTable.ORDER_GUID + " = ?", orderGuid)

@@ -16,6 +16,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.store.ShopProvider;
@@ -26,6 +27,7 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
@@ -134,7 +136,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
 
             @Override
-            public void handleTotal(BigDecimal totalSubtotal, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee) {
+            public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
                 BigDecimal totalCashBack = BigDecimal.ZERO;
 
                 printerWrapper.drawLine();

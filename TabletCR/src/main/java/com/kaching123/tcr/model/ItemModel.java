@@ -60,7 +60,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
 
     public boolean ignoreMovementupdate;
 
-    public ItemModel(){
+    public ItemModel() {
         this.guid = UUID.randomUUID().toString();
     }
 
@@ -140,7 +140,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.commission = commission;
         this.referenceItemGuid = referenceItemGuid;
         this.refType = refType;
-	}
+    }
 
     public ItemModel(ItemModel itemModel) {
         super();
@@ -238,13 +238,13 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         _putItemRefType(values, ItemTable.ITEM_REF_TYPE, refType);
         values.put(ItemTable.REFERENCE_ITEM_ID, referenceItemGuid);
 
-		return values;
-	}
-	
-	@Override
-	public String toString() {
-		return description;
-	}
+        return values;
+    }
+
+    @Override
+    public String toString() {
+        return description;
+    }
 
     public ContentValues toQtyValues() {
         ContentValues values = new ContentValues();
@@ -252,4 +252,5 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.COST, _decimal(cost));
         return values;
     }
+
 }

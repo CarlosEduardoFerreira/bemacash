@@ -19,17 +19,15 @@ public class ItemWrapFunction implements Function<Cursor, List<ItemModel>> {
 
     @Override
     public List<ItemModel> apply(Cursor c) {
-        if (!c.moveToFirst())
-            return new ArrayList<ItemModel>();
-
-        LinkedHashMap<String, ItemModel> map = new LinkedHashMap<String, ItemModel>();
+        if (!c.moveToFirst()) {
+            return new ArrayList<>();
+        }
+        LinkedHashMap<String, ItemModel> map = new LinkedHashMap<>();
         do {
-            ItemModel item =  function.apply(c);
-
+            ItemModel item = function.apply(c);
             map.put(item.guid, item);
         } while (c.moveToNext());
-
-        return new ArrayList<ItemModel>(map.values());
+        return new ArrayList<>(map.values());
     }
 
 }
