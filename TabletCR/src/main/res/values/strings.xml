@@ -507,6 +507,10 @@
     <string name="printer_ec_order">Order:</string>
     <string name="printer_ec_tax">Tax(%s)</string>
     <string name="printer_ec_tax_title">Tax</string>
+    <string name="printer_ec_header_description">Description</string>
+    <string name="printer_ec_header_qty">Qty</string>
+    <string name="printer_ec_header_total">Total</string>
+    <string name="printer_ec_header_unit_price">Unit Price</string>
 
     <string name="printer_refund_total">Total (tax included)</string>
     <string name="printer_refund_tips">     Tips</string>

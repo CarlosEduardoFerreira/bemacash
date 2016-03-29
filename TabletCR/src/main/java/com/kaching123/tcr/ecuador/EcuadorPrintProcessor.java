@@ -184,7 +184,10 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ?
                 transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
-        ((PosEcuadorOrderTextPrinter) printerWrapper).addHeaderTitle("Description", "Qty", "Total", "Unit Price");
+        ((PosEcuadorOrderTextPrinter) printerWrapper).addHeaderTitle(context.getString(R.string.printer_ec_header_description),
+                context.getString(R.string.printer_ec_header_qty),
+                context.getString(R.string.printer_ec_header_total),
+                context.getString(R.string.printer_ec_header_unit_price));
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new OrderTotalPriceCursorQuery.PrintHandler() {
             @Override
             public void handleItem(String saleItemGuid, String description, String unitLabel,
