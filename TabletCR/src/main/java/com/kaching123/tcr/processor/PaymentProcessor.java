@@ -1281,7 +1281,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
     public HistoryDetailedOrderItemListFragment.RefundAmount getReturnAmount() {
         BigDecimal pickedValue = BigDecimal.ZERO;
-        ArrayList<SaleOrderItemViewModel> orderItems = getOderItems(ReleaseResultList);
+        ArrayList<SaleOrderItemViewModel> orderItems = getOderItems(failReleaseResultList);
         ArrayList<MoneybackProcessor.RefundSaleItemInfo> refundItems = new ArrayList<MoneybackProcessor.RefundSaleItemInfo>(failReleaseResultList.size());
 
         for (SaleOrderItemViewModel model : orderItems) {
