@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderCustomerCommand;
 import com.kaching123.tcr.commands.store.user.AddCustomerCommand;
 import com.kaching123.tcr.commands.store.user.DeleteCustomerCommand;
@@ -50,6 +51,18 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
         loadOrderData();
         setCancelable(false);
     }
+
+    @Override
+    protected Builder build(Builder builder) {
+        String customMessage = TcrApplication.get().getShopPref().customerPopupScreenMessage().get();
+        if (TextUtils.isEmpty(customMessage)) {
+            customMessage = getString(R.string.tendering_choose_customer_dialog_title);
+        } else {
+            customMessage = customMessage + "\n" + getString(R.string.tendering_choose_customer_dialog_title);
+        }
+        return super.build(builder).setTitle(customMessage);
+    }
+
 
     public static void show(FragmentActivity context, String orderGuid, ExtremeCallback callback) {
         DialogUtil.show(context, DIALOG_NAME, CustomerPickerExtremeFragment_.builder()

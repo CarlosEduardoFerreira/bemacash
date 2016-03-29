@@ -304,6 +304,8 @@ public interface ShopPref {
 
     boolean customerPopupScreenEnabled();
 
+    String customerPopupScreenMessage();
+
     /**
      * freemium settings
      */
