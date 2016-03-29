@@ -55,7 +55,7 @@ public final class UiHelper {
         priceInputFormat.setDecimalFormatSymbols(symbols);
         priceInputFormat.setRoundingMode(RoundingMode.UNNECESSARY);
         priceInputFormat.setParseBigDecimal(true);
-
+        priceInputFormat.setNegativePrefix("-");
 
         percentFormat.setDecimalFormatSymbols(otherSymbols);
         integralIntegerFormat.setDecimalFormatSymbols(otherSymbols);

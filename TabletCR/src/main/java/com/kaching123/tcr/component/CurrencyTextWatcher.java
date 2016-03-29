@@ -48,10 +48,13 @@ public class CurrencyTextWatcher implements TextWatcher {
         }
         isDecimalPart = !isSeparatorDeleted(value);
         if (isInput()) {
+            if (isNegativeCharacter(value)) {
+                return;
+            }
             if (isSeparatorCharacter(value)) {
                 isDecimalPart = true;
                 String intPart = value.replaceAll("\\,", "").replaceAll(String.valueOf("\\."), "");
-                if (TextUtils.isEmpty(intPart)){
+                if (TextUtils.isEmpty(intPart)) {
                     intPart = "0";
                 }
                 final String priceFormattedString = UiHelper.priceFormat(new BigDecimal(intPart));
@@ -98,6 +101,10 @@ public class CurrencyTextWatcher implements TextWatcher {
 
     private boolean isSeparatorCharacter(final String inputText) {
         return inputText.endsWith(".") || inputText.endsWith(",");
+    }
+
+    private boolean isNegativeCharacter(final String inputText) {
+        return inputText.equals("-");
     }
 
     private boolean isSeparatorDeleted(String amount) {
