@@ -318,22 +318,4 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
         String[] prints = receipt.split("\\n");
         return prints;
     }
-
-    private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
-
-    private int getSaleItemAmount(String orderGuid, Context context) {
-        int saleItemAmount = 0;
-        Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
-                .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
-                .perform(context);
-        int itemQty = 1;
-        while (c.moveToNext()) {
-            itemQty = c.getInt(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY));
-            saleItemAmount = saleItemAmount + itemQty;
-        }
-        c.close();
-
-        return saleItemAmount;
-    }
-
 }

@@ -20,7 +20,6 @@ import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -226,19 +225,19 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
     private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
 
-    private int getSaleItemAmount(String orderGuid, Context context) {
     protected int getSaleItemAmount(String orderGuid, Context context) {
         int saleItemAmount = 0;
         Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
                 .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .perform(context);
         int itemQty = 1;
-        while (c.moveToNext()) {
-            itemQty = c.getInt(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY));
-            saleItemAmount = saleItemAmount + itemQty;
+        if (c.moveToFirst()) {
+            do {
+                itemQty = c.getInt(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY));
+                saleItemAmount = saleItemAmount + itemQty;
+            } while (c.moveToNext());
+            c.close();
         }
-        c.close();
-
         return saleItemAmount;
     }
 
