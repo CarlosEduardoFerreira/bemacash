@@ -1867,5 +1867,7 @@
     <string name="prepaid_mini_item_description">Prepaid Item:</string>
     <string name="prepaid_mini_fail_error">Error:</string>
     <string name="prepaid_mini_fail_error_msg">Error Msg:</string>
+    <string name="prepaid_dialog_title">Prepaid</string>
+    <string name="prepaid_dialog_des">Please choose a vendor for Prepaid.</string>
 
 </resources>

@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -29,10 +30,16 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,7 +97,10 @@ import com.kaching123.tcr.fragment.commission.CommissionDialog.ICommissionDialog
 import com.kaching123.tcr.fragment.data.MsrDataFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
+import com.kaching123.tcr.fragment.dialog.AlertDialogListFragment;
+import com.kaching123.tcr.fragment.dialog.AlertDialogListFragment_;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
+import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment;
@@ -355,7 +365,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_RELEASE) {
 //            callback.onBillingSuccess(BaseCashierActivity.this, releaseResult);
             isPrepaidItemRelease = true;
-            PrepaidReleaseResult releaseResult = new PrepaidReleaseResult(data.getStringExtra(ScannerBaseActivity.EXTRA_ACTION),data.getStringExtra(ScannerBaseActivity.EXTRA_ERROR),data.getStringExtra(ScannerBaseActivity.EXTRA_ERRORMSG),data.getStringExtra(ScannerBaseActivity.EXTRA_RECEIPT), prepaidList.get(prepaidList.size() - prepaidCount));
+            PrepaidReleaseResult releaseResult = new PrepaidReleaseResult(data.getStringExtra(ScannerBaseActivity.EXTRA_ACTION), data.getStringExtra(ScannerBaseActivity.EXTRA_ERROR), data.getStringExtra(ScannerBaseActivity.EXTRA_ERRORMSG), data.getStringExtra(ScannerBaseActivity.EXTRA_RECEIPT), prepaidList.get(prepaidList.size() - prepaidCount));
             releaseResultList.add(releaseResult);
             if (--prepaidCount > 0) {
                 callReleaseSingleMini(PREPAID_MINI_RELEASE, prepaidList.get(prepaidList.size() - prepaidCount).productCode);
@@ -593,7 +603,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         @Override
         public void onCollected(ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers, final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit, boolean hasAutoApply) {
 
-            if(hasAutoApply) {
+            if (hasAutoApply) {
                 tryToAddCheckPriceType(model, getModifiers(modifiers), null, null, price, quantity, unit);
                 return;
             }
@@ -619,11 +629,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     };
 
-    protected ArrayList<String> getModifiers(ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers)
-    {
+    protected ArrayList<String> getModifiers(ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers) {
         ArrayList<String> list = new ArrayList<>();
-        for(CollectModifiersCommand.SelectedModifierExModel item : modifiers)
-        {
+        for (CollectModifiersCommand.SelectedModifierExModel item : modifiers) {
             list.add(item.modifierGuid);
         }
         return list;
@@ -947,6 +955,24 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             lockItem.setEnabled(true);
     }
 
+    private ArrayList<String> getData() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("BlackStone");
+        return list;
+    }
+
+    protected final String DIALOG_NAME = "prepaidListDialogFragment";
+
+    public void show(FragmentActivity activity, String message, ListAdapter adapter) {
+        DialogUtil.show(activity, DIALOG_NAME,
+                AlertDialogListFragment_.builder()
+                        .titleId(R.string.prepaid_dialog_title)
+                        .errorMsg(message)
+                        .positiveButtonTitleId(R.string.btn_ok)
+                        .dialogType(DialogType.ALERT).build())
+                .setAdapter(adapter);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -967,19 +993,26 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         assert searchItem != null;
         assert prepaidItem != null;
 
+
         prepaidItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                try {
-                    callPrepaidMini(PREPAID_MINI_START, PREPAID_MINI_START_ALL);
-                    return false;
-                } catch (ActivityNotFoundException exception) {
-                    AlertDialogFragment.showAlert(BaseCashierActivity.this,
-                            R.string.dlg_prepaid_app_missing_title,
-                            getString(R.string.dlg_prepaid_app_missing));
 
+//                show(BaseCashierActivity.this, getString(R.string.prepaid_dialog_des), new ArrayAdapter<String>(BaseCashierActivity.this,
+//                        android.R.layout.simple_expandable_list_item_1,
+//                        getData()));
+                  show(BaseCashierActivity.this, getString(R.string.prepaid_dialog_des), new PrepaidListAdapter(getData()));
 
-                }
+//                try {
+//                    callPrepaidMini(PREPAID_MINI_START, PREPAID_MINI_START_ALL);
+//                    return false;
+//                } catch (ActivityNotFoundException exception) {
+//                    AlertDialogFragment.showAlert(BaseCashierActivity.this,
+//                            R.string.dlg_prepaid_app_missing_title,
+//                            getString(R.string.dlg_prepaid_app_missing));
+//
+//
+//                }
                 return false;
             }
         });
@@ -1009,6 +1042,86 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
         return b;
+    }
+
+    class PrepaidListAdapter extends BaseAdapter {
+        private ViewHolder holder;
+        private ArrayList<String> list;
+        private LayoutInflater mInflater;
+
+        PrepaidListAdapter(ArrayList<String> list) {
+            this.list = list;
+            this.mInflater = LayoutInflater.from(BaseCashierActivity.this);
+        }
+
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return list.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.prepaid_list_item, null);
+                holder = new ViewHolder();
+                holder.name = (TextView) convertView.findViewById(R.id.tv_name);
+                holder.linearLayout = (LinearLayout) convertView.findViewById(R.id.linear_layout);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.name.setText(list.get(position));
+            holder.name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        DialogUtil.hide(BaseCashierActivity.this, DIALOG_NAME);
+                        callPrepaidMini(PREPAID_MINI_START, PREPAID_MINI_START_ALL);
+
+                    } catch (ActivityNotFoundException exception) {
+                        AlertDialogFragment.showAlert(BaseCashierActivity.this,
+                                R.string.dlg_prepaid_app_missing_title,
+                                getString(R.string.dlg_prepaid_app_missing));
+
+
+                    }
+                }
+            });
+            holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        DialogUtil.hide(BaseCashierActivity.this, DIALOG_NAME);
+                        callPrepaidMini(PREPAID_MINI_START, PREPAID_MINI_START_ALL);
+
+                    } catch (ActivityNotFoundException exception) {
+                        AlertDialogFragment.showAlert(BaseCashierActivity.this,
+                                R.string.dlg_prepaid_app_missing_title,
+                                getString(R.string.dlg_prepaid_app_missing));
+
+
+                    }
+                }
+            });
+
+            return convertView;
+        }
+
+        public final class ViewHolder {
+            public TextView name;
+            public LinearLayout linearLayout;
+        }
     }
 
     protected void callPrepaidMini(String state, String extra) {
@@ -1684,7 +1797,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
 
         @Override
-        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {}
+        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {
+        }
     };
 
     private void try2ClockIn() {
