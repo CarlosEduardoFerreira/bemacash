@@ -12,12 +12,7 @@ import static com.kaching123.tcr.print.FormatterUtil.commaPriceFormat;
 public class PosEcuadorOrderTextPrinter extends PosOrderTextPrinter {
 
     public PosEcuadorOrderTextPrinter() {
-
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < PRINTER_MAX_QTY_LEN + 2; i++) {//need add 2 extra spaces between label
-            builder.append(' ');
-        }
-        qtyHolderText = builder.toString();
+        super();
     }
 
     public void add(String title, String qty, String totalPrice, String itemPrice, List<String> units) {

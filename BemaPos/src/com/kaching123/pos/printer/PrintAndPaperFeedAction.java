@@ -2,7 +2,7 @@ package com.kaching123.pos.printer;
 
 import com.kaching123.pos.Action;
 
-public class PrintAndPaperFeedAction extends Action {
+public class PrintAndPaperFeedAction extends Action implements Countable {
 
 	private static final byte[] COMMAND_BYTES = new byte[]{0x0A};
 	
@@ -11,4 +11,8 @@ public class PrintAndPaperFeedAction extends Action {
 		return COMMAND_BYTES;
 	}
 
+	@Override
+	public int getLineCount() {
+		return 1;
+	}
 }

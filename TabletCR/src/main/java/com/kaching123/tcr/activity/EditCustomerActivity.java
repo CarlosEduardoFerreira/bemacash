@@ -230,6 +230,10 @@ public class EditCustomerActivity extends SuperBaseActivity {
             Toast.makeText(this, R.string.customer_edit_first_name_error, Toast.LENGTH_SHORT).show();
             return false;
         }
+        if (TextUtils.isEmpty(lastName.getText().toString().trim())) {
+            Toast.makeText(this, R.string.customer_edit_last_name_error, Toast.LENGTH_SHORT).show();
+            return false;
+        }
         String emailText = email.getText().toString().trim();
         String phoneText = phone.getText().toString().trim();
         if (!TextUtils.isEmpty(emailText) && !isValidEmail(emailText)) {

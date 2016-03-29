@@ -194,25 +194,22 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
 
             int counts = getSaleItemAmount(orderGuid, context);
-            if(counts > 0)
-            {
+            if (counts > 0) {
                 printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
             }
         }
 
 
-
         if (prepaidReleaseResults != null)
             for (PrepaidReleaseResult result : prepaidReleaseResults) {
-                if(Integer.parseInt(result.error) == 200) {
+                if (Integer.parseInt(result.error) == 200) {
                     if (result.receipt != null) {
                         String[] prints = getFormattedLine(result.receipt);
                         for (String line : prints) {
                             printerWrapper.add(line);
                         }
                     }
-                }
-                else{
+                } else {
                     printerWrapper.header(context.getString(R.string.prepaid_mini_item_description), result.model.description);
                     printerWrapper.header(context.getString(R.string.prepaid_mini_fail_error), result.error);
                     printerWrapper.header(context.getString(R.string.prepaid_mini_fail_error_msg), result.errorMSG);
@@ -225,19 +222,20 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         String[] prints = receipt.split("\\n");
         return prints;
     }
+
     private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
 
-    private int getSaleItemAmount(String orderGuid, Context context)
-    {
+    protected int getSaleItemAmount(String orderGuid, Context context) {
         int saleItemAmount = 0;
         Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
                 .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .perform(context);
-        while (c.moveToNext()) {
-            saleItemAmount++;
+        if (c.moveToFirst()) {
+            do {
+                saleItemAmount++;
+            } while (c.moveToNext());
+            c.close();
         }
-        c.close();
-
         return saleItemAmount;
     }
 

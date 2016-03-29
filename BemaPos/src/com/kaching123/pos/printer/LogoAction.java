@@ -12,7 +12,7 @@ import com.kaching123.pos.Action;
 
  * Created by vkompaniets on 27.05.2014.
  */
-public class LogoAction extends Action {
+public class LogoAction extends Action implements Countable {
 
     @Override
     protected byte[] getCommand() {
@@ -22,5 +22,10 @@ public class LogoAction extends Action {
     @Override
     public String toString() {
         return "[LOGO]";
+    }
+
+    @Override
+    public int getLineCount() {
+        return 3;
     }
 }

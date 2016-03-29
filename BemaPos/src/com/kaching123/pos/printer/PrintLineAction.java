@@ -2,7 +2,7 @@ package com.kaching123.pos.printer;
 
 import com.kaching123.pos.CP850ConverterAction;
 
-public class PrintLineAction extends CP850ConverterAction {
+public class PrintLineAction extends CP850ConverterAction implements Countable {
 
     private byte bytes[];
     private String line;
@@ -24,5 +24,10 @@ public class PrintLineAction extends CP850ConverterAction {
     @Override
     public String toString() {
         return line;
+    }
+
+    @Override
+    public int getLineCount() {
+        return 1;
     }
 }

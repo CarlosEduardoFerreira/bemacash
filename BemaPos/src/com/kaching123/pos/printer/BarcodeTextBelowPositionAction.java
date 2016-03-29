@@ -13,7 +13,7 @@ import com.kaching123.pos.Action;
  [Default] n = 0
 
  */
-public class BarcodeTextBelowPositionAction extends Action {
+public class BarcodeTextBelowPositionAction extends Action implements Countable {
 
     private byte bytes[];
 
@@ -32,5 +32,10 @@ public class BarcodeTextBelowPositionAction extends Action {
     @Override
     public String toString() {
         return "BarcodeTextBelowPositionAction";
+    }
+
+    @Override
+    public int getLineCount() {
+        return 4;
     }
 }

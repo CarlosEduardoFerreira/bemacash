@@ -6,6 +6,7 @@ import com.kaching123.pos.printer.BarcodeAction;
 import com.kaching123.pos.printer.BarcodeHeightAction;
 import com.kaching123.pos.printer.BarcodeTextBelowPositionAction;
 import com.kaching123.pos.printer.CenterAlignment;
+import com.kaching123.pos.printer.Countable;
 import com.kaching123.pos.printer.EmphasizedModeAction;
 import com.kaching123.pos.printer.FullPaperCutAction2;
 import com.kaching123.pos.printer.InitPrintAction;
@@ -37,6 +38,8 @@ public class BasePosTextPrinter implements IPrinter {
     public static final String SPACES_2 = "  ";
     public static final String SPACES_4 = "    ";
 
+    public int linesCount;
+
     static {
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
         otherSymbols.setDecimalSeparator('.');
@@ -52,7 +55,7 @@ public class BasePosTextPrinter implements IPrinter {
     protected static final int PRINTER_FOUR_QTY_LEN = 4;
     protected static final int PRINTER_MAX_DATE_LEN = 22;
 
-    private ArrayList<Action> commands = new ArrayList<Action>();
+    private ArrayList<Action> commands = new ArrayList<>();
 
     protected BasePosTextPrinter() {
         add(new InitPrintAction());
@@ -68,6 +71,9 @@ public class BasePosTextPrinter implements IPrinter {
         if (action == null)
             return;
         commands.add(action);
+        if (action instanceof Countable) {
+            linesCount += ((Countable) action).getLineCount();
+        }
     }
 
     protected void boldDoubleString(PrintLineAction line) {
