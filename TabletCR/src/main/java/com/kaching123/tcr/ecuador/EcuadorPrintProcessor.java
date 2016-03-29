@@ -312,10 +312,16 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 }
 
             }
+
+        int printedLines = ((PosEcuadorOrderTextPrinter) printerWrapper).linesCount;
+        if (printedLines < EC_RECEIPT_LINES_COUNT) {
+            printerWrapper.emptyLine(EC_RECEIPT_LINES_COUNT - printedLines);
+        }
     }
 
     private String[] getFormattedLine(String receipt) {
         String[] prints = receipt.split("\\n");
         return prints;
     }
+
 }
