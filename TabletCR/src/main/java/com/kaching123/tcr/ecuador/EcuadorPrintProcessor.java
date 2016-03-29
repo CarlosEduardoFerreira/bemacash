@@ -41,6 +41,7 @@ import java.util.Map;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
 import static com.kaching123.tcr.fragment.UiHelper.formatPercent;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 import static com.kaching123.tcr.util.DateUtils.formatEcuador;
@@ -292,12 +293,13 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             if (p.balance != null && p.gateway.isEbt()) {
                 printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
             }
+
+            BigDecimal counts = getSaleItemAmount(orderGuid, context);
+            if (counts.compareTo(BigDecimal.ZERO) > 0) {
+                printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
+            }
         }
 
-        int counts = getSaleItemAmount(orderGuid, context);
-        if (counts > 0) {
-            printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
-        }
 
         if (prepaidReleaseResults != null)
             for (PrepaidReleaseResult result : prepaidReleaseResults) {

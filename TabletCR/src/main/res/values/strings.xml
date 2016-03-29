@@ -232,6 +232,7 @@
     <string name="cashier_action_balance">EBT Balance</string>
     <string name="cashier_action_commission">Sales Person</string>
     <string name="cashier_action_search">Search</string>
+    <string name="cashier_action_item_account">Total Qty:</string>
     <string name="cashier_action_delete">Delete</string>
     <string name="cashier_action_add">Add</string>
     <string name="cashier_action_unit">Search serial</string>

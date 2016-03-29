@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
 /**
@@ -193,8 +194,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
             }
 
-            int counts = getSaleItemAmount(orderGuid, context);
-            if (counts > 0) {
+            BigDecimal counts = getSaleItemAmount(orderGuid, context);
+            if (counts.compareTo(BigDecimal.ZERO) > 0) {
                 printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
             }
         }
@@ -225,16 +226,16 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
     private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
 
-    protected int getSaleItemAmount(String orderGuid, Context context) {
-        int saleItemAmount = 0;
+    protected BigDecimal getSaleItemAmount(String orderGuid, Context context) {
+        BigDecimal saleItemAmount = BigDecimal.ZERO;
         Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
                 .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .perform(context);
-        int itemQty = 1;
+        BigDecimal itemQty = BigDecimal.ZERO;
         if (c.moveToFirst()) {
             do {
-                itemQty = c.getInt(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY));
-                saleItemAmount = saleItemAmount + itemQty;
+                itemQty = _decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)));
+                saleItemAmount = saleItemAmount.add(itemQty);
             } while (c.moveToNext());
             c.close();
         }

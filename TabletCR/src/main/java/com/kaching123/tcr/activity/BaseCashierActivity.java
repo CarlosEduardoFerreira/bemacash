@@ -19,7 +19,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -36,7 +35,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -97,7 +95,6 @@ import com.kaching123.tcr.fragment.commission.CommissionDialog.ICommissionDialog
 import com.kaching123.tcr.fragment.data.MsrDataFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
-import com.kaching123.tcr.fragment.dialog.AlertDialogListFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogListFragment_;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -127,7 +124,6 @@ import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
@@ -184,10 +180,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
 @EActivity
@@ -197,6 +193,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
 
+    private String strItemCount;
+
     static {
         permissions.add(Permission.SALES_TRANSACTION);
     }
@@ -205,6 +203,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final Uri PAYMENTS_URI = ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT);
 
     private static final int LOADER_ORDER_TITLE = 1;
+    private static final int LOADER_ITEM_COUNT_TITLE = 11;
     private static final int LOADER_ORDERS_COUNT = 2;
     private static final int LOADER_CHECK_ORDER = 3;
     private static final int LOADER_CHECK_ORDER_PAYMENTS = 4;
@@ -230,11 +229,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected MenuItem searchItem;
     protected MenuItem prepaidItem;
+    protected MenuItem itemCount;
 
     private MenuItem holdCounterItem;
     private TextView holdCounterView;
 
     private OrderInfoLoader orderInfoLoader = new OrderInfoLoader();
+    //    private SaleItemCountLoader saleItemCountLoader = new SaleItemCountLoader();
     private OrdersCountLoader ordersCountLoader = new OrdersCountLoader();
     private AddItem2SaleOrderCallback addItemCallback = new AddItem2SaleOrderCallback();
     private AddSaleOrderCallback addOrderCallback = new AddSaleOrderCallback();
@@ -543,6 +544,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     }
 
+
     private void initTitle() {
         if (!isCreateReturnOrder) {
             title = getString(R.string.cashier_title_new_order);
@@ -573,6 +575,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onResume();
         stop = false;
         LocalBroadcastManager.getInstance(this).registerReceiver(syncGapReceiver, new IntentFilter(SyncCommand.ACTION_SYNC_GAP));
+        if (itemCount != null && orderGuid != null)
+            itemCount.setTitle(strItemCount == null ? itemCount.getTitle() : strItemCount);
     }
 
     @Override
@@ -644,6 +648,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                           final BigDecimal price,
                                           final BigDecimal quantity,
                                           final Unit unit) {
+//        getSupportLoaderManager().restartLoader(LOADER_ITEM_COUNT_TITLE, null, saleItemCountLoader);
+        if (itemCount != null && orderGuid != null)
+            strItemCount = (itemCount.getTitle().toString().substring(0, 10) + " " + getSaleItemAmount(orderGuid));
         if (PriceType.OPEN == model.priceType && price == null) {
             PriceEditFragment.show(this, model.price, new OnEditPriceListener() {
 
@@ -1001,7 +1008,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //                show(BaseCashierActivity.this, getString(R.string.prepaid_dialog_des), new ArrayAdapter<String>(BaseCashierActivity.this,
 //                        android.R.layout.simple_expandable_list_item_1,
 //                        getData()));
-                  show(BaseCashierActivity.this, getString(R.string.prepaid_dialog_des), new PrepaidListAdapter(getData()));
+                show(BaseCashierActivity.this, getString(R.string.prepaid_dialog_des), new PrepaidListAdapter(getData()));
 
 //                try {
 //                    callPrepaidMini(PREPAID_MINI_START, PREPAID_MINI_START_ALL);
@@ -1017,6 +1024,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             }
         });
 
+        itemCount = menu.findItem(R.id.action_item_account);
+        if (itemCount != null && orderGuid != null) {
+            if (strItemCount != null)
+                itemCount.setTitle(strItemCount);
+            else
+            {
+               itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + getSaleItemAmount(orderGuid));
+            }
+        }
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
 
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
@@ -1719,7 +1735,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             isPaying = false;
                             completeOrder();
                             checkOfflineMode();
-
+                            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10));
                         }
 
                         @Override
@@ -2134,12 +2150,32 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         @Override
         public void onLoadFinished(Loader<OrdersStatInfo> loader, OrdersStatInfo info) {
             updateCounter(info);
+//            if (itemCount != null)
+//                itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + getSaleItemAmount(orderGuid));
         }
 
         @Override
         public void onLoaderReset(Loader<OrdersStatInfo> loader) {
         }
 
+    }
+
+    private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
+
+    protected BigDecimal getSaleItemAmount(String orderGuid) {
+        BigDecimal saleItemAmount = BigDecimal.ZERO;
+        Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
+                .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
+                .perform(BaseCashierActivity.this);
+        BigDecimal itemQty = BigDecimal.ZERO;
+        if (c.moveToFirst()) {
+            do {
+                itemQty = _decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)));
+                saleItemAmount = saleItemAmount.add(itemQty);
+            } while (c.moveToNext());
+            c.close();
+        }
+        return saleItemAmount;
     }
 
     private static class OrdersStatInfo {
@@ -2160,6 +2196,42 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         Logger.d("Order discount = " + saleOrderModel.discount + " => Can apply discount to items = " + !isDiscounted);
         return isDiscounted;
     }
+
+//    private class SaleItemCountLoader implements LoaderManager.LoaderCallbacks<Cursor> {
+//
+//        @Override
+//        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+//            if (orderGuid != null)
+//                return CursorLoaderBuilder.forUri(SALE_ITEM_ORDER_URI)
+//                        .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
+//                        .build(BaseCashierActivity.this);
+//            else
+//                return null;
+//        }
+//
+//        @Override
+//        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+//            if (data == null) {
+//                itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " 0");
+//
+//                return;
+//            }
+//            BigDecimal saleItemAmount = BigDecimal.ZERO;
+//            BigDecimal itemQty = BigDecimal.ZERO;
+//            if (data.moveToFirst()) {
+//                do {
+//                    itemQty = _decimal(data.getString(data.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)));
+//                    saleItemAmount = saleItemAmount.add(itemQty);
+//                } while (data.moveToNext());
+//            }
+//            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + saleItemAmount.toString());
+//        }
+//
+//        @Override
+//        public void onLoaderReset(Loader<Cursor> loader) {
+//            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " 0");
+//        }
+//    }
 
     private class OrderInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
 
