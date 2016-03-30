@@ -1563,7 +1563,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 this.orderGuid,
                 model.guid,
                 model.description,
-                quantity == null ? BigDecimal.ONE : quantity,
+                quantity == null ? (model.priceType == PriceType.UNIT_PRICE ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
                 BigDecimal.ZERO,
                 isCreateReturnOrder ? PriceType.OPEN : model.priceType,
                 price == null ? model.price : price,
