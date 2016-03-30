@@ -41,7 +41,6 @@ import java.util.Map;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
 import static com.kaching123.tcr.fragment.UiHelper.formatPercent;
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 import static com.kaching123.tcr.util.DateUtils.formatEcuador;
@@ -56,7 +55,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
     private final String TRANSACTION_FEE = "Transaction Fee";
 
-    private static final int EC_RECEIPT_LINES_COUNT = 68;
+    private static final int EC_RECEIPT_LINES_COUNT = 50;
 
     private boolean reprint;
 
