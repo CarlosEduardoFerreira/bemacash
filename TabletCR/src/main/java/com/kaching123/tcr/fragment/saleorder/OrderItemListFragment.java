@@ -46,6 +46,7 @@ import com.kaching123.tcr.fragment.edit.SaleItemDiscountEditFragment.OnEditSaleI
 import com.kaching123.tcr.fragment.saleorder.ItemsAdapter.HighlightedColumn.Type;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
+import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Permission;
@@ -160,11 +161,11 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             @Override
             public void onQtyClicked(final View v, final int pos) {
                 final SaleOrderItemViewModel model = adapter.getItem(pos);
-                if(model.isPrepaidItem)
+                if (model.isPrepaidItem)
                     return;
                 if (!model.isSerializable) {
                     final String saleItemGuid = adapter.getSaleItemGuid(pos);
-                    if(model.itemModel.priceType == PriceType.UNIT_PRICE) {
+                    if (model.itemModel.priceType == PriceType.UNIT_PRICE) {
                         if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) {
                             QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
                                 @Override
@@ -190,7 +191,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                                 }
                             }, Permission.CHANGE_QTY);
                         }
-                    }else {
+                    } else {
                         QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
                             @Override
                             public void onConfirm(BigDecimal value) {
@@ -334,7 +335,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private void doRemoceClickLine() {
         getListView().closeOpenedItems();
-
+        itemsListHandler.onTotolQtyUpdated(getRemoveQty(adapter.getSaleItemGuid(position)), true);
         if (adapter.getCount() == 1) {
             if (itemsListHandler != null) {
                 itemsListHandler.onRemoveLastItem();
@@ -343,7 +344,27 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         }
 
         RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(position), OrderItemListFragment.this);
+
     }
+
+    private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
+
+    private String getRemoveQty(String saleItemGuid) {
+        BigDecimal saleItemAmount = BigDecimal.ZERO;
+        Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
+                .where(ShopStore.SaleItemTable.SALE_ITEM_GUID + " = ?", saleItemGuid)
+                .perform(getActivity());
+        BigDecimal itemQty = BigDecimal.ZERO;
+        if (c.moveToFirst()) {
+
+            itemQty = ContentValuesUtil._decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)));
+            saleItemAmount = saleItemAmount.add(itemQty);
+
+            c.close();
+        }
+        return saleItemAmount.toString();
+    }
+
 
     public void doRemoceClickLine(String guid) {
         getListView().closeOpenedItems();
@@ -419,6 +440,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, List<SaleOrderItemViewModel> list) {
+        itemsListHandler.onTotolQtyUpdated(getCount(list), false);
         adapter.changeCursor(list);
         if (need2ScrollList) {
             getListView().postDelayed(new Runnable() {
@@ -435,6 +457,14 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             if (itemsListHandler != null)
                 itemsListHandler.onOrderLoaded(getLastItem());
         }
+    }
+
+    private String getCount(List<SaleOrderItemViewModel> list) {
+        BigDecimal count = BigDecimal.ZERO;
+        for (SaleOrderItemViewModel model : list) {
+            count = count.add(model.itemModel.qty);
+        }
+        return count.toString();
     }
 
     @Override
@@ -524,6 +554,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         void onOrderLoaded(SaleOrderItemViewModel lastItem);
 
         void onBarcodeReceivedFromUSB(String barcode);
+
+        void onTotolQtyUpdated(String qty, boolean remove);
     }
 
     private void needScrollToTheEnd() {

@@ -193,8 +193,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
 
-    private String strItemCount;
-
     static {
         permissions.add(Permission.SALES_TRANSACTION);
     }
@@ -290,6 +288,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private ArrayList<PaymentTransactionModel> successfullCCtransactionModels;
     private List<SaleOrderItemViewModel> prepaidList;
     private ArrayList<PrepaidReleaseResult> releaseResultList;
+    private String strItemCount;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -516,6 +515,19 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
                 tryToSearchBarCode(barcode, true);
             }
+
+            @Override
+            public void onTotolQtyUpdated(String qty, boolean remove) {
+                if (itemCount != null) {
+                    if (remove) {
+                        strItemCount = new BigDecimal(strItemCount).subtract(new BigDecimal(qty)).toString();
+                        itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + strItemCount);
+                    } else {
+                        strItemCount = qty;
+                        itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + strItemCount);
+                    }
+                }
+            }
         });
 
         searchResultFragment.setListener(new SearchItemsListFragment.IItemListener() {
@@ -575,8 +587,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onResume();
         stop = false;
         LocalBroadcastManager.getInstance(this).registerReceiver(syncGapReceiver, new IntentFilter(SyncCommand.ACTION_SYNC_GAP));
-        if (itemCount != null && orderGuid != null)
-            itemCount.setTitle(strItemCount == null ? itemCount.getTitle() : strItemCount);
     }
 
     @Override
@@ -648,9 +658,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                           final BigDecimal price,
                                           final BigDecimal quantity,
                                           final Unit unit) {
-//        getSupportLoaderManager().restartLoader(LOADER_ITEM_COUNT_TITLE, null, saleItemCountLoader);
-        if (itemCount != null && orderGuid != null)
-            strItemCount = (itemCount.getTitle().toString().substring(0, 10) + " " + getSaleItemAmount(orderGuid));
         if (PriceType.OPEN == model.priceType && price == null) {
             PriceEditFragment.show(this, model.price, new OnEditPriceListener() {
 
@@ -1005,34 +1012,25 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-//                show(BaseCashierActivity.this, getString(R.string.prepaid_dialog_des), new ArrayAdapter<String>(BaseCashierActivity.this,
-//                        android.R.layout.simple_expandable_list_item_1,
-//                        getData()));
-                show(BaseCashierActivity.this, getString(R.string.prepaid_dialog_des), new PrepaidListAdapter(getData()));
+//                show(BaseCashierActivity.this, getString(R.string.prepaid_dialog_des), new PrepaidListAdapter(getData()));
 
-//                try {
-//                    callPrepaidMini(PREPAID_MINI_START, PREPAID_MINI_START_ALL);
-//                    return false;
-//                } catch (ActivityNotFoundException exception) {
-//                    AlertDialogFragment.showAlert(BaseCashierActivity.this,
-//                            R.string.dlg_prepaid_app_missing_title,
-//                            getString(R.string.dlg_prepaid_app_missing));
-//
-//
-//                }
+                try {
+                    callPrepaidMini(PREPAID_MINI_START, PREPAID_MINI_START_ALL);
+                    return false;
+                } catch (ActivityNotFoundException exception) {
+                    AlertDialogFragment.showAlert(BaseCashierActivity.this,
+                            R.string.dlg_prepaid_app_missing_title,
+                            getString(R.string.dlg_prepaid_app_missing));
+
+
+                }
                 return false;
             }
         });
 
         itemCount = menu.findItem(R.id.action_item_account);
-        if (itemCount != null && orderGuid != null) {
-            if (strItemCount != null)
-                itemCount.setTitle(strItemCount);
-            else
-            {
-               itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + getSaleItemAmount(orderGuid));
-            }
-        }
+        if (itemCount != null && strItemCount != null)
+            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + strItemCount);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
 
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
@@ -1735,7 +1733,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             isPaying = false;
                             completeOrder();
                             checkOfflineMode();
-                            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10));
                         }
 
                         @Override
@@ -2150,8 +2147,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         @Override
         public void onLoadFinished(Loader<OrdersStatInfo> loader, OrdersStatInfo info) {
             updateCounter(info);
-//            if (itemCount != null)
-//                itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + getSaleItemAmount(orderGuid));
         }
 
         @Override
