@@ -13,10 +13,9 @@ import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.converter.ModifierExFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ModifierTable;
-import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ModifierTable;
-import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.ModifierView;
+import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnSuccess;
@@ -58,7 +57,7 @@ public class CollectModifiersCommand extends PublicGroundyTask {
 
         ItemExModel model = (ItemExModel) getArgs().getSerializable(ARG_ITEM_MODEL);
         BigDecimal price = (BigDecimal) getArgs().getSerializable(ARG_PRICE);
-        BigDecimal quantity = (BigDecimal) getArgs().getSerializable(ARG_PRICE);
+        BigDecimal quantity = (BigDecimal) getArgs().getSerializable(ARG_QUANTITY);
         Unit unit = (Unit) getArgs().getSerializable(ARG_UNIT);
         boolean isAutoApplycheck = getArgs().getBoolean(ARG_AUTO_APPLY_CHECK);
 
@@ -68,7 +67,11 @@ public class CollectModifiersCommand extends PublicGroundyTask {
                 .perform(getContext());
 
         if (c.getCount() == 0) {
-            return succeeded().add(PARAM_ITEM_MODEL, model).add(PARAM_PRICE, price).add(PARAM_QUANTITY, quantity).add(PARAM_UNIT, unit);
+            return succeeded()
+                    .add(PARAM_ITEM_MODEL, model)
+                    .add(PARAM_PRICE, price)
+                    .add(PARAM_QUANTITY, quantity)
+                    .add(PARAM_UNIT, unit);
         }
 
         ArrayList<ModifierExModel> modifierModels = new ArrayList<>();
@@ -93,16 +96,16 @@ public class CollectModifiersCommand extends PublicGroundyTask {
             }
 
 
-                for (ModifierExModel modifier : modifierModels) {
-                    if (modifier.autoApply) {
-                        wrappedAutoApplyModifiers.add(new SelectedModifierExModel(modifier, modifier.isDefaultWithinGroupOrItem(item)));
-                        hasAutoApply = true;
-                    }
+            for (ModifierExModel modifier : modifierModels) {
+                if (modifier.autoApply) {
+                    wrappedAutoApplyModifiers.add(new SelectedModifierExModel(modifier, modifier.isDefaultWithinGroupOrItem(item)));
+                    hasAutoApply = true;
                 }
+            }
 
-                for (ModifierExModel modifier : modifierModels) {
-                    wrappedModifiers.add(new SelectedModifierExModel(modifier, modifier.isDefaultWithinGroupOrItem(item)));
-                }
+            for (ModifierExModel modifier : modifierModels) {
+                wrappedModifiers.add(new SelectedModifierExModel(modifier, modifier.isDefaultWithinGroupOrItem(item)));
+            }
 
         } else {
             c = ProviderAction.query(SALE_MODIFIER_URI)
@@ -120,11 +123,13 @@ public class CollectModifiersCommand extends PublicGroundyTask {
             }
         }
         c.close();
-        if (hasAutoApply)
-            return succeeded().add(PARAM_MODIFIERS, wrappedAutoApplyModifiers).add(PARAM_ITEM_MODEL, model).add(PARAM_PRICE, price).add(PARAM_QUANTITY, quantity).add(PARAM_UNIT, unit).add(PARAM_HAS_AUTO_APPLY, hasAutoApply);
-        else
-            return succeeded().add(PARAM_MODIFIERS, wrappedModifiers).add(PARAM_ITEM_MODEL, model).add(PARAM_PRICE, price).add(PARAM_QUANTITY, quantity).add(PARAM_UNIT, unit).add(PARAM_HAS_AUTO_APPLY, hasAutoApply);
-
+        return succeeded()
+                .add(PARAM_MODIFIERS, hasAutoApply ? wrappedAutoApplyModifiers : wrappedModifiers)
+                .add(PARAM_ITEM_MODEL, model)
+                .add(PARAM_PRICE, price)
+                .add(PARAM_QUANTITY, quantity)
+                .add(PARAM_UNIT, unit)
+                .add(PARAM_HAS_AUTO_APPLY, hasAutoApply);
     }
 
     public static class SelectedModifierExModel extends ModifierExModel {
@@ -148,7 +153,7 @@ public class CollectModifiersCommand extends PublicGroundyTask {
 
         @OnSuccess(CollectModifiersCommand.class)
         public void onSuccess(@Param(PARAM_MODIFIERS) ArrayList<SelectedModifierExModel> modifiers, @Param(PARAM_ITEM_MODEL) ItemExModel model, @Param(PARAM_PRICE) BigDecimal price, @Param(PARAM_QUANTITY) BigDecimal quantity, @Param(PARAM_UNIT) Unit unit, @Param(PARAM_HAS_AUTO_APPLY) boolean hasAutoApply) {
-            onCollected(modifiers, model, price, quantity, unit,hasAutoApply);
+            onCollected(modifiers, model, price, quantity, unit, hasAutoApply);
         }
 
         public abstract void onCollected(ArrayList<SelectedModifierExModel> modifiers, ItemExModel model, BigDecimal price, BigDecimal quantity, Unit unit, boolean hasAutoApply);
