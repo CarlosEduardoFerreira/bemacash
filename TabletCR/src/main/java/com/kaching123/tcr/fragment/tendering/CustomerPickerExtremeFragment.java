@@ -2,8 +2,14 @@ package com.kaching123.tcr.fragment.tendering;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ResourceCursorAdapter;
@@ -47,6 +53,12 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
         return this;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setCancelable(false);
+    }
+
     protected void init() {
         loadOrderData();
         setCancelable(false);
@@ -56,17 +68,19 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
     protected Builder build(Builder builder) {
         String customMessage = TcrApplication.get().getShopPref().customerPopupScreenMessage().get();
         if (TextUtils.isEmpty(customMessage)) {
-            customMessage = getString(R.string.tendering_choose_customer_dialog_title);
+            return super.build(builder).setTitle(getString(R.string.tendering_choose_customer_dialog_title));
         } else {
-            customMessage = customMessage + "\n" + getString(R.string.tendering_choose_customer_dialog_title);
+            Spannable text = new SpannableString(customMessage + "\n" + getString(R.string.tendering_choose_customer_dialog_title));
+            text.setSpan(new ForegroundColorSpan(Color.RED), 0, customMessage.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return super.build(builder).setTitle(text);
         }
-        return super.build(builder).setTitle(customMessage);
     }
-
 
     public static void show(FragmentActivity context, String orderGuid, ExtremeCallback callback) {
         DialogUtil.show(context, DIALOG_NAME, CustomerPickerExtremeFragment_.builder()
-                .orderGuid(orderGuid).build().setCallback(callback));
+                .orderGuid(orderGuid)
+                .build()
+                .setCallback(callback));
     }
 
     @Override
