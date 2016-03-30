@@ -1377,6 +1377,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 @Override
                 public void onConfirmed() {
 
+                    callback.onPrintComplete();
                     if (failReleaseResultList != null && failReleaseResultList.size() != 0) {
                         final HistoryDetailedOrderItemListFragment.RefundAmount amount = getReturnAmount();
                         if (BigDecimal.ZERO.compareTo(amount.pickedValue) == 0) {
@@ -1564,6 +1565,8 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         public void onRefund(final HistoryDetailedOrderItemListFragment.RefundAmount amount);
 
         public void onUpdateOrderList();
+
+        public void onPrintComplete();
     }
 
 

@@ -286,6 +286,11 @@ public class PrepaidSunPassActivity extends PrepaidBaseFragmentActivity {
 
                     }
 
+                    @Override
+                    public void onPrintComplete() {
+
+                    }
+
 
                 }).setPrepaidMode().init(context);
 

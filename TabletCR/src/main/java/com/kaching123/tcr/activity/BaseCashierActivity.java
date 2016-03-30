@@ -16,9 +16,11 @@ import android.graphics.Typeface;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -1004,6 +1006,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         boolean b = super.onCreateOptionsMenu(menu);
         searchItem = menu.findItem(R.id.action_search);
         prepaidItem = menu.findItem(R.id.action_prepaid);
+        prepaidItem.setVisible(getApp().getBlackStonePrepaidSulution());
         assert searchItem != null;
         assert prepaidItem != null;
 
@@ -1712,6 +1715,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             try2ClockIn();
             return;
         }
+
         if (saleOrderModel == null || TextUtils.isEmpty(orderGuid)) {
             Toast.makeText(this, "Please select an order to continue", Toast.LENGTH_LONG).show();
         } else if (isCreateReturnOrder) {
@@ -1721,7 +1725,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             SuccessOrderCommand.start(this, orderGuid, isCreateReturnOrder, new SuccessOrderCommand4ReturnCallback());
         } else if (!isPaying) {
             isPaying = true;
-
             StartTransactionCommand.start(BaseCashierActivity.this, orderGuid);
             processor = PaymentProcessor.create(orderGuid, OrderType.SALE, saleOrderModel.kitchenPrintStatus, salesmanGuids.toArray(new String[salesmanGuids.size()]))
                     .callback(new IPaymentProcessor() {
@@ -1746,6 +1749,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                 startCommand(new DisplaySaleItemCommand(lastItem.getSaleItemGuid()));
                             }
                             checkOfflineMode();
+                            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + strItemCount);
                         }
 
                         @Override
@@ -1778,12 +1782,26 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             checkOfflineMode();
                             getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
                         }
+
+                        @Override
+                        public void onPrintComplete() {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    updateTitle();
+                                }
+                            });
+                        }
                     });
             setCallback(processor);
 
             processor.init(this);
 
         }
+    }
+
+    public void updateTitle()
+    {
+        itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " 0");
     }
 
     public int prepaidCount;

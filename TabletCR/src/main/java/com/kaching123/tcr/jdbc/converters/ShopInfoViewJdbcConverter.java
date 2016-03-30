@@ -118,6 +118,8 @@ public class ShopInfoViewJdbcConverter {
     public static final String CUSTOMER_POPUP_SCREEN_ENABLED = "CUSTOMER_POPUP_SCREEN";
     public static final String CUSTOMER_POPUP_SCREEN_MESSAGE = "CUSTOMER_POPUP_SCREEN_MESSAGE";
 
+    public static final String BLACKSTONE_PREPAID_SOLUTION  = "BLACKSTONE_PREPAID_SOLUTION";
+
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
                 rs.getLong(ID),
@@ -187,7 +189,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getLong(PLAN_ID),
                 rs.getLong(COUNTRY_ID),
                 rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED),
-                rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE));
+                rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE),
+                rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION));
     }
 
     public static ShopInfo read(JdbcJSONObject rs) throws JSONException {
@@ -259,7 +262,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getLong(PLAN_ID),
                 rs.getLong(COUNTRY_ID),
                 rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED),
-                rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE));
+                rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE),
+                rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION ));
     }
 
     public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException {
@@ -370,6 +374,8 @@ public class ShopInfoViewJdbcConverter {
 
         public final String customerPopupScreenMessage;
 
+        public final boolean blackStonePRepaidSolution;
+
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
@@ -433,7 +439,8 @@ public class ShopInfoViewJdbcConverter {
                         long planId,
                         long countryId,
                         boolean customerPopupScreenEnabled,
-                        String customerPopupScreenMessage) {
+                        String customerPopupScreenMessage,
+                        boolean blackStonePRepaidSolution) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -522,6 +529,7 @@ public class ShopInfoViewJdbcConverter {
 
             this.customerPopupScreenEnabled = customerPopupScreenEnabled;
             this.customerPopupScreenMessage = customerPopupScreenMessage;
+            this.blackStonePRepaidSolution = blackStonePRepaidSolution;
         }
 
     }

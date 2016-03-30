@@ -388,4 +388,6 @@ public interface ShopPref {
 
     boolean isSalesSummaryReportReportAllowed();
 
+    boolean blackStonePRepaidSolution();
+
 }

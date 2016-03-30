@@ -355,6 +355,11 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
 
                     }
 
+                    @Override
+                    public void onPrintComplete() {
+
+                    }
+
                 }).setPrepaidMode().init(context);
 
             }

@@ -252,7 +252,8 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.planId().get(),
                     shopPref.countryId().get(),
                     shopPref.customerPopupScreenEnabled().get(),
-                    shopPref.customerPopupScreenMessage().get());
+                    shopPref.customerPopupScreenMessage().get(),
+                    shopPref.blackStonePRepaidSolution().get());
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -596,6 +597,7 @@ public class TcrApplication extends MultiDexApplication {
                 .countryId().put(info.countryId)
                 .customerPopupScreenEnabled().put(info.customerPopupScreenEnabled)
                 .customerPopupScreenMessage().put(info.customerPopupScreenMessage)
+                .blackStonePRepaidSolution().put(info.blackStonePRepaidSolution)
                 .apply();
 
         setUsers();
@@ -689,6 +691,10 @@ public class TcrApplication extends MultiDexApplication {
 
     public synchronized boolean getPrinterTwoCopiesReceipt() {
         return shopInfo.printerTwoCopiesReceipt;
+    }
+
+    public synchronized boolean getBlackStonePrepaidSulution() {
+        return shopInfo.blackStonePRepaidSolution;
     }
 
     public void setSunpassActivated(boolean activated) {

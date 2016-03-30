@@ -183,6 +183,11 @@ public class PrepaidProcessor {
 
                     }
 
+                    @Override
+                    public void onPrintComplete() {
+
+                    }
+
                 }).setPrepaidMode().init(context);
 
             }
