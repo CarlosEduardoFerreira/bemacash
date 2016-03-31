@@ -34,7 +34,6 @@ import com.telly.groundy.PublicGroundyTask;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
     private final String TRANSACTION_FEE = "Transaction Fee";
 
-    private static final int EC_RECEIPT_LINES_COUNT = 50;
+    private static final int EC_RECEIPT_LINES_COUNT = 55;
 
     private boolean reprint;
 
@@ -178,8 +177,6 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
     @Override
     protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
-        final HashMap<TaxGroupModel, BigDecimal> taxes = new HashMap<>();
-
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ?
