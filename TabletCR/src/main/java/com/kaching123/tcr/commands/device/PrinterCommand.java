@@ -182,7 +182,7 @@ public abstract class PrinterCommand extends PublicGroundyTask {
             new ConfigurePaperSensorAction().execute(printer);
               
             if (printer.supportExtendedStatus()) {
-          if (getPrinter().printerType == null || getPrinter().printerType.equalsIgnoreCase("Thermal"))
+          if (getPrinter().printerType.equalsIgnoreCase("Thermal"))
                 status = new GetPrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer);
             else {
                 PrinterStatusEx.PrinterStatusInfo printerStatus = new GetMP200PrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer).printerStatus;
