@@ -74,7 +74,7 @@ public abstract class PrinterCommand extends PublicGroundyTask {
                     c.getString(3),
                     c.getString(4),
                     c.getInt(5) == 1,
-                    c.getString(6)
+                    c.getString(6) == null ? "Thermal" : c.getString(6)
             );
         }
         c.close();
@@ -182,7 +182,7 @@ public abstract class PrinterCommand extends PublicGroundyTask {
             new ConfigurePaperSensorAction().execute(printer);
               
             if (printer.supportExtendedStatus()) {
-          if (getPrinter().printerType.equalsIgnoreCase("Thermal"))
+                if (getPrinter().printerType.equalsIgnoreCase("Thermal"))
                 status = new GetPrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer);
             else {
                 PrinterStatusEx.PrinterStatusInfo printerStatus = new GetMP200PrinterStatusExAction(getApp().getDrawerClosedValue()).execute(printer).printerStatus;
