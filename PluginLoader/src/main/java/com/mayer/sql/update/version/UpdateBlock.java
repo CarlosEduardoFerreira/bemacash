@@ -187,7 +187,7 @@ class UpdateBlock {
     private static final String SQL_ADD_COLUMN_EMPLOYEE_TABLE = "ALTER TABLE employee ADD COLUMN is_sync INTEGER DEFAULT(1);";
 
     private static final String SQL_CREATE_APK_UPDATE_TABLE = "CREATE TABLE apk_update (guid TEXT NOT NULL, url TEXT, version TEXT, scheduleTime INTEGER, priority TEXT, aprove INTEGER DEFAULT(0), update_time INTEGER, is_deleted INTEGER DEFAULT(0) )";
-    private static final String SQL_INSERT_PRINTER_TYPE = "ALTER TABLE printer_able ADD COLUMN printer_type TEXT DEFAULT (Thermal);";
+    private static final String SQL_INSERT_PRINTER_TYPE = "ALTER TABLE printer_table ADD COLUMN printer_type TEXT;";
     private static final String SQL_DROP_PRINTER_VIEW = "drop view if exists printer_view";
     private static final String SQL_CREATE_PRINTER_VIEW = "CREATE VIEW printer_view AS SELECT  printer_table.guid as printer_table_guid, printer_table.ip as printer_table_ip, printer_table.port as printer_table_port, printer_table.alias_guid as printer_table_alias_guid, printer_table.mac as printer_table_mac, printer_table.subnet as printer_table_subnet, printer_table.gateway as printer_table_gateway, printer_table.dhcp as printer_table_dhcp, printer_type as printer_table_printer_type, alias_table.alias as alias_table_alias FROM printer_able AS printer_table LEFT OUTER JOIN printer_alias_table AS alias_table ON alias_table.guid = printer_table.alias_guid and alias_table.is_deleted = 0";
 

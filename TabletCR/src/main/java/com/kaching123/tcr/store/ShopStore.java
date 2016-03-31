@@ -1585,7 +1585,7 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String ALIAS_GUID = "alias_guid";
 
-        @Column(type = Type.TEXT, defVal = "Thermal")
+        @Column(type = Type.TEXT)
         String PRINTER_TYPE = "printer_type";
 
         @Column(type = Type.TEXT)
