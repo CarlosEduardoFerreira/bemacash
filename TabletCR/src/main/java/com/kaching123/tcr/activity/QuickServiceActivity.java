@@ -89,6 +89,9 @@ public class QuickServiceActivity extends BaseCashierActivity {
     protected void completeOrder() {
         super.completeOrder();
         hideModifiersFragment();
+
+        strItemCount = "0";
+        updateItemCountMsg();
     }
 
     @Override

@@ -290,7 +290,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private ArrayList<PaymentTransactionModel> successfullCCtransactionModels;
     private List<SaleOrderItemViewModel> prepaidList;
     private ArrayList<PrepaidReleaseResult> releaseResultList;
-    private String strItemCount;
+    protected String strItemCount;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -523,10 +523,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 if (itemCount != null) {
                     if (remove) {
                         strItemCount = new BigDecimal(strItemCount).subtract(new BigDecimal(qty)).toString();
-                        itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + strItemCount);
+                        updateItemCountMsg();
                     } else {
                         strItemCount = qty;
-                        itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + strItemCount);
+                        updateItemCountMsg();
                     }
                 }
             }
@@ -1033,7 +1033,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         itemCount = menu.findItem(R.id.action_item_account);
         if (itemCount != null && strItemCount != null)
-            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + strItemCount);
+            updateItemCountMsg();
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
 
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
@@ -1749,7 +1749,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                 startCommand(new DisplaySaleItemCommand(lastItem.getSaleItemGuid()));
                             }
                             checkOfflineMode();
-                            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + strItemCount);
+                            updateItemCountMsg();
                         }
 
                         @Override
@@ -1787,7 +1787,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         public void onPrintComplete() {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    updateTitle();
+                                    updateItemCountMsg();
                                 }
                             });
                         }
@@ -1799,9 +1799,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    public void updateTitle()
+    public void updateItemCountMsg()
     {
-        itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " 0");
+        itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " +strItemCount);
     }
 
     public int prepaidCount;
@@ -1976,6 +1976,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (TextUtils.isEmpty(this.orderGuid))
             return;
 
+        strItemCount = "0";
+        updateItemCountMsg();
         setupNewOrder();
     }
 
