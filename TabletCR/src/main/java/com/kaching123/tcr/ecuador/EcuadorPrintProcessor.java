@@ -54,7 +54,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
     private final String TRANSACTION_FEE = "Transaction Fee";
 
-    private static final int EC_RECEIPT_LINES_COUNT = 55;
+    private static final int EC_RECEIPT_LINES_COUNT = 56;
 
     private boolean reprint;
 
