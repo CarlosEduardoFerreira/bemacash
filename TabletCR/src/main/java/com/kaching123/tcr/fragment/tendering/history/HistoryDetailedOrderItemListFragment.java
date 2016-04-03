@@ -221,7 +221,7 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
         BigDecimal pickedValue = BigDecimal.ZERO;
         for (int i = 0; i < adapter.getCount(); i++) {
             HistoryDetailedOrderItemModel historyItem = adapter.getItem(i);
-            if (!historyItem.wanted) {
+            if (!historyItem.wanted || historyItem.saleItemModel.isPrepaidItem) {
                 Logger.d("not wanted");
                 continue;
             }
