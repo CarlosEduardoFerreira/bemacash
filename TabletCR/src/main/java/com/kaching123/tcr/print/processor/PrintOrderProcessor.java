@@ -20,12 +20,15 @@ import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -224,21 +227,34 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         return prints;
     }
 
-    private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
+    private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
 
     protected BigDecimal getSaleItemAmount(String orderGuid, Context context) {
         BigDecimal saleItemAmount = BigDecimal.ZERO;
         Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
-                .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
+                .where(ShopSchema2.SaleOrderItemsView2.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .perform(context);
         BigDecimal itemQty = BigDecimal.ZERO;
+        HashMap<String, BigDecimal> list = new HashMap<>();
         if (c.moveToFirst()) {
             do {
-                itemQty = _decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)));
-                saleItemAmount = saleItemAmount.add(itemQty);
+                String unitLabel = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.ItemTable.UNITS_LABEL));
+                itemQty = unitLabel.equalsIgnoreCase("LB") ? BigDecimal.ONE : _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.QUANTITY)));
+                String itemGuid = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.SALE_ITEM_GUID));
+                list.put(itemGuid, itemQty);
+//                if(!unitLabel.equalsIgnoreCase("LB"))
+//                    saleItemAmount = saleItemAmount.add(itemQty);
+//                else
+//                    saleItemAmount = saleItemAmount.add(BigDecimal.ONE);
             } while (c.moveToNext());
             c.close();
         }
+        Iterator iter = list.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            BigDecimal val = (BigDecimal)entry.getValue();
+            saleItemAmount = saleItemAmount.add(val);
+            }
         return saleItemAmount;
     }
 
