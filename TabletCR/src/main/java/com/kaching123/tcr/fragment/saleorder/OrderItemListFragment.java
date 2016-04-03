@@ -462,7 +462,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     private String getCount(List<SaleOrderItemViewModel> list) {
         BigDecimal count = BigDecimal.ZERO;
         for (SaleOrderItemViewModel model : list) {
-            if(!model.unitsLabel.equalsIgnoreCase("LB"))
+            if(model.unitsLabel !=null &&!model.unitsLabel.equalsIgnoreCase("LB"))
                 count = count.add(model.itemModel.qty);
             else
                 count = count.add(BigDecimal.ONE);
