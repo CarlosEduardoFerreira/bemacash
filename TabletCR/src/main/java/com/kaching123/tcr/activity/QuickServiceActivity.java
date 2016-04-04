@@ -3,6 +3,10 @@ package com.kaching123.tcr.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Message;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
@@ -10,9 +14,10 @@ import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand.BaseUpdateSaleItemAddonsCallback;
+import com.kaching123.tcr.component.CustomEditBox;
+import com.kaching123.tcr.component.KeyboardView;
 import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
-import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickCategoriesFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickItemsFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
@@ -27,6 +32,7 @@ import com.kaching123.tcr.util.ReceiverWrapper;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,9 +43,9 @@ import java.util.ArrayList;
 
 @EActivity(R.layout.quickservice_activity)
 @OptionsMenu(R.menu.quick_service_activity)
-public class QuickServiceActivity extends BaseCashierActivity {
+public class QuickServiceActivity extends BaseCashierActivity implements CustomEditBox.IKeyboardSupport {
 
-    @FragmentById
+@FragmentById
     protected QuickCategoriesFragment categoriesFragment;
 
     @FragmentById
@@ -49,8 +55,34 @@ public class QuickServiceActivity extends BaseCashierActivity {
     protected QuickModifyFragment modifyFragment;
     private boolean isVisiable = true;
 
+    @ViewById
+    protected KeyboardView keyboard;
+
     @Override
     protected void init() {
+        scannerInput.setKeyboardSupportConteiner(this);
+        keyboard.setDotEnabled(false);
+        keyboard.attachEditView(scannerInput);
+        scannerInput.setEditListener(new CustomEditBox.IEditListener() {
+            @Override
+            public boolean onChanged(String text) {
+                tryToSearchBarCode(scannerInput);
+                return true;
+            }
+        });
+        scannerInput.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+//                    Toast.makeText(CashierActivity.this, scannerInput.getText(), Toast.LENGTH_SHORT).show();
+                    tryToSearchBarCode(scannerInput);
+                    return true;
+                }
+                return false;
+            }
+        });
         super.init();
 
         getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commit();
@@ -78,11 +110,13 @@ public class QuickServiceActivity extends BaseCashierActivity {
             }
         });
         hideModifiersFragment();
+        scannerInput.requestFocus();
     }
 
     @Override
-    public void focusUsbInput() {
-
+    protected void makeScannerInputFocus() {
+        scannerInput.setFocusableInTouchMode(true);
+        scannerInput.requestFocus();
     }
 
     @Override
@@ -158,7 +192,7 @@ public class QuickServiceActivity extends BaseCashierActivity {
     public void hideModifiersFragment() {
         if (modifyFragment == null)
             return;
-        if(isVisiable) {
+        if (isVisiable) {
             getSupportFragmentManager().beginTransaction().hide(modifyFragment).commit();
             getSupportFragmentManager().popBackStack();
             showQuickModifyFragment();
@@ -181,7 +215,7 @@ public class QuickServiceActivity extends BaseCashierActivity {
         @Override
         public void onCollected(ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers, final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit, boolean hasAutoApply) {
 
-            if(hasAutoApply) {
+            if (hasAutoApply) {
                 tryToAddCheckPriceType(model, getModifiers(modifiers), null, null, price, quantity, unit);
                 return;
             }
@@ -225,4 +259,67 @@ public class QuickServiceActivity extends BaseCashierActivity {
         super.onBackPressed();
         showQuickModifyFragment();
     }
+
+
+    @ViewById
+    protected CustomEditBox scannerInput;
+
+    private Timer timer;
+
+    private Handler USBHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case TIMES_UP:
+                    filtInput();
+                    tryToSearchBarCode(scannerInput);
+                    timer.interrupt();
+                    timer = null;
+                    break;
+
+            }
+        }
+    };
+
+    private void filtInput() {
+        String input = scannerInput.getText().toString();
+        String result = input.toString().replace("\n", "").replace("\r", "");
+        scannerInput.setText(result);
+    }
+
+    @Override
+    public void focusUsbInput() {
+        scannerInput.requestFocus();
+    }
+
+    @Override
+    public void attachMe2Keyboard(CustomEditBox v) {
+
+    }
+
+    @Override
+    public void detachMe4Keyboard(CustomEditBox v) {
+
+    }
+
+    private class Timer extends Thread {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(200);
+                notifyHandler();
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void notifyHandler() {
+        USBHandler.sendEmptyMessage(TIMES_UP);
+    }
+
+    private final int TIMES_UP = 0;
 }

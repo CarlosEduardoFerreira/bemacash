@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<merge
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
         android:id="@+id/main_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/cashier_activity_background">
+        android:background="@color/cashier_activity_background"
+        android:orientation="vertical">
+
+        <com.kaching123.tcr.component.CustomEditBox
+            android:id="@+id/scanner_input"
+            style="@style/CashierActivity.Barcode"
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+
+        <com.kaching123.tcr.component.KeyboardView_
+            android:id="@+id/keyboard"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
+
             <fragment
                 android:id="@+id/categories_fragment"
                 android:name="com.kaching123.tcr.fragment.quickservice.QuickCategoriesFragment_"
-                android:layout_height="match_parent"
-                android:layout_width="240dp"/>
+                android:layout_width="240dp"
+                android:layout_height="match_parent" />
 
             <FrameLayout
                 android:layout_width="0dp"
@@ -28,63 +39,61 @@
 
 
                 <fragment
+                    android:id="@+id/order_item_list_fragment"
                     android:name="com.kaching123.tcr.fragment.saleorder.OrderItemListFragment_"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/order_item_list_fragment"/>
+                    android:layout_height="match_parent" />
 
                 <fragment
                     android:id="@+id/search_result_fragment"
-                    android:layout_height="match_parent"
+                    android:name="com.kaching123.tcr.fragment.search.SearchItemsListFragment_"
                     android:layout_width="match_parent"
-                    android:name="com.kaching123.tcr.fragment.search.SearchItemsListFragment_"/>
+                    android:layout_height="match_parent" />
 
                 <RelativeLayout
-                    android:visibility="gone"
                     android:id="@+id/empty_holder"
-                    android:layout_height="match_parent"
                     android:layout_width="match_parent"
-                    android:background="#DD000000">
+                    android:layout_height="match_parent"
+                    android:background="#DD000000"
+                    android:visibility="gone">
 
                     <Button
-                        android:layout_centerInParent="true"
                         android:id="@+id/btn_add_order"
-                        android:text="Add new"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"/>
+                        android:layout_centerInParent="true"
+                        android:text="Add new" />
                 </RelativeLayout>
 
             </FrameLayout>
-
-
 
 
         </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/fragment_container"
-            android:layout_height="0dp"
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
 
             <fragment
                 android:id="@+id/items_list_fragment"
                 android:name="com.kaching123.tcr.fragment.quickservice.QuickItemsFragment_"
-                android:layout_height="match_parent"
-                android:layout_width="960dp"/>
+                android:layout_width="960dp"
+                android:layout_height="match_parent" />
 
             <fragment
                 android:id="@+id/modify_fragment"
                 android:name="com.kaching123.tcr.fragment.quickservice.QuickModifyFragment_"
-                android:layout_height="match_parent"
-                android:layout_width="960dp"/>
+                android:layout_width="960dp"
+                android:layout_height="match_parent" />
 
             <FrameLayout
-                android:layout_toRightOf="@+id/items_list_fragment"
                 android:layout_width="320dp"
                 android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/items_list_fragment"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp">
 
@@ -92,7 +101,7 @@
                     android:id="@+id/total_cost_fragment"
                     android:name="com.kaching123.tcr.fragment.saleorder.TotalCostFragment_"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent" />
 
             </FrameLayout>
 
@@ -102,41 +111,40 @@
 
 
     <RelativeLayout
-        android:clickable="true"
-        android:visibility="gone"
         android:id="@+id/scanner_wait_block"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:clickable="true"
+        android:visibility="gone">
 
 
         <FrameLayout
-            android:layout_centerInParent="true"
-            android:background="@drawable/popup_window"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
+            android:layout_centerInParent="true"
+            android:background="@drawable/popup_window">
 
             <LinearLayout
-                android:background="@drawable/dark_rounded_bg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:background="@drawable/dark_rounded_bg"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="16dp">
 
                 <ProgressBar
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_marginRight="8dp"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp" />
 
                 <TextView
                     android:id="@+id/progress_msg"
                     style="@style/TextAppearance.Dialog.Text"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:singleLine="false"
+                    android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:text="@string/search_barcode_wait_msg"
-                    />
+                    android:singleLine="false"
+                    android:text="@string/search_barcode_wait_msg" />
 
             </LinearLayout>
         </FrameLayout>
