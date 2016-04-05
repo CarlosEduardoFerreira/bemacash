@@ -98,7 +98,8 @@ public final class ZReportQuery extends XReportQuery {
                 new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), shiftGuid);
         totalValue = BigDecimal.ZERO;
         for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
-            departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
+            if (d.description != null)
+                departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
             d.reset();
             totalValue = totalValue.add(d.revenue);
         }
@@ -589,7 +590,7 @@ public final class ZReportQuery extends XReportQuery {
                 .where(ShopSchema2.ZReportView2.SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .perform(context);
 
-        while (c.moveToNext()){
+        while (c.moveToNext()) {
             BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY));
 
             BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY));

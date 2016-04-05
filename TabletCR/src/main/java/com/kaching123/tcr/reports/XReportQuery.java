@@ -148,7 +148,8 @@ public class XReportQuery {
         Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), shiftGuid);
         totalValue = BigDecimal.ZERO;
         for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
-            departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
+            if (d.description != null)
+                departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
             d.reset();
             totalValue = totalValue.add(d.revenue);
         }
@@ -443,7 +444,8 @@ public class XReportQuery {
             Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), guid);
             totalValue = BigDecimal.ZERO;
             for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
-                departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
+                if (d.description != null)
+                    departsSales.put(d.description, new DepartsSale(d.description, d.revenue));
                 d.reset();
                 totalValue = totalValue.add(d.revenue);
             }
