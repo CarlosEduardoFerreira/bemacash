@@ -1287,7 +1287,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         for (SaleOrderItemViewModel model : orderItems) {
             final MoneybackProcessor.RefundSaleItemInfo info = new MoneybackProcessor.RefundSaleItemInfo(model.itemModel.saleItemGuid, new BigDecimal(failReleaseResultList.size()));
             refundItems.add(info);
-            pickedValue = pickedValue.add(CalculationUtil.getSubTotal(new BigDecimal(failReleaseResultList.size()), model.finalPrice));
+            pickedValue = pickedValue.add(CalculationUtil.getSubTotal(BigDecimal.ONE, model.finalPrice));
         }
 
         final HistoryDetailedOrderItemListFragment.RefundAmount refundAmount = new HistoryDetailedOrderItemListFragment.RefundAmount(pickedValue, BigDecimal.ZERO);
