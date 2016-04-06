@@ -125,6 +125,10 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
                 String orderGuid = c.getString(c.getColumnIndex(SaleItemTable.ORDER_GUID));
                 SaleOrderInfo r = result.get(orderGuid);
                 if (r == null) {
+                    c.getColumnIndex(SaleOrderTable.TAXABLE);
+                    c.getColumnIndex(SaleOrderTable.DISCOUNT);
+                    c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE);
+                    c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE);
                     r = new SaleOrderInfo(_bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
