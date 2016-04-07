@@ -186,7 +186,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
 
     @Override
     public void header(String guest, String message) {
-
+        stringBuilder.append(_styled("div", H1_STYLE)).append(message).append("</div>");
     }
 
     @Override

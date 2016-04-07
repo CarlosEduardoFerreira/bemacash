@@ -21,6 +21,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -114,6 +115,9 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
     @ViewById
     protected AutoCompleteTextView itemChooser;
 
+    @ViewById
+    protected LinearLayout llAutoApply;
+
     @FragmentArg
     protected String groupGuid;
 
@@ -164,6 +168,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
         if (modType != ModifierType.MODIFIER) {
             itemGroupSpinner.setVisibility(View.GONE);
         }
+        llAutoApply.setVisibility(modType == ModifierType.MODIFIER ? View.VISIBLE : View.INVISIBLE);
         autoApplySelected.setChecked(model == null ? false : model.autoApply);
         customerAdapter = new ModifiersAdapter(modType, getActivity());
         groupAdapter = new ItemGroupAdapter(getActivity());
