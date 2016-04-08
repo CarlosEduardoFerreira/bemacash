@@ -26,7 +26,7 @@ public class PrepaidSendResult {
     protected static final String ARG_ITEMNAME = "ITEMNAME";
     protected static final String ARG_ITEMDETAILS = "ITEMDETAILS";
     protected static final String ARG_ITEMQTY = "ITEMQTY";
-    protected static final String ARG_ITEMPRICE = "ITEMPRICE";
+    public static final String ARG_ITEMPRICE = "ITEMPRICE";
     protected static final String ARG_ITEMTAXABLE = "ITEMTAXABLE";
 
     public PrepaidSendResult(Intent data) {

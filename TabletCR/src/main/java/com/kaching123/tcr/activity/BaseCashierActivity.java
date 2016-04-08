@@ -314,7 +314,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
-        if (data == null)
+        if (data == null || data.getStringExtra(PrepaidSendResult.ARG_ITEMPRICE) == null)
             return;
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SEND) {
             isPrepaidItemStart = true;
