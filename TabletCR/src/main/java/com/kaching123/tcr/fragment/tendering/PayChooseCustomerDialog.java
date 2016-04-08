@@ -6,6 +6,7 @@ import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.commands.print.digital.SendDigitalOrderCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.PrepaidReleaseResult;
 
 import java.util.ArrayList;
 
@@ -19,13 +20,13 @@ public class PayChooseCustomerDialog extends ChooseCustomerBaseDialog {
 
     @Override
     protected void sendDigitalOrder(String email) {
-        SendDigitalOrderCommand.start(getActivity(), orderGuid, email, null, transactions);
+        SendDigitalOrderCommand.start(getActivity(), orderGuid, email, null, transactions, releaseResultList);
         dismiss();
         listener.onComplete();
     }
 
-    public static void show(FragmentActivity activity, String orderGuid, ArrayList<PaymentTransactionModel> transactions, emailSenderListener listener) {
-        DialogUtil.show(activity, DIALOG_NAME, PayChooseCustomerDialog_.builder().transactions(transactions).orderGuid(orderGuid).build()).setListener(listener);
+    public static void show(FragmentActivity activity, String orderGuid, ArrayList<PaymentTransactionModel> transactions, emailSenderListener listener, ArrayList<PrepaidReleaseResult> releaseResultList) {
+        DialogUtil.show(activity, DIALOG_NAME, PayChooseCustomerDialog_.builder().transactions(transactions).orderGuid(orderGuid).releaseResultList(releaseResultList).build()).setListener(listener);
     }
 
 }

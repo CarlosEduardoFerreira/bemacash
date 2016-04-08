@@ -31,6 +31,7 @@ import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
@@ -69,6 +70,9 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     @FragmentArg
     protected String orderGuid;
+
+    @FragmentArg
+    protected ArrayList<PrepaidReleaseResult> releaseResultList;
 
     @FragmentArg
     protected boolean IVULotoActivated;

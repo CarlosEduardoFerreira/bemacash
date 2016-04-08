@@ -6,6 +6,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.rest.email.BaseSendEmailCommand;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.print.builder.DigitalOrderBuilder;
 import com.kaching123.tcr.print.processor.PrintDigitalOrderProcessor;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
@@ -22,6 +23,7 @@ public class SendDigitalOrderCommand extends BaseSendEmailCommand {
     protected static final String ARG_ORDER_GUID = "arg_order_guid";
     protected static final String ARG_EMAIL = "arg_email";
     protected static final String ARG_TRANSACTIONS = "ARG_TRANSACTIONS";
+    protected static final String ARG_RELEASE_RESULT_LIST = "ARG_RELEASE_RESULT_LIST";
 
     @Override
     protected Response execute(SyncApi restApi, String apiKey) {
@@ -31,6 +33,7 @@ public class SendDigitalOrderCommand extends BaseSendEmailCommand {
         DigitalOrderBuilder orderBuilder = new DigitalOrderBuilder();
         PrintOrderProcessor printProcessor = getPrintDigitalOrderProcessor(orderGuid, getAppCommandContext());
         printProcessor.setPaxTransactions((ArrayList<PaymentTransactionModel>) getArgs().getSerializable(ARG_TRANSACTIONS));
+        printProcessor.setPrepaidReleaseResults((ArrayList<PrepaidReleaseResult>) getArgs().getSerializable(ARG_RELEASE_RESULT_LIST));
         printProcessor.print(getContext(), getApp(), orderBuilder);
 
         String html = orderBuilder.build();
@@ -47,8 +50,8 @@ public class SendDigitalOrderCommand extends BaseSendEmailCommand {
         return getContext().getString(R.string.order_email_subject, orderNumber);
     }
 
-    public static void start(Context context, String orderGuid, String email, BaseSendDigitalOrderCallback callback, ArrayList<PaymentTransactionModel> transactions) {
-        create(SendDigitalOrderCommand.class).arg(ARG_ORDER_GUID, orderGuid).arg(ARG_EMAIL, email).arg(ARG_TRANSACTIONS, transactions).callback(callback).queueUsing(context);
+    public static void start(Context context, String orderGuid, String email, BaseSendDigitalOrderCallback callback, ArrayList<PaymentTransactionModel> transactions, ArrayList<PrepaidReleaseResult> releaseResultList) {
+        create(SendDigitalOrderCommand.class).arg(ARG_ORDER_GUID, orderGuid).arg(ARG_EMAIL, email).arg(ARG_TRANSACTIONS, transactions).arg(ARG_RELEASE_RESULT_LIST, releaseResultList).callback(callback).queueUsing(context);
     }
 
     public static abstract class BaseSendDigitalOrderCallback {

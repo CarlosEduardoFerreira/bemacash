@@ -159,7 +159,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
                 listener.onConfirmed();
                 dismiss();
             }
-        });
+        }, releaseResultList);
     }
 
     //@Override
