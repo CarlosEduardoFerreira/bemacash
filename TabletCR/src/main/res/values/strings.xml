@@ -402,6 +402,7 @@
     <string name="pay_toast_zero">The charge can not be of zero value!</string>
     <string name="lots_o_dots">...........................................................................................................................................</string>
     <string name="total_cost_order_discount_label">Order discount:</string>
+    <string name="cashier_action_prapaid">Prepago</string>
 
     <string name="qs_info_panel_label_tmpl">%s:</string>
     <string name="qs_info_panel_item_label">Item price:</string>
