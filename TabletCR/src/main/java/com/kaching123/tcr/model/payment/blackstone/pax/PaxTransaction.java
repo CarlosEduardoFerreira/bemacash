@@ -13,6 +13,7 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.LastTrasn
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -70,7 +71,7 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         //TODO PosLink need change to HostCode later.
 //        userTransactionNumber = response.RefNum;
         try {
-            balance = new BigDecimal(response.RemainingBalance);
+            balance = new BigDecimal(response.RemainingBalance == null ? BigInteger.ZERO.toString() : response.RemainingBalance);
         }
         catch (Exception ex )
         {
