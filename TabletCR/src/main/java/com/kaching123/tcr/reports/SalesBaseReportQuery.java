@@ -152,9 +152,9 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
             value = new SaleItemInfo2(
                     saleItemId,
                     c.getString(c.getColumnIndex(SaleItemTable.ITEM_GUID)),
-                    c.getString(descIndex),
+                    (c.getString(descIndex) == null || c.getString(descIndex).equalsIgnoreCase("")) ? c.getString(c.getColumnIndex(BillPaymentDescriptionTable.DESCRIPTION)) : c.getString(descIndex),
                     c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
-                    c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
+                    (c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)) == null || c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)).equalsIgnoreCase("")) ? c.getString(c.getColumnIndex(BillPaymentDescriptionTable.PREPAID_ORDER_ID)) : c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
                     _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY)),
                     _decimal(c, c.getColumnIndex(SaleItemTable.PRICE)),
                     _bool(c, c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),

@@ -35,6 +35,7 @@ public class SendDigitalOrderCommand extends BaseSendEmailCommand {
         printProcessor.setPaxTransactions((ArrayList<PaymentTransactionModel>) getArgs().getSerializable(ARG_TRANSACTIONS));
         printProcessor.setPrepaidReleaseResults((ArrayList<PrepaidReleaseResult>) getArgs().getSerializable(ARG_RELEASE_RESULT_LIST));
         printProcessor.print(getContext(), getApp(), orderBuilder);
+        printProcessor.setPrepaidReleaseResults((ArrayList<PrepaidReleaseResult>)getArgs().getSerializable(ARG_RELEASE_RESULT_LIST));
 
         String html = orderBuilder.build();
         String subject = getSubject(printProcessor.getPrintOrderNumber());

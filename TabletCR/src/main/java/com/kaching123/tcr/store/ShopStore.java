@@ -2916,7 +2916,7 @@ public abstract class ShopStore {
         String TABLE_DEPARTMENT = "department_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Join(type = Join.Type.LEFT, joinTable = BillPaymentDescriptionTable.TABLE_NAME, joinColumn = BillPaymentDescriptionTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
+        @Join(type = Join.Type.LEFT, joinTable = BillPaymentDescriptionTable.TABLE_NAME, joinColumn = BillPaymentDescriptionTable.ORDER_ID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.SALE_ITEM_GUID)
         String TABLE_BILL_PAYMENT_DESCRIPTION = "bill_payment_description_table";
     }
 
