@@ -38,7 +38,7 @@ public class ApkDownloadCommand extends GroundyTask {
     protected TaskResult doInBackground() {
 
         String urlAddress = getStringArg(ARG_UPDATE_URL);
-        int buildBumber = getIntArg(ARG_TARGET_BUILD_BUMBER);
+        double buildBumber = getIntArg(ARG_TARGET_BUILD_BUMBER);
         InputStream in = null;
         FileOutputStream out = null;
         String apkFileAddress = null;
@@ -96,7 +96,7 @@ public class ApkDownloadCommand extends GroundyTask {
         return succeeded().add(EXTRA_BUILD_BUMBER, buildBumber).add(EXTRA_APK_FILE_ADDRESS, apkFileAddress);
     }
 
-    public static void start(Context context, String url, int buildBumber, BaseApkDownloadCallback callback) {
+    public static void start(Context context, String url, double buildBumber, BaseApkDownloadCallback callback) {
         create(ApkDownloadCommand.class).arg(ARG_UPDATE_URL, url).arg(ARG_TARGET_BUILD_BUMBER, buildBumber).callback(callback).queueUsing(context);
     }
 
@@ -108,7 +108,7 @@ public class ApkDownloadCommand extends GroundyTask {
         }
 
         @OnSuccess(ApkDownloadCommand.class)
-        public void handleSuccess(@Param(EXTRA_APK_FILE_ADDRESS) String apkFileAddress, @Param(EXTRA_BUILD_BUMBER) int buildNumber) {
+        public void handleSuccess(@Param(EXTRA_APK_FILE_ADDRESS) String apkFileAddress, @Param(EXTRA_BUILD_BUMBER) double buildNumber) {
             onhandleSuccess(apkFileAddress, buildNumber);
         }
 
@@ -117,7 +117,7 @@ public class ApkDownloadCommand extends GroundyTask {
             onhandleFailure();
         }
 
-        protected abstract void onhandleSuccess(String apkFileAddress, int buildNumber);
+        protected abstract void onhandleSuccess(String apkFileAddress, double buildNumber);
 
         protected abstract void onhandleFailure();
 

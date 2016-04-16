@@ -59,7 +59,7 @@ public class AutoUpdateApk extends Observable {
     private Runnable task;
 
     private APKUpdater result;
-    private int buildNumber;
+    private double buildNumber;
 
     public boolean isAprove() {
         return aprove;
@@ -81,15 +81,15 @@ public class AutoUpdateApk extends Observable {
 
     protected static final Uri URI_APK_UPDATE = ShopProvider.getNoNotifyContentUri(ShopStore.ApkUpdate.URI_CONTENT);
 
-    public int getUpdateBuildNumber() {
+    public double getUpdateBuildNumber() {
         return updateBuildNumber;
     }
 
-    public void setUpdateBuildNumber(int updateBuildNumber) {
+    public void setUpdateBuildNumber(double updateBuildNumber) {
         this.updateBuildNumber = updateBuildNumber;
     }
 
-    private int updateBuildNumber;
+    private double updateBuildNumber;
 
     private class ScheduleEntry {
         public int start;
@@ -109,7 +109,7 @@ public class AutoUpdateApk extends Observable {
     private void setupVariables(Context ctx) {
         context = ctx;
         try {
-            buildNumber = getApp().getPackageManager().getPackageInfo(getApp().getPackageName(), 0).versionCode;
+            buildNumber = Double.parseDouble(getApp().getPackageManager().getPackageInfo(getApp().getPackageName(), 0).versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -174,13 +174,13 @@ public class AutoUpdateApk extends Observable {
                     return null;
                 }
                 APKUpdater info = APKupdaterJDBCConverter.read(resp.getEntity().getJSONObject(0));
-                setUpdateBuildNumber((Integer.parseInt(info.getUpdateBuildNumber())));
+                setUpdateBuildNumber((Double.parseDouble(info.getUpdateBuildNumber())));
                 setAprove(info.aprove);
                 if (info == null) {
                     Logger.e("Auto update error: response is empty");
                     return null;
                 }
-                if (Integer.parseInt(info.getUpdateBuildNumber()) > buildNumber) {
+                if ((Double.parseDouble(info.getUpdateBuildNumber())) > buildNumber) {
                     context.getContentResolver().insert(ShopProvider.contentUri(ShopStore.ApkUpdate.URI_CONTENT), info.toValues());
                 } else {
                     String update_file = getApp().getUpdateFilePath();

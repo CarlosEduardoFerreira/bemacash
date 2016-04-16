@@ -55,6 +55,9 @@ public class AlertDialogFragment extends StyledDialogFragment {
     protected int negativeButtonTitleId;
 
     @FragmentArg
+    protected int skipTitleId;
+
+    @FragmentArg
     protected String errorMsg;
 
     @FragmentArg
@@ -96,6 +99,11 @@ public class AlertDialogFragment extends StyledDialogFragment {
     @Override
     protected int getDialogTitle() {
         return titleId;
+    }
+
+    @Override
+    protected int getSkipButtonTitle() {
+        return skipTitleId == 0 ?  R.string.btn_skip :skipTitleId;
     }
 
     @Override
@@ -150,6 +158,10 @@ public class AlertDialogFragment extends StyledDialogFragment {
     public static void hide(FragmentActivity activity) {
 
         DialogUtil.hide(activity, DIALOG_NAME);
+    }
+
+    public static void show(FragmentActivity activity, DialogType type, int titleId, String msg, int positiveTitleId,int negativeTitleId, int skipTitleId, OnDialogClickListener positiveListener, OnDialogClickListener negativeListener, OnDialogClickListener skipListener) {
+        DialogUtil.show(activity, DIALOG_NAME, AlertDialogFragment_.builder().titleId(titleId).errorMsg(msg).hideImage(true).negativeButtonTitleId(negativeTitleId).skipTitleId(skipTitleId).positiveButtonTitleId(positiveTitleId).dialogType(type).build()).setOnPositiveListener(positiveListener).setOnNegativeListener(negativeListener).setOnSkipListener(skipListener);
     }
 
     public static void show(FragmentActivity activity, DialogType type, int titleId, String msg, int positiveTitleId, OnDialogClickListener positiveListener, OnDialogClickListener negativeListener, OnDialogClickListener skipListener) {

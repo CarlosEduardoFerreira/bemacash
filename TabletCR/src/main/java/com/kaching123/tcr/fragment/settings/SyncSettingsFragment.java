@@ -103,7 +103,7 @@ public class SyncSettingsFragment extends PreferenceFragment {
             if (AutoUpdateService.ACTION_NO_UPDATE.equals(intent.getAction())) {
                 SyncWaitDialogFragment.hide(getActivity());
 
-                int targetBuildNumber = intent.getIntExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0) == 0 ? getCurrentBuildNumber() : intent.getIntExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0);
+                double targetBuildNumber = intent.getDoubleExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0) == 0 ? getCurrentBuildNumber() : intent.getDoubleExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0);
                 Toast.makeText(getActivity(), String.format(getString(R.string.str_no_app_update), targetBuildNumber), Toast.LENGTH_LONG).show();
             }
         }

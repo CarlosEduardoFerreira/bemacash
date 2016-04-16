@@ -279,6 +279,7 @@
     <string name="btn_finish">Finish</string>
     <string name="btn_try_again">Try again</string>
     <string name="btn_skip">Skip</string>
+    <string name="btn_release">Release Note</string>
     <string name="btn_save">Save</string>
     <string name="btn_select">Select</string>
     <string name="btn_update">Update</string>
@@ -611,7 +612,7 @@
     <string name="scan_dialog_title">Please scan a barcode...</string>
     <string name="lottery_wait_dialog_title">Please wait...</string>
     <string name="lottery_fail_message">Fails to catch lottery</string>
-    <string name="apk_update_dialog_title">Would you like to update to version %d now?</string>
+    <string name="apk_update_dialog_title">Would you like to update to version %s now?</string>
     <string name="confirm_display_title">Do you see the message on the display?</string>
     <string name="confirm_scale_title">The number on the scale is : %s, is it correct?</string>
     <string name="confirm_scanner_title">The barcode you scanned is : %s, is it correct?</string>

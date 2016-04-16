@@ -92,15 +92,15 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                 SyncWaitDialogFragment.hide(SuperBaseActivity.this);
                 final String updateUrl = getApp().getUpdateURL();
                 boolean approve = getApp().getUpdateApprove();
-                final int targetBuildNumber = intent.getIntExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0);
+                final double targetBuildNumber = intent.getDoubleExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0);
                 AlertDialogFragment.hide(SuperBaseActivity.this);
                 if (isUpdatePermitted() && approve) {
-                    AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.CONFIRM,
+                    AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT3,
                             R.string.dlg_process_software_update_title,
                             String.format(getString(R.string.apk_update_dialog_title), targetBuildNumber),
                             R.string.btn_yes,
                             R.string.btn_no,
-                            true,
+                            R.string.btn_release,
                             new StyledDialogFragment.OnDialogClickListener() {
 
                                 @Override
@@ -116,7 +116,12 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                                     return true;
                                 }
                             },
-                            null
+                            new  StyledDialogFragment.OnDialogClickListener() {
+                                @Override
+                                public boolean onClick() {
+                                    return true;
+                                }
+                            }
                     );
 
                 }
@@ -133,7 +138,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
     public class ApkDownloadInterface extends ApkDownloadCommand.BaseApkDownloadCallback {
 
         @Override
-        protected void onhandleSuccess(String apkFileAddress, int buildNumber) {
+        protected void onhandleSuccess(String apkFileAddress, double buildNumber) {
             getApp().setUpdateFilePath(apkFileAddress);
             SyncWaitDialogFragment.hide(SuperBaseActivity.this);
             install_apk(buildNumber);
@@ -170,7 +175,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
     private final String STR_UPDATE_AVAILABLE = " update available";
     private final String STR_INSTALL_BUILD = "Select to install build: ";
 
-    protected void install_apk(int targetBuildNumber) {
+    protected void install_apk(double targetBuildNumber) {
 
         String update_file = getApp().getUpdateFilePath();
         File apkfile = new File(update_file);
