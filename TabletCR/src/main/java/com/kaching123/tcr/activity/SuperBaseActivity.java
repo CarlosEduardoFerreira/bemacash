@@ -119,6 +119,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                             new  StyledDialogFragment.OnDialogClickListener() {
                                 @Override
                                 public boolean onClick() {
+                                    ReleaseNoteActivity.start(SuperBaseActivity.this, "bematech.com");
                                     return true;
                                 }
                             }
