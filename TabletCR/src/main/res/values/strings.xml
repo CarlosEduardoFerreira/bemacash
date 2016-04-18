@@ -1762,7 +1762,7 @@
     <string name="str_download_progress">Downloading Progress...%d</string>
     <string name="str_start_download">Start downloading...</string>
     <string name="str_apk_download_fail">Apk file path not valid. Try again</string>
-    <string name="str_no_app_update">Current build: %d is the latest one.</string>
+    <string name="str_no_app_update">Current build: %s is the latest one.</string>
 
     <string name="truncate_wait_message">Truncating database</string>
     <string name="truncate_failed_message">Database truncation failed</string>
