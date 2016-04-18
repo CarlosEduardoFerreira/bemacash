@@ -612,7 +612,7 @@
     <string name="scan_dialog_title">Please scan a barcode...</string>
     <string name="lottery_wait_dialog_title">Please wait...</string>
     <string name="lottery_fail_message">Fails to catch lottery</string>
-    <string name="apk_update_dialog_title">Would you like to update to version %s now?</string>
+    <string name="apk_update_dialog_title">Would you like to update to version %s now?\n http://www.bemacashus.com/change-log/</string>
     <string name="confirm_display_title">Do you see the message on the display?</string>
     <string name="confirm_scale_title">The number on the scale is : %s, is it correct?</string>
     <string name="confirm_scanner_title">The barcode you scanned is : %s, is it correct?</string>
@@ -1876,5 +1876,6 @@
     <string name="prepaid_mini_fail_error_msg">Error Msg:</string>
     <string name="prepaid_dialog_title">Prepaid</string>
     <string name="prepaid_dialog_des">Please choose a vendor for Prepaid.</string>
+    <string name="release_note_link">http://www.bemacashus.com/change-log/</string>
 
 </resources>

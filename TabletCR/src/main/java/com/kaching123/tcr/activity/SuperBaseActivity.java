@@ -96,6 +96,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                 AlertDialogFragment.hide(SuperBaseActivity.this);
                 if (isUpdatePermitted() && approve) {
                     AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT3,
+                            true,
                             R.string.dlg_process_software_update_title,
                             String.format(getString(R.string.apk_update_dialog_title), targetBuildNumber),
                             R.string.btn_yes,
@@ -119,10 +120,20 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                             new  StyledDialogFragment.OnDialogClickListener() {
                                 @Override
                                 public boolean onClick() {
-                                    ReleaseNoteActivity.start(SuperBaseActivity.this, "bematech.com");
+                                    ReleaseNoteActivity.start(SuperBaseActivity.this, getString(R.string.release_note_link));
+                                    return true;
+                                }
+                            },
+                            new  StyledDialogFragment.OnDialogClickListener() {
+                                @Override
+                                public boolean onClick() {
+                                    ReleaseNoteActivity.start(SuperBaseActivity.this, getString(R.string.release_note_link));
                                     return true;
                                 }
                             }
+
+
+
                     );
 
                 }

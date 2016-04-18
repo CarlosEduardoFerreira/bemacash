@@ -66,15 +66,26 @@ public class AlertDialogFragment extends StyledDialogFragment {
     @FragmentArg
     protected boolean hideImage;
 
+    @FragmentArg
+    protected boolean listenMessage;
+
     private OnDialogClickListener onPositiveListener;
     private OnDialogClickListener onNegativeListener;
     private OnDialogClickListener onSkipListener;
+    private OnDialogClickListener onMessageListener;
 
     @AfterViews
     protected void bind() {
         setCancelable(false);
         textView.setGravity(dialogType == DialogType.CONFIRM || dialogType == DialogType.CONFIRM_NONE ? Gravity.LEFT : Gravity.CENTER);
         textView.setText(errorMsg);
+        if(listenMessage)
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onMessageListener.onClick();
+                }
+            });
         if (dialogType == DialogType.CONFIRM_NONE || hideImage) {
             icon.setVisibility(View.GONE);
         } else {
@@ -141,8 +152,17 @@ public class AlertDialogFragment extends StyledDialogFragment {
         return onSkipListener;
     }
 
+    protected OnDialogClickListener getMessageListener() {
+        return onMessageListener;
+    }
+
     public void setOnSkipListener(OnDialogClickListener onSkipListener) {
         this.onSkipListener = onSkipListener;
+    }
+
+    public AlertDialogFragment setOnMessageListener(OnDialogClickListener onMessageListener) {
+        this.onMessageListener = onMessageListener;
+        return this;
     }
 
     public AlertDialogFragment setOnPositiveListener(OnDialogClickListener onPositiveListener) {
@@ -160,8 +180,8 @@ public class AlertDialogFragment extends StyledDialogFragment {
         DialogUtil.hide(activity, DIALOG_NAME);
     }
 
-    public static void show(FragmentActivity activity, DialogType type, int titleId, String msg, int positiveTitleId,int negativeTitleId, int skipTitleId, OnDialogClickListener positiveListener, OnDialogClickListener negativeListener, OnDialogClickListener skipListener) {
-        DialogUtil.show(activity, DIALOG_NAME, AlertDialogFragment_.builder().titleId(titleId).errorMsg(msg).hideImage(true).negativeButtonTitleId(negativeTitleId).skipTitleId(skipTitleId).positiveButtonTitleId(positiveTitleId).dialogType(type).build()).setOnPositiveListener(positiveListener).setOnNegativeListener(negativeListener).setOnSkipListener(skipListener);
+    public static void show(FragmentActivity activity, DialogType type, boolean listenMessage, int titleId, String msg, int positiveTitleId, int negativeTitleId, int skipTitleId, OnDialogClickListener positiveListener, OnDialogClickListener negativeListener, OnDialogClickListener skipListener, OnDialogClickListener messageLisener) {
+        DialogUtil.show(activity, DIALOG_NAME, AlertDialogFragment_.builder().listenMessage(listenMessage).titleId(titleId).errorMsg(msg).hideImage(true).negativeButtonTitleId(negativeTitleId).skipTitleId(skipTitleId).positiveButtonTitleId(positiveTitleId).dialogType(type).build()).setOnPositiveListener(positiveListener).setOnMessageListener(messageLisener).setOnNegativeListener(negativeListener).setOnSkipListener(skipListener);
     }
 
     public static void show(FragmentActivity activity, DialogType type, int titleId, String msg, int positiveTitleId, OnDialogClickListener positiveListener, OnDialogClickListener negativeListener, OnDialogClickListener skipListener) {
