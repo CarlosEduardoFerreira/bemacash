@@ -79,13 +79,13 @@ public class AlertDialogFragment extends StyledDialogFragment {
         setCancelable(false);
         textView.setGravity(dialogType == DialogType.CONFIRM || dialogType == DialogType.CONFIRM_NONE ? Gravity.LEFT : Gravity.CENTER);
         textView.setText(errorMsg);
-        if(listenMessage)
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onMessageListener.onClick();
-                }
-            });
+//        if(listenMessage)
+//            textView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    onMessageListener.onClick();
+//                }
+//            });
         if (dialogType == DialogType.CONFIRM_NONE || hideImage) {
             icon.setVisibility(View.GONE);
         } else {
