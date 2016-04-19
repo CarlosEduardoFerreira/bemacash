@@ -50,14 +50,14 @@ public class SalesByDepartmentsReportQuery extends SalesBaseReportQuery<Departme
             Logger.d("[SALE_BY_DEPS] [%s] (%s) %s = %s * %s", i.departmentGuid, i.itemGiud, i.description, i.qty, itemFinalPrice);
             BigDecimal revenue = CalculationUtil.getSubTotal(i.qty, itemFinalPrice);
 
-            DepartmentStatistics depInfo = items.get(i.departmentGuid);
+            DepartmentStatistics depInfo = items.get(i.departmentGuid == null ? "Prepaid" : i.departmentGuid);
             if (depInfo == null) {
-                items.put(i.departmentGuid, depInfo = new DepartmentStatistics(i.departmentTitle, BigDecimal.ZERO));
+                items.put(i.departmentGuid == null ? "Prepaid" : i.departmentGuid, depInfo = new DepartmentStatistics(i.departmentTitle == null ? "Prepaid" : i.departmentTitle, BigDecimal.ZERO));
             }
 
-            CategoryStat catStat = depInfo.categories.get(i.categoryGuid);
+            CategoryStat catStat = depInfo.categories.get(i.categoryGuid == null? "Prepaid" : i.categoryGuid);
             if (catStat == null) {
-                depInfo.categories.put(i.categoryGuid, catStat = new CategoryStat(i.categoryTitle, BigDecimal.ZERO));
+                depInfo.categories.put(i.categoryGuid == null ? "Prepaid" : i.categoryGuid, catStat = new CategoryStat(i.categoryTitle == null ? "Prepaid" : i.categoryTitle, BigDecimal.ZERO));
             }
 
             catStat.revenue = catStat.revenue.add(revenue);
