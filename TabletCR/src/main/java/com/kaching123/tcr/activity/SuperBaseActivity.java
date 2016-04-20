@@ -92,7 +92,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                 SyncWaitDialogFragment.hide(SuperBaseActivity.this);
                 final String updateUrl = getApp().getUpdateURL();
                 boolean approve = getApp().getUpdateApprove();
-                final double targetBuildNumber = intent.getDoubleExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0);
+                final int targetBuildNumber = intent.getIntExtra(AutoUpdateService.ARG_BUILD_NUMBER, 0);
                 AlertDialogFragment.hide(SuperBaseActivity.this);
                 if (isUpdatePermitted() && approve) {
                     AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT3,
@@ -150,7 +150,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
     public class ApkDownloadInterface extends ApkDownloadCommand.BaseApkDownloadCallback {
 
         @Override
-        protected void onhandleSuccess(String apkFileAddress, double buildNumber) {
+        protected void onhandleSuccess(String apkFileAddress, int buildNumber) {
             getApp().setUpdateFilePath(apkFileAddress);
             SyncWaitDialogFragment.hide(SuperBaseActivity.this);
             install_apk(buildNumber);
