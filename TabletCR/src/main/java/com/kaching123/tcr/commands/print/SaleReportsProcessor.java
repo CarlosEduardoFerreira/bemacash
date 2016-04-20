@@ -717,16 +717,18 @@ public final class SaleReportsProcessor {
             String key = orderType == OrderType.SALE ? itemInfo.itemGuid : itemInfo.description;
             if (key == null)
                 continue;
-            if (groupedMap.containsKey(key)) {
-                final SalesByItemsReportQuery.ReportItemInfo existingInfo = groupedMap.get(key);
-                final SalesByItemsReportQuery.ReportItemInfo newInfo = new SalesByItemsReportQuery.ReportItemInfo(itemInfo.itemGuid, itemInfo.description,
-                        itemInfo.ean, itemInfo.productCode,
-                        existingInfo.qty.add(itemInfo.qty),
-                        existingInfo.revenue.add(itemInfo.revenue));
-                groupedMap.remove(key);
-                groupedMap.put(key, newInfo);
-            } else {
-                groupedMap.put(key, itemInfo);
+            if (itemInfo.qty.compareTo(BigDecimal.ZERO) != 0) {
+                if (groupedMap.containsKey(key)) {
+                    final SalesByItemsReportQuery.ReportItemInfo existingInfo = groupedMap.get(key);
+                    final SalesByItemsReportQuery.ReportItemInfo newInfo = new SalesByItemsReportQuery.ReportItemInfo(itemInfo.itemGuid, itemInfo.description,
+                            itemInfo.ean, itemInfo.productCode,
+                            existingInfo.qty.add(itemInfo.qty),
+                            existingInfo.revenue.add(itemInfo.revenue));
+                    groupedMap.remove(key);
+                    groupedMap.put(key, newInfo);
+                } else {
+                    groupedMap.put(key, itemInfo);
+                }
             }
         }
         return new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(groupedMap.values());

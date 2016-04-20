@@ -60,7 +60,7 @@ public class SalesByItemsReportQuery extends SalesBaseReportQuery<ReportItemInfo
             BigDecimal revenue = CalculationUtil.getSubTotal(i.qty, itemFinalPrice);
 
             ReportItemInfo itemInfo = items.get(i.itemGiud);
-            if (revenue.compareTo(BigDecimal.ZERO) != 0 && i.productCode != null || i.description != null) {
+            if (i.qty.compareTo(BigDecimal.ZERO) != 0) {
                 if (itemInfo == null) {
                     items.put(i.itemGiud, itemInfo = new ReportItemInfo(i.itemGiud, i.description, i.ean, i.productCode, i.qty, revenue));
                 } else {
