@@ -17,7 +17,9 @@ import com.kaching123.tcr.store.ShopSchema2.SaleReportItemsView2.DepartmentTable
 import com.kaching123.tcr.store.ShopSchema2.SaleReportItemsView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleReportItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleReportItemsView2.SaleOrderTable;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.SaleReportItemsView;
+import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.Sale;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,8 +37,9 @@ import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 public abstract class SalesBaseReportQuery<T extends IReportResult> {
 
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(SaleReportItemsView.URI_CONTENT);
+    private static final Uri URI_BILL_DESCRIPTION = ShopProvider.getContentUri(ShopStore.BillPaymentDescriptionTable.URI_CONTENT);
 
-    private boolean isSale;
+    private static boolean isSale;
 
     public SalesBaseReportQuery() {
         this(true);
@@ -70,7 +73,7 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
 
         Cursor c = query.perform(context);
 
-        HashMap<String, SaleOrderInfo> ordersInfo = readCursor(c);
+        HashMap<String, SaleOrderInfo> ordersInfo = readCursor(c, context);
         c.close();
 
         SalesReportHandler handler2 = createHandler();
@@ -100,7 +103,7 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
 
         Cursor c = query.perform(context);
 
-        HashMap<String, SaleOrderInfo> ordersInfo = readCursor(c);
+        HashMap<String, SaleOrderInfo> ordersInfo = readCursor(c, context);
         c.close();
 
         SalesReportHandler handler2 = createHandler();
@@ -115,7 +118,7 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
     protected abstract SalesReportHandler<T> createHandler();
 
 
-    private static HashMap<String, SaleOrderInfo> readCursor(Cursor c) {
+    private static HashMap<String, SaleOrderInfo> readCursor(Cursor c, Context context) {
         if (c == null) {
             return new HashMap<String, SaleOrderInfo>(0);
         }
@@ -135,26 +138,40 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
                             _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)));
                     result.put(orderGuid, r);
                 }
-                readCursorRow(c, r);
+                readCursorRow(c, r, context);
             } while (c.moveToNext());
         }
 
         return result;
     }
 
-    private static void readCursorRow(Cursor c, SaleOrderInfo result) {
+    private static void readCursorRow(Cursor c, SaleOrderInfo result, Context context) {
         String saleItemId = c.getString(c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID));
 
         SaleItemInfo2 value = (SaleItemInfo2) result.map.get(saleItemId);
         if (value == null) {
             OrderType orderType = _orderType(c, c.getColumnIndex(SaleOrderTable.ORDER_TYPE));
             int descIndex = orderType == OrderType.SALE ? c.getColumnIndex(ItemTable.DESCRIPTION) : c.getColumnIndex(BillPaymentDescriptionTable.DESCRIPTION);
+            String description = null;
+            String productId = null;
+            if(!isSale && (c.getString(descIndex) == null || c.getString(descIndex).equalsIgnoreCase(""))) {
+                Query query = ProviderAction.query(URI_BILL_DESCRIPTION);
+                query.where(ShopStore.BillPaymentDescriptionTable.ORDER_ID + " = ? ", c.getString(c.getColumnIndex(SaleItemTable.PARENT_GUID)));
+                Cursor temp = query.perform(context);
+
+                if(temp.moveToFirst()) {
+                    description = temp.getString(temp.getColumnIndex(ShopStore.BillPaymentDescriptionTable.DESCRIPTION));
+                    productId = temp.getString(temp.getColumnIndex(ShopStore.BillPaymentDescriptionTable.PREPAID_ORDER_ID));
+                }
+                temp.close();
+            }
+
             value = new SaleItemInfo2(
                     saleItemId,
                     c.getString(c.getColumnIndex(SaleItemTable.ITEM_GUID)),
-                    (c.getString(descIndex) == null || c.getString(descIndex).equalsIgnoreCase("")) ? c.getString(c.getColumnIndex(BillPaymentDescriptionTable.DESCRIPTION)) : c.getString(descIndex),
+                    description == null ? c.getString(descIndex) : description,
                     c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
-                    (c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)) == null || c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)).equalsIgnoreCase("")) ? c.getString(c.getColumnIndex(BillPaymentDescriptionTable.PREPAID_ORDER_ID)) : c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
+                    productId == null ? c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)) : productId,
                     _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY)),
                     _decimal(c, c.getColumnIndex(SaleItemTable.PRICE)),
                     _bool(c, c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),
