@@ -154,12 +154,15 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
             int descIndex = orderType == OrderType.SALE ? c.getColumnIndex(ItemTable.DESCRIPTION) : c.getColumnIndex(BillPaymentDescriptionTable.DESCRIPTION);
             String description = null;
             String productId = null;
-            if(!isSale && (c.getString(descIndex) == null || c.getString(descIndex).equalsIgnoreCase(""))) {
+            if ((c.getString(descIndex) == null || c.getString(descIndex).equalsIgnoreCase(""))){
                 Query query = ProviderAction.query(URI_BILL_DESCRIPTION);
-                query.where(ShopStore.BillPaymentDescriptionTable.ORDER_ID + " = ? ", c.getString(c.getColumnIndex(SaleItemTable.PARENT_GUID)));
+                if (!isSale)
+                    query.where(ShopStore.BillPaymentDescriptionTable.ORDER_ID + " = ? ", c.getString(c.getColumnIndex(SaleItemTable.PARENT_GUID)));
+                else
+                    query.where(ShopStore.BillPaymentDescriptionTable.ORDER_ID + " = ? ", c.getString(c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID)));
                 Cursor temp = query.perform(context);
 
-                if(temp.moveToFirst()) {
+                if (temp.moveToFirst()) {
                     description = temp.getString(temp.getColumnIndex(ShopStore.BillPaymentDescriptionTable.DESCRIPTION));
                     productId = temp.getString(temp.getColumnIndex(ShopStore.BillPaymentDescriptionTable.PREPAID_ORDER_ID));
                 }
