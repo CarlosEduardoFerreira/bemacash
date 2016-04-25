@@ -31,6 +31,8 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragmentWithCallback;
 import com.kaching123.tcr.service.DisplayService;
 import com.kaching123.tcr.service.ScaleService;
+import com.kaching123.tcr.service.ScannerBinder;
+import com.kaching123.tcr.service.ScannerListener;
 import com.kaching123.tcr.service.ScannerService;
 import com.kaching123.tcr.util.ReceiverWrapper;
 
@@ -76,7 +78,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
     };
     private ScaleService.ScaleBinder scaleBinder;
     private boolean isUSBScanner;
-    private ScannerService.ScannerBinder scannerBinder;
+    private ScannerBinder scannerBinder;
 
     public String getScannerRead() {
         return scannerRead;
@@ -379,7 +381,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
         }
     }
 
-    private ScannerService.ScannerListener scannerListener = new ScannerService.ScannerListener() {
+    private ScannerListener scannerListener = new ScannerListener() {
 
         @Override
         public void onDisconnected() {
@@ -470,7 +472,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             Logger.d("ScannerBaseActivity: scannerServiceConnection: onServiceConnected()");
-            scannerBinder = (ScannerService.ScannerBinder) binder;
+            scannerBinder = (ScannerBinder) binder;
             setScannerListener(scannerListener);
         }
 
@@ -481,7 +483,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
         }
     };
 
-    private void setScannerListener(ScannerService.ScannerListener scannerListener) {
+    private void setScannerListener(ScannerListener scannerListener) {
         Logger.d("ScannerService: setScannerListener(): scannerListener = " + scannerListener);
         this.scannerListener = scannerListener;
     }

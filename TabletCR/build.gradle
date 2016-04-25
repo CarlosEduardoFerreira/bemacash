@@ -138,7 +138,6 @@ dependencies {
     compile project(':WebService')
     compile project(':PluginLoader')
     compile project(':BemaUsb')
-
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.android.support:support-v4:23.1.0'
     compile 'com.android.support:appcompat-v7:23.2.1'
@@ -152,28 +151,22 @@ dependencies {
     compile 'com.google.guava:guava:13.0.1'
     apt "com.github.hamsterksu:android-annotatedsql-processor:${asVersion}"
     compile "com.github.hamsterksu:android-annotatedsql-api:${asVersion}"
-
     compile "com.telly:groundy:${groundyVersion}"
     provided "com.telly:groundy-compiler:${groundyVersion}"
     compile "org.androidannotations:androidannotations-api:${aaVersion}"
-
     apt "org.androidannotations:androidannotations:${aaVersion}"
     compile "org.androidannotations:androidannotations-api:${aaVersion}"
-
     compile 'com.google.code.gson:gson:2.2.+'
     compile 'se.emilsjolander:stickylistheaders:2.1.2@aar'
     compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1'
     compile 'net.sf.supercsv:super-csv:2.1.0'
     compile 'com.squareup.retrofit:retrofit:1.5.1'
     compile 'com.squareup.okhttp:okhttp:1.5.2'
-
     compile 'com.koushikdutta.urlimageviewhelper:urlimageviewhelper:1.0.4'
-
     compile 'com.tonicartos:stickygridheaders:1.0.1'
-
     compile 'org.jsoup:jsoup:1.8.1'
-
     compile 'com.crittercism:crittercism-android-agent:+'
+    compile project(':usbSerialForAndroid')
 
     compile 'com.android.support:multidex:1.0.0'
     compile 'com.github.rey5137:material:1.2.2'

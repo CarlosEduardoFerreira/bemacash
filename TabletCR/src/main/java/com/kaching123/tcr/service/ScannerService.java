@@ -39,7 +39,7 @@ public class ScannerService extends Service {
     private static final int RECONNECTIONS_COUNT = 2;
 
 
-    private ScannerBinder binder = new ScannerBinder();
+    private BluetoothScannerBinder binder = new BluetoothScannerBinder();
 
     private ExecutorService executor;
 
@@ -49,7 +49,7 @@ public class ScannerService extends Service {
 
     private volatile boolean shouldConnect;
 
-    private AtomicBoolean isConnected = new AtomicBoolean();
+    public AtomicBoolean isConnected = new AtomicBoolean();
 
     public static void bind(Context context, ServiceConnection connection) {
         Intent intent = new Intent(context, ScannerService.class);
@@ -362,36 +362,21 @@ public class ScannerService extends Service {
 
     };
 
-    public class ScannerBinder extends Binder implements IScannerBinder {
-
+    public class BluetoothScannerBinder extends ScannerBinder {
+        @Override
         public void setScannerListener(ScannerListener scannerListener) {
             ScannerService.this.setScannerListener(scannerListener);
         }
-
-        public void tryReconnectScanner() {
+        @Override
+        public boolean tryReconnectScanner() {
             ScannerService.this.startOpenConnection();
+            return true;
         }
 
         @Override
         public void disconnectScanner() {
             ScannerService.this.startCloseConnection();
         }
-    }
-
-    public interface ScannerListener {
-
-        public void onDisconnected();
-        public void onBarcodeReceived(String barcode);
-    }
-
-    public interface IScannerBinder {
-
-        public void setScannerListener(ScannerListener displayListener);
-
-        public void tryReconnectScanner();
-
-        public void disconnectScanner();
-
     }
 
 }

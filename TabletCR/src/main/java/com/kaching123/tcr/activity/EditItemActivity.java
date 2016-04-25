@@ -405,8 +405,8 @@ public class EditItemActivity extends BaseCommonItemActivity {
             UnitsEditFragment editFragment = (UnitsEditFragment) fragment;
             editFragment.onBarcodeReceived(barcode);
         } else {
-            ItemCodeChooserAlertDialogFragment.show(EditItemActivity.this, barcode);
-            //super.onBarcodeReceived(barcode);
+//            ItemCodeChooserAlertDialogFragment.show(EditItemActivity.this, barcode);
+            super.onBarcodeReceived(barcode);
         }
     }
 

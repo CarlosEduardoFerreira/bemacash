@@ -678,8 +678,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void tryToAddByBarcode(final ItemExModel item, final String barcode, BigDecimal price, BigDecimal quantity, final boolean fromScanner, Unit unit) {
         if (item == null) {
-            if (fromScanner)
-                disconnectScanner();
+//            if (fromScanner)
+//                disconnectScanner();
             playAlarm();
             AlertDialogFragment.show(BaseCashierActivity.this,
                     DialogType.CONFIRM_NONE,
@@ -728,8 +728,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
 
         if (!item.isActiveStatus && !item.isSalable) {
-            if (fromScanner)
-                disconnectScanner();
+//            if (fromScanner)
+//                disconnectScanner();
             playAlarm();
             AlertDialogFragment.show(BaseCashierActivity.this,
                     DialogType.CONFIRM_NONE,

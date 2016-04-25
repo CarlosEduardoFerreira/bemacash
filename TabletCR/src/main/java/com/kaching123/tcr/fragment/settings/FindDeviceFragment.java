@@ -69,8 +69,10 @@ public class FindDeviceFragment extends StyledDialogFragment {
     public static final String INTEGRATED_DISPLAYER = "Integrated Customer Display";
     public static final String SERIAL_PORT = "Integrated Customer Display";
     public static String USB_MSR_NAME = "Integrated MSR";
-    public static String USB_SCANNER_NAME = "USB SCANNER";
-    public static String USB_SCANNER_ADDRESS = "USB SCANNER";
+    public static String USB_HID_SCANNER_NAME = "USB SCANNER (KeyBoard)";
+    public static String USB_HID_SCANNER_ADDRESS = "USB SCANNER (KeyBoard)";
+    public static String USB_SCANNER_NAME = "USB SCANNER (Virtual COM)";
+    public static String USB_SCANNER_ADDRESS = "USB SCANNER (Virtual COM)";
     public static String USB_DISPLAY = "LDX1000";
     public static String SEARIL_PORT_SCANNER_ADDRESS = "Integrated Scanner";
     public static String SEARIL_PORT_SCANNER_NAME = "Integrated Scanner";
@@ -330,6 +332,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 //                    if (checkUsb(USB_SCANNER_VID, USB_SCANNER_PID))
 //                        devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
                     devices.add(new DeviceModel(USB_SCANNER_NAME, USB_SCANNER_ADDRESS));
+                    devices.add(new DeviceModel(USB_HID_SCANNER_NAME,USB_HID_SCANNER_ADDRESS));
                 }
             for (BluetoothDevice device : bluetoothDevices) {
                 if (useConstraint && !checkConstraint(device))

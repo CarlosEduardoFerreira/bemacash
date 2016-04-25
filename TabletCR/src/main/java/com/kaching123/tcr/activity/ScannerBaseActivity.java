@@ -1,8 +1,8 @@
 package com.kaching123.tcr.activity;
 
 import android.content.ComponentName;
-import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Binder;
 import android.os.IBinder;
 import android.text.TextUtils;
 
@@ -11,24 +11,23 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
+import com.kaching123.tcr.service.IScannerBinder;
+import com.kaching123.tcr.service.ScannerBinder;
+import com.kaching123.tcr.service.ScannerListener;
 import com.kaching123.tcr.service.ScannerService;
-import com.kaching123.tcr.service.ScannerService.IScannerBinder;
-import com.kaching123.tcr.service.ScannerService.ScannerBinder;
-import com.kaching123.tcr.service.ScannerService.ScannerListener;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
+import com.kaching123.tcr.service.USBScannerService;
 
 /**
  * Created by pkabakov on 14.03.14.
  */
 public abstract class ScannerBaseActivity extends SuperBaseActivity implements IScannerBinder {
 
-    private ScannerBinder scannerBinder;
+    protected ScannerBinder scannerBinder;
 
     protected abstract void onBarcodeReceived(String barcode);
 
     private boolean isUSBScanner;
+
     protected static final String EXTRA_ACTION = "ACTION";
     protected static final String EXTRA_ERROR = "ERROR";
     protected static final String EXTRA_ERRORMSG = "ERRORMSG";
@@ -41,17 +40,16 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
     protected static final String EXTRA_SERVICEFEE = "SERVICEFEE";
     protected static final String EXTRA_RECEIPT = "RECEIPT";
 
-
     @Override
-    protected void onStart() {
-        super.onStart();
+    public   void onResume() {
+        super.onResume();
 
         bindToScannerService();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
 
         unbindFromScannerService();
     }
@@ -61,10 +59,14 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         boolean scannerConfigured = !TextUtils.isEmpty(getApp().getShopPref().scannerAddress().get());
 
         if (scannerConfigured) {
-            if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_SCANNER_ADDRESS))
+            if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_SCANNER_ADDRESS)) {
                 setUSBScanner(true);
-            else if (!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
+                USBScannerService.bind(this, scannerServiceConnection);
+            }else if(getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_HID_SCANNER_ADDRESS))
+                setUSBScanner(true);
+            else if(!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
                 ScannerService.bind(this, scannerServiceConnection);
+
         } else
             Logger.d("ScannerBaseActivity: bindToScannerService(): failed - scanner is not configured!");
     }
@@ -73,13 +75,15 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
         isUSBScanner = flag;
     }
 
-    private boolean getUSBScanner() {
+    private boolean getUSBScanner()
+    {
         return isUSBScanner;
     }
 
     private void unbindFromScannerService() {
         Logger.d("ScannerBaseActivity: unbindFromScannerService()");
         if (scannerBinder != null) {
+            scannerBinder.disconnectScanner();
             scannerBinder = null;
             unbindService(scannerServiceConnection);
         } else {
@@ -97,12 +101,13 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
     }
 
     @Override
-    public void tryReconnectScanner() {
+    public boolean tryReconnectScanner() {
         Logger.d("ScannerBaseActivity: tryReconnectScanner()");
         if (scannerBinder != null)
-            scannerBinder.tryReconnectScanner();
+            return scannerBinder.tryReconnectScanner();
         else
             Logger.d("ScannerBaseActivity: tryReconnectScanner(): failed - not binded!");
+        return false;
     }
 
     @Override
@@ -149,7 +154,9 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
 
                         @Override
                         public boolean onClick() {
-                            tryReconnectScanner();
+                            if (!tryReconnectScanner()){
+                                onDisconnected();
+                            }
                             return true;
                         }
 
@@ -165,12 +172,10 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
                 return;
             }
 
+            barcode = barcode.replaceAll("[^A-Za-z0-9]", "");
             ScannerBaseActivity.this.onBarcodeReceived(barcode);
         }
 
     };
-
-
-
 
 }
