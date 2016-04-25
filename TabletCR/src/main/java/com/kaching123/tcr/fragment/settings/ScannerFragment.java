@@ -40,6 +40,7 @@ import java.util.List;
 @OptionsMenu(R.menu.settings_scanner_fragment)
 public class ScannerFragment extends SuperBaseFragment {
 
+    private static final String TAG = "ScannerFragment";
     @ViewById
     protected DragSortListView list;
 
@@ -49,7 +50,7 @@ public class ScannerFragment extends SuperBaseFragment {
     private ScannerAdapter adapter;
     private UsbSerialPort sPort;
     private UsbManager mUsbManager;
-    private final static String USB_SCANNER_NAME = "USB SCANNER (Virtual COM)";
+    private final static String USB_SCANNER_NAME = "USB SCANNER";
 
     public static Fragment instance() {
         return ScannerFragment_.builder().build();
@@ -132,8 +133,8 @@ public class ScannerFragment extends SuperBaseFragment {
         final List<UsbSerialPort> result = new ArrayList<UsbSerialPort>();
         for (final UsbSerialDriver driver : drivers) {
             final List<UsbSerialPort> ports = driver.getPorts();
-//            Log.d(TAG, String.format("+ %s: %s port%s",
-//                    driver, Integer.valueOf(ports.size()), ports.size() == 1 ? "" : "s"));
+            Log.d(TAG, String.format("+ %s: %s port%s",
+                    driver, Integer.valueOf(ports.size()), ports.size() == 1 ? "" : "s"));
             result.addAll(ports);
         }
         for(UsbSerialPort port: result){

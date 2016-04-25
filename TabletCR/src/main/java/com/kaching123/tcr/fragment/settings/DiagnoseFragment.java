@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.SettingsActivity;
 import com.kaching123.tcr.commands.display.DisplayMessageCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
@@ -34,6 +35,7 @@ import com.kaching123.tcr.service.ScaleService;
 import com.kaching123.tcr.service.ScannerBinder;
 import com.kaching123.tcr.service.ScannerListener;
 import com.kaching123.tcr.service.ScannerService;
+import com.kaching123.tcr.service.USBScannerService;
 import com.kaching123.tcr.util.ReceiverWrapper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -77,7 +79,6 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
         }
     };
     private ScaleService.ScaleBinder scaleBinder;
-    private boolean isUSBScanner;
     private ScannerBinder scannerBinder;
 
     public String getScannerRead() {
@@ -149,7 +150,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
 
         @Override
         public void onDeviceSelected() {
-            bindToScannerService();
+            ((SettingsActivity)getActivity()).bindToScannerService();
             task.execute();
         }
 
@@ -353,7 +354,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
                 }
                 confirmStr = String.format(getString(R.string.confirm_scanner_title),scannerRead);
                 scannerRead = null;
-                unbindFromScannerService();
+                ((SettingsActivity)getActivity()).unbindFromScannerService();
             }
             AlertDialogFragment.show(getActivity(), AlertDialogFragment.DialogType.CONFIRM,
                     R.string.btn_confirm,
@@ -381,112 +382,7 @@ public class DiagnoseFragment extends SuperBaseFragment implements DisplayServic
         }
     }
 
-    private ScannerListener scannerListener = new ScannerListener() {
 
-        @Override
-        public void onDisconnected() {
-            Logger.d("ScannerBaseActivity: scannerListener: onDisconnected()");
-            if (getActivity().isFinishing() || getActivity().isDestroyed()) {
-                Logger.d("ScannerBaseActivity: scannerListener: onDisconnected(): ignore and exit - activity is finishing");
-                return;
-            }
-
-            AlertDialogFragment.showAlert(
-                    getActivity(),
-                    R.string.error_dialog_title,
-                    getString(R.string.error_message_scanner_disconnected),
-                    R.string.btn_try_again,
-                    new StyledDialogFragment.OnDialogClickListener() {
-
-                        @Override
-                        public boolean onClick() {
-                            tryReconnectScanner();
-                            return true;
-                        }
-
-                    }
-            );
-        }
-
-        @Override
-        public void onBarcodeReceived(String barcode) {
-            Logger.d("ScannerBaseActivity: scannerListener: onBarcodeReceived()" + barcode);
-            if (getActivity().isFinishing() || getActivity().isDestroyed()) {
-                Logger.d("ScannerBaseActivity: scannerListener: onBarcodeReceived(): ignore and exit - activity is finishing");
-                return;
-            }
-        }
-
-    };
-
-    public void tryReconnectScanner() {
-        Logger.d("ScannerBaseActivity: tryReconnectScanner()");
-        if (scannerBinder != null)
-            scannerBinder.tryReconnectScanner();
-        else
-            Logger.d("ScannerBaseActivity: tryReconnectScanner(): failed - not binded!");
-    }
-
-    public void disconnectScanner() {
-        Logger.d("ScannerBaseActivity: disconnectScanner()");
-        if (scannerBinder != null)
-            scannerBinder.disconnectScanner();
-        else
-            Logger.d("ScannerBaseActivity: disconnectScanner(): failed - not binded!");
-    }
-
-    private void bindToScannerService() {
-        Logger.d("ScannerBaseActivity: bindToScannerService()"+getApp().getShopPref().scannerAddress().get());
-        boolean scannerConfigured = !TextUtils.isEmpty(getApp().getShopPref().scannerAddress().get());
-
-        if (scannerConfigured) {
-            if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_SCANNER_ADDRESS))
-                setUSBScanner(true);
-            else if(!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
-                ScannerService.bind(getActivity(), scannerServiceConnection);
-        } else
-            Logger.d("ScannerBaseActivity: bindToScannerService(): failed - scanner is not configured!");
-    }
-
-    private void setUSBScanner(boolean flag) {
-        isUSBScanner = flag;
-    }
-
-    private boolean getUSBScanner()
-    {
-        return isUSBScanner;
-    }
-
-    private void unbindFromScannerService() {
-        Logger.d("ScannerBaseActivity: unbindFromScannerService()");
-        if (scannerBinder != null) {
-            scannerBinder = null;
-            getActivity().unbindService(scannerServiceConnection);
-        } else {
-            Logger.d("ScannerBaseActivity: unbindFromScannerService(): ignore and exit - not binded");
-        }
-    }
-
-    private ServiceConnection scannerServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder binder) {
-            Logger.d("ScannerBaseActivity: scannerServiceConnection: onServiceConnected()");
-            scannerBinder = (ScannerBinder) binder;
-            setScannerListener(scannerListener);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            Logger.d("ScannerBaseActivity: scannerServiceConnection: onServiceDisconnected()");
-            scannerBinder = null;
-        }
-    };
-
-    private void setScannerListener(ScannerListener scannerListener) {
-        Logger.d("ScannerService: setScannerListener(): scannerListener = " + scannerListener);
-        this.scannerListener = scannerListener;
-    }
 
     public void receivedScannerCallback(String barcode){
             scannerRead = barcode;

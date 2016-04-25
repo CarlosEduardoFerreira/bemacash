@@ -1,9 +1,15 @@
 package com.kaching123.tcr.activity;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +22,8 @@ import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
+import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.UnavailabledOptionFragment;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragmentWithCallback;
@@ -24,6 +32,7 @@ import com.kaching123.tcr.fragment.settings.DataUsageStatFragment;
 import com.kaching123.tcr.fragment.settings.DiagnoseFragment;
 import com.kaching123.tcr.fragment.settings.DisplayFragment;
 import com.kaching123.tcr.fragment.settings.DrawerSettingsFragment;
+import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.fragment.settings.PaxListFragment;
 import com.kaching123.tcr.fragment.settings.PrinterListFragment;
 import com.kaching123.tcr.fragment.settings.ScaleFragment;
@@ -31,7 +40,13 @@ import com.kaching123.tcr.fragment.settings.ScannerFragment;
 import com.kaching123.tcr.fragment.settings.SyncSettingsFragment;
 import com.kaching123.tcr.fragment.settings.TrainingModeSettingsFragment;
 import com.kaching123.tcr.fragment.settings.USBMsrFragment;
+import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.service.IScannerBinder;
+import com.kaching123.tcr.service.ScannerBinder;
+import com.kaching123.tcr.service.ScannerListener;
+import com.kaching123.tcr.service.ScannerService;
+import com.kaching123.tcr.service.USBScannerService;
 import com.kaching123.tcr.model.PlanOptions;
 
 import org.androidannotations.annotations.AfterViews;
@@ -47,7 +62,7 @@ import java.util.Set;
  * Created by gdubina on 07/11/13.
  */
 @EActivity(R.layout.settings_activity)
-public class SettingsActivity extends SuperBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener, WaitDialogFragmentWithCallback.OnDialogDismissListener {
+public class SettingsActivity extends ScannerBaseActivity implements SyncSettingsFragment.ManualCheckUpdateListener, WaitDialogFragmentWithCallback.OnDialogDismissListener, IScannerBinder {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -179,6 +194,15 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.settings_details, fragment).commit();
     }
+    protected ScannerBinder scannerBinder;
+    @Override
+    public void setScannerListener(ScannerListener scannerListener) {
+        Logger.d("ScannerBaseActivity: setScannerListener()");
+        if (scannerBinder != null)
+            scannerBinder.setScannerListener(scannerListener);
+        else
+            Logger.d("ScannerBaseActivity: setScannerListener(): failed - not binded!");
+    }
 
     @Override
     public void onCheckClick() {
@@ -198,6 +222,31 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     public void onDialogDismissed(String barcode) {
 //        WaitDialogFragmentWithCallback.show(this,getString(R.string.wait_dialog_title));
         ((DiagnoseFragment) fragment).setScannerRead(barcode);
+    }
+
+    @Override
+    public boolean tryReconnectScanner() {
+        Logger.d("ScannerBaseActivity: tryReconnectScanner()");
+        if (scannerBinder != null)
+            return scannerBinder.tryReconnectScanner();
+        else
+            Logger.d("ScannerBaseActivity: tryReconnectScanner(): failed - not binded!");
+        return false;
+    }
+
+    @Override
+    public void disconnectScanner() {
+        Logger.d("ScannerBaseActivity: disconnectScanner()");
+        if (scannerBinder != null)
+            scannerBinder.disconnectScanner();
+        else
+            Logger.d("ScannerBaseActivity: disconnectScanner(): failed - not binded!");
+    }
+
+    @Override
+    public void onBarcodeReceived(String barcode) {
+        barcode = barcode.replaceAll("[^A-Za-z0-9]", "");
+        ((DiagnoseFragment)fragment).setScannerRead(barcode);
     }
 
     private class NavigationAdapter extends ObjectsArrayAdapter<NavigationItem> {
@@ -264,4 +313,99 @@ public class SettingsActivity extends SuperBaseActivity implements SyncSettingsF
     public static void start(Context context) {
         SettingsActivity_.intent(context).start();
     }
+
+
+    private boolean isUSBScanner;
+    public void bindToScannerService() {
+        Logger.d("ScannerBaseActivity: bindToScannerService()");
+        boolean scannerConfigured = !TextUtils.isEmpty(getApp().getShopPref().scannerAddress().get());
+
+        if (scannerConfigured) {
+            if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_SCANNER_ADDRESS)) {
+                setUSBScanner(true);
+                USBScannerService.bind(this, scannerServiceConnection);
+            }else if(getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_HID_SCANNER_ADDRESS))
+                setUSBScanner(true);
+            else if(!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
+                ScannerService.bind(this, scannerServiceConnection);
+
+        } else
+            Logger.d("ScannerBaseActivity: bindToScannerService(): failed - scanner is not configured!");
+    }
+
+    public void unbindFromScannerService() {
+        Logger.d("ScannerBaseActivity: unbindFromScannerService()");
+        if (scannerBinder != null) {
+            scannerBinder.disconnectScanner();
+            scannerBinder = null;
+            unbindService(scannerServiceConnection);
+        } else {
+            Logger.d("ScannerBaseActivity: unbindFromScannerService(): ignore and exit - not binded");
+        }
+    }
+
+    private void setUSBScanner(boolean flag) {
+        isUSBScanner = flag;
+    }
+
+    private boolean getUSBScanner()
+    {
+        return isUSBScanner;
+    }
+
+    private ServiceConnection scannerServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            Logger.d("ScannerBaseActivity: scannerServiceConnection: onServiceConnected()");
+            scannerBinder = (ScannerBinder) binder;
+            setScannerListener(scannerListener);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            Logger.d("ScannerBaseActivity: scannerServiceConnection: onServiceDisconnected()");
+            scannerBinder = null;
+        }
+    };
+
+    private ScannerListener scannerListener = new ScannerListener() {
+
+        @Override
+        public void onDisconnected() {
+            Logger.d("ScannerBaseActivity: scannerListener: onDisconnected()");
+            if (isFinishing() || isDestroyed()) {
+                Logger.d("ScannerBaseActivity: scannerListener: onDisconnected(): ignore and exit - activity is finishing");
+                return;
+            }
+
+            AlertDialogFragment.showAlert(
+                    SettingsActivity.this,
+                    R.string.error_dialog_title,
+                    getString(R.string.error_message_scanner_disconnected),
+                    R.string.btn_try_again,
+                    new StyledDialogFragment.OnDialogClickListener() {
+
+                        @Override
+                        public boolean onClick() {
+                            tryReconnectScanner();
+                            return true;
+                        }
+
+                    }
+            );
+        }
+
+        @Override
+        public void onBarcodeReceived(String barcode) {
+            Logger.d("ScannerBaseActivity: scannerListener: onBarcodeReceived()" + barcode);
+            if (isFinishing() || isDestroyed()) {
+                Logger.d("ScannerBaseActivity: scannerListener: onBarcodeReceived(): ignore and exit - activity is finishing");
+                return;
+            }
+            barcode = barcode.replaceAll("[^A-Za-z0-9]", "");
+            ((DiagnoseFragment)fragment).setScannerRead(barcode);
+        }
+
+    };
 }
