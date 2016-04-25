@@ -6,6 +6,7 @@
     <usb-device vendor-id="0514" product-id="02964" />
     <usb-device vendor-id="9450" product-id="00391" />
     <usb-device vendor-id="9450" product-id="00512" />
+    <usb-device vendor-id="0514" product-id="00244" />
 
     <!-- 0x0403 / 0x6001: FTDI FT232R UART -->
     <usb-device vendor-id="1027" product-id="24577" />
