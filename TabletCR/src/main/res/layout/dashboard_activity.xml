@@ -5,13 +5,261 @@
     android:layout_height="match_parent">
 
 
-    <LinearLayout android:orientation="vertical"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent">
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right">
 
+
+
+
+        <ScrollView
+            android:layout_height="match_parent"
+            android:layout_width="1000dp"
+            android:fillViewport="true">
+
+            <RelativeLayout
+                android:id="@+id/main_buttons_container"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:paddingTop="26dp"
+                android:paddingBottom="26dp"
+                android:paddingLeft="53dp"
+                android:background="@color/prepaid_dialog_white"
+                >
+
+                <RelativeLayout
+                    android:id="@+id/register_button"
+                    style="@style/DashboardModule.Container.green"
+                    android:layout_width="@dimen/dashboard_module_width"
+                    android:layout_height="@dimen/dashboard_module_height"
+                    android:layout_marginRight="56dp"
+                    android:enabled="false">
+
+                    <ImageView
+                        android:layout_height="125dp"
+                        android:layout_width="125dp"
+                        android:background="@drawable/dashboard_register_bg"
+                        android:layout_marginTop="5dp"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="19dp"
+                        android:text="@string/dashboard_activity_register_button_label"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/inventory_button"
+                    style="@style/DashboardModule.Container.green"
+                    android:layout_width="@dimen/dashboard_module_width"
+                    android:layout_height="@dimen/dashboard_module_height"
+                    android:layout_toRightOf="@id/register_button"
+                    android:layout_marginRight="56dp">
+
+                    <ImageView
+                        android:layout_marginTop="6dp"
+                        android:layout_height="120dp"
+                        android:layout_width="120dp"
+                        android:background="@drawable/dashboard_inventory_bg"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignLeft="@+id/textView3"
+                        android:layout_alignStart="@+id/textView3" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="19dp"
+                        android:text="@string/dashboard_activity_inventory_button_label"
+                        android:id="@+id/textView3" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/no_sale_button"
+                    style="@style/DashboardModule.Container.green"
+                    android:layout_width="@dimen/dashboard_module_width"
+                    android:layout_height="@dimen/dashboard_module_height"
+                    android:layout_toRightOf="@id/inventory_button"
+                    android:layout_marginRight="56dp"
+                    >
+
+                    <ImageView
+                        android:layout_marginTop="6dp"
+                        android:layout_height="110dp"
+                        android:layout_width="110dp"
+                        android:background="@drawable/dashboard_no_sale_bg"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="19dp"
+                        android:text="@string/dashboard_activity_no_sale_button_label"
+                        android:id="@+id/textView4" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/drops_and_payouts_button"
+                    style="@style/DashboardModule.Container.yellow"
+                    android:layout_width="@dimen/dashboard_module_width"
+                    android:layout_height="@dimen/dashboard_module_height"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true">
+
+                    <ImageView
+                        android:layout_height="110dp"
+                        android:layout_width="110dp"
+                        android:background="@drawable/dashboard_drop_layouts"
+                        android:id="@+id/imageView"
+                        android:layout_marginTop="15dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/dashboard_activity_drops_and_payouts_button_label"
+
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="19dp" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/checkin_and_out_button"
+                    style="@style/DashboardModule.Container.yellow"
+                    android:layout_width="@dimen/dashboard_module_width"
+                    android:layout_height="@dimen/dashboard_module_height"
+                    android:layout_alignTop="@+id/drops_and_payouts_button"
+                    android:layout_alignLeft="@+id/customers_button"
+                    android:layout_alignStart="@+id/customers_button">
+
+                    <ImageView
+                        android:layout_height="110dp"
+                        android:layout_width="110dp"
+                        android:background="@drawable/dashboard_checkin_out_layouts"
+                        android:id="@+id/imageView1"
+                        android:layout_marginTop="15dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/dashboard_activity_checkin_and_out_button_label"
+
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="19dp" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/employees_button"
+                    style="@style/DashboardModule.Container.blue"
+                    android:layout_width="@dimen/dashboard_module_width"
+                    android:layout_height="@dimen/dashboard_module_height"
+                    android:visibility="visible"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true">
+
+                    <ImageView
+                        android:layout_height="110dp"
+                        android:layout_width="120dp"
+                        android:background="@drawable/dashboard_employees_bg"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="19dp"
+                        android:text="@string/dashboard_activity_employees_button_label"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/customers_button"
+                    style="@style/DashboardModule.Container.blue"
+                    android:layout_width="@dimen/dashboard_module_width"
+                    android:layout_height="@dimen/dashboard_module_height"
+                    android:visibility="visible"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/register_button">
+
+                    <ImageView
+                        android:layout_height="130dp"
+                        android:layout_width="140dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/dashboard_customers_bg"/>
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="19dp"
+                        android:text="@string/dashboard_activity_customers_button_label"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/reports_button"
+                    style="@style/DashboardModule.Container.blue"
+                    android:layout_width="@dimen/dashboard_module_width"
+                    android:layout_height="@dimen/dashboard_module_height"
+                    android:layout_alignTop="@+id/customers_button"
+                    android:layout_toRightOf="@+id/inventory_button">
+
+                    <ImageView
+                        android:layout_height="110dp"
+                        android:layout_width="wrap_content"
+                        android:background="@drawable/dashboard_reports_bg"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        style="@style/DashboardModule.Label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="19dp"
+                        android:text="@string/dashboard_activity_reports_button_label"
+                        android:id="@+id/textView5" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </ScrollView>
         <RelativeLayout
-            android:layout_height="160dp"
-            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_width="280dp"
             android:background="@color/cashier_activity_background"
             android:paddingBottom="8dp">
 
@@ -36,92 +284,32 @@
                 android:textSize="@dimen/dashboard_operator_name_value_label"
                 android:maxLines="2"
                 android:textColor="@color/dashboard_operator_name_value_text"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/operator_name_value_label"
+                android:background="@android:color/darker_gray"/>
 
-            <RelativeLayout
-                android:id="@+id/clock_in_button_container"
-                android:layout_height="wrap_content"
-                android:layout_width="93dp"
-                android:layout_marginLeft="372dp"
-                android:paddingTop="7dp">
 
-                <ImageView
-                    android:layout_height="match_parent"
-                    android:layout_width="wrap_content"
-                    android:background="@drawable/divider_dashboard"
-                    />
-
-                <ImageView
-                    android:id="@+id/clock_in_img"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/clock_in_btn_bg"/>
-
-                <TextView
-                    android:textSize="14sp"
-                    android:text="@string/button_clockin"
-                    android:layout_alignParentBottom="true"
-                    android:paddingBottom="30dp"
-                    android:textStyle="normal"
-                    android:textColor="@color/text_green2"
-                    android:layout_centerHorizontal="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/clock_out_button_container"
-                android:layout_height="wrap_content"
-                android:layout_width="93dp"
-                android:layout_toRightOf="@+id/clock_in_button_container"
-                android:paddingTop="7dp">
-
-                <ImageView
-                    android:layout_height="match_parent"
-                    android:layout_width="wrap_content"
-                    android:background="@drawable/divider_dashboard"
-                    />
-
-                <ImageView
-                    android:id="@+id/clock_out_img"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/clock_out_btn_bg"/>
-
-                <TextView
-                    android:textSize="14sp"
-                    android:text="@string/button_clockout"
-                    android:layout_alignParentBottom="true"
-                    android:paddingBottom="30dp"
-                    android:textStyle="normal"
-                    android:textColor="@color/text_red2"
-                    android:layout_centerHorizontal="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <ImageView
-                    android:layout_alignParentRight="true"
-                    android:layout_height="match_parent"
-                    android:layout_width="wrap_content"
-                    android:background="@drawable/divider_dashboard"
-                    />
-
-            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/shift_action_button_container"
-                android:layout_height="wrap_content"
+                android:layout_height="180dp"
                 android:layout_width="wrap_content"
-                android:layout_toRightOf="@+id/clock_out_button_container"
+                android:layout_below="@+id/operator_name_value_label"
                 android:paddingTop="7dp">
 
                 <ImageView
                     android:id="@+id/shift_action_image"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:background="@drawable/shift_open_btn_bg"/>
+                    android:background="@drawable/shift_open_btn_bg"
+                    android:paddingTop="7dp"
+
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
 
                 <TextView
                     android:id="@+id/close_shift_label"
@@ -162,17 +350,19 @@
                     android:visibility="gone"
                     />
 
-                <ImageView
-                    android:layout_toRightOf="@+id/shift_action_image"
-                    android:layout_height="match_parent"
-                    android:layout_width="wrap_content"
-                    android:background="@drawable/divider_dashboard"
-                    />
+
+
 
             </RelativeLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/shift_action_button_container"
+                android:background="@android:color/darker_gray"/>
 
             <RelativeLayout
                 android:id="@+id/total_sales_container"
+                android:layout_below="@+id/cash_on_drawer_container"
                 android:layout_width="@dimen/dashboard_total_sales_container_width"
                 android:layout_height="@dimen/dashboard_total_sales_container_height"
                 android:layout_alignParentRight="true"
@@ -377,17 +567,17 @@
             <RelativeLayout android:id="@+id/cash_on_drawer_container"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@id/total_sales_container"
-                android:layout_toRightOf="@id/shift_action_button_container"
-                android:layout_alignWithParentIfMissing="true">
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_below="@+id/shift_action_button_container"
+                android:layout_alignParentRight="true">
 
                 <TextView
                     android:id="@+id/cash_on_drawer_label"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginLeft="50dp"
                     android:textStyle="bold"
                     android:textColor="@color/beige"
                     android:textSize="14sp"
@@ -397,12 +587,11 @@
                     android:id="@+id/cash_on_drawer_value_label"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="50dp"
                     android:layout_below="@id/cash_on_drawer_label"
                     android:layout_marginTop="-4dp"
+                    android:layout_marginRight="30dp"
                     android:textStyle="bold"
-                    android:singleLine="true"
-                    android:ellipsize="end"
                     android:textColor="@color/dashboard_cash_on_drawer_value_text"
                     android:textSize="34sp"
                     android:text="0.00"/>
@@ -411,9 +600,10 @@
                     android:id="@+id/opening_amount_label"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="50dp"
                     android:layout_below="@id/cash_on_drawer_value_label"
                     android:layout_marginTop="8dp"
+                    android:layout_marginRight="30dp"
                     android:textStyle="bold"
                     android:textColor="@color/beige"
                     android:textSize="14sp"
@@ -423,255 +613,28 @@
                     android:id="@+id/opening_amount_value_label"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="50dp"
                     android:layout_below="@id/opening_amount_label"
                     android:layout_marginTop="-4dp"
+                    android:layout_marginRight="30dp"
                     android:textStyle="bold"
-                    android:singleLine="true"
-                    android:ellipsize="end"
                     android:textColor="@color/dashboard_opening_amount_value_text"
                     android:textSize="34sp"
                     android:text="0.00"/>
-
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignBottom="@id/opening_amount_value_label"
+                    android:background="@android:color/darker_gray"/>
             </RelativeLayout>
+
 
         </RelativeLayout>
-
-        <ScrollView
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:fillViewport="true">
-
-            <RelativeLayout
-                android:id="@+id/main_buttons_container"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:paddingTop="26dp"
-                android:paddingBottom="26dp"
-                android:paddingLeft="53dp"
-                android:background="@color/beige">
-
-                <RelativeLayout
-                    android:id="@+id/register_button"
-                    style="@style/DashboardModule.Container"
-                    android:background="@drawable/dashboard_module_bg"
-                    android:layout_width="@dimen/dashboard_module_width"
-                    android:layout_height="@dimen/dashboard_module_height"
-                    android:layout_marginRight="56dp"
-                    android:enabled="false">
-
-                    <ImageView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/dashboard_register_bg"/>
-
-                    <TextView
-                        style="@style/DashboardModule.Label"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="19dp"
-                        android:text="@string/dashboard_activity_register_button_label"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/inventory_button"
-                    style="@style/DashboardModule.Container"
-                    android:layout_width="@dimen/dashboard_module_width"
-                    android:layout_height="@dimen/dashboard_module_height"
-                    android:layout_toRightOf="@id/register_button"
-                    android:layout_marginRight="56dp">
-
-                    <ImageView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/dashboard_inventory_bg"/>
-
-                    <TextView
-                        style="@style/DashboardModule.Label"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="19dp"
-                        android:text="@string/dashboard_activity_inventory_button_label"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/no_sale_button"
-                    style="@style/DashboardModule.Container"
-                    android:layout_width="@dimen/dashboard_module_width"
-                    android:layout_height="@dimen/dashboard_module_height"
-                    android:layout_toRightOf="@id/inventory_button"
-                    android:layout_marginRight="56dp"
-                    >
-
-                    <ImageView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/dashboard_no_sale_bg"/>
-
-                    <TextView
-                        style="@style/DashboardModule.Label"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="19dp"
-                        android:text="@string/dashboard_activity_no_sale_button_label"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/drops_and_payouts_button"
-                    style="@style/DashboardModule.Container"
-                    android:layout_width="@dimen/dashboard_module_width"
-                    android:layout_height="@dimen/dashboard_module_height"
-                    android:layout_toRightOf="@id/no_sale_button"
-                    >
-
-                    <ImageView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/dashboard_no_sale_bg"/>
-
-                    <TextView
-                        style="@style/DashboardModule.Label"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="19dp"
-                        android:text="@string/dashboard_activity_drops_and_payouts_button_label"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/employees_button"
-                    style="@style/DashboardModule.Container"
-                    android:layout_width="@dimen/dashboard_module_width"
-                    android:layout_height="@dimen/dashboard_module_height"
-                    android:layout_below="@id/register_button"
-                    android:layout_marginTop="56dp"
-                    android:layout_marginRight="56dp"
-                    android:visibility="visible">
-
-                    <ImageView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/dashboard_employees_bg"/>
-
-                    <TextView
-                        style="@style/DashboardModule.Label"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="19dp"
-                        android:text="@string/dashboard_activity_employees_button_label"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/customers_button"
-                    style="@style/DashboardModule.Container"
-                    android:layout_width="@dimen/dashboard_module_width"
-                    android:layout_height="@dimen/dashboard_module_height"
-                    android:layout_alignTop="@id/employees_button"
-                    android:layout_toRightOf="@id/employees_button"
-                    android:layout_marginRight="56dp"
-                    android:visibility="visible">
-
-                    <ImageView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/dashboard_customers_bg"/>
-
-                    <TextView
-                        style="@style/DashboardModule.Label"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="19dp"
-                        android:text="@string/dashboard_activity_customers_button_label"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/reports_button"
-                    style="@style/DashboardModule.Container"
-                    android:layout_width="@dimen/dashboard_module_width"
-                    android:layout_height="@dimen/dashboard_module_height"
-                    android:layout_alignTop="@id/customers_button"
-                    android:layout_toRightOf="@id/customers_button"
-                    android:layout_marginRight="56dp">
-
-                    <ImageView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/dashboard_reports_bg"/>
-
-                    <TextView
-                        style="@style/DashboardModule.Label"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="19dp"
-                        android:text="@string/dashboard_activity_reports_button_label"/>
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:id="@+id/prepaid_button"
-                    style="@style/DashboardModule.Container"
-                    android:layout_width="@dimen/dashboard_module_width"
-                    android:layout_height="@dimen/dashboard_module_height"
-                    android:layout_alignTop="@id/reports_button"
-                    android:layout_toRightOf="@id/reports_button"
-                    android:layout_marginRight="56dp">
-
-                    <ImageView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/prepaid_dashborad_button_bg"/>
-
-                    <TextView
-                        style="@style/DashboardModule.Label"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="19dp"
-                        android:text="@string/cashier_action_prapaid"/>
-
-                </RelativeLayout>
-
-            </RelativeLayout>
-
-        </ScrollView>
-
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/operator_name_value_label"
+            android:background="@android:color/darker_gray"/>
     </LinearLayout>
 
 </merge>
