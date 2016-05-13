@@ -2427,7 +2427,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void onScaleItemAdded(final SaleOrderItemModel item) {
         final SaleOrderItemViewModel model = getSaleItem(item.saleItemGuid);
-        if (scaleService.getStatus() == 0 && scaleService.isUnitsLabelMatch(model.unitsLabel)) {
+        if (scaleService != null && scaleService.getStatus() == 0 && scaleService.isUnitsLabelMatch(model.unitsLabel)) {
             BigDecimal newQty = new BigDecimal(scaleService.readScale());
             UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
         } else {
@@ -2579,9 +2579,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 return;
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
             if (item.priceType == PriceType.UNIT_PRICE) {
-                if (scaleServiceBound) {
-                    onScaleItemAdded(item);
-                }
+                onScaleItemAdded(item);
             }
         }
 
