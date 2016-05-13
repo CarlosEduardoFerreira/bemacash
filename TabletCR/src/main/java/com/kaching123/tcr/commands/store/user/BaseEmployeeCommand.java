@@ -81,6 +81,7 @@ public abstract class BaseEmployeeCommand extends AsyncCommand {
                 .query(URI_EMPLOYEE)
                 .where(EmployeeTable.EMAIL + " = ?", model.email)
                 .where(EmployeeTable.GUID + " <> ?", model.guid)
+                .where(EmployeeTable.IS_MERCHANT + " = ?", 0)
                 .perform(getContext());
         boolean exists = c.moveToFirst();
         c.close();
