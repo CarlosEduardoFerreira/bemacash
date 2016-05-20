@@ -239,7 +239,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 ModifierType type = _modifierType(c, 0);
                 String title = c.getString(1);
                 if (type == ModifierType.MODIFIER) {
-                    item.modifier = title;
+                    item.modifier.add(title);
                 } else if (type == ModifierType.ADDON) {
                     item.addons.add(title);
                 } else if (type == ModifierType.OPTIONAL) {
@@ -347,7 +347,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         public String printAliasGuid;
         public String notes;
 
-        public String modifier;
+        public ArrayList<String> modifier = new ArrayList<>();
         public ArrayList<String> addons = new ArrayList<String>();
         public ArrayList<String> options = new ArrayList<String>();
 

@@ -112,13 +112,18 @@ public class PrintItemsForKitchenProcessor {
     private void printBody(Context context, TcrApplication app, IKitchenPrinter printer) {
         for (ItemInfo item : items){
             String description = item.description;
-            if (!TextUtils.isEmpty(item.modifier)){
-//                description = description + ", " + item.modifier;
-                item.addons.add(item.modifier);
-            }
-
             BigDecimal printQty = printAllItems ? item.qty : item.qty.subtract(item.printedQty);
             printer.add(printQty, description);
+            if (!item.modifier.isEmpty()){
+                for (String modifier : item.modifier){
+                    printer.addAddsOn(modifier);
+                }
+            }
+//            if (!TextUtils.isEmpty(item.modifier)){
+////                description = description + ", " + item.modifier;
+//                item.addons.add(item.modifier);
+//            }
+
 
             if (!item.addons.isEmpty()){
                 for (String addon : item.addons){
