@@ -28,7 +28,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -110,30 +112,6 @@ public class ItemModifiersFragment extends Fragment{
     }
 
     private static Map<String, List<SelectedModifierExModel>> sortModifiers(List<SelectedModifierExModel> modifiers){
-        Comparator<String> comparator = new Comparator<String>() {
-            @Override
-            public int compare(String lhs, String rhs) {
-                int lhsNum = intRepresentation(lhs);
-                int rhsNum = intRepresentation(rhs);
-
-                return lhsNum - rhsNum;
-            }
-
-            private int intRepresentation(String s){
-                /* free_modifiers, mod_group1, mod_group2, ..., addons, oprionals */
-                int i;
-                if (s.equals(MODIFIERS_GROUP_ID)){
-                    i = 1;
-                }else if (s.equals(ADDONS_GROUP_ID)){
-                    i = 3;
-                }else if (s.equals(OPTIONAL_GROUP_ID)){
-                    i = 4;
-                }else{
-                    i = 2;
-                }
-                return i;
-            }
-        };
 
         HashMap<String, List<SelectedModifierExModel>> groupedItems = new HashMap<>();
         for (SelectedModifierExModel item : modifiers){
@@ -155,15 +133,36 @@ public class ItemModifiersFragment extends Fragment{
             groupedItems.get(key).add(item);
         }
 
-        ArrayList<String> keys = new ArrayList<>(groupedItems.keySet());
-        Collections.sort(keys, comparator);
-        LinkedHashMap<String, List<SelectedModifierExModel>> groupedSortedItems = new LinkedHashMap<>(groupedItems.size());
-        for (String key : keys){
-            groupedSortedItems.put(key, groupedItems.get(key));
-        }
-
-        return groupedSortedItems;
+        return sortByComparator(groupedItems);
     }
+
+    private static Map<String, List<SelectedModifierExModel>> sortByComparator(Map<String, List<SelectedModifierExModel>> unsortMap) {
+
+        // Convert Map to List
+        List<Map.Entry<String, List<SelectedModifierExModel>>> list =
+                new LinkedList<>(unsortMap.entrySet());
+
+        // Sort list with comparator, to compare the Map values
+        Collections.sort(list, new Comparator<Map.Entry<String, List<SelectedModifierExModel>>>() {
+            public int compare(Map.Entry<String, List<SelectedModifierExModel>> o1,
+                               Map.Entry<String, List<SelectedModifierExModel>> o2) {
+                SelectedModifierExModel m1 = o1.getValue().get(0);
+                SelectedModifierExModel m2 = o2.getValue().get(0);
+                int dif = m1.type.compareTo(m2.type);
+                if(dif != 0) return dif;
+                return m1.getGroup().title.compareTo(m2.getGroup().title);
+            }
+        });
+
+        // Convert sorted map back to a Map
+        Map<String, List<SelectedModifierExModel>> sortedMap = new LinkedHashMap<>();
+        for (Iterator<Map.Entry<String, List<SelectedModifierExModel>>> it = list.iterator(); it.hasNext();) {
+            Map.Entry<String, List<SelectedModifierExModel>> entry = it.next();
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+        return sortedMap;
+    }
+
 
 
     protected void fillViewWithContainers(Map<String, List<SelectedModifierExModel>> groupedItems){

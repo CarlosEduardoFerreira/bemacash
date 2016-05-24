@@ -17,10 +17,12 @@ import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.print.printer.PosKitchenPrinter;
 import com.kaching123.tcr.print.processor.PrintItemsForKitchenProcessor;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleItemExDelView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleItemExDelView2.SaleItemTable;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.PrinterTable;
 import com.kaching123.tcr.store.ShopStore.SaleAddonView;
@@ -36,6 +38,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,6 +56,8 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
 
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(SaleItemExDelView.URI_CONTENT);
     private static final Uri URI_MODIFIERS = ShopProvider.getContentUri(SaleAddonView.URI_CONTENT);
+    private static final Uri URI_MODIFIERS_GROUP = ShopProvider.getContentUri(ShopStore.ModifierGroupTable.URI_CONTENT);
+
     private static final Uri URI_PRINTER = ShopProvider.getContentUri(PrinterTable.URI_CONTENT);
     private static final Uri URI_ALIAS = ShopProvider.getContentUri(PrinterAliasTable.URI_CONTENT);
 
@@ -231,26 +236,51 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         for (ItemInfo item : items) {
             c = ProviderAction
                     .query(URI_MODIFIERS)
-                    .projection(SaleAddonView2.SaleAddonTable.TYPE, ModifierTable.TITLE)
+                    .projection(SaleAddonView2.SaleAddonTable.TYPE, ModifierTable.TITLE, ModifierTable.ITEM_GROUP_GUID)
                     .where(SaleAddonView2.SaleAddonTable.ITEM_GUID + " = ?", item.guid)
                     .perform(getContext());
-
+            ArrayList<SimpleModifier> modifiers = new ArrayList<>();
             while (c.moveToNext()) {
                 ModifierType type = _modifierType(c, 0);
                 String title = c.getString(1);
+                String groupGuid = c.getString(2);
                 if (type == ModifierType.MODIFIER) {
-                    item.modifier.add(title);
+                    Cursor cursor = ProviderAction.query((URI_MODIFIERS_GROUP))
+                            .projection(ShopStore.ModifierGroupTable.TITLE)
+                            .where(ShopStore.ModifierGroupTable.GUID + " = ?", groupGuid)
+                            .perform(getContext());
+                    cursor.moveToFirst();
+                    modifiers.add(new SimpleModifier(title, cursor.getString(0)));
+                    cursor.close();
                 } else if (type == ModifierType.ADDON) {
                     item.addons.add(title);
                 } else if (type == ModifierType.OPTIONAL) {
                     item.options.add(title);
                 }
             }
+            Collections.sort(modifiers);
+            for(SimpleModifier mod: modifiers)
+                item.modifier.add(mod.title);
         }
         if (c != null)
             c.close();
 
         return items;
+    }
+
+    class SimpleModifier implements Comparable<SimpleModifier>{
+        String title;
+        String groupTitle;
+
+        public SimpleModifier(String title, String groupTitle){
+            this.title = title;
+            this.groupTitle = groupTitle;
+        }
+
+        @Override
+        public int compareTo(SimpleModifier another) {
+            return this.groupTitle.compareTo(another.groupTitle);
+        }
     }
 
     private Map<String, String> loadAliasTitles(Collection<String> aliases) {

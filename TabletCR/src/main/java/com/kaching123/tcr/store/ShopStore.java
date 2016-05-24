@@ -2310,6 +2310,10 @@ public abstract class ShopStore {
         @Join(type = Join.Type.LEFT, joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.MODIFIER_GUID, onTableAlias = TABLE_SALE_ORDER_ITEM_ADDON, onColumn = SaleAddonTable.ADDON_GUID)
         String TABLE_MODIFIER = "modifier_table";
 
+        @Columns(ModifierGroupTable.TITLE)
+        @Join(type = Join.Type.LEFT, joinTable = ModifierGroupTable.TABLE_NAME, joinColumn = ModifierGroupTable.GUID, onTableAlias = TABLE_MODIFIER, onColumn = ModifierTable.ITEM_GROUP_GUID)
+        String TABLE_MODIFIER_GROUP = "modifier_group_table";
+
         //        String raw = "unit_label_id";
         @Columns(UnitLabelTable.SHORTCUT)
         @Join(type = Join.Type.LEFT, joinTable = UnitLabelTable.TABLE_NAME, joinColumn = UnitLabelTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.UNIT_LABEL_ID)
@@ -3227,7 +3231,7 @@ public abstract class ShopStore {
         @From(SaleAddonTable.TABLE_NAME)
         String TABLE_SALE_ADDON = "sale_addon_table";
 
-        @Columns(ModifierTable.TITLE)
+        @Columns({ModifierTable.TITLE, ModifierTable.ITEM_GROUP_GUID})
         @Join(joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.MODIFIER_GUID,
                 onTableAlias = TABLE_SALE_ADDON, onColumn = SaleAddonTable.ADDON_GUID)
         String TABLE_MODIFIER = "modifier_table";

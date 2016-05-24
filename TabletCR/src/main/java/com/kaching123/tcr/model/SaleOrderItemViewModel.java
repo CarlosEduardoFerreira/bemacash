@@ -215,10 +215,12 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
     public static class AddonInfo {
         public SaleOrderItemAddonModel addon;
         public String addonTitle;
+        public String groupName;
 
-        public AddonInfo(SaleOrderItemAddonModel addon, String addonTitle) {
+        public AddonInfo(SaleOrderItemAddonModel addon, String addonTitle, String groupName) {
             this.addon = addon;
             this.addonTitle = addonTitle;
+            this.groupName = groupName;
         }
     }
 
@@ -226,7 +228,10 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
     private static Comparator<AddonInfo> comparator = new Comparator<AddonInfo>() {
         @Override
         public int compare(AddonInfo lhs, AddonInfo rhs) {
-            return lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
+            int dif = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
+            if(dif != 0)
+                return dif;
+            return lhs.groupName.compareTo(rhs.groupName);
         }
     };
 

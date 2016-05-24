@@ -152,6 +152,7 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
 
     private AddonInfo readModifier(Cursor c) {
         String addonGuid = c.getString(c.getColumnIndex(SaleAddonTable.ADDON_GUID));
+        String groupName = c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierGroupTable.TITLE));
         if (!TextUtils.isEmpty(addonGuid)) {
             return new AddonInfo(
                     new SaleOrderItemAddonModel(
@@ -163,7 +164,8 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                             c.getString(c.getColumnIndex(SaleAddonTable.CHILD_ITEM_ID)),
                             ContentValuesUtilBase._decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY))),
 
-                    c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.TITLE))
+                    c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.TITLE)),
+                    groupName
             );
         }
         return null;

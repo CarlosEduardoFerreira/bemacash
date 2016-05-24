@@ -215,6 +215,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
     private AddonInfo readModifier(Cursor c) {
         if (c.getString(c.getColumnIndex(SaleAddonTable.GUID)) != null) {
             String childItemId = c.getString(c.getColumnIndex(SaleAddonTable.CHILD_ITEM_ID));
+            String groupName = c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierGroupTable.TITLE));
 
             /*** SaleModifierModel ***/
             BigDecimal cost;
@@ -249,7 +250,9 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
             /*** result ***/
             return new AddonInfo(
                     saleModifierModel,
-                    title
+                    title,
+                    groupName
+
             );
         }
         return null;

@@ -27,6 +27,9 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -107,6 +110,16 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                                    BigDecimal itemSubtotal, BigDecimal itemDiscount,
                                    BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note) {
                 List<String> unitAsStrings = new ArrayList<String>(units.size());
+                Comparator<SaleOrderItemViewModel.AddonInfo> comparator = new Comparator<SaleOrderItemViewModel.AddonInfo>() {
+                    @Override
+                    public int compare(SaleOrderItemViewModel.AddonInfo lhs, SaleOrderItemViewModel.AddonInfo rhs) {
+                        int dif = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
+                        if(dif != 0)
+                            return dif;
+                        return lhs.groupName.compareTo(rhs.groupName);
+                    }
+                };
+                Collections.sort(addons, comparator);
                 for (Unit unit : units) {
                     unitAsStrings.add(unit.serialCode);
                 }
