@@ -320,48 +320,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             isPrepaidItemStart = true;
             PrepaidSendResult result = new PrepaidSendResult(data);
             result.print();
-            final ItemExModel model = new ItemExModel(UUID.randomUUID().toString(),
-                    null,
-                    result.itemName,
-                    null,
-                    null,
-                    result.transactionId,
-                    PriceType.FIXED,
-                    result.itemPrice,
-                    result.itemQty,
-                    "pcs",
-                    null,
-                    null,
-                    false, true, // temp to true
-                    false,
-                    false,
-                    BigDecimal.ZERO,
-                    DiscountType.PERCENT,
-                    result.itemTaxable,
-                    null,
-                    null,
-                    null,
-                    UUID.randomUUID().toString(),
-                    null,
-                    null,
-                    0,
-                    0,
-                    0,
-                    null,
-                    null,
-                    null,
-                    null,
-                    0,
-                    null,
-                    0,
-                    false,
-                    false,
-                    null,
-                    true,
-                    null,
-                    null,
-                    ItemRefType.Simple
-            );
+            final ItemExModel model = new ItemExModel(result);
             tryToAddItem(model);
 
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_RELEASE) {

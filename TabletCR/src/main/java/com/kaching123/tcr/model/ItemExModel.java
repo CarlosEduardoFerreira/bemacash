@@ -16,6 +16,7 @@ import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class ItemExModel extends ItemModel {
 
@@ -47,6 +48,57 @@ public class ItemExModel extends ItemModel {
         this.modifiersCount = 0;
         this.addonsCount = 0;
         this.optionalCount = 0;
+    }
+
+    public ItemExModel(PrepaidSendResult result) {
+        super(UUID.randomUUID().toString(),
+                null,
+                result.itemName,
+                null,
+                null,
+                result.transactionId,
+                PriceType.FIXED,
+                result.itemPrice,
+                result.itemQty,
+                "pcs",
+                null,
+                false, true, // temp to true
+                false,
+                false,
+                BigDecimal.ZERO,
+                DiscountType.PERCENT,
+                result.itemTaxable,
+                null,
+                null,
+                null,
+                UUID.randomUUID().toString(),
+                null,
+                null,
+                null,
+                0,
+                null,
+                0,
+                false,
+                false,
+                null,
+                true,
+                null,
+                null,
+                ItemRefType.Simple);
+        this.modifiersCount = 0;
+        this.addonsCount = 0;
+        this.optionalCount = 0;
+        this.departmentGuid = null;
+        if (result.itemTaxable)
+            this.tax = result.taxAmount;
+        else
+            this.tax = null;
+        this.tax2 = null;
+        if (TextUtils.isEmpty(unitsLabelId)) {
+            this.shortCut = unitsLabel;
+        } else {
+            this.shortCut = null;
+        }
     }
 
     public ItemExModel(String guid,
