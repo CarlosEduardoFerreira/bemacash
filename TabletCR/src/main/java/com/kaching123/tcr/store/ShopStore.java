@@ -37,7 +37,7 @@ import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTriggers;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 305)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 306)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
