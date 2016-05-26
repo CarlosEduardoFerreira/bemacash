@@ -1,6 +1,7 @@
 package com.kaching123.tcr.commands.payment.pax;
 
 import android.content.Context;
+import android.os.Parcel;
 
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.IPaymentGateway;
@@ -15,6 +16,7 @@ import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBalanceComm
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorRefundCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSettlementCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorVoidCommand;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
@@ -26,6 +28,7 @@ import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode
 import com.kaching123.tcr.model.payment.blackstone.payment.User;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
+import com.telly.groundy.GroundyManager;
 import com.telly.groundy.TaskHandler;
 
 import java.math.BigDecimal;
@@ -187,6 +190,27 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
         }
         return PaxBlackstoneRefundCommand.startReturn(context, PaxModel.get(), transaction, amount, childOrderModel, refundId, reloadResponse, refundTips, isManualReturn,
                 (PaxBlackstoneRefundCommand.PaxREFUNDCommandBaseCallback) callback);
+    }
+
+    public PaxProcessorVoidCommand.VoidResponse Void_PosLink(
+    Context context,
+    Object callback,
+    User user,
+    Void ignore,
+    PaymentTransactionModel transaction,
+    BigDecimal amount,
+    SaleActionResponse reloadResponse,
+    SaleOrderModel childOrderModel,
+    boolean refundTips,
+    boolean isManualReturn
+    )
+    {
+        //todo do void first
+        PaxProcessorVoidCommand.VoidResponse response = new PaxProcessorVoidCommand().Sync(refundId, transaction, amount, refundTips, isManualReturn, transaction);
+        if (response.getErrorReason().equalsIgnoreCase("")) {
+            return response;
+        }
+        return null;
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorVoidCommand;
 import com.kaching123.tcr.commands.store.history.UpdateSaleOrderItemRefundQtyCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -388,6 +389,7 @@ public class MoneybackProcessor {
         } else {
             refundAmount = amount;
         }
+
         RefundPAXPendingFragmentDialog.show(context,
                 transaction.toTransaction(),
                 refundAmount, reloadResponse, childOrderModel, new RefundPAXPendingFragmentDialog.IRefundProgressListener() {

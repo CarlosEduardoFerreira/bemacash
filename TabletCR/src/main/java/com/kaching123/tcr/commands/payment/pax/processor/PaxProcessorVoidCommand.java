@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 /**
  * Created by hamsterksu on 24.04.2014.
  */
-public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
+public class PaxProcessorVoidCommand extends PaxProcessorBaseCommand {
 
     private static final String ARG_AMOUNT = "ARG_AMOUNT";
     private static final String ARG_AMOUNT_OLD = "ARG_AMOUNT_OLD";
@@ -40,6 +40,7 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
     private static final String ARG_SALE_ACTION_RESPONSE = "ARG_SALE_ACTION_RESPONSE";
     private static final String ARG_REFUND_TIPS = "ARG_REFUND_TIPS";
     public static final String ARG_IS_MANUAL_RETURN = "ARG_IS_MANUAL_RETURN";
+    public static final String ARG_ORI_REF_NUM = "ARG_ORI_REF_NUM";
 
     private SaleOrderModel returnOrder;
     private PaymentTransactionModel childTransactionModel;
@@ -55,7 +56,7 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
                                                 boolean refundTips,
                                                 boolean isManualReturn,
                                                 PaxREFUNDCommandBaseCallback callback) {
-        return create(PaxProcessorRefundCommand.class)
+        return create(PaxProcessorVoidCommand.class)
                 .arg(ARG_DATA_PAX, paxTerminal)
                 .arg(ARG_AMOUNT, transaction)
                 .arg(ARG_AMOUNT_OLD, amount)
@@ -77,7 +78,7 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
                                                 boolean refundTips,
                                                 boolean isManualReturn,
                                                 PaxREFUNDCommandBaseCallback callback) {
-        return create(PaxProcessorRefundCommand.class)
+        return create(PaxProcessorVoidCommand.class)
                 .arg(ARG_DATA_PAX, paxTerminal)
                 .arg(ARG_AMOUNT, transaction)
                 .arg(ARG_AMOUNT_OLD, amount)
@@ -92,9 +93,95 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
 
     @Override
     protected PaxModel getPaxModel() {
-        return (PaxModel) getArgs().getParcelable(ARG_DATA_PAX);
+        return PaxModel.get();
     }
 
+    public  VoidResponse Sync(int transactionId, PaymentTransactionModel transactionModel, BigDecimal amount, boolean refundTips, boolean isManualReturn, PaymentTransactionModel transaction)
+    {
+        BigDecimal cents = amount.multiply(CalculationUtil.ONE_HUNDRED).setScale(0);
+        String sAmount = String.valueOf(cents.intValue());
+        Logger.d("PaxProcessorRefundCommand %d - %s", transactionId, sAmount);
+
+        String errorReason = "";
+        try {
+            PaymentRequest request = new PaymentRequest();
+
+            request.Amount = sAmount;
+            request.TransType = TRANS_TYPE_VOID;
+            request.ECRRefNum = ECRREFNUM_DEFAULT;
+            request.OrigRefNum = transactionModel.toTransaction().serviceTransactionNumber;
+
+            request.TenderType = 0;
+            switch (transactionModel.gateway) {
+                case PAX:
+                    request.TenderType = TRANSACTION_ID_CREDIT_SALE;
+                    break;
+                case PAX_EBT_CASH:
+                    request.TenderType = TRANSACTION_ID_EBT_CASH_SALE;
+                    break;
+                case PAX_EBT_FOODSTAMP:
+                    request.TenderType = TRANSACTION_ID_EBT_FOODSTAMP_SALE;
+                    break;
+                case PAX_DEBIT:
+                    request.TenderType = TRANSACTION_ID_DEBIT_SALE;
+                    break;
+                default:
+                    break;
+
+            }
+
+            PosLink posLink = createPosLink();
+
+            posLink.PaymentRequest = request;
+            ProcessTransResult ptr = posLink.ProcessTrans();
+
+            Logger.d("PaxProcessorRefundCommand response:" + ptr.Msg);
+
+            if (ptr.Code == ProcessTransResult.ProcessTransResultCode.OK) {
+
+                PaymentResponse response = posLink.PaymentResponse;
+                if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
+                    PaxTransaction childTransaction = PaxTransactionFactory.createChild(getAppCommandContext().getEmployeeGuid(),
+                            new BigDecimal(response.ApprovedAmount).divide(CalculationUtil.ONE_HUNDRED),
+                            null,
+                            transaction.getGuid(),
+                            response.CardType, transactionModel.gateway, transactionModel.isPreauth);
+                    childTransactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), childTransaction);
+                    RefundCommandResult refundCommandResult = new RefundCommand().sync(getContext(), getArgs(), transactionModel, childTransactionModel, refundTips, isManualReturn, getAppCommandContext());
+                    returnOrder = refundCommandResult.returnOrder;
+                    if (!refundCommandResult.success) {
+                        Logger.e("PaxProcessorRefundCommand.doCommand(): error, failed to insert data in the database!");
+                        childTransactionModel = null;
+                        errorReason = "Rare SQL exception caught, data was not updated";
+                        transactionModel.allowReload = true;
+                    }
+
+                } else {
+                    Logger.e(response.Message + ":" + response.ResultTxt);
+                    errorReason = response.ResultTxt;
+                    if (response.ResultCode.compareTo(RESULT_CODE_ABORTED) == 0) {
+                        transactionModel.allowReload = true;
+                    }
+                }
+            } else {
+
+                errorReason = "The payment action failed. Please try again.";
+                transactionModel.allowReload = true;
+            }
+
+        } catch (PaxProcessorException e) {
+            Logger.e("Pax Processor exc", e);
+            errorReason = "Refund cancelled or connection problems.";
+            transactionModel.allowReload = true;
+        } catch (Exception e) {
+            // Though it should not happen, as Gena confirms we only care about local DB and data will sync after,
+            // I put this check due to possibilty on DB corruption, DB access failure and many other ugly rare stuff
+            Logger.e("Rare SQL exception caught, data was not updated", e);
+            errorReason = "Rare SQL exception caught, data was not updated";
+            transactionModel.allowReload = true;
+        }
+        return new VoidResponse(childTransactionModel, transactionModel, errorReason, returnOrder);
+    }
     @Override
     protected TaskResult doCommand() {
         int transactionId = getIntArg(ARG_PURPOSE);
@@ -110,48 +197,48 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
 
         String errorReason = "";
         try {
-            PaymentRequest requestVoid = getRequest(true, sAmount, transactionModel);
+            PaymentRequest request = new PaymentRequest();
 
-//            requestVoid.Amount = sAmount;
-//            requestVoid.TransType = TRANS_TYPE_VOID;
-//            requestVoid.ECRRefNum = ECRREFNUM_DEFAULT;
-//            requestVoid.OrigRefNum = transactionModel.toTransaction().serviceTransactionNumber;
-//
-//            requestVoid.TenderType = 0;
-//            switch (transactionModel.gateway) {
-//                case PAX:
-//                    requestVoid.TenderType = TRANSACTION_ID_CREDIT_SALE;
-//                    break;
-//                case PAX_EBT_CASH:
-//                    requestVoid.TenderType = TRANSACTION_ID_EBT_CASH_SALE;
-//                    break;
-//                case PAX_EBT_FOODSTAMP:
-//                    requestVoid.TenderType = TRANSACTION_ID_EBT_FOODSTAMP_SALE;
-//                    break;
-//                case PAX_DEBIT:
-//                    requestVoid.TenderType = TRANSACTION_ID_DEBIT_SALE;
-//                    break;
-//                default:
-//                    break;
-//
-//            }
+            request.Amount = sAmount;
+            request.TransType = TRANS_TYPE_VOID;
+            request.ECRRefNum = ECRREFNUM_DEFAULT;
+            request.OrigRefNum = transactionModel.toTransaction().serviceTransactionNumber;
+
+            request.TenderType = 0;
+            switch (transactionModel.gateway) {
+                case PAX:
+                    request.TenderType = TRANSACTION_ID_CREDIT_SALE;
+                    break;
+                case PAX_EBT_CASH:
+                    request.TenderType = TRANSACTION_ID_EBT_CASH_SALE;
+                    break;
+                case PAX_EBT_FOODSTAMP:
+                    request.TenderType = TRANSACTION_ID_EBT_FOODSTAMP_SALE;
+                    break;
+                case PAX_DEBIT:
+                    request.TenderType = TRANSACTION_ID_DEBIT_SALE;
+                    break;
+                default:
+                    break;
+
+            }
 
             PosLink posLink = createPosLink();
 
-            posLink.PaymentRequest = requestVoid;
+            posLink.PaymentRequest = request;
             ProcessTransResult ptr = posLink.ProcessTrans();
 
             Logger.d("PaxProcessorRefundCommand response:" + ptr.Msg);
 
             if (ptr.Code == ProcessTransResult.ProcessTransResultCode.OK) {
 
-                PaymentResponse responseVoid = posLink.PaymentResponse;
-                if (responseVoid.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
+                PaymentResponse response = posLink.PaymentResponse;
+                if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
                     PaxTransaction childTransaction = PaxTransactionFactory.createChild(getAppCommandContext().getEmployeeGuid(),
-                            new BigDecimal(responseVoid.ApprovedAmount).divide(CalculationUtil.ONE_HUNDRED),
+                            new BigDecimal(response.ApprovedAmount).divide(CalculationUtil.ONE_HUNDRED),
                             null,
                             transaction.getGuid(),
-                            responseVoid.CardType, transactionModel.gateway, transactionModel.isPreauth);
+                            response.CardType, transactionModel.gateway, transactionModel.isPreauth);
                     childTransactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), childTransaction);
                     RefundCommandResult refundCommandResult = new RefundCommand().sync(getContext(), getArgs(), transactionModel, childTransactionModel, refundTips, isManualReturn, getAppCommandContext());
                     returnOrder = refundCommandResult.returnOrder;
@@ -163,41 +250,9 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
                     }
 
                 } else {
-                    PaymentRequest requestReturn = getRequest(false, sAmount, transactionModel);
-
-                    posLink.PaymentRequest = requestReturn;
-                    ptr = posLink.ProcessTrans();
-
-                    Logger.d("PaxProcessorRefundCommand response:" + ptr.Msg);
-                    if (ptr.Code == ProcessTransResult.ProcessTransResultCode.OK) {
-
-                        PaymentResponse responseRefund = posLink.PaymentResponse;
-                        if (responseRefund.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
-                            PaxTransaction childTransaction = PaxTransactionFactory.createChild(getAppCommandContext().getEmployeeGuid(),
-                                    new BigDecimal(responseRefund.ApprovedAmount).divide(CalculationUtil.ONE_HUNDRED),
-                                    null,
-                                    transaction.getGuid(),
-                                    responseRefund.CardType, transactionModel.gateway, transactionModel.isPreauth);
-                            childTransactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), childTransaction);
-                            RefundCommandResult refundCommandResult = new RefundCommand().sync(getContext(), getArgs(), transactionModel, childTransactionModel, refundTips, isManualReturn, getAppCommandContext());
-                            returnOrder = refundCommandResult.returnOrder;
-                            if (!refundCommandResult.success) {
-                                Logger.e("PaxProcessorRefundCommand.doCommand(): error, failed to insert data in the database!");
-                                childTransactionModel = null;
-                                errorReason = "Rare SQL exception caught, data was not updated";
-                                transactionModel.allowReload = true;
-                            }
-
-                        } else {
-                            Logger.e(responseRefund.Message + ":" + responseRefund.ResultTxt);
-                            errorReason = responseRefund.ResultTxt;
-                            if (responseRefund.ResultCode.compareTo(RESULT_CODE_ABORTED) == 0) {
-                                transactionModel.allowReload = true;
-                            }
-                        }
-                    } else {
-
-                        errorReason = "The payment action failed. Please try again.";
+                    Logger.e(response.Message + ":" + response.ResultTxt);
+                    errorReason = response.ResultTxt;
+                    if (response.ResultCode.compareTo(RESULT_CODE_ABORTED) == 0) {
                         transactionModel.allowReload = true;
                     }
                 }
@@ -225,46 +280,45 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
                 .add(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL, returnOrder);
     }
 
-    public PaymentRequest getRequest(boolean isVoid, String sAmount, PaymentTransactionModel transactionModel) {
-        PaymentRequest request = new PaymentRequest();
-        if (!isVoid)
-            request.Amount = sAmount;
-        if (isVoid)
-            request.TransType = TRANS_TYPE_VOID;
-        else
-            request.TransType = TRANS_TYPE_RETURN;
-        request.ECRRefNum = ECRREFNUM_DEFAULT;
-        if (isVoid)
-            request.OrigRefNum = transactionModel.toTransaction().serviceTransactionNumber;
+    public class VoidResponse{
+        PaymentTransactionModel childTransactionModel;
 
-        request.TenderType = 0;
-        switch (transactionModel.gateway) {
-            case PAX:
-                request.TenderType = TRANSACTION_ID_CREDIT_SALE;
-                break;
-            case PAX_EBT_CASH:
-                request.TenderType = TRANSACTION_ID_EBT_CASH_SALE;
-                break;
-            case PAX_EBT_FOODSTAMP:
-                request.TenderType = TRANSACTION_ID_EBT_FOODSTAMP_SALE;
-                break;
-            case PAX_DEBIT:
-                request.TenderType = TRANSACTION_ID_DEBIT_SALE;
-                break;
-            default:
-                break;
-
+        public SaleOrderModel getReturnOrder() {
+            return returnOrder;
         }
-        return request;
+
+        public String getErrorReason() {
+            return errorReason;
+        }
+
+        public PaymentTransactionModel getTransactionModel() {
+            return transactionModel;
+        }
+
+        public PaymentTransactionModel getChildTransactionModel() {
+            return childTransactionModel;
+        }
+
+        PaymentTransactionModel transactionModel;
+        String errorReason;
+        SaleOrderModel returnOrder;
+        public VoidResponse(PaymentTransactionModel childTransactionModel, PaymentTransactionModel transactionModel, String errorReason, SaleOrderModel returnOrder)
+        {
+            this.childTransactionModel = childTransactionModel;
+            this.transactionModel = transactionModel;
+            this.errorReason = errorReason;
+            this.returnOrder = returnOrder;
+        }
+
     }
 
     public static abstract class PaxREFUNDCommandBaseCallback {
 
-        @OnSuccess(PaxProcessorRefundCommand.class)
+        @OnSuccess(PaxProcessorVoidCommand.class)
         public final void onSuccess(@Param(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL) SaleOrderModel childOrderModel,
-                                    @Param(PaxProcessorRefundCommand.ARG_TRANSACTION_MODEL) PaymentTransactionModel childTransactionModel,
-                                    @Param(PaxProcessorRefundCommand.RESULT_ERROR_REASON) String errorMessage,
-                                    @Param(PaxProcessorRefundCommand.ARG_TRANSACTION) Transaction transaction) {
+                                    @Param(PaxProcessorVoidCommand.ARG_TRANSACTION_MODEL) PaymentTransactionModel childTransactionModel,
+                                    @Param(PaxProcessorVoidCommand.RESULT_ERROR_REASON) String errorMessage,
+                                    @Param(PaxProcessorVoidCommand.ARG_TRANSACTION) Transaction transaction) {
             handleSuccess(childOrderModel, childTransactionModel, transaction, errorMessage);
         }
 
@@ -273,7 +327,7 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
                                               Transaction transaction,
                                               String errorMessage);
 
-        @OnFailure(PaxProcessorRefundCommand.class)
+        @OnFailure(PaxProcessorVoidCommand.class)
         public final void onFailure() {
             handleError();
         }

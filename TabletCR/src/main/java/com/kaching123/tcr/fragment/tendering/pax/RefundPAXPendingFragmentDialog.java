@@ -7,6 +7,7 @@ import android.widget.TextView;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
@@ -15,6 +16,7 @@ import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneRefundCom
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBalanceCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorRefundCommand;
 
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorVoidCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -62,9 +64,9 @@ public class RefundPAXPendingFragmentDialog extends TransactionPendingFragmentDi
         message.setText(getString(R.string.pax_refund_instructions, transaction.getGuid()));
     }
 
-    private Object returnPaxCallBack () {
+    private Object returnPaxCallBack() {
         if (!TcrApplication.get().isBlackstonePax()) {
-            return  new PaxProcessorRefundCommand.PaxREFUNDCommandBaseCallback() {
+            return new PaxProcessorRefundCommand.PaxREFUNDCommandBaseCallback() {
 
                 @Override
                 protected void handleSuccess(SaleOrderModel childOrderModel,
@@ -100,7 +102,18 @@ public class RefundPAXPendingFragmentDialog extends TransactionPendingFragmentDi
     @Override
     protected void doCommand() {
         PaxGateway gateway = (PaxGateway) transaction.getGateway().gateway();
-        gateway.refund(getActivity(), returnPaxCallBack(), null, null, new PaymentTransactionModel(getApp().getShiftGuid(), transaction), amount, reloadResponse, childOrderModel, refundTips, isManualReturn);
+//        if (!TcrApplication.get().isBlackstonePax()) {
+//            PaxProcessorVoidCommand.VoidResponse response = gateway.Void_PosLink(getActivity(), returnPaxCallBack(), null, null, new PaymentTransactionModel(getApp().getShiftGuid(), transaction), amount, reloadResponse, childOrderModel, refundTips, isManualReturn);
+//            if(response == null)
+//            {
+//                gateway.refund(getActivity(), returnPaxCallBack(), null, null, new PaymentTransactionModel(getApp().getShiftGuid(), transaction), amount, reloadResponse, childOrderModel, refundTips, isManualReturn);
+//            }else
+//            {
+//                listener.onComplete(response.getChildTransactionModel(), response.getTransactionModel().toTransaction(), response.getReturnOrder(), response.getErrorReason());
+//            }
+//        } else {
+            gateway.refund(getActivity(), returnPaxCallBack(), null, null, new PaymentTransactionModel(getApp().getShiftGuid(), transaction), amount, reloadResponse, childOrderModel, refundTips, isManualReturn);
+//        }
     }
 
     public RefundPAXPendingFragmentDialog setAmount(BigDecimal amount) {
