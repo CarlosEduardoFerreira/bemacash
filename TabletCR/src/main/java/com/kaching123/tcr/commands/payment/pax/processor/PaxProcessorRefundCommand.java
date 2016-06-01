@@ -25,6 +25,8 @@ import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by hamsterksu on 24.04.2014.
@@ -225,10 +227,17 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
                 .add(AddReturnOrderCommand.RESULT_CHILD_ORDER_MODEL, returnOrder);
     }
 
+    private String getData(Date data)
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        return sdf.format(data);
+    }
     public PaymentRequest getRequest(boolean isVoid, String sAmount, PaymentTransactionModel transactionModel) {
         PaymentRequest request = new PaymentRequest();
-        if (!isVoid)
+        if (!isVoid) {
             request.Amount = sAmount;
+            request.ExtData = "<ReturnReason>0</ReturnReason><OrigTransDate>"+getData(transaction.createTime)+"</OrigTransDate>";
+        }
         if (isVoid)
             request.TransType = TRANS_TYPE_VOID;
         else
