@@ -114,12 +114,13 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                     @Override
                     public int compare(SaleOrderItemViewModel.AddonInfo lhs, SaleOrderItemViewModel.AddonInfo rhs) {
                         int dif = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
-                        if(dif != 0)
+                        if (dif != 0)
                             return dif;
                         return lhs.groupName.compareTo(rhs.groupName);
                     }
                 };
-                Collections.sort(addons, comparator);
+                if (addons != null)
+                    Collections.sort(addons, comparator);
                 for (Unit unit : units) {
                     unitAsStrings.add(unit.serialCode);
                 }
@@ -252,7 +253,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         if (c.moveToFirst()) {
             do {
                 String unitLabel = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.ItemTable.UNITS_LABEL));
-                itemQty = unitLabel !=null && unitLabel.equalsIgnoreCase("LB") ? BigDecimal.ONE : _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.QUANTITY)));
+                itemQty = unitLabel != null && unitLabel.equalsIgnoreCase("LB") ? BigDecimal.ONE : _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.QUANTITY)));
                 String itemGuid = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.SALE_ITEM_GUID));
                 list.put(itemGuid, itemQty);
 //                if(!unitLabel.equalsIgnoreCase("LB"))
@@ -265,9 +266,9 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         Iterator iter = list.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            BigDecimal val = (BigDecimal)entry.getValue();
+            BigDecimal val = (BigDecimal) entry.getValue();
             saleItemAmount = saleItemAmount.add(val);
-            }
+        }
         return saleItemAmount;
     }
 
