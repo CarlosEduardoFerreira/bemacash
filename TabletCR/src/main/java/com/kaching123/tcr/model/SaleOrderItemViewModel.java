@@ -228,6 +228,8 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
     private static Comparator<AddonInfo> comparator = new Comparator<AddonInfo>() {
         @Override
         public int compare(AddonInfo lhs, AddonInfo rhs) {
+            if(lhs.groupName == null)
+                return 0;
             int dif = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
             if(dif != 0)
                 return dif;
