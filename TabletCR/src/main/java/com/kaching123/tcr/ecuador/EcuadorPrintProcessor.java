@@ -167,7 +167,6 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
         c.close();
         printerWrapper.emptyLine();
         printMidTid(context, app, printerWrapper, orderType);
-        printerWrapper.drawLine();
     }
 
     @Override
@@ -185,6 +184,9 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 context.getString(R.string.printer_ec_header_qty),
                 context.getString(R.string.printer_ec_header_total),
                 context.getString(R.string.printer_ec_header_unit_price));
+
+        printerWrapper.drawLine();
+
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new OrderTotalPriceCursorQuery.PrintHandler() {
             @Override
             public void handleItem(String saleItemGuid, String description, String unitLabel,
@@ -291,9 +293,9 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             }
 
             BigDecimal counts = getSaleItemAmount(orderGuid, context);
-            if (counts.compareTo(BigDecimal.ZERO) > 0) {
-                printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
-            }
+//            if (counts.compareTo(BigDecimal.ZERO) > 0) {
+//                printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
+//            }
         }
 
 

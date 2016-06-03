@@ -37,7 +37,7 @@
     <string name="printer_ec_store_address">Dirección:</string>
     <string name="printer_ec_cashier">Usuario Caja:</string>
     <string name="printer_ec_email">Correo:</string>
-    <string name="printer_ec_order">#:</string>
+    <string name="printer_ec_order">Sec.Int.:</string>
 
     <string name="wireless_header_oper">Operaciones</string>
     <string name="wireless_header_status">Estado</string>
