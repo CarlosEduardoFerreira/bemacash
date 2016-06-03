@@ -32,6 +32,7 @@
     <string name="refund_confirm_title_failed">Devoluci\u00F3n Fallida</string>
 
     <string name="printer_ec_date">Fecha / Hora:</string>
+    <string name="printer_cash">EFECTIVO</string>
     <string name="printer_ec_customer_id">RUC / C. I.:</string>
     <string name="printer_ec_customer_name">Cliente:</string>
     <string name="printer_ec_store_address">Dirección:</string>

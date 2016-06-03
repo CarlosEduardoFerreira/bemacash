@@ -3,12 +3,14 @@ package com.kaching123.tcr.ecuador;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.telecom.GatewayInfo;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
@@ -258,8 +260,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 for (Iterator i = taxes.keySet().iterator(); i.hasNext(); ) {
                     TaxGroupModel key = (TaxGroupModel) i.next();
                     if (!TextUtils.isEmpty(key.title)) {
-                        printerWrapper.orderFooter(context.getString(R.string.printer_ec_tax_title)
-                                + " " + key.title + " " + formatPercent(key.tax), taxes.get(key));
+                        printerWrapper.orderFooter(key.title + " " + formatPercent(key.tax), taxes.get(key));
                     } else {
                         printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default)
                                 + " " + formatPercent(TcrApplication.get().getTaxVat()), taxes.get(key));
@@ -283,7 +284,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
             boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
-            printerWrapper.payment(p.cardName == null ? p.gateway.name() : p.cardName, isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
+            printerWrapper.payment(p.cardName == null ? p.gateway == PaymentGateway.CASH ? context.getString(R.string.printer_cash) : p.gateway.name() : p.cardName, isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
             if (isChanged) {
                 printerWrapper.change(changeText, p.changeAmount);
             }
