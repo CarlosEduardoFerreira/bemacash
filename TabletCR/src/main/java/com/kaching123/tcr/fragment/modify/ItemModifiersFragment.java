@@ -136,6 +136,62 @@ public class ItemModifiersFragment extends Fragment{
         return sortByComparator(groupedItems);
     }
 
+//    private static Map<String, List<SelectedModifierExModel>> sortModifiers(List<SelectedModifierExModel> modifiers){
+//        Comparator<String> comparator = new Comparator<String>() {
+//            @Override
+//            public int compare(String lhs, String rhs) {
+//                int lhsNum = intRepresentation(lhs);
+//                int rhsNum = intRepresentation(rhs);
+//
+//                return lhsNum - rhsNum;
+//            }
+//
+//            private int intRepresentation(String s){
+//                /* free_modifiers, mod_group1, mod_group2, ..., addons, oprionals */
+//                int i;
+//                if (s.equals(MODIFIERS_GROUP_ID)){
+//                    i = 1;
+//                }else if (s.equals(ADDONS_GROUP_ID)){
+//                    i = 3;
+//                }else if (s.equals(OPTIONAL_GROUP_ID)){
+//                    i = 4;
+//                }else{
+//                    i = 2;
+//                }
+//                return i;
+//            }
+//        };
+//
+//        HashMap<String, List<SelectedModifierExModel>> groupedItems = new HashMap<>();
+//        for (SelectedModifierExModel item : modifiers){
+//            String key;
+//            switch (item.type){
+//                case ADDON:
+//                    key = ADDONS_GROUP_ID;
+//                    break;
+//                case OPTIONAL:
+//                    key = OPTIONAL_GROUP_ID;
+//                    break;
+//                default:
+//                    key = item.modifierGroupGuid != null ? item.modifierGroupGuid : MODIFIERS_GROUP_ID;
+//                    break;
+//            }
+//            if (!groupedItems.containsKey(key)) {
+//                groupedItems.put(key, new ArrayList<SelectedModifierExModel>());
+//            }
+//            groupedItems.get(key).add(item);
+//        }
+//
+//        ArrayList<String> keys = new ArrayList<>(groupedItems.keySet());
+//        Collections.sort(keys, comparator);
+//        LinkedHashMap<String, List<SelectedModifierExModel>> groupedSortedItems = new LinkedHashMap<>(groupedItems.size());
+//        for (String key : keys){
+//            groupedSortedItems.put(key, groupedItems.get(key));
+//        }
+//
+//        return groupedSortedItems;
+//    }
+
     private static Map<String, List<SelectedModifierExModel>> sortByComparator(Map<String, List<SelectedModifierExModel>> unsortMap) {
 
         // Convert Map to List
@@ -150,6 +206,8 @@ public class ItemModifiersFragment extends Fragment{
                 SelectedModifierExModel m2 = o2.getValue().get(0);
                 int dif = m1.type.compareTo(m2.type);
                 if(dif != 0) return dif;
+                if(m1.getGroup() == null || m2.getGroup() == null)
+                    return 0;
                 return m1.getGroup().title.compareTo(m2.getGroup().title);
             }
         });
