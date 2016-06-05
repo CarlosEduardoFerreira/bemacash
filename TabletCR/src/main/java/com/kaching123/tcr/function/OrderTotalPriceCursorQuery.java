@@ -208,7 +208,7 @@ public final class OrderTotalPriceCursorQuery {
             handler.handleItem(item.getSaleItemGuid(), item.description,
                     item.unitsLabel, itemModel.priceType,
                     itemQty, itemSubtotal, itemDiscount,
-                    itemTax, singleItemPrice, units, item.modifiers, transactionFee, item.getPrice(), item.getNotes());
+                    itemTax, singleItemPrice, units, item.modifiers, transactionFee, item.getPrice(), item.getNotes(), model1, model2);
         }
 
         handler.handleTotal(totalSubtotal, subtotals, totalDiscount, totalTax, tips, transactionFee, taxes);
@@ -228,7 +228,9 @@ public final class OrderTotalPriceCursorQuery {
                         ArrayList<SaleOrderItemViewModel.AddonInfo> addons,
                         BigDecimal transactionFee,
                         BigDecimal itemFullPrice,
-                        String note);
+                        String note,
+                        TaxGroupModel model1,
+                        TaxGroupModel model2);
 
         void handleTotal(BigDecimal totalSubtotal,
                          Map<TaxGroupModel, BigDecimal> subtotals,

@@ -108,7 +108,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             @Override
             public void handleItem(String saleItemGuid, String description, String unitLabel, PriceType priceType, BigDecimal qty,
                                    BigDecimal itemSubtotal, BigDecimal itemDiscount,
-                                   BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note) {
+                                   BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note, TaxGroupModel model1, TaxGroupModel model2) {
                 List<String> unitAsStrings = new ArrayList<String>(units.size());
                 Comparator<SaleOrderItemViewModel.AddonInfo> comparator = new Comparator<SaleOrderItemViewModel.AddonInfo>() {
                     @Override

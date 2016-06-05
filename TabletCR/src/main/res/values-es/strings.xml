@@ -349,7 +349,7 @@
     <string name="printer_discount">Descuento</string>
     <string name="printer_subtotal">Subtotal</string>
     <string name="printer_tax">Impuesto</string>
-    <string name="printer_total">Total</string>
+    <string name="printer_total">VALOR TOTAL</string>
     <string name="printer_order_num">Orden</string>
     <string name="printer_refund_total">Total (incluyendo impuesto)</string>
     <string name="printer_signature_subtitle">Recibo firmado</string>

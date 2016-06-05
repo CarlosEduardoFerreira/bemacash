@@ -80,12 +80,12 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
         printerWrapper.drawLine();
 
         final boolean printTips = this.refundItems.isEmpty();
-        if (printTips){
+        if (printTips) {
             final BigDecimal tipsAmount = OrderTotalPriceCursorQuery.loadTips(context, orderGuid);
             printerWrapper.orderFooter(context.getString(R.string.printer_refund_tips), negative(tipsAmount), false);
             printerWrapper.drawLine();
             printerWrapper.orderFooter(context.getString(R.string.printer_refund_total), negative(tipsAmount));
-        }else {
+        } else {
             final HashMap<String, BigDecimal> saleItemsQty = new HashMap<String, BigDecimal>();
             for (RefundSaleItemInfo i : refundItems) {
                 saleItemsQty.put(i.saleItemGuid, i.qty);
@@ -99,7 +99,7 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                                        BigDecimal singleItemPrice, List<Unit> units,
                                        ArrayList<SaleOrderItemViewModel.AddonInfo> addons,
                                        BigDecimal transactionFee, BigDecimal itemFullPrice,
-                                       String note) {
+                                       String note, TaxGroupModel model1, TaxGroupModel model2) {
                     if (!saleItemsQty.containsKey(saleItemGuid))
                         return;
 
@@ -113,7 +113,7 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                             }
                         }
                     }
-                    if(app.getShopPref().printDetailReceipt().get())
+                    if (app.getShopPref().printDetailReceipt().get())
                         printerWrapper.add(description, qty, negative(itemTotal), singleItemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                     else
                         printerWrapper.add(description, qty, negative(itemTotal), singleItemPrice, unitAsStrings);
@@ -137,7 +137,6 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
             }
         }
     }
-
 
 
 }

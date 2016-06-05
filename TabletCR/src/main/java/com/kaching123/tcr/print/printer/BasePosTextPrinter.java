@@ -195,7 +195,56 @@ public class BasePosTextPrinter implements IPrinter {
         return printTitle.toString();
     }
 
-    public static String formatString(int maxLen, int priceLen, int qtyLen, String title, String qty, String totalPrice, String itemPrice) {
+    public static String formatStringEcua(int maxLen, int priceLen, int qtyLen, String title, String qty, String isIva, String itemPrice, String discount, String price) {
+        if (title == null)
+            title = "";
+
+
+        StringBuilder printTitle = new StringBuilder();
+
+//        for (int i = qtyLen - 1; i > qty.length(); i--) {
+//            printTitle.append(' ');
+//        }
+        printTitle.append(qty);
+
+        int maxLeftPart = maxLen - priceLen * 2;
+        printTitle.append(' ');
+
+        int maxTitleLen = maxLeftPart - qtyLen;
+        if (title.length() > maxTitleLen) {
+            printTitle.append(crop(maxTitleLen, title));
+        } else {
+            printTitle.append(title);
+        }
+
+        if (printTitle.length() < maxLeftPart) {
+            for (int i = printTitle.length(); i < maxLeftPart; i++) {
+                printTitle.append(' ');
+            }
+        }
+
+        printTitle.append(isIva);
+        for (int i = 0; i < 4 - isIva.length(); i++) {
+            printTitle.append(' ');
+        }
+
+        printTitle.append(itemPrice);
+        for (int i = 0; i < priceLen- itemPrice.length() - 4; i++) {
+            printTitle.append(' ');
+        }
+//        for (int i = 0; i < priceLen - price.length(); i++) {
+//            printTitle.append(' ');
+//        }
+        printTitle.append(discount);
+        for (int i = 0; i < 5 - discount.length(); i++) {
+            printTitle.append(' ');
+        }
+//        printTitle.append("$");
+        printTitle.append(price);
+        return printTitle.toString();
+    }
+
+    public static String formatString(int maxLen, int priceLen, int qtyLen, String title, String qty, String Iva, String discount, String totalPrice, String itemPrice) {
         if (title == null)
             title = "";
 
@@ -214,8 +263,16 @@ public class BasePosTextPrinter implements IPrinter {
                 printBuilder.append(' ');
             }
         }
+        printBuilder.append(Iva);
+        for (int i = 0; i < 4 - Iva.length(); i++) {
+            printBuilder.append(' ');
+        }
         printBuilder.append(itemPrice);
-        for (int i = 0; i < priceLen - itemPrice.length(); i++) {
+        for (int i = 0; i < priceLen - itemPrice.length() - 4; i++) {
+            printBuilder.append(' ');
+        }
+        printBuilder.append(discount);
+        for (int i = 0; i < 5 - discount.length(); i++) {
             printBuilder.append(' ');
         }
         printBuilder.append(totalPrice);
