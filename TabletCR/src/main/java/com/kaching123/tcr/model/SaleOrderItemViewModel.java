@@ -233,6 +233,10 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
             int dif = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
             if(dif != 0)
                 return dif;
+            boolean l = TextUtils.isEmpty(lhs.groupName), r = TextUtils.isEmpty(rhs.groupName);
+            if(l && r) return 0;
+            if(l) return 1;
+            if(r) return -1;
             return lhs.groupName.compareTo(rhs.groupName);
         }
     };
