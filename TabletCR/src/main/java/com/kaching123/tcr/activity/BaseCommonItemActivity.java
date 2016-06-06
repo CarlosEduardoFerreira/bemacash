@@ -417,10 +417,10 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
         }
 
         final String productCode = this.productCode.getText().toString();
-        if (TextUtils.isEmpty(productCode)) {
-            Toast.makeText(this, getString(R.string.item_activity_alert_product_code_empty_error), Toast.LENGTH_SHORT).show();
-            return false;
-        }
+//        if (TextUtils.isEmpty(productCode)) {
+//            Toast.makeText(this, getString(R.string.item_activity_alert_product_code_empty_error), Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
 
         if (!TextUtils.isEmpty(productCode) && (productCode.length() < TcrApplication.BARCODE_MIN_LEN || productCode.length() > TcrApplication.PRODUCT_CODE_MAX_LEN)) {
             Toast.makeText(this, getString(R.string.item_activity_alert_product_code_msg,
