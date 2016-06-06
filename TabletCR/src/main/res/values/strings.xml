@@ -514,7 +514,7 @@
     <string name="printer_ec_header_qty">Cant</string>
     <string name="printer_ec_header_iva">Iva</string>
     <string name="printer_ec_header_dto">Dto.</string>
-    <string name="printer_ec_header_total">P.total</string>
+    <string name="printer_ec_header_total">P.Total</string>
     <string name="printer_ec_header_unit_price">P.U.</string>
 
     <string name="printer_tax_title">Iva</string>

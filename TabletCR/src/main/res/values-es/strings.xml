@@ -537,7 +537,7 @@
     <string name="order_email_subject">Orden #%s</string>
     <string name="refund_email_subject">Reintegro #%s</string>
     <string name="error_print_digital_order">No se pudo crear recibo digital</string>
-    <string name="print_order_change_label">Cambio</string>
+    <string name="print_order_change_label">CAMBIO</string>
     <string name="print_order_refund_subtitle">Recibo por reintegro</string>
     <string name="print_order_void_subtitle">Recibo de anulaci\u00F3n</string>
     <string name="print_order_item_discount">Descuento</string>

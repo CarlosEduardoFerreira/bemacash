@@ -213,7 +213,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                     printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                 } else {
                     String isIva;
-                    if (model1.title.contains("Iva") || model2.title.contains("Iva"))
+                    if (model1.title != null && (model1.title.contains("Iva") || model2.title.contains("Iva")))
                         isIva = context.getString(R.string.printer_tax_is_iva);
                     else
                         isIva = context.getString(R.string.printer_tax_is_not_iva);
@@ -231,9 +231,9 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 if (transactionFee.compareTo(BigDecimal.ZERO) > 0) {
                     printerWrapper.addAddsOn(TRANSACTION_FEE, transactionFee);
                 }
-                if (itemDiscount.compareTo(BigDecimal.ZERO) == 1) {
-                    printerWrapper.addItemDiscount(itemDiscountText, negative(itemDiscount));
-                }
+//                if (itemDiscount.compareTo(BigDecimal.ZERO) == 1) {
+//                    printerWrapper.addItemDiscount(itemDiscountText, negative(itemDiscount));
+//                }
                 if (note != null) {
                     printerWrapper.addNotes(note);
                 }
@@ -252,7 +252,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                     printerWrapper.orderFooter(context.getString(R.string.printer_cash_back), totalCashBack);
                 }
                 if (BigDecimal.ZERO.compareTo(totalDiscount) != 0) {
-                    printerWrapper.orderFooter(context.getString(R.string.printer_discount), negative(totalDiscount));
+                    printerWrapper.orderFooter(context.getString(R.string.printer_discount),totalDiscount);
                 }
                 for (Iterator i = subtotals.keySet().iterator(); i.hasNext(); ) {
                     TaxGroupModel key = (TaxGroupModel) i.next();

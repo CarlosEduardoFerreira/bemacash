@@ -207,6 +207,10 @@ public class BasePosTextPrinter implements IPrinter {
 //        }
         printTitle.append(qty);
 
+        if (printTitle.length() < 8 - qty.length()) {
+            printTitle.append(' ');
+        }
+
         int maxLeftPart = maxLen - priceLen * 2;
         printTitle.append(' ');
 
@@ -229,7 +233,7 @@ public class BasePosTextPrinter implements IPrinter {
         }
 
         printTitle.append(itemPrice);
-        for (int i = 0; i < priceLen- itemPrice.length() - 4; i++) {
+        for (int i = 0; i < priceLen - itemPrice.length() - 4; i++) {
             printTitle.append(' ');
         }
 //        for (int i = 0; i < priceLen - price.length(); i++) {
@@ -311,7 +315,7 @@ public class BasePosTextPrinter implements IPrinter {
             printBuilder.append(title);
         }
         if (printBuilder.length() < maxLeftPart) {
-            for (int i = printBuilder.length(); i < maxLeftPart; i++) {
+            for (int i = printBuilder.length(); i < maxLeftPart + 5; i++) {
                 printBuilder.append(' ');
             }
         }
