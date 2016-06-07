@@ -257,11 +257,11 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 for (Iterator i = subtotals.keySet().iterator(); i.hasNext(); ) {
                     TaxGroupModel key = (TaxGroupModel) i.next();
                     if (!TextUtils.isEmpty(key.title)) {
-                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " ("
-                               + formatPercent(key.tax) + ")", subtotals.get(key));
+                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) +
+                               formatPercent(key.tax) , subtotals.get(key));
                     } else {
-                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " ("
-                                + formatPercent(TcrApplication.get().getTaxVat()) + ")", subtotals.get(key));
+                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal)
+                                + formatPercent(TcrApplication.get().getTaxVat()), subtotals.get(key));
                     }
                 }
                 for (Iterator i = taxes.keySet().iterator(); i.hasNext(); ) {
