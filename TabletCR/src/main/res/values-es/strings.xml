@@ -149,6 +149,8 @@
     <string name="total_cost_subtotal_label">Subtotal</string>
     <string name="total_cost_discount_label">Descuento</string>
     <string name="printer_tips">PROPINA</string>
+    <string name="printer_subtotal_iva">SUBTOTAL NO SUJETO DE IVA</string>
+    <string name="printer_subtotal_p_total">SUBTOTAL SIN IMPUESTOS</string>
     <string name="total_cost_tax_label">Total de Impuestos</string>
     <string name="total_cost_order_discount_hint">Descuento en la orden</string>
     <string name="cashier_action_settings">Configuraciones</string>

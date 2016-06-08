@@ -494,6 +494,8 @@
     <string name="printer_tax">Tax Total</string>
     <string name="printer_total">Total</string>
     <string name="printer_tips">Tips</string>
+    <string name="printer_subtotal_iva">SUBTOTAL NO SUJETO DE IVA</string>
+    <string name="printer_subtotal_p_total">SUBTOTAL SIN IMPUESTOS</string>
     <string name="printer_balance">EBT Balance</string>
     <string name="printer_sale_item_amount">Total Item Sold:</string>
     <string name="printer_order_num">Order</string>
