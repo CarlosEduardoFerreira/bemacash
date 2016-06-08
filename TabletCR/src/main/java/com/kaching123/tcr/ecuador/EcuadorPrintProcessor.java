@@ -213,11 +213,11 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                     printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                 } else {
                     String isIva;
-                    if (model1 !=null && model1.title != null && (model1.title.contains("Iva")) ||(( model2 != null && model2.title != null && model2.title.contains("Iva"))))
+                    if (model1 != null && model1.title != null && (model1.title.contains("Iva")) || ((model2 != null && model2.title != null && model2.title.contains("Iva"))))
                         isIva = context.getString(R.string.printer_tax_is_iva);
                     else
                         isIva = context.getString(R.string.printer_tax_is_not_iva);
-                    ((PosEcuadorOrderTextPrinter) printerWrapper).addEcua(description, qty.toString(), isIva, itemDiscount, itemSubtotal, itemPrice, unitAsStrings);
+                    ((PosEcuadorOrderTextPrinter) printerWrapper).addEcua(description, qty.toString(), isIva, itemDiscount, itemSubtotal.divide(itemDiscount), itemPrice, unitAsStrings);
 //                    printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitAsStrings);
                 }
                 if (addons != null && addons.size() != 0)
@@ -252,15 +252,15 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                     printerWrapper.orderFooter(context.getString(R.string.printer_cash_back), totalCashBack);
                 }
                 if (BigDecimal.ZERO.compareTo(totalDiscount) != 0) {
-                    printerWrapper.orderFooter(context.getString(R.string.printer_discount),totalDiscount);
+                    printerWrapper.orderFooter(context.getString(R.string.printer_discount), totalDiscount);
                 }
                 for (Iterator i = subtotals.keySet().iterator(); i.hasNext(); ) {
                     TaxGroupModel key = (TaxGroupModel) i.next();
                     if (!TextUtils.isEmpty(key.title)) {
-                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) +
-                               formatPercent(key.tax) , subtotals.get(key));
+                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " " +
+                                formatPercent(key.tax), subtotals.get(key));
                     } else {
-                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal)
+                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " "
                                 + formatPercent(TcrApplication.get().getTaxVat()), subtotals.get(key));
                     }
                 }
@@ -273,9 +273,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                                 + " " + formatPercent(TcrApplication.get().getTaxVat()), taxes.get(key));
                     }
                 }
-                if (BigDecimal.ZERO.compareTo(tipsAmount) != 0) {
-                    printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
-                }
+                printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
 
                 BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
                 if (amountTotal == null) {

@@ -148,6 +148,7 @@
     <string name="pref_scanner_header_summary">Configuraci\u00F3n del lector de c\u00F3digo de barras</string>
     <string name="total_cost_subtotal_label">Subtotal</string>
     <string name="total_cost_discount_label">Descuento</string>
+    <string name="printer_tips">PROPINA</string>
     <string name="total_cost_tax_label">Total de Impuestos</string>
     <string name="total_cost_order_discount_hint">Descuento en la orden</string>
     <string name="cashier_action_settings">Configuraciones</string>
@@ -347,7 +348,7 @@
     <string name="modifiers_activity_title">Modificaciones %s</string>
     <string name="modifiers_activity_new_item_title">Nuevo articulo</string>
     <string name="printer_discount">Descuento</string>
-    <string name="printer_subtotal">Subtotal</string>
+    <string name="printer_subtotal">SUBTOTAL</string>
     <string name="printer_tax">Impuesto</string>
     <string name="printer_total">VALOR TOTAL</string>
     <string name="printer_order_num">Orden</string>
@@ -540,7 +541,7 @@
     <string name="print_order_change_label">CAMBIO</string>
     <string name="print_order_refund_subtitle">Recibo por reintegro</string>
     <string name="print_order_void_subtitle">Recibo de anulaci\u00F3n</string>
-    <string name="print_order_item_discount">Descuento</string>
+    <string name="print_order_item_discount">TOTAL DESUENTO</string>
     <string name="print_order_signature_subtitle">Firma</string>
     <string name="print_order_merchant_id_label">Merchant ID</string>
     <string name="employee_personal_information">Informaci\u00F3n Personal</string>
