@@ -513,7 +513,7 @@
     <string name="printer_ec_tax">Tax(%s)</string>
     <string name="printer_ec_tax_title">Tax</string>
     <string name="printer_ec_header_description">Description</string>
-    <string name="printer_ec_header_qty">Cant</string>
+    <string name="printer_ec_header_qty">Cant.</string>
     <string name="printer_ec_header_iva">Iva</string>
     <string name="printer_ec_header_dto">Dto.</string>
     <string name="printer_ec_header_total">P.Total</string>
@@ -524,6 +524,7 @@
     <string name="printer_tax_is_not_iva">N</string>
 
     <string name="printer_cash">Cash</string>
+    <string name="printer_offline_credit">OFFLINE CREDIT</string>
     <string name="printer_refund_total">Total (tax included)</string>
     <string name="printer_refund_tips">     Tips</string>
     <string name="printer_signature_subtitle">Signature Receipt</string>

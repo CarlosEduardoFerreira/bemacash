@@ -213,7 +213,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                     printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                 } else {
                     String isIva;
-                    if (model1 != null && model1.title != null && (model1.title.contains("Iva")) || ((model2 != null && model2.title != null && model2.title.contains("Iva"))))
+                    if (model1 != null && model1.title != null && (model1.title.contains("IVA")) || ((model2 != null && model2.title != null && model2.title.contains("IVA"))))
                         isIva = context.getString(R.string.printer_tax_is_iva);
                     else
                         isIva = context.getString(R.string.printer_tax_is_not_iva);
@@ -258,24 +258,25 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                     TaxGroupModel key = (TaxGroupModel) i.next();
                     if (!TextUtils.isEmpty(key.title)) {
                         printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " " +
-                                formatPercent(key.tax), subtotals.get(key));
+                                 formatPercent(key.tax), subtotals.get(key));
                     } else {
                         printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " "
                                 + formatPercent(TcrApplication.get().getTaxVat()), subtotals.get(key));
                     }
                 }
+                printerWrapper.orderFooter(context.getString(R.string.printer_subtotal_iva), BigDecimal.ZERO);
+                printerWrapper.orderFooter(context.getString(R.string.printer_subtotal_p_total), totalSubtotal.subtract(totalDiscount));
+
                 for (Iterator i = taxes.keySet().iterator(); i.hasNext(); ) {
                     TaxGroupModel key = (TaxGroupModel) i.next();
                     if (!TextUtils.isEmpty(key.title)) {
-                        printerWrapper.orderFooter(key.title + " " + formatPercent(key.tax), taxes.get(key));
+                        printerWrapper.orderFooter(key.title.toString().toUpperCase() + " " + formatPercent(key.tax), taxes.get(key));
                     } else {
-                        printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default)
+                        printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default).toString().toUpperCase()
                                 + " " + formatPercent(TcrApplication.get().getTaxVat()), taxes.get(key));
                     }
                 }
                 printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
-                printerWrapper.orderFooter(context.getString(R.string.printer_subtotal_iva), BigDecimal.ZERO);
-                printerWrapper.orderFooter(context.getString(R.string.printer_subtotal_p_total), totalSubtotal.subtract(totalDiscount));
 
                 BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
                 if (amountTotal == null) {
@@ -291,7 +292,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
             boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
-            printerWrapper.payment(p.cardName == null ? p.gateway == PaymentGateway.CASH ? context.getString(R.string.printer_cash) : p.gateway.name() : p.cardName.equalsIgnoreCase("Cash") ? context.getString(R.string.printer_cash) : p.cardName, isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
+
+            printerWrapper.payment(p.cardName == null ? p.gateway == PaymentGateway.CASH ? context.getString(R.string.printer_cash) : p.gateway.name() : p.cardName.equalsIgnoreCase(context.getString(R.string.printer_check)) ? context.getString(R.string.printer_check_ecu) : p.cardName.equalsIgnoreCase(context.getString(R.string.printer_offline_credit))? context.getString(R.string.printer_offline_credit_ecu) : p.cardName.equalsIgnoreCase("Cash") ? context.getString(R.string.printer_cash) : p.cardName, isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
             if (isChanged) {
                 printerWrapper.change(changeText, p.changeAmount);
             }

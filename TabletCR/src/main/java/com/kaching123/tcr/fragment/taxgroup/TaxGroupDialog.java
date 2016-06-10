@@ -149,7 +149,7 @@ public class TaxGroupDialog extends StyledDialogFragment {
         String title = this.title.getText().toString().trim();
         String value = this.tax.getText().toString().replaceAll(",", "");
         BigDecimal tax = TextUtils.isEmpty(value) ? null : new BigDecimal(value);
-        return !TextUtils.isEmpty(title) && tax != null && tax.compareTo(BigDecimal.ZERO) > 0;
+        return !TextUtils.isEmpty(title) && tax != null && tax.compareTo(BigDecimal.ZERO) >= 0;
     }
 
     private boolean isChanged() {
