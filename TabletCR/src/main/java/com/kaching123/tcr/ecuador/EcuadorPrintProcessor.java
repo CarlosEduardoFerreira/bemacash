@@ -273,7 +273,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                         printerWrapper.orderFooter(key.title.toString().toUpperCase() + " " + formatPercent(key.tax), taxes.get(key));
                     } else {
                         printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default).toString().toUpperCase()
-                                + " " + formatPercent(TcrApplication.get().getTaxVat()), taxes.get(key));
+                                + " " + formatPercent(TcrApplication.get().getTaxVat()), taxes.get(key).divide(BigDecimal.TEN));
                     }
                 }
                 printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
