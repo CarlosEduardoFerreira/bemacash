@@ -53,7 +53,7 @@ public class PosEcuadorOrderTextPrinter extends PosOrderTextPrinter {
     }
 
     public void addEcua(String title, String qty, String isVal, BigDecimal discount, BigDecimal price, BigDecimal itemPrice, List<String> units) {
-        add(new PrintLineAction(formatStringEcua(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, qty, isVal, commaFormat(itemPrice),  commaFormat(discount),  commaFormat(price))));
+        add(new PrintLineAction(formatStringEcua(42, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, qty, isVal, commaFormat(itemPrice),  commaFormat(discount),  commaFormat(price))));
 
         if (units == null || units.isEmpty())
             return;
