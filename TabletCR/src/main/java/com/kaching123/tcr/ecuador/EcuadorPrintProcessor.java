@@ -213,7 +213,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                     printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                 } else {
                     String isIva;
-                    if (model1 != null && model1.title != null && (model1.title.contains("IVA")) || ((model2 != null && model2.title != null && model2.title.contains("IVA"))))
+                    if (model1 != null && model1.title != null && (model1.title.toUpperCase().contains("IVA")) || ((model2 != null && model2.title != null && model2.title.toUpperCase().contains("IVA"))))
                         isIva = context.getString(R.string.printer_tax_is_iva);
                     else
                         isIva = context.getString(R.string.printer_tax_is_not_iva);

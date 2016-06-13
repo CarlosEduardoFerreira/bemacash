@@ -207,7 +207,7 @@ public class BasePosTextPrinter implements IPrinter {
 //        }
         printTitle.append(qty);
 
-        for (int qtySpace = 0; 6 - qty.length() > qtySpace; qtySpace ++) {
+        if (printTitle.length() < 8 - qty.length()) {
             printTitle.append(' ');
         }
 

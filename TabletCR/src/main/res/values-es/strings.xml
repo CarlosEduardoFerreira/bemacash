@@ -1278,7 +1278,7 @@
     <string name="printer_check_ecu">CHEQUE</string>
     <string name="printer_check">Check</string>
     <string name="printer_offline_credit">Offline Credit</string>
-    <string name="printer_offline_credit_ecu">TAJERATA OFFLINE</string>
+    <string name="printer_offline_credit_ecu">TARJETA OFFLINE</string>
     <string name="button_receipt">Receipt</string>
     <string name="button_store_credit">Cr\u00e9dito Tienda</string>
     <string name="button_clockin">ENTRADA</string>
