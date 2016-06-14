@@ -159,7 +159,7 @@ public final class OrderTotalPriceCursorQuery {
             final BigDecimal itemTax = getSubTotal(itemQty, itemModel.finalTax);
             final BigDecimal singleItemPrice = itemModel.finalGrossPrice.add(itemModel.finalTax).subtract(itemModel.finalDiscount);
 
-             final TaxGroupModel model1 = item.taxGroup1;
+            final TaxGroupModel model1 = item.taxGroup1;
             if (!TextUtils.isEmpty(model1.getGuid())) {
                 BigDecimal subTax = getTaxVatValueNoScale(itemModel.finalGrossPrice.subtract(itemModel.finalDiscount), itemModel.tax);
                 BigDecimal currentTax = getSubTotal(itemQty, subTax);
@@ -174,7 +174,10 @@ public final class OrderTotalPriceCursorQuery {
                 taxes.put(model1, currentTax);
                 subtotals.put(model1, subTotal);
             } else { // store tax
-                taxes.put(model1, getSubTotal(itemQty, itemModel.tax));
+                if (taxes.get(model1) != null)
+                    taxes.put(model1, taxes.get(model1).add(getSubTotal(itemQty,itemModel.getFinalPrice().subtract(itemModel.price))));
+                else
+                    taxes.put(model1,getSubTotal(itemQty, itemModel.getFinalPrice().subtract(itemModel.price)));
                 subtotals.put(model1, getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount)));
             }
             final TaxGroupModel model2 = item.taxGroup2;
