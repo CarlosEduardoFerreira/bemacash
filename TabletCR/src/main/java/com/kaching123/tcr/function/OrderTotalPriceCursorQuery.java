@@ -175,9 +175,9 @@ public final class OrderTotalPriceCursorQuery {
                 subtotals.put(model1, subTotal);
             } else { // store tax
                 if (taxes.get(model1) != null)
-                    taxes.put(model1, taxes.get(model1).add(getSubTotal(itemQty,itemModel.getFinalPrice().subtract(itemModel.price))));
+                    taxes.put(model1, taxes.get(model1).add(getSubTotal(itemQty, itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : itemModel.price.multiply(itemModel.tax.divide(new BigDecimal(100))))));
                 else
-                    taxes.put(model1,getSubTotal(itemQty, itemModel.getFinalPrice().subtract(itemModel.price)));
+                    taxes.put(model1,getSubTotal(itemQty, itemModel.price.multiply(itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : itemModel.tax.divide(new BigDecimal(100)))));
                 subtotals.put(model1, getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount)));
             }
             final TaxGroupModel model2 = item.taxGroup2;

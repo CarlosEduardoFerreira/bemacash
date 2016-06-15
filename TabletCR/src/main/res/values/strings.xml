@@ -512,7 +512,7 @@
     <string name="printer_ec_order">Order:</string>
     <string name="printer_ec_tax">Tax(%s)</string>
     <string name="printer_ec_tax_title">Tax</string>
-    <string name="printer_ec_header_description">Description</string>
+    <string name="printer_ec_header_description">Descripcion</string>
     <string name="printer_ec_header_qty">Cant.</string>
     <string name="printer_ec_header_iva">Iva</string>
     <string name="printer_ec_header_dto">Dto.</string>
