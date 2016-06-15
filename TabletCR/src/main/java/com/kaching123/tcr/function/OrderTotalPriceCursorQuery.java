@@ -156,16 +156,16 @@ public final class OrderTotalPriceCursorQuery {
             final BigDecimal itemQty = item.getQty();
             final BigDecimal itemSubtotal = getSubTotal(itemQty, itemModel.finalGrossPrice);
             final BigDecimal itemDiscount = getSubTotal(itemQty, itemModel.finalDiscount);
-            final BigDecimal itemTax = getSubTotal(itemQty, itemModel.finalTax);
+            final BigDecimal itemTax = itemModel.isTaxable == false ? BigDecimal.ZERO : getSubTotal(itemQty, itemModel.finalTax);
             final BigDecimal singleItemPrice = itemModel.finalGrossPrice.add(itemModel.finalTax).subtract(itemModel.finalDiscount);
 
             final TaxGroupModel model1 = item.taxGroup1;
             if (!TextUtils.isEmpty(model1.getGuid())) {
-                BigDecimal subTax = getTaxVatValueNoScale(itemModel.finalGrossPrice.subtract(itemModel.finalDiscount), itemModel.tax);
-                BigDecimal currentTax = getSubTotal(itemQty, subTax);
+                BigDecimal subTax = getTaxVatValueNoScale(itemModel.isTaxable == false ? BigDecimal.ZERO : itemModel.finalGrossPrice.subtract(itemModel.finalDiscount), itemModel.tax);
+                BigDecimal currentTax = itemModel.isTaxable == false ? BigDecimal.ZERO : getSubTotal(itemQty, subTax);
                 BigDecimal subTotal = getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount));
                 if (taxes.containsKey(model1)) {
-                    BigDecimal taxGroupValue = taxes.get(model1);
+                    BigDecimal taxGroupValue = itemModel.isTaxable == false ? BigDecimal.ZERO : taxes.get(model1);
                     currentTax = taxGroupValue.add(currentTax);
 
                     BigDecimal sub = subtotals.get(model1);
@@ -175,18 +175,18 @@ public final class OrderTotalPriceCursorQuery {
                 subtotals.put(model1, subTotal);
             } else { // store tax
                 if (taxes.get(model1) != null)
-                    taxes.put(model1, taxes.get(model1).add(getSubTotal(itemQty, itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : itemModel.price.multiply(itemModel.tax.divide(new BigDecimal(100))))));
+                    taxes.put(model1, taxes.get(model1).add(getSubTotal(itemQty, itemModel.isTaxable == false ? BigDecimal.ZERO : itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : itemModel.price.multiply(itemModel.tax.divide(new BigDecimal(100))))));
                 else
-                    taxes.put(model1,getSubTotal(itemQty, itemModel.price.multiply(itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : itemModel.tax.divide(new BigDecimal(100)))));
+                    taxes.put(model1, getSubTotal(itemQty, itemModel.price.multiply(itemModel.isTaxable == false ? BigDecimal.ZERO : itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : itemModel.tax.divide(new BigDecimal(100)))));
                 subtotals.put(model1, getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount)));
             }
             final TaxGroupModel model2 = item.taxGroup2;
             if (!TextUtils.isEmpty(model2.getGuid())) {
-                BigDecimal subTax = getTaxVatValueNoScale(itemModel.finalGrossPrice.subtract(itemModel.finalDiscount), itemModel.tax2);
-                BigDecimal currentTax = getSubTotal(itemQty, subTax);
+                BigDecimal subTax = getTaxVatValueNoScale(itemModel.isTaxable == false ? BigDecimal.ZERO : itemModel.finalGrossPrice.subtract(itemModel.finalDiscount), itemModel.tax2);
+                BigDecimal currentTax = itemModel.isTaxable == false ? BigDecimal.ZERO : getSubTotal(itemQty, subTax);
                 BigDecimal subTotal = getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount));
                 if (taxes.containsKey(model2)) {
-                    BigDecimal taxGroupValue = taxes.get(model2);
+                    BigDecimal taxGroupValue =itemModel.isTaxable == false ? BigDecimal.ZERO : taxes.get(model2);
                     currentTax = taxGroupValue.add(currentTax);
 
                     BigDecimal sub = subtotals.get(model2);
@@ -198,7 +198,7 @@ public final class OrderTotalPriceCursorQuery {
 
             totalSubtotal = totalSubtotal.add(itemSubtotal);
             totalDiscount = totalDiscount.add(itemDiscount);
-            totalTax = totalTax.add(itemTax);
+            totalTax = totalTax.add(itemModel.isTaxable == false ? BigDecimal.ZERO :itemTax);
             List<Unit> units;
             if (childOrderGuid != null) {
                 units = loadUnitItemsForRefund(context, item.itemModel.itemGuid, childOrderGuid);
