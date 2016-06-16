@@ -186,9 +186,9 @@ public final class OrderTotalPriceCursorQuery {
                     subTotal = sub.add(subTotal);
                 }
                 taxes.put(model1, currentTax);
-                if(subtotals.get(model1) != null)
-                    subtotals.put(model1, subtotals.get(model1).add(subTotal));
-                else
+//                if(subtotals.get(model1) != null)
+//                    subtotals.put(model1, subtotals.get(model1).add(subTotal));
+//                else
                     subtotals.put(model1, subTotal);
             } else { // store tax
                 if (taxes.get(model1) != null)
@@ -215,9 +215,9 @@ public final class OrderTotalPriceCursorQuery {
                 }
                 taxes.put(model2, currentTax);
 //                subtotals.put(model2, subTotal);
-                if(subtotals.get(model2) != null)
-                    subtotals.put(model2, subtotals.get(model2).add(subTotal));
-                else
+//                if(subtotals.get(model2) != null)
+//                    subtotals.put(model2, subtotals.get(model2).add(subTotal));
+//                else
                     subtotals.put(model2, subTotal);
             }
 
