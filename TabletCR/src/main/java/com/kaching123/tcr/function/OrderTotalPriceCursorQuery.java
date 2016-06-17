@@ -192,9 +192,9 @@ public final class OrderTotalPriceCursorQuery {
                     subtotals.put(model1, subTotal);
             } else { // store tax
                 if (taxes.get(model1) != null)
-                    taxes.put(model1, taxes.get(model1).add(getSubTotal(itemQty, taxable == false ? BigDecimal.ZERO : itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : itemModel.price.multiply(itemModel.tax.divide(new BigDecimal(100))))));
+                    taxes.put(model1, taxes.get(model1).add(getSubTotal(itemQty, taxable == false ? BigDecimal.ZERO : itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : (itemModel.finalGrossPrice.subtract(itemModel.finalDiscount)).multiply(itemModel.tax.divide(new BigDecimal(100))))));
                 else
-                    taxes.put(model1, getSubTotal(itemQty, itemModel.price.multiply(taxable == false? BigDecimal.ZERO : itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : itemModel.tax.divide(new BigDecimal(100)))));
+                    taxes.put(model1, getSubTotal(itemQty, (itemModel.finalGrossPrice.subtract(itemModel.finalDiscount)).multiply(taxable == false? BigDecimal.ZERO : itemModel.finalTax.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : itemModel.tax.divide(new BigDecimal(100)))));
 
                 if(subtotals.get(model1) != null)
                     subtotals.put(model1, subtotals.get(model1).add(getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount))));
