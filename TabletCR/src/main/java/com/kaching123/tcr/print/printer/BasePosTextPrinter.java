@@ -379,8 +379,8 @@ public class BasePosTextPrinter implements IPrinter {
         return printTitle.toString();
     }
 
-    public static String formatStirng_notes(int maxLen, int qtyLen, String note) {
-        String title = "Notes: ";
+    public static String formatStirng_notes(int maxLen, int qtyLen, String note, String noteWords) {
+        String title = noteWords;
 
         StringBuilder printTitle = new StringBuilder();
 

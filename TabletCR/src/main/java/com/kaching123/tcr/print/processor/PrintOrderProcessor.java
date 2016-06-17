@@ -150,7 +150,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                     printerWrapper.addItemDiscount(itemDiscountText, negative(itemDiscount));
                 }
                 if (note != null)
-                    printerWrapper.addNotes(note);
+                    printerWrapper.addNotes(note, context.getString(R.string.notes_edit_fragment_title) + ": ");
             }
 
             @Override

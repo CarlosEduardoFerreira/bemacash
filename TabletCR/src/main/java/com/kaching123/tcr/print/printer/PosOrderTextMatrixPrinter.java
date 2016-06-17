@@ -105,8 +105,8 @@ public class PosOrderTextMatrixPrinter extends PosOrderTextPrinter implements IT
     }
 
     @Override
-    public void addNotes(String notes) {
-        add(new PrintLineAction(formatStirng_notes(PRINTER_MAX_TEXT_LEN, PRINTER_FOUR_QTY_LEN, notes)));
+    public void addNotes(String notes, String noteWords) {
+        add(new PrintLineAction(formatStirng_notes(PRINTER_MAX_TEXT_LEN, PRINTER_FOUR_QTY_LEN, notes, noteWords)));
     }
 
     @Override

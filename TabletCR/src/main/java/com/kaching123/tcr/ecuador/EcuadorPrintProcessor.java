@@ -56,7 +56,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
     private final String TRANSACTION_FEE = "Transaction Fee";
 
-    private static final int EC_RECEIPT_LINES_COUNT = 56;
+    private static final int EC_RECEIPT_LINES_COUNT = 46;
 
     private boolean reprint;
 
@@ -235,7 +235,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 //                    printerWrapper.addItemDiscount(itemDiscountText, negative(itemDiscount));
 //                }
                 if (note != null) {
-                    printerWrapper.addNotes(note);
+                    printerWrapper.addNotes(note, context.getString(R.string.notes_edit_fragment_title) + ": ");
                 }
             }
 
@@ -279,6 +279,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
 
                 BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
+                totalOrderPrice = totalOrderPrice.setScale(2, BigDecimal.ROUND_UP);
                 if (amountTotal == null) {
                     printerWrapper.orderFooter(context.getString(R.string.printer_total), totalOrderPrice.add(tipsAmount).add(transactionFee).add(totalCashBack), true);
                 } else {

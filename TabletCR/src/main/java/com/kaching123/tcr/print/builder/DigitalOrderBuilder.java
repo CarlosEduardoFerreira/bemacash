@@ -302,11 +302,11 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     }
 
     @Override
-    public void addNotes(String notes) {
+    public void addNotes(String notes, String noteWords) {
         stringBuilder.append(_styled("table", TABLE_STYLE));
         stringBuilder.append("<tr>");
         stringBuilder.append("<td>");
-        stringBuilder.append("&nbsp;").append(' ').append("Notes");
+        stringBuilder.append("&nbsp;").append(' ').append(noteWords);
         stringBuilder.append("</td>");
         stringBuilder.append(_styled("td", PRICE_STYLE));
         stringBuilder.append(notes);
