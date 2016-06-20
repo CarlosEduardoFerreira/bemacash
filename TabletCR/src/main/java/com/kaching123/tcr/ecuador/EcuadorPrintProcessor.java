@@ -160,7 +160,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             printNotNull(context, R.string.printer_ec_date, getCurrentDate(c));
             printNotNull(context, R.string.printer_ec_customer_id, getCustomerId(c));
             printNullable(context, R.string.printer_ec_customer_name, getCustomerName(c));
-            printNullable(context, R.string.printer_ec_store_address, getStoreAddress(app));
+//            printNullable(context, R.string.printer_ec_store_address, getStoreAddress(app));
             printNotNull(context, R.string.printer_ec_cashier, getOperatorName(c));
             printNullable(context, R.string.printer_ec_email, app.getShopInfo().email);
             printNotNull(context, R.string.printer_ec_order, getOrderNumber(c));
