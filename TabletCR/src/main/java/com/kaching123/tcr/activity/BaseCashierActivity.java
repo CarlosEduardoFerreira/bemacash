@@ -1535,7 +1535,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 0,
                 null,
                 BigDecimal.ZERO,
-                BigDecimal.ZERO,
+                isPrepaidItemStart ? model.tax : BigDecimal.ZERO,//final tax
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
                 null,
