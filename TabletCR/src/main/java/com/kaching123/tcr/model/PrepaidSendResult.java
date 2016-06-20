@@ -41,8 +41,21 @@ public class PrepaidSendResult {
         itemDetails = data.getStringExtra(ARG_ITEMDETAILS);
         itemQty = new BigDecimal(data.getIntExtra(ARG_ITEMQTY, 1));
         itemPrice = new BigDecimal(data.getStringExtra(ARG_ITEMPRICE));
-        itemTaxable = Boolean.parseBoolean(data.getStringExtra(ARG_ITEMTAXABLE));
+        itemTaxable = ((data.getStringExtra(ARG_ITEMTAXABLE)).equalsIgnoreCase("Y") ? true : false);
         taxAmount = new BigDecimal(data.getStringExtra(ARG_TAXAMOUNT) == null ? "0" : data.getStringExtra(ARG_TAXAMOUNT));
+    }
+
+    public PrepaidSendResult() {
+        action = "";
+        error = "";
+        errorMsg = "";
+        transactionId = "Prepaid transaction id";
+        itemName = "Prepaid item name";
+        itemDetails = "Prepaid item details";
+        itemQty = new BigDecimal(1);
+        itemPrice = new BigDecimal("10");
+        itemTaxable = ("Y".equalsIgnoreCase("Y") ? true : false);
+        taxAmount = new BigDecimal(0.10);
     }
 
     public void print() {

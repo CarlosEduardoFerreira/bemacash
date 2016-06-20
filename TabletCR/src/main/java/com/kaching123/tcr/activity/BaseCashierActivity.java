@@ -541,6 +541,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
             }
         }
+        //fake prepaid item
+//        PrepaidSendResult result = new PrepaidSendResult();
+//        result.print();
+//        final ItemExModel model = new ItemExModel(result);
+//        tryToAddItem(model);
     }
 
     @Override
