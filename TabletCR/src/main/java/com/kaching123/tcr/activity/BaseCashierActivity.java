@@ -1536,7 +1536,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 model.isDiscountable ? model.discount : null,
                 model.isDiscountable ? model.discountType : null,
                 model.isTaxable,
-                isPrepaidItemStart ? model.tax :TextUtils.isEmpty(model.taxGroupGuid) ? getApp().getTaxVat() : model.tax,
+                isPrepaidItemRelease ? model.tax :TextUtils.isEmpty(model.taxGroupGuid) ? getApp().getTaxVat() : model.tax,
                 TextUtils.isEmpty(model.taxGroupGuid2) ? null : model.tax2,
                 0,
                 null,
@@ -1546,7 +1546,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 BigDecimal.ZERO,
                 null,
                 !isCreateReturnOrder && model.hasNotes,
-                isPrepaidItemStart);
+                isPrepaidItemRelease);
+
+        if(isPrepaidItemRelease)
+            isPrepaidItemRelease = false;
 
         if (unit != null && orderGuid != null) {
             unit.orderId = orderGuid;
