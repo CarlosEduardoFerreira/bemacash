@@ -89,7 +89,7 @@ public class ItemExModel extends ItemModel {
         this.addonsCount = 0;
         this.optionalCount = 0;
         this.departmentGuid = null;
-        if (result.itemTaxable)
+        if (result.taxAmount != null || result.itemTaxable)
             this.tax = result.taxAmount;
         else
             this.tax = null;
