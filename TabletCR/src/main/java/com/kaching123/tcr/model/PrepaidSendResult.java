@@ -55,7 +55,7 @@ public class PrepaidSendResult {
         itemQty = new BigDecimal(1);
         itemPrice = new BigDecimal("10");
         itemTaxable = ("Y".equalsIgnoreCase("Y") ? true : false);
-        taxAmount = new BigDecimal(0.10);
+        taxAmount = new BigDecimal(20);
     }
 
     public void print() {

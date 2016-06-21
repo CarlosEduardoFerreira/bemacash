@@ -542,6 +542,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             }
         }
         //fake prepaid item
+//        isPrepaidItemStart = true;
 //        PrepaidSendResult result = new PrepaidSendResult();
 //        result.print();
 //        final ItemExModel model = new ItemExModel(result);
@@ -1535,12 +1536,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 model.isDiscountable ? model.discount : null,
                 model.isDiscountable ? model.discountType : null,
                 model.isTaxable,
-                TextUtils.isEmpty(model.taxGroupGuid) ? getApp().getTaxVat() : model.tax,
+                isPrepaidItemStart ? model.tax :TextUtils.isEmpty(model.taxGroupGuid) ? getApp().getTaxVat() : model.tax,
                 TextUtils.isEmpty(model.taxGroupGuid2) ? null : model.tax2,
                 0,
                 null,
                 BigDecimal.ZERO,
-                isPrepaidItemStart ? model.tax : BigDecimal.ZERO,//final tax
+                BigDecimal.ZERO,//final tax
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
                 null,
