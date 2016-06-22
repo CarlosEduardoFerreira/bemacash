@@ -480,7 +480,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
             @Override
             public void onTotolQtyUpdated(String qty, boolean remove, List<SaleOrderItemViewModel> list) {
-                if(list != null)
+                if (list != null)
                     saleItemCount = list.size();
                 if (itemCount != null) {
                     if (remove) {
@@ -574,11 +574,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                                   final String itemGuid);
 
     protected void tryToAddItem(final ItemExModel model) {
-        if (saleItemCount < 10)
+        if (!TcrApplication.isEcuadorVersion())
             tryToAddItem(model, null, null, null);
-        else
-        {
-            AlertDialogFragment.showAlert(this, R.string.sale_item_limit_error_dialog_title, getString(R.string.sale_item_limit_error_message_no_payments));
+        else {
+            if (saleItemCount < 10)
+                tryToAddItem(model, null, null, null);
+            else {
+                AlertDialogFragment.showAlert(this, R.string.sale_item_limit_error_dialog_title, getString(R.string.sale_item_limit_error_message_no_payments));
+            }
         }
     }
 
