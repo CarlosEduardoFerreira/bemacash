@@ -1910,6 +1910,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (TextUtils.isEmpty(this.orderGuid))
             return;
 
+        saleItemCount = 0;
+        strItemCount = "0";
         checkOrderPayments();
     }
 
@@ -1952,6 +1954,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             return;
 
         strItemCount = "0";
+        saleItemCount = 0;
         updateItemCountMsg();
         setupNewOrder();
     }

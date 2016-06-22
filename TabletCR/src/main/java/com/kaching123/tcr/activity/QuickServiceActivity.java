@@ -125,6 +125,7 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
         hideModifiersFragment();
 
         strItemCount = "0";
+        saleItemCount = 0;
         updateItemCountMsg();
     }
 

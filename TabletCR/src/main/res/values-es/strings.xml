@@ -1411,7 +1411,7 @@
     <string name="sunopass_choose_document_payment_method">Choose Document Payment Method</string>
 
     <string name="custom_service">CUSTOMER SERVICE</string>
-    <string name="sale_item_limit_error_message_no_payments">Robert Ditusa: EL maximo de articulos por tansacción es 10</string>
-
+    <string name="sale_item_limit_error_message_no_payments">EL maximo de articulos por tansacción es 10</string>
+    <string name="sale_item_limit_error_dialog_title">Error</string>
 
 </resources>
