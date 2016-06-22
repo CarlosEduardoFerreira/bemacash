@@ -291,6 +291,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private List<SaleOrderItemViewModel> prepaidList;
     private ArrayList<PrepaidReleaseResult> releaseResultList;
     protected String strItemCount;
+    protected int saleItemCount;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -478,7 +479,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             }
 
             @Override
-            public void onTotolQtyUpdated(String qty, boolean remove) {
+            public void onTotolQtyUpdated(String qty, boolean remove, List<SaleOrderItemViewModel> list) {
+                if(list != null)
+                    saleItemCount = list.size();
                 if (itemCount != null) {
                     if (remove) {
                         strItemCount = new BigDecimal(strItemCount).subtract(new BigDecimal(qty)).toString();
@@ -571,7 +574,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                                   final String itemGuid);
 
     protected void tryToAddItem(final ItemExModel model) {
-        tryToAddItem(model, null, null, null);
+        if (saleItemCount < 10)
+            tryToAddItem(model, null, null, null);
+        else
+        {
+            AlertDialogFragment.showAlert(this, R.string.sale_item_limit_error_dialog_title, getString(R.string.sale_item_limit_error_message_no_payments));
+        }
     }
 
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
@@ -1536,7 +1544,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 model.isDiscountable ? model.discount : null,
                 model.isDiscountable ? model.discountType : null,
                 model.isTaxable,
-                isPrepaidItemStart ? model.tax :TextUtils.isEmpty(model.taxGroupGuid) ? getApp().getTaxVat() : model.tax,
+                isPrepaidItemStart ? model.tax : TextUtils.isEmpty(model.taxGroupGuid) ? getApp().getTaxVat() : model.tax,
                 TextUtils.isEmpty(model.taxGroupGuid2) ? null : model.tax2,
                 0,
                 null,
@@ -1764,9 +1772,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    public void updateItemCountMsg()
-    {
-        itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " +strItemCount);
+    public void updateItemCountMsg() {
+        itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + strItemCount);
     }
 
     public int prepaidCount;

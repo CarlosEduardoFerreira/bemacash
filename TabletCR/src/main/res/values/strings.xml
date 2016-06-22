@@ -638,6 +638,7 @@
     <string name="wait_message_clock_out">Clock-Out</string>
     <string name="wait_message_save_employee">Saving Employee</string>
     <string name="error_dialog_title">Error</string>
+    <string name="sale_item_limit_error_dialog_title">Error</string>
     <string name="error_empty_department">Warning</string>
     <string name="warning_dialog_title">Warning</string>
     <string name="warning_delete_employee">Please goto back office to delete the employee</string>
@@ -673,6 +674,7 @@
     <string name="error_message_already_clocked_out">Clock Out has been already performed</string>
     <string name="modifiers_copy_header_name">Name</string>
     <string name="error_message_no_payments">Cannot refund - order has no payments</string>
+    <string name="sale_item_limit_error_message_no_payments">The limit amount of items for one sales order is 10</string>
     <string name="error_message_has_payments">Cannot void - order has payments</string>
     <string name="error_message_scanner_not_attached">Please plug USB scanner.</string>
     <string name="error_message_scanner_no_permission">Please enable USB Scanner access.</string>

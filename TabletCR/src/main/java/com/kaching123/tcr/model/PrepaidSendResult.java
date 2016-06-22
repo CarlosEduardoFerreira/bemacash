@@ -30,7 +30,8 @@ public class PrepaidSendResult {
     protected static final String ARG_ITEMQTY = "ITEMQTY";
     public static final String ARG_ITEMPRICE = "ITEMPRICE";
     protected static final String ARG_ITEMTAXABLE = "ITEMTAXABLE";
-    protected static final String ARG_TAXAMOUNT = "ARG_TAXAMOUNT";
+    protected static final String ARG_TAXAMOUNT = "ITEMTAX";
+    protected static final String ARG_ITEM_TOTAL_PRICE = "ITEMTOTALPRICE";
 
     public PrepaidSendResult(Intent data) {
         action = data.getStringExtra(ARG_ACTION);

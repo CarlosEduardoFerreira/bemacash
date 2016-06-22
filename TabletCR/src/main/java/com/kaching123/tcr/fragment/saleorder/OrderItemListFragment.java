@@ -335,7 +335,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private void doRemoceClickLine() {
         getListView().closeOpenedItems();
-        itemsListHandler.onTotolQtyUpdated(getRemoveQty(adapter.getSaleItemGuid(position)), true);
+        itemsListHandler.onTotolQtyUpdated(getRemoveQty(adapter.getSaleItemGuid(position)), true, null);
         if (adapter.getCount() == 1) {
             if (itemsListHandler != null) {
                 itemsListHandler.onRemoveLastItem();
@@ -440,7 +440,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, List<SaleOrderItemViewModel> list) {
-        itemsListHandler.onTotolQtyUpdated(getCount(list), false);
+        itemsListHandler.onTotolQtyUpdated(getCount(list), false, list);
         adapter.changeCursor(list);
         if (need2ScrollList) {
             getListView().postDelayed(new Runnable() {
@@ -558,7 +558,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
         void onBarcodeReceivedFromUSB(String barcode);
 
-        void onTotolQtyUpdated(String qty, boolean remove);
+        void onTotolQtyUpdated(String qty, boolean remove,List<SaleOrderItemViewModel> list);
     }
 
     private void needScrollToTheEnd() {
