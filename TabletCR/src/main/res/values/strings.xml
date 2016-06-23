@@ -525,6 +525,7 @@
 
     <string name="printer_cash">Cash</string>
     <string name="printer_offline_credit">OFFLINE CREDIT</string>
+    <string name="printer_offline_credit_ecu">OFFLINE CREDIT</string>
     <string name="printer_refund_total">Total (tax included)</string>
     <string name="printer_refund_tips">     Tips</string>
     <string name="printer_signature_subtitle">Signature Receipt</string>
