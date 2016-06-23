@@ -776,7 +776,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         closeSearch();
     }
 
+    protected void setCountZero()
+    {
+        saleItemCount = 0;
+        strItemCount = "0";
+    }
+
     protected void setOrderGuid(String newOrderGuid, boolean clearSalesmans) {
+        setCountZero();
         getApp().setCurrentOrderGuid(newOrderGuid);
         getApp().setSalesmanGuids(salesmanGuids);
         this.orderGuid = newOrderGuid;
@@ -1910,8 +1917,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (TextUtils.isEmpty(this.orderGuid))
             return;
 
-        saleItemCount = 0;
-        strItemCount = "0";
+        setCountZero();
         checkOrderPayments();
     }
 
@@ -1953,8 +1959,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (TextUtils.isEmpty(this.orderGuid))
             return;
 
-        strItemCount = "0";
-        saleItemCount = 0;
+        setCountZero();
         updateItemCountMsg();
         setupNewOrder();
     }

@@ -551,6 +551,7 @@
     <string name="printer_signature_merchant_copy_phrase1">I agree to pay above total amount</string>
     <string name="printer_signature_merchant_copy_phrase2">according to card issuer Agreement</string>
     <string name="printer_check">Check</string>
+    <string name="printer_check_ecu">Check</string>
     <string name="pax_not_configured">Wrong IP address, PAX pinpad wasn\'t configured</string>
     <string name="pax_configuring">Please wait for the device to be checked</string>
     <string name="pax_configured">Device ready!</string>
