@@ -162,6 +162,7 @@
     <dimen name="employee_tips_dialog_width">680dp</dimen>
     <dimen name="activation_dlg_width">550dp</dimen>
     <dimen name="activation_dlg_height">500dp</dimen>
+    <dimen name="activity_column_margin">72dp</dimen>
 
     <!-- newly added for prepaid changes -->
     <dimen name="prepaid_supass_choice_dlg_width">700dp</dimen>

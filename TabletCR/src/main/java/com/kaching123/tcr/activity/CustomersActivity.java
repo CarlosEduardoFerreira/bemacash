@@ -19,13 +19,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
-
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.store.export.ExportQuickbooksCustomersCommand.ExportCommandBaseCallback;
@@ -38,6 +31,12 @@ import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 import com.kaching123.tcr.util.DateUtils;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.HashSet;
 import java.util.List;
@@ -149,7 +148,7 @@ public class CustomersActivity extends SuperBaseActivity {
         if (!PlanOptions.isEditingCustomersAllowed()) {
             AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
         } else {
-            EditCustomerActivity.start(CustomersActivity.this, null);
+            EditCustomerActivity2.start(CustomersActivity.this, null);
         }
     }
 

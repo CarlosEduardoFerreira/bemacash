@@ -1157,6 +1157,12 @@
         <item>Matrix</item>
     </string-array>
 
+    <string-array name="customer_tabs">
+        <item>General Information</item>
+        <item>Notes</item>
+        <item>History</item>
+    </string-array>
+
     <string name="report_details_menu_email">Send by email</string>
     <string name="report_details_menu_print">Print</string>
     <string name="report_details_menu_export">Export</string>
@@ -1272,6 +1278,7 @@
     <string name="customer_label_phone">Phone</string>
     <string name="customer_label_notes">Notes</string>
     <string name="customer_label_street">Street</string>
+    <string name="customer_label_street2">Street 2</string>
     <string name="customer_label_complementary">Complementary</string>
     <string name="customer_label_city">City</string>
     <string name="customer_label_state">State</string>

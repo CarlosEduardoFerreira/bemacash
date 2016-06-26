@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/personal_information_label"
+        style="@style/EditItem.Table.Header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/edit_item_row_margin_top"
+        android:layout_marginLeft="0dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="4dp"
+        android:drawablePadding="8dp"
+        android:drawableLeft="@drawable/user_information"
+        android:background="@drawable/inventory_title_line"
+        android:text="@string/customer_label_personal_info"/>
+
+    <LinearLayout
+        android:id="@+id/personal_information"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/personal_information_label">
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/EditItem.Table.Label.Required"
+                android:text="@string/customer_label_first_name"/>
+
+            <EditText
+                style="@style/EditItem.Table.Edittext"
+                android:id="@+id/first_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="@integer/name_max_length"
+                android:singleLine="true"
+                android:inputType="textPersonName"
+                android:nextFocusDown="@+id/last_name"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_column_margin">
+
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_last_name"/>
+
+            <EditText
+                style="@style/EditItem.Table.Edittext"
+                android:id="@+id/last_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="@integer/name_max_length"
+                android:singleLine="true"
+                android:inputType="textPersonName"
+                android:nextFocusDown="@+id/email"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_column_margin">
+
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_email"/>
+
+            <EditText
+                style="@style/EditItem.Table.Edittext"
+                android:id="@+id/email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:inputType="textEmailAddress"
+                android:maxLength="@integer/email_max_length"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
