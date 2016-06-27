@@ -7,40 +7,35 @@
     <TableLayout
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_street" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_street" />
 
             <EditText
                 android:id="@+id/street"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="textPostalAddress"
                 android:maxLength="@integer/address_max_length"
-                android:nextFocusDown="@+id/complementary"
+                android:nextFocusDown="@+id/street2"
                 android:singleLine="true" />
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_street2" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_street2" />
 
             <EditText
                 android:id="@+id/street2"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="textPostalAddress"
                 android:maxLength="@integer/address_max_length"
                 android:nextFocusDown="@+id/city"
@@ -48,18 +43,15 @@
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_city" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_city" />
 
             <EditText
                 android:id="@+id/city"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="textPostalAddress"
                 android:maxLength="@integer/address_max_length"
                 android:nextFocusDown="@+id/state"
@@ -67,18 +59,15 @@
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_state" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_state" />
 
             <EditText
                 android:id="@+id/state"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="textPostalAddress"
                 android:maxLength="@integer/address_max_length"
                 android:nextFocusDown="@+id/country"
@@ -86,18 +75,15 @@
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_country" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_country" />
 
             <EditText
                 android:id="@+id/country"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="textPostalAddress"
                 android:maxLength="@integer/address_max_length"
                 android:nextFocusDown="@+id/zip"
@@ -105,172 +91,148 @@
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_zip" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_zip" />
 
             <EditText
                 android:id="@+id/zip"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:inputType="textPostalAddress"
                 android:maxLength="@integer/address_max_length"
+                android:nextFocusDown="@+id/phone"
                 android:singleLine="true" />
         </TableRow>
+
     </TableLayout>
 
     <TableLayout
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/activity_column_margin"
+        android:stretchColumns="1">
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_email" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_phone" />
 
             <EditText
-                android:id="@+id/email"
+                android:id="@+id/phone"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="textEmailAddress"
-                android:maxLength="@integer/email_max_length"
+                android:inputType="phone"
+                android:maxLength="@integer/phone_max_length"
                 android:nextFocusDown="@+id/phone"
                 android:singleLine="true" />
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_sex" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_sex" />
 
             <Spinner
-                android:id="@+id/sex_spinner"
-                style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:id="@+id/gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_identification" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_identification" />
 
             <EditText
                 android:id="@+id/identification"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
-                android:inputType="number"
-                android:maxLength="13"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
+                android:inputType="number"
+                android:maxLength="13"/>
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_consent_promotions" />
-
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_email_promotion" />
 
             <CheckBox
-                android:id="@+id/consent_promotions"
-                android:layout_width="0dp"
+                android:id="@+id/email_promotion"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true" />
+                android:button="@drawable/checkbox_mint"
+                android:layout_marginTop="12dp"/>
         </TableRow>
+
     </TableLayout>
 
     <TableLayout
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/activity_column_margin"
+        android:stretchColumns="1">
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_street" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_bonus_point" />
 
             <EditText
                 android:id="@+id/bonus_points"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="textPostalAddress"
-                android:maxLength="@integer/address_max_length"
-                android:nextFocusDown="@+id/complementary"
+                android:inputType="number"
+                android:nextFocusDown="@+id/birthday"
                 android:singleLine="true" />
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_street" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_birthday" />
 
             <EditText
                 android:id="@+id/birthday"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:maxLength="@integer/address_max_length"
-                android:nextFocusDown="@+id/complementary"
+                android:inputType="datetime"
+                android:nextFocusDown="@+id/loyalty_barcode"
                 android:singleLine="true" />
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_street" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_loyalty_barcode" />
 
             <EditText
                 android:id="@+id/loyalty_barcode"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:maxLength="@integer/address_max_length"
-                android:nextFocusDown="@+id/complementary"
+                android:inputType="number"
                 android:singleLine="true" />
         </TableRow>
 
         <TableRow>
-            <FrameLayout style="@style/EditItem.Table.LabelLayout">
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/customer_label_sex" />
-            </FrameLayout>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/customer_label_loyalty_plan" />
 
             <Spinner
                 android:id="@+id/loyalty_plan"
-                style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </TableRow>
+
 
     </TableLayout>
 

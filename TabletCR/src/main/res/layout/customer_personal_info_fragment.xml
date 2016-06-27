@@ -51,7 +51,7 @@
             android:layout_marginLeft="@dimen/activity_column_margin">
 
             <TextView
-                style="@style/EditItem.Table.Label"
+                style="@style/EditItem.Table.Label.Required"
                 android:text="@string/customer_label_last_name"/>
 
             <EditText

@@ -889,7 +889,7 @@
     <string name="customer_label_country">Pa\u00EDs</string>
     <string name="customer_label_zip">C\u00F3digo Postal</string>
     <string name="customer_label_address">Direcci\u00F3n</string>
-    <string name="customer_label_consent_promotions">Acepta recibir promociones</string>
+    <string name="customer_label_email_promotion">Acepta recibir promociones</string>
 
     <string name="customer_edit_first_name_error">Campo de Nombre vacio</string>
     <string name="customer_edit_last_name_error">Campo de apellido vacio</string>

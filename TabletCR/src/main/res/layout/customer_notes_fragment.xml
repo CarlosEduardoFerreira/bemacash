@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/notes"
+        android:layout_width="450dp"
+        android:layout_height="250dp"
+        android:gravity="start"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:background="@drawable/gradient"
+        android:inputType="textMultiLine"
+        android:textSize="18sp"
+        android:textColor="@color/mint_text_color"
+        android:maxLength="@integer/notes_max_length"
+        android:maxLines="@integer/notes_max_lines"
+        android:minLines="@integer/notes_min_lines"
+        android:scrollbars="vertical" />
+</LinearLayout>

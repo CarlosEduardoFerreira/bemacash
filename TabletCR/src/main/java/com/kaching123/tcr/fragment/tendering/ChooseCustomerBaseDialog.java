@@ -218,7 +218,7 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
             }, Permission.CUSTOMER_MANAGEMENT);
             return;
         }
-        EditCustomerActivity.startForResult(this, getActivity(), null, ADD_CUSTOMER_REQUEST_CODE);
+        EditCustomerActivity.startForResult(getActivity(), null, ADD_CUSTOMER_REQUEST_CODE);
     }
 
     @Override

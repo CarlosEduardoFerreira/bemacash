@@ -190,11 +190,6 @@
             android:theme="@style/AppTheme.Holo.NoCapsTabText"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.EditCustomerActivity2_"
-            android:screenOrientation="sensorLandscape"
-            android:theme="@style/AppTheme.Holo.NoCapsTabText"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
             android:name=".activity.EditEmployeeActivity_"
             android:label="@string/employees_edit_activity_label"
             android:screenOrientation="sensorLandscape"

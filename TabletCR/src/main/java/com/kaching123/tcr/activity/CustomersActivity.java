@@ -148,7 +148,7 @@ public class CustomersActivity extends SuperBaseActivity {
         if (!PlanOptions.isEditingCustomersAllowed()) {
             AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
         } else {
-            EditCustomerActivity2.start(CustomersActivity.this, null);
+            EditCustomerActivity.start(CustomersActivity.this, null);
         }
     }
 

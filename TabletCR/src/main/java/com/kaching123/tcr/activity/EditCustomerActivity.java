@@ -2,29 +2,22 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.telephony.PhoneNumberFormattingTextWatcher;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.adapter.CustomerPagerAdapter;
 import com.kaching123.tcr.commands.store.user.AddCustomerCommand;
 import com.kaching123.tcr.commands.store.user.AddCustomerCommand.BaseAddCustomerCallback;
 import com.kaching123.tcr.commands.store.user.DeleteCustomerCommand;
 import com.kaching123.tcr.commands.store.user.DeleteCustomerCommand.BaseDeleteCustomerCallback;
 import com.kaching123.tcr.commands.store.user.EditCustomerCommand;
 import com.kaching123.tcr.commands.store.user.EditCustomerCommand.BaseEditCustomerCallback;
+import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
+import com.kaching123.tcr.fragment.customer.CustomerPersonalInfoFragment;
+import com.kaching123.tcr.fragment.customer.CustomerProvider;
+import com.kaching123.tcr.fragment.customer.CustomerView;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
@@ -37,6 +30,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
@@ -46,94 +40,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.kaching123.tcr.fragment.UiHelper.isValidEmail;
-import static com.kaching123.tcr.fragment.UiHelper.showPhone;
-import static com.kaching123.tcr.util.PhoneUtil.isValid;
-import static com.kaching123.tcr.util.PhoneUtil.onlyDigits;
-
 /**
- * Created by pkabakov on 10.02.14.
+ * Created by vkompaniets on 24.06.2016.
  */
 @EActivity(R.layout.edit_customer_activity)
 @OptionsMenu(R.menu.edit_customer_activity)
-public class EditCustomerActivity extends SuperBaseActivity {
+public class EditCustomerActivity extends SuperBaseActivity implements CustomerProvider {
 
-    private final static HashSet<Permission> permissions = new HashSet<Permission>();
+    private final static HashSet<Permission> permissions = new HashSet<>();
 
     static {
         permissions.add(Permission.CUSTOMER_MANAGEMENT);
-    }
-
-    public static final String EXTRA_CUSTOMER = "extra_customer";
-
-    @Extra
-    protected CustomerModel model;
-
-    @ViewById(R.id.availability_message)
-    protected TextView availabilityMessage;
-    @ViewById
-    protected EditText firstName;
-    @ViewById
-    protected EditText lastName;
-    @ViewById
-    protected EditText email;
-    @ViewById
-    protected EditText phone;
-    @ViewById
-    protected EditText street;
-    @ViewById
-    protected EditText complementary;
-    @ViewById
-    protected EditText city;
-    @ViewById
-    protected EditText state;
-    @ViewById
-    protected EditText country;
-    @ViewById
-    protected EditText zip;
-    @ViewById
-    protected EditText identification;
-    @ViewById
-    protected EditText notes;
-    @ViewById
-    protected Spinner sexSpinner;
-    @ViewById
-    protected CheckBox consentPromotions;
-    @ViewById
-    protected Button saveButton;
-
-    private Mode mode;
-
-    public static void start(Context context, CustomerModel model) {
-        EditCustomerActivity_.intent(context).model(model).start();
-    }
-
-    public static void startForResult(Context context, CustomerModel model, int requestCode) {
-        EditCustomerActivity_.intent(context).model(model).startForResult(requestCode);
-    }
-
-    public static void startForResult(Fragment fragment, Context context, CustomerModel model, int requestCode) {
-        Intent intent = EditCustomerActivity_.intent(context).model(model).get();
-        fragment.startActivityForResult(intent, requestCode);
-    }
-
-    private void setItemsEnabled(boolean flag) {
-        availabilityMessage.setVisibility(flag ? View.GONE : View.VISIBLE);
-        firstName.setEnabled(flag);
-        lastName.setEnabled(flag);
-        email.setEnabled(flag);
-        phone.setEnabled(flag);
-        street.setEnabled(flag);
-        complementary.setEnabled(flag);
-        city.setEnabled(flag);
-        state.setEnabled(flag);
-        country.setEnabled(flag);
-        zip.setEnabled(flag);
-        notes.setEnabled(flag);
-        identification.setEnabled(flag);
-        sexSpinner.setEnabled(flag);
-        consentPromotions.setEnabled(flag);
-        saveButton.setEnabled(flag);
     }
 
     @Override
@@ -141,45 +58,36 @@ public class EditCustomerActivity extends SuperBaseActivity {
         return permissions;
     }
 
+    @FragmentById(R.id.personal_info_fragment)
+    protected CustomerPersonalInfoFragment personalInfoFragment;
+
+    @ViewById protected SlidingTabLayout tabs;
+    @ViewById protected ViewPager viewPager;
+
+    public static final String EXTRA_CUSTOMER = "extra_customer";
+
+    @Extra
+    protected CustomerModel model;
+
+    private Mode mode;
+    private CustomerPagerAdapter adapter;
+
     @AfterViews
-    protected void initViews() {
+    protected void init(){
         mode = model == null ? Mode.CREATE : Mode.UPDATE;
         setTitle();
-        sexSpinner.setAdapter(new SexAdapter());
-        setCustomer();
-        phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-        setItemsEnabled(PlanOptions.isEditingCustomersAllowed());
+
+        adapter = new CustomerPagerAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.customer_tabs));
+        viewPager.setAdapter(adapter);
+        tabs.setDistributeEvenly(false);
+        tabs.setViewPager(viewPager);
+
+//        setFieldsEnabled(PlanOptions.isEditingCustomersAllowed());
     }
 
-    private void setTitle() {
-        switch (mode) {
-            case CREATE:
-                setTitle(R.string.add_customer_activity_label);
-                break;
-            case UPDATE:
-                setTitle(model.getFullName());
-                break;
-        }
-    }
-
-    private void setCustomer() {
-        if (mode == Mode.CREATE)
-            return;
-
-        firstName.setText(model.firstName);
-        lastName.setText(model.lastName);
-        email.setText(model.email);
-        showPhone(phone, model.phone);
-        street.setText(model.street);
-        complementary.setText(model.complementary);
-        city.setText(model.city);
-        state.setText(model.state);
-        country.setText(model.country);
-        zip.setText(model.zip);
-        sexSpinner.setSelection(model.sex ? Sex.MALE.ordinal() : Sex.FEMALE.ordinal());
-        consentPromotions.setChecked(model.consentPromotions);
-        notes.setText(model.notes);
-        identification.setText(model.customerIdentification);
+    @Override
+    public CustomerModel getCustomer() {
+        return model;
     }
 
     @Override
@@ -208,8 +116,8 @@ public class EditCustomerActivity extends SuperBaseActivity {
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        WaitDialogFragment.show(EditCustomerActivity.this, getString(R.string.customer_delete_wait_message));
-                        DeleteCustomerCommand.start(EditCustomerActivity.this, model, deleteCustomerCallback);
+                        WaitDialogFragment.show(self(), getString(R.string.customer_delete_wait_message));
+                        DeleteCustomerCommand.start(self(), model, deleteCustomerCallback);
                         return true;
                     }
                 }
@@ -217,66 +125,15 @@ public class EditCustomerActivity extends SuperBaseActivity {
         );
     }
 
-    @Click
-    protected void saveButtonClicked() {
-        if (!validateForm()) {
-            return;
+    private void setTitle() {
+        switch (mode) {
+            case CREATE:
+                setTitle(R.string.add_customer_activity_label);
+                break;
+            case UPDATE:
+                setTitle(model.getFullName());
+                break;
         }
-        startCommand();
-    }
-
-    protected boolean validateForm() {
-        if (TextUtils.isEmpty(firstName.getText().toString().trim())) {
-            Toast.makeText(this, R.string.customer_edit_first_name_error, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (TextUtils.isEmpty(lastName.getText().toString().trim())) {
-            Toast.makeText(this, R.string.customer_edit_last_name_error, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        String emailText = email.getText().toString().trim();
-        String phoneText = phone.getText().toString().trim();
-        if (!TextUtils.isEmpty(emailText) && !isValidEmail(emailText)) {
-            Toast.makeText(this, R.string.customer_edit_email_not_valid_error, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (!TextUtils.isEmpty(phoneText) && !isValid(phoneText)) {
-            Toast.makeText(this, R.string.customer_edit_phone_not_valid_error, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
-    }
-
-    protected void startCommand() {
-        updateModel();
-        WaitDialogFragment.show(EditCustomerActivity.this, getString(R.string.customer_save_wait_message));
-        if (mode == Mode.CREATE) {
-            AddCustomerCommand.start(EditCustomerActivity.this, addCustomerCallback, model);
-        } else {
-            EditCustomerCommand.start(EditCustomerActivity.this, editCustomerCallback, model);
-        }
-
-    }
-
-    private void updateModel() {
-        if (mode == Mode.CREATE) {
-            model = new CustomerModel(UUID.randomUUID().toString(), new Date());
-        }
-
-        model.firstName = firstName.getText().toString().trim();
-        model.lastName = lastName.getText().toString().trim();
-        model.email = email.getText().toString().trim();
-        model.phone = onlyDigits(phone.getText().toString().trim());
-        model.street = street.getText().toString().trim();
-        model.complementary = complementary.getText().toString().trim();
-        model.city = city.getText().toString().trim();
-        model.state = state.getText().toString().trim();
-        model.country = country.getText().toString().trim();
-        model.zip = zip.getText().toString().trim();
-        model.sex = sexSpinner.getSelectedItem() == Sex.MALE;
-        model.consentPromotions = consentPromotions.isChecked();
-        model.notes = notes.getText().toString().trim();
-        model.customerIdentification = identification.getText().toString().trim();
     }
 
     private void setResult() {
@@ -285,27 +142,68 @@ public class EditCustomerActivity extends SuperBaseActivity {
         setResult(RESULT_OK, data);
     }
 
+    @Click
+    protected void saveButtonClicked() {
+        if (!validateView()) {
+            return;
+        }
+        startCommand();
+    }
+
+    private void startCommand() {
+        updateModel();
+        WaitDialogFragment.show(self(), getString(R.string.customer_save_wait_message));
+        if (mode == Mode.CREATE) {
+            AddCustomerCommand.start(self(), addCustomerCallback, model);
+        } else {
+            EditCustomerCommand.start(self(), editCustomerCallback, model);
+        }
+
+    }
+
+    private boolean validateView() {
+        return personalInfoFragment.validateView() && getViewFragment(0).validateView() && getViewFragment(1).validateView();
+    }
+
+    private void updateModel() {
+        if (mode == Mode.CREATE) {
+            model = new CustomerModel(UUID.randomUUID().toString(), new Date());
+        }
+
+        personalInfoFragment.collectDataToModel(model);
+        getViewFragment(0).collectDataToModel(model);
+        getViewFragment(1).collectDataToModel(model);
+    }
+
+    private CustomerView getViewFragment(int position){
+        return (CustomerView) adapter.getItem(position);
+    }
+
+    private void setFieldsEnabled(boolean enabled){
+        personalInfoFragment.setFieldsEnabled(enabled);
+        getViewFragment(0).setFieldsEnabled(enabled);
+        getViewFragment(1).setFieldsEnabled(enabled);
+    }
+
     private BaseAddCustomerCallback addCustomerCallback = new BaseAddCustomerCallback() {
 
         @Override
         protected void onCustomerAdded() {
-            WaitDialogFragment.hide(EditCustomerActivity.this);
-
+            WaitDialogFragment.hide(self());
             setResult();
-
             finish();
         }
 
         @Override
         protected void onCustomerAddError() {
-            WaitDialogFragment.hide(EditCustomerActivity.this);
-            AlertDialogFragment.showAlert(EditCustomerActivity.this, R.string.error_dialog_title, getString(R.string.customer_edit_error_msg));
+            WaitDialogFragment.hide(self());
+            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_error_msg));
         }
 
         @Override
         protected void onEmailExists() {
-            WaitDialogFragment.hide(EditCustomerActivity.this);
-            AlertDialogFragment.showAlert(EditCustomerActivity.this, R.string.error_dialog_title, getString(R.string.customer_edit_email_exists_error_msg));
+            WaitDialogFragment.hide(self());
+            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_email_exists_error_msg));
         }
 
     };
@@ -314,104 +212,47 @@ public class EditCustomerActivity extends SuperBaseActivity {
 
         @Override
         protected void onCustomerUpdated() {
-            WaitDialogFragment.hide(EditCustomerActivity.this);
+            WaitDialogFragment.hide(self());
             finish();
         }
 
         @Override
         protected void onCustomerUpdateError() {
-            WaitDialogFragment.hide(EditCustomerActivity.this);
-            AlertDialogFragment.showAlert(EditCustomerActivity.this, R.string.error_dialog_title, getString(R.string.customer_edit_error_msg));
+            WaitDialogFragment.hide(self());
+            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_error_msg));
         }
 
         @Override
         protected void onEmailExists() {
-            WaitDialogFragment.hide(EditCustomerActivity.this);
-            AlertDialogFragment.showAlert(EditCustomerActivity.this, R.string.error_dialog_title, getString(R.string.customer_edit_email_exists_error_msg));
+            WaitDialogFragment.hide(self());
+            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_email_exists_error_msg));
         }
     };
 
     private BaseDeleteCustomerCallback deleteCustomerCallback = new BaseDeleteCustomerCallback() {
         @Override
         protected void onCustomerDeleted() {
-            WaitDialogFragment.hide(EditCustomerActivity.this);
+            WaitDialogFragment.hide(self());
             finish();
         }
 
         @Override
         protected void onCustomerDeleteError() {
-            WaitDialogFragment.hide(EditCustomerActivity.this);
-            AlertDialogFragment.showAlert(EditCustomerActivity.this, R.string.error_dialog_title, getString(R.string.customer_delete_dialog_error_message));
+            WaitDialogFragment.hide(self());
+            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_delete_dialog_error_message));
         }
     };
 
-    private class SexAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return Sex.values().length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return Sex.values()[position];
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = newDropDownView(parent, position);
-            }
-            bindView(convertView, parent, position);
-            return convertView;
-        }
-
-        private View newDropDownView(ViewGroup parent, int position) {
-            return LayoutInflater.from(EditCustomerActivity.this).inflate(R.layout.spinner_dropdown_item, parent, false);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = newView(parent, position);
-            }
-            bindView(convertView, parent, position);
-            return convertView;
-        }
-
-        private View newView(ViewGroup parent, int position) {
-            return LayoutInflater.from(EditCustomerActivity.this).inflate(R.layout.spinner_item, parent, false);
-        }
-
-        private void bindView(View convertView, ViewGroup parent, int position) {
-            TextView label = (TextView) convertView;
-            Sex item = (Sex) getItem(position);
-            label.setText(item.getLabelRes());
-        }
-
-    }
-
-    private enum Sex {
-        MALE(R.string.sex_male), FEMALE(R.string.sex_female);
-
-        private final int labelRes;
-
-        Sex(int labelRes) {
-            this.labelRes = labelRes;
-        }
-
-        public int getLabelRes() {
-            return labelRes;
-        }
-    }
-
     private enum Mode {
-        CREATE, UPDATE;
+        CREATE, UPDATE
+    }
+
+    public static void start(Context context, CustomerModel model) {
+        EditCustomerActivity_.intent(context).model(model).start();
+    }
+
+    public static void startForResult(Context context, CustomerModel model, int requestCode) {
+        EditCustomerActivity_.intent(context).model(model).startForResult(requestCode);
     }
 
 }

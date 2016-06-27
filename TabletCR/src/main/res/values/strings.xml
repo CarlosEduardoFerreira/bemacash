@@ -1272,8 +1272,8 @@
     <string name="customer_label_contacts">Contacts</string>
     <string name="customer_label_first_name">First name</string>
     <string name="customer_label_last_name">Last name</string>
-    <string name="customer_label_sex">Sex</string>
-    <string name="customer_label_identification">Customer identification</string>
+    <string name="customer_label_sex">Gender</string>
+    <string name="customer_label_identification">Customer\nidentification</string>
     <string name="customer_label_email">Email</string>
     <string name="customer_label_phone">Phone</string>
     <string name="customer_label_notes">Notes</string>
@@ -1285,7 +1285,11 @@
     <string name="customer_label_country">Country</string>
     <string name="customer_label_zip">Zip</string>
     <string name="customer_label_address">Address</string>
-    <string name="customer_label_consent_promotions">Agree to receive\npromotions</string>
+    <string name="customer_label_email_promotion">Email\nPromotion</string>
+    <string name="customer_label_bonus_point">Bonus Points</string>
+    <string name="customer_label_birthday">Birthday</string>
+    <string name="customer_label_loyalty_barcode">Loyalty Barcode</string>
+    <string name="customer_label_loyalty_plan">Loyalty Plan</string>
     <string name="customer_edit_first_name_error">First name is empty</string>
     <string name="customer_edit_last_name_error">Last name is empty</string>
     <string name="customer_edit_email_not_valid_error">Email invalid</string>
