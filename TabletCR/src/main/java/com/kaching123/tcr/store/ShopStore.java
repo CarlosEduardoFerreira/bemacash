@@ -1944,14 +1944,14 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER)
         String BIRTHDAY_OFFSET = "birthday_offset";
 
-        @Column(type = Type.INTEGER)
+        @Column(type = Type.TEXT)
         String POINT_THRESHOLD = "point_threshold";
 
         @Column(type = Type.TEXT)
         String REWARD_VALUE = "reward_value";
 
         //percent, value
-        @Column(type = Type.TEXT)
+        @Column(type = Type.INTEGER)
         String REWARD_VALUE_TYPE = "reward_value_type";
     }
 
