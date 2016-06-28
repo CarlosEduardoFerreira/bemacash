@@ -1915,6 +1915,130 @@ public abstract class ShopStore {
                 foreignKey(ItemMatrixTable.PARENT_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
     }
 
+    @Table(LoyaltyTable.TABLE_NAME)
+    public interface LoyaltyTable extends IBemaSyncTable {
+
+        String TABLE_NAME = "loyalty";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String NAME = "name";
+
+        //points, birthday
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String TYPE = "type";
+
+        //discount, gift_card, item
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String REWARD_TYPE = "reward_type";
+
+        @Column(type = Type.INTEGER)
+        String BIRTHDAY_OFFSET = "birthday_offset";
+
+        @Column(type = Type.INTEGER)
+        String POINT_THRESHOLD = "point_threshold";
+
+        @Column(type = Type.TEXT)
+        String REWARD_VALUE = "reward_value";
+
+        //percent, value
+        @Column(type = Type.TEXT)
+        String REWARD_VALUE_TYPE = "reward_value_type";
+    }
+
+    @Indexes({
+            @Index(name = "loyalty", columns = LoyaltyXitemTable.LOYALTY_GUID),
+            @Index(name = "item", columns = LoyaltyXitemTable.ITEM_GUID)
+    })
+    @Table(LoyaltyXitemTable.TABLE_NAME)
+    public interface LoyaltyXitemTable extends IBemaSyncTable {
+
+        String TABLE_NAME = "loyalty_x_item";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String LOYALTY_GUID = "loyalty_guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ITEM_GUID = "item_guid";
+
+        @Column(type = Type.TEXT)
+        String PRICE = "price";
+
+        @Column(type = Type.TEXT)
+        String QTY = "qty";
+    }
+
+    static {
+        applyForeignKeys(LoyaltyXitemTable.TABLE_NAME,
+                foreignKey(LoyaltyXitemTable.LOYALTY_GUID, LoyaltyTable.TABLE_NAME, LoyaltyTable.GUID),
+                foreignKey(LoyaltyXitemTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
+    }
+
+    @Table(LoyaltyPlanTable.TABLE_NAME)
+    public interface LoyaltyPlanTable extends IBemaSyncTable {
+
+        String TABLE_NAME = "loyalty_plan";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String NAME = "name";
+    }
+
+    @Indexes({
+            @Index(name = "loyalty", columns = LoyaltyXplanTable.LOYALTY_GUID),
+            @Index(name = "plan", columns = LoyaltyXplanTable.PLAN_GUID)
+    })
+    @Table(LoyaltyXplanTable.TABLE_NAME)
+    public interface LoyaltyXplanTable {
+
+        String TABLE_NAME = "loyalty_x_plan";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String LOYALTY_GUID = "loyalty_guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String PLAN_GUID = "plan_guid";
+    }
+
+    static {
+        applyForeignKeys(LoyaltyXplanTable.TABLE_NAME,
+                foreignKey(LoyaltyXplanTable.LOYALTY_GUID, LoyaltyTable.TABLE_NAME, LoyaltyTable.GUID),
+                foreignKey(LoyaltyXplanTable.PLAN_GUID, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID));
+    }
 
     /**
      * views *
