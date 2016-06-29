@@ -2,7 +2,7 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 
-import com.kaching123.tcr.store.ShopStore.LoyaltyXitemTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveItemTable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,17 +13,17 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 /**
  * Created by vkompaniets on 28.06.2016.
  */
-public class LoyaltyXitemModel implements IValueModel, Serializable {
+public class LoyaltyIncentiveItemModel implements IValueModel, Serializable {
 
     public String guid;
-    public String loyaltyGuid;
+    public String incentiveGuid;
     public String itemGuid;
     public BigDecimal price;
     public BigDecimal qty;
 
-    public LoyaltyXitemModel(String guid, String loyaltyGuid, String itemGuid, BigDecimal price, BigDecimal qty) {
+    public LoyaltyIncentiveItemModel(String guid, String incentiveGuid, String itemGuid, BigDecimal price, BigDecimal qty) {
         this.guid = guid;
-        this.loyaltyGuid = loyaltyGuid;
+        this.incentiveGuid = incentiveGuid;
         this.itemGuid = itemGuid;
         this.price = price;
         this.qty = qty;
@@ -37,11 +37,11 @@ public class LoyaltyXitemModel implements IValueModel, Serializable {
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
-        values.put(LoyaltyXitemTable.GUID, guid);
-        values.put(LoyaltyXitemTable.LOYALTY_GUID, loyaltyGuid);
-        values.put(LoyaltyXitemTable.ITEM_GUID, itemGuid);
-        values.put(LoyaltyXitemTable.PRICE, _decimal(price));
-        values.put(LoyaltyXitemTable.QTY, _decimalQty(qty));
+        values.put(LoyaltyIncentiveItemTable.GUID, guid);
+        values.put(LoyaltyIncentiveItemTable.INCENTIVE_GUID, incentiveGuid);
+        values.put(LoyaltyIncentiveItemTable.ITEM_GUID, itemGuid);
+        values.put(LoyaltyIncentiveItemTable.PRICE, _decimal(price));
+        values.put(LoyaltyIncentiveItemTable.QTY, _decimalQty(qty));
         return values;
     }
 }

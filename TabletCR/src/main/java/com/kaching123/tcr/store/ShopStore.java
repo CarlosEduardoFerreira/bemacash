@@ -1915,10 +1915,10 @@ public abstract class ShopStore {
                 foreignKey(ItemMatrixTable.PARENT_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
     }
 
-    @Table(LoyaltyTable.TABLE_NAME)
-    public interface LoyaltyTable extends IBemaSyncTable {
+    @Table(LoyaltyIncentiveTable.TABLE_NAME)
+    public interface LoyaltyIncentiveTable extends IBemaSyncTable {
 
-        String TABLE_NAME = "loyalty";
+        String TABLE_NAME = "loyalty_incentive";
 
         @URI
         String URI_CONTENT = TABLE_NAME;
@@ -1956,13 +1956,13 @@ public abstract class ShopStore {
     }
 
     @Indexes({
-            @Index(name = "loyalty", columns = LoyaltyXitemTable.LOYALTY_GUID),
-            @Index(name = "item", columns = LoyaltyXitemTable.ITEM_GUID)
+            @Index(name = "incentive", columns = LoyaltyIncentiveItemTable.INCENTIVE_GUID),
+            @Index(name = "item", columns = LoyaltyIncentiveItemTable.ITEM_GUID)
     })
-    @Table(LoyaltyXitemTable.TABLE_NAME)
-    public interface LoyaltyXitemTable extends IBemaSyncTable {
+    @Table(LoyaltyIncentiveItemTable.TABLE_NAME)
+    public interface LoyaltyIncentiveItemTable extends IBemaSyncTable {
 
-        String TABLE_NAME = "loyalty_x_item";
+        String TABLE_NAME = "loyalty_incentive_item";
 
         @URI
         String URI_CONTENT = TABLE_NAME;
@@ -1973,7 +1973,7 @@ public abstract class ShopStore {
 
         @NotNull
         @Column(type = Type.TEXT)
-        String LOYALTY_GUID = "loyalty_guid";
+        String INCENTIVE_GUID = "incentive_guid";
 
         @NotNull
         @Column(type = Type.TEXT)
@@ -1987,9 +1987,9 @@ public abstract class ShopStore {
     }
 
     static {
-        applyForeignKeys(LoyaltyXitemTable.TABLE_NAME,
-                foreignKey(LoyaltyXitemTable.LOYALTY_GUID, LoyaltyTable.TABLE_NAME, LoyaltyTable.GUID),
-                foreignKey(LoyaltyXitemTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
+        applyForeignKeys(LoyaltyIncentiveItemTable.TABLE_NAME,
+                foreignKey(LoyaltyIncentiveItemTable.INCENTIVE_GUID, LoyaltyIncentiveTable.TABLE_NAME, LoyaltyIncentiveTable.GUID),
+                foreignKey(LoyaltyIncentiveItemTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
     }
 
     @Table(LoyaltyPlanTable.TABLE_NAME)
@@ -2010,13 +2010,13 @@ public abstract class ShopStore {
     }
 
     @Indexes({
-            @Index(name = "loyalty", columns = LoyaltyXplanTable.LOYALTY_GUID),
-            @Index(name = "plan", columns = LoyaltyXplanTable.PLAN_GUID)
+            @Index(name = "incentive", columns = LoyaltyIncentivePlanTable.INCENTIVE_GUID),
+            @Index(name = "plan", columns = LoyaltyIncentivePlanTable.PLAN_GUID)
     })
-    @Table(LoyaltyXplanTable.TABLE_NAME)
-    public interface LoyaltyXplanTable {
+    @Table(LoyaltyIncentivePlanTable.TABLE_NAME)
+    public interface LoyaltyIncentivePlanTable {
 
-        String TABLE_NAME = "loyalty_x_plan";
+        String TABLE_NAME = "loyalty_incentive_plan";
 
         @URI
         String URI_CONTENT = TABLE_NAME;
@@ -2027,7 +2027,7 @@ public abstract class ShopStore {
 
         @NotNull
         @Column(type = Type.TEXT)
-        String LOYALTY_GUID = "loyalty_guid";
+        String INCENTIVE_GUID = "incentive_guid";
 
         @NotNull
         @Column(type = Type.TEXT)
@@ -2035,9 +2035,9 @@ public abstract class ShopStore {
     }
 
     static {
-        applyForeignKeys(LoyaltyXplanTable.TABLE_NAME,
-                foreignKey(LoyaltyXplanTable.LOYALTY_GUID, LoyaltyTable.TABLE_NAME, LoyaltyTable.GUID),
-                foreignKey(LoyaltyXplanTable.PLAN_GUID, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID));
+        applyForeignKeys(LoyaltyIncentivePlanTable.TABLE_NAME,
+                foreignKey(LoyaltyIncentivePlanTable.INCENTIVE_GUID, LoyaltyIncentiveTable.TABLE_NAME, LoyaltyIncentiveTable.GUID),
+                foreignKey(LoyaltyIncentivePlanTable.PLAN_GUID, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID));
     }
 
     /**
