@@ -18,6 +18,10 @@ import com.kaching123.tcr.jdbc.converters.ItemsModifierGroupsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsModifiersJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.jdbc.converters.LoyaltyIncentiveItemJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.LoyaltyIncentiveJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.LoyaltyIncentivePlanJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.LoyaltyPlanJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PrinterAliasJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.RegisterJdbcConverter;
@@ -48,6 +52,10 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemMovementModel;
+import com.kaching123.tcr.model.LoyaltyIncentiveItemModel;
+import com.kaching123.tcr.model.LoyaltyIncentiveModel;
+import com.kaching123.tcr.model.LoyaltyIncentivePlanModel;
+import com.kaching123.tcr.model.LoyaltyPlanModel;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierModel;
@@ -291,6 +299,30 @@ public class JdbcFactory {
         API_METHOD.put(ShopStore.ItemMatrixTable.TABLE_NAME, "item_matrixes");
         API_METHOD2.put(ItemMatrixModel.class, "item_matrixes");
 
+        CONVERTERS.put(ShopStore.LoyaltyIncentiveTable.TABLE_NAME, c = new LoyaltyIncentiveJdbcConverter());
+        CONVERTERS2.put(LoyaltyIncentiveModel.class, c);
+
+        API_METHOD.put(ShopStore.LoyaltyIncentiveTable.TABLE_NAME, "loyalty_incentive");
+        API_METHOD2.put(LoyaltyIncentiveModel.class, "loyalty_incentive");
+
+        CONVERTERS.put(ShopStore.LoyaltyIncentiveItemTable.TABLE_NAME, c = new LoyaltyIncentiveItemJdbcConverter());
+        CONVERTERS2.put(LoyaltyIncentiveItemModel.class, c);
+
+        API_METHOD.put(ShopStore.LoyaltyIncentiveItemTable.TABLE_NAME, "loyalty_incentive_item");
+        API_METHOD2.put(LoyaltyIncentiveItemModel.class, "loyalty_incentive_item");
+
+        CONVERTERS.put(ShopStore.LoyaltyPlanTable.TABLE_NAME, c = new LoyaltyPlanJdbcConverter());
+        CONVERTERS2.put(LoyaltyPlanModel.class, c);
+
+        API_METHOD.put(ShopStore.LoyaltyPlanTable.TABLE_NAME, "loyalty_plan");
+        API_METHOD2.put(LoyaltyPlanModel.class, "loyalty_plan");
+
+        CONVERTERS.put(ShopStore.LoyaltyIncentivePlanTable.TABLE_NAME, c = new LoyaltyIncentivePlanJdbcConverter());
+        CONVERTERS2.put(LoyaltyIncentivePlanModel.class, c);
+
+        API_METHOD.put(ShopStore.LoyaltyIncentivePlanTable.TABLE_NAME, "loyalty_incentive_plan");
+        API_METHOD2.put(LoyaltyIncentivePlanModel.class, "loyalty_incentive_plan");
+
     }
 
     public static JdbcConverter getConverter(String tableName) {
@@ -304,14 +336,6 @@ public class JdbcFactory {
     public static <T extends IValueModel> JdbcConverter<T> getConverter(Class<T> clazz) {
         return CONVERTERS2.get(clazz);
     }
-
-    /*public static <T extends IValueModel> ISqlCommand insert(String tableName, T model) {
-        String apiMethod = API_METHOD.get(tableName);
-        if(apiMethod == null){
-            throw new IllegalArgumentException("no api for table = " + tableName);
-        }
-        return CONVERTERS.get(tableName).insertSQL("add_" + apiMethod, model);
-    }*/
 
     public static <T extends IValueModel> ISqlCommand insert(T model, IAppCommandContext appCommandContext) {
         String apiMethod = API_METHOD2.get(model.getClass());

@@ -26,6 +26,10 @@ import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveItemTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyIncentivePlanTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyPlanTable;
 import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
@@ -180,8 +184,10 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(EmployeeTipsTable.TABLE_NAME, R.string.sync_employee_tips);
         TABLE_NAMES.put(EmployeeCommissionsTable.TABLE_NAME, R.string.sync_employee_commissions);
 
-        //TABLE_NAMES.put(UnitLabelTable.TABLE_NAME, R.string.sync_oomposer);
-
+        TABLE_NAMES.put(LoyaltyIncentiveTable.TABLE_NAME, R.string.sync_loyalty_incentive);
+        TABLE_NAMES.put(LoyaltyIncentiveItemTable.TABLE_NAME, R.string.sync_loyalty_incentive_item);
+        TABLE_NAMES.put(LoyaltyPlanTable.TABLE_NAME, R.string.sync_loyalty_plan);
+        TABLE_NAMES.put(LoyaltyIncentivePlanTable.TABLE_NAME, R.string.sync_loyalty_incentive_plan);
     }
 
     public static void show(FragmentActivity activity, String msg) {

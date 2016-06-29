@@ -1949,14 +1949,14 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String NAME = "name";
 
-        //points, birthday
         @NotNull
         @Column(type = Type.INTEGER)
+        //points, birthday
         String TYPE = "type";
 
-        //discount, gift_card, item
         @NotNull
         @Column(type = Type.INTEGER)
+        //discount, gift_card, item
         String REWARD_TYPE = "reward_type";
 
         @Column(type = Type.INTEGER)
@@ -1968,8 +1968,8 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String REWARD_VALUE = "reward_value";
 
-        //percent, value
         @Column(type = Type.INTEGER)
+        //percent, value
         String REWARD_VALUE_TYPE = "reward_value_type";
     }
 

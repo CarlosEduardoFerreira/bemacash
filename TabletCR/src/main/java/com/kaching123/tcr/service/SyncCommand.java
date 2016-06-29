@@ -59,6 +59,10 @@ import com.kaching123.tcr.store.ShopProviderExt;
 import com.kaching123.tcr.store.ShopProviderExt.Method;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemMatrixTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveItemTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyIncentivePlanTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyPlanTable;
 import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
@@ -150,6 +154,10 @@ public class SyncCommand implements Runnable {
             ItemMovementTable.URI_CONTENT,
             UnitTable.URI_CONTENT,
             UnitLabelTable.URI_CONTENT,
+            LoyaltyIncentiveTable.URI_CONTENT,
+            LoyaltyIncentiveItemTable.URI_CONTENT,
+            LoyaltyPlanTable.URI_CONTENT,
+            LoyaltyIncentivePlanTable.URI_CONTENT,
 
             SaleOrderTable.URI_CONTENT,
             SaleItemTable.URI_CONTENT,
@@ -359,6 +367,7 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, UnitLabelTable.TABLE_NAME, UnitLabelTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, RegisterTable.TABLE_NAME, RegisterTable.ID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID, employee, serverLastTimestamp);
+
                     count += syncSingleTable2(service, api2, CustomerTable.TABLE_NAME, CustomerTable.GUID, employee, serverLastTimestamp);
 
                     //employee
@@ -380,6 +389,12 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, VariantItemTable.TABLE_NAME, VariantItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, VariantSubItemTable.TABLE_NAME, VariantSubItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ItemMatrixTable.TABLE_NAME, ItemMatrixTable.GUID, employee, serverLastTimestamp);
+
+                    //loyalty
+                    count += syncSingleTable2(service, api2, LoyaltyIncentiveTable.TABLE_NAME, LoyaltyIncentiveTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, LoyaltyIncentiveItemTable.TABLE_NAME, LoyaltyIncentiveItemTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, LoyaltyIncentivePlanTable.TABLE_NAME, LoyaltyIncentivePlanTable.GUID, employee, serverLastTimestamp);
 
                     //between iterations shouldn't be any gaps
                     boolean firstIteration = retriesCount == FINALIZE_SYNC_RETRIES;
@@ -673,6 +688,15 @@ public class SyncCommand implements Runnable {
             return false;
         if (!isTableEmpty(context, ComposerTable.TABLE_NAME, ComposerTable.ID))
             return false;
+        if (!isTableEmpty(context, LoyaltyIncentiveTable.TABLE_NAME, LoyaltyIncentiveTable.GUID))
+            return false;
+        if (!isTableEmpty(context, LoyaltyIncentiveItemTable.TABLE_NAME, LoyaltyIncentiveItemTable.GUID))
+            return false;
+        if (!isTableEmpty(context, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID))
+            return false;
+        if (!isTableEmpty(context, LoyaltyIncentivePlanTable.TABLE_NAME, LoyaltyIncentivePlanTable.GUID))
+            return false;
+
         return true;
     }
 
@@ -763,9 +787,11 @@ public class SyncCommand implements Runnable {
                 checkIsLoadingOldOrders();
 
                 count += syncLocalSingleTable(service, ShopStore.UnitLabelTable.TABLE_NAME, UnitLabelTable.GUID);
-
                 count += syncLocalSingleTable(service, RegisterTable.TABLE_NAME, RegisterTable.ID);
                 count += syncLocalSingleTable(service, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID);
+                count += syncLocalSingleTable(service, LoyaltyIncentiveTable.TABLE_NAME, LoyaltyIncentiveTable.GUID);
+                count += syncLocalSingleTable(service, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID);
+                count += syncLocalSingleTable(service, LoyaltyIncentivePlanTable.TABLE_NAME, LoyaltyIncentivePlanTable.GUID);
                 count += syncLocalSingleTable(service, CustomerTable.TABLE_NAME, CustomerTable.GUID);
 
                 //employee
@@ -789,6 +815,7 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, ItemMatrixTable.TABLE_NAME, ItemMatrixTable.GUID);
                 count += syncLocalSingleTable(service, ComposerTable.TABLE_NAME, ComposerTable.ID);
                 count += syncLocalSingleTable(service, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID);
+                count += syncLocalSingleTable(service, LoyaltyIncentiveItemTable.TABLE_NAME, LoyaltyIncentiveItemTable.GUID);
 
                 //sale
 
@@ -1741,7 +1768,11 @@ public class SyncCommand implements Runnable {
         REFUND_EMPLOYEE_TIPS(EmployeeTipsTable.TABLE_NAME, false),
         EMPLOYEE_COMMISSIONS(EmployeeCommissionsTable.TABLE_NAME, true),
         COMPOSER(ShopStore.ComposerTable.TABLE_NAME, true),
-        UNIT_LABEL(ShopStore.UnitLabelTable.TABLE_NAME, true);
+        UNIT_LABEL(ShopStore.UnitLabelTable.TABLE_NAME, true),
+        LOYALTY_INCENTIVE(LoyaltyIncentiveTable.TABLE_NAME, true),
+        LOYALTY_INCENTIVE_ITEM(LoyaltyIncentiveItemTable.TABLE_NAME, true),
+        LOYALTY_PLAN(LoyaltyPlanTable.TABLE_NAME, true),
+        LOYALTY_INCENTIVE_PLAN(LoyaltyIncentivePlanTable.TABLE_NAME, true);
 
         public final String tableName;
         public final boolean isParent;
