@@ -40,6 +40,9 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String CONSENT_EMAIL = "CONSENT_EMAIL";
     private static final String NOTES = "NOTES";
     private static final String CUSTOMER_IDENTIFICATION = "CUSTOMER_IDENTIFICATION";
+    private static final String LOYALTY_PLAN_ID = "LOYALTY_PLAN_ID";
+    private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
+    private static final String LOYALTY_BARCODE = "LOYALTY_BARCODE";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -59,7 +62,10 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 _jdbcDate(rs.getTimestamp(CREATE_DATE)),
                 rs.getBoolean(CONSENT_EMAIL),
                 rs.getString(NOTES),
-                rs.getString(CUSTOMER_IDENTIFICATION))
+                rs.getString(CUSTOMER_IDENTIFICATION),
+                rs.getString(LOYALTY_PLAN_ID),
+                rs.getBigDecimal(LOYALTY_POINTS),
+                rs.getString(LOYALTY_BARCODE))
                 .toValues();
     }
 
@@ -81,7 +87,10 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getDate(CREATE_DATE),
                 rs.getBoolean(CONSENT_EMAIL),
                 rs.getString(NOTES),
-                rs.getString(CUSTOMER_IDENTIFICATION));
+                rs.getString(CUSTOMER_IDENTIFICATION),
+                rs.getString(LOYALTY_PLAN_ID),
+                rs.getBigDecimal(LOYALTY_POINTS),
+                rs.getString(LOYALTY_BARCODE));
     }
 
     @Override
@@ -113,6 +122,9 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(CONSENT_EMAIL, model.consentPromotions)
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
+                .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
+                .add(LOYALTY_POINTS, model.loyaltyPoints)
+                .add(LOYALTY_BARCODE, model.loyaltyBarcode)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -133,6 +145,9 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(CONSENT_EMAIL, model.consentPromotions)
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
+                .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
+                .add(LOYALTY_POINTS, model.loyaltyPoints)
+                .add(LOYALTY_BARCODE, model.loyaltyBarcode)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

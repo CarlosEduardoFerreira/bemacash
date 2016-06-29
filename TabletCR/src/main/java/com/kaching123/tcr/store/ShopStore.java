@@ -1504,6 +1504,15 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String NOTES = "notes";
+
+        @Column(type = Column.Type.TEXT)
+        String LOYALTY_PLAN_ID = "loyalty_plan_id";
+
+        @Column(type = Column.Type.TEXT)
+        String LOYALTY_POINTS = "loyalty_points";
+
+        @Column(type = Column.Type.TEXT)
+        String LOYALTY_BARCODE = "loyalty_barcode";
     }
 
     @Table(PrinterAliasTable.TABLE_NAME)
