@@ -12,8 +12,14 @@ import java.io.Serializable;
 public class LoyaltyIncentivePlanModel implements IValueModel, Serializable{
 
     public String guid;
-    public String loyaltyGuid;
+    public String incentiveGuid;
     public String planGuid;
+
+    public LoyaltyIncentivePlanModel(String guid, String incentiveGuid, String planGuid) {
+        this.guid = guid;
+        this.incentiveGuid = incentiveGuid;
+        this.planGuid = planGuid;
+    }
 
     @Override
     public String getGuid() {
@@ -24,7 +30,7 @@ public class LoyaltyIncentivePlanModel implements IValueModel, Serializable{
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
         values.put(LoyaltyIncentivePlanTable.GUID, guid);
-        values.put(LoyaltyIncentivePlanTable.INCENTIVE_GUID, loyaltyGuid);
+        values.put(LoyaltyIncentivePlanTable.INCENTIVE_GUID, incentiveGuid);
         values.put(LoyaltyIncentivePlanTable.PLAN_GUID, planGuid);
         return values;
     }
