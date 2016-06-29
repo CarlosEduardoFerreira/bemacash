@@ -21,6 +21,7 @@ import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
@@ -47,7 +48,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String COST = "COST";
     private static final String MINIMUM_QTY = "MINIMUM_QTY";
     private static final String RECOMMENDED_QTY = "RECOMMENDED_QTY";
-
     private static final String UPDATE_QTY_FLAG = "UPDATE_QTY_FLAG";
     private static final String TAX_GROUP_ID = "TAX_GROUP_ID";
     private static final String TAX_GROUP_ID2 = "TAX_GROUP_ID2";
@@ -64,6 +64,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String ITEM_REF_TYPE = "ITEM_REF_TYPE";
     private static final String REFERENCE_ITEM_ID = "REFERENCE_ITEM_ID";
     private static final String IS_PREPAID_ITEM = "IS_PREPAID_ITEM";
+    private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -102,8 +103,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
                 rs.getBigDecimal(COMMISSION),
                 rs.getString(REFERENCE_ITEM_ID),
-                _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple)
-
+                _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple),
+                rs.getBigDecimal(LOYALTY_POINTS)
         );
         return model.toValues();
     }
@@ -145,7 +146,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
                 rs.getBigDecimal(COMMISSION),
                 rs.getString(REFERENCE_ITEM_ID),
-                ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE))
+                ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE)),
+                rs.getBigDecimal(LOYALTY_POINTS)
         );
     }
 
@@ -195,6 +197,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(COMMISSION, item.commission)
                 .add(ITEM_REF_TYPE, item.refType.ordinal())
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
+                .add(LOYALTY_POINTS, _decimal(item.loyaltyPoints))
                 .build(JdbcFactory.getApiMethod(item));
     }
 
@@ -232,9 +235,10 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(CODE_TYPE, item.codeType)
                 .add(ELIGIBLE_FOR_COMMISSION, item.commissionEligible)
                 .add(COMMISSION, item.commission)
-                .where(ID, item.guid)
                 .add(ITEM_REF_TYPE, item.refType.ordinal())
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
+                .add(LOYALTY_POINTS, _decimal(item.loyaltyPoints))
+                .where(ID, item.guid)
                 .build(JdbcFactory.getApiMethod(item));
     }
 

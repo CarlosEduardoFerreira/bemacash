@@ -97,7 +97,6 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getString(indexHolder.get(ItemTable.PRODUCT_CODE)),
                 _priceType(c, indexHolder.get(ItemTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
-                //_decimal(c.getString(indexHolder.get(ItemTable.QUANTITY))),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemTable.UNITS_LABEL)),
                 c.getString(c.getColumnIndex(ItemTable.UNIT_LABEL_ID)),
@@ -131,7 +130,8 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
                 _decimal(c, indexHolder.get(ItemTable.COMMISSION)),
                 c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
-                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)))
+                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
+                _decimal(c, indexHolder.get(ItemTable.LOYALTY_POINTS)))
                 .setIsAComposer(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.HostComposerTable.ID)) != null)
                 .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null)
                 .setMatrixGuid(matrixGuid);

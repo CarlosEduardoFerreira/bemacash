@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.VariantItemTable;
 import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
@@ -84,7 +85,8 @@ public class ItemExModel extends ItemModel {
                 true,
                 null,
                 null,
-                ItemRefType.Simple);
+                ItemRefType.Simple,
+                null);
         this.modifiersCount = 0;
         this.addonsCount = 0;
         this.optionalCount = 0;
@@ -138,11 +140,12 @@ public class ItemExModel extends ItemModel {
                        int btnView,
                        boolean hasNotes,
                        boolean serializable,
-                       Unit.CodeType codeType,
+                       CodeType codeType,
                        boolean commissionEligible,
                        BigDecimal commission,
                        String referenceItemGuid,
-                       ItemRefType itemRefType) {
+                       ItemRefType itemRefType,
+                       BigDecimal loyaltyPoints) {
         super(guid,
                 categoryId,
                 description,
@@ -177,7 +180,8 @@ public class ItemExModel extends ItemModel {
                 commissionEligible,
                 commission,
                 referenceItemGuid,
-                itemRefType
+                itemRefType,
+                loyaltyPoints
         );
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;

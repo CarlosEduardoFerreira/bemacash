@@ -4,7 +4,7 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.PriceType;
-import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.Unit.CodeType;
 
 import java.math.BigDecimal;
 
@@ -47,11 +47,12 @@ public class CategoryItemViewModel extends ItemExModel {
                                  int btnView,
                                  boolean hasNotes,
                                  boolean serializable,
-                                 Unit.CodeType codeType,
+                                 CodeType codeType,
                                  boolean commissionEligible,
                                  BigDecimal commission,
                                  String referenceItemGuid,
-                                 ItemRefType itemRefType) {
+                                 ItemRefType itemRefType,
+                                 BigDecimal loyaltyPoints) {
         super(guid,
                 categoryId,
                 description,
@@ -92,7 +93,8 @@ public class CategoryItemViewModel extends ItemExModel {
                 commissionEligible,
                 commission,
                 referenceItemGuid,
-                itemRefType);
+                itemRefType,
+                loyaltyPoints);
         this.categoryName = categoryName;
     }
 

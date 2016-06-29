@@ -486,6 +486,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String REFERENCE_ITEM_ID = "reference_item_id";
+
+        @Column(type = Type.TEXT)
+        String LOYALTY_POINTS = "LOYALTY_POINTS";
     }
 
     static {
@@ -1513,6 +1516,12 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String LOYALTY_BARCODE = "loyalty_barcode";
+    }
+
+    static {
+        applyForeignKeys(CustomerTable.TABLE_NAME,
+                foreignKey(CustomerTable.LOYALTY_PLAN_ID, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID)
+        );
     }
 
     @Table(PrinterAliasTable.TABLE_NAME)

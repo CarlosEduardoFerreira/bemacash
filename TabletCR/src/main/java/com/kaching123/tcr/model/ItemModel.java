@@ -54,11 +54,10 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public boolean commissionEligible = true;
     public BigDecimal commission;
     public boolean isSalable;
-
     public ItemRefType refType;
     public String referenceItemGuid;
-
     public boolean ignoreMovementupdate;
+    public BigDecimal loyaltyPoints;
 
     public ItemModel() {
         this.guid = UUID.randomUUID().toString();
@@ -102,7 +101,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      boolean commissionEligible,
                      BigDecimal commission,
                      String referenceItemGuid,
-                     ItemRefType refType) {
+                     ItemRefType refType,
+                     BigDecimal loyaltyPoints) {
         super();
         this.guid = guid;
         this.categoryId = categoryId;
@@ -140,6 +140,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.commission = commission;
         this.referenceItemGuid = referenceItemGuid;
         this.refType = refType;
+        this.loyaltyPoints = loyaltyPoints;
     }
 
     public ItemModel(ItemModel itemModel) {
@@ -180,6 +181,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.commission = itemModel.commission;
         this.refType = itemModel.refType;
         this.referenceItemGuid = itemModel.referenceItemGuid;
+        this.loyaltyPoints = itemModel.loyaltyPoints;
     }
 
     @Override
@@ -190,28 +192,22 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
-
         values.put(ItemTable.GUID, guid);
         values.put(ItemTable.CATEGORY_ID, categoryId);
-
         values.put(ItemTable.DESCRIPTION, description);
         values.put(ItemTable.CODE, code);
         values.put(ItemTable.EAN_CODE, eanCode);
         values.put(ItemTable.PRODUCT_CODE, productCode);
-
         values.put(ItemTable.PRICE_TYPE, priceType.ordinal());
         values.put(ItemTable.SALE_PRICE, _decimal(price));
         values.put(ItemTable.UNITS_LABEL, unitsLabel);
         values.put(ItemTable.UNIT_LABEL_ID, unitsLabelId);
-
         values.put(ItemTable.STOCK_TRACKING, isStockTracking);
         values.put(ItemTable.ACTIVE_STATUS, isActiveStatus);
-
         values.put(ItemTable.DISCOUNTABLE, isDiscountable);
         values.put(ItemTable.SALABLE, isSalable);
         values.put(ItemTable.DISCOUNT, _decimal(discount));
         _putDiscount(values, ItemTable.DISCOUNT_TYPE, discountType);
-
         values.put(ItemTable.TAXABLE, isTaxable);
         values.put(ItemTable.COST, _decimal(cost));
         values.put(ItemTable.MINIMUM_QTY, _decimalQty(minimumQty));
@@ -219,24 +215,18 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.UPDATE_QTY_FLAG, updateQtyFlag);
         values.put(ItemTable.TAX_GROUP_GUID, taxGroupGuid);
         values.put(ItemTable.TAX_GROUP_GUID2, taxGroupGuid2);
-
         values.put(ItemTable.DEFAULT_MODIFIER_GUID, defaultModifierGuid);
-
         values.put(ItemTable.ORDER_NUM, orderNum);
-
         values.put(ItemTable.PRINTER_ALIAS_GUID, printerAliasGuid);
-
         values.put(ItemTable.BUTTON_VIEW, btnView);
-
         values.put(ItemTable.HAS_NOTES, hasNotes);
         values.put(ItemTable.SERIALIZABLE, serializable);
         _putEnum(values, ItemTable.CODE_TYPE, codeType);
-
         values.put(ItemTable.ELIGIBLE_FOR_COMMISSION, commissionEligible);
         values.put(ItemTable.COMMISSION, _decimal(commission));
-
         _putItemRefType(values, ItemTable.ITEM_REF_TYPE, refType);
         values.put(ItemTable.REFERENCE_ITEM_ID, referenceItemGuid);
+        values.put(ItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
 
         return values;
     }

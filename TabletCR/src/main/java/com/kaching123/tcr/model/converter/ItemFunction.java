@@ -53,7 +53,8 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
             ItemTable.ELIGIBLE_FOR_COMMISSION,
             ItemTable.COMMISSION,
             ItemTable.REFERENCE_ITEM_ID,
-            ItemTable.ITEM_REF_TYPE
+            ItemTable.ITEM_REF_TYPE,
+            ItemTable.LOYALTY_POINTS
     };
 
     @Override
@@ -94,8 +95,8 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
                 _decimal(c, indexHolder.get(ItemTable.COMMISSION)),
                 c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
-                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE))
-
+                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
+                _decimal(c.getString(indexHolder.get(ItemTable.LOYALTY_POINTS)))
         );
     }
 
