@@ -209,6 +209,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected CheckBox commissionsEligible;
     @ViewById
     protected EditText commissions;
+    @ViewById
+    protected EditText loyaltyPoints;
 
     @Extra
     protected ItemExModel parentItem;
@@ -717,6 +719,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.serializable = model.codeType != null;
 
         model.commissionEligible = this.commissionsEligible.isChecked();
+
+        model.loyaltyPoints = parseBigDecimal(this.loyaltyPoints, BigDecimal.ZERO);
     }
 
     protected boolean validateForm() {

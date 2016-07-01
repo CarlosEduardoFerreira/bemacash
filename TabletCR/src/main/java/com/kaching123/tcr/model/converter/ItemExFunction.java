@@ -57,6 +57,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             ItemTable.TAX_GROUP_GUID2,
             ItemTable.IS_DELETED,
             ItemTable.DEFAULT_MODIFIER_GUID,
+            ItemTable.LOYALTY_POINTS,
             CategoryTable.DEPARTMENT_GUID,
             _caseCount(ModifierTable.TYPE, ModifierType.MODIFIER, ItemExtView.MODIFIERS_COUNT),
             _caseCount(ModifierTable.TYPE, ModifierType.ADDON, ItemExtView.ADDONS_COUNT),

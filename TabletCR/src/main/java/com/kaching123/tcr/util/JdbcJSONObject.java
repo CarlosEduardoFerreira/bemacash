@@ -29,6 +29,14 @@ public class JdbcJSONObject extends JSONObject{
         }
     };
 
+    private static ThreadLocal<SimpleDateFormat> dateSimpleFormat = new ThreadLocal<SimpleDateFormat>() {
+        protected SimpleDateFormat initialValue() {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            format.setTimeZone(TimeZone.getTimeZone("GMT"));
+            return format;
+        }
+    };
+
     public JdbcJSONObject(String json) throws JSONException {
         super(json);
     }
@@ -61,6 +69,17 @@ public class JdbcJSONObject extends JSONObject{
             return null;
         try {
             return dateFormat.get().parse(datetime);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("unsupported format", e);
+        }
+    }
+
+    public Date getSimpleDate(String column) throws JSONException {
+        String datetime = getString(column);
+        if (TextUtils.isEmpty(datetime))
+            return null;
+        try {
+            return dateSimpleFormat.get().parse(datetime);
         } catch (ParseException e) {
             throw new IllegalArgumentException("unsupported format", e);
         }

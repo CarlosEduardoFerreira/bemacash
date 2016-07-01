@@ -104,7 +104,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBigDecimal(COMMISSION),
                 rs.getString(REFERENCE_ITEM_ID),
                 _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple),
-                rs.getBigDecimal(LOYALTY_POINTS)
+                /*rs.getBigDecimal(LOYALTY_POINTS)*/null
         );
         return model.toValues();
     }

@@ -36,6 +36,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String EMAIL = "EMAIL";
     private static final String PHONE = "PHONE";
     private static final String SEX = "SEX";
+    private static final String BIRTHDAY = "BIRTHDAY";
     private static final String CREATE_DATE = "CREATE_DATE";
     private static final String CONSENT_EMAIL = "CONSENT_EMAIL";
     private static final String NOTES = "NOTES";
@@ -59,13 +60,14 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getString(EMAIL),
                 rs.getString(PHONE),
                 rs.getBoolean(SEX),
+                null,
                 _jdbcDate(rs.getTimestamp(CREATE_DATE)),
                 rs.getBoolean(CONSENT_EMAIL),
                 rs.getString(NOTES),
-                rs.getString(CUSTOMER_IDENTIFICATION),
-                rs.getString(LOYALTY_PLAN_ID),
+                /*rs.getString(LOYALTY_PLAN_ID),
                 rs.getBigDecimal(LOYALTY_POINTS),
-                rs.getString(LOYALTY_BARCODE))
+                rs.getString(LOYALTY_BARCODE))*/
+                rs.getString(CUSTOMER_IDENTIFICATION), null, null, null)
                 .toValues();
     }
 
@@ -84,6 +86,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getString(EMAIL),
                 rs.getString(PHONE),
                 rs.getBoolean(SEX),
+                rs.getSimpleDate(BIRTHDAY),
                 rs.getDate(CREATE_DATE),
                 rs.getBoolean(CONSENT_EMAIL),
                 rs.getString(NOTES),
@@ -118,6 +121,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(EMAIL, model.email)
                 .add(PHONE, model.phone)
                 .add(SEX, model.sex)
+                .add(BIRTHDAY, model.birthday)
                 .add(CREATE_DATE, model.createTime)
                 .add(CONSENT_EMAIL, model.consentPromotions)
                 .add(NOTES, model.notes)
@@ -142,6 +146,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(EMAIL, model.email)
                 .add(PHONE, model.phone)
                 .add(SEX, model.sex)
+                .add(BIRTHDAY, model.birthday)
                 .add(CONSENT_EMAIL, model.consentPromotions)
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)

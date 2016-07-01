@@ -31,6 +31,7 @@ public class CustomerModel implements IValueModel, Serializable {
     public String email;
     public String phone;
     public boolean sex;
+    public Date birthday;
     public Date createTime;
     public boolean consentPromotions;
     public String notes;
@@ -57,18 +58,18 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(CustomerTable.EMAIL)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.PHONE)),
                 _bool(cursor, cursor.getColumnIndex(CustomerTable.SEX)),
+                _nullableDate(cursor, cursor.getColumnIndex(CustomerTable.BIRTHDAY)),
                 _nullableDate(cursor, cursor.getColumnIndex(CustomerTable.CREATE_TIME)),
                 _bool(cursor, cursor.getColumnIndex(CustomerTable.CONSENT_PROMOTIONS)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.NOTES)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.CUSTOMER_IDENTIFICATION)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_PLAN_ID)),
-                _decimal(cursor, cursor.getColumnIndex(CustomerTable.LOYALTY_POINTS)),
-                cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)));
+                _decimal(cursor, cursor.getColumnIndex(CustomerTable.LOYALTY_POINTS)), cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)));
     }
 
     public CustomerModel(String guid, String firstName, String lastName, String street,
                          String complementary, String city, String state, String country,
-                         String zip, String email, String phone, boolean sex, Date createTime,
+                         String zip, String email, String phone, boolean sex, Date birthday, Date createTime,
                          boolean consentPromotions, String notes, String customerIdentification,
                          String loyaltyPlanId, BigDecimal loyaltyPoints, String loyaltyBarcode) {
         this.firstName = firstName;
@@ -83,6 +84,7 @@ public class CustomerModel implements IValueModel, Serializable {
         this.email = email;
         this.phone = phone;
         this.sex = sex;
+        this.birthday = birthday;
         this.createTime = createTime;
         this.consentPromotions = consentPromotions;
         this.notes = notes;
@@ -116,6 +118,7 @@ public class CustomerModel implements IValueModel, Serializable {
         v.put(CustomerTable.EMAIL, email);
         v.put(CustomerTable.PHONE, phone);
         v.put(CustomerTable.SEX, sex);
+        _nullableDate(v, CustomerTable.BIRTHDAY, birthday);
         _nullableDate(v, CustomerTable.CREATE_TIME, createTime);
         v.put(CustomerTable.CONSENT_PROMOTIONS, consentPromotions);
         v.put(CustomerTable.NOTES, notes);
@@ -139,6 +142,7 @@ public class CustomerModel implements IValueModel, Serializable {
         v.put(CustomerTable.EMAIL, email);
         v.put(CustomerTable.PHONE, phone);
         v.put(CustomerTable.SEX, sex);
+        _nullableDate(v, CustomerTable.BIRTHDAY, birthday);
         v.put(CustomerTable.CONSENT_PROMOTIONS, consentPromotions);
         v.put(CustomerTable.NOTES, notes);
         v.put(CustomerTable.CUSTOMER_IDENTIFICATION, customerIdentification);

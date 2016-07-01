@@ -183,12 +183,11 @@
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_bonus_point" />
 
-            <EditText
+            <TextView
                 android:id="@+id/bonus_points"
                 style="@style/EditItem.Table.Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:nextFocusDown="@+id/birthday"
                 android:singleLine="true" />
         </TableRow>
@@ -198,12 +197,11 @@
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_birthday" />
 
-            <EditText
+            <TextView
                 android:id="@+id/birthday"
                 style="@style/EditItem.Table.Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="datetime"
                 android:nextFocusDown="@+id/loyalty_barcode"
                 android:singleLine="true" />
         </TableRow>

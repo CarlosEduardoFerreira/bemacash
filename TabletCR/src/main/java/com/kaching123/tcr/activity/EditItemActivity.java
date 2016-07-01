@@ -22,7 +22,6 @@ import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
-import com.kaching123.tcr.fragment.inventory.ItemCodeChooserAlertDialogFragment;
 import com.kaching123.tcr.fragment.wireless.UnitsEditFragment;
 import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.ItemExModel;
@@ -294,6 +293,7 @@ public class EditItemActivity extends BaseCommonItemActivity {
             getSupportLoaderManager().restartLoader(ITEM_PARENT_LOADER, null, cursorLoaderCallbacks);
         }
 
+        showInteger(this.loyaltyPoints, model.loyaltyPoints);
     }
 
     protected void setQuantities(ItemExModel model) {

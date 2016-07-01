@@ -34,6 +34,7 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 
 /**
@@ -109,6 +110,8 @@ public class EditReferenceItemActivity extends BaseReferenceItemActivity {
         buttonView.getBackground().setLevel(model.btnView);
 
         hasNotes.setChecked(model.hasNotes);
+
+        showInteger(this.loyaltyPoints, model.loyaltyPoints);
 
         setFieldsChangeListeners();
     }

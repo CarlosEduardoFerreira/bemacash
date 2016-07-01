@@ -1,26 +1,48 @@
 package com.kaching123.tcr.fragment.customer;
 
+import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Context;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.google.common.base.Function;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.fragment.dialog.DatePickerFragment;
 import com.kaching123.tcr.model.CustomerModel;
+import com.kaching123.tcr.model.LoyaltyPlanModel;
 import com.kaching123.tcr.model.PlanOptions;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore.LoyaltyPlanTable;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPhone;
+import static com.kaching123.tcr.util.DateUtils.dateOnlyFormat;
 import static com.kaching123.tcr.util.PhoneUtil.isValid;
 import static com.kaching123.tcr.util.PhoneUtil.onlyDigits;
 
@@ -38,16 +60,22 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
     @ViewById protected EditText zip;
     @ViewById protected EditText phone;
     @ViewById protected EditText identification;
-    @ViewById protected EditText bonusPoints;
-    @ViewById protected EditText birthday;
+    @ViewById protected TextView bonusPoints;
+    @ViewById protected TextView birthday;
     @ViewById protected EditText loyaltyBarcode;
     @ViewById protected Spinner gender;
     @ViewById protected Spinner loyaltyPlan;
     @ViewById protected CheckBox emailPromotion;
 
+    private Calendar birthdayDate = Calendar.getInstance();
+    private boolean birthdaySet = false;
+
+    private LoyaltyPlanAdapter loyaltyPlanAdapter;
+
     @Override
     @AfterViews
     protected void init(){
+        birthdayDate.set(1990, 0, 1);
         super.init();
     }
 
@@ -57,6 +85,9 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         gender.setAdapter(new SexAdapter());
         phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         setFieldsEnabled(PlanOptions.isEditingCustomersAllowed());
+        loyaltyPlanAdapter = new LoyaltyPlanAdapter(getActivity());
+        loyaltyPlan.setAdapter(loyaltyPlanAdapter);
+        getLoaderManager().restartLoader(0, null, loyaltyPlanLoader);
     }
 
     @Override
@@ -65,7 +96,7 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
 
         CustomerModel model = getCustomer();
         street.setText(model.street);
-        street2.setText(model.street);
+        street2.setText(model.complementary);
         city.setText(model.city);
         state.setText(model.state);
         country.setText(model.country);
@@ -75,11 +106,18 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         emailPromotion.setChecked(model.consentPromotions);
         identification.setText(model.customerIdentification);
         showPhone(phone, model.phone);
+        if (model.birthday != null){
+            birthdayDate.setTime(model.birthday);
+            birthday.setText(dateOnlyFormat(model.birthday));
+        }
+        showInteger(bonusPoints, model.loyaltyPoints);
+        loyaltyBarcode.setText(model.loyaltyBarcode);
     }
 
     @Override
     public void collectDataToModel(CustomerModel model) {
         model.street = street.getText().toString();
+        model.complementary = street2.getText().toString();
         model.city = city.getText().toString();
         model.state = state.getText().toString();
         model.country = country.getText().toString();
@@ -89,6 +127,11 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         model.sex = gender.getSelectedItem() == Sex.MALE;
         model.consentPromotions = emailPromotion.isChecked();
         model.customerIdentification = identification.getText().toString();
+        if (birthdaySet){
+            model.birthday = birthdayDate.getTime();
+        }
+        model.loyaltyPlanId = ((LoyaltyPlanModel) loyaltyPlan.getSelectedItem()).guid;
+        model.loyaltyBarcode = loyaltyBarcode.getText().toString();
     }
 
     @Override
@@ -101,7 +144,6 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         zip.setEnabled(enabled);
         phone.setEnabled(enabled);
         identification.setEnabled(enabled);
-        bonusPoints.setEnabled(enabled);
         birthday.setEnabled(enabled);
         loyaltyBarcode.setEnabled(enabled);
         gender.setEnabled(enabled);
@@ -118,6 +160,91 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         }
 
         return true;
+    }
+
+    @Click
+    protected void birthdayClicked(){
+        showDatePicker();
+    }
+
+    private void showDatePicker() {
+        DatePickerFragment.show(getActivity(), birthdayDate, new OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                birthdayDate.set(year, monthOfYear, dayOfMonth);
+                birthday.setText(dateOnlyFormat(birthdayDate.getTime()));
+                birthdaySet = true;
+            }
+        });
+    }
+
+    private LoaderCallbacks<List<LoyaltyPlanModel>> loyaltyPlanLoader = new LoaderCallbacks<List<LoyaltyPlanModel>>() {
+        @Override
+        public Loader<List<LoyaltyPlanModel>> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(LoyaltyPlanTable.URI_CONTENT))
+                    .wrap(new Function<Cursor, List<LoyaltyPlanModel>>() {
+                        @Override
+                        public List<LoyaltyPlanModel> apply(Cursor input) {
+                            ArrayList<LoyaltyPlanModel> result = new ArrayList<>(input.getCount() + 1);
+                            result.add(new LoyaltyPlanModel(null, "None"));
+                            while (input.moveToNext()){
+                                result.add(new LoyaltyPlanModel(
+                                        input.getString(input.getColumnIndex(LoyaltyPlanTable.GUID)),
+                                        input.getString(input.getColumnIndex(LoyaltyPlanTable.NAME))
+                                ));
+                            }
+                            return result;
+                        }
+                    })
+                    .build(getActivity());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<LoyaltyPlanModel>> loader, List<LoyaltyPlanModel> data) {
+            loyaltyPlanAdapter.changeCursor(data);
+            if (getCustomer() != null && getCustomer().loyaltyPlanId != null){
+                int position = loyaltyPlanAdapter.getPosition(getCustomer().loyaltyPlanId);
+                if (position != AdapterView.INVALID_POSITION)
+                    loyaltyPlan.setSelection(position);
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<LoyaltyPlanModel>> loader) {
+            loyaltyPlanAdapter.changeCursor(null);
+        }
+    };
+
+    private class LoyaltyPlanAdapter extends ObjectsCursorAdapter<LoyaltyPlanModel> {
+
+        public LoyaltyPlanAdapter(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected View newView(int position, ViewGroup parent) {
+            return LayoutInflater.from(getActivity()).inflate(R.layout.spinner_item, parent, false);
+        }
+
+        @Override
+        protected View bindView(View convertView, int position, LoyaltyPlanModel item) {
+            TextView label = (TextView) convertView;
+            label.setText(item.name);
+            return convertView;
+        }
+
+        @Override
+        protected View newDropDownView(int position, ViewGroup parent) {
+            return LayoutInflater.from(getActivity()).inflate(R.layout.spinner_dropdown_item, parent, false);
+        }
+
+        public int getPosition(String guid){
+            for (int i = 0; i < getCount(); i++){
+                if (guid.equals(getItem(i).guid))
+                    return i;
+            }
+            return AdapterView.INVALID_POSITION;
+        }
     }
 
     private class SexAdapter extends BaseAdapter {

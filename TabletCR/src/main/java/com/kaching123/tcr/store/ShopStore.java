@@ -1497,6 +1497,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String SEX = "sex";
 
+        @Column(type = Column.Type.INTEGER)
+        String BIRTHDAY = "birthday";
+
         @NotNull
         @Column(type = Column.Type.INTEGER)
         String CREATE_TIME = "create_time";
@@ -2032,7 +2035,7 @@ public abstract class ShopStore {
             @Index(name = "plan", columns = LoyaltyIncentivePlanTable.PLAN_GUID)
     })
     @Table(LoyaltyIncentivePlanTable.TABLE_NAME)
-    public interface LoyaltyIncentivePlanTable {
+    public interface LoyaltyIncentivePlanTable extends IBemaSyncTable {
 
         String TABLE_NAME = "loyalty_incentive_plan";
 
