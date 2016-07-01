@@ -300,126 +300,29 @@
                     android:focusableInTouchMode="false" />
             </TableRow>
 
-            <!--TableRow
-                android:id="@+id/pis1"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout style="@style/EditItem.Table.LabelLayout.Price">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/item_activity_use_shop_settings" />
-                </FrameLayout>
-
-                <CheckBox
-                    android:id="@+id/use_shop_pis_cofins"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true" />
-
-            </TableRow>
-
             <TableRow
-                android:id="@+id/pis2"
+                android:id="@+id/polyalty_points_container"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical">
 
-                <FrameLayout style="@style/EditItem.Table.LabelLayout.Price">
+                <FrameLayout
+                    style="@style/EditItem.Table.LabelLayout.Price">
 
                     <TextView
                         style="@style/EditItem.Table.Label"
-                        android:text="@string/item_activity_cst" />
+                        android:text="@string/item_loyalty_points_label"/>
                 </FrameLayout>
 
-                <Spinner
-                    android:id="@+id/cst"
+                <EditText
+                    style="@style/EditItem.Table.Edittext"
+                    android:id="@+id/loyalty_points"
+                    android:inputType="number"
                     android:layout_width="0dp"
+                    android:singleLine="true"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"/>
             </TableRow>
-
-            <TableRow
-                android:id="@+id/pis3"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout style="@style/EditItem.Table.LabelLayout.Price">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/item_activity_pis" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/pis"
-                        style="@style/EditItem.Table.Edittext"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:digits="0123456789."
-                        android:enabled="false"
-                        android:inputType="phone" />
-
-                    <TextView
-                        style="@style/EditItem.Table.Edittext"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        android:text="%" />
-                </LinearLayout>
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/pis4"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout style="@style/EditItem.Table.LabelLayout.Price">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/item_activity_cofins" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/cofins"
-                        style="@style/EditItem.Table.Edittext"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:digits="0123456789."
-                        android:enabled="false"
-                        android:inputType="phone" />
-
-                    <TextView
-                        style="@style/EditItem.Table.Edittext"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        android:text="%" />
-                </LinearLayout>
-
-            </TableRow-->
 
         </TableLayout>
 
