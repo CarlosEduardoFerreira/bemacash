@@ -845,6 +845,7 @@
     <string name="sync_loyalty_incentive_item">loyalty part#2</string>
     <string name="sync_loyalty_plan">loyalty part#3</string>
     <string name="sync_loyalty_incentive_plan">loyalty part#4</string>
+    <string name="sync_customer_loyalty_points">loyalty part#5</string>
     <string name="tax_group">tax groups</string>
     <string name="register">registers</string>
     <string name="customer">customers</string>

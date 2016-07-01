@@ -2061,6 +2061,35 @@ public abstract class ShopStore {
                 foreignKey(LoyaltyIncentivePlanTable.PLAN_GUID, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID));
     }
 
+
+    @Indexes({
+            @Index(name = "customer", columns = CustomerLoyaltyPointsTable.CUSTOMER_ID)
+    })
+    @Table(CustomerLoyaltyPointsTable.TABLE_NAME)
+    public interface CustomerLoyaltyPointsTable extends IBemaSyncTable {
+
+        String TABLE_NAME = "customer_loyalty_points";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String CUSTOMER_ID = "customer_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String LOYALTY_POINTS = "loyalty_points";
+    }
+    static {
+        applyForeignKeys(CustomerLoyaltyPointsTable.TABLE_NAME,
+                foreignKey(CustomerLoyaltyPointsTable.CUSTOMER_ID, CustomerTable.TABLE_NAME, CustomerTable.GUID));
+    }
+
     /**
      * views *
      */

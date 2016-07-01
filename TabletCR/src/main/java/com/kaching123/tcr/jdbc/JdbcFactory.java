@@ -42,6 +42,7 @@ import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.model.CommissionsModel;
 import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.CreditReceiptModel;
+import com.kaching123.tcr.model.CustomerLoyaltyPointsModel;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.DepartmentModel;
 import com.kaching123.tcr.model.EmployeeModel;
@@ -323,6 +324,8 @@ public class JdbcFactory {
         API_METHOD.put(ShopStore.LoyaltyIncentivePlanTable.TABLE_NAME, "loyalty_incentive_plan");
         API_METHOD2.put(LoyaltyIncentivePlanModel.class, "loyalty_incentive_plan");
 
+        API_METHOD.put(ShopStore.CustomerLoyaltyPointsTable.TABLE_NAME, "customer_loyalty_points");
+        API_METHOD2.put(CustomerLoyaltyPointsModel.class, "customer_loyalty_points");
     }
 
     public static JdbcConverter getConverter(String tableName) {
