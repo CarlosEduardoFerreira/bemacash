@@ -11,6 +11,7 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.OldActiveUnitOrdersQuery;
@@ -22,12 +23,15 @@ import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.helper.RecalcItemComposerTable;
 import com.kaching123.tcr.store.helper.RecalcItemCostTable;
 import com.kaching123.tcr.store.helper.RecalcItemMovementTable;
+import com.kaching123.tcr.store.helper.RecalcLoyaltyPointsHelper;
 import com.kaching123.tcr.store.helper.RecalcSaleAddonTable;
 import com.kaching123.tcr.store.helper.RecalcSaleItemTable;
 
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /*import com.kaching123.tcr.store.ShopStore.MaxUpdateTableChildTimeQuery;
 import com.kaching123.tcr.store.ShopStore.MaxUpdateTableParentTimeQuery;*/
@@ -135,6 +139,7 @@ public class ShopProviderExt extends ShopProvider {
     private ProviderQueryHelper providerQueryHelper;
     private RecalcItemComposerTable composerHelper;
     private RecalcItemCostTable costComposerHelper;
+    private RecalcLoyaltyPointsHelper loyaltyPointsHelper;
 
     @Override
     public boolean onCreate() {
@@ -145,6 +150,7 @@ public class ShopProviderExt extends ShopProvider {
         providerQueryHelper = new ProviderQueryHelper(AUTHORITY, dbHelper);
         composerHelper = new RecalcItemComposerTable(getContext(), dbHelper);
         costComposerHelper = new RecalcItemCostTable(getContext(), dbHelper);
+        loyaltyPointsHelper = new RecalcLoyaltyPointsHelper(getContext(), dbHelper);
 
         ShopStore.init();
         return b;
@@ -279,9 +285,10 @@ public class ShopProviderExt extends ShopProvider {
         } else if (SaleAddonTable.URI_CONTENT.equals(path)) {
             saleItemHelper.recalculateOrderTotalPriceByItem(values.getAsString(SaleAddonTable.ITEM_GUID));
         } else if (ItemMovementTable.URI_CONTENT.equals(path)) {
-            //itemHelper.recalculateAvailableQty(values.getAsString(ItemMovementTable.ITEM_GUID));
             itemMovementHelper.recalculateMovementAvailableQty(values.getAsString(ItemMovementTable.ITEM_UPDATE_QTY_FLAG));
             sheduleUpdate();
+        } else if (LoyaltyPointsMovementTable.URI_CONTENT.equals(path)){
+            loyaltyPointsHelper.recalculateCustomerLoyaltyPoints(values.getAsString(LoyaltyPointsMovementTable.CUSTOMER_ID), _decimal(values.getAsString(LoyaltyPointsMovementTable.LOYALTY_POINTS)));
         }
         return result;
     }
@@ -321,6 +328,9 @@ public class ShopProviderExt extends ShopProvider {
                 saleItemHelper.bulkRecalculateOrderTotalPriceAfterSync();
             }else if (ShopStore.ComposerTable.URI_CONTENT.equals(path)){
                 sheduleUpdate();
+            }else if (LoyaltyPointsMovementTable.URI_CONTENT.equals(path)){
+                Logger.d("recalculateLoyaltyPoints");
+                loyaltyPointsHelper.bulkRecalcCustomerLoyaltyPointsAfterSync();
             }
         }
 
@@ -343,29 +353,6 @@ public class ShopProviderExt extends ShopProvider {
     private boolean isKitchenStatusUpdate(ContentValues values) {
         return values.size() == 1 && values.containsKey(SaleOrderTable.KITCHEN_PRINT_STATUS);
     }
-
-    /*@Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
-        String saleOrderGuid = null;
-        if (selectionArgs != null && selectionArgs.length == 1) {
-            String path = getUriPath(uri);
-            if (SaleItemTable.URI_CONTENT.equals(path) || SaleAddonTable.URI_CONTENT.equals(path)) {
-                saleOrderGuid = saleItemHelper.getSaleOrderGuidByItem(selectionArgs[0]);
-            }
-        }
-
-        int count = super.delete(uri, selection, selectionArgs);
-
-        if (count > 0 && saleOrderGuid != null) {
-            String path = getUriPath(uri);
-            if (SaleItemTable.URI_CONTENT.equals(path)) {
-                saleItemHelper.recalculateOrderTotalPrice(saleOrderGuid);
-            } else if (SaleAddonTable.URI_CONTENT.equals(path)) {
-                saleItemHelper.recalculateOrderTotalPrice(saleOrderGuid);
-            }
-        }
-        return count;
-    }*/
 
     private String getUriPath(Uri uri) {
         if (uri == null || uri.getPath() == null)

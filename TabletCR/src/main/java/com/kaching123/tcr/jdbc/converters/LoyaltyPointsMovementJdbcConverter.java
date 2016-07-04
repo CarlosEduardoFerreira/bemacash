@@ -3,7 +3,7 @@ package com.kaching123.tcr.jdbc.converters;
 import android.content.ContentValues;
 
 import com.kaching123.tcr.jdbc.JdbcFactory;
-import com.kaching123.tcr.model.CustomerLoyaltyPointsModel;
+import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -19,7 +19,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 /**
  * Created by vkompaniets on 01.07.2016.
  */
-public class CustomerLoyaltyPointsJdbcConverter extends JdbcConverter<CustomerLoyaltyPointsModel> {
+public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPointsMovementModel> {
 
     private static final String TABLE_NAME = "CUSTOMER_LOYALTY_POINTS";
 
@@ -33,8 +33,8 @@ public class CustomerLoyaltyPointsJdbcConverter extends JdbcConverter<CustomerLo
     }
 
     @Override
-    public CustomerLoyaltyPointsModel toValues(JdbcJSONObject rs) throws JSONException {
-        return new CustomerLoyaltyPointsModel(
+    public LoyaltyPointsMovementModel toValues(JdbcJSONObject rs) throws JSONException {
+        return new LoyaltyPointsMovementModel(
                 rs.getString(ID),
                 rs.getString(CUSTOMER_ID),
                 rs.getBigDecimal(LOYALTY_POINTS)
@@ -52,7 +52,7 @@ public class CustomerLoyaltyPointsJdbcConverter extends JdbcConverter<CustomerLo
     }
 
     @Override
-    public SingleSqlCommand insertSQL(CustomerLoyaltyPointsModel model, IAppCommandContext appCommandContext) {
+    public SingleSqlCommand insertSQL(LoyaltyPointsMovementModel model, IAppCommandContext appCommandContext) {
         return _insert(TABLE_NAME, appCommandContext)
                 .add(ID, model.guid)
                 .add(CUSTOMER_ID, model.customerId)
@@ -62,7 +62,7 @@ public class CustomerLoyaltyPointsJdbcConverter extends JdbcConverter<CustomerLo
     }
 
     @Override
-    public SingleSqlCommand updateSQL(CustomerLoyaltyPointsModel model, IAppCommandContext appCommandContext) {
+    public SingleSqlCommand updateSQL(LoyaltyPointsMovementModel model, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
                 .add(CUSTOMER_ID, model.customerId)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)

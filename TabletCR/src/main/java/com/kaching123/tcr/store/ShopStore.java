@@ -488,7 +488,7 @@ public abstract class ShopStore {
         String REFERENCE_ITEM_ID = "reference_item_id";
 
         @Column(type = Type.TEXT)
-        String LOYALTY_POINTS = "LOYALTY_POINTS";
+        String LOYALTY_POINTS = "loyalty_points";
     }
 
     static {
@@ -1515,16 +1515,17 @@ public abstract class ShopStore {
         String LOYALTY_PLAN_ID = "loyalty_plan_id";
 
         @Column(type = Column.Type.TEXT)
-        String LOYALTY_POINTS = "loyalty_points";
+        String LOYALTY_BARCODE = "loyalty_barcode";
 
         @Column(type = Column.Type.TEXT)
-        String LOYALTY_BARCODE = "loyalty_barcode";
+        String TMP_LOYALTY_POINTS = "tmp_loyalty_points";
     }
 
     static {
         applyForeignKeys(CustomerTable.TABLE_NAME,
                 foreignKey(CustomerTable.LOYALTY_PLAN_ID, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID)
         );
+        applyTmpFields(CustomerTable.TABLE_NAME, CustomerTable.TMP_LOYALTY_POINTS);
     }
 
     @Table(PrinterAliasTable.TABLE_NAME)
@@ -2063,14 +2064,14 @@ public abstract class ShopStore {
 
 
     @Indexes({
-            @Index(name = "customer", columns = CustomerLoyaltyPointsTable.CUSTOMER_ID)
+            @Index(name = "customer", columns = LoyaltyPointsMovementTable.CUSTOMER_ID)
     })
-    @Table(CustomerLoyaltyPointsTable.TABLE_NAME)
-    public interface CustomerLoyaltyPointsTable extends IBemaSyncTable {
+    @Table(LoyaltyPointsMovementTable.TABLE_NAME)
+    public interface LoyaltyPointsMovementTable extends IBemaSyncTable {
 
-        String TABLE_NAME = "customer_loyalty_points";
+        String TABLE_NAME = "loyalty_points_movement";
 
-        @URI
+        @URI(altNotify = CustomerTable.URI_CONTENT)
         String URI_CONTENT = TABLE_NAME;
 
         @PrimaryKey
@@ -2086,8 +2087,8 @@ public abstract class ShopStore {
         String LOYALTY_POINTS = "loyalty_points";
     }
     static {
-        applyForeignKeys(CustomerLoyaltyPointsTable.TABLE_NAME,
-                foreignKey(CustomerLoyaltyPointsTable.CUSTOMER_ID, CustomerTable.TABLE_NAME, CustomerTable.GUID));
+        applyForeignKeys(LoyaltyPointsMovementTable.TABLE_NAME,
+                foreignKey(LoyaltyPointsMovementTable.CUSTOMER_ID, CustomerTable.TABLE_NAME, CustomerTable.GUID));
     }
 
     /**

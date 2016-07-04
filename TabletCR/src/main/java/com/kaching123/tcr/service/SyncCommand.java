@@ -58,7 +58,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
 import com.kaching123.tcr.store.ShopProviderExt.Method;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.CustomerLoyaltyPointsTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemMatrixTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveItemTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyIncentivePlanTable;
@@ -159,6 +159,7 @@ public class SyncCommand implements Runnable {
             LoyaltyIncentiveItemTable.URI_CONTENT,
             LoyaltyPlanTable.URI_CONTENT,
             LoyaltyIncentivePlanTable.URI_CONTENT,
+            LoyaltyPointsMovementTable.URI_CONTENT,
 
             SaleOrderTable.URI_CONTENT,
             SaleItemTable.URI_CONTENT,
@@ -396,7 +397,7 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, LoyaltyIncentiveItemTable.TABLE_NAME, LoyaltyIncentiveItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, LoyaltyIncentivePlanTable.TABLE_NAME, LoyaltyIncentivePlanTable.GUID, employee, serverLastTimestamp);
-                    count += syncSingleTable2(service, api2, CustomerLoyaltyPointsTable.TABLE_NAME, CustomerLoyaltyPointsTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, LoyaltyPointsMovementTable.TABLE_NAME, LoyaltyPointsMovementTable.GUID, employee, serverLastTimestamp);
 
                     //between iterations shouldn't be any gaps
                     boolean firstIteration = retriesCount == FINALIZE_SYNC_RETRIES;
@@ -818,7 +819,7 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, ComposerTable.TABLE_NAME, ComposerTable.ID);
                 count += syncLocalSingleTable(service, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID);
                 count += syncLocalSingleTable(service, LoyaltyIncentiveItemTable.TABLE_NAME, LoyaltyIncentiveItemTable.GUID);
-                count += syncLocalSingleTable(service, CustomerLoyaltyPointsTable.TABLE_NAME, CustomerLoyaltyPointsTable.GUID);
+                count += syncLocalSingleTable(service, LoyaltyPointsMovementTable.TABLE_NAME, LoyaltyPointsMovementTable.GUID);
 
                 //sale
 
@@ -1776,7 +1777,7 @@ public class SyncCommand implements Runnable {
         LOYALTY_INCENTIVE_ITEM(LoyaltyIncentiveItemTable.TABLE_NAME, true),
         LOYALTY_PLAN(LoyaltyPlanTable.TABLE_NAME, true),
         LOYALTY_INCENTIVE_PLAN(LoyaltyIncentivePlanTable.TABLE_NAME, true),
-        CUSTOMER_LOYALTY_POINTS(CustomerLoyaltyPointsTable.TABLE_NAME, true);
+        LOYALTY_POINTS_MOVEMENT(LoyaltyPointsMovementTable.TABLE_NAME, true);
 
         public final String tableName;
         public final boolean isParent;

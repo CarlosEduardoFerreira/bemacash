@@ -10,6 +10,7 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -42,7 +43,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String NOTES = "NOTES";
     private static final String CUSTOMER_IDENTIFICATION = "CUSTOMER_IDENTIFICATION";
     private static final String LOYALTY_PLAN_ID = "LOYALTY_PLAN_ID";
-    private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
     private static final String LOYALTY_BARCODE = "LOYALTY_BARCODE";
 
     @Override
@@ -65,7 +65,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getBoolean(CONSENT_EMAIL),
                 rs.getString(NOTES),
                 /*rs.getString(LOYALTY_PLAN_ID),
-                rs.getBigDecimal(LOYALTY_POINTS),
+                rs.getBigDecimal(TMP_LOYALTY_POINTS),
                 rs.getString(LOYALTY_BARCODE))*/
                 rs.getString(CUSTOMER_IDENTIFICATION), null, null, null)
                 .toValues();
@@ -92,7 +92,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getString(NOTES),
                 rs.getString(CUSTOMER_IDENTIFICATION),
                 rs.getString(LOYALTY_PLAN_ID),
-                rs.getBigDecimal(LOYALTY_POINTS),
+                BigDecimal.ZERO,
                 rs.getString(LOYALTY_BARCODE));
     }
 
@@ -127,7 +127,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                 .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
-                .add(LOYALTY_POINTS, model.loyaltyPoints)
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
                 .build(JdbcFactory.getApiMethod(model));
     }
@@ -151,7 +150,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                 .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
-                .add(LOYALTY_POINTS, model.loyaltyPoints)
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));

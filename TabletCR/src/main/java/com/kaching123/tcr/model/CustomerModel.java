@@ -64,7 +64,8 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(CustomerTable.NOTES)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.CUSTOMER_IDENTIFICATION)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_PLAN_ID)),
-                _decimal(cursor, cursor.getColumnIndex(CustomerTable.LOYALTY_POINTS)), cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)));
+                _decimal(cursor, cursor.getColumnIndex(CustomerTable.TMP_LOYALTY_POINTS)),
+                cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)));
     }
 
     public CustomerModel(String guid, String firstName, String lastName, String street,
@@ -124,7 +125,6 @@ public class CustomerModel implements IValueModel, Serializable {
         v.put(CustomerTable.NOTES, notes);
         v.put(CustomerTable.CUSTOMER_IDENTIFICATION, customerIdentification);
         v.put(CustomerTable.LOYALTY_PLAN_ID, loyaltyPlanId);
-        v.put(CustomerTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
         v.put(CustomerTable.LOYALTY_BARCODE, loyaltyBarcode);
         return v;
     }
@@ -147,7 +147,6 @@ public class CustomerModel implements IValueModel, Serializable {
         v.put(CustomerTable.NOTES, notes);
         v.put(CustomerTable.CUSTOMER_IDENTIFICATION, customerIdentification);
         v.put(CustomerTable.LOYALTY_PLAN_ID, loyaltyPlanId);
-        v.put(CustomerTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
         v.put(CustomerTable.LOYALTY_BARCODE, loyaltyBarcode);
         return v;
     }
