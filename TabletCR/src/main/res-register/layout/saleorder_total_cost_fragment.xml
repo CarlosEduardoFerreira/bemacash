@@ -58,14 +58,6 @@
                 android:text="$ 0.00" />
         </LinearLayout>
 
-        <!--<View-->
-            <!--android:layout_marginTop="4dp"-->
-            <!--android:layout_marginBottom="3dp"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="2dp"-->
-            <!--android:background="@drawable/total_cost_order_discount_border"-->
-             <!--/>-->
-
         <LinearLayout
             style="@style/TotalCostTable.Row.Clickable"
             android:id="@+id/tax_block"
@@ -114,7 +106,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:orientation="horizontal">
@@ -145,16 +137,36 @@
                 android:paddingLeft="12dp"
                 android:background="@drawable/hold_btn"/>
 
+            <Button
+                android:id="@+id/btn_customer"
+                android:text="Customer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
 
-        <Button
-            style="@style/LocalizableButton.Green"
-            android:id="@+id/btn_pay"
-            android:layout_marginLeft="3dp"
-            android:textSize="18sp"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/pay_btn" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                style="@style/LocalizableButton.Green"
+                android:id="@+id/btn_pay"
+                android:layout_marginLeft="3dp"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/pay_btn" />
+
+            <TextView
+                android:id="@+id/customer_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_lightgrey"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 

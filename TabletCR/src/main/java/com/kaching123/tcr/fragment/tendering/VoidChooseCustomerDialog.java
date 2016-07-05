@@ -2,12 +2,14 @@ package com.kaching123.tcr.fragment.tendering;
 
 import android.support.v4.app.FragmentActivity;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.commands.print.digital.SendDigitalRefundCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
+import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 
 import java.util.ArrayList;
 
@@ -33,8 +35,8 @@ public class VoidChooseCustomerDialog extends ChooseCustomerBaseDialog {
     }
 
     @Override
-    protected void sendDigitalOrder(String email) {
-        SendDigitalRefundCommand.start(getActivity(), orderGuid, refundItemsInfo, transactionsGuids, email, null);
+    protected void onCustomerPicked(CustomerModel customer) {
+        SendDigitalRefundCommand.start(getActivity(), orderGuid, refundItemsInfo, transactionsGuids, customer.email, null);
 		dismiss();
     }
 

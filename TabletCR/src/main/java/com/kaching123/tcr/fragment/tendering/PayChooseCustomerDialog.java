@@ -2,11 +2,13 @@ package com.kaching123.tcr.fragment.tendering;
 
 import android.support.v4.app.FragmentActivity;
 
-import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.commands.print.digital.SendDigitalOrderCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
+import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
+
+import org.androidannotations.annotations.EFragment;
 
 import java.util.ArrayList;
 
@@ -19,8 +21,8 @@ public class PayChooseCustomerDialog extends ChooseCustomerBaseDialog {
     public static final String DIALOG_NAME = "PAY_CHOOSE_CUSTOMER";
 
     @Override
-    protected void sendDigitalOrder(String email) {
-        SendDigitalOrderCommand.start(getActivity(), orderGuid, email, null, transactions, releaseResultList);
+    protected void onCustomerPicked(CustomerModel customer) {
+        SendDigitalOrderCommand.start(getActivity(), orderGuid, customer.email, null, transactions, releaseResultList);
         dismiss();
         listener.onComplete();
     }

@@ -1,6 +1,5 @@
 package com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless;
 
-import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,18 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.getbase.android.db.provider.ProviderAction;
-import com.getbase.android.db.provider.Query;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
-import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
+import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog.emailSenderListener;
 import com.kaching123.tcr.fragment.tendering.PrepaidChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayPrintAndFinishFragmentDialog;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -29,9 +22,13 @@ import com.kaching123.tcr.model.payment.blackstone.prepaid.IPrePaidInfo;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.request.BillPaymentRequest;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.websvc.api.prepaid.Category;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -125,7 +122,7 @@ public class PrepaidBillPaymentPrintAndFinishFragmentDialog extends PayPrintAndF
 
     @Override
     protected void sendDigitalOrder() {
-        PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new ChooseCustomerBaseDialog.emailSenderListener() {
+        PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new emailSenderListener() {
             @Override
             public void onComplete() {
                 listener.onConfirmed();

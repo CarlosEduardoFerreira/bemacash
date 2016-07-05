@@ -7,18 +7,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.function.OrderTotalPriceLoaderCallback;
+import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.DiscountType;
 
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.ColorRes;
+
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 
@@ -35,18 +36,22 @@ public class TotalCostFragment extends Fragment {
     protected TextView tax;
     @ViewById(R.id.total_cost_total)
     protected TextView orderTotal;
-
     @ViewById
     protected View btnHold;
     @ViewById
     protected View btnVoid;
     @ViewById
     protected Button btnPay;
-
+    @ViewById
+    protected Button btnCustomer;
     @ViewById
     protected View taxBlock;
     @ViewById
     protected View orderDiscountBlock;
+
+    @ViewById
+    protected TextView customerLabel;
+
     @ColorRes(R.color.subtotal_table_text_main)
     protected int taxColorNormal;
 
@@ -94,6 +99,7 @@ public class TotalCostFragment extends Fragment {
         if (TextUtils.isEmpty(orderGuid)) {
             updateClickable(false);
             setZero();
+            customerLabel.setText(null);
             getLoaderManager().destroyLoader(LOADER_ITEMS);
             return;
         }
@@ -129,10 +135,19 @@ public class TotalCostFragment extends Fragment {
         });
     }
 
+    public void setCustomer(CustomerModel customer){
+        if (customer == null){
+            customerLabel.setText(null);
+        }else{
+            customerLabel.setText(String.format("%s\n%s pts", customer.getFullName(), customer.loyaltyPoints.toString()));
+        }
+    }
+
     private void updateClickable(boolean clickable) {
         btnHold.setEnabled(!isCreateReturnOrder && clickable);
         btnVoid.setEnabled(clickable);
         btnPay.setEnabled(clickable);
+        btnCustomer.setEnabled(clickable);
         taxBlock.setEnabled(clickable);
         orderDiscountBlock.setEnabled(clickable);
     }
@@ -225,6 +240,11 @@ public class TotalCostFragment extends Fragment {
     }
 
     @Click
+    protected void btnCustomerClicked() {
+        getActionListener().onCustomer();
+    }
+
+    @Click
     protected void orderDiscountBlockClicked() {
         BigDecimal subTotal = (BigDecimal) this.subTotal.getTag();
         if (subTotal == null) {
@@ -252,6 +272,8 @@ public class TotalCostFragment extends Fragment {
         void onHold();
 
         void onVoid();
+
+        void onCustomer();
 
         void onDiscount(BigDecimal itemsSubTotal);
 

@@ -16,11 +16,9 @@ import android.graphics.Typeface;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -115,6 +113,8 @@ import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHan
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment.IOrderActionListener;
 import com.kaching123.tcr.fragment.search.SearchItemsListFragment;
+import com.kaching123.tcr.fragment.tendering.ChooseCustomerDialog;
+import com.kaching123.tcr.fragment.tendering.ChooseCustomerDialog.CustomerPickListener;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment.RefundAmount;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
@@ -124,9 +124,8 @@ import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
-import com.kaching123.tcr.model.DiscountType;
+import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -1919,6 +1918,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         setCountZero();
         checkOrderPayments();
+    }
+
+    @Override
+    public void onCustomer() {
+        ChooseCustomerDialog.show(self(), this.orderGuid, new CustomerPickListener() {
+            @Override
+            public void onCustomerPicked(CustomerModel customer) {
+                totalCostFragment.setCustomer(customer);
+            }
+        });
     }
 
     private void checkOrderPayments() {

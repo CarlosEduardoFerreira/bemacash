@@ -2,11 +2,13 @@ package com.kaching123.tcr.fragment.tendering;
 
 import android.support.v4.app.FragmentActivity;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.commands.print.digital.SendDigitalPrepaidOrderCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
+import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.IPrePaidInfo;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 
 /**
  * Created by gdubina on 03/03/14.
@@ -20,13 +22,13 @@ public class PrepaidChooseCustomerDialog extends ChooseCustomerBaseDialog {
     protected IPrePaidInfo prepaidInfo;
 
     @Override
-    protected void sendDigitalOrder(String email) {
+    protected void onCustomerPicked(CustomerModel customer) {
         SendDigitalPrepaidOrderCommand.start(getActivity(), orderGuid, email, prepaidInfo, null);
         dismiss();
         listener.onComplete();
     }
 
-    public static void show(FragmentActivity activity, String orderGuid, IPrePaidInfo prepaidInfo, emailSenderListener listener1) {
-        DialogUtil.show(activity, DIALOG_NAME, PrepaidChooseCustomerDialog_.builder().orderGuid(orderGuid).prepaidInfo(prepaidInfo).build()).setListener(listener1);
+    public static void show(FragmentActivity activity, String orderGuid, IPrePaidInfo prepaidInfo, emailSenderListener listener) {
+        DialogUtil.show(activity, DIALOG_NAME, PrepaidChooseCustomerDialog_.builder().orderGuid(orderGuid).prepaidInfo(prepaidInfo).build()).setListener(listener);
     }
 }

@@ -128,7 +128,7 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
     }
 
     @Override
-    protected void sendDigitalOrder(String email) {
+    protected void onCustomerPicked(CustomerModel customer) {
     }
 
     @Override

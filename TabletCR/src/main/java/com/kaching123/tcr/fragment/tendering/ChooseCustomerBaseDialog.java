@@ -40,6 +40,7 @@ import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ViewById;
 
@@ -79,6 +80,9 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     @FragmentArg
     protected IVULotoDataResponse ivuLotoDataResponse;
+
+    @InstanceState
+    protected int positionClicked;
 
     protected String email;
 
@@ -139,9 +143,10 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     @ItemClick(android.R.id.list)
     protected void listViewItemClicked(int pos) {
+        positionClicked = pos;
         Cursor c = (Cursor) adapter.getItem(pos);
-        String guid = c.getString(CURSOR_GUID);
-        String email = c.getString(CURSOR_NAME_EMAIL);
+        String guid = c.getString(c.getColumnIndex(CustomerTable.GUID));
+        String email = c.getString(c.getColumnIndex(CustomerTable.EMAIL));
         if (!UiHelper.isValidEmail(email)) {
             AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(R.string.customer_email_invalid_msg));
             return;
@@ -154,7 +159,7 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
         return orderGuid;
     }
 
-    protected abstract void sendDigitalOrder(String email);
+    protected abstract void onCustomerPicked(CustomerModel customer);
 
     @AfterTextChange
     protected void customerFilterAfterTextChanged(Editable s) {
@@ -164,25 +169,8 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(CUSTOMERS_URI)
-                .projection("0 as _id",
-                        CustomerTable.GUID,
-                        CustomerTable.FISRT_NAME,
-                        CustomerTable.LAST_NAME,
-                        CustomerTable.EMAIL,
-                        CustomerTable.PHONE,
-                        CustomerTable.CUSTOMER_IDENTIFICATION,
-                        CustomerTable.STREET,
-                        CustomerTable.COMPLEMENTARY,
-                        CustomerTable.CITY,
-                        CustomerTable.STATE,
-                        CustomerTable.COUNTRY,
-                        CustomerTable.SEX,
-                        CustomerTable.UPDATE_TIME,
-                        CustomerTable.ZIP,
-                        CustomerTable.CREATE_TIME,
-                        CustomerTable.CONSENT_PROMOTIONS,
-                        CustomerTable.NOTES
-                );
+                .projection("0 as _id, *");
+
         String filter = customerFilter.getText().toString();
         if (!TextUtils.isEmpty(filter)) {
             filter = "%" + filter + "%";
@@ -190,8 +178,9 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
                             + CustomerTable.LAST_NAME + " LIKE ? OR "
                             + CustomerTable.EMAIL + " LIKE ? OR "
                             + CustomerTable.PHONE + " LIKE ? OR "
-                            + CustomerTable.CUSTOMER_IDENTIFICATION + " LIKE ?",
-                    filter, filter, filter, filter, filter);
+                            + CustomerTable.CUSTOMER_IDENTIFICATION + " LIKE ? OR "
+                            + CustomerTable.LOYALTY_BARCODE + " = ?",
+                    filter, filter, filter, filter, filter, customerFilter.getText().toString());
         }
         return builder.build(getActivity());
     }
@@ -234,7 +223,8 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
         @Override
         protected void onOrderCustomerUpdated() {
-            sendDigitalOrder(email);
+            CustomerModel customer = new CustomerModel((Cursor) adapter.getItem(positionClicked));
+            onCustomerPicked(customer);
         }
 
         @Override
@@ -263,9 +253,9 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
         @Override
         public void bindView(View v, Context context, Cursor c) {
             UIHolder holder = (UIHolder) v.getTag();
-            holder.name.setText(UiHelper.concatFullname(c.getString(CURSOR_FIRST_NAME_INDEX), c.getString(CURSOR_LAST_NAME_INDEX)));
+            holder.name.setText(UiHelper.concatFullname(c.getString(c.getColumnIndex(CustomerTable.FISRT_NAME)), c.getString(c.getColumnIndex(CustomerTable.LAST_NAME))));
 
-            String email = c.getString(CURSOR_NAME_EMAIL);
+            String email = c.getString(c.getColumnIndex(CustomerTable.EMAIL));
             if (UiHelper.isValidEmail(email)) {
                 holder.email.setText(email);
                 holder.email.setVisibility(View.VISIBLE);
@@ -273,7 +263,7 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
                 holder.email.setVisibility(View.GONE);
             }
 
-            String phone = c.getString(CURSOR_PHONE);
+            String phone = c.getString(c.getColumnIndex(CustomerTable.PHONE));
             if (!TextUtils.isEmpty(phone)) {
                 holder.phone.setVisibility(View.VISIBLE);
                 UiHelper.showPhone(holder.phone, phone);
@@ -282,12 +272,6 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
             }
         }
     }
-
-    private static final int CURSOR_GUID = 1;
-    private static final int CURSOR_FIRST_NAME_INDEX = 2;
-    private static final int CURSOR_LAST_NAME_INDEX = 3;
-    private static final int CURSOR_NAME_EMAIL = 4;
-    private static final int CURSOR_PHONE = 5;
 
     private static class UIHolder {
         TextView name;

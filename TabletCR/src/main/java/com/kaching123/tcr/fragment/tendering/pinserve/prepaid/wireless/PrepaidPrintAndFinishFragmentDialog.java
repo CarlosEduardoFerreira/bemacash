@@ -2,18 +2,19 @@ package com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless;
 
 import android.support.v4.app.FragmentActivity;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
-import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
+import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog.emailSenderListener;
 import com.kaching123.tcr.fragment.tendering.PrepaidChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayPrintAndFinishFragmentDialog;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.IPrePaidInfo;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class PrepaidPrintAndFinishFragmentDialog extends PayPrintAndFinishFragme
 
     @Override
     protected void sendDigitalOrder() {
-        PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new ChooseCustomerBaseDialog.emailSenderListener() {
+        PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new emailSenderListener() {
             @Override
             public void onComplete() {
                 listener.onConfirmed();

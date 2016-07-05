@@ -7,7 +7,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.activity.ScannerBaseActivity;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
@@ -26,7 +25,7 @@ import com.kaching123.tcr.fragment.PrintCallbackHelper2.IPrintCallback;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
-import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
+import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog.emailSenderListener;
 import com.kaching123.tcr.fragment.tendering.PayChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
 import com.kaching123.tcr.model.PaxModel;
@@ -153,7 +152,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     }
 
     protected void sendDigitalOrder() {
-        PayChooseCustomerDialog.show(getActivity(), orderGuid, transactions, new ChooseCustomerBaseDialog.emailSenderListener() {
+        PayChooseCustomerDialog.show(getActivity(), orderGuid, transactions, new emailSenderListener() {
             @Override
             public void onComplete() {
                 listener.onConfirmed();

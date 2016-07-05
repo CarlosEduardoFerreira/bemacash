@@ -2,10 +2,12 @@ package com.kaching123.tcr.fragment.creditreceipt;
 
 import android.support.v4.app.FragmentActivity;
 
-import org.androidannotations.annotations.EFragment;
 import com.kaching123.tcr.commands.print.digital.SendDigitalCreditCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.tendering.ChooseCustomerBaseDialog;
+import com.kaching123.tcr.model.CustomerModel;
+
+import org.androidannotations.annotations.EFragment;
 
 /**
  * Created by vkompaniets on 19.03.14.
@@ -16,8 +18,8 @@ public class EmailCreditReceiptFragmentDialog extends ChooseCustomerBaseDialog {
     private static final String DIALOG_NAME = EmailCreditReceiptFragmentDialog.class.getSimpleName();
 
     @Override
-    protected void sendDigitalOrder(String email) {
-        SendDigitalCreditCommand.start(getActivity(), orderGuid, email);
+    protected void onCustomerPicked(CustomerModel customer) {
+        SendDigitalCreditCommand.start(getActivity(), orderGuid, customer.email);
         dismiss();
     }
 
