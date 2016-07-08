@@ -61,7 +61,7 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
         query.where(LoyaltyIncentivePlanTable.PLAN_GUID + " = ?", customer.loyaltyPlanId);
         query.where("(" + _castToReal(LoyaltyIncentiveTable.POINT_THRESHOLD) + " <= ? OR " + LoyaltyIncentiveTable.TYPE + " = ?)", customer.loyaltyPoints, LoyaltyType.BIRTHDAY.ordinal());
         if (customer.birthday == null){
-            query.where(LoyaltyIncentiveTable.TYPE + " = ?" + LoyaltyType.POINTS.ordinal());
+            query.where(LoyaltyIncentiveTable.TYPE + " = ?", LoyaltyType.POINTS.ordinal());
         }
         if (order.discount != null && order.discount.compareTo(BigDecimal.ZERO) != 0){
             query.where(LoyaltyIncentiveTable.REWARD_TYPE + " <> ?", LoyaltyRewardType.DISCOUNT.ordinal());
