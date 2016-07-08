@@ -1722,19 +1722,23 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             StartTransactionCommand.start(BaseCashierActivity.this);
             SuccessOrderCommand.start(this, orderGuid, isCreateReturnOrder, new SuccessOrderCommand4ReturnCallback());
         } else if (!isPaying) {
-            loyaltyProcessor = LoyaltyProcessor.create(customer.guid, orderGuid);
-            loyaltyProcessor.setCallback(new LoyaltyProcessorCallback() {
-                @Override
-                public void onAddItemRequest(ItemExModel item, BigDecimal price, BigDecimal qty) {
-                    tryToAddItem(item, price, qty, null);
-                }
+            if (customer == null || customer.loyaltyPlanId == null){
+                doPayment();
+            }else {
+                loyaltyProcessor = LoyaltyProcessor.create(customer.guid, orderGuid);
+                loyaltyProcessor.setCallback(new LoyaltyProcessorCallback() {
+                    @Override
+                    public void onAddItemRequest(ItemExModel item, BigDecimal price, BigDecimal qty) {
+                        tryToAddItem(item, price, qty, null);
+                    }
 
-                @Override
-                public void onComplete() {
-                    doPayment();
-                }
-            });
-            loyaltyProcessor.init(self());
+                    @Override
+                    public void onComplete() {
+                        doPayment();
+                    }
+                })
+                .init(self());
+            }
         }
     }
 
