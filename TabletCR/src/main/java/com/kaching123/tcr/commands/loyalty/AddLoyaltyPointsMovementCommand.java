@@ -3,6 +3,7 @@ package com.kaching123.tcr.commands.loyalty;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -57,6 +58,13 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
 
     public static void start(Context context, String customerId, BigDecimal points, AddLoyaltyPointsMovementCallback callback){
         create(AddLoyaltyPointsMovementCommand.class).arg(ARG_CUSTOMER, customerId).arg(ARG_POINTS, points).callback(callback).queueUsing(context);
+    }
+
+    public SyncResult sync(Context context, String customerId, BigDecimal points, IAppCommandContext appCommandContext){
+        Bundle args = new Bundle(2);
+        args.putString(ARG_CUSTOMER, customerId);
+        args.putSerializable(ARG_POINTS, points);
+        return syncDependent(context, args, appCommandContext);
     }
 
     public static abstract class AddLoyaltyPointsMovementCallback {
