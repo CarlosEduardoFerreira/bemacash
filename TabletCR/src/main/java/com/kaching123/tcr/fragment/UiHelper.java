@@ -50,10 +50,10 @@ public final class UiHelper {
         symbols.setGroupingSeparator(',');
         priceFormat.setDecimalFormatSymbols(symbols);
         priceFormat.setParseBigDecimal(true);
-        priceFormat.setRoundingMode(RoundingMode.UNNECESSARY);
+        priceFormat.setRoundingMode(RoundingMode.HALF_UP);
 
         priceInputFormat.setDecimalFormatSymbols(symbols);
-        priceInputFormat.setRoundingMode(RoundingMode.UNNECESSARY);
+        priceInputFormat.setRoundingMode(RoundingMode.HALF_UP);
         priceInputFormat.setParseBigDecimal(true);
         priceInputFormat.setNegativePrefix("-");
 

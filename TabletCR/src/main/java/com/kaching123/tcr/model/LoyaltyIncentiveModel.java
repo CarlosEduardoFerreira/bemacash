@@ -21,9 +21,9 @@ public class LoyaltyIncentiveModel implements IValueModel, Serializable {
     public int birthdayOffset;
     public BigDecimal pointThreshold;
     public BigDecimal rewardValue;
-    public DiscountType rewardValuetype;
+    public DiscountType rewardValueType;
 
-    public LoyaltyIncentiveModel(String guid, String name, LoyaltyType type, LoyaltyRewardType rewardType, int birthdayOffset, BigDecimal pointThreshold, BigDecimal rewardValue, DiscountType rewardValuetype) {
+    public LoyaltyIncentiveModel(String guid, String name, LoyaltyType type, LoyaltyRewardType rewardType, int birthdayOffset, BigDecimal pointThreshold, BigDecimal rewardValue, DiscountType rewardValueType) {
         this.guid = guid;
         this.name = name;
         this.type = type;
@@ -31,7 +31,7 @@ public class LoyaltyIncentiveModel implements IValueModel, Serializable {
         this.birthdayOffset = birthdayOffset;
         this.pointThreshold = pointThreshold;
         this.rewardValue = rewardValue;
-        this.rewardValuetype = rewardValuetype;
+        this.rewardValueType = rewardValueType;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class LoyaltyIncentiveModel implements IValueModel, Serializable {
         values.put(LoyaltyIncentiveTable.BIRTHDAY_OFFSET, birthdayOffset);
         values.put(LoyaltyIncentiveTable.POINT_THRESHOLD, _decimal(pointThreshold));
         values.put(LoyaltyIncentiveTable.REWARD_VALUE, _decimal(rewardValue));
-        values.put(LoyaltyIncentiveTable.REWARD_VALUE, rewardValuetype == null ? null : rewardValuetype.ordinal());
+        values.put(LoyaltyIncentiveTable.REWARD_VALUE_TYPE, rewardValueType == null ? null : rewardValueType.ordinal());
         return values;
     }
 }

@@ -20,8 +20,8 @@ public class LoyaltyIncentivePlanJdbcConverter extends JdbcConverter<LoyaltyInce
     private static final String TABLE_NAME = "LOYALTY_PLAN_INCENTIVE";
 
     private static final String ID = "ID";
-    private static final String INCENTIVE_ID = "INCENTIVE_ID";
-    private static final String PLAN_ID = "PLAN_ID";
+    private static final String INCENTIVE_ID = "LOYALTY_INCENTIVE_ID";
+    private static final String PLAN_ID = "LOYALTY_PLAN_ID";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {

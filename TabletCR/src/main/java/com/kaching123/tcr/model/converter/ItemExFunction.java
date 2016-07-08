@@ -1,11 +1,13 @@
 package com.kaching123.tcr.model.converter;
 
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemMatrixTable;
@@ -13,6 +15,7 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
@@ -28,6 +31,8 @@ import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
  * Created by gdubina on 22/11/13.
  */
 public class ItemExFunction extends ListConverterFunction<ItemExModel> {
+
+    public static Uri VIEW_URI = ShopProvider.contentUriGroupBy(ShopStore.ItemExtView.URI_CONTENT, ItemTable.GUID);
 
     public static String[] PROJECTION = new String[]{
             ItemTable.GUID,

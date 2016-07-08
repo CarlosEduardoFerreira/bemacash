@@ -21,7 +21,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
  */
 public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPointsMovementModel> {
 
-    private static final String TABLE_NAME = "CUSTOMER_LOYALTY_POINTS";
+    private static final String TABLE_NAME = "LOYALTY_POINTS_MOVEMENT";
 
     private static final String ID = "ID";
     private static final String CUSTOMER_ID = "CUSTOMER_ID";

@@ -68,6 +68,7 @@ import com.kaching123.tcr.fragment.tendering.payment.SettlementNotificationFragm
 import com.kaching123.tcr.fragment.tendering.payment.SettlementTransPendingFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.SettlementTransPendingFragmentDialog.ISettlementProgressListener;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
+import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -113,8 +114,8 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
     private String orderGuid;
     private OrderType orderType;
     private KitchenPrintStatus kitchenPrintStatus;
-
     private String[] salesmanGuids;
+    private CustomerModel customer;
 
     private BigDecimal orderTotal;
     private BigDecimal orderPayed;
@@ -174,6 +175,11 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         return this;
     }
 
+    public PaymentProcessor setCustomer(CustomerModel customer){
+        this.customer = customer;
+        return this;
+    }
+
 
     /**
      * Set the working context
@@ -186,6 +192,12 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             proceedToTender(context, 0, singleTenderEnabled);
         }
         return this;
+    }
+
+    private void proceedToLoyalty(final FragmentActivity context){
+        if (customer != null && customer.loyaltyPlanId != null){
+
+        }
     }
 
     private void proceedToCpf(final FragmentActivity context) {

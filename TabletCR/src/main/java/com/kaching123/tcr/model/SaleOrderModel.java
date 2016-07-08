@@ -1,14 +1,17 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.util.DateUtils;
-import com.kaching123.tcr.websvc.api.pax.api.WebAPI;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -58,6 +61,31 @@ public class SaleOrderModel implements Serializable, IValueModel {
 
     public SaleOrderModel(String guid) {
         this.guid = guid;
+    }
+
+    public static SaleOrderModel fromView(Cursor c){
+        return new SaleOrderModel(
+                c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.GUID)),
+                new Date(c.getLong(c.getColumnIndex(SaleOrderView2.SaleOrderTable.CREATE_TIME))),
+                c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.OPERATOR_GUID)),
+                c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.SHIFT_GUID)),
+                c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)),
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.DISCOUNT)),
+                _discountType(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.DISCOUNT_TYPE)),
+                _orderStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.STATUS)),
+                c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.HOLD_NAME)),
+                _bool(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TAXABLE)),
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_PRICE)),
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_TAX)),
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_DISCOUNT)),
+                c.getInt(c.getColumnIndex(SaleOrderView2.SaleOrderTable.PRINT_SEQ_NUM)),
+                c.getLong(c.getColumnIndex(SaleOrderView2.SaleOrderTable.REGISTER_ID)),
+                c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.PARENT_ID)),
+                _orderType(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.ORDER_TYPE)),
+                _bool(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.IS_TIPPED)),
+                _kitchenPrintStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.KITCHEN_PRINT_STATUS)),
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TRANSACTION_FEE))
+        );
     }
 
     public SaleOrderModel(Cursor c) {
@@ -185,9 +213,6 @@ public class SaleOrderModel implements Serializable, IValueModel {
         values.put(SaleOrderTable.STATUS, orderStatus.ordinal());
         values.put(SaleOrderTable.HOLD_NAME, holdName);
         values.put(SaleOrderTable.TAXABLE, taxable);
-
-        //values.put(SaleOrderTable.TML_TOTAL_PRICE, _decimal(tmpTotalPrice));
-
         values.put(SaleOrderTable.PRINT_SEQ_NUM, printSeqNum);
         values.put(SaleOrderTable.REGISTER_ID, registerId);
         values.put(SaleOrderTable.PARENT_ID, parentGuid);
@@ -207,6 +232,19 @@ public class SaleOrderModel implements Serializable, IValueModel {
 
     public static String getDefaultName(SaleOrderModel model) {
         return DateUtils.format(model.createTime);
+    }
+
+    public static SaleOrderModel loadSync(Context context, String guid){
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(SaleOrderTable.URI_CONTENT))
+                .where(SaleOrderTable.GUID + " = ?", guid)
+                .perform(context);
+        SaleOrderModel result = null;
+        if (c.moveToFirst()){
+            result = new SaleOrderModel(c);
+        }
+        c.close();
+
+        return result;
     }
 
 }

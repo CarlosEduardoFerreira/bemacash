@@ -1911,4 +1911,19 @@
     <string name="prepaid_dialog_title">Prepaid</string>
     <string name="prepaid_dialog_des">Please choose a vendor for Prepaid.</string>
     <string name="release_note_link">http://www.bemacashus.com/change-log/</string>
+
+    <string name="loyalty_incentive_dialog_title">Please choose:</string>
+    <string name="loyalty_incentive_dialog_msg1">Reward Available</string>
+    <string name="loyalty_incentive_dialog_msg2">Would you like to apply this reward now?</string>
+    <string name="loyalty_incentive_dialog_type_label">Type: %s</string>
+    <string name="loyalty_incentive_dialog_reward_label">Reward: %s</string>
+
+    <string name="loyalty_type_label_points">Points Reward</string>
+    <string name="loyalty_type_label_birthday">Birthday Reward</string>
+    <string name="loyalty_reward_type_discount">Discount</string>
+    <string name="loyalty_reward_type_gift_card">Gift Card</string>
+    <string name="loyalty_reward_type_item">Item</string>
+
+    <string name="loyalty_wait_message">Searching for Incentives</string>
+    <string name="loyalty_applied_msg">%s incentive applied</string>
 </resources>

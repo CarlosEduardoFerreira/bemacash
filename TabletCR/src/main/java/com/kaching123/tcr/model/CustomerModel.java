@@ -1,9 +1,13 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.fragment.UiHelper;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 
 import java.io.Serializable;
@@ -43,6 +47,31 @@ public class CustomerModel implements IValueModel, Serializable {
     public CustomerModel(String guid, Date createTime) {
         this.guid = guid;
         this.createTime = createTime;
+    }
+
+    public static CustomerModel fromOrderView(Cursor cursor){
+        return new CustomerModel(
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.GUID)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.FISRT_NAME)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LAST_NAME)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.STREET)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.COMPLEMENTARY)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.CITY)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.STATE)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.COUNTRY)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.ZIP)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.EMAIL)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.PHONE)),
+                _bool(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.SEX)),
+                _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.BIRTHDAY)),
+                _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.CREATE_TIME)),
+                _bool(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.CONSENT_PROMOTIONS)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.NOTES)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.CUSTOMER_IDENTIFICATION)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_PLAN_ID)),
+                _decimal(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.TMP_LOYALTY_POINTS)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_BARCODE))
+        );
     }
 
     public CustomerModel(Cursor cursor) {
@@ -149,6 +178,19 @@ public class CustomerModel implements IValueModel, Serializable {
         v.put(CustomerTable.LOYALTY_PLAN_ID, loyaltyPlanId);
         v.put(CustomerTable.LOYALTY_BARCODE, loyaltyBarcode);
         return v;
+    }
+
+    public static CustomerModel loadSync(Context context, String guid){
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(CustomerTable.URI_CONTENT))
+                .where(CustomerTable.GUID + " = ?", guid)
+                .perform(context);
+        CustomerModel result = null;
+        if (c.moveToFirst()){
+            result = new CustomerModel(c);
+        }
+        c.close();
+
+        return result;
     }
 
 }

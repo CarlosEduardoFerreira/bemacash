@@ -144,6 +144,8 @@ import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
+import com.kaching123.tcr.processor.LoyaltyProcessor;
+import com.kaching123.tcr.processor.LoyaltyProcessor.LoyaltyProcessorCallback;
 import com.kaching123.tcr.processor.MoneybackProcessor;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.processor.PaymentProcessor;
@@ -158,9 +160,11 @@ import com.kaching123.tcr.service.ScaleService.ScaleBinder;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
+import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.util.DateUtils;
 import com.kaching123.tcr.util.KeyboardUtils;
 import com.telly.groundy.annotations.OnCancel;
@@ -199,6 +203,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     private static final Uri ORDER_URI = ShopProvider.getContentUri(SaleOrderTable.URI_CONTENT);
+    private static final Uri ORDER_VIEW_URI = ShopProvider.getContentUri(SaleOrderView.URI_CONTENT);
     private static final Uri PAYMENTS_URI = ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT);
 
     private static final int LOADER_ORDER_TITLE = 1;
@@ -246,6 +251,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private String orderTitle;
     private OrdersStatInfo ordersCount;
     private Ringtone alarmRingtone;
+    private CustomerModel customer;
 
     private DisplayBinder displayBinder;
     private ScaleBinder scaleBinder;
@@ -286,6 +292,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private boolean isPrepaidItemRelease = false;
 
     private PaymentProcessor processor;
+    private LoyaltyProcessor loyaltyProcessor;
     private ArrayList<PaymentTransactionModel> successfullCCtransactionModels;
     private List<SaleOrderItemViewModel> prepaidList;
     private ArrayList<PrepaidReleaseResult> releaseResultList;
@@ -503,7 +510,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         });
 
         initTitle();
-        updateTitle(null);
+        updateOrderInfo(null, null);
 
         String curOrderGuid = getApp().getCurrentOrderGuid();
         if (!TextUtils.isEmpty(curOrderGuid)) {
@@ -810,9 +817,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
     }
 
-    private void updateTitle(SaleOrderModel saleOrderModel) {
+    private void updateOrderInfo(SaleOrderModel saleOrderModel, CustomerModel customerModel) {
         CharSequence title;
         this.saleOrderModel = saleOrderModel;
+        this.customer = customerModel;
+        this.totalCostFragment.setCustomer(customerModel);
         ActionBar actionBar = getActionBar();
         if (actionBar == null) {
             return;
@@ -1497,11 +1506,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                     }
                                 }
                         );
+                        notifyLoyaltyProcessorItemAddedToOrder(false);
                         hide();
                     }
 
                     @Override
                     public void handleCancelling() {
+                        notifyLoyaltyProcessorItemAddedToOrder(false);
                     }
 
                     private void hide() {
@@ -1513,8 +1524,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void addItemModel(final ItemExModel model, final ArrayList<String> modifierGiud, final ArrayList<String> addonsGuids,
                               final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final boolean checkDrawerState, Unit unit) {
-        if (model == null)
+        if (model == null){
+            notifyLoyaltyProcessorItemAddedToOrder(false);
             return;
+        }
 
         if (model.serializable && model.tmpUnit.size() == 0 && PlanOptions.isSerializableAllowed()) {
             tryToAddSerializedItem(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, checkDrawerState);
@@ -1528,11 +1541,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                          ArrayList<String> modifierGiud,
                          ArrayList<String> addonsGuids,
                          ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, boolean checkDrawerState, Unit unit) {
-        if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit))
+        if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit)){
+            notifyLoyaltyProcessorItemAddedToOrder(false);
             return;
+        }
         if (model.priceType == PriceType.UNIT_PRICE && scaleServiceBound) {
             if (System.currentTimeMillis() - lastClickTime < 1000) {
                 lastClickTime = System.currentTimeMillis();
+                notifyLoyaltyProcessorItemAddedToOrder(false);
                 return;
             }
             lastClickTime = System.currentTimeMillis();
@@ -1706,79 +1722,104 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             StartTransactionCommand.start(BaseCashierActivity.this);
             SuccessOrderCommand.start(this, orderGuid, isCreateReturnOrder, new SuccessOrderCommand4ReturnCallback());
         } else if (!isPaying) {
-            isPaying = true;
-            StartTransactionCommand.start(BaseCashierActivity.this, orderGuid);
-            processor = PaymentProcessor.create(orderGuid, OrderType.SALE, saleOrderModel.kitchenPrintStatus, salesmanGuids.toArray(new String[salesmanGuids.size()]))
-                    .callback(new IPaymentProcessor() {
+            loyaltyProcessor = LoyaltyProcessor.create(customer.guid, orderGuid);
+            loyaltyProcessor.setCallback(new LoyaltyProcessorCallback() {
+                @Override
+                public void onAddItemRequest(ItemExModel item, BigDecimal price, BigDecimal qty) {
+                    tryToAddItem(item, price, qty, null);
+                }
 
-                        @Override
-                        public void onSuccess() {
-
-                            EndTransactionCommand.start(BaseCashierActivity.this, true);
-                            isPaying = false;
-                            completeOrder();
-                            checkOfflineMode();
-                        }
-
-                        @Override
-                        public void onCancel() {
-                            EndTransactionCommand.start(BaseCashierActivity.this);
-                            isPaying = false;
-                            SaleOrderItemViewModel lastItem = orderItemListFragment == null ? null : orderItemListFragment.getLastItem();
-                            if (lastItem == null) {
-                                startCommand(new DisplayWelcomeMessageCommand());
-                            } else {
-                                startCommand(new DisplaySaleItemCommand(lastItem.getSaleItemGuid()));
-                            }
-                            checkOfflineMode();
-                            updateItemCountMsg();
-                        }
-
-                        @Override
-                        public void onPrintValues(String order, ArrayList<PaymentTransactionModel> list, BigDecimal changeAmount) {
-
-                        }
-
-                        @Override
-                        public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> list) {
-//                            callback.onBillingSuccess();
-                            EndTransactionCommand.start(BaseCashierActivity.this);
-
-                            prepaidList = list;
-                            prepaidCount = prepaidList.size();
-                            successfullCCtransactionModels = transactionModels;
-
-                            OnPrepaidBilling();
-                        }
-
-                        @Override
-                        public void onRefund(RefundAmount a) {
-                            amount = a;
-                            getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
-                        }
-
-                        @Override
-                        public void onUpdateOrderList() {
-                            isPaying = false;
-                            completeOrder();
-                            checkOfflineMode();
-                            getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
-                        }
-
-                        @Override
-                        public void onPrintComplete() {
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    updateItemCountMsg();
-                                }
-                            });
-                        }
-                    });
-            setCallback(processor);
-
-            processor.init(this);
-
+                @Override
+                public void onComplete() {
+                    doPayment();
+                }
+            });
+            loyaltyProcessor.init(self());
         }
+    }
+
+    private void doPayment() {
+        isPaying = true;
+        StartTransactionCommand.start(BaseCashierActivity.this, orderGuid);
+        processor = PaymentProcessor.create(orderGuid, OrderType.SALE, saleOrderModel.kitchenPrintStatus, salesmanGuids.toArray(new String[salesmanGuids.size()]))
+                .callback(new IPaymentProcessor() {
+
+                    @Override
+                    public void onSuccess() {
+
+                        EndTransactionCommand.start(BaseCashierActivity.this, true);
+                        isPaying = false;
+                        completeOrder();
+                        checkOfflineMode();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        EndTransactionCommand.start(BaseCashierActivity.this);
+                        isPaying = false;
+                        SaleOrderItemViewModel lastItem = orderItemListFragment == null ? null : orderItemListFragment.getLastItem();
+                        if (lastItem == null) {
+                            startCommand(new DisplayWelcomeMessageCommand());
+                        } else {
+                            startCommand(new DisplaySaleItemCommand(lastItem.getSaleItemGuid()));
+                        }
+                        checkOfflineMode();
+                        updateItemCountMsg();
+                    }
+
+                    @Override
+                    public void onPrintValues(String order, ArrayList<PaymentTransactionModel> list, BigDecimal changeAmount) {
+
+                    }
+
+                    @Override
+                    public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> list) {
+//                            callback.onBillingSuccess();
+                        EndTransactionCommand.start(BaseCashierActivity.this);
+
+                        prepaidList = list;
+                        prepaidCount = prepaidList.size();
+                        successfullCCtransactionModels = transactionModels;
+
+                        OnPrepaidBilling();
+                    }
+
+                    @Override
+                    public void onRefund(RefundAmount a) {
+                        amount = a;
+                        getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
+                    }
+
+                    @Override
+                    public void onUpdateOrderList() {
+                        isPaying = false;
+                        completeOrder();
+                        checkOfflineMode();
+                        getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
+                    }
+
+                    @Override
+                    public void onPrintComplete() {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                updateItemCountMsg();
+                            }
+                        });
+                    }
+                }).setCustomer(customer);
+        setCallback(processor);
+        processor.init(this);
+    }
+
+    private void testLoyaltyProgram() {
+
+    }
+
+    private void notifyLoyaltyProcessorItemAddedToOrder(boolean success){
+        if (loyaltyProcessor == null)
+            return;
+
+        loyaltyProcessor.onItemAddedToOrder(orderGuid, success);
     }
 
     public void updateItemCountMsg() {
@@ -1925,7 +1966,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         ChooseCustomerDialog.show(self(), this.orderGuid, new CustomerPickListener() {
             @Override
             public void onCustomerPicked(CustomerModel customer) {
-                totalCostFragment.setCustomer(customer);
+                /*totalCostFragment.setCustomer(customer);*/
             }
         });
     }
@@ -2204,82 +2245,48 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         return isDiscounted;
     }
 
-//    private class SaleItemCountLoader implements LoaderManager.LoaderCallbacks<Cursor> {
-//
-//        @Override
-//        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-//            if (orderGuid != null)
-//                return CursorLoaderBuilder.forUri(SALE_ITEM_ORDER_URI)
-//                        .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
-//                        .build(BaseCashierActivity.this);
-//            else
-//                return null;
-//        }
-//
-//        @Override
-//        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//            if (data == null) {
-//                itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " 0");
-//
-//                return;
-//            }
-//            BigDecimal saleItemAmount = BigDecimal.ZERO;
-//            BigDecimal itemQty = BigDecimal.ZERO;
-//            if (data.moveToFirst()) {
-//                do {
-//                    itemQty = _decimal(data.getString(data.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)));
-//                    saleItemAmount = saleItemAmount.add(itemQty);
-//                } while (data.moveToNext());
-//            }
-//            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " " + saleItemAmount.toString());
-//        }
-//
-//        @Override
-//        public void onLoaderReset(Loader<Cursor> loader) {
-//            itemCount.setTitle(itemCount.getTitle().toString().substring(0, 10) + " 0");
-//        }
-//    }
-
     private class OrderInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
 
         @Override
         public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder.forUri(ORDER_URI)
-                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-                    .transform(new Function<Cursor, SaleOrderModel>() {
+            return CursorLoaderBuilder.forUri(ORDER_VIEW_URI)
+                    .where(SaleOrderView2.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
+                    .wrap(new Function<Cursor, SaleOrderModelResult>() {
                         @Override
-                        public SaleOrderModel apply(Cursor cursor) {
-                            return new SaleOrderModel(cursor);
-                        }
-                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
-                        @Override
-                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
-                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
-                                return new SaleOrderModelResult(null);
-                            } else {
-                                return new SaleOrderModelResult(saleOrderModels.get(0));
+                        public SaleOrderModelResult apply(Cursor cursor) {
+                            if (!cursor.moveToFirst()){
+                                return new SaleOrderModelResult(null, null);
+                            }else{
+                                SaleOrderModel order = SaleOrderModel.fromView(cursor);
+                                CustomerModel customer = null;
+                                if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))){
+                                    customer = CustomerModel.fromOrderView(cursor);
+                                }
+                                return new SaleOrderModelResult(order, customer);
                             }
                         }
                     }).build(BaseCashierActivity.this);
         }
 
         @Override
-        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, SaleOrderModelResult saleOrderModel) {
-            updateTitle(saleOrderModel.model);
+        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, SaleOrderModelResult result) {
+            updateOrderInfo(result.order, result.customer);
         }
 
         @Override
         public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
-            updateTitle(null);
+            updateOrderInfo(null, null);
         }
     }
 
     private static class SaleOrderModelResult {
 
-        private final SaleOrderModel model;
+        private final SaleOrderModel order;
+        private final CustomerModel customer;
 
-        private SaleOrderModelResult(SaleOrderModel model) {
-            this.model = model;
+        private SaleOrderModelResult(SaleOrderModel order, CustomerModel customer) {
+            this.order = order;
+            this.customer = customer;
         }
     }
 
@@ -2567,6 +2574,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         protected void onItemAdded(final SaleOrderItemModel item) {
+            notifyLoyaltyProcessorItemAddedToOrder(true);
             if (isFinishing() || isDestroyed())
                 return;
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
@@ -2579,6 +2587,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         protected void onItemAddError() {
+            notifyLoyaltyProcessorItemAddedToOrder(false);
             if (isFinishing() || isDestroyed())
                 return;
             orderItemListFragment.setNeed2ScrollList(false);
@@ -2894,7 +2903,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //
 //        @Override
 //        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
-//            updateTitle(null);
+//            updateOrderInfo(null);
 //        }
 //    }
 

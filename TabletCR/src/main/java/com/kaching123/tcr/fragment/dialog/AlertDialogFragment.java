@@ -196,8 +196,12 @@ public class AlertDialogFragment extends StyledDialogFragment {
         show(activity, type, titleId, msg, positiveTitleId, positiveListener, null, null);
     }
 
-    public static void showNotification(FragmentActivity activity, int titleId, String msg) {
-        show(activity, DialogType.INFO, titleId, msg, R.string.btn_ok, null);
+    public static void showNotification(FragmentActivity activity, int titleId, String msg){
+        showNotification(activity, titleId, msg, null);
+    }
+
+    public static void showNotification(FragmentActivity activity, int titleId, String msg, OnDialogClickListener positiveListener) {
+        show(activity, DialogType.INFO, titleId, msg, R.string.btn_ok, positiveListener);
     }
 
     public static void showComplete(FragmentActivity activity, int titleId, String msg) {

@@ -627,7 +627,7 @@ public abstract class ShopStore {
     })
     public static interface SaleOrderTable extends IBemaSyncTable {
 
-        @URI(altNotify = {SaleOrderItemsView.URI_CONTENT, SaleOrderTipsQuery.URI_CONTENT, UnitsView.URI_CONTENT})
+        @URI(altNotify = {SaleOrderItemsView.URI_CONTENT, SaleOrderTipsQuery.URI_CONTENT, UnitsView.URI_CONTENT, SaleOrderView.URI_CONTENT})
         String URI_CONTENT = "sale_order";
 
         String TABLE_NAME = "sale_order";
@@ -2903,7 +2903,6 @@ public abstract class ShopStore {
         String TABLE_OPERATOR = "operator_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({CustomerTable.GUID, CustomerTable.FISRT_NAME, CustomerTable.LAST_NAME, CustomerTable.PHONE, CustomerTable.EMAIL, CustomerTable.CUSTOMER_IDENTIFICATION})
         @Join(type = Join.Type.LEFT, joinTable = CustomerTable.TABLE_NAME, joinColumn = CustomerTable.GUID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.CUSTOMER_GUID)
         String TABLE_CUSTOMER = "customer_table";
 
@@ -3778,6 +3777,30 @@ public abstract class ShopStore {
         @Join(type = Join.Type.LEFT, joinTable = ModifierTable.TABLE_NAME,
                 joinColumn = ModifierTable.ITEM_GROUP_GUID, onTableAlias = TABGROUP,
                 onColumn = ModifierGroupTable.GUID)
+        String TABLE_ITEM = "item_table";
+    }
+
+    @SimpleView(LoyaltyView.VIEW_NAME)
+    public interface LoyaltyView {
+
+        String VIEW_NAME = "loyalty_incentive_view";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = VIEW_NAME;
+
+        @From(LoyaltyIncentivePlanTable.TABLE_NAME)
+        String TABLE_INCENTIVE_PLAN = "loyalty_incentive_plan_table";
+
+        @Join(joinTable = LoyaltyPlanTable.TABLE_NAME, joinColumn = LoyaltyPlanTable.GUID, onTableAlias = TABLE_INCENTIVE_PLAN, onColumn = LoyaltyIncentivePlanTable.PLAN_GUID)
+        String TABLE_PLAN = "loyalty_plan_table";
+
+        @Join(joinTable = LoyaltyIncentiveTable.TABLE_NAME, joinColumn = LoyaltyIncentiveTable.GUID, onTableAlias = TABLE_INCENTIVE_PLAN, onColumn = LoyaltyIncentivePlanTable.INCENTIVE_GUID)
+        String TABLE_INCENTIVE = "loyalty_incentive_table";
+
+        @Join(type = Join.Type.LEFT, joinTable = LoyaltyIncentiveItemTable.TABLE_NAME, joinColumn = LoyaltyIncentiveItemTable.INCENTIVE_GUID, onTableAlias = TABLE_INCENTIVE, onColumn = LoyaltyIncentiveTable.GUID)
+        String TABLE_INCENTIVE_ITEM = "loyalty_incentive_item_table";
+
+        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_INCENTIVE_ITEM, onColumn = LoyaltyIncentiveItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
     }
 

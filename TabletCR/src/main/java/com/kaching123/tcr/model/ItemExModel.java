@@ -11,7 +11,9 @@ import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.model.Unit.CodeType;
+import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopStore.VariantItemTable;
 import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
 
@@ -255,5 +257,20 @@ public class ItemExModel extends ItemModel {
             }
         }
         return variantsCount;
+    }
+
+    public static ItemExModel loadSync(Context context, String itemGuid){
+        Cursor c = ProviderAction.query(ItemExFunction.VIEW_URI)
+                .projection(ItemExFunction.PROJECTION)
+                .where(ItemTable.GUID + " = ?", itemGuid)
+                .perform(context);
+
+        ItemExModel result = null;
+        if (c.moveToFirst()){
+            result = new ItemExFunction().apply(c);
+        }
+        c.close();
+
+        return result;
     }
 }
