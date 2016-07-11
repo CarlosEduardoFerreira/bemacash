@@ -69,6 +69,9 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
 
         Cursor c = query.perform(getContext());
         LoyaltyViewModel loyalty = new LoyaltyViewWrapFunction().apply(c);
+        if (loyalty == null)
+            return succeeded();
+
         filterByBirthday(loyalty.incentiveExModels, customer.birthday);
         filterByOrderValue(loyalty.incentiveExModels, order.tmpTotalPrice);
 
