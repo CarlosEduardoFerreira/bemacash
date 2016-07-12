@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 
 import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
+import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
 import static com.kaching123.tcr.fragment.UiHelper.showQuantityInteger;
 
 /**
@@ -128,17 +129,9 @@ public class HistoryDetailedOrderItemView extends FrameLayout implements ICheckB
 
         BigDecimal availableQty = historyItem.availableQty;//itemModel.qty.subtract(itemModel.tmpRefundQty);
 
-
-        if (saleItemModel.isPcsUnit) {
-            showInteger(this.qty, itemModel.qty);
-            showInteger(this.maxRefundQty, itemModel.isPrepaidItem ? itemModel.getFinalPrice() : availableQty);
-            showInteger(this.qtyRefund, itemModel.isPrepaidItem ? new BigDecimal(0) : historyItem.wantedQty);
-
-        } else {
-            showQuantityInteger(this.qty, itemModel.qty);
-            showQuantityInteger(this.maxRefundQty, itemModel.isPrepaidItem ? new BigDecimal(0) : availableQty);
-            showQuantityInteger(this.qtyRefund, itemModel.isPrepaidItem ? new BigDecimal(0) :historyItem.wantedQty);
-        }
+        showQuantity(this.qty, itemModel.qty, saleItemModel.isPcsUnit);
+        showQuantity(this.maxRefundQty, itemModel.isPrepaidItem ? BigDecimal.ZERO : availableQty, saleItemModel.isPcsUnit);
+        showQuantity(this.qtyRefund, itemModel.isPrepaidItem ? BigDecimal.ZERO :historyItem.wantedQty, saleItemModel.isPcsUnit);
 
         checkbox.setChecked(historyItem.wanted);
         if (historyItem.isFinished()) {

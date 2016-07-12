@@ -9,19 +9,18 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EViewGroup;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.util.CalculationUtil;
 
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.ViewById;
+
 import java.math.BigDecimal;
 
-import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
-import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPercentInBrackets;
 import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
 
@@ -207,12 +206,7 @@ public class ItemView extends FrameLayout {
         showHiddenSerialCodes(productCodes);
 
         this.itemUnits.setText(unitsLabel);
-//        this.itemUnits.setVisibility(unitsLabel == null ? View.GONE : View.VISIBLE);
-        if (unitsLabel == null) {
-            showBrandQtyInteger(this.itemQty, qty);
-        } else {
-            showQuantity(this.itemQty, qty);
-        }
+        showQuantity(this.itemQty, qty, unitsLabel == null);
 
         showPrice(this.itemUnitPrice, price);
 

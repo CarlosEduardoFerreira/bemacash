@@ -8,10 +8,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.EViewGroup;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.PriceType;
+
+import org.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 
@@ -88,7 +89,7 @@ public class ItemView extends FrameLayout {
         if (unitsLabel == null) {
             showInteger(this.qty, qty);
         } else {
-            showQuantity(this.qty, qty);
+            showQuantity(this.qty, qty, false);
             this.units.setText(unitsLabel);
         }
 

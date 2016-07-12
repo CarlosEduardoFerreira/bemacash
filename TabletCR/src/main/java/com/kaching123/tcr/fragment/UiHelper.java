@@ -239,10 +239,12 @@ public final class UiHelper {
         }
     }
 
-    public static void showQuantity(TextView textView, BigDecimal decimal) {
+    public static void showQuantity(TextView textView, BigDecimal decimal, boolean isPcsUnit) {
         if (decimal == null) {
             textView.setText(null);
-        } else {
+        } else if (isPcsUnit){
+            textView.setText(quantityIntegerFormat.format(decimal));
+        } else{
             textView.setText(quantityFormat.format(decimal));
         }
     }
@@ -274,10 +276,14 @@ public final class UiHelper {
         return value;
     }
 
-    public static String qtyFormat(BigDecimal qty) {
-        if (qty == null)
+    public static String qtyFormat(BigDecimal qty, boolean isPcsUnit) {
+        if (qty == null){
             return null;
-        return quantityFormat.format(qty);
+        }else if (isPcsUnit){
+            return quantityIntegerFormat.format(qty);
+        }else {
+            return quantityFormat.format(qty);
+        }
     }
 
     public static String trimFormat(BigDecimal qty) {

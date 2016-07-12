@@ -94,6 +94,11 @@
     <string name="orders_history_merchant">Cashier:</string>
     <string name="orders_history_order_num">Order#:</string>
     <string name="orders_history_transactions_status">Status:</string>
+    <string name="orders_header_sale_date">Sale Date</string>
+    <string name="orders_header_register_number">Register Number</string>
+    <string name="orders_header_total_price">Total Price</string>
+    <string name="orders_header_discount">Discount</string>
+    <string name="orders_header_tax">Tax</string>
 
     <string name="composer_header_item">Composing item</string>
     <string name="composer_header_code">Item product code</string>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/ItemList.ItemLayout"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingLeft="0dp"
+              android:paddingRight="0dp">
+
+    <TextView
+        android:id="@+id/description"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        style="@style/ItemList.ItemText"
+        android:gravity="left|center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"/>
+
+    <TextView
+        android:id="@+id/price"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        style="@style/ItemList.ItemText"
+        android:gravity="right|center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/qty"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        style="@style/ItemList.ItemText"
+        android:gravity="right|center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/total"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        style="@style/ItemList.ItemText"
+        android:gravity="right|center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+</LinearLayout>

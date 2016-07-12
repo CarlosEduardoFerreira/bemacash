@@ -23,7 +23,8 @@
                 android:inputType="textPostalAddress"
                 android:maxLength="@integer/address_max_length"
                 android:nextFocusDown="@+id/street2"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textCursorDrawable="@null"/>
         </TableRow>
 
         <TableRow>

@@ -165,6 +165,10 @@
             android:theme="@style/AppTheme.Holo.NoCapsTabText"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".activity.SaleItemsHistoryActivity_"
+            android:label="@string/history_activity_label"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".activity.CategoriesActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape" />

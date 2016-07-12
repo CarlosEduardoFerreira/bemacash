@@ -494,8 +494,8 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
                                 showInteger(availableQty, model.availableQty);
                                 showInteger(availableQtyPencil, model.availableQty);
                             } else {
-                                showQuantity(availableQty, model.availableQty);
-                                showQuantity(availableQtyPencil, model.availableQty);
+                                showQuantity(availableQty, model.availableQty, false);
+                                showQuantity(availableQtyPencil, model.availableQty, false);
                             }
                         }
 
@@ -507,8 +507,8 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
                                 showInteger(availableQty, model.availableQty);
                                 showInteger(availableQtyPencil, model.availableQty);
                             } else {
-                                showQuantity(availableQty, model.availableQty);
-                                showQuantity(availableQtyPencil, model.availableQty);
+                                showQuantity(availableQty, model.availableQty, false);
+                                showQuantity(availableQtyPencil, model.availableQty, false);
                             }
                         }
                     }

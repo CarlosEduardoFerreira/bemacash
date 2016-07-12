@@ -188,4 +188,12 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                 })
                 .build(context);
     }
+
+    public static Loader<List<SaleOrderItemViewModel>> createHistorySimpleLoader(Context context, String orderGuid) {
+        return CursorLoaderBuilder.forUri(URI_ORDER_ITEMS)
+                .where(SaleItemTable.ORDER_GUID + " = ?", orderGuid)
+                .orderBy(ORDER_BY)
+                .wrap(new HistoryOrderItemViewModelWrapFunction(context))
+                .build(context);
+    }
 }

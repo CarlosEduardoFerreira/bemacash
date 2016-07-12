@@ -80,7 +80,7 @@ public class LoyaltyFragmentDialog extends StyledDialogFragment {
     }
 
     private String getItemClarification(){
-        String qty = UiHelper.qtyFormat(incentive.incentiveItemExModel.qty);
+        String qty = UiHelper.qtyFormat(incentive.incentiveItemExModel.qty, false);
         String price = UiHelper.priceFormat(incentive.incentiveItemExModel.price);
         String description = incentive.incentiveItemExModel.item.description;
         return String.format("%s x %s %s", qty, price, description);
