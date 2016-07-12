@@ -3,18 +3,23 @@ package com.kaching123.tcr.commands.store.saleorder;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
+import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnCallback;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
+import com.telly.groundy.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -26,6 +31,8 @@ public class UpdateSaleOrderCustomerCommand extends AsyncCommand {
 
     private static final String ARG_SALE_ORDER_GUID = "arg_sale_order_guid";
     private static final String ARG_CUSTOMER_GUID = "arg_customer_guid";
+    private static final String EXTRA_ORDER_GUID = "extra_order_guid";
+    private static final String CALLBACK_ADD_ORDER = "callback_add_order";
 
     private String saleOrderGuid;
     private String customerGuid;
@@ -34,6 +41,15 @@ public class UpdateSaleOrderCustomerCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         saleOrderGuid = getStringArg(ARG_SALE_ORDER_GUID);
         customerGuid = getStringArg(ARG_CUSTOMER_GUID);
+
+        if (saleOrderGuid == null){
+            SaleOrderModel order = createSaleOrder();
+            if (!new AddSaleOrderCommand().sync(getContext(), order, true, getAppCommandContext()))
+                return failed();
+            saleOrderGuid = order.guid;
+            fireAddOrderEvent(saleOrderGuid);
+            return succeeded();
+        }
 
         return succeeded();
     }
@@ -58,12 +74,22 @@ public class UpdateSaleOrderCustomerCommand extends AsyncCommand {
         return converter.updateCustomer(model, getAppCommandContext());
     }
 
+    private void fireAddOrderEvent(String orderGuid) {
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_ORDER_GUID, orderGuid);
+        callback(CALLBACK_ADD_ORDER, bundle);
+    }
+
     public static void start(Context context, String saleOrderGuid, String customerId, BaseUpdateOrderCustomerCallback callback) {
         create(UpdateSaleOrderCustomerCommand.class)
                 .arg(ARG_SALE_ORDER_GUID, saleOrderGuid)
                 .arg(ARG_CUSTOMER_GUID, customerId)
                 .callback(callback)
                 .queueUsing(context);
+    }
+
+    private SaleOrderModel createSaleOrder() {
+        return AddSaleOrderCommand.createSaleOrder(getContext(), getAppCommandContext().getRegisterId(), getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), customerGuid, OrderType.SALE, BigDecimal.ZERO);
     }
 
     public static abstract class BaseUpdateOrderCustomerCallback {
@@ -78,9 +104,16 @@ public class UpdateSaleOrderCustomerCommand extends AsyncCommand {
             onOrderCustomerUpdateError();
         }
 
+        @OnCallback(value = UpdateSaleOrderCustomerCommand.class, name = CALLBACK_ADD_ORDER)
+        public void onCallback(@Param(EXTRA_ORDER_GUID)String orderGuid){
+            onOrderAdded(orderGuid);
+        }
+
         protected abstract void onOrderCustomerUpdated();
 
         protected abstract void onOrderCustomerUpdateError();
+
+        protected abstract void onOrderAdded(String orderGuid);
 
     }
 }

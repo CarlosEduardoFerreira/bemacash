@@ -1970,7 +1970,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         ChooseCustomerDialog.show(self(), this.orderGuid, new CustomerPickListener() {
             @Override
             public void onCustomerPicked(CustomerModel customer) {
-                /*totalCostFragment.setCustomer(customer);*/
+
+            }
+
+            @Override
+            public void onOrderAdded(String orderGuid) {
+                if (isFinishing() || isDestroyed())
+                    return;
+                setOrderGuid(orderGuid, true);
             }
         });
     }

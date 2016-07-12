@@ -163,7 +163,7 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
     }
 
     private SaleOrderModel createSaleOrder(BigDecimal transactionFee) {
-        return AddItem2SaleOrderCommand.createSaleOrder(getContext(), getAppCommandContext().getRegisterId(), getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), OrderType.PREPAID, transactionFee);
+        return AddSaleOrderCommand.createSaleOrder(getContext(), getAppCommandContext().getRegisterId(), getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), null, OrderType.PREPAID, transactionFee);
     }
 
     @Override

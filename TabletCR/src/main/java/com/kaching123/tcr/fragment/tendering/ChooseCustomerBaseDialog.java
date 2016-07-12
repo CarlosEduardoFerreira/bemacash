@@ -161,6 +161,10 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     protected abstract void onCustomerPicked(CustomerModel customer);
 
+    protected void onOrderAdded(String orderGuid){
+
+    };
+
     @AfterTextChange
     protected void customerFilterAfterTextChanged(Editable s) {
         getLoaderManager().restartLoader(0, null, this);
@@ -230,6 +234,11 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
         @Override
         protected void onOrderCustomerUpdateError() {
 
+        }
+
+        @Override
+        protected void onOrderAdded(String orderGuid) {
+            ChooseCustomerBaseDialog.this.onOrderAdded(orderGuid);
         }
     };
 

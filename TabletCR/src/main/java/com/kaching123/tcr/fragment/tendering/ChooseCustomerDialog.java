@@ -34,11 +34,19 @@ public class ChooseCustomerDialog extends ChooseCustomerBaseDialog implements Ba
         dismiss();
     }
 
+    @Override
+    protected void onOrderAdded(String orderGuid) {
+        if (pickListener != null)
+            pickListener.onOrderAdded(orderGuid);
+        dismiss();
+    }
+
     public static void show(FragmentActivity activity, String orderGuid, CustomerPickListener listener){
         DialogUtil.show(activity, DIALOG_NAME, ChooseCustomerDialog_.builder().orderGuid(orderGuid).build()).setPickListener(listener);
     }
 
     public interface CustomerPickListener{
         void onCustomerPicked(CustomerModel customer);
+        void onOrderAdded(String orderGuid);
     }
 }

@@ -2,11 +2,18 @@ package com.kaching123.tcr.commands.store.saleorder;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
+import com.getbase.android.db.provider.ProviderAction;
+import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
+import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.model.DiscountType;
+import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -19,8 +26,14 @@ import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
+
+import static com.kaching123.tcr.util.CursorUtil._wrap;
 
 public class AddSaleOrderCommand extends AsyncCommand {
+
+    private static final Uri URI_ORDER = ShopProvider.contentUri(SaleOrderTable.URI_CONTENT);
 
     public static final String ARG_ORDER = "arg_order";
     public static final String ARG_SKIP_NOTIFY = "arg_skip_notify";
@@ -38,7 +51,7 @@ public class AddSaleOrderCommand extends AsyncCommand {
         skipNotify = getBooleanArg(ARG_SKIP_NOTIFY);
 
         if (order == null)
-            order = AddItem2SaleOrderCommand.createSaleOrder(getContext(), getAppCommandContext().getRegisterId(), getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), OrderType.SALE, BigDecimal.ZERO);
+            order = createSaleOrder(getContext(), getAppCommandContext().getRegisterId(), getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), null, OrderType.SALE, BigDecimal.ZERO);
 
         return succeeded().add(EXTRA_GUID, order.guid);
     }
@@ -57,6 +70,45 @@ public class AddSaleOrderCommand extends AsyncCommand {
         return JdbcFactory.getConverter(order).insertSQL(order, getAppCommandContext());
     }
 
+    public static SaleOrderModel createSaleOrder(Context context,
+                                                 long registerId,
+                                                 String operatorGuid, String shiftGuid, String customerGuid, OrderType type, BigDecimal transactionFee) {
+        Integer seq = _wrap(ProviderAction
+                        .query(URI_ORDER)
+                        .projection("max(" + SaleOrderTable.PRINT_SEQ_NUM + ")")
+                        .where(SaleOrderTable.REGISTER_ID + " = ?", registerId)
+                        .perform(context),
+                new Function<Cursor, Integer>() {
+                    @Override
+                    public Integer apply(Cursor cursor) {
+                        if (cursor.moveToFirst()) {
+                            return cursor.getInt(0) + 1;
+                        }
+                        return 1;
+                    }
+                });
+        return new SaleOrderModel(UUID.randomUUID().toString(),
+                new Date(),
+                operatorGuid,
+                shiftGuid,
+                customerGuid,
+                BigDecimal.ZERO,
+                DiscountType.VALUE,
+                OrderStatus.ACTIVE,
+                null,
+                true,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                seq,
+                registerId,
+                null,
+                type,
+                KitchenPrintStatus.PRINT,
+                transactionFee
+        );
+    }
+
     public static void start(Context context, SaleOrderModel order, boolean skipNotify, BaseAddSaleOrderCommandCallback callback) {
         create(AddSaleOrderCommand.class).arg(ARG_ORDER, order).arg(ARG_SKIP_NOTIFY, skipNotify).callback(callback).queueUsing(context);
     }
@@ -73,6 +125,8 @@ public class AddSaleOrderCommand extends AsyncCommand {
         TaskResult result = syncStandalone(context, bundle(order, skipNotify), appCommandContext);
         return !isFailed(result);
     }
+
+
 
     private static Bundle bundle(SaleOrderModel order) {
         return bundle(order, false);

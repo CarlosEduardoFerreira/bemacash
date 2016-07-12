@@ -147,7 +147,6 @@ public class TotalCostFragment extends Fragment {
         btnHold.setEnabled(!isCreateReturnOrder && clickable);
         btnVoid.setEnabled(clickable);
         btnPay.setEnabled(clickable);
-        btnCustomer.setEnabled(clickable);
         taxBlock.setEnabled(clickable);
         orderDiscountBlock.setEnabled(clickable);
     }
@@ -173,7 +172,7 @@ public class TotalCostFragment extends Fragment {
         showPrice(this.tax, totalTaxVatValue);
         if (taxable) {
             this.tax.setTextColor(taxColorNormal);
-        } else {
+        } else if (BigDecimal.ZERO.compareTo(totalTaxVatValue) != 0){
             this.tax.setTextColor(taxColorEmpty);
         }
 
