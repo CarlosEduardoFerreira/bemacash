@@ -18,8 +18,6 @@ import com.kaching123.tcr.model.LoyaltyViewModel;
 import com.kaching123.tcr.model.LoyaltyViewModel.IncentiveExModel;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by vkompaniets on 06.07.2016.
@@ -31,7 +29,6 @@ public class LoyaltyProcessor {
     private IncentiveExModel currentIncentive;
     private String orderGuid;
     private String customerGuid;
-    private Set<String> bannedIncentiveIds = new HashSet<>();
 
     private LoyaltyProcessorCallback callback;
 
@@ -87,7 +84,7 @@ public class LoyaltyProcessor {
 
                 @Override
                 public void onSkipRequested(IncentiveExModel incentive) {
-                    bannedIncentiveIds.add(incentive.guid);
+                    banIncentive(incentive.guid);
                     processIncentive();
                 }
             });
@@ -96,7 +93,7 @@ public class LoyaltyProcessor {
 
     private IncentiveExModel getNextIncentive(){
         for (IncentiveExModel incentive : loyalty.incentiveExModels){
-            if (!bannedIncentiveIds.contains(incentive.guid))
+            if (!checkIncentiveBanned(incentive.guid))
                 return incentive;
         }
         return null;
@@ -122,7 +119,7 @@ public class LoyaltyProcessor {
 
     private void applyGiftCardIncentive(IncentiveExModel incentive){
         //TODO implement gift card incentives
-        bannedIncentiveIds.add(incentive.guid);
+        banIncentive(incentive.guid);
         processIncentive();
     }
 
@@ -145,7 +142,7 @@ public class LoyaltyProcessor {
     }
 
     private void addPointsMovement(final IncentiveExModel incentive) {
-        bannedIncentiveIds.add(incentive.guid);
+        banIncentive(incentive.guid);
         AddLoyaltyPointsMovementCommand.start(context, customerGuid, incentive.pointThreshold == null ? BigDecimal.ZERO : incentive.pointThreshold.negate(), orderGuid, new AddLoyaltyPointsMovementCallback() {
             @Override
             protected void onPointsApplied() {
@@ -163,6 +160,14 @@ public class LoyaltyProcessor {
                 return true;
             }
         });
+    }
+
+    private void banIncentive(String incentiveId){
+        LoyaltyIncentiveCache.get().put(orderGuid, incentiveId);
+    }
+
+    private boolean checkIncentiveBanned(String incentiveId){
+        return LoyaltyIncentiveCache.get().isIncentiveBannedForOrder(orderGuid, incentiveId);
     }
 
     public interface LoyaltyProcessorCallback {

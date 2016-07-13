@@ -11,9 +11,9 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 import com.kaching123.tcr.store.ShopStore.OldActiveUnitOrdersQuery;
 import com.kaching123.tcr.store.ShopStore.OldMovementGroupsQuery;
 import com.kaching123.tcr.store.ShopStore.OldSaleOrdersQuery;
@@ -30,8 +30,6 @@ import com.kaching123.tcr.store.helper.RecalcSaleItemTable;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /*import com.kaching123.tcr.store.ShopStore.MaxUpdateTableChildTimeQuery;
 import com.kaching123.tcr.store.ShopStore.MaxUpdateTableParentTimeQuery;*/
@@ -288,7 +286,7 @@ public class ShopProviderExt extends ShopProvider {
             itemMovementHelper.recalculateMovementAvailableQty(values.getAsString(ItemMovementTable.ITEM_UPDATE_QTY_FLAG));
             sheduleUpdate();
         } else if (LoyaltyPointsMovementTable.URI_CONTENT.equals(path)){
-            loyaltyPointsHelper.recalculateCustomerLoyaltyPoints(values.getAsString(LoyaltyPointsMovementTable.CUSTOMER_ID), _decimal(values.getAsString(LoyaltyPointsMovementTable.LOYALTY_POINTS)));
+            loyaltyPointsHelper.recalculateCustomerLoyaltyPoints(values.getAsString(LoyaltyPointsMovementTable.CUSTOMER_ID));
         }
         return result;
     }
@@ -305,10 +303,10 @@ public class ShopProviderExt extends ShopProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         boolean isDraftReset = values.size() == 1 && values.containsKey(ShopStore.DEFAULT_IS_DRAFT);
+        String path = getUriPath(uri);
         if (isDraftReset) {
             //sync process completed need to recalc all instead bulkinsert
             //need to do it before sync flag will be flushed
-            String path = getUriPath(uri);
             if (SaleItemTable.URI_CONTENT.equals(path)) {
                 Logger.d("RecalculateOrderPrice: bulkInsert SaleItemTable");
                 saleItemHelper.bulkRecalcSaleItemTableAfterSync();
@@ -334,10 +332,10 @@ public class ShopProviderExt extends ShopProvider {
             }
         }
 
+
         int count = super.update(uri, values, selection, selectionArgs);
 
         if (!isDraftReset && count > 0 && selectionArgs != null && selectionArgs.length == 1) {
-            String path = getUriPath(uri);
             if (SaleItemTable.URI_CONTENT.equals(path)) {
                 saleItemHelper.recalculateOrderTotalPriceByItem(selectionArgs[0]);
             } else if (SaleOrderTable.URI_CONTENT.equals(path) && !values.containsKey(SaleOrderTable.TML_TOTAL_PRICE)
@@ -347,6 +345,11 @@ public class ShopProviderExt extends ShopProvider {
                 sheduleUpdate();
             }
         }
+
+        if (!isDraftReset && LoyaltyPointsMovementTable.URI_CONTENT.equals(path)){
+            loyaltyPointsHelper.recalculateCustomerLoyaltyPoints2(selectionArgs[0]);
+        }
+
         return count;
     }
 

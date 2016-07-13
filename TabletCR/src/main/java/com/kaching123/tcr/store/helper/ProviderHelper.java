@@ -24,6 +24,10 @@ class ProviderHelper {
         return context;
     }
 
+    protected SQLiteOpenHelper getDbHelper() {
+        return dbHelper;
+    }
+
     protected void bulkUpdate(String tableName, ArrayList<ContentValues> values, String idName) {
         bulkUpdate(tableName, values, idName, null, null);
     }

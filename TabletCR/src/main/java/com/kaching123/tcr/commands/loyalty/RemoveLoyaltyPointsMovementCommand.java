@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.AsyncCommand;
@@ -35,12 +36,14 @@ public class RemoveLoyaltyPointsMovementCommand extends AsyncCommand {
                 .where(LoyaltyPointsMovementTable.SALE_ORDER_ID + " = ?", orderId)
                 .perform(getContext());
 
-        if (c.moveToFirst()){
-            movement = new LoyaltyPointsMovementModel(c.getString(0), null, null, null);
+        try {
+            if (c.moveToFirst()){
+                movement = new LoyaltyPointsMovementModel(c.getString(0), null, null, null);
+            }else{
+                return succeeded();
+            }
+        } finally {
             c.close();
-        }else{
-            c.close();
-            return failed();
         }
 
         return succeeded();
@@ -48,11 +51,17 @@ public class RemoveLoyaltyPointsMovementCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
+        if (movement == null)
+            return null;
+
         return JdbcFactory.delete(movement, getAppCommandContext());
     }
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
+        if (movement == null)
+            return null;
+
         ArrayList<ContentProviderOperation> ops = new ArrayList<>(1);
         ops.add(ContentProviderOperation.newUpdate(URI_MOVEMENTS)
                 .withValues(ShopStore.DELETE_VALUES)
@@ -64,5 +73,11 @@ public class RemoveLoyaltyPointsMovementCommand extends AsyncCommand {
 
     public static void start(Context context, String orderGuid){
         create(RemoveLoyaltyPointsMovementCommand.class).arg(ARG_ORDER_ID, orderGuid).queueUsing(context);
+    }
+
+    public SyncResult syncNow(Context context, String orderGuid, IAppCommandContext appCommandContext){
+        Bundle args = new Bundle(1);
+        args.putString(ARG_ORDER_ID, orderGuid);
+        return syncDependent(context, args, appCommandContext);
     }
 }

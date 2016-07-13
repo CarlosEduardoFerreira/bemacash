@@ -7,7 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.loyalty.RemoveLoyaltyPointsMovementCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
@@ -43,6 +43,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     private String prepaidOrderGuid;
 
     private SyncResult[] removeSaleOrderItemResults;
+    private SyncResult returnLoyaltyPointsResult;
 
     @Override
     protected TaskResult doCommand() {
@@ -50,6 +51,9 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         orderType = (OrderType) getArgs().getSerializable(ARG_ORDER_TYPE);
 
         if (!removeItems())
+            return failed();
+
+        if (!returnLoyaltyPoints())
             return failed();
 
         return succeeded();
@@ -81,6 +85,11 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         }
     }
 
+    private boolean returnLoyaltyPoints(){
+        returnLoyaltyPointsResult = new RemoveLoyaltyPointsMovementCommand().syncNow(getContext(), orderId, getAppCommandContext());
+        return returnLoyaltyPointsResult != null;
+    }
+
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
@@ -96,6 +105,10 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         for (SyncResult subResult: removeSaleOrderItemResults) {
             if (subResult.getLocalDbOperations() != null)
                 operations.addAll(subResult.getLocalDbOperations());
+        }
+
+        if (returnLoyaltyPointsResult.getLocalDbOperations() != null){
+            operations.addAll(returnLoyaltyPointsResult.getLocalDbOperations());
         }
 
         if (prepaidOrderGuid != null) {
@@ -119,22 +132,16 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         BatchSqlCommand batchSqlCommand = batchDelete(SaleOrderModel.class);
-//        SaleOrderModel order = null;
-//        Cursor c = ProviderAction.query(URI_ORDER)
-//                .where(SaleOrderTable.GUID + " = ?", orderId)
-//                .perform(getContext());
-//        if (c.moveToFirst()) {
-//            order = new SaleOrderModel(c);
-//            Logger.d("Guid = "+order.getGuid());
-//        }
-//        if(order != null && order.orderStatus == OrderStatus.ACTIVE){
-//            return batchSqlCommand;
-//        }
+
         UnitsJdbcConverter unitConverter = (UnitsJdbcConverter)JdbcFactory.getConverter(UnitTable.TABLE_NAME);
         batchSqlCommand.add(unitConverter.removeFromOrder(orderId, getAppCommandContext()));
 
         for (SyncResult subResult: removeSaleOrderItemResults) {
             batchSqlCommand.add(subResult.getSqlCmd());
+        }
+
+        if (returnLoyaltyPointsResult.getSqlCmd() != null){
+            batchSqlCommand.add(returnLoyaltyPointsResult.getSqlCmd());
         }
 
         if (prepaidOrderGuid != null) {

@@ -10,7 +10,6 @@ import android.widget.Toast;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.commands.loyalty.RemoveLoyaltyPointsMovementCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
@@ -179,7 +178,6 @@ public class MoneybackProcessor {
         @Override
         public void onComplete(final List<PaymentTransactionModel> completed, SaleOrderModel childOrderModel) {
             MoneybackProcessor.this.childOrderModel = childOrderModel;
-            RemoveLoyaltyPointsMovementCommand.start(context, orderGuid);
             Logger.d("The voiding onComplete");
             hide();
             if (completed.isEmpty()) {

@@ -22,34 +22,52 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 public class RecalcLoyaltyPointsHelper extends ProviderHelper {
 
     private static final Uri URI_CUSTOMER = ShopProvider.contentUri(CustomerTable.URI_CONTENT);
-    private static final Uri URI_LOYALTY_MOVEMENT = ShopProvider.contentUriGroupBy(LoyaltyPointsMovementTable.URI_CONTENT, LoyaltyPointsMovementTable.CUSTOMER_ID);
+    private static final Uri URI_LOYALTY_MOVEMENT_GROUP_BY = ShopProvider.contentUriGroupBy(LoyaltyPointsMovementTable.URI_CONTENT, LoyaltyPointsMovementTable.CUSTOMER_ID);
 
     public RecalcLoyaltyPointsHelper(Context context, SQLiteOpenHelper dbHelper) {
         super(context, dbHelper);
     }
 
-    public void recalculateCustomerLoyaltyPoints(String customerId, BigDecimal points){
-        Cursor c = ProviderAction.query(URI_CUSTOMER)
-                .projection(CustomerTable.TMP_LOYALTY_POINTS)
-                .where(CustomerTable.GUID + " = ?", customerId)
+    public void recalculateCustomerLoyaltyPoints(String customerId){
+        Cursor c = ProviderAction.query(URI_LOYALTY_MOVEMENT_GROUP_BY)
+                .projection("SUM(" + LoyaltyPointsMovementTable.LOYALTY_POINTS + ")")
+                .where(LoyaltyPointsMovementTable.CUSTOMER_ID + " = ?", customerId)
                 .perform(getContext());
 
-        BigDecimal currentPoints = BigDecimal.ZERO;
+        BigDecimal points = null;
         if (c.moveToFirst()){
-            currentPoints = _decimal(c, 0);
+            points = _decimal(c, 0);
         }
         c.close();
 
-        currentPoints = currentPoints.add(points);
         ContentValues cv = new ContentValues(1);
-        cv.put(CustomerTable.TMP_LOYALTY_POINTS, _decimal(currentPoints));
+        cv.put(CustomerTable.TMP_LOYALTY_POINTS, _decimal(points));
 
         ContentResolver cr = getContext().getContentResolver();
         cr.update(URI_CUSTOMER, cv, CustomerTable.GUID + " = ?", new String[]{customerId});
     }
 
+    public void recalculateCustomerLoyaltyPoints2(String movementId){
+        Cursor c = getDbHelper().getReadableDatabase().query(
+                LoyaltyPointsMovementTable.TABLE_NAME,
+                new String[]{LoyaltyPointsMovementTable.CUSTOMER_ID},
+                LoyaltyPointsMovementTable.GUID + " = ?",
+                new String[]{movementId},
+                null, null, null);
+
+        String customerId = null;
+        if (c.moveToFirst()){
+            customerId = c.getString(0);
+        }
+        c.close();
+
+        if (customerId != null)
+            recalculateCustomerLoyaltyPoints(customerId);
+
+    }
+
     public void bulkRecalcCustomerLoyaltyPointsAfterSync(){
-        Cursor c = ProviderAction.query(URI_LOYALTY_MOVEMENT)
+        Cursor c = ProviderAction.query(URI_LOYALTY_MOVEMENT_GROUP_BY)
                 .projection(LoyaltyPointsMovementTable.CUSTOMER_ID, "SUM(" + LoyaltyPointsMovementTable.LOYALTY_POINTS + ")")
                 .perform(getContext());
 
