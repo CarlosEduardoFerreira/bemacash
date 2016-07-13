@@ -17,11 +17,13 @@ public class LoyaltyPointsMovementModel implements IValueModel, Serializable{
     public String guid;
     public String customerId;
     public BigDecimal loyaltyPoints;
+    public String saleOrderId;
 
-    public LoyaltyPointsMovementModel(String guid, String customerId, BigDecimal loyaltyPoints) {
+    public LoyaltyPointsMovementModel(String guid, String customerId, BigDecimal loyaltyPoints, String saleOrderId) {
         this.guid = guid;
         this.customerId = customerId;
         this.loyaltyPoints = loyaltyPoints;
+        this.saleOrderId = saleOrderId;
     }
 
     @Override
@@ -35,6 +37,7 @@ public class LoyaltyPointsMovementModel implements IValueModel, Serializable{
         values.put(LoyaltyPointsMovementTable.GUID, guid);
         values.put(LoyaltyPointsMovementTable.CUSTOMER_ID, customerId);
         values.put(LoyaltyPointsMovementTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
+        values.put(LoyaltyPointsMovementTable.SALE_ORDER_ID, saleOrderId);
         return values;
     }
 }

@@ -229,7 +229,7 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
         if (totalPoints.compareTo(BigDecimal.ZERO) == 0){
             return true;
         }else{
-            addLoyaltyPointsMovementResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, totalPoints, getAppCommandContext());
+            addLoyaltyPointsMovementResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, totalPoints, order.guid, getAppCommandContext());
             return addLoyaltyPointsMovementResult != null;
         }
     }

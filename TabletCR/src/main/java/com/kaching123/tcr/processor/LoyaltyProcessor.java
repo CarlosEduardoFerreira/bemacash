@@ -146,9 +146,9 @@ public class LoyaltyProcessor {
 
     private void addPointsMovement(final IncentiveExModel incentive) {
         bannedIncentiveIds.add(incentive.guid);
-        AddLoyaltyPointsMovementCommand.start(context, customerGuid, incentive.pointThreshold == null ? BigDecimal.ZERO : incentive.pointThreshold.negate(), new AddLoyaltyPointsMovementCallback() {
+        AddLoyaltyPointsMovementCommand.start(context, customerGuid, incentive.pointThreshold == null ? BigDecimal.ZERO : incentive.pointThreshold.negate(), orderGuid, new AddLoyaltyPointsMovementCallback() {
             @Override
-            protected void onPointsApplied(BigDecimal points) {
+            protected void onPointsApplied() {
                 showApplySuccessfulDialog(incentive);
             }
         });

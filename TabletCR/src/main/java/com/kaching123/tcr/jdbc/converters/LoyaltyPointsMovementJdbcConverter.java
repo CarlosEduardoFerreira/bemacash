@@ -26,6 +26,7 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
     private static final String ID = "ID";
     private static final String CUSTOMER_ID = "CUSTOMER_ID";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
+    private static final String SALE_ORDER_ID = "SALE_ORDER_ID";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -37,7 +38,8 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
         return new LoyaltyPointsMovementModel(
                 rs.getString(ID),
                 rs.getString(CUSTOMER_ID),
-                rs.getBigDecimal(LOYALTY_POINTS)
+                rs.getBigDecimal(LOYALTY_POINTS),
+                rs.getString(SALE_ORDER_ID)
         );
     }
 
@@ -57,6 +59,7 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
                 .add(ID, model.guid)
                 .add(CUSTOMER_ID, model.customerId)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
+                .add(SALE_ORDER_ID, model.saleOrderId)
                 .build(JdbcFactory.getApiMethod(model));
 
     }
@@ -66,6 +69,7 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
         return _update(TABLE_NAME, appCommandContext)
                 .add(CUSTOMER_ID, model.customerId)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
+                .add(SALE_ORDER_ID, model.saleOrderId)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }
