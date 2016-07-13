@@ -9,6 +9,7 @@ import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.LoyaltyViewModel.IncentiveExModel;
+import com.kaching123.tcr.util.UnitUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -24,6 +25,7 @@ public class LoyaltyFragmentDialog extends StyledDialogFragment {
     private static final String DIALOG_NAME = LoyaltyFragmentDialog.class.getSimpleName();
 
     @ViewById protected ViewGroup content;
+    @ViewById protected TextView availableLabel;
     @ViewById protected TextView typeLabel;
     @ViewById protected TextView rewardLabel;
 
@@ -41,7 +43,8 @@ public class LoyaltyFragmentDialog extends StyledDialogFragment {
 
     @AfterViews
     protected void init(){
-        typeLabel.setText(incentive.type.getLabel());
+        availableLabel.setText(getString(R.string.loyalty_incentive_dialog_available_label, incentive.name));
+        typeLabel.setText(getString(R.string.loyalty_incentive_dialog_type_label, getString(incentive.type.getLabel())));
 
         String reward;
         switch (incentive.rewardType){
@@ -58,14 +61,14 @@ public class LoyaltyFragmentDialog extends StyledDialogFragment {
                 reward = null;
         }
 
-        rewardLabel.setText(reward);
+        rewardLabel.setText(getString(R.string.loyalty_incentive_dialog_reward_label, reward));
     }
 
     private String getDiscountClarification(){
         String discount = null;
         switch (incentive.rewardValueType){
             case PERCENT:
-                discount = UiHelper.formatPercent(incentive.rewardValue);
+                discount = UiHelper.percentFormat(incentive.rewardValue);
                 break;
             case VALUE:
                 discount = UiHelper.priceFormat(incentive.rewardValue);
@@ -80,7 +83,7 @@ public class LoyaltyFragmentDialog extends StyledDialogFragment {
     }
 
     private String getItemClarification(){
-        String qty = UiHelper.qtyFormat(incentive.incentiveItemExModel.qty, false);
+        String qty = UiHelper.qtyFormat(incentive.incentiveItemExModel.qty, UnitUtil.isPcs(incentive.incentiveItemExModel.item.priceType));
         String price = UiHelper.priceFormat(incentive.incentiveItemExModel.price);
         String description = incentive.incentiveItemExModel.item.description;
         return String.format("%s x %s %s", qty, price, description);

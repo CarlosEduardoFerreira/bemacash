@@ -286,10 +286,10 @@ public final class UiHelper {
         }
     }
 
-    public static String trimFormat(BigDecimal qty) {
-        if (qty == null)
+    public static String integerFormat(BigDecimal decimal) {
+        if (decimal == null)
             return null;
-        return integerFormat.format(qty);
+        return integerFormat.format(decimal);
     }
 
     public static String valueOf(BigDecimal value) {
@@ -304,16 +304,10 @@ public final class UiHelper {
         return String.format("####-####-####-%s", value);
     }
 
-    public static String formatPercent(BigDecimal percent) {
+    public static String percentFormat(BigDecimal percent) {
         if (percent == null)
             return null;
-        return String.format(Locale.US, "%s %%", percentFormat.format(percent));
-    }
-
-    public static String formatQuantity(BigDecimal percent) {
-        if (percent == null)
-            return null;
-        return String.format(Locale.US, "%s %%", quantityFormat.format(percent));
+        return String.format(Locale.US, "%s%%", integerFormat.format(percent));
     }
 
     public static boolean isValidEmail(CharSequence target) {

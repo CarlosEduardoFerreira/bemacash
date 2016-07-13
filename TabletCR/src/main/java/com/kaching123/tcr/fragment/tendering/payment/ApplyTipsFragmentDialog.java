@@ -252,7 +252,7 @@ public class ApplyTipsFragmentDialog extends KeyboardDialogFragment {
 
         BigDecimal tipsWarnThreshold = getApp().getShopInfo().tipsWarnThreshold;
         if (tipsWarnThreshold != null && tipsWarnThreshold.compareTo(BigDecimal.ZERO) == 1 && tipsAmount.compareTo(CalculationUtil.getTipValue(subtotalAmount, tipsWarnThreshold, DiscountType.PERCENT)) == 1){
-            String msg = getString(R.string.apply_tips_dialog_warn_message, UiHelper.formatPercent(tipsWarnThreshold));
+            String msg = getString(R.string.apply_tips_dialog_warn_message, UiHelper.percentFormat(tipsWarnThreshold));
             AlertDialogFragment.showAlert(getActivity(), R.string.warning_dialog_title, msg, R.string.btn_continue, new OnDialogClickListener() {
                 @Override
                 public boolean onClick() {

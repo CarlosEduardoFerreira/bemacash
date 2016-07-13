@@ -158,7 +158,7 @@ public class EmployeeTipsFragmentDialog extends KeyboardDialogFragment {
 
         BigDecimal maxValue = getMaxValue();
         if (!skipWarning && maxValue != null && value.compareTo(maxValue) == 1){
-            String msg = getString(R.string.apply_tips_dialog_warn_message, UiHelper.formatPercent(getApp().getShopInfo().tipsWarnThreshold));
+            String msg = getString(R.string.apply_tips_dialog_warn_message, UiHelper.percentFormat(getApp().getShopInfo().tipsWarnThreshold));
             AlertDialogFragment.showAlert(getActivity(), R.string.warning_dialog_title, msg, R.string.btn_continue, new OnDialogClickListener() {
                 @Override
                 public boolean onClick() {

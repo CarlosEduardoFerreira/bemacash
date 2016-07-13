@@ -3,7 +3,6 @@ package com.kaching123.tcr.ecuador;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.telecom.GatewayInfo;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
@@ -41,9 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
-import static com.kaching123.tcr.fragment.UiHelper.formatPercent;
+import static com.kaching123.tcr.fragment.UiHelper.percentFormat;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
-import static com.kaching123.tcr.util.CalculationUtil.negative;
 import static com.kaching123.tcr.util.DateUtils.formatEcuador;
 
 public class EcuadorPrintProcessor extends PrintOrderProcessor {
@@ -258,10 +256,10 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                     TaxGroupModel key = (TaxGroupModel) i.next();
                     if (!TextUtils.isEmpty(key.title)) {
                         printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " " +
-                                 formatPercent(key.tax), subtotals.get(key));
+                                 percentFormat(key.tax), subtotals.get(key));
                     } else {
                         printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " "
-                                + formatPercent(TcrApplication.get().getTaxVat()), subtotals.get(key));
+                                + percentFormat(TcrApplication.get().getTaxVat()), subtotals.get(key));
                     }
                 }
                 printerWrapper.orderFooter(context.getString(R.string.printer_subtotal_iva), BigDecimal.ZERO);
@@ -270,10 +268,10 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 for (Iterator i = taxes.keySet().iterator(); i.hasNext(); ) {
                     TaxGroupModel key = (TaxGroupModel) i.next();
                     if (!TextUtils.isEmpty(key.title)) {
-                        printerWrapper.orderFooter(key.title.toString().toUpperCase() + " " + formatPercent(key.tax), taxes.get(key));
+                        printerWrapper.orderFooter(key.title.toString().toUpperCase() + " " + percentFormat(key.tax), taxes.get(key));
                     } else {
                         printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default).toString().toUpperCase()
-                                + " " + formatPercent(TcrApplication.get().getTaxVat()), taxes.get(key));
+                                + " " + percentFormat(TcrApplication.get().getTaxVat()), taxes.get(key));
                     }
                 }
                 printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);

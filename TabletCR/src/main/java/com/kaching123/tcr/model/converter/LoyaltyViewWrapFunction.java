@@ -3,6 +3,7 @@ package com.kaching123.tcr.model.converter;
 import android.database.Cursor;
 
 import com.google.common.base.Function;
+import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.LoyaltyIncentiveItemModel;
@@ -95,6 +96,7 @@ public class LoyaltyViewWrapFunction implements Function<Cursor, LoyaltyViewMode
     public static ItemModel itemFromView(Cursor c){
         ItemModel item = new ItemModel(c.getString(c.getColumnIndex(ItemTable.GUID)));
         item.description = c.getString(c.getColumnIndex(ItemTable.DESCRIPTION));
+        item.priceType = ContentValuesUtil._priceType(c, c.getColumnIndex(ItemTable.PRICE_TYPE));
         return item;
     }
 }
