@@ -86,7 +86,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     }
 
     private boolean returnLoyaltyPoints(){
-        returnLoyaltyPointsResult = new RemoveLoyaltyPointsMovementCommand().syncNow(getContext(), orderId, getAppCommandContext());
+        returnLoyaltyPointsResult = new RemoveLoyaltyPointsMovementCommand().sync(getContext(), orderId, getAppCommandContext());
         return returnLoyaltyPointsResult != null;
     }
 
