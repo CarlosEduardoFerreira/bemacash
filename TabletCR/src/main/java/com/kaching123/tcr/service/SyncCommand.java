@@ -819,28 +819,17 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, ComposerTable.TABLE_NAME, ComposerTable.ID);
                 count += syncLocalSingleTable(service, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID);
                 count += syncLocalSingleTable(service, LoyaltyIncentiveItemTable.TABLE_NAME, LoyaltyIncentiveItemTable.GUID);
-                count += syncLocalSingleTable(service, LoyaltyPointsMovementTable.TABLE_NAME, LoyaltyPointsMovementTable.GUID);
 
                 //sale
-
-
                 count += syncLocalSingleTable(service, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, SaleOrderTable.PARENT_ID, true);
-
                 count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, true);
-
                 count += syncLocalSingleTable(service, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID, true);
-
                 count += syncLocalSingleTable(service, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, true);
-
                 count += syncLocalSingleTable(service, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID, true);
-
-
                 count += syncLocalSingleTable(service, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID);
-
                 count += syncLocalSingleTable(service, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID, true);
-
                 count += syncLocalSingleTable(service, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, true);
-
+                count += syncLocalSingleTable(service, LoyaltyPointsMovementTable.TABLE_NAME, LoyaltyPointsMovementTable.GUID);
 
                 //inventory depended from sale
                 count += syncLocalSingleTable(service, UnitTable.TABLE_NAME, UnitTable.ID);
