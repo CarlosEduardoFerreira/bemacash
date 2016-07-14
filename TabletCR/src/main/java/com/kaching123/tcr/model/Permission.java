@@ -21,6 +21,7 @@ public enum Permission implements LabaledEnum {
     INVENTORY_MODULE(12, R.string.permission_inventory_module, Group.DASHBOARD),
     EMPLOYEE_MANAGEMENT(13, R.string.permission_employee_management, Group.DASHBOARD),
     CUSTOMER_MANAGEMENT(14, R.string.permission_customer_management, Group.SYSTEM_CONFIGURATION),
+    CUSTOMER_LOYALTY_POINTS_ADJUST(64, R.string.permission_customer_loyalty_points_adjust, Group.SYSTEM_CONFIGURATION),
     //BACKUPS(15, R.string.permission_backups, Group.SYSTEM_CONFIGURATION),
     NO_SALE(16, R.string.permission_no_sales, Group.DASHBOARD),
     DROPS_AND_PAYOUTS(17, R.string.permission_drops_and_payout, Group.DASHBOARD),

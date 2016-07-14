@@ -889,6 +889,7 @@
     <string name="permission_inventory_module">Inventory Management</string>
     <string name="permission_employee_management">Employee Management</string>
     <string name="permission_customer_management">Customer Management</string>
+    <string name="permission_customer_loyalty_points_adjust">Adjust Loyalty Points</string>
     <string name="permission_backups">Backups</string>
     <string name="permission_software_updates">Software Updates</string>
     <string name="permission_reports">Reports</string>

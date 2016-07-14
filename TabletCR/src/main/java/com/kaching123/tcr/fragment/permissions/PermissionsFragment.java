@@ -9,19 +9,23 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.Permission.Group;
+
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
-import com.kaching123.tcr.R;
-import com.kaching123.tcr.model.Permission;
-import com.kaching123.tcr.model.Permission.Group;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by vkompaniets on 26.12.13.
@@ -56,6 +60,11 @@ public class PermissionsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        SortedSet<Permission> groupPermissions2 = null;
+        if (Group.SYSTEM_CONFIGURATION == group){
+            groupPermissions2 = systemConfigurationDirtySort(groupPermissions);
+        }
+
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -67,9 +76,24 @@ public class PermissionsFragment extends Fragment {
         title.setText(getString(group.getLabelId()));
 
         adapter = new PermissionsAdapter(getActivity());
-        adapter.changeCursor(new ArrayList<Permission>(groupPermissions));
+        adapter.changeCursor(new ArrayList<>(groupPermissions2 == null ? groupPermissions : groupPermissions2));
 
         list.setAdapter(adapter);
+    }
+
+    private static SortedSet<Permission> systemConfigurationDirtySort(Set<Permission> permissions) {
+        TreeSet<Permission> result = new TreeSet<>();
+        if (permissions.contains(Permission.CUSTOMER_MANAGEMENT) && permissions.contains(Permission.CUSTOMER_LOYALTY_POINTS_ADJUST)){
+            result.add(Permission.CUSTOMER_MANAGEMENT);
+            result.add(Permission.CUSTOMER_LOYALTY_POINTS_ADJUST);
+            for (Permission p : permissions){
+                if (p != Permission.CUSTOMER_MANAGEMENT && p != Permission.CUSTOMER_LOYALTY_POINTS_ADJUST)
+                    result.add(p);
+            }
+            return result;
+        }else{
+            return new TreeSet<>(permissions);
+        }
     }
 
     private void updateCounter(){
