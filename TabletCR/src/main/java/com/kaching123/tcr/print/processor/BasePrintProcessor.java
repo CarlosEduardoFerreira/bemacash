@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
+import static com.kaching123.tcr.fragment.UiHelper.integralIntegerFormat;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 
 /**
@@ -123,7 +125,8 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
                         OperatorTable.FIRST_NAME,
                         OperatorTable.LAST_NAME,
                         SaleOrderTable.ORDER_TYPE,
-                        CustomerTable.CUSTOMER_IDENTIFICATION)
+                        CustomerTable.CUSTOMER_IDENTIFICATION,
+                        CustomerTable.TMP_LOYALTY_POINTS)
                 .where(SaleOrderTable.GUID + " = ?", orderGuid)
                 .perform(context);
 
@@ -140,6 +143,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         if (TextUtils.isEmpty(customerIdentification)) {
             customerIdentification = TcrApplication.isEcuadorVersion() ? "9999999999999" : "";
         }
+        String loyaltyPoints = c.getString(7);
         c.close();
 
         orderNumber = registerTitle + "-" + seqNum;
@@ -175,6 +179,9 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         printerWrapper.header(context.getString(R.string.printer_order_num), registerTitle, seqNum,
                 new Date(createTime), context.getString(R.string.printer_cashier), operatorName != null ? operatorName : "",
                 context.getString(R.string.printer_customer_identification), customerIdentification);
+        if (!TextUtils.isEmpty(loyaltyPoints)){
+            printerWrapper.header("Loyalty Points:", integralIntegerFormat(_decimal(loyaltyPoints)));
+        }
         printMidTid(context, app, printerWrapper, orderType);
         if (title != null && !title.equalsIgnoreCase("ARG_ORDER_TITLE"))
             printerWrapper.header(context.getString(R.string.printer_guest), title);

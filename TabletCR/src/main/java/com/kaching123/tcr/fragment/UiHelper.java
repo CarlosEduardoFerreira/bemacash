@@ -292,6 +292,12 @@ public final class UiHelper {
         return integerFormat.format(decimal);
     }
 
+    public static String integralIntegerFormat(BigDecimal decimal) {
+        if (decimal == null)
+            return null;
+        return integralIntegerFormat.format(decimal);
+    }
+
     public static String valueOf(BigDecimal value) {
         if (value == null)
             return null;
