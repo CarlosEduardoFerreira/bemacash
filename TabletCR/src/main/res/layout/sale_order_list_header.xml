@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="@string/orders_header_sale_date"/>
+        android:text="@string/orders_header_order_number"/>
 
     <TextView
         style="@style/ItemList.HeaderText"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="@string/orders_header_register_number"/>
+        android:text="@string/orders_header_sale_date"/>
 
     <TextView
         style="@style/ItemList.HeaderText"

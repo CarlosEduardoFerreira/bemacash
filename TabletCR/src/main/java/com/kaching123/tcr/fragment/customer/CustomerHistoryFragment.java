@@ -118,7 +118,7 @@ public class CustomerHistoryFragment extends CustomerBaseFragment {
             BigDecimal price = total.add(discount).subtract(tax);
 
             holder.date.setText(DateUtils.formatFull(item.createTime));
-            holder.register.setText(item.registerTitle);
+            holder.orderNumber.setText(String.format("%s-%s", item.registerTitle, item.printSeqNum));
             showPrice(holder.price, total);
             showPrice(holder.discount, discount);
             showPrice(holder.tax, tax);
@@ -129,7 +129,7 @@ public class CustomerHistoryFragment extends CustomerBaseFragment {
 
         class ViewHolder {
             TextView date;
-            TextView register;
+            TextView orderNumber;
             TextView price;
             TextView discount;
             TextView tax;
@@ -137,7 +137,7 @@ public class CustomerHistoryFragment extends CustomerBaseFragment {
 
             public ViewHolder(View view) {
                 date = (TextView) view.findViewById(R.id.date);
-                register = (TextView) view.findViewById(R.id.register);
+                orderNumber = (TextView) view.findViewById(R.id.order_number);
                 price = (TextView) view.findViewById(R.id.price);
                 discount = (TextView) view.findViewById(R.id.discount);
                 tax = (TextView) view.findViewById(R.id.tax);

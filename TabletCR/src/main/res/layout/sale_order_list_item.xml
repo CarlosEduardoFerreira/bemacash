@@ -9,7 +9,7 @@
               android:paddingRight="0dp">
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/order_number"
         android:paddingRight="8dp"
         android:paddingLeft="8dp"
         style="@style/ItemList.ItemText"
@@ -19,7 +19,7 @@
         android:layout_weight="1"/>
 
     <TextView
-        android:id="@+id/register"
+        android:id="@+id/date"
         android:paddingRight="8dp"
         android:paddingLeft="8dp"
         style="@style/ItemList.ItemText"
@@ -27,6 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"/>
+
 
     <TextView
         android:id="@+id/price"
