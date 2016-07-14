@@ -48,6 +48,7 @@ public class RecalcLoyaltyPointsHelper extends ProviderHelper {
     }
 
     public void recalculateCustomerLoyaltyPoints2(String movementId){
+        //we use database directly to avoid using ShopProvider which adds 'isDeleted = 0' statement
         Cursor c = getDbHelper().getReadableDatabase().query(
                 LoyaltyPointsMovementTable.TABLE_NAME,
                 new String[]{LoyaltyPointsMovementTable.CUSTOMER_ID},

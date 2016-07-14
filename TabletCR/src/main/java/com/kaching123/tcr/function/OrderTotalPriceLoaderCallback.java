@@ -124,7 +124,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                 result.totalOrderPrice.setScale(2, RoundingMode.HALF_UP), result.totalDiscountableItemTotal, info.transactionFee);
     }
 
-    private static SaleOrderInfo readCursor(Cursor c) {
+    public static SaleOrderInfo readCursor(Cursor c) {
         if (c == null)
             return null;
 
@@ -183,6 +183,4 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
         }
 
     }
-
-
 }

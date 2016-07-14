@@ -6,6 +6,10 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
+import com.kaching123.tcr.function.OrderTotalPriceCalculator;
+import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderCostInfo;
+import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderInfo;
+import com.kaching123.tcr.function.OrderTotalPriceLoaderCallback;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.LoyaltyRewardType;
@@ -17,7 +21,9 @@ import com.kaching123.tcr.model.converter.LoyaltyViewWrapFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentivePlanTable;
 import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentiveTable;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyView;
+import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnSuccess;
@@ -73,11 +79,30 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
             return succeeded();
 
         filterByBirthday(loyalty.incentiveExModels, customer.birthday);
-        filterByOrderValue(loyalty.incentiveExModels, order.tmpTotalPrice);
+        filterByOrderValue(loyalty.incentiveExModels, calculateOrderTotal(getContext(), orderId));
 
         c.close();
 
         return succeeded().add(EXTRA_LOYALTY, loyalty);
+    }
+
+    private static BigDecimal calculateOrderTotal(Context context, String orderId){
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(SaleOrderItemsView.URI_CONTENT))
+                .projection(OrderTotalPriceLoaderCallback.PROJECTION)
+                .where(SaleItemTable.ORDER_GUID + " = ? ", orderId)
+                .orderBy(SaleItemTable.SEQUENCE)
+                .perform(context);
+
+        SaleOrderInfo saleOrderInfo = OrderTotalPriceLoaderCallback.readCursor(c);
+        if (saleOrderInfo == null){
+            c.close();
+            return BigDecimal.ZERO;
+        }
+        c.close();
+
+        SaleOrderCostInfo saleOrderCostInfo = OrderTotalPriceCalculator.calculate(saleOrderInfo);
+
+        return saleOrderCostInfo.totalOrderPrice;
     }
 
     private static void filterByBirthday(List<IncentiveExModel> incentives, Date birthdayDate){
