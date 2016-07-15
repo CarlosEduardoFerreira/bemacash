@@ -5,11 +5,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.LoyaltyViewModel.IncentiveExModel;
-import com.kaching123.tcr.util.UnitUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -43,50 +41,8 @@ public class LoyaltyFragmentDialog extends StyledDialogFragment {
 
     @AfterViews
     protected void init(){
-        availableLabel.setText(getString(R.string.loyalty_incentive_dialog_available_label, incentive.name));
         typeLabel.setText(getString(R.string.loyalty_incentive_dialog_type_label, getString(incentive.type.getLabel())));
-
-        String reward;
-        switch (incentive.rewardType){
-            case DISCOUNT:
-                reward = getDiscountClarification();
-                break;
-            case GIFT_CARD:
-                reward = getGiftCardClarification();
-                break;
-            case ITEM:
-                reward = getItemClarification();
-                break;
-            default:
-                reward = null;
-        }
-
-        rewardLabel.setText(getString(R.string.loyalty_incentive_dialog_reward_label, reward));
-    }
-
-    private String getDiscountClarification(){
-        String discount = null;
-        switch (incentive.rewardValueType){
-            case PERCENT:
-                discount = UiHelper.percentFormat(incentive.rewardValue);
-                break;
-            case VALUE:
-                discount = UiHelper.priceFormat(incentive.rewardValue);
-                break;
-
-        }
-        return String.format("%s Discount", discount);
-    }
-
-    private String getGiftCardClarification(){
-        return String.format("Gift Card %s", UiHelper.priceFormat(incentive.rewardValue));
-    }
-
-    private String getItemClarification(){
-        String qty = UiHelper.qtyFormat(incentive.incentiveItemExModel.qty, UnitUtil.isPcs(incentive.incentiveItemExModel.item.priceType));
-        String price = UiHelper.priceFormat(incentive.incentiveItemExModel.price);
-        String description = incentive.incentiveItemExModel.item.description;
-        return String.format("%s x %s %s", qty, price, description);
+        rewardLabel.setText(getString(R.string.loyalty_incentive_dialog_reward_label, incentive.name));
     }
 
     @Override
