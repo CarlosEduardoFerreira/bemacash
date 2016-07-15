@@ -45,7 +45,7 @@ import java.util.List;
 import static com.kaching123.tcr.fragment.UiHelper.showBrandQty;
 import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
-import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
+import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 
 /**
@@ -131,7 +131,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         }
         if (this.useOnlyNearTheEnd) {
             builder.where(ItemTable.STOCK_TRACKING + " = ? ", "1");
-            builder.where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY));
+            builder.where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY));
         }
 
         if (serial) {

@@ -333,7 +333,7 @@ public final class ContentValuesUtil {
         return String.format(Locale.US, "sum(case when %s = %d then 1 else 0 end) as %s", column, type.ordinal(), as);
     }
 
-    public static String _castToReal(String column){
+    public static String _castAsReal(String column){
         return String.format(Locale.US, "cast(%s as real)", column);
     }
 

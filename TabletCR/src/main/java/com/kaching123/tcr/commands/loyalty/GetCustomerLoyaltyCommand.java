@@ -35,7 +35,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
+import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.util.DateUtils.cutTime;
 
 /**
@@ -65,7 +65,7 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
 
         Query query = ProviderAction.query(URI_LOYALTY_VIEW);
         query.where(LoyaltyIncentivePlanTable.PLAN_GUID + " = ?", customer.loyaltyPlanId);
-        query.where("(" + _castToReal(LoyaltyIncentiveTable.POINT_THRESHOLD) + " <= ? OR " + LoyaltyIncentiveTable.TYPE + " = ?)", customer.loyaltyPoints, LoyaltyType.BIRTHDAY.ordinal());
+        query.where("(" + _castAsReal(LoyaltyIncentiveTable.POINT_THRESHOLD) + " <= ? OR " + LoyaltyIncentiveTable.TYPE + " = ?)", customer.loyaltyPoints, LoyaltyType.BIRTHDAY.ordinal());
         if (customer.birthday == null){
             query.where(LoyaltyIncentiveTable.TYPE + " = ?", LoyaltyType.POINTS.ordinal());
         }

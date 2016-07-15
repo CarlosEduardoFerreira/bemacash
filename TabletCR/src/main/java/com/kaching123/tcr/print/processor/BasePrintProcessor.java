@@ -9,7 +9,6 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.IHeaderFooterPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -19,15 +18,18 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.CustomerTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.OperatorTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
-import static com.kaching123.tcr.fragment.UiHelper.integralIntegerFormat;
+import static com.kaching123.tcr.fragment.UiHelper.priceFormat;
+import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 
@@ -50,6 +52,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     protected ArrayList<PrepaidReleaseResult> prepaidReleaseResults;
 
     private final IAppCommandContext appCommandContext;
+    private PrintOrderInfo orderInfo;
 
     public BasePrintProcessor(String orderGuid, IAppCommandContext appCommandContext) {
         this.orderGuid = orderGuid;
@@ -61,6 +64,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     }
 
     public void print(final Context context, final TcrApplication app, final T printerWrapper) {
+        orderInfo = loadOrderInfo(context);
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
@@ -70,6 +74,12 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     protected abstract void printBody(final Context context, final TcrApplication app, final T printerWrapper);
 
     protected void printFooter(TcrApplication app, T printerWrapper) {
+        if (orderInfo.customerLoyaltyPoints != null){
+            printerWrapper.header("Total Bonus Points Available", priceFormat(orderInfo.customerLoyaltyPoints));
+        }
+        if (orderInfo.earnedLoyaltyPoints != null){
+            printerWrapper.header("Bonus Points on this Sale", priceFormat(orderInfo.earnedLoyaltyPoints));
+        }
 
         if (title == null || title.equalsIgnoreCase("ARG_ORDER_TITLE"))
             printerWrapper.barcode(orderNumber);
@@ -117,36 +127,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
             printerWrapper.emptyLine();
         }
 
-        Cursor c = ProviderAction.query(URI_ORDER)
-                .projection(
-                        RegisterTable.TITLE,
-                        SaleOrderTable.PRINT_SEQ_NUM,
-                        SaleOrderTable.CREATE_TIME,
-                        OperatorTable.FIRST_NAME,
-                        OperatorTable.LAST_NAME,
-                        SaleOrderTable.ORDER_TYPE,
-                        CustomerTable.CUSTOMER_IDENTIFICATION,
-                        CustomerTable.TMP_LOYALTY_POINTS)
-                .where(SaleOrderTable.GUID + " = ?", orderGuid)
-                .perform(context);
-
-        String registerTitle = "";
-        int seqNum = 0;
-        if (c.moveToFirst()) {
-            registerTitle = c.getString(0);
-            seqNum = c.getInt(1);
-        }
-        long createTime = c.getLong(2);
-        String operatorName = concatFullname(c.getString(3), c.getString(4));
-        OrderType orderType = _orderType(c, 5);
-        String customerIdentification = c.getString(6);
-        if (TextUtils.isEmpty(customerIdentification)) {
-            customerIdentification = TcrApplication.isEcuadorVersion() ? "9999999999999" : "";
-        }
-        String loyaltyPoints = c.getString(7);
-        c.close();
-
-        orderNumber = registerTitle + "-" + seqNum;
+        orderNumber = orderInfo.registerTitle + "-" + orderInfo.seqNum;
         ShopInfo shopInfo = app.getShopInfo();
 
         printerWrapper.header(shopInfo.name);
@@ -171,18 +152,14 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 
         printerWrapper.emptyLine();
 
-//        if (title == null || title.equalsIgnoreCase("ARG_ORDER_TITLE"))
-//            printerWrapper.header(context.getString(R.string.printer_order_num), registerTitle, seqNum, new Date(createTime), operatorName != null ? operatorName : "");
-//        else
-//            printerWrapper.header("", "", 0, new Date(createTime), operatorName);
 
-        printerWrapper.header(context.getString(R.string.printer_order_num), registerTitle, seqNum,
-                new Date(createTime), context.getString(R.string.printer_cashier), operatorName != null ? operatorName : "",
-                context.getString(R.string.printer_customer_identification), customerIdentification);
-        if (!TextUtils.isEmpty(loyaltyPoints)){
-            printerWrapper.header("Loyalty Points:", integralIntegerFormat(_decimal(loyaltyPoints)));
+        printerWrapper.header(context.getString(R.string.printer_order_num), orderInfo.registerTitle, orderInfo.seqNum,
+                new Date(orderInfo.createTime), context.getString(R.string.printer_cashier), orderInfo.operatorName != null ? orderInfo.operatorName : "",
+                context.getString(R.string.printer_customer_identification), orderInfo.customerIdentification);
+        if (orderInfo.customerName != null) {
+            printerWrapper.header("Customer Name:", orderInfo.customerName);
         }
-        printMidTid(context, app, printerWrapper, orderType);
+        printMidTid(context, app, printerWrapper, orderInfo.orderType);
         if (title != null && !title.equalsIgnoreCase("ARG_ORDER_TITLE"))
             printerWrapper.header(context.getString(R.string.printer_guest), title);
 
@@ -225,13 +202,70 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 
     protected abstract void printMidTid(T printer, String label, String value, boolean bold);
 
-    private static int getPaymentTitle(PaymentGateway gateway) {
-        switch (gateway) {
-            case BLACKSTONE:
-                return R.string.print_order_power_by_backstone;
-            case PAYPAL:
-                return R.string.print_order_power_by_paypal;
+    private PrintOrderInfo loadOrderInfo(Context context){
+        Cursor c = ProviderAction.query(URI_ORDER)
+                .projection(
+                        RegisterTable.TITLE,
+                        SaleOrderTable.PRINT_SEQ_NUM,
+                        SaleOrderTable.CREATE_TIME,
+                        OperatorTable.FIRST_NAME,
+                        OperatorTable.LAST_NAME,
+                        SaleOrderTable.ORDER_TYPE,
+                        CustomerTable.CUSTOMER_IDENTIFICATION,
+                        CustomerTable.TMP_LOYALTY_POINTS,
+                        CustomerTable.FISRT_NAME,
+                        CustomerTable.LAST_NAME)
+                .where(SaleOrderTable.GUID + " = ?", orderGuid)
+                .perform(context);
+
+        if (!c.moveToFirst())
+            throw new IllegalStateException("cannot load order info");
+
+        PrintOrderInfo info = new PrintOrderInfo();
+
+        info.registerTitle = "";
+        info.seqNum = 0;
+        if (c.moveToFirst()) {
+            info.registerTitle = c.getString(0);
+            info.seqNum = c.getInt(1);
         }
-        return 0;
+        info.createTime = c.getLong(2);
+        info.operatorName = concatFullname(c.getString(3), c.getString(4));
+        info.orderType = _orderType(c, 5);
+        String customerIdentification = c.getString(6);
+        if (TextUtils.isEmpty(customerIdentification)) {
+            info.customerIdentification = TcrApplication.isEcuadorVersion() ? "9999999999999" : "";
+        }
+        String loyaltyPoints = c.getString(7);
+        if (loyaltyPoints != null){
+            info.customerLoyaltyPoints = _decimal(loyaltyPoints);
+        }
+        info.customerName = concatFullname(c.getString(8), c.getString(9));
+        c.close();
+
+        c = ProviderAction.query(ShopProvider.contentUriGroupBy(LoyaltyPointsMovementTable.URI_CONTENT, LoyaltyPointsMovementTable.SALE_ORDER_ID))
+                .projection(LoyaltyPointsMovementTable.LOYALTY_POINTS)
+                .where(LoyaltyPointsMovementTable.SALE_ORDER_ID + " = ?", orderGuid)
+                .where(_castAsReal(LoyaltyPointsMovementTable.LOYALTY_POINTS) + " > ?", 0)
+                .perform(context);
+
+        if (c.moveToFirst()){
+            info.earnedLoyaltyPoints = _decimal(c, 0);
+        }
+        c.close();
+
+        return info;
+    }
+
+    private class PrintOrderInfo {
+        String registerTitle;
+        int seqNum;
+        long createTime;
+        String operatorName;
+        OrderType orderType;
+        String customerIdentification;
+        String customerName;
+        BigDecimal customerLoyaltyPoints;
+        BigDecimal earnedLoyaltyPoints;
     }
 }

@@ -13,14 +13,11 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.kaching123.tcr.InventoryHelper;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.CategoryItemView;
 import com.kaching123.tcr.model.ItemRefType;
-import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.CategoryView2.CategoryTable;
@@ -30,8 +27,7 @@ import com.kaching123.tcr.store.ShopStore.CategoryView;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
-import static com.kaching123.tcr.model.ContentValuesUtil._count;
+import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.util.ContentValuesUtilBase._countDistinct;
 
 /**
@@ -152,7 +148,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
                 _countDistinct(ItemTable.GUID, CategoryView.ITEM_COUNT));//_count(ItemTable.GUID, CategoryView.ITEM_COUNT));
         if (useOnlyNearTheEnd) {
             builder.where(ItemTable.STOCK_TRACKING + " = ? ", "1");
-            builder.where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY));
+            builder.where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY));
         }
         builder.where(ItemTable.IS_DELETED + " = ? ", "0");
         if (serial) {

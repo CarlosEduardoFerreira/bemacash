@@ -37,14 +37,6 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
         this.type = receiptType;
     }
 
-    @Override
-    public void print(final Context context, final TcrApplication app, final ISignaturePrinter printerWrapper) {
-        prePrintHeader(context, app, printerWrapper);
-        printHeader(context, app, printerWrapper);
-        printBody(context, app, printerWrapper);
-        printFooter(app, printerWrapper);
-    }
-
     protected void printBody(Context context, TcrApplication app, ISignaturePrinter printerWrapper) {
 
         if (type == ReceiptType.DEBIT)

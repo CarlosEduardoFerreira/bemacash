@@ -108,7 +108,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
+import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
@@ -1617,7 +1617,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     .projection("count(" + ItemTable.GUID + ")")
                     .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
                     .where(ItemTable.STOCK_TRACKING + " = ?", 1)
-                    .where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY))
+                    .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY))
                     .wrap(new Function<Cursor, Integer>() {
                         @Override
                         public Integer apply(Cursor c) {

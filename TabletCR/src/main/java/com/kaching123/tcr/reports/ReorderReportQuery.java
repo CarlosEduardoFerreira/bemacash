@@ -9,13 +9,12 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._castToReal;
+import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 
 /**
@@ -31,8 +30,8 @@ public class ReorderReportQuery {
                 .projection(ItemTable.DESCRIPTION, ItemTable.TMP_AVAILABLE_QTY, ItemTable.RECOMMENDED_QTY)
                 .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
                 .where(ItemTable.STOCK_TRACKING + " = ?", 1)
-                .where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY))
-                .where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " < "  + _castToReal(ItemTable.RECOMMENDED_QTY))
+                .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY))
+                .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " < "  + _castAsReal(ItemTable.RECOMMENDED_QTY))
                 .transform(new ConvertFunction())
                 .build(context);
     }
@@ -44,8 +43,8 @@ public class ReorderReportQuery {
                 .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
                 .where(ItemTable.STOCK_TRACKING + " = ? ", 1)
                 .where(ItemTable.DESCRIPTION + " like ? ", "%" + textFilter + "%")
-                .where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY))
-                .where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " < "  + _castToReal(ItemTable.RECOMMENDED_QTY))
+                .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY))
+                .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " < "  + _castAsReal(ItemTable.RECOMMENDED_QTY))
                 .transform(new ConvertFunction())
                 .build(context);
     }
@@ -55,8 +54,8 @@ public class ReorderReportQuery {
                 .projection(ItemTable.DESCRIPTION, ItemTable.TMP_AVAILABLE_QTY, ItemTable.RECOMMENDED_QTY)
                 .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
                 .where(ItemTable.STOCK_TRACKING + " = ?", 1)
-                .where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castToReal(ItemTable.MINIMUM_QTY))
-                .where(_castToReal(ItemTable.TMP_AVAILABLE_QTY) + " < "  + _castToReal(ItemTable.RECOMMENDED_QTY))
+                .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY))
+                .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " < "  + _castAsReal(ItemTable.RECOMMENDED_QTY))
                 .perform(context)
                 .toFluentIterable(new ConvertFunction()).toImmutableList();
     }
