@@ -1,14 +1,14 @@
 package com.kaching123.tcr.fragment.customer;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
 
+import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.model.CustomerModel;
 
 /**
  * Created by vkompaniets on 27.06.2016.
  */
-public abstract class CustomerBaseFragment extends Fragment{
+public abstract class CustomerBaseFragment extends SuperBaseFragment{
 
     @Override
     public void onAttach(Context context) {

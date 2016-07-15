@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CustomerModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
@@ -25,11 +26,19 @@ public class AddCustomerCommand extends BaseCustomerCommand {
     @Override
     protected void doQuery(ArrayList<ContentProviderOperation> operations) {
         operations.add(ContentProviderOperation.newInsert(CUSTOMER_URI).withValues(model.toValues()).build());
+        if (pointsMovementResult != null && pointsMovementResult.getLocalDbOperations() != null){
+            operations.addAll(pointsMovementResult.getLocalDbOperations());
+        }
     }
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext());
+        BatchSqlCommand batch = batchInsert(model);
+        batch.add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
+        if (pointsMovementResult != null && pointsMovementResult.getSqlCmd() != null){
+            batch.add(pointsMovementResult.getSqlCmd());
+        }
+        return batch;
     }
 
     public static void start(Context context, BaseAddCustomerCallback callback, CustomerModel customer) {

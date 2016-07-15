@@ -27,7 +27,7 @@ android {
     useLibrary 'org.apache.http.legacy'
     dexOptions {
         jumboMode = true
-        javaMaxHeapSize "4g"
+        javaMaxHeapSize "6g"
     }
     defaultConfig {
         minSdkVersion 15

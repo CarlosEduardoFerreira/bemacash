@@ -184,13 +184,14 @@
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_bonus_point" />
 
-            <TextView
+            <EditText
                 android:id="@+id/bonus_points"
                 style="@style/EditItem.Table.Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nextFocusDown="@+id/birthday"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:inputType="number"/>
         </TableRow>
 
         <TableRow>

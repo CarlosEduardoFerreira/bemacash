@@ -6,14 +6,16 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.telly.groundy.TaskResult;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.store.ShopStore.CustomerTable;
 
 /**
@@ -32,6 +34,7 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
     protected ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 
     protected CustomerModel model;
+    protected SyncResult pointsMovementResult;
 
     @Override
     protected TaskResult doCommand() {
@@ -41,9 +44,33 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
         if ((!ignoreEmailCheck() && checkEmail()) || checkPhone())
             return failed().add(EXTRA_ERROR, Error.EMAIL_EXISTS);
 
+        pointsMovementResult = addPointsMovement();
+
         doQuery(operations);
 
         return succeeded();
+    }
+
+    private SyncResult addPointsMovement(){
+        Cursor c = ProviderAction.query(CUSTOMER_URI)
+                .projection(CustomerTable.TMP_LOYALTY_POINTS)
+                .where(CustomerTable.GUID + " = ?", model.guid)
+                .perform(getContext());
+
+        try{
+            if (c.moveToFirst()){
+                BigDecimal oldPoints = _decimal(c, 0);
+                BigDecimal newPoints = model.loyaltyPoints == null ? BigDecimal.ZERO : model.loyaltyPoints;
+                BigDecimal difference = newPoints.subtract(oldPoints);
+                if (BigDecimal.ZERO.compareTo(difference) != 0){
+                    return new AddLoyaltyPointsMovementCommand().sync(getContext(), model.guid, difference, null, getAppCommandContext());
+                }
+            }
+        }finally {
+            c.close();
+        }
+
+        return null;
     }
 
     @Override

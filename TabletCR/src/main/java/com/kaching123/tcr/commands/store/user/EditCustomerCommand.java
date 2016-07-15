@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CustomerModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.annotations.OnFailure;
@@ -29,11 +30,19 @@ public class EditCustomerCommand extends BaseCustomerCommand {
                 .withValues(model.toUpdateValues())
                 .withSelection(ShopStore.CustomerTable.GUID + " = ?", new String[]{model.guid})
                 .build());
+        if (pointsMovementResult != null && pointsMovementResult.getLocalDbOperations() != null){
+            operations.addAll(pointsMovementResult.getLocalDbOperations());
+        }
     }
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext());
+        BatchSqlCommand batch = batchUpdate(model);
+        batch.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
+        if (pointsMovementResult != null && pointsMovementResult.getSqlCmd() != null){
+            batch.add(pointsMovementResult.getSqlCmd());
+        }
+        return batch;
     }
 
     public static void start(Context context, BaseEditCustomerCallback callback, CustomerModel customer) {

@@ -27,6 +27,7 @@ import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.dialog.DatePickerFragment;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.LoyaltyPlanModel;
+import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.LoyaltyPlanTable;
@@ -42,6 +43,7 @@ import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPhone;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.DateUtils.dateOnlyFormat;
 import static com.kaching123.tcr.util.PhoneUtil.isValid;
 import static com.kaching123.tcr.util.PhoneUtil.onlyDigits;
@@ -60,7 +62,7 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
     @ViewById protected EditText zip;
     @ViewById protected EditText phone;
     @ViewById protected EditText identification;
-    @ViewById protected TextView bonusPoints;
+    @ViewById protected EditText bonusPoints;
     @ViewById protected TextView birthday;
     @ViewById protected EditText loyaltyBarcode;
     @ViewById protected Spinner gender;
@@ -87,6 +89,7 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         setFieldsEnabled(PlanOptions.isEditingCustomersAllowed());
         loyaltyPlanAdapter = new LoyaltyPlanAdapter(getActivity());
         loyaltyPlan.setAdapter(loyaltyPlanAdapter);
+        bonusPoints.setEnabled(getApp().hasPermission(Permission.CUSTOMER_LOYALTY_POINTS_ADJUST));
         getLoaderManager().restartLoader(0, null, loyaltyPlanLoader);
     }
 
@@ -132,6 +135,7 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         }
         model.loyaltyPlanId = ((LoyaltyPlanModel) loyaltyPlan.getSelectedItem()).guid;
         model.loyaltyBarcode = loyaltyBarcode.getText().toString();
+        model.loyaltyPoints = _decimal(bonusPoints.getText().toString());
     }
 
     @Override
