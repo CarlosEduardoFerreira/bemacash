@@ -253,7 +253,8 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.countryId().get(),
                     shopPref.customerPopupScreenEnabled().get(),
                     shopPref.customerPopupScreenMessage().get(),
-                    shopPref.blackStonePRepaidSolution().get());
+                    shopPref.blackStonePRepaidSolution().get(),
+                    shopPref.defaultLoyaltyPlanId().get());
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -598,6 +599,7 @@ public class TcrApplication extends MultiDexApplication {
                 .customerPopupScreenEnabled().put(info.customerPopupScreenEnabled)
                 .customerPopupScreenMessage().put(info.customerPopupScreenMessage)
                 .blackStonePRepaidSolution().put(info.blackStonePRepaidSolution)
+                .defaultLoyaltyPlanId().put(info.defaultLoyaltyPlanId)
                 .apply();
 
         setUsers();

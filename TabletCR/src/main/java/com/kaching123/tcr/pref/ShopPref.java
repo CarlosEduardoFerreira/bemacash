@@ -122,6 +122,8 @@ public interface ShopPref {
 
     boolean loadingOldOrders();
 
+    String defaultLoyaltyPlanId();
+
     /**
      * user **
      */

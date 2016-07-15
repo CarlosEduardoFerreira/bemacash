@@ -206,11 +206,14 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         @Override
         public void onLoadFinished(Loader<List<LoyaltyPlanModel>> loader, List<LoyaltyPlanModel> data) {
             loyaltyPlanAdapter.changeCursor(data);
+            int position = AdapterView.INVALID_POSITION;
             if (getCustomer() != null && getCustomer().loyaltyPlanId != null){
-                int position = loyaltyPlanAdapter.getPosition(getCustomer().loyaltyPlanId);
-                if (position != AdapterView.INVALID_POSITION)
-                    loyaltyPlan.setSelection(position);
+                position = loyaltyPlanAdapter.getPosition(getCustomer().loyaltyPlanId);
+            } else if (getCustomer() == null && getApp().getShopInfo().defaultLoyaltyPlanId != null){
+                position = loyaltyPlanAdapter.getPosition(getApp().getShopInfo().defaultLoyaltyPlanId);
             }
+            if (position != AdapterView.INVALID_POSITION)
+                loyaltyPlan.setSelection(position);
         }
 
         @Override

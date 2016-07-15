@@ -17,108 +17,110 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
  */
 public class ShopInfoViewJdbcConverter {
 
-    public static final String ID = "ID";
-    public static final String NAME = "NAME";
-    public static final String VIEW_TYPE = "VIEW_TYPE";
-    public static final String TAX_VAT = "TAX_VAT";
+    private static final String ID = "ID";
+    private static final String NAME = "NAME";
+    private static final String VIEW_TYPE = "VIEW_TYPE";
+    private static final String TAX_VAT = "TAX_VAT";
 
-    public static final String ADDRESS1 = "ADDRESS1";
-    public static final String ADDRESS2 = "ADDRESS2";
-    public static final String ADDRESS3 = "ADDRESS3";
-    public static final String STATE = "STATE";
+    private static final String ADDRESS1 = "ADDRESS1";
+    private static final String ADDRESS2 = "ADDRESS2";
+    private static final String ADDRESS3 = "ADDRESS3";
+    private static final String STATE = "STATE";
 
-    public static final String PHONE = "PHONE";
-    public static final String EMAIL = "EMAIL";
-    public static final String SITE = "SITE";
+    private static final String PHONE = "PHONE";
+    private static final String EMAIL = "EMAIL";
+    private static final String SITE = "SITE";
 
-    public static final String THANKS_PHRASE = "THANKS_PHRASE";
-    public static final String PAYMENT_GATEWAY = "PAYMENT_GATEWAY";
+    private static final String THANKS_PHRASE = "THANKS_PHRASE";
+    private static final String PAYMENT_GATEWAY = "PAYMENT_GATEWAY";
 
-    public static final String HOLD_ON_ORDERS_COUNT = "HOLD_ON_ORDERS_COUNT";
-    public static final String PRINT_ONHOLD_ORDERS = "PRINT_RECEIPT_FOR_ONHOLD_ORDERS_ENABLED";
-    public static final String DRAWER_CLOSED_FOR_SALE = "DRAWER_CLOSED_FOR_SALE";
-    public static final String SALES_FOR_CLOCK_OUT_ENABLED = "SALES_FOR_CLOCK_OUT_ENABLED";
+    private static final String HOLD_ON_ORDERS_COUNT = "HOLD_ON_ORDERS_COUNT";
+    private static final String PRINT_ONHOLD_ORDERS = "PRINT_RECEIPT_FOR_ONHOLD_ORDERS_ENABLED";
+    private static final String DRAWER_CLOSED_FOR_SALE = "DRAWER_CLOSED_FOR_SALE";
+    private static final String SALES_FOR_CLOCK_OUT_ENABLED = "SALES_FOR_CLOCK_OUT_ENABLED";
 
-    public static final String FOOTER_MESSAGE1 = "FOOTER_MESSAGE1";
-    public static final String FOOTER_MESSAGE2 = "FOOTER_MESSAGE2";
-    public static final String USE_CREDIT_RECEIPT = "USE_CREDIT_RECEIPT";
+    private static final String FOOTER_MESSAGE1 = "FOOTER_MESSAGE1";
+    private static final String FOOTER_MESSAGE2 = "FOOTER_MESSAGE2";
+    private static final String USE_CREDIT_RECEIPT = "USE_CREDIT_RECEIPT";
 
-    public static final String DISPLAY_WELCOME_MESSAGE = "DISPLAY_WELCOME_MESSAGE";
-    public static final String DISPLAY_WELCOME_MESSAGE_BOTTOM = "DISPLAY_WELCOME_MESSAGE_BOTTOM";
-    public static final String SIGNATURE_PRINT_LIMIT = "SIGNATURE_PRINT_LIMIT";
-    public static final String OWNER_EMAIL = "OWNER_EMAIL";
-    public static final String CREDIT_RECEIPT_EXPIRE_TIME = "CREDIT_RECEIPT_EXPIRE_TIME";
+    private static final String DISPLAY_WELCOME_MESSAGE = "DISPLAY_WELCOME_MESSAGE";
+    private static final String DISPLAY_WELCOME_MESSAGE_BOTTOM = "DISPLAY_WELCOME_MESSAGE_BOTTOM";
+    private static final String SIGNATURE_PRINT_LIMIT = "SIGNATURE_PRINT_LIMIT";
+    private static final String OWNER_EMAIL = "OWNER_EMAIL";
+    private static final String CREDIT_RECEIPT_EXPIRE_TIME = "CREDIT_RECEIPT_EXPIRE_TIME";
 
-    public static final String PREPAID_URL = "PREPAID_URL";
-    public static final String PREPAID_MID = "PREPAID_MID";
-    public static final String PREPAID_PASSWORD = "PREPAID_PASSWORD";
-    public static final String PREPAID_TRANSACTION_MODE = "PREPAID_TRANSACTION_MODE";
-    public static final String TIPS_ENABLED = "TIPS_ENABLED";
-    public static final String TIPS_SPLIT_TRESHOLD = "TIPS_SPLIT_TRESHOLD";
-    public static final String TIPS_ON_FLY_ENABLED = "TIPS_ON_FLY_ENABLED";
-    public static final String TIPS_WARN_THRESHOLD = "TIPS_WARN_THRESHOLD";
+    private static final String PREPAID_URL = "PREPAID_URL";
+    private static final String PREPAID_MID = "PREPAID_MID";
+    private static final String PREPAID_PASSWORD = "PREPAID_PASSWORD";
+    private static final String PREPAID_TRANSACTION_MODE = "PREPAID_TRANSACTION_MODE";
+    private static final String TIPS_ENABLED = "TIPS_ENABLED";
+    private static final String TIPS_SPLIT_TRESHOLD = "TIPS_SPLIT_TRESHOLD";
+    private static final String TIPS_ON_FLY_ENABLED = "TIPS_ON_FLY_ENABLED";
+    private static final String TIPS_WARN_THRESHOLD = "TIPS_WARN_THRESHOLD";
 
-    public static final String ZIP_CODE_MANDATORY = "ZIP_CODE_MANDATORY";
-    public static final String CVN_MANDATORY = "CVN_MANDATORY";
-    public static final String ACCEPT_CREDIT_CARDS = "ACCEPT_CREDIT_CARDS";
-    public static final String ACCEPT_DEBIT_CARDS = "ACCEPT_DEBIT_CARDS";
-    public static final String ACCEPT_EBT_CARDS = "ACCEPT_EBT_CARDS";
-    public static final String ACCEPT_SERIALIZABLE = "SERIALIZABLE_ITEMS";
+    private static final String ZIP_CODE_MANDATORY = "ZIP_CODE_MANDATORY";
+    private static final String CVN_MANDATORY = "CVN_MANDATORY";
+    private static final String ACCEPT_CREDIT_CARDS = "ACCEPT_CREDIT_CARDS";
+    private static final String ACCEPT_DEBIT_CARDS = "ACCEPT_DEBIT_CARDS";
+    private static final String ACCEPT_EBT_CARDS = "ACCEPT_EBT_CARDS";
+    private static final String ACCEPT_SERIALIZABLE = "SERIALIZABLE_ITEMS";
 
-    public static final String BLACKSTONE_PAYMENT_URL = "BLACKSTONE_PAYMENT_URL";
-    public static final String BLACKSTONE_PAYMENT_ACCOUNT = "BLACKSTONE_PAYMENT_ACCOUNT";
-    public static final String BLACKSTONE_PAYMENT_PASSWORD = "BLACKSTONE_PAYMENT_PASSWORD";
-    public static final String BLACKSTONE_PAYMENT_APPTYPE = "BLACKSTONE_PAYMENT_APPTYPE";
-    public static final String BLACKSTONE_PAYMENT_APPKEY = "BLACKSTONE_PAYMENT_APPKEY";
-    public static final String BLACKSTONE_PAYMENT_MID = "BLACKSTONE_PAYMENT_MID";
-    public static final String SUPPORT_EMAIL = "SUPPORT_EMAIL";
+    private static final String BLACKSTONE_PAYMENT_URL = "BLACKSTONE_PAYMENT_URL";
+    private static final String BLACKSTONE_PAYMENT_ACCOUNT = "BLACKSTONE_PAYMENT_ACCOUNT";
+    private static final String BLACKSTONE_PAYMENT_PASSWORD = "BLACKSTONE_PAYMENT_PASSWORD";
+    private static final String BLACKSTONE_PAYMENT_APPTYPE = "BLACKSTONE_PAYMENT_APPTYPE";
+    private static final String BLACKSTONE_PAYMENT_APPKEY = "BLACKSTONE_PAYMENT_APPKEY";
+    private static final String BLACKSTONE_PAYMENT_MID = "BLACKSTONE_PAYMENT_MID";
+    private static final String SUPPORT_EMAIL = "SUPPORT_EMAIL";
 
-    public static final String AUTO_SETTLEMENT_TIME = "AUTO_SETTLEMENT_TIME";
+    private static final String AUTO_SETTLEMENT_TIME = "AUTO_SETTLEMENT_TIME";
 
-    public static final String COMMISSION_CONTROL = "COMMISSION_CONTROL";
-    public static final String DEFAULT_STORE_COMMISSION = "DEFAULT_STORE_COMMISSION";
+    private static final String COMMISSION_CONTROL = "COMMISSION_CONTROL";
+    private static final String DEFAULT_STORE_COMMISSION = "DEFAULT_STORE_COMMISSION";
 
-    public static final String OFFLINE_PERIOD = "OFFLINE_PERIOD";
+    private static final String OFFLINE_PERIOD = "OFFLINE_PERIOD";
 
-    public static final String DEF_UNIT_LBL_SH = "DEFAULT_UNIT_LBL_SHORTCUT";
-    public static final String DEF_UNIT_LBL_DESR = "DEFAULT_UNIT_LBL_DESCRIPTION";
-
-
-    public static final String PRINTER_TWO_COPIES_RECEIPT = "PRINTER_TWO_COPIES_RECEIPT";
-    public static final String PRINTER_RECEIPT_TWICE = "PRINTER_RECEIPT_TWICE";
-
-    public static final String PRINTER_DETAIL_RECEIPT = "PRINTER_DETAIL_RECEIPT";
-
-    public static final String ITEMS_COUNT = "ITEMS_COUNT";
-
-    public static final String SHOP_STATUS = "STATUS";
-
-    public static final String UPDATE_CHECK_TIMER = "UPDATE_CHECK_TIMER";
+    private static final String DEF_UNIT_LBL_SH = "DEFAULT_UNIT_LBL_SHORTCUT";
+    private static final String DEF_UNIT_LBL_DESR = "DEFAULT_UNIT_LBL_DESCRIPTION";
 
 
-    public static final String MAX_HISTORY_RANGE = "MAX_HISTORY_RANGE";
+    private static final String PRINTER_TWO_COPIES_RECEIPT = "PRINTER_TWO_COPIES_RECEIPT";
+    private static final String PRINTER_RECEIPT_TWICE = "PRINTER_RECEIPT_TWICE";
 
-    public static final String PRINT_DROP_OR_PAYOUT = "PRINT_DROP_OR_PAYOUT";
+    private static final String PRINTER_DETAIL_RECEIPT = "PRINTER_DETAIL_RECEIPT";
 
-    public static final String ENABLE_XREPORT_DEPART_SALE = "ENABLE_XREPORT_DEPART_SALE";
-    public static final String ENABLE_XREPORT_ITEM_SALE = "ENABLE_XREPORT_ITEM_SALE";
+    private static final String ITEMS_COUNT = "ITEMS_COUNT";
 
-    public static final String IVULOTO_MID = "IVULOTO_MID";
+    private static final String SHOP_STATUS = "STATUS";
 
-    public static final String TERMINAL_ID = "TERMINAL_ID";
+    private static final String UPDATE_CHECK_TIMER = "UPDATE_CHECK_TIMER";
 
-    public static final String TERMINAL_PASSWORD = "TERMINAL_PASSWORD";
 
-    public static final String REMOVE_CHECK_AND_OFFLINECREDIT = "REMOVE_CHECK_AND_OFFLINECREDIT";
+    private static final String MAX_HISTORY_RANGE = "MAX_HISTORY_RANGE";
 
-    public static final String PLAN_ID = "PLAN_ID";
+    private static final String PRINT_DROP_OR_PAYOUT = "PRINT_DROP_OR_PAYOUT";
 
-    public static final String COUNTRY_ID = "COUNTRY_ID";
+    private static final String ENABLE_XREPORT_DEPART_SALE = "ENABLE_XREPORT_DEPART_SALE";
+    private static final String ENABLE_XREPORT_ITEM_SALE = "ENABLE_XREPORT_ITEM_SALE";
 
-    public static final String CUSTOMER_POPUP_SCREEN_ENABLED = "CUSTOMER_POPUP_SCREEN";
-    public static final String CUSTOMER_POPUP_SCREEN_MESSAGE = "CUSTOMER_POPUP_SCREEN_MESSAGE";
+    private static final String IVULOTO_MID = "IVULOTO_MID";
 
-    public static final String BLACKSTONE_PREPAID_SOLUTION  = "BLACKSTONE_PREPAID_SOLUTION";
+    private static final String TERMINAL_ID = "TERMINAL_ID";
+
+    private static final String TERMINAL_PASSWORD = "TERMINAL_PASSWORD";
+
+    private static final String REMOVE_CHECK_AND_OFFLINECREDIT = "REMOVE_CHECK_AND_OFFLINECREDIT";
+
+    private static final String PLAN_ID = "PLAN_ID";
+
+    private static final String COUNTRY_ID = "COUNTRY_ID";
+
+    private static final String CUSTOMER_POPUP_SCREEN_ENABLED = "CUSTOMER_POPUP_SCREEN";
+    private static final String CUSTOMER_POPUP_SCREEN_MESSAGE = "CUSTOMER_POPUP_SCREEN_MESSAGE";
+
+    private static final String BLACKSTONE_PREPAID_SOLUTION  = "BLACKSTONE_PREPAID_SOLUTION";
+    
+    private static final String DEFAULT_LOYALTY_PLAN_ID = "DEFAULT_LOYALTY_PLAN";
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
@@ -190,7 +192,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getLong(COUNTRY_ID),
                 rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED),
                 rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE),
-                rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION));
+                rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION),
+                rs.getString(DEFAULT_LOYALTY_PLAN_ID));
     }
 
     public static ShopInfo read(JdbcJSONObject rs) throws JSONException {
@@ -263,7 +266,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getLong(COUNTRY_ID),
                 rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED),
                 rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE),
-                rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION ));
+                rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION ),
+                rs.getString(DEFAULT_LOYALTY_PLAN_ID));
     }
 
     public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException {
@@ -375,6 +379,8 @@ public class ShopInfoViewJdbcConverter {
         public final String customerPopupScreenMessage;
 
         public final boolean blackStonePRepaidSolution;
+        
+        public final String defaultLoyaltyPlanId;
 
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
@@ -440,7 +446,7 @@ public class ShopInfoViewJdbcConverter {
                         long countryId,
                         boolean customerPopupScreenEnabled,
                         String customerPopupScreenMessage,
-                        boolean blackStonePRepaidSolution) {
+                        boolean blackStonePRepaidSolution, String defaultLoyaltyPlanId) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -530,6 +536,8 @@ public class ShopInfoViewJdbcConverter {
             this.customerPopupScreenEnabled = customerPopupScreenEnabled;
             this.customerPopupScreenMessage = customerPopupScreenMessage;
             this.blackStonePRepaidSolution = blackStonePRepaidSolution;
+            
+            this.defaultLoyaltyPlanId = defaultLoyaltyPlanId;
         }
 
     }
