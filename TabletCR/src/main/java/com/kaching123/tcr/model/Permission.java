@@ -22,7 +22,7 @@ public enum Permission implements LabaledEnum {
     OPEN_CLOSE_SHIFT(19, R.string.permission_open_close_shift, Group.DASHBOARD),
     EMPLOYEE_MANAGEMENT(13, R.string.permission_employee_management, Group.DASHBOARD),
     CUSTOMER_MANAGEMENT(14, R.string.permission_customer_management, Group.DASHBOARD),
-    CUSTOMER_LOYALTY_POINTS_ADJUST(64, R.string.permission_customer_loyalty_points_adjust, Group.DASHBOARD),
+    CUSTOMER_LOYALTY_BONUS_POINTS(64, R.string.permission_customer_loyalty_bonus_points, Group.DASHBOARD),
     CASH_DRAWER_MONEY(22, R.string.permission_cash_drawer_money, Group.DASHBOARD),
     NO_SALE(16, R.string.permission_no_sales, Group.DASHBOARD),
     INVENTORY_MODULE(12, R.string.permission_inventory_module, Group.DASHBOARD),

@@ -89,7 +89,7 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         setFieldsEnabled(PlanOptions.isEditingCustomersAllowed());
         loyaltyPlanAdapter = new LoyaltyPlanAdapter(getActivity());
         loyaltyPlan.setAdapter(loyaltyPlanAdapter);
-        bonusPoints.setEnabled(getApp().hasPermission(Permission.CUSTOMER_LOYALTY_POINTS_ADJUST));
+        bonusPoints.setEnabled(getApp().hasPermission(Permission.CUSTOMER_LOYALTY_BONUS_POINTS));
         getLoaderManager().restartLoader(0, null, loyaltyPlanLoader);
     }
 

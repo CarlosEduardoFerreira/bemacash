@@ -889,7 +889,7 @@
     <string name="permission_inventory_module">Inventory Management</string>
     <string name="permission_employee_management">Employee Management</string>
     <string name="permission_customer_management">Customer Management</string>
-    <string name="permission_customer_loyalty_points_adjust">Adjust Loyalty Points</string>
+    <string name="permission_customer_loyalty_bonus_points">Loyalty Bonus Points</string>
     <string name="permission_backups">Backups</string>
     <string name="permission_software_updates">Software Updates</string>
     <string name="permission_reports">Reports</string>
@@ -1921,7 +1921,7 @@
     <string name="loyalty_incentive_dialog_title">Please choose:</string>
     <string name="loyalty_incentive_dialog_msg1">Reward Available</string>
     <string name="loyalty_incentive_dialog_msg2">Would you like to apply this reward now?</string>
-    <string name="loyalty_incentive_dialog_available_label">Reward Available: %s</string>
+    <string name="loyalty_incentive_dialog_available_label">Reward Available</string>
     <string name="loyalty_incentive_dialog_type_label">Type: %s</string>
     <string name="loyalty_incentive_dialog_reward_label">Reward: %s</string>
 
