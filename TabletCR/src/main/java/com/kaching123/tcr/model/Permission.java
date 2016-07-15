@@ -7,32 +7,29 @@ import com.kaching123.tcr.R;
  */
 public enum Permission implements LabaledEnum {
 
-    SALES_TRANSACTION(1, R.string.permission_sales_transaction, Group.SALES_MODULE),
-    SALES_DISCOUNTS(2, R.string.permission_sales_discount, Group.SALES_MODULE),
-    VOID_SALES(3, R.string.permission_void_sales, Group.SALES_MODULE),
-    SALES_RETURN(4, R.string.permission_sales_return, Group.SALES_MODULE),
-    /*TABLE_ORDERING(5, R.string.permission_table_ordering, Group.TABLE_MANAGEMENT),
-    TRANSFER_GUESTS(6, R.string.permission_transfer_quests, Group.TABLE_MANAGEMENT),
-    SPLIT_CHECK(7, R.string.permission_split_check, Group.TABLE_MANAGEMENT),
-    JOIN_TABLE(8, R.string.permission_join_table, Group.TABLE_MANAGEMENT),
-    GUEST_TABLE_ORDERING(9, R.string.permission_guest_table_ordering, Group.TABLE_MANAGEMENT),*/
-    REPORTS(10, R.string.permission_reports, Group.DASHBOARD),
-    //SOFTWARE_UPDATES(11, R.string.permission_software_updates, Group.SYSTEM_CONFIGURATION),
-    INVENTORY_MODULE(12, R.string.permission_inventory_module, Group.DASHBOARD),
-    EMPLOYEE_MANAGEMENT(13, R.string.permission_employee_management, Group.DASHBOARD),
-    CUSTOMER_MANAGEMENT(14, R.string.permission_customer_management, Group.SYSTEM_CONFIGURATION),
-    CUSTOMER_LOYALTY_POINTS_ADJUST(64, R.string.permission_customer_loyalty_points_adjust, Group.SYSTEM_CONFIGURATION),
-    //BACKUPS(15, R.string.permission_backups, Group.SYSTEM_CONFIGURATION),
-    NO_SALE(16, R.string.permission_no_sales, Group.DASHBOARD),
-    DROPS_AND_PAYOUTS(17, R.string.permission_drops_and_payout, Group.DASHBOARD),
-    ADMIN(18, R.string.permission_admin, Group.SYSTEM_CONFIGURATION),
-    OPEN_CLOSE_SHIFT(19, R.string.permission_open_close_shift, Group.DASHBOARD),
-    SALES_TAX(20, R.string.permission_sales_tax, Group.SALES_MODULE),
+    //Note: order remains on UI, insert new items carefully!
+
     TIPS(21, R.string.permission_tips, Group.SALES_MODULE),
-    TRAINING_MODE(24, R.string.permission_training_mode, Group.SYSTEM_CONFIGURATION),
-    WARRANTY_EXPIRATION_OVERRIDE(23, R.string.permission_warranty_expiration_override, Group.SALES_MODULE),
-    CASH_DRAWER_MONEY(22, R.string.permission_cash_drawer_money, Group.DASHBOARD),
+    VOID_SALES(3, R.string.permission_void_sales, Group.SALES_MODULE),
     CHANGE_QTY(59, R.string.permission_change_quantity, Group.SALES_MODULE),
+    SALES_TRANSACTION(1, R.string.permission_sales_transaction, Group.SALES_MODULE),
+    SALES_TAX(20, R.string.permission_sales_tax, Group.SALES_MODULE),
+    SALES_DISCOUNTS(2, R.string.permission_sales_discount, Group.SALES_MODULE),
+    SALES_RETURN(4, R.string.permission_sales_return, Group.SALES_MODULE),
+    WARRANTY_EXPIRATION_OVERRIDE(23, R.string.permission_warranty_expiration_override, Group.SALES_MODULE),
+
+    DROPS_AND_PAYOUTS(17, R.string.permission_drops_and_payout, Group.DASHBOARD),
+    OPEN_CLOSE_SHIFT(19, R.string.permission_open_close_shift, Group.DASHBOARD),
+    EMPLOYEE_MANAGEMENT(13, R.string.permission_employee_management, Group.DASHBOARD),
+    CUSTOMER_MANAGEMENT(14, R.string.permission_customer_management, Group.DASHBOARD),
+    CUSTOMER_LOYALTY_POINTS_ADJUST(64, R.string.permission_customer_loyalty_points_adjust, Group.DASHBOARD),
+    CASH_DRAWER_MONEY(22, R.string.permission_cash_drawer_money, Group.DASHBOARD),
+    NO_SALE(16, R.string.permission_no_sales, Group.DASHBOARD),
+    INVENTORY_MODULE(12, R.string.permission_inventory_module, Group.DASHBOARD),
+    REPORTS(10, R.string.permission_reports, Group.DASHBOARD),
+
+    TRAINING_MODE(24, R.string.permission_training_mode, Group.SYSTEM_CONFIGURATION),
+    ADMIN(18, R.string.permission_admin, Group.SYSTEM_CONFIGURATION),
     SOFTWARE_UPDATE(25, R.string.permission_software_update, Group.SYSTEM_CONFIGURATION);
 
     private final long id;

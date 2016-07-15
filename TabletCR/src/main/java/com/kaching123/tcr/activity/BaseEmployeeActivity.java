@@ -408,6 +408,11 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
             return convertView;
         }
 
+        @Override
+        public synchronized void changeCursor(List<Permission> list) {
+            Collections.sort(list);
+            super.changeCursor(list);
+        }
 
         private class ViewHolder {
             TextView header;

@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -60,11 +58,6 @@ public class PermissionsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        SortedSet<Permission> groupPermissions2 = null;
-        if (Group.SYSTEM_CONFIGURATION == group){
-            groupPermissions2 = systemConfigurationDirtySort(groupPermissions);
-        }
-
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -76,24 +69,9 @@ public class PermissionsFragment extends Fragment {
         title.setText(getString(group.getLabelId()));
 
         adapter = new PermissionsAdapter(getActivity());
-        adapter.changeCursor(new ArrayList<>(groupPermissions2 == null ? groupPermissions : groupPermissions2));
+        adapter.changeCursor(new ArrayList<>(new TreeSet(groupPermissions)));
 
         list.setAdapter(adapter);
-    }
-
-    private static SortedSet<Permission> systemConfigurationDirtySort(Set<Permission> permissions) {
-        TreeSet<Permission> result = new TreeSet<>();
-        if (permissions.contains(Permission.CUSTOMER_MANAGEMENT) && permissions.contains(Permission.CUSTOMER_LOYALTY_POINTS_ADJUST)){
-            result.add(Permission.CUSTOMER_MANAGEMENT);
-            result.add(Permission.CUSTOMER_LOYALTY_POINTS_ADJUST);
-            for (Permission p : permissions){
-                if (p != Permission.CUSTOMER_MANAGEMENT && p != Permission.CUSTOMER_LOYALTY_POINTS_ADJUST)
-                    result.add(p);
-            }
-            return result;
-        }else{
-            return new TreeSet<>(permissions);
-        }
     }
 
     private void updateCounter(){
@@ -126,4 +104,5 @@ public class PermissionsFragment extends Fragment {
     public Collection<? extends Permission> getSelectedItems() {
         return adapter.getSelectedPermissions();
     }
+
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -8,13 +8,26 @@
               android:paddingRight="80dp"
               android:paddingTop="40dp"
               android:paddingBottom="40dp"
-              android:background="@color/beige">
+              android:background="@color/bg_grey_color">
+
+    <Button
+        style="@style/LocalizableButton.Green"
+        android:text="@string/button_save"
+        android:textSize="26sp"
+        android:paddingBottom="6dp"
+        android:id="@+id/btn_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/save_btn_bg"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"/>
 
     <LinearLayout
-        android:layout_height="0dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_weight="2"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_save"
         android:weightSum="3">
 
         <FrameLayout
@@ -39,45 +52,5 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_marginTop="50dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:weightSum="3">
 
-        <Space
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"/>
-
-        <Space
-            android:layout_marginLeft="@dimen/edit_item_table_margin_left"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"/>
-
-        <FrameLayout
-            android:layout_marginLeft="@dimen/edit_item_table_margin_left"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1">
-
-            <Button
-                style="@style/LocalizableButton.Green"
-                android:text="@string/button_save"
-                android:textSize="26sp"
-                android:paddingBottom="6dp"
-                android:id="@+id/btn_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
-                android:background="@drawable/save_btn_bg"
-                android:layout_marginTop="10dp"
-                />
-        </FrameLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
