@@ -2092,8 +2092,63 @@ public abstract class ShopStore {
     static {
         applyForeignKeys(LoyaltyPointsMovementTable.TABLE_NAME,
                 foreignKey(LoyaltyPointsMovementTable.CUSTOMER_ID, CustomerTable.TABLE_NAME, CustomerTable.GUID),
-                foreignKey(LoyaltyPointsMovementTable.SALE_ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID));
+                foreignKey(LoyaltyPointsMovementTable.SALE_ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true));
     }
+
+    public interface SaleIncentiveTable extends IBemaSyncTable {
+
+        String TABLE_NAME = "sale_incentive";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String INCENTIVE_ID = "incentive_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String CUSTOMER_ID = "customer_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ORDER_ID = "order_id";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        //points, birthday
+        String TYPE = "type";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        //discount, gift_card, item
+        String REWARD_TYPE = "reward_type";
+
+        @Column(type = Type.TEXT)
+        String REWARD_VALUE = "reward_value";
+
+        @Column(type = Type.INTEGER)
+        //percent, value
+        String REWARD_VALUE_TYPE = "reward_value_type";
+
+        @Column(type = Type.TEXT)
+        String SALE_ITEM_ID = "sale_item_id";
+
+        @Column(type = Type.TEXT)
+        String POINT_THRESHOLD = "point_threshold";
+    }
+    static {
+        applyForeignKeys(SaleIncentiveTable.TABLE_NAME,
+                foreignKey(SaleIncentiveTable.INCENTIVE_ID, LoyaltyIncentiveTable.TABLE_NAME, LoyaltyIncentiveTable.GUID),
+                foreignKey(SaleIncentiveTable.CUSTOMER_ID, CustomerTable.TABLE_NAME, CustomerTable.GUID),
+                foreignKey(SaleIncentiveTable.ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID),
+                foreignKey(SaleIncentiveTable.SALE_ITEM_ID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID));
+    }
+
 
     /**
      * views *
