@@ -64,6 +64,7 @@ import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveItemTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyIncentivePlanTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyPlanTable;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
@@ -160,6 +161,7 @@ public class SyncCommand implements Runnable {
             LoyaltyPlanTable.URI_CONTENT,
             LoyaltyIncentivePlanTable.URI_CONTENT,
             LoyaltyPointsMovementTable.URI_CONTENT,
+            SaleIncentiveTable.URI_CONTENT,
 
             SaleOrderTable.URI_CONTENT,
             SaleItemTable.URI_CONTENT,
@@ -449,6 +451,8 @@ public class SyncCommand implements Runnable {
 
                     count += syncSingleTable2(service, api2, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, employee, serverLastTimestamp, minUpdateTime, false);
 
+                    count += syncSingleTable2(service, api2, SaleIncentiveTable.TABLE_NAME, SaleIncentiveTable.GUID, employee, serverLastTimestamp, minUpdateTime, false);
+
                     count += syncTableWithChildren2(service, api2,
                             PaymentTransactionTable.TABLE_NAME,
                             PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID,
@@ -547,6 +551,8 @@ public class SyncCommand implements Runnable {
             return true;
         if (checkIsSyncGep(syncOpenHelper, minUpdateTime, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, null, false))
             return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, SaleIncentiveTable.TABLE_NAME, SaleIncentiveTable.GUID, null, false))
+            return true;
         if (checkIsSyncGep(syncOpenHelper, minUpdateTime, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID, false))
             return true;
         if (checkIsSyncGep(syncOpenHelper, minUpdateTime, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID, true))
@@ -580,6 +586,8 @@ public class SyncCommand implements Runnable {
         if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, SaleItemTable.TABLE_NAME, SaleItemTable.PARENT_GUID, true))
             return true;
         if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, SaleAddonTable.TABLE_NAME, null, false))
+            return true;
+        if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, SaleIncentiveTable.TABLE_NAME, null, false))
             return true;
         if (checkIsOldSyncCache(syncOpenHelper, minUpdateTime, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.PARENT_GUID, false))
             return true;
@@ -699,6 +707,8 @@ public class SyncCommand implements Runnable {
             return false;
         if (!isTableEmpty(context, LoyaltyIncentivePlanTable.TABLE_NAME, LoyaltyIncentivePlanTable.GUID))
             return false;
+        if (!isTableEmpty(context, SaleIncentiveTable.TABLE_NAME, SaleIncentiveTable.GUID))
+            return false;
 
         return true;
     }
@@ -796,14 +806,13 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID);
                 count += syncLocalSingleTable(service, LoyaltyIncentivePlanTable.TABLE_NAME, LoyaltyIncentivePlanTable.GUID);
                 count += syncLocalSingleTable(service, CustomerTable.TABLE_NAME, CustomerTable.GUID);
+                count += syncLocalSingleTable(service, LoyaltyPointsMovementTable.TABLE_NAME, LoyaltyPointsMovementTable.GUID);
 
                 //employee
                 count += syncLocalSingleTable(service, EmployeeTable.TABLE_NAME, EmployeeTable.GUID);
-                //TODO: check
                 count += syncLocalSingleTable(service, EmployeePermissionTable.TABLE_NAME, EmployeePermissionTable.PERMISSION_ID);
                 count += syncLocalSingleTable(service, EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetTable.GUID);
                 count += syncLocalSingleTable(service, ShiftTable.TABLE_NAME, ShiftTable.GUID);
-
                 count += syncLocalSingleTable(service, CashDrawerMovementTable.TABLE_NAME, CashDrawerMovementTable.GUID);
 
                 //inventory
@@ -825,11 +834,11 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, BillPaymentDescriptionTable.TABLE_NAME, BillPaymentDescriptionTable.GUID, true);
                 count += syncLocalSingleTable(service, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, SaleItemTable.PARENT_GUID, true);
                 count += syncLocalSingleTable(service, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID, true);
+                count += syncLocalSingleTable(service, SaleIncentiveTable.TABLE_NAME, SaleIncentiveTable.GUID, true);
                 count += syncLocalSingleTable(service, PaymentTransactionTable.TABLE_NAME, PaymentTransactionTable.GUID, PaymentTransactionTable.PARENT_GUID, true);
                 count += syncLocalSingleTable(service, CreditReceiptTable.TABLE_NAME, CreditReceiptTable.GUID);
                 count += syncLocalSingleTable(service, EmployeeTipsTable.TABLE_NAME, EmployeeTipsTable.GUID, EmployeeTipsTable.PARENT_GUID, true);
                 count += syncLocalSingleTable(service, EmployeeCommissionsTable.TABLE_NAME, EmployeeCommissionsTable.GUID, true);
-                count += syncLocalSingleTable(service, LoyaltyPointsMovementTable.TABLE_NAME, LoyaltyPointsMovementTable.GUID);
 
                 //inventory depended from sale
                 count += syncLocalSingleTable(service, UnitTable.TABLE_NAME, UnitTable.ID);
@@ -1766,7 +1775,8 @@ public class SyncCommand implements Runnable {
         LOYALTY_INCENTIVE_ITEM(LoyaltyIncentiveItemTable.TABLE_NAME, true),
         LOYALTY_PLAN(LoyaltyPlanTable.TABLE_NAME, true),
         LOYALTY_INCENTIVE_PLAN(LoyaltyIncentivePlanTable.TABLE_NAME, true),
-        LOYALTY_POINTS_MOVEMENT(LoyaltyPointsMovementTable.TABLE_NAME, true);
+        LOYALTY_POINTS_MOVEMENT(LoyaltyPointsMovementTable.TABLE_NAME, true),
+        SALE_INCENTIVE(SaleIncentiveTable.TABLE_NAME, true);
 
         public final String tableName;
         public final boolean isParent;

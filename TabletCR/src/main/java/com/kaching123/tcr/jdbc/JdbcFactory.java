@@ -26,6 +26,7 @@ import com.kaching123.tcr.jdbc.converters.LoyaltyPointsMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PrinterAliasJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.RegisterJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.SaleIncentiveJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemAddonJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
@@ -64,6 +65,7 @@ import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.model.RegisterModel;
+import com.kaching123.tcr.model.SaleIncentiveModel;
 import com.kaching123.tcr.model.SaleModifierModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -98,6 +100,7 @@ import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.RegisterTable;
 import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
@@ -331,6 +334,12 @@ public class JdbcFactory {
 
         API_METHOD.put(LoyaltyPointsMovementTable.TABLE_NAME, "loyalty_points_movement");
         API_METHOD2.put(LoyaltyPointsMovementModel.class, "loyalty_points_movement");
+
+        CONVERTERS.put(ShopStore.SaleIncentiveTable.TABLE_NAME, c = new SaleIncentiveJdbcConverter());
+        CONVERTERS2.put(SaleIncentiveModel.class, c);
+
+        API_METHOD.put(SaleIncentiveTable.TABLE_NAME, "sale_incentive");
+        API_METHOD2.put(SaleIncentiveModel.class, "sale_incentive");
     }
 
     public static JdbcConverter getConverter(String tableName) {

@@ -38,6 +38,7 @@ import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.PrinterTable;
 import com.kaching123.tcr.store.ShopStore.RegisterTable;
 import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
@@ -190,6 +191,7 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(LoyaltyPlanTable.TABLE_NAME, R.string.sync_loyalty_plan);
         TABLE_NAMES.put(LoyaltyIncentivePlanTable.TABLE_NAME, R.string.sync_loyalty_incentive_plan);
         TABLE_NAMES.put(LoyaltyPointsMovementTable.TABLE_NAME, R.string.sync_customer_loyalty_points);
+        TABLE_NAMES.put(SaleIncentiveTable.TABLE_NAME, R.string.sync_sale_incentives);
     }
 
     public static void show(FragmentActivity activity, String msg) {
