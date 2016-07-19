@@ -8,7 +8,7 @@ import java.util.HashSet;
  */
 public class LoyaltyIncentiveCache {
 
-    // [saleOrder -> [incentive]]
+    // [saleOrderId -> [incentiveId]]
     private HashMap<String, HashSet<String>> orderIncentives = new HashMap<>();
 
     public void put(String orderId, String incentiveId){

@@ -4,8 +4,8 @@ import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand;
-import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand.AddLoyaltyPointsMovementCallback;
+import com.kaching123.tcr.commands.loyalty.AddSaleIncentiveCommand;
+import com.kaching123.tcr.commands.loyalty.AddSaleIncentiveCommand.AddSaleIncentiveCallback;
 import com.kaching123.tcr.commands.loyalty.GetCustomerLoyaltyCommand;
 import com.kaching123.tcr.commands.loyalty.GetCustomerLoyaltyCommand.BaseGetCustomerLoyaltyCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderDiscountCommand;
@@ -114,7 +114,7 @@ public class LoyaltyProcessor {
 
     private void applyDiscountIncentive(IncentiveExModel incentive){
         UpdateSaleOrderDiscountCommand.start(context, orderGuid, incentive.rewardValue, incentive.rewardValueType);
-        addPointsMovement(incentive);
+        addSaleIncentive(incentive);
     }
 
     private void applyGiftCardIncentive(IncentiveExModel incentive){
@@ -134,25 +134,21 @@ public class LoyaltyProcessor {
             return;
 
         if (success){
-            addPointsMovement(currentIncentive);
+            addSaleIncentive(currentIncentive);
         }else{
             Toast.makeText(context, "Failed to add item", Toast.LENGTH_SHORT).show();
             startCircle();
         }
     }
 
-    private void addPointsMovement(final IncentiveExModel incentive) {
-        banIncentive(incentive.guid);
-        AddLoyaltyPointsMovementCommand.start(context, customerGuid, incentive.pointThreshold == null ? BigDecimal.ZERO : incentive.pointThreshold.negate(), new AddLoyaltyPointsMovementCallback() {
+    private void addSaleIncentive(final IncentiveExModel incentive){
+        AddSaleIncentiveCommand.start(context, incentive.guid, customerGuid, orderGuid, new AddSaleIncentiveCallback() {
             @Override
-            protected void onPointsApplied() {
+            protected void onAdded(String saleIncentiveId) {
+                banIncentive(incentive.guid);
                 showApplySuccessfulDialog(incentive);
             }
         });
-    }
-
-    private void addSaleIncentive(final IncentiveExModel incentive, String saleitemId){
-        banIncentive(incentive.guid);
     }
 
     private void showApplySuccessfulDialog(IncentiveExModel incentive){
