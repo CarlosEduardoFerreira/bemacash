@@ -1,6 +1,7 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveTable;
 
@@ -8,6 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 
 /**
  * Created by vkompaniets on 28.06.2016.
@@ -32,6 +34,19 @@ public class LoyaltyIncentiveModel implements IValueModel, Serializable {
         this.pointThreshold = pointThreshold;
         this.rewardValue = rewardValue;
         this.rewardValueType = rewardValueType;
+    }
+
+    public LoyaltyIncentiveModel(Cursor c){
+        this(
+                c.getString(c.getColumnIndex(LoyaltyIncentiveTable.GUID)),
+                c.getString(c.getColumnIndex(LoyaltyIncentiveTable.NAME)),
+                LoyaltyType.valueOf(c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.TYPE))),
+                LoyaltyRewardType.valueOf(c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.REWARD_TYPE))),
+                c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.BIRTHDAY_OFFSET)),
+                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.POINT_THRESHOLD)),
+                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.REWARD_VALUE)),
+                _discountType(c, c.getColumnIndex(LoyaltyIncentiveTable.REWARD_VALUE_TYPE))
+        );
     }
 
     @Override

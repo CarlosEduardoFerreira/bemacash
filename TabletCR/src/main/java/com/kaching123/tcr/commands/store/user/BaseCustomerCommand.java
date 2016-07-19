@@ -63,7 +63,7 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
                 BigDecimal newPoints = model.loyaltyPoints == null ? BigDecimal.ZERO : model.loyaltyPoints;
                 BigDecimal difference = newPoints.subtract(oldPoints);
                 if (BigDecimal.ZERO.compareTo(difference) != 0){
-                    return new AddLoyaltyPointsMovementCommand().sync(getContext(), model.guid, difference, null, getAppCommandContext());
+                    return new AddLoyaltyPointsMovementCommand().sync(getContext(), model.guid, difference, getAppCommandContext());
                 }
             }
         }finally {

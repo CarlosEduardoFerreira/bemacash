@@ -38,8 +38,7 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
         return new LoyaltyPointsMovementModel(
                 rs.getString(ID),
                 rs.getString(CUSTOMER_ID),
-                rs.getBigDecimal(LOYALTY_POINTS),
-                rs.getString(SALE_ORDER_ID)
+                rs.getBigDecimal(LOYALTY_POINTS)
         );
     }
 
@@ -59,7 +58,6 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
                 .add(ID, model.guid)
                 .add(CUSTOMER_ID, model.customerId)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
-                .add(SALE_ORDER_ID, model.saleOrderId)
                 .build(JdbcFactory.getApiMethod(model));
 
     }
@@ -69,7 +67,6 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
         return _update(TABLE_NAME, appCommandContext)
                 .add(CUSTOMER_ID, model.customerId)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
-                .add(SALE_ORDER_ID, model.saleOrderId)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

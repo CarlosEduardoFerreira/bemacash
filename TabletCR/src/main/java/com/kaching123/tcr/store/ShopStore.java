@@ -2085,14 +2085,10 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String LOYALTY_POINTS = "loyalty_points";
-
-        @Column(type = Type.TEXT)
-        String SALE_ORDER_ID = "sale_order_id";
     }
     static {
         applyForeignKeys(LoyaltyPointsMovementTable.TABLE_NAME,
-                foreignKey(LoyaltyPointsMovementTable.CUSTOMER_ID, CustomerTable.TABLE_NAME, CustomerTable.GUID),
-                foreignKey(LoyaltyPointsMovementTable.SALE_ORDER_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true));
+                foreignKey(LoyaltyPointsMovementTable.CUSTOMER_ID, CustomerTable.TABLE_NAME, CustomerTable.GUID));
     }
 
     public interface SaleIncentiveTable extends IBemaSyncTable {

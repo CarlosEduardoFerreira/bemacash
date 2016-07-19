@@ -18,7 +18,6 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.CustomerTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.OperatorTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
-import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -29,7 +28,6 @@ import java.util.Date;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
 import static com.kaching123.tcr.fragment.UiHelper.priceFormat;
-import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 
@@ -243,7 +241,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         info.customerName = concatFullname(c.getString(8), c.getString(9));
         c.close();
 
-        c = ProviderAction.query(ShopProvider.contentUriGroupBy(LoyaltyPointsMovementTable.URI_CONTENT, LoyaltyPointsMovementTable.SALE_ORDER_ID))
+        /*c = ProviderAction.query(ShopProvider.contentUriGroupBy(LoyaltyPointsMovementTable.URI_CONTENT, LoyaltyPointsMovementTable.SALE_ORDER_ID))
                 .projection(LoyaltyPointsMovementTable.LOYALTY_POINTS)
                 .where(LoyaltyPointsMovementTable.SALE_ORDER_ID + " = ?", orderGuid)
                 .where(_castAsReal(LoyaltyPointsMovementTable.LOYALTY_POINTS) + " > ?", 0)
@@ -252,7 +250,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         if (c.moveToFirst()){
             info.earnedLoyaltyPoints = _decimal(c, 0);
         }
-        c.close();
+        c.close();*/
 
         return info;
     }

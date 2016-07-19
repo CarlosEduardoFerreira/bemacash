@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.kaching123.tcr.commands.loyalty.RemoveLoyaltyPointsMovementCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
@@ -86,8 +85,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     }
 
     private boolean returnLoyaltyPoints(){
-        returnLoyaltyPointsResult = new RemoveLoyaltyPointsMovementCommand().sync(getContext(), orderId, getAppCommandContext());
-        return returnLoyaltyPointsResult != null;
+        return true;
     }
 
     @Override

@@ -143,12 +143,16 @@ public class LoyaltyProcessor {
 
     private void addPointsMovement(final IncentiveExModel incentive) {
         banIncentive(incentive.guid);
-        AddLoyaltyPointsMovementCommand.start(context, customerGuid, incentive.pointThreshold == null ? BigDecimal.ZERO : incentive.pointThreshold.negate(), orderGuid, new AddLoyaltyPointsMovementCallback() {
+        AddLoyaltyPointsMovementCommand.start(context, customerGuid, incentive.pointThreshold == null ? BigDecimal.ZERO : incentive.pointThreshold.negate(), new AddLoyaltyPointsMovementCallback() {
             @Override
             protected void onPointsApplied() {
                 showApplySuccessfulDialog(incentive);
             }
         });
+    }
+
+    private void addSaleIncentive(final IncentiveExModel incentive, String saleitemId){
+        banIncentive(incentive.guid);
     }
 
     private void showApplySuccessfulDialog(IncentiveExModel incentive){

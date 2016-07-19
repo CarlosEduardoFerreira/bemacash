@@ -27,7 +27,6 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
 
     private static final String ARG_CUSTOMER = "ARG_CUSTOMER";
     private static final String ARG_POINTS = "ARG_POINTS";
-    private static final String ARG_SALE_ORDER = "ARG_SALE_ORDER";
 
     private LoyaltyPointsMovementModel movement;
 
@@ -35,8 +34,7 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         String customerId = getStringArg(ARG_CUSTOMER);
         BigDecimal points = (BigDecimal)getArgs().getSerializable(ARG_POINTS);
-        String saleOrderId = getStringArg(ARG_SALE_ORDER);
-        movement = new LoyaltyPointsMovementModel(UUID.randomUUID().toString(), customerId, points, saleOrderId);
+        movement = new LoyaltyPointsMovementModel(UUID.randomUUID().toString(), customerId, points);
         return succeeded();
     }
 
@@ -55,15 +53,14 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
         return ops;
     }
 
-    public static void start(Context context, String customerId, BigDecimal points, String saleOrderId, AddLoyaltyPointsMovementCallback callback){
-        create(AddLoyaltyPointsMovementCommand.class).arg(ARG_CUSTOMER, customerId).arg(ARG_POINTS, points).arg(ARG_SALE_ORDER, saleOrderId).callback(callback).queueUsing(context);
+    public static void start(Context context, String customerId, BigDecimal points, AddLoyaltyPointsMovementCallback callback){
+        create(AddLoyaltyPointsMovementCommand.class).arg(ARG_CUSTOMER, customerId).arg(ARG_POINTS, points).callback(callback).queueUsing(context);
     }
 
-    public SyncResult sync(Context context, String customerId, BigDecimal points, String orderGuid, IAppCommandContext appCommandContext){
+    public SyncResult sync(Context context, String customerId, BigDecimal points, IAppCommandContext appCommandContext){
         Bundle args = new Bundle(3);
         args.putString(ARG_CUSTOMER, customerId);
         args.putSerializable(ARG_POINTS, points);
-        args.putString(ARG_SALE_ORDER, orderGuid);
         return syncDependent(context, args, appCommandContext);
     }
 
