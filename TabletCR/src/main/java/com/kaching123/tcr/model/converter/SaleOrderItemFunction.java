@@ -41,6 +41,7 @@ public class SaleOrderItemFunction implements Function<Cursor, SaleOrderItemMode
                 _decimalQty(c, c.getColumnIndex(SaleItemTable.TMP_REFUND_QUANTITY)),
                 c.getString(c.getColumnIndex(SaleItemTable.NOTES)),
                 c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
-                c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1);
+                c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
+                _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)));
     }
 }

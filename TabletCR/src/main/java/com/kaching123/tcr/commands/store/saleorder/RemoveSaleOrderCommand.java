@@ -31,8 +31,8 @@ import com.telly.groundy.TaskResult;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.model.ContentValuesUtil._sum;
 
 public class RemoveSaleOrderCommand extends AsyncCommand {
 
@@ -102,7 +102,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
 
     private boolean returnLoyaltyPoints(){
         Cursor c = ProviderAction.query(ShopProvider.contentUriGroupBy(SaleIncentiveTable.URI_CONTENT, SaleIncentiveTable.ORDER_ID))
-                .projection(SaleIncentiveTable.CUSTOMER_ID, _castAsReal(SaleIncentiveTable.POINT_THRESHOLD))
+                .projection(SaleIncentiveTable.CUSTOMER_ID, _sum(SaleIncentiveTable.POINT_THRESHOLD))
                 .where(SaleIncentiveTable.ORDER_ID + " = ?", orderId)
                 .perform(getContext());
 

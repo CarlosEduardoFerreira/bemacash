@@ -46,6 +46,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public String notes;
     public boolean hasNotes;
     public boolean isPrepaidItem;
+    public BigDecimal loyaltyPoints;
 
     public SaleOrderItemModel(String saleItemGuid) {
         this.saleItemGuid = saleItemGuid;
@@ -60,7 +61,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               BigDecimal tmpRefundQty,
                               String notes,
                               boolean hasNotes,
-                              boolean isPrepaidItem) {
+                              boolean isPrepaidItem,
+                              BigDecimal loyaltyPoints) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -83,6 +85,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.hasNotes = hasNotes;
         this.kitchenPrintedQty = kitchenPrintedQty;
         this.isPrepaidItem = isPrepaidItem;
+        this.loyaltyPoints = loyaltyPoints;
     }
 
     public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description,
@@ -95,7 +98,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               BigDecimal tmpRefundQty,
                               String notes,
                               boolean hasNotes,
-                              boolean isPrepaidItem) {
+                              boolean isPrepaidItem,
+                              BigDecimal loyaltyPoints) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -119,11 +123,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.hasNotes = hasNotes;
         this.kitchenPrintedQty = kitchenPrintedQty;
         this.isPrepaidItem = isPrepaidItem;
-    }
-
-    public SaleOrderItemModel setUnitItemGuid(ArrayList<Unit> tmpUnit) {
-        this.tmpUnit = tmpUnit;
-        return this;
+        this.loyaltyPoints = loyaltyPoints;
     }
 
     @Override
@@ -158,6 +158,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         values.put(SaleItemTable.NOTES, notes);
         values.put(SaleItemTable.HAS_NOTES, hasNotes);
         values.put(SaleItemTable.IS_PREPAID_ITEM, isPrepaidItem);
+        values.put(SaleItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
 
         return values;
     }

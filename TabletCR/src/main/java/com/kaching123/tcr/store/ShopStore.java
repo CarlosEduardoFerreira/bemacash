@@ -815,6 +815,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.INTEGER, defVal = "0")
         String IS_PREPAID_ITEM = "is_prepaid_item";
+
+        @Column(type = Column.Type.TEXT)
+        String LOYALTY_POINTS = "loyalty_points";
     }
 
     static {

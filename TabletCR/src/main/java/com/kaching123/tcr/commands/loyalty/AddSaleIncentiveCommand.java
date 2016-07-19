@@ -17,6 +17,7 @@ import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
@@ -132,6 +133,7 @@ public class AddSaleIncentiveCommand extends AsyncCommand {
 
     public static abstract class AddSaleIncentiveCallback {
 
+        @OnSuccess(AddSaleIncentiveCommand.class)
         public void onSuccess(@Param(EXTRA_SALE_INCENTIVE_ID) String saleIncentiveId){
             onAdded(saleIncentiveId);
         }

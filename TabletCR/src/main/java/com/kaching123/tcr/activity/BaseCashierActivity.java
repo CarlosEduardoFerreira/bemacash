@@ -1579,7 +1579,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 BigDecimal.ZERO,
                 null,
                 !isCreateReturnOrder && model.hasNotes,
-                isPrepaidItemStart);
+                isPrepaidItemStart,
+                model.loyaltyPoints);
 
         if (unit != null && orderGuid != null) {
             unit.orderId = orderGuid;

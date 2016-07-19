@@ -337,6 +337,10 @@ public final class ContentValuesUtil {
         return String.format(Locale.US, "cast(%s as real)", column);
     }
 
+    public static String _sum(String column){
+        return String.format(Locale.US, "sum(%s)", column);
+    }
+
     private ContentValuesUtil() {
     }
 }
