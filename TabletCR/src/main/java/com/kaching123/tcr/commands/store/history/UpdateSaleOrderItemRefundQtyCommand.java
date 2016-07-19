@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand;
 import com.kaching123.tcr.commands.payment.AddReturnOrderCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItemsMovementCommand;
@@ -13,7 +14,6 @@ import com.kaching123.tcr.commands.wireless.EditUnitCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemJdbcConverter;
 import com.kaching123.tcr.model.ItemMovementModel;
-import com.kaching123.tcr.model.ItemMovementModelFactory;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.Unit;
@@ -22,8 +22,8 @@ import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.MovementUtils;
@@ -31,13 +31,13 @@ import com.telly.groundy.TaskResult;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -56,6 +56,7 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
     private List<SaleOrderItemModel> returnItems;
 
     private SyncResult addMovementsResult;
+    private SyncResult addLoyaltyPointsResult;
     private ArrayList<SyncResult> editUnitResults;
     protected SaleOrderModel returnOrder;
     private HashMap<String, BigDecimal> info;
@@ -109,6 +110,9 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
         if (!addMovementsPartial())
             return failed();
 
+        if (!returnLoyaltyPoints())
+            return failed();
+
         return succeeded();
     }
 
@@ -156,14 +160,39 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
         return true;
     }
 
+    private boolean returnLoyaltyPoints(){
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(SaleIncentiveTable.URI_CONTENT))
+                .projection(SaleIncentiveTable.CUSTOMER_ID, SaleIncentiveTable.POINT_THRESHOLD)
+                .whereIn(SaleIncentiveTable.SALE_ITEM_ID, info.keySet())
+                .perform(getContext());
+
+        BigDecimal points = BigDecimal.ZERO;
+        String customerId = null;
+        while (c.moveToNext()){
+            if (customerId == null)
+                customerId = c.getString(0);
+            points = points.add(_decimal(c, 1));
+        }
+        c.close();
+
+        if (BigDecimal.ZERO.compareTo(points) != 0){
+            addLoyaltyPointsResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, points, getAppCommandContext());
+            return addLoyaltyPointsResult != null;
+        }
+        return true;
+    }
+
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         if (addMovementsResult != null && addMovementsResult.getLocalDbOperations() != null)
             operations.addAll(addMovementsResult.getLocalDbOperations());
+        if (addLoyaltyPointsResult != null)
+            operations.addAll(addLoyaltyPointsResult.getLocalDbOperations());
         if (editUnitResults != null) {
             for (SyncResult subResult : editUnitResults) {
-                if (subResult.getLocalDbOperations() != null)
+                if (subResult.getLocalDbOperations() != null) {
                     operations.addAll(subResult.getLocalDbOperations());
+                }
             }
         }
         return operations;
@@ -178,6 +207,8 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
         }
         if (addMovementsResult != null)
             batch.add(addMovementsResult.getSqlCmd());
+        if (addLoyaltyPointsResult != null)
+            batch.add(addLoyaltyPointsResult.getSqlCmd());
         if (editUnitResults != null) {
             for (SyncResult subResult : editUnitResults) {
                 batch.add(subResult.getSqlCmd());
