@@ -24,6 +24,10 @@ public class SaleIncentiveModel implements IValueModel {
     public String saleItemId;
     public BigDecimal pointsThreshold;
 
+    public SaleIncentiveModel(String guid){
+        this.guid = guid;
+    }
+
     public SaleIncentiveModel(String guid, String incentiveId, String customerId, String orderId, LoyaltyType type, LoyaltyRewardType rewardType, BigDecimal rewardValue, DiscountType rewardValueType, String saleItemId, BigDecimal pointsThreshold) {
         this.guid = guid;
         this.incentiveId = incentiveId;

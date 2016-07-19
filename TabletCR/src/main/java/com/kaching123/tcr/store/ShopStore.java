@@ -2091,6 +2091,7 @@ public abstract class ShopStore {
                 foreignKey(LoyaltyPointsMovementTable.CUSTOMER_ID, CustomerTable.TABLE_NAME, CustomerTable.GUID));
     }
 
+    @Table(SaleIncentiveTable.TABLE_NAME)
     public interface SaleIncentiveTable extends IBemaSyncTable {
 
         String TABLE_NAME = "sale_incentive";

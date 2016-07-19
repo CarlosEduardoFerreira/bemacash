@@ -69,7 +69,7 @@ public class PermissionsFragment extends Fragment {
         title.setText(getString(group.getLabelId()));
 
         adapter = new PermissionsAdapter(getActivity());
-        adapter.changeCursor(new ArrayList<>(new TreeSet(groupPermissions)));
+        adapter.changeCursor(new ArrayList<Permission>(new TreeSet<Permission>(groupPermissions)));
 
         list.setAdapter(adapter);
     }

@@ -81,7 +81,7 @@ public class AddSaleIncentiveCommand extends AsyncCommand {
         if (points == null)
             return true;
 
-        addPointsMovementResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, points, getAppCommandContext());
+        addPointsMovementResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, points.negate(), getAppCommandContext());
         return addPointsMovementResult != null;
     }
 

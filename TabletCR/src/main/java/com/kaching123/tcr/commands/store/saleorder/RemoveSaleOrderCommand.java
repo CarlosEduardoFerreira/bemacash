@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand;
+import com.kaching123.tcr.commands.loyalty.DeleteOrderIncentivesCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
@@ -20,12 +22,17 @@ import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.telly.groundy.TaskResult;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+
+import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 public class RemoveSaleOrderCommand extends AsyncCommand {
 
@@ -42,7 +49,8 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     private String prepaidOrderGuid;
 
     private SyncResult[] removeSaleOrderItemResults;
-    private SyncResult returnLoyaltyPointsResult;
+    private SyncResult removeSaleIncentivesResult;
+    private SyncResult addLoyaltyPointsResult;
 
     @Override
     protected TaskResult doCommand() {
@@ -50,6 +58,9 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         orderType = (OrderType) getArgs().getSerializable(ARG_ORDER_TYPE);
 
         if (!removeItems())
+            return failed();
+
+        if (!removeSaleIncentives())
             return failed();
 
         if (!returnLoyaltyPoints())
@@ -84,17 +95,34 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         }
     }
 
+    private boolean removeSaleIncentives(){
+        removeSaleIncentivesResult = new DeleteOrderIncentivesCommand().sync(getContext(), orderId, getAppCommandContext());
+        return removeSaleIncentivesResult != null;
+    }
+
     private boolean returnLoyaltyPoints(){
-        return true;
+        Cursor c = ProviderAction.query(ShopProvider.contentUriGroupBy(SaleIncentiveTable.URI_CONTENT, SaleIncentiveTable.ORDER_ID))
+                .projection(SaleIncentiveTable.CUSTOMER_ID, _castAsReal(SaleIncentiveTable.POINT_THRESHOLD))
+                .where(SaleIncentiveTable.ORDER_ID + " = ?", orderId)
+                .perform(getContext());
+
+        try{
+            if (c.moveToFirst()){
+                String customerId = c.getString(0);
+                BigDecimal points = _decimal(c, 1);
+                addLoyaltyPointsResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, points, getAppCommandContext());
+                return addLoyaltyPointsResult != null;
+            }else{
+                return true;
+            }
+        }finally {
+            c.close();
+        }
     }
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
-//        if(order != null && order.orderStatus == OrderStatus.ACTIVE){
-//            return operations;
-//        }
-
         operations.add(ContentProviderOperation.newUpdate(URI_UNIT)
                 .withValue(UnitTable.SALE_ORDER_ID, null)
                 .withSelection(UnitTable.SALE_ORDER_ID + " = ?", new String[]{orderId})
@@ -105,8 +133,12 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
                 operations.addAll(subResult.getLocalDbOperations());
         }
 
-        if (returnLoyaltyPointsResult.getLocalDbOperations() != null){
-            operations.addAll(returnLoyaltyPointsResult.getLocalDbOperations());
+        if (removeSaleIncentivesResult != null){
+            operations.addAll(removeSaleIncentivesResult.getLocalDbOperations());
+        }
+
+        if (addLoyaltyPointsResult != null){
+            operations.addAll(addLoyaltyPointsResult.getLocalDbOperations());
         }
 
         if (prepaidOrderGuid != null) {
@@ -138,8 +170,12 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
             batchSqlCommand.add(subResult.getSqlCmd());
         }
 
-        if (returnLoyaltyPointsResult.getSqlCmd() != null){
-            batchSqlCommand.add(returnLoyaltyPointsResult.getSqlCmd());
+        if (removeSaleIncentivesResult != null){
+            batchSqlCommand.add(removeSaleIncentivesResult.getSqlCmd());
+        }
+
+        if (addLoyaltyPointsResult != null){
+            batchSqlCommand.add(addLoyaltyPointsResult.getSqlCmd());
         }
 
         if (prepaidOrderGuid != null) {
