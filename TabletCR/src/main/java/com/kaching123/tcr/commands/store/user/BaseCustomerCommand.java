@@ -57,17 +57,17 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
                 .where(CustomerTable.GUID + " = ?", model.guid)
                 .perform(getContext());
 
-        try{
-            if (c.moveToFirst()){
-                BigDecimal oldPoints = _decimal(c, 0);
-                BigDecimal newPoints = model.loyaltyPoints == null ? BigDecimal.ZERO : model.loyaltyPoints;
-                BigDecimal difference = newPoints.subtract(oldPoints);
-                if (BigDecimal.ZERO.compareTo(difference) != 0){
-                    return new AddLoyaltyPointsMovementCommand().sync(getContext(), model.guid, difference, getAppCommandContext());
-                }
-            }
-        }finally {
-            c.close();
+        BigDecimal oldPoints;
+        if (c.moveToFirst()){
+            oldPoints = _decimal(c, 0);
+        }else {
+            oldPoints = BigDecimal.ZERO;
+        }
+        c.close();
+        BigDecimal newPoints = model.loyaltyPoints == null ? BigDecimal.ZERO : model.loyaltyPoints;
+        BigDecimal difference = newPoints.subtract(oldPoints);
+        if (BigDecimal.ZERO.compareTo(difference) != 0){
+            return new AddLoyaltyPointsMovementCommand().sync(getContext(), model.guid, difference, getAppCommandContext());
         }
 
         return null;
