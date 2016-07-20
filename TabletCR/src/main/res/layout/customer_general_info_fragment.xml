@@ -191,7 +191,8 @@
                 android:layout_height="wrap_content"
                 android:nextFocusDown="@+id/birthday"
                 android:singleLine="true"
-                android:inputType="number"/>
+                android:inputType="number"
+                android:maxLength="5"/>
         </TableRow>
 
         <TableRow>

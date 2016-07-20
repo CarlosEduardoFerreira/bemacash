@@ -38,7 +38,7 @@
                 android:id="@+id/first_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLength="@integer/name_max_length"
+                android:maxLength="15"
                 android:singleLine="true"
                 android:inputType="textPersonName"
                 android:nextFocusDown="@+id/last_name"/>
@@ -59,7 +59,7 @@
                 android:id="@+id/last_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLength="@integer/name_max_length"
+                android:maxLength="15"
                 android:singleLine="true"
                 android:inputType="textPersonName"
                 android:nextFocusDown="@+id/email"/>
