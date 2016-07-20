@@ -23,7 +23,6 @@ import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
-import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.MovementUtils;
@@ -37,7 +36,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -161,22 +159,17 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
     }
 
     private boolean returnLoyaltyPoints(){
-        Cursor c = ProviderAction.query(ShopProvider.contentUri(SaleIncentiveTable.URI_CONTENT))
-                .projection(SaleIncentiveTable.CUSTOMER_ID, SaleIncentiveTable.POINT_THRESHOLD)
-                .whereIn(SaleIncentiveTable.SALE_ITEM_ID, info.keySet())
-                .perform(getContext());
+        if (returnOrder.customerGuid == null)
+            return true;
 
         BigDecimal points = BigDecimal.ZERO;
-        String customerId = null;
-        while (c.moveToNext()){
-            if (customerId == null)
-                customerId = c.getString(0);
-            points = points.add(_decimal(c, 1));
+        for (SaleOrderItemModel model : returnItems){
+            if (model.loyaltyPoints != null)
+                points = points.add(CalculationUtil.getSubTotal(model.qty, model.loyaltyPoints));
         }
-        c.close();
 
         if (BigDecimal.ZERO.compareTo(points) != 0){
-            addLoyaltyPointsResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, points, getAppCommandContext());
+            addLoyaltyPointsResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), returnOrder.customerGuid, points, getAppCommandContext());
             return addLoyaltyPointsResult != null;
         }
         return true;
