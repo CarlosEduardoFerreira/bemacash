@@ -246,6 +246,6 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         protected String customerIdentification;
         protected String customerName;
         protected BigDecimal customerLoyaltyPoints;
-        protected BigDecimal earnedLoyaltyPoints;
+        protected BigDecimal earnedLoyaltyPoints = BigDecimal.ZERO;
     }
 }

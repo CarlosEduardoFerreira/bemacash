@@ -12,6 +12,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
@@ -239,7 +240,7 @@ public final class OrderTotalPriceCursorQuery {
             handler.handleItem(item.getSaleItemGuid(), item.description,
                     item.unitsLabel, itemModel.priceType,
                     itemQty, itemSubtotal, itemDiscount,
-                    itemTax, singleItemPrice, units, item.modifiers, transactionFee, item.getPrice(), item.getNotes(), model1, model2);
+                    itemTax, singleItemPrice, units, item.modifiers, transactionFee, item.getPrice(), item.getNotes(), model1, model2, itemModel.loyaltyPoints);
         }
 
         handler.handleTotal(totalSubtotal, subtotals, totalDiscount, totalTax, totalLoyaltyPoints, tips, transactionFee, taxes);
@@ -256,12 +257,12 @@ public final class OrderTotalPriceCursorQuery {
                         BigDecimal itemTax,
                         BigDecimal singleItemPrice,
                         List<Unit> units,
-                        ArrayList<SaleOrderItemViewModel.AddonInfo> addons,
+                        ArrayList<AddonInfo> addons,
                         BigDecimal transactionFee,
                         BigDecimal itemFullPrice,
                         String note,
                         TaxGroupModel model1,
-                        TaxGroupModel model2);
+                        TaxGroupModel model2, BigDecimal loyaltyPoints);
 
         void handleTotal(BigDecimal totalSubtotal,
                          Map<TaxGroupModel, BigDecimal> subtotals,

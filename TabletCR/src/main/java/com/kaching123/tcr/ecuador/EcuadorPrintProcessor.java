@@ -19,6 +19,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
@@ -194,8 +195,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             public void handleItem(String saleItemGuid, String description, String unitLabel,
                                    PriceType priceType, BigDecimal qty, BigDecimal itemSubtotal,
                                    BigDecimal itemDiscount, BigDecimal itemTax, BigDecimal singleItemPrice,
-                                   List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons,
-                                   BigDecimal transactionFee, BigDecimal itemFullPrice, String note, TaxGroupModel model1, TaxGroupModel model2) {
+                                   List<Unit> units, ArrayList<AddonInfo> addons,
+                                   BigDecimal transactionFee, BigDecimal itemFullPrice, String note, TaxGroupModel model1, TaxGroupModel model2, BigDecimal loyaltyPoints) {
                 List<String> unitAsStrings = new ArrayList<>(units.size());
                 for (Unit unit : units) {
                     unitAsStrings.add(unit.serialCode);

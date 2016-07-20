@@ -11,7 +11,7 @@ import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PriceType;
-import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
@@ -98,9 +98,9 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                                        PriceType priceType, BigDecimal qty, BigDecimal itemSubtotal,
                                        BigDecimal itemDiscount, BigDecimal itemTax,
                                        BigDecimal singleItemPrice, List<Unit> units,
-                                       ArrayList<SaleOrderItemViewModel.AddonInfo> addons,
+                                       ArrayList<AddonInfo> addons,
                                        BigDecimal transactionFee, BigDecimal itemFullPrice,
-                                       String note, TaxGroupModel model1, TaxGroupModel model2) {
+                                       String note, TaxGroupModel model1, TaxGroupModel model2, BigDecimal loyaltyPoints) {
                     if (!saleItemsQty.containsKey(saleItemGuid))
                         return;
 
@@ -115,18 +115,19 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                         }
                     }
                     if (app.getShopPref().printDetailReceipt().get())
-                        printerWrapper.add(description, qty, negative(itemTotal), singleItemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
+                        printerWrapper.add(description, refundQty, negative(itemTotal), singleItemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                     else
-                        printerWrapper.add(description, qty, negative(itemTotal), singleItemPrice, unitAsStrings);
+                        printerWrapper.add(description, refundQty, negative(itemTotal), singleItemPrice, unitAsStrings);
                     total = total.add(itemTotal);
+                    if (loyaltyPoints != null){
+                        orderInfo.earnedLoyaltyPoints = orderInfo.earnedLoyaltyPoints.add(getSubTotal(refundQty, loyaltyPoints));
+                    }
                 }
 
                 @Override
                 public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal totalLoyaltyPoints, BigDecimal tipsAmount, BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
                     printerWrapper.drawLine();
                     printerWrapper.orderFooter(context.getString(R.string.printer_refund_total), negative(total));
-
-                    orderInfo.earnedLoyaltyPoints = totalLoyaltyPoints;
                 }
             });
         }
