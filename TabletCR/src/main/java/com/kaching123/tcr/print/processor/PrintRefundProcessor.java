@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.kaching123.tcr.fragment.UiHelper.integerFormat;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
@@ -121,9 +122,11 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
 
                 @Override
-                public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
+                public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal totalLoyaltyPoints, BigDecimal tipsAmount, BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
                     printerWrapper.drawLine();
                     printerWrapper.orderFooter(context.getString(R.string.printer_refund_total), negative(total));
+
+                    orderInfo.earnedLoyaltyPoints = totalLoyaltyPoints;
                 }
             });
         }
@@ -138,5 +141,14 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
         }
     }
 
-
+    @Override
+    protected void printFooter(TcrApplication app, ITextPrinter printerWrapper) {
+        if (orderInfo.customerLoyaltyPoints != null){
+            printerWrapper.header("Total Bonus Points Available", integerFormat(orderInfo.customerLoyaltyPoints));
+        }
+        if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0){
+            printerWrapper.header("Bonus Points on this Return", integerFormat(orderInfo.earnedLoyaltyPoints.negate()));
+        }
+        super.printFooter(app, printerWrapper);
+    }
 }

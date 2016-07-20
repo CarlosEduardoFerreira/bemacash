@@ -239,7 +239,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
             @Override
             public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount,
-                                    BigDecimal totalTax, BigDecimal tipsAmount,
+                                    BigDecimal totalTax, BigDecimal totalLoyaltyPoints, BigDecimal tipsAmount,
                                     BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
                 BigDecimal totalCashBack = BigDecimal.ZERO;
                 printerWrapper.drawLine();

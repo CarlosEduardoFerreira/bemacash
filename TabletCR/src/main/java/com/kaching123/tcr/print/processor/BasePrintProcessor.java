@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
-import static com.kaching123.tcr.fragment.UiHelper.priceFormat;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 
@@ -50,7 +49,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     protected ArrayList<PrepaidReleaseResult> prepaidReleaseResults;
 
     private final IAppCommandContext appCommandContext;
-    private PrintOrderInfo orderInfo;
+    protected PrintOrderInfo orderInfo;
 
     public BasePrintProcessor(String orderGuid, IAppCommandContext appCommandContext) {
         this.orderGuid = orderGuid;
@@ -72,12 +71,6 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     protected abstract void printBody(final Context context, final TcrApplication app, final T printerWrapper);
 
     protected void printFooter(TcrApplication app, T printerWrapper) {
-        if (orderInfo.customerLoyaltyPoints != null){
-            printerWrapper.header("Total Bonus Points Available", priceFormat(orderInfo.customerLoyaltyPoints));
-        }
-        if (orderInfo.earnedLoyaltyPoints != null){
-            printerWrapper.header("Bonus Points on this Sale", priceFormat(orderInfo.earnedLoyaltyPoints));
-        }
 
         if (title == null || title.equalsIgnoreCase("ARG_ORDER_TITLE"))
             printerWrapper.barcode(orderNumber);
@@ -241,29 +234,18 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         info.customerName = concatFullname(c.getString(8), c.getString(9));
         c.close();
 
-        /*c = ProviderAction.query(ShopProvider.contentUriGroupBy(LoyaltyPointsMovementTable.URI_CONTENT, LoyaltyPointsMovementTable.SALE_ORDER_ID))
-                .projection(LoyaltyPointsMovementTable.LOYALTY_POINTS)
-                .where(LoyaltyPointsMovementTable.SALE_ORDER_ID + " = ?", orderGuid)
-                .where(_castAsReal(LoyaltyPointsMovementTable.LOYALTY_POINTS) + " > ?", 0)
-                .perform(context);
-
-        if (c.moveToFirst()){
-            info.earnedLoyaltyPoints = _decimal(c, 0);
-        }
-        c.close();*/
-
         return info;
     }
 
-    private class PrintOrderInfo {
-        String registerTitle;
-        int seqNum;
-        long createTime;
-        String operatorName;
-        OrderType orderType;
-        String customerIdentification;
-        String customerName;
-        BigDecimal customerLoyaltyPoints;
-        BigDecimal earnedLoyaltyPoints;
+    protected class PrintOrderInfo {
+        protected String registerTitle;
+        protected int seqNum;
+        protected long createTime;
+        protected String operatorName;
+        protected OrderType orderType;
+        protected String customerIdentification;
+        protected String customerName;
+        protected BigDecimal customerLoyaltyPoints;
+        protected BigDecimal earnedLoyaltyPoints;
     }
 }

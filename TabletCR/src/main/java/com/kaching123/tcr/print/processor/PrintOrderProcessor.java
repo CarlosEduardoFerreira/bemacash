@@ -27,7 +27,6 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.kaching123.tcr.fragment.UiHelper.integerFormat;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
@@ -103,8 +103,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
     protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
-        final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ? transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
-        OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
+        final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ? transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);        OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
+
             @Override
             public void handleItem(String saleItemGuid, String description, String unitLabel, PriceType priceType, BigDecimal qty,
                                    BigDecimal itemSubtotal, BigDecimal itemDiscount,
@@ -154,7 +154,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
 
             @Override
-            public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal tipsAmount, BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
+            public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal totalLoyaltyPoints, BigDecimal tipsAmount, BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
                 BigDecimal totalCashBack = BigDecimal.ZERO;
 
                 printerWrapper.drawLine();
@@ -187,6 +187,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 else
                     printerWrapper.orderFooter(context.getString(R.string.printer_total), new BigDecimal(amountTotal).add(transactionFee).add(totalCashBack), true);
                 printerWrapper.drawLine();
+
+                orderInfo.earnedLoyaltyPoints = totalLoyaltyPoints;
             }
         });
 
@@ -195,28 +197,18 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
             boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
             printerWrapper.payment(p.cardName == null ? p.gateway.name() : p.cardName, isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
-//            if (p.gateway.name().equalsIgnoreCase(PaymentGateway.PAX_DEBIT.name())) {
-//                if (p.lastFour != null)
-//                    printerWrapper.add(UiHelper.formatLastFour(p.lastFour));
-//                if (p.authorizationNumber != null)
-//                    printerWrapper.addWithTab2(context.getString(R.string.printer_auth_number), p.authorizationNumber, true, false);
-//            }
-
             if (isChanged) {
                 printerWrapper.change(changeText, p.changeAmount);
             }
-            //rafael: add isEBTCash
             if (p.balance != null && p.gateway.isEbt()) {
-//                printerWrapper.orderFooter(context.getString(R.string.printer_balance) + p.lastFour != null ? " (" + p.lastFour + ")" : "", p.balance, true);
                 printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
-            }
-
-            BigDecimal counts = getSaleItemAmount(orderGuid, context);
-            if (counts.compareTo(BigDecimal.ZERO) > 0) {
-                printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
             }
         }
 
+        BigDecimal counts = getSaleItemAmount(orderGuid, context);
+        if (counts.compareTo(BigDecimal.ZERO) > 0) {
+            printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
+        }
 
         if (prepaidReleaseResults != null)
             for (PrepaidReleaseResult result : prepaidReleaseResults) {
@@ -234,6 +226,17 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
 
             }
+    }
+
+    @Override
+    protected void printFooter(TcrApplication app, ITextPrinter printerWrapper) {
+        if (orderInfo.customerLoyaltyPoints != null){
+            printerWrapper.header("Total Bonus Points Available", integerFormat(orderInfo.customerLoyaltyPoints));
+        }
+        if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0){
+            printerWrapper.header("Bonus Points on this Sale", integerFormat(orderInfo.earnedLoyaltyPoints));
+        }
+        super.printFooter(app, printerWrapper);
     }
 
     private String[] getFormattedLine(String receipt) {
