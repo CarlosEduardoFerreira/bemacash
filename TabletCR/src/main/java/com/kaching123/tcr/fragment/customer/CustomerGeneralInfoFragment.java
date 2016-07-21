@@ -24,7 +24,7 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
-import com.kaching123.tcr.fragment.dialog.DatePickerFragment;
+import com.kaching123.tcr.component.DatePickerDialogFragment;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.LoyaltyPlanModel;
 import com.kaching123.tcr.model.Permission;
@@ -171,8 +171,8 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         showDatePicker();
     }
 
-    private void showDatePicker() {
-        DatePickerFragment.show(getActivity(), birthdayDate, new OnDateSetListener() {
+    private void showDatePicker(){
+        DatePickerDialogFragment.show(getActivity(), birthdayDate, new OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 birthdayDate.set(year, monthOfYear, dayOfMonth);
