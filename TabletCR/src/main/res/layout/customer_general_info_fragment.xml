@@ -10,7 +10,8 @@
         android:layout_height="match_parent"
         android:stretchColumns="1">
 
-        <TableRow>
+        <TableRow
+            android:minHeight="70dp">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_street" />
@@ -23,8 +24,7 @@
                 android:inputType="textPostalAddress"
                 android:maxLength="@integer/address_max_length"
                 android:nextFocusDown="@+id/street2"
-                android:singleLine="true"
-                android:textCursorDrawable="@null"/>
+                android:singleLine="true"/>
         </TableRow>
 
         <TableRow>
