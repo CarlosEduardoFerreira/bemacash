@@ -38,6 +38,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String PHONE = "PHONE";
     private static final String SEX = "SEX";
     private static final String BIRTHDAY = "BIRTHDAY";
+    private static final String BIRTHDAY_REWARD_APPLY_DATE = "BIRTHDAY_REWARD_APPLY_DATE";
     private static final String CREATE_DATE = "CREATE_DATE";
     private static final String CONSENT_EMAIL = "CONSENT_EMAIL";
     private static final String NOTES = "NOTES";
@@ -60,14 +61,13 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getString(EMAIL),
                 rs.getString(PHONE),
                 rs.getBoolean(SEX),
-                null,
+                null, null,
                 _jdbcDate(rs.getTimestamp(CREATE_DATE)),
                 rs.getBoolean(CONSENT_EMAIL),
-                rs.getString(NOTES),
                 /*rs.getString(LOYALTY_PLAN_ID),
                 rs.getBigDecimal(TMP_LOYALTY_POINTS),
                 rs.getString(LOYALTY_BARCODE))*/
-                rs.getString(CUSTOMER_IDENTIFICATION), null, null, null)
+                rs.getString(NOTES), rs.getString(CUSTOMER_IDENTIFICATION), null, null, null)
                 .toValues();
     }
 
@@ -87,13 +87,13 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getString(PHONE),
                 rs.getBoolean(SEX),
                 rs.getSimpleDate(BIRTHDAY),
+                rs.getSimpleDate(BIRTHDAY_REWARD_APPLY_DATE),
                 rs.getDate(CREATE_DATE),
                 rs.getBoolean(CONSENT_EMAIL),
                 rs.getString(NOTES),
                 rs.getString(CUSTOMER_IDENTIFICATION),
                 rs.getString(LOYALTY_PLAN_ID),
-                BigDecimal.ZERO,
-                rs.getString(LOYALTY_BARCODE));
+                BigDecimal.ZERO, rs.getString(LOYALTY_BARCODE));
     }
 
     @Override
@@ -122,6 +122,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(PHONE, model.phone)
                 .add(SEX, model.sex)
                 .add(BIRTHDAY, model.birthday)
+                .add(BIRTHDAY_REWARD_APPLY_DATE, model.birthdayRewardApplyDate)
                 .add(CREATE_DATE, model.createTime)
                 .add(CONSENT_EMAIL, model.consentPromotions)
                 .add(NOTES, model.notes)
@@ -146,11 +147,19 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(PHONE, model.phone)
                 .add(SEX, model.sex)
                 .add(BIRTHDAY, model.birthday)
+                .add(BIRTHDAY_REWARD_APPLY_DATE, model.birthdayRewardApplyDate)
                 .add(CONSENT_EMAIL, model.consentPromotions)
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                 .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
+                .where(GUID, model.guid)
+                .build(JdbcFactory.getApiMethod(model));
+    }
+
+    public SingleSqlCommand updateBirthdayRewardDate(CustomerModel model, IAppCommandContext appCommandContext) {
+        return _update(TABLE_NAME, appCommandContext)
+                .add(BIRTHDAY_REWARD_APPLY_DATE, model.birthdayRewardApplyDate)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.util.DateUtils.cutTime;
@@ -54,6 +55,7 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
+
         String customerId = getStringArg(ARG_CUSTOMER_ID);
         String orderId = getStringArg(ARG_ORDER_ID);
 
@@ -67,6 +69,9 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
             return succeeded();
 
         SaleOrderCostInfo orderCostInfo = loadSaleOrderCostInfo(getContext(), orderId);
+
+        long now = new Date().getTime();
+        long halfYear = TimeUnit.DAYS.toMillis(365 / 2);
 
         Query query = ProviderAction.query(URI_LOYALTY_VIEW);
         query.where(LoyaltyIncentivePlanTable.PLAN_GUID + " = ?", customer.loyaltyPlanId);
@@ -85,14 +90,13 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
 
         Cursor c = query.perform(getContext());
         LoyaltyViewModel loyalty = new LoyaltyViewWrapFunction().apply(c);
+        c.close();
         if (loyalty == null)
             return succeeded();
 
         filterByUsedIncentives(loyalty.incentiveExModels, orderId, getContext());
-        filterByBirthday(loyalty.incentiveExModels, customer.birthday);
+        filterByBirthday(loyalty.incentiveExModels, customer.birthday, customer.birthdayRewardApplyDate);
         filterByOrderValue(loyalty.incentiveExModels, orderCostInfo.totalDiscountableItemTotal);
-
-        c.close();
 
         return succeeded().add(EXTRA_LOYALTY, loyalty);
     }
@@ -133,13 +137,17 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
         }
     }
 
-    private static void filterByBirthday(List<IncentiveExModel> incentives, Date birthdayDate){
+    private static void filterByBirthday(List<IncentiveExModel> incentives, Date birthdayDate, Date birthdayRewardDate){
+        final long halfYear = TimeUnit.DAYS.toMillis(365 / 2);
         Iterator<IncentiveExModel> it = incentives.iterator();
         while (it.hasNext()){
             IncentiveExModel incentive = it.next();
             if (incentive.type == LoyaltyType.POINTS){
                 continue;
             }else if (birthdayDate == null){
+                it.remove();
+                continue;
+            }else if (birthdayRewardDate != null && new Date().getTime() - birthdayRewardDate.getTime() < halfYear){
                 it.remove();
                 continue;
             }

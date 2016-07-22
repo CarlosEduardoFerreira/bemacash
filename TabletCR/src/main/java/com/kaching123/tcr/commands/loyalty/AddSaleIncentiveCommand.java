@@ -6,9 +6,11 @@ import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.AsyncCommand;
+import com.kaching123.tcr.commands.store.user.UpdateCustomerBirthdayRewardDateCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.LoyaltyIncentiveModel;
 import com.kaching123.tcr.model.LoyaltyRewardType;
+import com.kaching123.tcr.model.LoyaltyType;
 import com.kaching123.tcr.model.SaleIncentiveModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -22,6 +24,7 @@ import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -74,6 +77,9 @@ public class AddSaleIncentiveCommand extends AsyncCommand {
 
         if (!addPointsMovement(customerId, incentive.pointThreshold))
             return failed();
+
+        if (saleIncentive.type == LoyaltyType.BIRTHDAY)
+            new UpdateCustomerBirthdayRewardDateCommand().sync(getContext(), customerId, new Date(), getAppCommandContext());
 
         return succeeded().add(EXTRA_SALE_INCENTIVE_ID, saleIncentive.guid);
     }
