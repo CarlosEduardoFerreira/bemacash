@@ -79,14 +79,14 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
             return succeeded();
 
         filterByBirthday(loyalty.incentiveExModels, customer.birthday);
-        filterByOrderValue(loyalty.incentiveExModels, calculateOrderTotal(getContext(), orderId));
+        filterByOrderValue(loyalty.incentiveExModels, calculateOrderDiscountTotal(getContext(), orderId));
 
         c.close();
 
         return succeeded().add(EXTRA_LOYALTY, loyalty);
     }
 
-    private static BigDecimal calculateOrderTotal(Context context, String orderId){
+    private static BigDecimal calculateOrderDiscountTotal(Context context, String orderId){
         Cursor c = ProviderAction.query(ShopProvider.contentUri(SaleOrderItemsView.URI_CONTENT))
                 .projection(OrderTotalPriceLoaderCallback.PROJECTION)
                 .where(SaleItemTable.ORDER_GUID + " = ? ", orderId)
@@ -102,7 +102,7 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
 
         SaleOrderCostInfo saleOrderCostInfo = OrderTotalPriceCalculator.calculate(saleOrderInfo);
 
-        return saleOrderCostInfo.totalOrderPrice;
+        return saleOrderCostInfo.totalDiscountableItemTotal;
     }
 
     private static void filterByBirthday(List<IncentiveExModel> incentives, Date birthdayDate){
