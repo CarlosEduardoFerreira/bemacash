@@ -63,13 +63,20 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
         if (customer.loyaltyPlanId == null)
             return succeeded();
 
+        SaleOrderCostInfo orderCostInfo = loadSaleOrderCostInfo(getContext(), orderId);
+
         Query query = ProviderAction.query(URI_LOYALTY_VIEW);
         query.where(LoyaltyIncentivePlanTable.PLAN_GUID + " = ?", customer.loyaltyPlanId);
         query.where("(" + _castAsReal(LoyaltyIncentiveTable.POINT_THRESHOLD) + " <= ? OR " + LoyaltyIncentiveTable.TYPE + " = ?)", customer.loyaltyPoints, LoyaltyType.BIRTHDAY.ordinal());
         if (customer.birthday == null){
             query.where(LoyaltyIncentiveTable.TYPE + " = ?", LoyaltyType.POINTS.ordinal());
         }
+        //do not apply discount reward if order already has discount
         if (order.discount != null && order.discount.compareTo(BigDecimal.ZERO) != 0){
+            query.where(LoyaltyIncentiveTable.REWARD_TYPE + " <> ?", LoyaltyRewardType.DISCOUNT.ordinal());
+        }
+        //do not apply discount reward if order total = 0
+        if (orderCostInfo.totalOrderPrice.compareTo(BigDecimal.ZERO) == 0){
             query.where(LoyaltyIncentiveTable.REWARD_TYPE + " <> ?", LoyaltyRewardType.DISCOUNT.ordinal());
         }
 
@@ -79,14 +86,14 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
             return succeeded();
 
         filterByBirthday(loyalty.incentiveExModels, customer.birthday);
-        filterByOrderValue(loyalty.incentiveExModels, calculateOrderDiscountTotal(getContext(), orderId));
+        filterByOrderValue(loyalty.incentiveExModels, orderCostInfo.totalDiscountableItemTotal);
 
         c.close();
 
         return succeeded().add(EXTRA_LOYALTY, loyalty);
     }
 
-    private static BigDecimal calculateOrderDiscountTotal(Context context, String orderId){
+    private static SaleOrderCostInfo loadSaleOrderCostInfo(Context context, String orderId){
         Cursor c = ProviderAction.query(ShopProvider.contentUri(SaleOrderItemsView.URI_CONTENT))
                 .projection(OrderTotalPriceLoaderCallback.PROJECTION)
                 .where(SaleItemTable.ORDER_GUID + " = ? ", orderId)
@@ -94,15 +101,9 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
                 .perform(context);
 
         SaleOrderInfo saleOrderInfo = OrderTotalPriceLoaderCallback.readCursor(c);
-        if (saleOrderInfo == null){
-            c.close();
-            return BigDecimal.ZERO;
-        }
         c.close();
 
-        SaleOrderCostInfo saleOrderCostInfo = OrderTotalPriceCalculator.calculate(saleOrderInfo);
-
-        return saleOrderCostInfo.totalDiscountableItemTotal;
+        return OrderTotalPriceCalculator.calculate(saleOrderInfo);
     }
 
     private static void filterByBirthday(List<IncentiveExModel> incentives, Date birthdayDate){
