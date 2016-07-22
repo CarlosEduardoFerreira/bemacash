@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
+import com.google.common.base.Function;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderCostInfo;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderInfo;
@@ -23,6 +24,7 @@ import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentivePlanTab
 import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentiveTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyView;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
@@ -34,6 +36,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.util.DateUtils.cutTime;
@@ -85,6 +88,7 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
         if (loyalty == null)
             return succeeded();
 
+        filterByUsedIncentives(loyalty.incentiveExModels, orderId, getContext());
         filterByBirthday(loyalty.incentiveExModels, customer.birthday);
         filterByOrderValue(loyalty.incentiveExModels, orderCostInfo.totalDiscountableItemTotal);
 
@@ -104,6 +108,29 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
         c.close();
 
         return OrderTotalPriceCalculator.calculate(saleOrderInfo);
+    }
+
+    private static void filterByUsedIncentives(List<IncentiveExModel> incentives, String orderId, Context context){
+        Set<String> usedIncentives = ProviderAction.query(ShopProvider.contentUri(SaleIncentiveTable.URI_CONTENT))
+                .projection(SaleIncentiveTable.INCENTIVE_ID)
+                .where(SaleIncentiveTable.ORDER_ID + " = ?", orderId)
+                .perform(context)
+                .toFluentIterable(new Function<Cursor, String>() {
+                    @Override
+                    public String apply(Cursor input) {
+                        return input.getString(0);
+                    }
+                }).toImmutableSet();
+
+        if (usedIncentives.isEmpty())
+            return;
+
+        Iterator<IncentiveExModel> it = incentives.iterator();
+        while (it.hasNext()){
+            IncentiveExModel incentive = it.next();
+            if (usedIncentives.contains(incentive.guid))
+                it.remove();
+        }
     }
 
     private static void filterByBirthday(List<IncentiveExModel> incentives, Date birthdayDate){
