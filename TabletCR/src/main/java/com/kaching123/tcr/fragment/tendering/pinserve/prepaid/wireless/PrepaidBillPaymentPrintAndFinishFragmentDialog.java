@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.print.digital.SendDigitalPrepaidOrderCommand;
 import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -121,13 +122,19 @@ public class PrepaidBillPaymentPrintAndFinishFragmentDialog extends PayPrintAndF
     }
 
     @Override
-    protected void sendDigitalOrder() {
+    protected void chooseCustomer() {
         PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new emailSenderListener() {
             @Override
             public void onComplete() {
                 listener.onConfirmed();
             }
         });
+    }
+
+    @Override
+    protected void sendDigitalOrder() {
+        SendDigitalPrepaidOrderCommand.start(getActivity(), orderGuid, customer.email, info, null);
+        listener.onConfirmed();
     }
 
     public static void show(FragmentActivity context,

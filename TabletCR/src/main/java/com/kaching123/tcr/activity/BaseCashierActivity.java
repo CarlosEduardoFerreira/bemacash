@@ -2257,46 +2257,46 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         return isDiscounted;
     }
 
-    private class OrderInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+    private class OrderInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderViewResult> {
 
         @Override
-        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
+        public Loader<SaleOrderViewResult> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(ORDER_VIEW_URI)
                     .where(SaleOrderView2.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-                    .wrap(new Function<Cursor, SaleOrderModelResult>() {
+                    .wrap(new Function<Cursor, SaleOrderViewResult>() {
                         @Override
-                        public SaleOrderModelResult apply(Cursor cursor) {
+                        public SaleOrderViewResult apply(Cursor cursor) {
                             if (!cursor.moveToFirst()){
-                                return new SaleOrderModelResult(null, null);
+                                return new SaleOrderViewResult(null, null);
                             }else{
                                 SaleOrderModel order = SaleOrderModel.fromView(cursor);
                                 CustomerModel customer = null;
                                 if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))){
                                     customer = CustomerModel.fromOrderView(cursor);
                                 }
-                                return new SaleOrderModelResult(order, customer);
+                                return new SaleOrderViewResult(order, customer);
                             }
                         }
                     }).build(BaseCashierActivity.this);
         }
 
         @Override
-        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, SaleOrderModelResult result) {
+        public void onLoadFinished(Loader<SaleOrderViewResult> saleOrderModelLoader, SaleOrderViewResult result) {
             updateOrderInfo(result.order, result.customer);
         }
 
         @Override
-        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
+        public void onLoaderReset(Loader<SaleOrderViewResult> saleOrderModelLoader) {
             updateOrderInfo(null, null);
         }
     }
 
-    private static class SaleOrderModelResult {
+    public static class SaleOrderViewResult {
 
-        private final SaleOrderModel order;
-        private final CustomerModel customer;
+        public final SaleOrderModel order;
+        public final CustomerModel customer;
 
-        private SaleOrderModelResult(SaleOrderModel order, CustomerModel customer) {
+        public SaleOrderViewResult(SaleOrderModel order, CustomerModel customer) {
             this.order = order;
             this.customer = customer;
         }
@@ -2866,10 +2866,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    //    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+    //    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderViewResult> {
 //
 //        @Override
-//        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
+//        public Loader<SaleOrderViewResult> onCreateLoader(int i, Bundle bundle) {
 //            return CursorLoaderBuilder.forUri(ORDER_URI)
 //                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
 //                    .transform(new Function<Cursor, SaleOrderModel>() {
@@ -2877,20 +2877,20 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //                        public SaleOrderModel apply(Cursor cursor) {
 //                            return new SaleOrderModel(cursor);
 //                        }
-//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
+//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderViewResult>() {
 //                        @Override
-//                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
+//                        public SaleOrderViewResult apply(List<SaleOrderModel> saleOrderModels) {
 //                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
-//                                return new SaleOrderModelResult(null);
+//                                return new SaleOrderViewResult(null);
 //                            } else {
-//                                return new SaleOrderModelResult(saleOrderModels.get(0));
+//                                return new SaleOrderViewResult(saleOrderModels.get(0));
 //                            }
 //                        }
 //                    }).build(BaseCashierActivity.this);
 //        }
 //
 //        @Override
-//        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
+//        public void onLoadFinished(Loader<SaleOrderViewResult> saleOrderModelLoader, final SaleOrderViewResult saleOrderModel) {
 //            handler.post(new Runnable() {
 //                @Override
 //                public void run() {
@@ -2914,7 +2914,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //        }
 //
 //        @Override
-//        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
+//        public void onLoaderReset(Loader<SaleOrderViewResult> saleOrderModelLoader) {
 //            updateOrderInfo(null);
 //        }
 //    }

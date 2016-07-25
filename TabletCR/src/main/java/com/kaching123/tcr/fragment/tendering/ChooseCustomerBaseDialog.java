@@ -138,7 +138,7 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     protected ChooseCustomerBaseDialog setListener(emailSenderListener listener) {
         this.listener = listener;
-        return (ChooseCustomerBaseDialog) this;
+        return this;
     }
 
     @ItemClick(android.R.id.list)

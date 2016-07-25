@@ -2,6 +2,7 @@ package com.kaching123.tcr.fragment.tendering.payment;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -11,6 +12,7 @@ import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorHelloCommand;
+import com.kaching123.tcr.commands.print.digital.SendDigitalOrderCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand.BasePrintCallback;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
 import com.kaching123.tcr.commands.print.pos.PrintSignatureOrderCommand;
@@ -130,6 +132,15 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         }
     }
 
+    @Override
+    protected void onOrderDataLoaded() {
+        super.onOrderDataLoaded();
+        if (customer != null && TextUtils.isEmpty(customer.email)){
+            emailBox.setChecked(false);
+            emailBox.setEnabled(false);
+        }
+    }
+
     @AfterViews
     protected void initViews() {
         printBox.setChecked(true);
@@ -151,7 +162,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, releaseResultList, printOrderCallback);
     }
 
-    protected void sendDigitalOrder() {
+    protected void chooseCustomer(){
         PayChooseCustomerDialog.show(getActivity(), orderGuid, transactions, new emailSenderListener() {
             @Override
             public void onComplete() {
@@ -159,6 +170,12 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
                 dismiss();
             }
         }, releaseResultList);
+    }
+
+    protected void sendDigitalOrder() {
+        SendDigitalOrderCommand.start(getActivity(), orderGuid, customer.email, null, transactions, releaseResultList);
+        listener.onConfirmed();
+        dismiss();
     }
 
     //@Override
@@ -208,7 +225,11 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     protected void completeProcess() {
         WaitDialogFragment.hide(getActivity());
         if (emailBox.isChecked()) {
-            sendDigitalOrder();
+            if (customer == null){
+                chooseCustomer();
+            }else{
+                sendDigitalOrder();
+            }
         } else {
             super.completeProcess();
         }

@@ -6,12 +6,9 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.ListView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.PrepaidReceiptAdapter;
+import com.kaching123.tcr.commands.print.digital.SendDigitalPrepaidOrderCommand;
 import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -26,6 +23,11 @@ import com.kaching123.tcr.model.payment.blackstone.prepaid.sunpass.request.SunRe
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.SunpassType;
 import com.kaching123.tcr.websvc.api.prepaid.BalanceResponse;
 import com.kaching123.tcr.websvc.api.prepaid.DocumentInquiryResponse;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -136,13 +138,19 @@ public class PrepaidSunPassPrintAndFinishFragmentDialog extends PayPrintAndFinis
     }
 
     @Override
-    protected void sendDigitalOrder() {
+    protected void chooseCustomer() {
         PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new emailSenderListener() {
             @Override
             public void onComplete() {
                 listener.onConfirmed();
             }
         });
+    }
+
+    @Override
+    protected void sendDigitalOrder() {
+        SendDigitalPrepaidOrderCommand.start(getActivity(), orderGuid, customer.email, info, null);
+        listener.onConfirmed();
     }
 
     public static void show(FragmentActivity context,
