@@ -78,7 +78,7 @@
 
         <LinearLayout
             android:layout_below="@+id/layout2"
-            android:id="@+id/layout3"
+            android:id="@+id/linear_layout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -98,7 +98,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_below="@+id/layout3"
+            android:layout_below="@+id/linear_layout3"
             android:id="@+id/linear_layout4"
             android:visibility="gone"
             android:layout_marginTop="10dp"
