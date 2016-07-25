@@ -138,8 +138,10 @@ public class TotalCostFragment extends Fragment {
     public void setCustomer(CustomerModel customer){
         if (customer == null){
             customerLabel.setText(null);
+            btnCustomer.setEnabled(true);
         }else{
             customerLabel.setText(String.format("%s\n%s pts", customer.getFullName(), customer.loyaltyPoints.toString()));
+            btnCustomer.setEnabled(false);
         }
     }
 

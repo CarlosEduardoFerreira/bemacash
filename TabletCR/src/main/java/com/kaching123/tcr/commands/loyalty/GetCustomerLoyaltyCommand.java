@@ -70,9 +70,6 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
 
         SaleOrderCostInfo orderCostInfo = loadSaleOrderCostInfo(getContext(), orderId);
 
-        long now = new Date().getTime();
-        long halfYear = TimeUnit.DAYS.toMillis(365 / 2);
-
         Query query = ProviderAction.query(URI_LOYALTY_VIEW);
         query.where(LoyaltyIncentivePlanTable.PLAN_GUID + " = ?", customer.loyaltyPlanId);
         query.where("(" + _castAsReal(LoyaltyIncentiveTable.POINT_THRESHOLD) + " <= ? OR " + LoyaltyIncentiveTable.TYPE + " = ?)", customer.loyaltyPoints, LoyaltyType.BIRTHDAY.ordinal());
