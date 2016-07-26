@@ -20,6 +20,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/personal_information_label"
         android:orientation="horizontal">
 
         <TableLayout
@@ -101,7 +102,7 @@
                     android:text="@string/item_activity_active" />
 
                 <CheckBox
-                    android:id="@+id/active"
+                    android:id="@+id/active_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:button="@drawable/checkbox_mint"

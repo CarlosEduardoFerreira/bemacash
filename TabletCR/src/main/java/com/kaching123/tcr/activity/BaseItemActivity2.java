@@ -1,5 +1,6 @@
 package com.kaching123.tcr.activity;
 
+import android.content.Context;
 import android.support.v4.view.ViewPager;
 
 import com.kaching123.tcr.R;
@@ -7,6 +8,7 @@ import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
 import com.kaching123.tcr.fragment.item.ItemCommonInformationFragment;
 import com.kaching123.tcr.fragment.item.ItemProvider;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.StartMode;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -31,6 +33,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @Extra
     protected ItemExModel model;
 
+    @Extra
+    protected StartMode mode;
+
     @AfterViews
     protected void init(){
 
@@ -43,11 +48,15 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
     @Override
     public boolean isCreate() {
-        return false;
+        return StartMode.ADD == mode;
     }
 
     @Override
     protected void onBarcodeReceived(String barcode) {
 
+    }
+
+    public static void start(Context context, ItemExModel model, StartMode mode){
+        BaseItemActivity2_.intent(context).model(model).mode(mode).start();
     }
 }

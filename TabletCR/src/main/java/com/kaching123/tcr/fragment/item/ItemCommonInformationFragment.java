@@ -36,12 +36,12 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 @EFragment(R.layout.item_common_information_fragment)
 public class ItemCommonInformationFragment extends ItemBaseFragment implements LoaderCallbacks<Cursor> {
 
-    @ViewById EditText description;
-    @ViewById EditText salesPrice;
-    @ViewById Spinner department;
-    @ViewById Spinner category;
-    @ViewById Spinner taxGroup;
-    @ViewById CheckBox activeStatus;
+    @ViewById protected EditText description;
+    @ViewById protected EditText salesPrice;
+    @ViewById protected Spinner department;
+    @ViewById protected Spinner category;
+    @ViewById(R.id.tax_group) protected Spinner taxGroup;
+    @ViewById protected CheckBox activeStatus;
 
     private static final int DEPARTMENT_LOADER_ID = 0;
     private static final int CATEGORY_LOADER_ID = 1;

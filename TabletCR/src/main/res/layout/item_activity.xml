@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/common_information_fragment"
-        android:name="com.kaching123.tcr.fragment.item.ItemCommonInformationFragment"
+        android:name="com.kaching123.tcr.fragment.item.ItemCommonInformationFragment_"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
