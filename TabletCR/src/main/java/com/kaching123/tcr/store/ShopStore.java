@@ -821,6 +821,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String LOYALTY_POINTS = "loyalty_points";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String USE_LOYALTY_POINTS = "use_loyalty_points";
     }
 
     static {

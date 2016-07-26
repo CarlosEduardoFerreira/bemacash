@@ -53,7 +53,8 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                 c.getString(c.getColumnIndex(SaleItemTable.NOTES)),
                 c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
-                _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS))
+                _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
+                _bool(c, c.getColumnIndex(SaleItemTable.USE_LOYALTY_POINTS))
         );
 
         SaleOrderItemAddonModel saleAddon = null;

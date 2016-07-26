@@ -47,6 +47,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public boolean hasNotes;
     public boolean isPrepaidItem;
     public BigDecimal loyaltyPoints;
+    public boolean useLoyaltyPoints;
 
     public SaleOrderItemModel(String saleItemGuid) {
         this.saleItemGuid = saleItemGuid;
@@ -62,7 +63,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               String notes,
                               boolean hasNotes,
                               boolean isPrepaidItem,
-                              BigDecimal loyaltyPoints) {
+                              BigDecimal loyaltyPoints,
+                              boolean useLoyaltyPoints) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -86,6 +88,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.kitchenPrintedQty = kitchenPrintedQty;
         this.isPrepaidItem = isPrepaidItem;
         this.loyaltyPoints = loyaltyPoints;
+        this.useLoyaltyPoints = useLoyaltyPoints;
     }
 
     public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description,
@@ -99,7 +102,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               String notes,
                               boolean hasNotes,
                               boolean isPrepaidItem,
-                              BigDecimal loyaltyPoints) {
+                              BigDecimal loyaltyPoints,
+                              boolean useLoyaltyPoints) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -124,6 +128,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.kitchenPrintedQty = kitchenPrintedQty;
         this.isPrepaidItem = isPrepaidItem;
         this.loyaltyPoints = loyaltyPoints;
+        this.useLoyaltyPoints = useLoyaltyPoints;
     }
 
     @Override

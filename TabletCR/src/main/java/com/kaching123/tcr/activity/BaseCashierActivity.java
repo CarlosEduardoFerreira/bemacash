@@ -1584,7 +1584,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 null,
                 !isCreateReturnOrder && model.hasNotes,
                 isPrepaidItemStart,
-                model.loyaltyPoints);
+                model.loyaltyPoints,
+                model.useLoyaltyPopints || !getApp().getShopInfo().pricePointsEnabled);
 
         if (unit != null && orderGuid != null) {
             unit.orderId = orderGuid;
