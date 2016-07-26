@@ -230,6 +230,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         _putItemRefType(values, ItemTable.ITEM_REF_TYPE, refType);
         values.put(ItemTable.REFERENCE_ITEM_ID, referenceItemGuid);
         values.put(ItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
+        values.put(ItemTable.USE_LOYALTY_POINTS, useLoyaltyPopints);
 
         return values;
     }

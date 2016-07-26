@@ -294,6 +294,7 @@ public class EditItemActivity extends BaseCommonItemActivity {
         }
 
         showInteger(this.loyaltyPoints, model.loyaltyPoints);
+        useLoyaltyPoints.setChecked(model.useLoyaltyPopints);
     }
 
     protected void setQuantities(ItemExModel model) {

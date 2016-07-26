@@ -164,6 +164,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         values.put(SaleItemTable.HAS_NOTES, hasNotes);
         values.put(SaleItemTable.IS_PREPAID_ITEM, isPrepaidItem);
         values.put(SaleItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
+        values.put(SaleItemTable.USE_LOYALTY_POINTS, useLoyaltyPoints);
 
         return values;
     }

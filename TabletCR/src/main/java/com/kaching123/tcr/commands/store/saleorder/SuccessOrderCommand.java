@@ -26,7 +26,6 @@ import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.MovementUtils;
@@ -37,10 +36,7 @@ import com.telly.groundy.annotations.OnSuccess;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 /**
@@ -161,6 +157,7 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
                     item.finalDiscount = itemFinalDiscount;
                     item.itemGuid = i.itemGiud;
                     item.qty = i.qty;
+                    item.loyaltyPoints = i.itemViewModel.itemModel.loyaltyPoints;
                     itemsModels.add(item);
                 }
 
@@ -203,27 +200,13 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
         if (customerId == null)
             return true;
 
-        HashSet<String> itemGuids = new HashSet<>();
-        for (SaleOrderItemModel saleItem : itemsModels) {
-            itemGuids.add(saleItem.itemGuid);
-        }
-
-        Cursor c = ProviderAction.query(URI_ITEM)
-                .projection(ItemTable.GUID, ItemTable.LOYALTY_POINTS)
-                .whereIn(ItemTable.GUID, itemGuids)
-                .where(ItemTable.LOYALTY_POINTS + " IS NOT NULL")
-                .perform(getContext());
-
-        HashMap<String, BigDecimal> pointsMap = new HashMap<>();
-        while (c.moveToNext()){
-            String guid = c.getString(0);
-            BigDecimal points = _decimal(c.getString(1));
-            pointsMap.put(guid, points);
-        }
-
         BigDecimal totalPoints = BigDecimal.ZERO;
         for (SaleOrderItemModel item : itemsModels){
-            totalPoints = totalPoints.add(CalculationUtil.getSubTotal(item.qty, pointsMap.get(item.itemGuid)));
+            if (item.useLoyaltyPoints){
+                totalPoints = totalPoints.add(CalculationUtil.getSubTotal(item.qty, item.loyaltyPoints));
+            }else{
+                totalPoints = totalPoints.add(CalculationUtil.getSubTotal(item.qty, item.finalGrossPrice.subtract(item.finalDiscount)));
+            }
         }
 
         if (totalPoints.compareTo(BigDecimal.ZERO) == 0){

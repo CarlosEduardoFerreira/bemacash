@@ -29,6 +29,9 @@ public final class CalculationUtil {
     }
 
     public static BigDecimal getSubTotal(BigDecimal qty, BigDecimal price){
+        if (qty == null || price == null)
+            return BigDecimal.ZERO;
+
         return qty.multiply(price).setScale(RESULT_SCALE, MONEY_ROUNDING);
     }
 
