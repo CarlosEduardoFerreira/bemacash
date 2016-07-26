@@ -124,6 +124,8 @@ public interface ShopPref {
 
     String defaultLoyaltyPlanId();
 
+    boolean pricePointsEnabled();
+
     /**
      * user **
      */
