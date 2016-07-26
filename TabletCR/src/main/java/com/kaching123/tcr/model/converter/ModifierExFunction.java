@@ -84,7 +84,8 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     null,
                     null,
                     null,
-                    null
+                    null,
+                    false
             );
         }
         String id = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.MODIFIER_GUID));

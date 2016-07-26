@@ -58,6 +58,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public String referenceItemGuid;
     public boolean ignoreMovementupdate;
     public BigDecimal loyaltyPoints;
+    public boolean useLoyaltyPopints;
 
     public ItemModel() {
         this.guid = UUID.randomUUID().toString();
@@ -102,7 +103,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      BigDecimal commission,
                      String referenceItemGuid,
                      ItemRefType refType,
-                     BigDecimal loyaltyPoints) {
+                     BigDecimal loyaltyPoints,
+                     boolean useLoyaltyPoints) {
         super();
         this.guid = guid;
         this.categoryId = categoryId;
@@ -141,6 +143,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.referenceItemGuid = referenceItemGuid;
         this.refType = refType;
         this.loyaltyPoints = loyaltyPoints;
+        this.useLoyaltyPopints = useLoyaltyPoints;
     }
 
     public ItemModel(ItemModel itemModel) {

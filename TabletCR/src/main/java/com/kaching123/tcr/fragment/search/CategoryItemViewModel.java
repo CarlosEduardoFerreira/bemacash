@@ -52,7 +52,8 @@ public class CategoryItemViewModel extends ItemExModel {
                                  BigDecimal commission,
                                  String referenceItemGuid,
                                  ItemRefType itemRefType,
-                                 BigDecimal loyaltyPoints) {
+                                 BigDecimal loyaltyPoints,
+                                 boolean useLoyaltyPoints) {
         super(guid,
                 categoryId,
                 description,
@@ -94,7 +95,8 @@ public class CategoryItemViewModel extends ItemExModel {
                 commission,
                 referenceItemGuid,
                 itemRefType,
-                loyaltyPoints);
+                loyaltyPoints,
+                useLoyaltyPoints);
         this.categoryName = categoryName;
     }
 
