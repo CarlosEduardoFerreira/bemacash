@@ -163,6 +163,7 @@ import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.util.DateUtils;
@@ -213,6 +214,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_CHECK_ORDER_PAYMENTS = 4;
     private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 5;
     private static final int LOADER_SEARCH_BARCODE = 10;
+    private static final int LOADER_SALE_INCENTIVES = 12;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
 
@@ -245,6 +247,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private AddSaleOrderCallback addOrderCallback = new AddSaleOrderCallback();
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
+    private SaleIncentivesLoader saleIncentivesLoader = new SaleIncentivesLoader();
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -815,6 +818,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             getSupportLoaderManager().restartLoader(LOADER_ORDER_TITLE, null, orderInfoLoader);
         }
         getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
+        getSupportLoaderManager().restartLoader(LOADER_SALE_INCENTIVES, null, saleIncentivesLoader);
     }
 
     private void updateOrderInfo(SaleOrderModel saleOrderModel, CustomerModel customerModel) {
@@ -2813,6 +2817,27 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             });
         }
 
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+
+        }
+    }
+
+    private class SaleIncentivesLoader implements LoaderCallbacks<Cursor>{
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(SaleIncentiveTable.URI_CONTENT))
+                    .projection("1")
+                    .where(SaleIncentiveTable.ORDER_ID + " = ?", orderGuid == null ? "" : orderGuid)
+                    .build(self());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            totalCostFragment.setCustomerButtonEnabled(data.getCount() == 0);
+        }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
