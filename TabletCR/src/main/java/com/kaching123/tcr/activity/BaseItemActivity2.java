@@ -11,6 +11,8 @@ import com.kaching123.tcr.model.ItemExModel;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.ViewById;
 
 /**
  * Created by vkompaniets on 21.07.2016.
@@ -18,12 +20,12 @@ import org.androidannotations.annotations.Extra;
 @EActivity(R.layout.item_activity)
 public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvider{
 
-//    @FragmentById
+    @FragmentById
     protected ItemCommonInformationFragment commonInformationFragment;
 
-//    @ViewById
+    @ViewById
     protected SlidingTabLayout tabs;
-//    @ViewById
+    @ViewById
     protected ViewPager viewPager;
 
     @Extra
