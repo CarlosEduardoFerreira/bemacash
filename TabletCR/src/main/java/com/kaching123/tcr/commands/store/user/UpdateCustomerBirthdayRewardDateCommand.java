@@ -47,7 +47,7 @@ public class UpdateCustomerBirthdayRewardDateCommand extends AsyncCommand {
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> ops = new ArrayList<>(1);
         ops.add(ContentProviderOperation.newUpdate(ShopProvider.contentUri(CustomerTable.URI_CONTENT))
-                .withValue(CustomerTable.BIRTHDAY_REWARD_APPLY_DATE, customer.birthdayRewardApplyDate.getTime())
+                .withValue(CustomerTable.BIRTHDAY_REWARD_APPLY_DATE, customer.birthdayRewardApplyDate == null ? null : customer.birthdayRewardApplyDate.getTime())
                 .withSelection(CustomerTable.GUID + " = ?", new String[]{customer.guid})
                 .build()
         );
