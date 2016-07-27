@@ -54,7 +54,7 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                 c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
                 _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
-                _bool(c, c.getColumnIndex(SaleItemTable.USE_LOYALTY_POINTS))
+                _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT))
         );
 
         SaleOrderItemAddonModel saleAddon = null;
@@ -90,7 +90,7 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                 _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
                 _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
                 !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
-                c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 0 ? false : true,
+                c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) != 0,
                 taxModel1, taxModel2
         );
     }

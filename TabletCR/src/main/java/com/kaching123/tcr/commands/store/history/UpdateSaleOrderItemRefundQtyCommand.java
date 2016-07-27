@@ -164,7 +164,7 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
 
         BigDecimal points = BigDecimal.ZERO;
         for (SaleOrderItemModel model : returnItems){
-            if (model.useLoyaltyPoints){
+            if (model.pointsForDollarAmount){
                 points = points.add(CalculationUtil.getSubTotal(model.qty, model.loyaltyPoints));
             }else{
                 points = points.add(CalculationUtil.getSubTotal(model.qty, model.finalGrossPrice.subtract(model.finalDiscount)));

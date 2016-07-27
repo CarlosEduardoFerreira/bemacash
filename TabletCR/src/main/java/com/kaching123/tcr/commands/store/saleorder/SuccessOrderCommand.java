@@ -202,7 +202,7 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
 
         BigDecimal totalPoints = BigDecimal.ZERO;
         for (SaleOrderItemModel item : itemsModels){
-            if (item.useLoyaltyPoints){
+            if (item.pointsForDollarAmount){
                 totalPoints = totalPoints.add(CalculationUtil.getSubTotal(item.qty, item.loyaltyPoints));
             }else{
                 totalPoints = totalPoints.add(CalculationUtil.getSubTotal(item.qty, item.finalGrossPrice.subtract(item.finalDiscount)));

@@ -58,7 +58,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public String referenceItemGuid;
     public boolean ignoreMovementupdate;
     public BigDecimal loyaltyPoints;
-    public boolean useLoyaltyPopints;
+    public boolean excludeFromLoyaltyPlan;
 
     public ItemModel() {
         this.guid = UUID.randomUUID().toString();
@@ -104,7 +104,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      String referenceItemGuid,
                      ItemRefType refType,
                      BigDecimal loyaltyPoints,
-                     boolean useLoyaltyPoints) {
+                     boolean excludeFromLoyaltyPlan) {
         super();
         this.guid = guid;
         this.categoryId = categoryId;
@@ -143,7 +143,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.referenceItemGuid = referenceItemGuid;
         this.refType = refType;
         this.loyaltyPoints = loyaltyPoints;
-        this.useLoyaltyPopints = useLoyaltyPoints;
+        this.excludeFromLoyaltyPlan = excludeFromLoyaltyPlan;
     }
 
     public ItemModel(ItemModel itemModel) {
@@ -185,6 +185,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.refType = itemModel.refType;
         this.referenceItemGuid = itemModel.referenceItemGuid;
         this.loyaltyPoints = itemModel.loyaltyPoints;
+        this.excludeFromLoyaltyPlan = itemModel.excludeFromLoyaltyPlan;
     }
 
     @Override
@@ -230,7 +231,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         _putItemRefType(values, ItemTable.ITEM_REF_TYPE, refType);
         values.put(ItemTable.REFERENCE_ITEM_ID, referenceItemGuid);
         values.put(ItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
-        values.put(ItemTable.USE_LOYALTY_POINTS, useLoyaltyPopints);
+        values.put(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN, excludeFromLoyaltyPlan);
 
         return values;
     }

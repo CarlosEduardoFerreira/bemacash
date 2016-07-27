@@ -48,7 +48,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     private static final String HAS_NOTES = "HAS_NOTES";
     private static final String IS_PREPAID_ITEM = "IS_PREPAID_ITEM";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
-    private static final String USE_LOYALTY_POINTS = "USE_LOYALTY_POINTS";
+    private static final String POINTS_FOR_DOLLAR_AMOUNT = "POINTS_FOR_DOLLAR_AMOUNT";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -105,7 +105,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(HAS_NOTES),
                 rs.getBoolean(IS_PREPAID_ITEM),
                 rs.getBigDecimal(LOYALTY_POINTS),
-                rs.getBoolean(USE_LOYALTY_POINTS));
+                rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT));
     }
 
     @Override
@@ -149,7 +149,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(HAS_NOTES, model.hasNotes)
                 .add(IS_PREPAID_ITEM, model.isPrepaidItem)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
-                .add(USE_LOYALTY_POINTS, model.useLoyaltyPoints)
+                .add(POINTS_FOR_DOLLAR_AMOUNT, model.pointsForDollarAmount)
                 .build(JdbcFactory.getApiMethod(model));
     }
 

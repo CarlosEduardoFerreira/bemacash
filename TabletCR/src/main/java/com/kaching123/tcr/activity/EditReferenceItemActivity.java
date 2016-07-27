@@ -112,7 +112,7 @@ public class EditReferenceItemActivity extends BaseReferenceItemActivity {
         hasNotes.setChecked(model.hasNotes);
 
         showInteger(this.loyaltyPoints, model.loyaltyPoints);
-        useLoyaltyPoints.setChecked(model.useLoyaltyPopints);
+        useLoyaltyPoints.setChecked(model.excludeFromLoyaltyPlan);
 
         setFieldsChangeListeners();
     }

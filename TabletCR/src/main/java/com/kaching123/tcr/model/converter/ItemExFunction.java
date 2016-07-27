@@ -63,7 +63,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             ItemTable.IS_DELETED,
             ItemTable.DEFAULT_MODIFIER_GUID,
             ItemTable.LOYALTY_POINTS,
-            ItemTable.USE_LOYALTY_POINTS,
+            ItemTable.EXCLUDE_FROM_LOYALTY_PLAN,
             CategoryTable.DEPARTMENT_GUID,
             _caseCount(ModifierTable.TYPE, ModifierType.MODIFIER, ItemExtView.MODIFIERS_COUNT),
             _caseCount(ModifierTable.TYPE, ModifierType.ADDON, ItemExtView.ADDONS_COUNT),
@@ -139,7 +139,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
                 _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
                 _decimal(c, indexHolder.get(ItemTable.LOYALTY_POINTS)),
-                _bool(c, indexHolder.get(ItemTable.USE_LOYALTY_POINTS)))
+                _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)))
                 .setIsAComposer(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.HostComposerTable.ID)) != null)
                 .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null)
                 .setMatrixGuid(matrixGuid);

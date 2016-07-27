@@ -723,7 +723,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.commissionEligible = this.commissionsEligible.isChecked();
 
         model.loyaltyPoints = parseBigDecimal(this.loyaltyPoints, BigDecimal.ZERO);
-        model.useLoyaltyPopints = useLoyaltyPoints.isChecked();
+        model.excludeFromLoyaltyPlan = useLoyaltyPoints.isChecked();
     }
 
     protected boolean validateForm() {

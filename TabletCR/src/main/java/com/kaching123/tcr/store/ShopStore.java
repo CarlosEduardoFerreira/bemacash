@@ -490,8 +490,8 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String LOYALTY_POINTS = "loyalty_points";
 
-        @Column(type = Type.INTEGER, defVal = "0")
-        String USE_LOYALTY_POINTS = "use_loyalty_points";
+        @Column(type = Type.INTEGER)
+        String EXCLUDE_FROM_LOYALTY_PLAN = "exclude_from_loyalty_plan";
     }
 
     static {
@@ -822,8 +822,8 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String LOYALTY_POINTS = "loyalty_points";
 
-        @Column(type = Type.INTEGER, defVal = "0")
-        String USE_LOYALTY_POINTS = "use_loyalty_points";
+        @Column(type = Type.INTEGER)
+        String POINTS_FOR_DOLLAR_AMOUNT = "points_for_dollar_amount";
     }
 
     static {

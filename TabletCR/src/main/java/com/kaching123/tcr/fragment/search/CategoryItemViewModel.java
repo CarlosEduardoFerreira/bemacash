@@ -53,7 +53,7 @@ public class CategoryItemViewModel extends ItemExModel {
                                  String referenceItemGuid,
                                  ItemRefType itemRefType,
                                  BigDecimal loyaltyPoints,
-                                 boolean useLoyaltyPoints) {
+                                 boolean excludeFromLoyaltyPlan) {
         super(guid,
                 categoryId,
                 description,
@@ -96,7 +96,7 @@ public class CategoryItemViewModel extends ItemExModel {
                 referenceItemGuid,
                 itemRefType,
                 loyaltyPoints,
-                useLoyaltyPoints);
+                excludeFromLoyaltyPlan);
         this.categoryName = categoryName;
     }
 

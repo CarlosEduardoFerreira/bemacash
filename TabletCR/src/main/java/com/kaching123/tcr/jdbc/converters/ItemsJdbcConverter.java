@@ -65,7 +65,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String REFERENCE_ITEM_ID = "REFERENCE_ITEM_ID";
     private static final String IS_PREPAID_ITEM = "IS_PREPAID_ITEM";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
-    private static final String USE_LOYALTY_POINTS = "USE_LOYALTY_POINTS";
+    private static final String EXCLUDE_FROM_LOYALTY_PLAN = "EXCLUDE_FROM_LOYALTY_PLAN";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -106,7 +106,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getString(REFERENCE_ITEM_ID),
                 _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple),
                 rs.getBigDecimal(LOYALTY_POINTS),
-                rs.getBoolean(USE_LOYALTY_POINTS)
+                rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN)
         );
         return model.toValues();
     }
@@ -150,7 +150,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getString(REFERENCE_ITEM_ID),
                 ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE)),
                 rs.getBigDecimal(LOYALTY_POINTS),
-                rs.getBoolean(USE_LOYALTY_POINTS)
+                rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN)
         );
     }
 
@@ -201,7 +201,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(ITEM_REF_TYPE, item.refType.ordinal())
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
                 .add(LOYALTY_POINTS, _decimal(item.loyaltyPoints))
-                .add(USE_LOYALTY_POINTS, item.useLoyaltyPopints)
+                .add(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
                 .build(JdbcFactory.getApiMethod(item));
     }
 
@@ -242,7 +242,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(ITEM_REF_TYPE, item.refType.ordinal())
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
                 .add(LOYALTY_POINTS, _decimal(item.loyaltyPoints))
-                .add(USE_LOYALTY_POINTS, item.useLoyaltyPopints)
+                .add(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
                 .where(ID, item.guid)
                 .build(JdbcFactory.getApiMethod(item));
     }

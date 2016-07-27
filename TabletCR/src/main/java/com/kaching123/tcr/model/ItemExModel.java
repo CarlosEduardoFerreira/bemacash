@@ -149,7 +149,7 @@ public class ItemExModel extends ItemModel {
                        String referenceItemGuid,
                        ItemRefType itemRefType,
                        BigDecimal loyaltyPoints,
-                       boolean useLoyaltyPoints) {
+                       boolean excludeFromLoyaltyPlan) {
         super(guid,
                 categoryId,
                 description,
@@ -186,7 +186,7 @@ public class ItemExModel extends ItemModel {
                 referenceItemGuid,
                 itemRefType,
                 loyaltyPoints,
-                useLoyaltyPoints
+                excludeFromLoyaltyPlan
         );
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;
