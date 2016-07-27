@@ -158,6 +158,7 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
                     item.itemGuid = i.itemGiud;
                     item.qty = i.qty;
                     item.loyaltyPoints = i.itemViewModel.itemModel.loyaltyPoints;
+                    item.pointsForDollarAmount = i.itemViewModel.itemModel.pointsForDollarAmount;
                     itemsModels.add(item);
                 }
 
@@ -203,9 +204,9 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
         BigDecimal totalPoints = BigDecimal.ZERO;
         for (SaleOrderItemModel item : itemsModels){
             if (item.pointsForDollarAmount){
-                totalPoints = totalPoints.add(CalculationUtil.getSubTotal(item.qty, item.loyaltyPoints));
-            }else{
                 totalPoints = totalPoints.add(CalculationUtil.getSubTotal(item.qty, item.finalGrossPrice.subtract(item.finalDiscount)));
+            }else{
+                totalPoints = totalPoints.add(CalculationUtil.getSubTotal(item.qty, item.loyaltyPoints));
             }
         }
 

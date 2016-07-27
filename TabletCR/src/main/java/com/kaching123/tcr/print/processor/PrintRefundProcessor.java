@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.kaching123.tcr.fragment.UiHelper.integerFormat;
+import static com.kaching123.tcr.fragment.UiHelper.integralIntegerFormat;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
@@ -119,8 +119,8 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                     else
                         printerWrapper.add(description, refundQty, negative(itemTotal), singleItemPrice, unitAsStrings);
                     total = total.add(itemTotal);
-                    if (loyaltyPoints != null){
-                        orderInfo.earnedLoyaltyPoints = orderInfo.earnedLoyaltyPoints.add(getSubTotal(refundQty, loyaltyPoints));
+                    if (loyaltyPoints != null) {
+                        orderInfo.earnedLoyaltyPoints = orderInfo.earnedLoyaltyPoints.add(getSubTotal(refundQty, loyaltyPoints.divide(qty)));
                     }
                 }
 
@@ -144,11 +144,11 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
 
     @Override
     protected void printFooter(TcrApplication app, ITextPrinter printerWrapper) {
-        if (orderInfo.customerLoyaltyPoints != null){
-            printerWrapper.header("Total Bonus Points Available", integerFormat(orderInfo.customerLoyaltyPoints));
+        if (orderInfo.customerLoyaltyPoints != null) {
+            printerWrapper.header("Total Bonus Points Available", integralIntegerFormat(orderInfo.customerLoyaltyPoints));
         }
-        if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0){
-            printerWrapper.header("Bonus Points on this Return", integerFormat(orderInfo.earnedLoyaltyPoints.negate()));
+        if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0) {
+            printerWrapper.header("Bonus Points on this Return", integralIntegerFormat(orderInfo.earnedLoyaltyPoints.negate()));
         }
         super.printFooter(app, printerWrapper);
     }

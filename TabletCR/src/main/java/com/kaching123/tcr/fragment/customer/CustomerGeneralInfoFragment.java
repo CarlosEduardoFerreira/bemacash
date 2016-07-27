@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.kaching123.tcr.fragment.UiHelper.showInteger;
+import static com.kaching123.tcr.fragment.UiHelper.showIntegralInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPhone;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.DateUtils.dateOnlyFormat;
@@ -113,7 +113,7 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
             birthdayDate.setTime(model.birthday);
             birthday.setText(dateOnlyFormat(model.birthday));
         }
-        showInteger(bonusPoints, model.loyaltyPoints);
+        showIntegralInteger(bonusPoints, model.loyaltyPoints);
         loyaltyBarcode.setText(model.loyaltyBarcode);
     }
 

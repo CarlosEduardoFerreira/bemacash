@@ -601,7 +601,7 @@ public class TcrApplication extends MultiDexApplication {
                 .customerPopupScreenMessage().put(info.customerPopupScreenMessage)
                 .blackStonePRepaidSolution().put(info.blackStonePRepaidSolution)
                 .defaultLoyaltyPlanId().put(info.defaultLoyaltyPlanId)
-                .pricePointsEnabled().put(info.pricePointsEnabled)
+                .pricePointsEnabled().put(info.loyaltyPointsForDollarAmount)
                 .apply();
 
         setUsers();
