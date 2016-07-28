@@ -2,6 +2,7 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,11 +10,9 @@ import android.view.MenuItem;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.CustomerPagerAdapter;
 import com.kaching123.tcr.commands.store.user.AddCustomerCommand;
-import com.kaching123.tcr.commands.store.user.AddCustomerCommand.BaseAddCustomerCallback;
+import com.kaching123.tcr.commands.store.user.BaseCustomerCommand.BaseCustomerCallback;
 import com.kaching123.tcr.commands.store.user.DeleteCustomerCommand;
-import com.kaching123.tcr.commands.store.user.DeleteCustomerCommand.BaseDeleteCustomerCallback;
 import com.kaching123.tcr.commands.store.user.EditCustomerCommand;
-import com.kaching123.tcr.commands.store.user.EditCustomerCommand.BaseEditCustomerCallback;
 import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
 import com.kaching123.tcr.fragment.customer.CustomerPersonalInfoFragment;
 import com.kaching123.tcr.fragment.customer.CustomerProvider;
@@ -22,6 +21,7 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
@@ -45,7 +45,7 @@ import java.util.UUID;
  */
 @EActivity(R.layout.edit_customer_activity)
 @OptionsMenu(R.menu.edit_customer_activity)
-public class EditCustomerActivity extends SuperBaseActivity implements CustomerProvider {
+public class EditCustomerActivity extends ScannerBaseActivity implements CustomerProvider {
 
     private final static HashSet<Permission> permissions = new HashSet<>();
 
@@ -81,8 +81,6 @@ public class EditCustomerActivity extends SuperBaseActivity implements CustomerP
         viewPager.setAdapter(adapter);
         tabs.setDistributeEvenly(false);
         tabs.setViewPager(viewPager);
-
-//        setFieldsEnabled(PlanOptions.isEditingCustomersAllowed());
     }
 
     @Override
@@ -154,9 +152,9 @@ public class EditCustomerActivity extends SuperBaseActivity implements CustomerP
         updateModel();
         WaitDialogFragment.show(self(), getString(R.string.customer_save_wait_message));
         if (mode == Mode.CREATE) {
-            AddCustomerCommand.start(self(), addCustomerCallback, model);
+            AddCustomerCommand.start(self(), addEditCustomerCallback, model);
         } else {
-            EditCustomerCommand.start(self(), editCustomerCallback, model);
+            EditCustomerCommand.start(self(), addEditCustomerCallback, model);
         }
 
     }
@@ -179,23 +177,17 @@ public class EditCustomerActivity extends SuperBaseActivity implements CustomerP
         return (CustomerView) adapter.getItem(position);
     }
 
-    private void setFieldsEnabled(boolean enabled){
-        personalInfoFragment.setFieldsEnabled(enabled);
-        getViewFragment(0).setFieldsEnabled(enabled);
-        getViewFragment(1).setFieldsEnabled(enabled);
-    }
-
-    private BaseAddCustomerCallback addCustomerCallback = new BaseAddCustomerCallback() {
+    private BaseCustomerCallback addEditCustomerCallback = new BaseCustomerCallback() {
 
         @Override
-        protected void onCustomerAdded() {
+        protected void onSuccess() {
             WaitDialogFragment.hide(self());
             setResult();
             finish();
         }
 
         @Override
-        protected void onCustomerAddError() {
+        protected void onError() {
             WaitDialogFragment.hide(self());
             AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_error_msg));
         }
@@ -206,42 +198,57 @@ public class EditCustomerActivity extends SuperBaseActivity implements CustomerP
             AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_email_exists_error_msg));
         }
 
-    };
-
-    private BaseEditCustomerCallback editCustomerCallback = new BaseEditCustomerCallback() {
+        @Override
+        protected void onPhoneExists() {
+            WaitDialogFragment.hide(self());
+            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_phone_exists_error_msg));
+        }
 
         @Override
-        protected void onCustomerUpdated() {
+        protected void onBarcodeExists() {
+            WaitDialogFragment.hide(self());
+            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_barcode_exists_error_msg));
+        }
+
+    };
+
+    private BaseCustomerCallback deleteCustomerCallback = new BaseCustomerCallback() {
+        @Override
+        protected void onSuccess() {
             WaitDialogFragment.hide(self());
             finish();
         }
 
         @Override
-        protected void onCustomerUpdateError() {
-            WaitDialogFragment.hide(self());
-            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_error_msg));
-        }
-
-        @Override
-        protected void onEmailExists() {
-            WaitDialogFragment.hide(self());
-            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_email_exists_error_msg));
-        }
-    };
-
-    private BaseDeleteCustomerCallback deleteCustomerCallback = new BaseDeleteCustomerCallback() {
-        @Override
-        protected void onCustomerDeleted() {
-            WaitDialogFragment.hide(self());
-            finish();
-        }
-
-        @Override
-        protected void onCustomerDeleteError() {
+        protected void onError() {
             WaitDialogFragment.hide(self());
             AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_delete_dialog_error_message));
         }
+
+        @Override
+        protected void onEmailExists() {
+            /*should not happen*/
+        }
+
+        @Override
+        protected void onPhoneExists() {
+            /*should not happen*/
+        }
+
+        @Override
+        protected void onBarcodeExists() {
+            /*should not happen*/
+        }
     };
+
+    @Override
+    protected void onBarcodeReceived(String barcode) {
+        for (Fragment fr : getSupportFragmentManager().getFragments()){
+            if (fr instanceof BarcodeReceiver){
+                ((BarcodeReceiver) fr).onBarcodeReceived(barcode);
+            }
+        }
+    }
 
     private enum Mode {
         CREATE, UPDATE

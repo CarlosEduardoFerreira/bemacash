@@ -25,6 +25,7 @@ import com.google.common.base.Function;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.DatePickerDialogFragment;
+import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.LoyaltyPlanModel;
 import com.kaching123.tcr.model.Permission;
@@ -52,7 +53,7 @@ import static com.kaching123.tcr.util.PhoneUtil.onlyDigits;
  * Created by vkompaniets on 24.06.2016.
  */
 @EFragment(R.layout.customer_general_info_fragment)
-public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements CustomerView{
+public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements CustomerView, BarcodeReceiver{
 
     @ViewById protected EditText street;
     @ViewById protected EditText street2;
@@ -221,6 +222,12 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
             loyaltyPlanAdapter.changeCursor(null);
         }
     };
+
+    @Override
+    public void onBarcodeReceived(String barcode) {
+        if (loyaltyBarcode != null)
+            loyaltyBarcode.setText(barcode);
+    }
 
     private class LoyaltyPlanAdapter extends ObjectsCursorAdapter<LoyaltyPlanModel> {
 

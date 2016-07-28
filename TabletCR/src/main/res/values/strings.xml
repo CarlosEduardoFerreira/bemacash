@@ -1041,6 +1041,7 @@
     <string name="customers_export_error_msg">Can\'t export customers to file.</string>
     <string name="customers_export_success_title">Export succeeded</string>
     <string name="customers_export_success_msg">%d customers were exported</string>
+    <string name="customer_not_found_msg">Can\'t find customer in database.\nDo you want to create one?</string>
     <string name="xreport_chooser_current_shift_sales">Current shift sales</string>
     <string name="xreport_chooser_sale_for_a_day">Sales for а day</string>
     <string name="xreport_chooser_dialog_title">X-Report type</string>
@@ -1311,8 +1312,9 @@
     <string name="customer_edit_email_phone_empty">Please, fill Phone or Email</string>
     <string name="customer_edit_phone_duplicate">The phone number is already in use.</string>
     <string name="customer_edit_error_msg">Can\'t save customer. Please try again!</string>
-    <string name="customer_edit_email_exists_error_msg">Can\'t save customer. Customer with such email or phone already exists</string>
+    <string name="customer_edit_email_exists_error_msg">Can\'t save customer. Customer with such email already exists</string>
     <string name="customer_edit_phone_exists_error_msg">Can\'t save customer. Customer with such phone already exists</string>
+    <string name="customer_edit_barcode_exists_error_msg">Can\'t save customer. Customer with such barcode already exists</string>
     <string name="customer_delete_dialog_title">Delete customer</string>
     <string name="customer_delete_dialog_message">Are you sure you want to delete this customer?</string>
     <string name="customer_delete_dialog_error_message">Can\'t delete customer. Please try again!</string>

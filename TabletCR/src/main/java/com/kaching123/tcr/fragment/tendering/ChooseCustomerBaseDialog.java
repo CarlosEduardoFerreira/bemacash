@@ -64,6 +64,9 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
     @ViewById
     protected EditText customerFilter;
 
+    @ViewById(android.R.id.empty)
+    protected TextView emptyView;
+
     protected ResourceCursorAdapter adapter;
 
     @FragmentArg
@@ -134,6 +137,7 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     protected void setupAdapter() {
         listView.setAdapter(adapter = new CustomerAdapter(getActivity()));
+        listView.setEmptyView(emptyView);
     }
 
     protected ChooseCustomerBaseDialog setListener(emailSenderListener listener) {
@@ -191,6 +195,7 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+//        emptyView.setVisibility(cursor == null || cursor.getCount() == 0 ? View.VISIBLE : View.GONE);
         adapter.changeCursor(cursor);
     }
 

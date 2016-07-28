@@ -8,8 +8,6 @@ import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
-import com.telly.groundy.annotations.OnFailure;
-import com.telly.groundy.annotations.OnSuccess;
 
 import java.util.ArrayList;
 
@@ -19,7 +17,7 @@ import java.util.ArrayList;
 public class DeleteCustomerCommand extends BaseCustomerCommand {
 
     @Override
-    protected boolean ignoreEmailCheck() {
+    protected boolean ignoreChecks() {
         return true;
     }
 
@@ -36,24 +34,7 @@ public class DeleteCustomerCommand extends BaseCustomerCommand {
         return JdbcFactory.getConverter(CustomerTable.TABLE_NAME).deleteSQL(model, getAppCommandContext());
     }
 
-    public static void start(Context context, CustomerModel model, BaseDeleteCustomerCallback callback){
+    public static void start(Context context, CustomerModel model, BaseCustomerCallback callback){
         create(DeleteCustomerCommand.class).arg(ARG_CUSTOMER, model).callback(callback).queueUsing(context);
-    }
-
-    public static abstract class BaseDeleteCustomerCallback {
-
-        @OnSuccess(DeleteCustomerCommand.class)
-        public void onSuccess() {
-            onCustomerDeleted();
-        }
-
-        @OnFailure(DeleteCustomerCommand.class)
-        public void onFailure() {
-            onCustomerDeleteError();
-        }
-
-        protected abstract void onCustomerDeleted();
-
-        protected abstract void onCustomerDeleteError();
     }
 }
