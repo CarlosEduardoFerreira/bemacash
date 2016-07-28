@@ -224,7 +224,12 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_CUSTOMER_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             CustomerModel model = (CustomerModel) data.getSerializableExtra(EditCustomerActivity.EXTRA_CUSTOMER);
-            customerFilter.setText(model.email);
+            if (!TextUtils.isEmpty(model.email))
+                customerFilter.setText(model.email);
+            else if (!TextUtils.isEmpty(model.loyaltyBarcode))
+                customerFilter.setText(model.loyaltyBarcode);
+            else if (!TextUtils.isEmpty(model.lastName))
+                customerFilter.setText(model.lastName);
         }
     }
 
