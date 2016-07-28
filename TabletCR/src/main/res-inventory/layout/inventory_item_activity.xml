@@ -340,7 +340,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginLeft="@dimen/edit_item_table_margin_left">
+        android:layout_marginLeft="@dimen/edit_item_table_margin">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -656,7 +656,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginLeft="@dimen/edit_item_table_margin_left">
+        android:layout_marginLeft="@dimen/edit_item_table_margin">
 
         <Button
             style="@style/LocalizableButton.Green.Wide"

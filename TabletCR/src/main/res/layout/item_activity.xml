@@ -2,7 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-                android:background="@color/bg_grey_color">
+              android:paddingLeft="@dimen/activity_padding_horizontal"
+              android:paddingRight="@dimen/activity_padding_horizontal"
+              android:paddingTop="@dimen/activity_padding_vertical"
+              android:paddingBottom="@dimen/activity_padding_vertical"
+              android:background="@color/bg_grey_color">
 
     <fragment
         android:id="@+id/common_information_fragment"

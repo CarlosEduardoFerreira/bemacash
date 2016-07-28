@@ -40,6 +40,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     @ViewById protected EditText salesPrice;
     @ViewById protected Spinner department;
     @ViewById protected Spinner category;
+    //dunno why, but generated id = 'R.id.taxGroup', so we set id explicitly here
     @ViewById(R.id.tax_group) protected Spinner taxGroup;
     @ViewById protected CheckBox activeStatus;
 
@@ -66,12 +67,22 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     }
 
     @Override
-    protected void setCustomer() {
+    protected void setModel() {
         final ItemModel model = getModel();
         description.setText(model.description);
         showPrice(salesPrice, model.price);
         activeStatus.setChecked(model.isActiveStatus);
 
+    }
+
+    @Override
+    protected void collectData() {
+        final ItemModel model = getModel();
+        model.description = description.getText().toString();
+        model.price = UiHelper.getDecimalValue(salesPrice);
+        model.categoryId = categoryAdapter.getGuid(category.getSelectedItemPosition());
+        model.isActiveStatus = activeStatus.isChecked();
+        model.taxGroupGuid = taxGroupAdapter.getGuid(taxGroup.getSelectedItemPosition());
     }
 
     private void initLoaders() {

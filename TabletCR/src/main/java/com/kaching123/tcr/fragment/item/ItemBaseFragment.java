@@ -33,10 +33,11 @@ public abstract class ItemBaseFragment extends SuperBaseFragment {
     protected void init(){
         setViews();
         if (!getItemProvider().isCreate()){
-            setCustomer();
+            setModel();
         }
     }
 
     protected abstract void setViews();
-    protected abstract void setCustomer();
+    protected abstract void setModel();
+    protected abstract void collectData();
 }
