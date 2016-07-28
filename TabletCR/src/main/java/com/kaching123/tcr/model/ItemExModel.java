@@ -45,6 +45,7 @@ public class ItemExModel extends ItemModel {
 
     public boolean isAComposisiton;
     public boolean isAComposer;
+    public boolean isIncentive;
 
     public ItemExModel() {
         super();

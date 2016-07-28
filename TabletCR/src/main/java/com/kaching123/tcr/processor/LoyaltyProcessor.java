@@ -130,6 +130,7 @@ public class LoyaltyProcessor {
     private void applyItemIncentive(IncentiveExModel incentive){
         currentIncentive = incentive;
         ItemExModel item = ItemExModel.loadSync(context, incentive.incentiveItemExModel.item.guid);
+        item.isIncentive = true;
         callback.onAddItemRequest(item, incentive.incentiveItemExModel.price, incentive.incentiveItemExModel.qty);
     }
 
