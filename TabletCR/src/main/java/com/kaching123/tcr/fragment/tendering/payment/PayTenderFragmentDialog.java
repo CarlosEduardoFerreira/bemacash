@@ -6,10 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.SuperBaseActivity;
@@ -23,6 +19,11 @@ import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.payment.PaymentMethod;
+
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 
@@ -197,7 +198,7 @@ public class PayTenderFragmentDialog extends TenderFragmentDialogBase<PayTenderF
 
     @Override
     protected void updateAfterCalculated() {
-        if (hasCompletedTransactions()) {
+        if (hasCompletedTransactions() || BigDecimal.ZERO.compareTo(orderTotal) == 0) {
             BigDecimal alreadyPayed = orderTotal.subtract(completedAmount);
             listener.onDataLoaded(completedAmount, orderTotal, saleOrderModels);
             difference.setText(UiHelper.valueOf(alreadyPayed));

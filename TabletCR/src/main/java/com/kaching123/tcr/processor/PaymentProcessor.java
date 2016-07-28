@@ -186,18 +186,12 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
      */
     public PaymentProcessor init(final FragmentActivity context) {
         this.singleTenderEnabled = true;
-        if (TcrApplication.get().payWithCustomerEnabled()) {
+        if (TcrApplication.get().payWithCustomerEnabled() && customer == null) {
             proceedToCpf(context);
         } else {
             proceedToTender(context, 0, singleTenderEnabled);
         }
         return this;
-    }
-
-    private void proceedToLoyalty(final FragmentActivity context){
-        if (customer != null && customer.loyaltyPlanId != null){
-
-        }
     }
 
     private void proceedToCpf(final FragmentActivity context) {
