@@ -7,9 +7,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kaching123.tcr.R;
+
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-import com.kaching123.tcr.R;
 
 /**
  * Created by vkompaniets on 25.11.13.
@@ -42,12 +43,26 @@ public class QuickCategoryItemView extends FrameLayout {
         this.guid = guid;
         this.title.setText(title);
 
-        int drawableResourceId = 0;
-        if(!TextUtils.isEmpty(imageName)){
-            drawableResourceId = this.getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
+        Integer level = getLevel(imageName);
+        if (level != null){
+            image.setImageDrawable(null);
+            image.getBackground().setLevel(level);
+        }else{
+            int drawableResourceId = 0;
+            if(!TextUtils.isEmpty(imageName)){
+                drawableResourceId = this.getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
+            }
+            this.image.setImageResource(drawableResourceId == 0 ? R.drawable.categories_placeholder : drawableResourceId);
+            image.getBackground().setLevel(0);
         }
-        this.image.setImageResource(drawableResourceId == 0 ? R.drawable.categories_placeholder : drawableResourceId);
-        //Picasso.with(getContext()).load(getContext().getString(R.string.config_value_img_category) + imageName + ".png").placeholder(R.drawable.categories_placeholder).into(this.image);
+    }
+
+    private static Integer getLevel(String str){
+        try{
+            return Integer.parseInt(str);
+        } catch(NumberFormatException nfe){
+            return null;
+        }
     }
 
 }

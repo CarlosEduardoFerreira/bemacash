@@ -1456,6 +1456,7 @@
     <string name="category_group_clothing">Clothing</string>
     <string name="category_group_electronics">Electronics</string>
     <string name="category_group_general">General</string>
+    <string name="category_group_colors">Colors</string>
     <string name="credit_receipt_print_dialog_title">Print receipt</string>
     <string name="error_something_wrong">Unexpected error is occurred</string>
     <string name="return_order_create_error">Can\'t create return order</string>

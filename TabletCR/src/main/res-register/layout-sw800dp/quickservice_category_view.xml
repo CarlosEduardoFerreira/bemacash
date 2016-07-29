@@ -15,7 +15,7 @@
             android:layout_centerInParent="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            />
+            android:background="@drawable/category_image_bg"/>
     </RelativeLayout>
 
     <TextView
