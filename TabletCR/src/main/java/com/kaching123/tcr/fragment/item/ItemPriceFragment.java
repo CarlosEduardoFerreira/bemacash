@@ -1,11 +1,15 @@
 package com.kaching123.tcr.fragment.item;
 
+import android.text.InputFilter;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.component.CurrencyFormatInputFilter;
+import com.kaching123.tcr.component.CurrencyTextWatcher;
+import com.kaching123.tcr.component.PercentFormatInputFilter;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
@@ -43,6 +47,8 @@ public class ItemPriceFragment extends ItemBaseFragment {
         ArrayAdapter<DiscountType> discountTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_light, DiscountType.values());
         discountTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         discountType.setAdapter(discountTypeAdapter);
+
+        setFilters();
     }
 
     @Override
@@ -69,5 +75,15 @@ public class ItemPriceFragment extends ItemBaseFragment {
         model.commissionEligible = commissionEligible.isChecked();
         model.commission = getDecimalValue(commission);
         model.isSalable = forSale.isChecked();
+    }
+
+    private void setFilters(){
+        InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
+        InputFilter[] percentFilter = new InputFilter[]{new PercentFormatInputFilter()};
+        discount.setFilters(currencyFilter);
+        cost.setFilters(currencyFilter);
+        commission.setFilters(percentFilter);
+        discount.addTextChangedListener(new CurrencyTextWatcher(discount));
+        cost.addTextChangedListener(new CurrencyTextWatcher(cost));
     }
 }

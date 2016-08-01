@@ -4,7 +4,7 @@
               android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/personal_information_label"
+        android:id="@+id/common_information_label"
         style="@style/EditItem.Table.Header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,12 +15,12 @@
         android:drawablePadding="8dp"
         android:drawableLeft="@drawable/user_information"
         android:background="@drawable/inventory_title_line"
-        android:text="@string/customer_label_personal_info"/>
+        android:text="@string/edit_item_common_information"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/personal_information_label"
+        android:layout_below="@id/common_information_label"
         android:orientation="horizontal">
 
         <TableLayout
@@ -52,7 +52,8 @@
                     android:id="@+id/sales_price"
                     style="@style/EditItem.Table.Edittext"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"/>
             </TableRow>
         </TableLayout>
 

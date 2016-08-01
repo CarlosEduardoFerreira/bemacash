@@ -4,7 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.kaching123.tcr.fragment.customer.CustomerBaseFragment;
+import com.kaching123.tcr.fragment.item.ItemAdditionalInformationFragment_;
+import com.kaching123.tcr.fragment.item.ItemBaseFragment;
+import com.kaching123.tcr.fragment.item.ItemPriceFragment_;
 
 /**
  * Created by vkompaniets on 21.07.2016.
@@ -12,11 +14,12 @@ import com.kaching123.tcr.fragment.customer.CustomerBaseFragment;
 public class ItemPagerAdapter extends FragmentPagerAdapter {
 
     private String[] pageTitles;
-    private CustomerBaseFragment[] fragments;
+    private ItemBaseFragment[] fragments;
 
     public ItemPagerAdapter(FragmentManager fm, String[] pageTitles) {
         super(fm);
         this.pageTitles = pageTitles;
+        this.fragments = new ItemBaseFragment[]{new ItemPriceFragment_(), new ItemAdditionalInformationFragment_()};
     }
 
     @Override

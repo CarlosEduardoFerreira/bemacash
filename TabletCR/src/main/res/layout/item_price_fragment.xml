@@ -46,7 +46,8 @@
                 android:id="@+id/discount"
                 style="@style/EditItem.Table.Edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
         </TableRow>
     </TableLayout>
 
@@ -93,7 +94,8 @@
                 android:id="@+id/cost"
                 style="@style/EditItem.Table.Edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
         </TableRow>
     </TableLayout>
 
@@ -128,7 +130,8 @@
                 android:id="@+id/commission"
                 style="@style/EditItem.Table.Edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
         </TableRow>
 
         <TableRow

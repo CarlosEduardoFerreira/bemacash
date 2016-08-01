@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.view.ViewPager;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.adapter.ItemPagerAdapter;
 import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
 import com.kaching123.tcr.fragment.item.ItemCommonInformationFragment;
 import com.kaching123.tcr.fragment.item.ItemProvider;
@@ -36,9 +37,14 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @Extra
     protected StartMode mode;
 
+    private ItemPagerAdapter adapter;
+
     @AfterViews
     protected void init(){
-
+        adapter = new ItemPagerAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.item_tabs));
+        viewPager.setAdapter(adapter);
+        tabs.setDistributeEvenly(false);
+        tabs.setViewPager(viewPager);
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.InputFilter;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.SpinnerAdapter;
+import com.kaching123.tcr.component.CurrencyFormatInputFilter;
+import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.store.ShopProvider;
@@ -63,6 +66,8 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         taxGroupAdapter = new TaxGroupSpinnerAdapter(getActivity());
         taxGroup.setAdapter(taxGroupAdapter);
 
+        setFilters();
+
         initLoaders();
     }
 
@@ -89,6 +94,12 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         getLoaderManager().initLoader(DEPARTMENT_LOADER_ID, null, this);
         getLoaderManager().initLoader(CATEGORY_LOADER_ID, null, this);
         getLoaderManager().initLoader(TAX_GROUP_LOADER_ID, null, this);
+    }
+
+    private void setFilters(){
+        InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
+        salesPrice.setFilters(currencyFilter);
+        salesPrice.addTextChangedListener(new CurrencyTextWatcher(salesPrice));
     }
 
     @ItemSelect
