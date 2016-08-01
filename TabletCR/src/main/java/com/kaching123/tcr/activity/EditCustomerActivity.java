@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.CustomerPagerAdapter;
@@ -189,25 +190,25 @@ public class EditCustomerActivity extends ScannerBaseActivity implements Custome
         @Override
         protected void onError() {
             WaitDialogFragment.hide(self());
-            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_error_msg));
+            Toast.makeText(self(), R.string.customer_edit_error_msg, Toast.LENGTH_LONG).show();
         }
 
         @Override
         protected void onEmailExists() {
             WaitDialogFragment.hide(self());
-            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_email_exists_error_msg));
+            Toast.makeText(self(), R.string.customer_edit_email_exists_error_msg, Toast.LENGTH_LONG).show();
         }
 
         @Override
         protected void onPhoneExists() {
             WaitDialogFragment.hide(self());
-            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_phone_exists_error_msg));
+            Toast.makeText(self(), R.string.customer_edit_phone_exists_error_msg, Toast.LENGTH_LONG).show();
         }
 
         @Override
         protected void onBarcodeExists() {
             WaitDialogFragment.hide(self());
-            AlertDialogFragment.showAlert(self(), R.string.error_dialog_title, getString(R.string.customer_edit_barcode_exists_error_msg));
+            Toast.makeText(self(), R.string.customer_edit_barcode_exists_error_msg, Toast.LENGTH_LONG).show();
         }
 
     };
