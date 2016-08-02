@@ -1,7 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_kitchen" />
+
+            <Spinner
+                android:id="@+id/kitchen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_marginLeft="@dimen/table_margin"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_kitchen" />
+
+            <Spinner
+                android:id="@+id/kds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+    </TableLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/table_margin" />
 
 </LinearLayout>

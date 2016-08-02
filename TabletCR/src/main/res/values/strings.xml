@@ -446,12 +446,13 @@
     <string name="item_activity_active">Active:</string>
     <string name="item_activity_notes">Notes:</string>
     <string name="item_activity_kitchen">Kitchen:</string>
+    <string name="item_activity_kds">KDS:</string>
     <string name="item_activity_supplier">Supplier:</string>
     <string name="item_activity_modifiers">Modifiers (%d):</string>
     <string name="item_activity_optionals">No-Options (%d):</string>
     <string name="item_activity_addons">Add-ons (%d):</string>
     <string name="item_activity_minimum_qty">Minimum quantity:</string>
-    <string name="item_activity_recommended_qty">Recommended quantity:</string>
+    <string name="item_activity_recommended_qty">Recommended\nquantity:</string>
     <string name="item_activity_available_quantity">Available quantity:</string>
     <string name="item_activity_stock_tracking">Stock tracking:</string>
     <string name="item_activity_sales_price">Sales Price:</string>
@@ -461,6 +462,13 @@
     <string name="item_activity_discount_amount">Discount:</string>
     <string name="item_activity_taxable">Taxable:</string>
     <string name="item_activity_cost">Cost:</string>
+    <string name="item_activity_monitoring">Monitoring:</string>
+    <string name="item_activity_time_based_pricing">Time Based Pricing</string>
+    <string name="item_activity_price_level_1">Price Level 1:</string>
+    <string name="item_activity_price_level_2">Price Level 2:</string>
+    <string name="item_activity_price_level_3">Price Level 3:</string>
+    <string name="item_activity_price_level_4">Price Level 4:</string>
+    <string name="item_activity_price_level_5">Price Level 5:</string>
     <string name="tax_group_dialog_msg">Please select 1 or 2 tax groups</string>
     <string name="item_activity_button_view">Button view:</string>
     <string name="item_activity_ebt_eligible">EBT eligible:</string>
@@ -1184,6 +1192,9 @@
     <string-array name="item_tabs">
         <item>Price</item>
         <item>Additional Information</item>
+        <item>Printer/KDS</item>
+        <item>Monitoring</item>
+        <item>Special Pricing</item>
     </string-array>
 
     <string name="report_details_menu_email">Send by email</string>

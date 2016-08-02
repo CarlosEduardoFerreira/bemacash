@@ -59,6 +59,16 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     protected void setViews() {
         departmentAdapter = new DepartmentSpinnerAdapter(getActivity());
         department.setAdapter(departmentAdapter);
+        /*department.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                getModel().departmentGuid = departmentAdapter.getGuid(position);
+                getLoaderManager().restartLoader(CATEGORY_LOADER_ID, null, ItemCommonInformationFragment.this);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });*/
 
         categoryAdapter = new CategorySpinnerAdapter(getActivity());
         category.setAdapter(categoryAdapter);
@@ -92,7 +102,6 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
 
     private void initLoaders() {
         getLoaderManager().initLoader(DEPARTMENT_LOADER_ID, null, this);
-        getLoaderManager().initLoader(CATEGORY_LOADER_ID, null, this);
         getLoaderManager().initLoader(TAX_GROUP_LOADER_ID, null, this);
     }
 
@@ -134,12 +143,18 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         switch (loader.getId()){
             case DEPARTMENT_LOADER_ID:
                 departmentAdapter.changeCursor(data);
+                if (getModel().departmentGuid != null)
+                    department.setSelection(departmentAdapter.getPosition4Id(getModel().departmentGuid));
                 break;
             case CATEGORY_LOADER_ID:
                 categoryAdapter.changeCursor(data);
+                if (getModel().categoryId != null)
+                    category.setSelection(categoryAdapter.getPosition4Id(getModel().categoryId));
                 break;
             case TAX_GROUP_LOADER_ID:
                 taxGroupAdapter.changeCursor(data);
+                if (getModel().taxGroupGuid != null)
+                    taxGroup.setSelection(taxGroupAdapter.getPosition4Id(getModel().taxGroupGuid));
                 break;
         }
     }

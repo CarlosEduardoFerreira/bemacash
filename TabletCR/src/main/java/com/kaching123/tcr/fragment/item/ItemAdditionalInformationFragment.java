@@ -32,6 +32,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import static com.kaching123.tcr.fragment.UiHelper.getDecimalValue;
 import static com.kaching123.tcr.fragment.UiHelper.showIntegralInteger;
 
 /**
@@ -79,6 +80,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
             unitsType.setSelection(model.codeType.ordinal() + 1);
         buttonView.getBackground().setLevel(model.btnView);
         showIntegralInteger(bonusPoints, model.loyaltyPoints);
+        excludeFromLoyaltyPlan.setChecked(model.excludeFromLoyaltyPlan);
     }
 
     @Override
@@ -87,6 +89,9 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         model.eanCode = eanUpc.getText().toString();
         model.productCode = productCode.getText().toString();
         model.unitsLabelId = ((UnitLabelModel)unitsType.getSelectedItem()).getGuid();
+        model.btnView = buttonView.getBackground().getLevel();
+        model.loyaltyPoints = getDecimalValue(bonusPoints);
+        model.excludeFromLoyaltyPlan = excludeFromLoyaltyPlan.isChecked();
     }
 
     @Click
@@ -118,9 +123,8 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         @Override
         public void onLoadFinished(Loader<List<UnitLabelModel>> loader, List<UnitLabelModel> data) {
             unitsLabelAdapter.changeCursor(data);
-            String unitLabelId;
-            if ((unitLabelId = getModel().unitsLabelId) != null){
-                int position = unitsLabelAdapter.getPositionById(unitLabelId);
+            if (getModel().unitsLabelId != null){
+                int position = unitsLabelAdapter.getPositionById(getModel().unitsLabelId);
                 if (position != AdapterView.INVALID_POSITION)
                     unitsLabel.setSelection(position);
             }
