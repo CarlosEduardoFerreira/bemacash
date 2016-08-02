@@ -14,73 +14,19 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"/>
 
-    <HorizontalScrollView
-        android:id="@+id/tabs_container"
+    <com.kaching123.tcr.component.slidingtab.SlidingTabLayout
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/common_information_fragment"
-        android:layout_marginTop="26dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.kaching123.tcr.component.slidingtab.SlidingTabLayout
-                android:id="@+id/tabs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/common_information_fragment"/>
-
-            <TextView
-                android:id="@+id/btn1"
-                android:text="Button 1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="28sp"
-                android:layout_marginLeft="20dp"/>
-
-            <TextView
-                android:id="@+id/btn2"
-                android:text="Button 2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="28sp"
-                android:layout_marginLeft="20dp"/>
-
-            <TextView
-                android:id="@+id/btn3"
-                android:text="Button 3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="28sp"
-                android:layout_marginLeft="20dp"/>
-            <TextView
-                android:id="@+id/btn4"
-                android:text="Button 4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="28sp"
-                android:layout_marginLeft="20dp"/>
-
-            <TextView
-                android:id="@+id/btn5"
-                android:text="Button 5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="28sp"
-                android:layout_marginLeft="20dp"/>
-
-        </LinearLayout>
-
-    </HorizontalScrollView>
+        android:layout_below="@id/common_information_fragment"
+        android:layout_marginTop="26dp"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
         android:layout_marginTop="20dp"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_below="@id/tabs_container"
+        android:layout_below="@id/tabs"
         android:layout_above="@+id/btn_save">
     </android.support.v4.view.ViewPager>
 
