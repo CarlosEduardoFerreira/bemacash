@@ -95,4 +95,27 @@
     <color name = "prepaid_instruction_blue_bg">#d9e7f5</color>
     <color name = "prepaid_transparent_bg">#00000000</color>
 
+    <color name = "addon_grey">#929292</color>
+    <color name = "addon_0">#CE2828</color>
+    <color name = "addon_15">#C85126</color>
+    <color name = "addon_30">#C97E27</color>
+    <color name = "addon_45">#C8A227</color>
+    <color name = "addon_60">#CFCF2A</color>
+    <color name = "addon_75">#A8CE29</color>
+    <color name = "addon_105">#56CE29</color>
+    <color name = "addon_140">#27CC62</color>
+    <color name = "addon_155">#28CB8E</color>
+    <color name = "addon_170">#27C9B0</color>
+    <color name = "addon_185">#29C2CE</color>
+    <color name = "addon_200">#2798CC</color>
+    <color name = "addon_215">#1C5EB2</color>
+    <color name = "addon_250">#341CAE</color>
+    <color name = "addon_265">#5C1CAF</color>
+    <color name = "addon_280">#801CAE</color>
+    <color name = "addon_295">#A41BB0</color>
+    <color name = "addon_310">#B01B98</color>
+    <color name = "addon_325">#B21C77</color>
+    <color name = "addon_340">#AC1A4C</color>
+    <color name = "addon_355">#AE1C27</color>
+
 </resources>

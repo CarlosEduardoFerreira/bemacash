@@ -200,5 +200,6 @@
     <dimen name="inventory_item_edit_activity_padding_right">65dp</dimen>
     <dimen name="inventory_matrix_item_padding_right">16dp</dimen>
     <dimen name="variant_item_padding">16dp</dimen>
+    <dimen name="category_circle_size">68dp</dimen>
 
 </resources>

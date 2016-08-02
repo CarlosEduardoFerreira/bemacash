@@ -230,24 +230,15 @@ public class CategoriesDialog extends StyledDialogFragment {
         String[] electronicsCategoryImages = getResources().getStringArray(R.array.category_group_electronics);
         String generalCategoryGroup = getString(R.string.category_group_general);
         String[] generalCategoryImages = getResources().getStringArray(R.array.category_group_general);
+        String colorsCategoryGroup = getString(R.string.category_group_colors);
+        String[] colorsCategoryImages = getResources().getStringArray(R.array.category_group_colors);
 
-        categoryGroupsMap.put(foodCategoryGroup, new LinkedHashSet<String>(Arrays.asList(foodCategoryImages)));
-        categoryGroupsMap.put(beverageCategoryGroup, new LinkedHashSet<String>(Arrays.asList(beverageCategoryImages)));
-        categoryGroupsMap.put(clothingCategoryGroup, new LinkedHashSet<String>(Arrays.asList(clothingCategoryImages)));
-        categoryGroupsMap.put(electronicsCategoryGroup, new LinkedHashSet<String>(Arrays.asList(electronicsCategoryImages)));
-        categoryGroupsMap.put(generalCategoryGroup, new LinkedHashSet<String>(Arrays.asList(generalCategoryImages)));
-
-        /*LinkedHashSet<String> imageFiles = new LinkedHashSet<String>();
-        try {
-            List<String> files = Arrays.asList(getActivity().getAssets().list("image/category"));
-            for (String str : files) {
-                if (str.endsWith(EXT)) {
-                    imageFiles.add(str.substring(0, str.lastIndexOf(EXT)));
-                }
-            }
-        } catch (IOException e) {
-            Logger.e("CategoriesDialog: load images file list failed", e);
-        }*/
+        categoryGroupsMap.put(foodCategoryGroup, new LinkedHashSet<>(Arrays.asList(foodCategoryImages)));
+        categoryGroupsMap.put(beverageCategoryGroup, new LinkedHashSet<>(Arrays.asList(beverageCategoryImages)));
+        categoryGroupsMap.put(clothingCategoryGroup, new LinkedHashSet<>(Arrays.asList(clothingCategoryImages)));
+        categoryGroupsMap.put(electronicsCategoryGroup, new LinkedHashSet<>(Arrays.asList(electronicsCategoryImages)));
+        categoryGroupsMap.put(generalCategoryGroup, new LinkedHashSet<>(Arrays.asList(generalCategoryImages)));
+        categoryGroupsMap.put(colorsCategoryGroup, new LinkedHashSet<>(Arrays.asList(colorsCategoryImages)));
 
         LinkedHashMap<String, Integer> imageHeadersMap = new LinkedHashMap<String, Integer>();
         ArrayList<String> sortedImages = new ArrayList<String>();
@@ -492,6 +483,7 @@ public class CategoriesDialog extends StyledDialogFragment {
 
             ViewHolder holder = new ViewHolder();
             holder.image = (ImageView) convertView.findViewById(R.id.image);
+            holder.parent = (ViewGroup) convertView.findViewById(R.id.parent);
 
             convertView.setTag(holder);
 
@@ -506,12 +498,16 @@ public class CategoriesDialog extends StyledDialogFragment {
             if (i == null)
                 return convertView;
 
-            int drawableResourceId = 0;
-            if (!TextUtils.isEmpty(i)) {
-                drawableResourceId = getContext().getResources().getIdentifier(i, "drawable", getContext().getPackageName());
+            Integer level = getLevel(item);
+            if (level != null){
+                holder.image.setImageDrawable(null);
+                holder.image.getBackground().setLevel(level);
+            }else{
+                int drawableResourceId = getContext().getResources().getIdentifier(i, "drawable", getContext().getPackageName());
+                holder.image.setImageResource(drawableResourceId == 0 ? R.drawable.categories_placeholder : drawableResourceId);
+                holder.image.getBackground().setLevel(0);
             }
-            holder.image.setImageResource(drawableResourceId == 0 ? R.drawable.categories_placeholder : drawableResourceId);
-            //Picasso.with(getContext()).load(getContext().getString(R.string.config_value_img_category) + i + EXT).into(holder.image);
+
             if (selected == position) {
                 convertView.setActivated(true);
             } else {
@@ -595,12 +591,20 @@ public class CategoriesDialog extends StyledDialogFragment {
 
         private class ViewHolder {
             ImageView image;
+            ViewGroup parent;
         }
 
         private class HeaderViewHolder {
             TextView label;
         }
 
+        private static Integer getLevel(String str){
+            try{
+                return Integer.parseInt(str);
+            } catch(NumberFormatException nfe){
+                return null;
+            }
+        }
     }
 
     public static void show(FragmentActivity activity, CategoryModel model, BaseAddCategoryCallback callback) {
