@@ -38,14 +38,14 @@
 
         <FrameLayout
             android:id="@+id/dashboard"
-            android:layout_marginLeft="@dimen/edit_item_table_margin_left"
+            android:layout_marginLeft="@dimen/edit_item_table_margin"
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"/>
 
         <FrameLayout
             android:id="@+id/system"
-            android:layout_marginLeft="@dimen/edit_item_table_margin_left"
+            android:layout_marginLeft="@dimen/edit_item_table_margin"
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"/>

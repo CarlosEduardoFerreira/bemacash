@@ -86,7 +86,11 @@
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.DarkSpinner" />
-
+        <activity
+            android:name=".activity.BaseItemActivity2_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.EditItemActivity_"
             android:label="@string/inventory_activity_label"

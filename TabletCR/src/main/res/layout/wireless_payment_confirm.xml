@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="366dp">
+        android:layout_marginLeft="250dp">
 
         <TextView
             android:id="@+id/text"
@@ -25,7 +25,7 @@
         <LinearLayout
             android:id="@+id/layout1"
             android:layout_below="@+id/text"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -38,7 +38,7 @@
 
             <TextView
                 android:id="@+id/product_name"
-                android:layout_marginLeft="160dp"
+                android:layout_marginLeft="100dp"
                 android:layout_width="300dp"
                 android:layout_marginTop="45dp"
                 android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
         <TextView
             android:layout_below="@+id/layout1"
             android:id="@+id/text2"
-            android:layout_width="3500dp"
+            android:layout_width="350dp"
             android:layout_gravity="left"
             android:layout_marginLeft="30dp"
             android:layout_height="wrap_content"
@@ -58,7 +58,6 @@
         <LinearLayout
             android:layout_below="@+id/text2"
             android:id="@+id/layout2"
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -80,6 +79,27 @@
         <LinearLayout
             android:layout_below="@+id/layout2"
             android:id="@+id/linear_layout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_marginLeft="30dp"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:text="@string/prepaid_wireless_payment_complete_product_transaction_fee"
+                style="@style/Prepaid.body.Text" />
+
+            <TextView
+                android:id="@+id/fee_amount_shows"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                style="@style/Prepaid.body.Text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_below="@+id/linear_layout3"
+            android:id="@+id/linear_layout4"
             android:visibility="gone"
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
@@ -101,9 +121,8 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_below="@+id/linear_layout3"
+            android:layout_below="@+id/linear_layout4"
             android:id="@+id/layout4"
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">

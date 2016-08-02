@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_ean_upc_code" />
+
+            <EditText
+                android:id="@+id/ean_upc"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_product_code" />
+
+            <EditText
+                android:id="@+id/product_code"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_units_label" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/units_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    style="@style/LocalizableButton.Green"
+                    android:background="@drawable/save_btn_bg"
+                    android:id="@+id/units_button"
+                    android:layout_width="@dimen/inventory_item_activity_units_button_width"
+                    android:layout_height="@dimen/inventory_item_activity_units_button_height"
+                    android:text="+" />
+
+            </LinearLayout>
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_marginLeft="@dimen/table_margin"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label.Required"
+                android:text="@string/item_activity_unit_type" />
+
+            <Spinner
+                android:id="@+id/units_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_reference_item" />
+
+            <TextView
+                android:id="@+id/reference_item"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_button_view" />
+
+            <FrameLayout>
+                <View
+                    android:id="@+id/button_view"
+                    android:layout_alignParentRight="true"
+                    android:clickable="true"
+                    android:layout_width="@dimen/quick_item_view_width"
+                    android:layout_height="@dimen/quick_item_view_width"
+                    android:background="@drawable/quick_item_bg"/>
+            </FrameLayout>
+
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_marginLeft="@dimen/table_margin"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_ebt_eligible" />
+
+            <CheckBox
+                android:id="@+id/ebt_eligible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/checkbox_mint"
+                android:checked="true"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_bonus_points" />
+
+            <EditText
+                android:id="@+id/bonus_points"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_exclude_from_loyalty_plan" />
+
+            <CheckBox
+                android:id="@+id/exclude_from_loyalty_plan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/checkbox_mint"/>
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>

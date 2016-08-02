@@ -32,10 +32,7 @@ import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.BaseIm
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.ImportType;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.WrongImportInfo;
 import com.kaching123.tcr.commands.store.inventory.UpdateDeletedItemCommand;
-import com.kaching123.tcr.ecuador.AddEcuadorItemActivity;
 import com.kaching123.tcr.ecuador.AddEcuadorReferenceItemActivity;
-import com.kaching123.tcr.ecuador.EditEcuadorItemActivity;
-import com.kaching123.tcr.ecuador.EditEcuadorReferenceItemActivity;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
@@ -54,6 +51,7 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
+import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 
@@ -167,7 +165,8 @@ public class InventoryActivity extends ScannerBaseActivity {
         itemsFragment.setListener(new BaseItemsPickFragment.IItemListener() {
             @Override
             public void onItemSelected(long id, ItemExModel model) {
-                switch (model.refType) {
+                BaseItemActivity2.start(self(), model, StartMode.EDIT);
+                /*switch (model.refType) {
                     case Simple:
                         if (TcrApplication.isEcuadorVersion()) {
                             EditEcuadorItemActivity.start(InventoryActivity.this, model);
@@ -188,7 +187,7 @@ public class InventoryActivity extends ScannerBaseActivity {
                         } else {
                             EditItemActivity.start(InventoryActivity.this, model);
                         }
-                }
+                }*/
             }
         });
 
@@ -300,11 +299,13 @@ public class InventoryActivity extends ScannerBaseActivity {
         model.categoryId = selectedCategoryGuid;
         model.departmentGuid = selectedDeartmentGuid;
 
-        if (TcrApplication.isEcuadorVersion()) {
+        BaseItemActivity2.start(self(), model, StartMode.EDIT);
+
+        /*if (TcrApplication.isEcuadorVersion()) {
             AddEcuadorItemActivity.start(InventoryActivity.this, model);
         } else {
             AddItemActivity.start(InventoryActivity.this, model);
-        }
+        }*/
     }
 
     private boolean inventoryLimitReached() {

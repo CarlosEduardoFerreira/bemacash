@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_discountable" />
+
+            <CheckBox
+                android:id="@+id/discountable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/checkbox_mint"
+                android:checked="true"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_discount_type" />
+
+            <Spinner
+                android:id="@+id/discount_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_discount_amount" />
+
+            <EditText
+                android:id="@+id/discount"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_marginLeft="@dimen/table_margin"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label.Required"
+                android:text="@string/item_activity_discount_type" />
+
+            <Spinner
+                android:id="@+id/price_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_taxable" />
+
+            <CheckBox
+                android:id="@+id/taxable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/checkbox_mint"
+                android:checked="true"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_cost" />
+
+            <EditText
+                android:id="@+id/cost"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_marginLeft="@dimen/table_margin"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_commissions_eligible_label" />
+
+            <CheckBox
+                android:id="@+id/commission_eligible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/checkbox_mint"
+                android:checked="true"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_commissions_label" />
+
+            <EditText
+                android:id="@+id/commission"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_salable" />
+
+            <CheckBox
+                android:id="@+id/for_sale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/checkbox_mint"
+                android:checked="true"/>
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

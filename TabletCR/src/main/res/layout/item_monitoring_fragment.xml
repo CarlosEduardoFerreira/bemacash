@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_monitoring"
+                android:textStyle="bold"
+                android:textSize="20sp"/>
+
+            <CheckBox
+                android:id="@+id/monitoring"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/checkbox_mint"
+                android:checked="true"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_available_quantity" />
+
+            <EditText
+                android:id="@+id/available_qty"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_minimum_qty" />
+
+            <EditText
+                android:id="@+id/minimum_qty"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
+        </TableRow>
+
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_recommended_qty" />
+
+            <EditText
+                android:id="@+id/recommended_qty"
+                style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
+        </TableRow>
+    </TableLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/table_margin" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/table_margin" />
+
+</LinearLayout>
