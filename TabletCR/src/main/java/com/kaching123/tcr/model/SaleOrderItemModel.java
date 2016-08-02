@@ -47,6 +47,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public boolean hasNotes;
     public boolean isPrepaidItem;
     public BigDecimal loyaltyPoints;
+    public boolean pointsForDollarAmount;
 
     public SaleOrderItemModel(String saleItemGuid) {
         this.saleItemGuid = saleItemGuid;
@@ -62,7 +63,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               String notes,
                               boolean hasNotes,
                               boolean isPrepaidItem,
-                              BigDecimal loyaltyPoints) {
+                              BigDecimal loyaltyPoints,
+                              boolean pointsForDollarAmount) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -86,6 +88,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.kitchenPrintedQty = kitchenPrintedQty;
         this.isPrepaidItem = isPrepaidItem;
         this.loyaltyPoints = loyaltyPoints;
+        this.pointsForDollarAmount = pointsForDollarAmount;
     }
 
     public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description,
@@ -99,7 +102,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               String notes,
                               boolean hasNotes,
                               boolean isPrepaidItem,
-                              BigDecimal loyaltyPoints) {
+                              BigDecimal loyaltyPoints,
+                              boolean pointsForDollarAmount) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -124,6 +128,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.kitchenPrintedQty = kitchenPrintedQty;
         this.isPrepaidItem = isPrepaidItem;
         this.loyaltyPoints = loyaltyPoints;
+        this.pointsForDollarAmount = pointsForDollarAmount;
     }
 
     @Override
@@ -159,6 +164,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         values.put(SaleItemTable.HAS_NOTES, hasNotes);
         values.put(SaleItemTable.IS_PREPAID_ITEM, isPrepaidItem);
         values.put(SaleItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
+        values.put(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT, pointsForDollarAmount);
 
         return values;
     }

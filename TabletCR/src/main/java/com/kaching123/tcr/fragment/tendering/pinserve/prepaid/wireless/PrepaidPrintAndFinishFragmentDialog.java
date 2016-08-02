@@ -3,6 +3,7 @@ package com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless;
 import android.support.v4.app.FragmentActivity;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.print.digital.SendDigitalPrepaidOrderCommand;
 import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
@@ -48,13 +49,19 @@ public class PrepaidPrintAndFinishFragmentDialog extends PayPrintAndFinishFragme
     }
 
     @Override
-    protected void sendDigitalOrder() {
+    protected void chooseCustomer() {
         PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new emailSenderListener() {
             @Override
             public void onComplete() {
                 listener.onConfirmed();
             }
         });
+    }
+
+    @Override
+    protected void sendDigitalOrder() {
+        SendDigitalPrepaidOrderCommand.start(getActivity(), orderGuid, customer.email, info, null);
+        listener.onConfirmed();
     }
 
     public static void show(FragmentActivity context,

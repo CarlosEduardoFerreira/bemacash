@@ -21,6 +21,7 @@ import org.androidannotations.annotations.res.ColorRes;
 
 import java.math.BigDecimal;
 
+import static com.kaching123.tcr.fragment.UiHelper.integralIntegerFormat;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 
 @EFragment(R.layout.saleorder_total_cost_fragment)
@@ -139,8 +140,12 @@ public class TotalCostFragment extends Fragment {
         if (customer == null){
             customerLabel.setText(null);
         }else{
-            customerLabel.setText(String.format("%s\n%s pts", customer.getFullName(), customer.loyaltyPoints.toString()));
+            customerLabel.setText(String.format("%s\n%s pts", customer.getFullName(), integralIntegerFormat(customer.loyaltyPoints)));
         }
+    }
+
+    public void setCustomerButtonEnabled(boolean enabled){
+        btnCustomer.setEnabled(enabled);
     }
 
     private void updateClickable(boolean clickable) {

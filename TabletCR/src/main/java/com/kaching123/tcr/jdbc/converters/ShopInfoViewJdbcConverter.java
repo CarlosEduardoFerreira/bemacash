@@ -121,6 +121,7 @@ public class ShopInfoViewJdbcConverter {
     private static final String BLACKSTONE_PREPAID_SOLUTION  = "BLACKSTONE_PREPAID_SOLUTION";
     
     private static final String DEFAULT_LOYALTY_PLAN_ID = "DEFAULT_LOYALTY_PLAN";
+    private static final String LOYALTY_POINTS_FOR_DOLLAR_AMOUNT = "PRICE_POINTS_ENABLED";
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
@@ -193,7 +194,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED),
                 rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE),
                 rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION),
-                rs.getString(DEFAULT_LOYALTY_PLAN_ID));
+                rs.getString(DEFAULT_LOYALTY_PLAN_ID),
+                rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT));
     }
 
     public static ShopInfo read(JdbcJSONObject rs) throws JSONException {
@@ -267,7 +269,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED),
                 rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE),
                 rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION ),
-                rs.getString(DEFAULT_LOYALTY_PLAN_ID));
+                rs.getString(DEFAULT_LOYALTY_PLAN_ID),
+                rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT));
     }
 
     public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException {
@@ -340,47 +343,29 @@ public class ShopInfoViewJdbcConverter {
 
         public final boolean commissionControl;
         public final BigDecimal defaultStoreCommission;
-
         public final String defUnitLabelShortcut;
         public final String defUnitLabelDescription;
-
         public final int offlinePeriodHours;
-
         public final boolean printerTwoCopiesReceipt;
-
         public final int printReceiptTwice;
-
         public final boolean printDetailReceipt;
-
         public final long inventoryLimit;
-
         public final long updateCheckTimer;
-
         public final boolean printDropOrPayout;
-
         public final boolean enableEreportDepartSale;
-
         public final boolean enableEreportItemSale;
-
         public final String ivulotoMid;
-
         public final String terminalID;
-
         public final String terminalPassword;
-
         public final boolean removeCheckAndOfflineCredit;
-
         public final long planId;
-
         public final long countryId;
-
         public final boolean customerPopupScreenEnabled;
-
         public final String customerPopupScreenMessage;
-
         public final boolean blackStonePRepaidSolution;
-        
         public final String defaultLoyaltyPlanId;
+        public final boolean loyaltyPointsForDollarAmount;
+
 
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
@@ -446,7 +431,8 @@ public class ShopInfoViewJdbcConverter {
                         long countryId,
                         boolean customerPopupScreenEnabled,
                         String customerPopupScreenMessage,
-                        boolean blackStonePRepaidSolution, String defaultLoyaltyPlanId) {
+                        boolean blackStonePRepaidSolution, String defaultLoyaltyPlanId,
+                        boolean loyaltyPointsForDollarAmount) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -538,6 +524,7 @@ public class ShopInfoViewJdbcConverter {
             this.blackStonePRepaidSolution = blackStonePRepaidSolution;
             
             this.defaultLoyaltyPlanId = defaultLoyaltyPlanId;
+            this.loyaltyPointsForDollarAmount = loyaltyPointsForDollarAmount;
         }
 
     }

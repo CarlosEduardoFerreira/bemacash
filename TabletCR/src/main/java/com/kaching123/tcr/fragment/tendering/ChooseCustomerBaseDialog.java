@@ -64,6 +64,9 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
     @ViewById
     protected EditText customerFilter;
 
+    @ViewById(android.R.id.empty)
+    protected TextView emptyView;
+
     protected ResourceCursorAdapter adapter;
 
     @FragmentArg
@@ -134,11 +137,12 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     protected void setupAdapter() {
         listView.setAdapter(adapter = new CustomerAdapter(getActivity()));
+        listView.setEmptyView(emptyView);
     }
 
     protected ChooseCustomerBaseDialog setListener(emailSenderListener listener) {
         this.listener = listener;
-        return (ChooseCustomerBaseDialog) this;
+        return this;
     }
 
     @ItemClick(android.R.id.list)
@@ -191,6 +195,7 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+//        emptyView.setVisibility(cursor == null || cursor.getCount() == 0 ? View.VISIBLE : View.GONE);
         adapter.changeCursor(cursor);
     }
 
@@ -219,7 +224,12 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_CUSTOMER_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             CustomerModel model = (CustomerModel) data.getSerializableExtra(EditCustomerActivity.EXTRA_CUSTOMER);
-            customerFilter.setText(model.email);
+            if (!TextUtils.isEmpty(model.email))
+                customerFilter.setText(model.email);
+            else if (!TextUtils.isEmpty(model.loyaltyBarcode))
+                customerFilter.setText(model.loyaltyBarcode);
+            else if (!TextUtils.isEmpty(model.lastName))
+                customerFilter.setText(model.lastName);
         }
     }
 

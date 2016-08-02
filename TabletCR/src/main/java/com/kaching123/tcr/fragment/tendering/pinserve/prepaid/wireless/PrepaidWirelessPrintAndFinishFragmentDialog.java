@@ -9,12 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.PrepaidReceiptAdapter;
+import com.kaching123.tcr.commands.print.digital.SendDigitalPrepaidOrderCommand;
 import com.kaching123.tcr.commands.print.pos.PrintPrepaidOrderCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -26,6 +23,11 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.IPrePaidInfo;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -142,13 +144,19 @@ public class PrepaidWirelessPrintAndFinishFragmentDialog extends PayPrintAndFini
     }
 
     @Override
-    protected void sendDigitalOrder() {
+    protected void chooseCustomer() {
         PrepaidChooseCustomerDialog.show(getActivity(), orderGuid, info, new emailSenderListener() {
             @Override
             public void onComplete() {
                 listener.onConfirmed();
             }
         });
+    }
+
+    @Override
+    protected void sendDigitalOrder() {
+        SendDigitalPrepaidOrderCommand.start(getActivity(), orderGuid, customer.email, info, null);
+        listener.onConfirmed();
     }
 
     public static void show(FragmentActivity context,

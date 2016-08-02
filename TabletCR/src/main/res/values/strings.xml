@@ -476,7 +476,7 @@
     <string name="item_activity_alert_product_code_error" formatted="false">Product Code can\'t be more than %d symbols</string>
     <string name="item_activity_alert_product_code_msg" formatted="false">Product code should be %d to %d symbols!</string>
     <string name="item_activity_alert_ean_duplicate_msg">Item with such ean is already exists!</string>
-    <string name="item_activity_alert_product_code_duplicate_msg">Item with such product code is already exists!</string>
+    <string name="item_activity_alert_product_code_duplicate_msg">Item with such product code already exists!</string>
     <string name="item_activity_alert_units_label_msg">Units label is empty!</string>
     <string name="item_activity_alert_units_label_not_match_msg">Units label should be PCS, LB or OZ!</string>
     <string name="item_activity_alert_price_empty_msg">Price is empty!</string>
@@ -825,6 +825,7 @@
     <string name="item_commissions_eligible_label">Commission\neligible:</string>
     <string name="item_commissions_label">Commission:</string>
     <string name="item_loyalty_points_label">Loyalty Points:</string>
+    <string name="item_exclude_from_loyalty_plan_label">Exclude From\nLoyalty Plan:</string>
     <string name="sync_wait_msg_tmpl" formatted="false">Sync %s data: %d/%d</string>
     <string name="sync_wait_upload_started">Uploading data...</string>
     <string name="sync_wait_msg_tmpl2" formatted="false">Sync %s data</string>
@@ -1043,6 +1044,7 @@
     <string name="customers_export_error_msg">Can\'t export customers to file.</string>
     <string name="customers_export_success_title">Export succeeded</string>
     <string name="customers_export_success_msg">%d customers were exported</string>
+    <string name="customer_not_found_msg">Can\'t find customer in database.\nDo you want to create one?</string>
     <string name="xreport_chooser_current_shift_sales">Current shift sales</string>
     <string name="xreport_chooser_sale_for_a_day">Sales for а day</string>
     <string name="xreport_chooser_dialog_title">X-Report type</string>
@@ -1318,8 +1320,9 @@
     <string name="customer_edit_email_phone_empty">Please, fill Phone or Email</string>
     <string name="customer_edit_phone_duplicate">The phone number is already in use.</string>
     <string name="customer_edit_error_msg">Can\'t save customer. Please try again!</string>
-    <string name="customer_edit_email_exists_error_msg">Can\'t save customer. Customer with such email or phone already exists</string>
-    <string name="customer_edit_phone_exists_error_msg">Can\'t save customer. Customer with such phone already exists</string>
+    <string name="customer_edit_email_exists_error_msg">Customer with such email already exists</string>
+    <string name="customer_edit_phone_exists_error_msg">Customer with such phone already exists</string>
+    <string name="customer_edit_barcode_exists_error_msg">Customer with such barcode already exists</string>
     <string name="customer_delete_dialog_title">Delete customer</string>
     <string name="customer_delete_dialog_message">Are you sure you want to delete this customer?</string>
     <string name="customer_delete_dialog_error_message">Can\'t delete customer. Please try again!</string>

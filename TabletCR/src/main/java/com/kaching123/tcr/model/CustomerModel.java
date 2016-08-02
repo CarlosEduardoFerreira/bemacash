@@ -36,6 +36,7 @@ public class CustomerModel implements IValueModel, Serializable {
     public String phone;
     public boolean sex;
     public Date birthday;
+    public Date birthdayRewardApplyDate;
     public Date createTime;
     public boolean consentPromotions;
     public String notes;
@@ -64,14 +65,14 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.PHONE)),
                 _bool(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.SEX)),
                 _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.BIRTHDAY)),
+                _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.BIRTHDAY_REWARD_APPLY_DATE)),
                 _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.CREATE_TIME)),
                 _bool(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.CONSENT_PROMOTIONS)),
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.NOTES)),
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.CUSTOMER_IDENTIFICATION)),
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_PLAN_ID)),
                 _decimal(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.TMP_LOYALTY_POINTS)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_BARCODE))
-        );
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_BARCODE)));
     }
 
     public CustomerModel(Cursor cursor) {
@@ -88,18 +89,19 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(CustomerTable.PHONE)),
                 _bool(cursor, cursor.getColumnIndex(CustomerTable.SEX)),
                 _nullableDate(cursor, cursor.getColumnIndex(CustomerTable.BIRTHDAY)),
+                _nullableDate(cursor, cursor.getColumnIndex(CustomerTable.BIRTHDAY_REWARD_APPLY_DATE)),
                 _nullableDate(cursor, cursor.getColumnIndex(CustomerTable.CREATE_TIME)),
                 _bool(cursor, cursor.getColumnIndex(CustomerTable.CONSENT_PROMOTIONS)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.NOTES)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.CUSTOMER_IDENTIFICATION)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_PLAN_ID)),
-                _decimal(cursor, cursor.getColumnIndex(CustomerTable.TMP_LOYALTY_POINTS)),
-                cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)));
+                _decimal(cursor, cursor.getColumnIndex(CustomerTable.TMP_LOYALTY_POINTS)), cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)));
     }
 
     public CustomerModel(String guid, String firstName, String lastName, String street,
                          String complementary, String city, String state, String country,
-                         String zip, String email, String phone, boolean sex, Date birthday, Date createTime,
+                         String zip, String email, String phone, boolean sex, Date birthday,
+                         Date birthdayRewardApplyDate, Date createTime,
                          boolean consentPromotions, String notes, String customerIdentification,
                          String loyaltyPlanId, BigDecimal loyaltyPoints, String loyaltyBarcode) {
         this.firstName = firstName;
@@ -115,6 +117,7 @@ public class CustomerModel implements IValueModel, Serializable {
         this.phone = phone;
         this.sex = sex;
         this.birthday = birthday;
+        this.birthdayRewardApplyDate = birthdayRewardApplyDate;
         this.createTime = createTime;
         this.consentPromotions = consentPromotions;
         this.notes = notes;

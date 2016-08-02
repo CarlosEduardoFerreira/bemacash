@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.kaching123.tcr.fragment.UiHelper.integerFormat;
+import static com.kaching123.tcr.fragment.UiHelper.integralIntegerFormat;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
@@ -233,10 +233,10 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
     @Override
     protected void printFooter(TcrApplication app, ITextPrinter printerWrapper) {
         if (orderInfo.customerLoyaltyPoints != null){
-            printerWrapper.header("Total Bonus Points Available", integerFormat(orderInfo.customerLoyaltyPoints));
+            printerWrapper.header("Total Bonus Points Available", integralIntegerFormat(orderInfo.customerLoyaltyPoints));
         }
         if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0){
-            printerWrapper.header("Bonus Points on this Sale", integerFormat(orderInfo.earnedLoyaltyPoints));
+            printerWrapper.header("Bonus Points on this Sale", integralIntegerFormat(orderInfo.earnedLoyaltyPoints));
         }
         super.printFooter(app, printerWrapper);
     }

@@ -63,7 +63,8 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 null,
                 null,
                 null,
-                null
+                null,
+                false
         );
 
         String shortCut;
@@ -115,7 +116,8 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 null,
                 null,
                 null,
-                null
+                null,
+                false
         );
 
         return new ComposerExModel(

@@ -21,7 +21,6 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
-import com.kaching123.tcr.util.CalculationUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -175,6 +174,7 @@ public final class OrderTotalPriceCursorQuery {
             final BigDecimal itemDiscount = getSubTotal(itemQty, itemModel.finalDiscount);
             final BigDecimal itemTax = !taxable ? BigDecimal.ZERO : getSubTotal(itemQty, itemModel.finalTax);
             final BigDecimal singleItemPrice = itemModel.finalGrossPrice.add(itemModel.finalTax).subtract(itemModel.finalDiscount);
+            final BigDecimal itemLoyaltyPoints = itemModel.pointsForDollarAmount ? getSubTotal(itemQty, itemModel.finalGrossPrice.subtract(itemModel.finalDiscount)) : getSubTotal(itemQty, itemModel.loyaltyPoints);
 
             final TaxGroupModel model1 = item.taxGroup1;
             if (!TextUtils.isEmpty(model1.getGuid())) {
@@ -227,7 +227,7 @@ public final class OrderTotalPriceCursorQuery {
             totalSubtotal = totalSubtotal.add(itemSubtotal);
             totalDiscount = totalDiscount.add(itemDiscount);
             totalTax = totalTax.add(!taxable ? BigDecimal.ZERO :itemTax);
-            totalLoyaltyPoints = totalLoyaltyPoints.add(itemModel.loyaltyPoints == null ? BigDecimal.ZERO : CalculationUtil.getSubTotal(itemQty, itemModel.loyaltyPoints));
+            totalLoyaltyPoints = totalLoyaltyPoints.add(itemLoyaltyPoints);
             List<Unit> units;
             if (childOrderGuid != null) {
                 units = loadUnitItemsForRefund(context, item.itemModel.itemGuid, childOrderGuid);
@@ -240,7 +240,7 @@ public final class OrderTotalPriceCursorQuery {
             handler.handleItem(item.getSaleItemGuid(), item.description,
                     item.unitsLabel, itemModel.priceType,
                     itemQty, itemSubtotal, itemDiscount,
-                    itemTax, singleItemPrice, units, item.modifiers, transactionFee, item.getPrice(), item.getNotes(), model1, model2, itemModel.loyaltyPoints);
+                    itemTax, singleItemPrice, units, item.modifiers, transactionFee, item.getPrice(), item.getNotes(), model1, model2, itemLoyaltyPoints);
         }
 
         handler.handleTotal(totalSubtotal, subtotals, totalDiscount, totalTax, totalLoyaltyPoints, tips, transactionFee, taxes);

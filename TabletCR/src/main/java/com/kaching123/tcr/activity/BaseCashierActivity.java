@@ -163,6 +163,7 @@ import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.util.DateUtils;
@@ -213,6 +214,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_CHECK_ORDER_PAYMENTS = 4;
     private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 5;
     private static final int LOADER_SEARCH_BARCODE = 10;
+    private static final int LOADER_SALE_INCENTIVES = 12;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
 
@@ -245,6 +247,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private AddSaleOrderCallback addOrderCallback = new AddSaleOrderCallback();
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
+    private SaleIncentivesLoader saleIncentivesLoader = new SaleIncentivesLoader();
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -815,6 +818,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             getSupportLoaderManager().restartLoader(LOADER_ORDER_TITLE, null, orderInfoLoader);
         }
         getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
+        getSupportLoaderManager().restartLoader(LOADER_SALE_INCENTIVES, null, saleIncentivesLoader);
     }
 
     private void updateOrderInfo(SaleOrderModel saleOrderModel, CustomerModel customerModel) {
@@ -1580,7 +1584,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 null,
                 !isCreateReturnOrder && model.hasNotes,
                 isPrepaidItemStart,
-                model.loyaltyPoints);
+                model.isIncentive || model.excludeFromLoyaltyPlan ? BigDecimal.ZERO : model.loyaltyPoints,
+                model.isIncentive || model.excludeFromLoyaltyPlan ? false : getApp().getShopInfo().loyaltyPointsForDollarAmount);
 
         if (unit != null && orderGuid != null) {
             unit.orderId = orderGuid;
@@ -2257,46 +2262,46 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         return isDiscounted;
     }
 
-    private class OrderInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+    private class OrderInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderViewResult> {
 
         @Override
-        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
+        public Loader<SaleOrderViewResult> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(ORDER_VIEW_URI)
                     .where(SaleOrderView2.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-                    .wrap(new Function<Cursor, SaleOrderModelResult>() {
+                    .wrap(new Function<Cursor, SaleOrderViewResult>() {
                         @Override
-                        public SaleOrderModelResult apply(Cursor cursor) {
+                        public SaleOrderViewResult apply(Cursor cursor) {
                             if (!cursor.moveToFirst()){
-                                return new SaleOrderModelResult(null, null);
+                                return new SaleOrderViewResult(null, null);
                             }else{
                                 SaleOrderModel order = SaleOrderModel.fromView(cursor);
                                 CustomerModel customer = null;
                                 if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))){
                                     customer = CustomerModel.fromOrderView(cursor);
                                 }
-                                return new SaleOrderModelResult(order, customer);
+                                return new SaleOrderViewResult(order, customer);
                             }
                         }
                     }).build(BaseCashierActivity.this);
         }
 
         @Override
-        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, SaleOrderModelResult result) {
+        public void onLoadFinished(Loader<SaleOrderViewResult> saleOrderModelLoader, SaleOrderViewResult result) {
             updateOrderInfo(result.order, result.customer);
         }
 
         @Override
-        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
+        public void onLoaderReset(Loader<SaleOrderViewResult> saleOrderModelLoader) {
             updateOrderInfo(null, null);
         }
     }
 
-    private static class SaleOrderModelResult {
+    public static class SaleOrderViewResult {
 
-        private final SaleOrderModel order;
-        private final CustomerModel customer;
+        public final SaleOrderModel order;
+        public final CustomerModel customer;
 
-        private SaleOrderModelResult(SaleOrderModel order, CustomerModel customer) {
+        public SaleOrderViewResult(SaleOrderModel order, CustomerModel customer) {
             this.order = order;
             this.customer = customer;
         }
@@ -2820,6 +2825,27 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
+    private class SaleIncentivesLoader implements LoaderCallbacks<Cursor>{
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(SaleIncentiveTable.URI_CONTENT))
+                    .projection("1")
+                    .where(SaleIncentiveTable.ORDER_ID + " = ?", orderGuid == null ? "" : orderGuid)
+                    .build(self());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            totalCostFragment.setCustomerButtonEnabled(data.getCount() == 0);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+
+        }
+    }
+
     private boolean isVoidNeedPermission() {
         Cursor c = ProviderAction.query(ORDER_URI)
                 .projection(
@@ -2866,10 +2892,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    //    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderModelResult> {
+    //    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderViewResult> {
 //
 //        @Override
-//        public Loader<SaleOrderModelResult> onCreateLoader(int i, Bundle bundle) {
+//        public Loader<SaleOrderViewResult> onCreateLoader(int i, Bundle bundle) {
 //            return CursorLoaderBuilder.forUri(ORDER_URI)
 //                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
 //                    .transform(new Function<Cursor, SaleOrderModel>() {
@@ -2877,20 +2903,20 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //                        public SaleOrderModel apply(Cursor cursor) {
 //                            return new SaleOrderModel(cursor);
 //                        }
-//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderModelResult>() {
+//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderViewResult>() {
 //                        @Override
-//                        public SaleOrderModelResult apply(List<SaleOrderModel> saleOrderModels) {
+//                        public SaleOrderViewResult apply(List<SaleOrderModel> saleOrderModels) {
 //                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
-//                                return new SaleOrderModelResult(null);
+//                                return new SaleOrderViewResult(null);
 //                            } else {
-//                                return new SaleOrderModelResult(saleOrderModels.get(0));
+//                                return new SaleOrderViewResult(saleOrderModels.get(0));
 //                            }
 //                        }
 //                    }).build(BaseCashierActivity.this);
 //        }
 //
 //        @Override
-//        public void onLoadFinished(Loader<SaleOrderModelResult> saleOrderModelLoader, final SaleOrderModelResult saleOrderModel) {
+//        public void onLoadFinished(Loader<SaleOrderViewResult> saleOrderModelLoader, final SaleOrderViewResult saleOrderModel) {
 //            handler.post(new Runnable() {
 //                @Override
 //                public void run() {
@@ -2914,7 +2940,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //        }
 //
 //        @Override
-//        public void onLoaderReset(Loader<SaleOrderModelResult> saleOrderModelLoader) {
+//        public void onLoaderReset(Loader<SaleOrderViewResult> saleOrderModelLoader) {
 //            updateOrderInfo(null);
 //        }
 //    }

@@ -10,10 +10,12 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand;
 import com.kaching123.tcr.commands.loyalty.DeleteOrderIncentivesCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
+import com.kaching123.tcr.commands.store.user.UpdateCustomerBirthdayRewardDateCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.UnitsJdbcConverter;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
+import com.kaching123.tcr.model.LoyaltyType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -60,11 +62,16 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         if (!removeItems())
             return failed();
 
-        if (!removeSaleIncentives())
+        if (!resetCustomerBirthdayRewardDate())
             return failed();
 
-        if (!returnLoyaltyPoints())
+        if (!removeSaleIncentives()) {
             return failed();
+        }
+
+        if (!returnLoyaltyPoints()) {
+            return failed();
+        }
 
         return succeeded();
     }
@@ -118,6 +125,28 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         }finally {
             c.close();
         }
+    }
+
+    private boolean resetCustomerBirthdayRewardDate() {
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(SaleIncentiveTable.URI_CONTENT))
+                .projection(SaleIncentiveTable.CUSTOMER_ID, SaleIncentiveTable.TYPE)
+                .where(SaleIncentiveTable.ORDER_ID + " = ?", orderId)
+                .perform(getContext());
+
+        String customerId = null;
+        while (c.moveToNext()){
+            if (LoyaltyType.valueOf(c.getInt(1)) == LoyaltyType.BIRTHDAY){
+                customerId = c.getString(0);
+                break;
+            }
+        }
+        c.close();
+
+        if (customerId == null)
+            return true;
+        else
+            return new UpdateCustomerBirthdayRewardDateCommand().sync(getContext(), customerId, null, getAppCommandContext());
+
     }
 
     @Override

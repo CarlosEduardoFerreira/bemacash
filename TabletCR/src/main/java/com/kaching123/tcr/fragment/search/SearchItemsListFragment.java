@@ -151,7 +151,8 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 ItemTable.COMMISSION,
                 ItemTable.REFERENCE_ITEM_ID,
                 ItemTable.ITEM_REF_TYPE,
-                ItemTable.LOYALTY_POINTS
+                ItemTable.LOYALTY_POINTS,
+                ItemTable.EXCLUDE_FROM_LOYALTY_PLAN
         };
 
         @Override
@@ -196,7 +197,8 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     _decimal(c, c.getColumnIndex(ItemTable.COMMISSION)),
                     c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
                     ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))),
-                    _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS))
+                    _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS)),
+                    _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN))
             );
         }
     }

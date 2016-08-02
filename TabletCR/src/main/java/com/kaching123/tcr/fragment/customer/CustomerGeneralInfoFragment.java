@@ -24,7 +24,8 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
-import com.kaching123.tcr.fragment.dialog.DatePickerFragment;
+import com.kaching123.tcr.component.DatePickerDialogFragment;
+import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.LoyaltyPlanModel;
 import com.kaching123.tcr.model.Permission;
@@ -41,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.kaching123.tcr.fragment.UiHelper.showInteger;
+import static com.kaching123.tcr.fragment.UiHelper.showIntegralInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPhone;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.DateUtils.dateOnlyFormat;
@@ -52,7 +53,7 @@ import static com.kaching123.tcr.util.PhoneUtil.onlyDigits;
  * Created by vkompaniets on 24.06.2016.
  */
 @EFragment(R.layout.customer_general_info_fragment)
-public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements CustomerView{
+public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements CustomerView, BarcodeReceiver{
 
     @ViewById protected EditText street;
     @ViewById protected EditText street2;
@@ -113,7 +114,7 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
             birthdayDate.setTime(model.birthday);
             birthday.setText(dateOnlyFormat(model.birthday));
         }
-        showInteger(bonusPoints, model.loyaltyPoints);
+        showIntegralInteger(bonusPoints, model.loyaltyPoints);
         loyaltyBarcode.setText(model.loyaltyBarcode);
     }
 
@@ -171,8 +172,8 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         showDatePicker();
     }
 
-    private void showDatePicker() {
-        DatePickerFragment.show(getActivity(), birthdayDate, new OnDateSetListener() {
+    private void showDatePicker(){
+        DatePickerDialogFragment.show(getActivity(), birthdayDate, new OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 birthdayDate.set(year, monthOfYear, dayOfMonth);
@@ -221,6 +222,12 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
             loyaltyPlanAdapter.changeCursor(null);
         }
     };
+
+    @Override
+    public void onBarcodeReceived(String barcode) {
+        if (loyaltyBarcode != null)
+            loyaltyBarcode.setText(barcode);
+    }
 
     private class LoyaltyPlanAdapter extends ObjectsCursorAdapter<LoyaltyPlanModel> {
 

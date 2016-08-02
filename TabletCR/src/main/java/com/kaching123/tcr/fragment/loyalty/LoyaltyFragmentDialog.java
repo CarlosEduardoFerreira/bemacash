@@ -41,6 +41,8 @@ public class LoyaltyFragmentDialog extends StyledDialogFragment {
 
     @AfterViews
     protected void init(){
+        setCancelable(false);
+
         typeLabel.setText(getString(R.string.loyalty_incentive_dialog_type_label, getString(incentive.type.getLabel())));
         rewardLabel.setText(getString(R.string.loyalty_incentive_dialog_reward_label, incentive.name));
     }

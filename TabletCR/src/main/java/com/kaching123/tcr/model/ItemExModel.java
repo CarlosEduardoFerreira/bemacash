@@ -45,6 +45,7 @@ public class ItemExModel extends ItemModel {
 
     public boolean isAComposisiton;
     public boolean isAComposer;
+    public boolean isIncentive;
 
     public ItemExModel() {
         super();
@@ -88,7 +89,8 @@ public class ItemExModel extends ItemModel {
                 null,
                 null,
                 ItemRefType.Simple,
-                null);
+                null,
+                false);
         this.modifiersCount = 0;
         this.addonsCount = 0;
         this.optionalCount = 0;
@@ -147,7 +149,8 @@ public class ItemExModel extends ItemModel {
                        BigDecimal commission,
                        String referenceItemGuid,
                        ItemRefType itemRefType,
-                       BigDecimal loyaltyPoints) {
+                       BigDecimal loyaltyPoints,
+                       boolean excludeFromLoyaltyPlan) {
         super(guid,
                 categoryId,
                 description,
@@ -183,7 +186,8 @@ public class ItemExModel extends ItemModel {
                 commission,
                 referenceItemGuid,
                 itemRefType,
-                loyaltyPoints
+                loyaltyPoints,
+                excludeFromLoyaltyPlan
         );
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;

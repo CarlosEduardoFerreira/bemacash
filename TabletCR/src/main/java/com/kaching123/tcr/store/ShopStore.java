@@ -489,6 +489,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String LOYALTY_POINTS = "loyalty_points";
+
+        @Column(type = Type.INTEGER)
+        String EXCLUDE_FROM_LOYALTY_PLAN = "exclude_from_loyalty_plan";
     }
 
     static {
@@ -818,6 +821,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String LOYALTY_POINTS = "loyalty_points";
+
+        @Column(type = Type.INTEGER)
+        String POINTS_FOR_DOLLAR_AMOUNT = "points_for_dollar_amount";
     }
 
     static {
@@ -1502,6 +1508,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER)
         String BIRTHDAY = "birthday";
+
+        @Column(type = Column.Type.INTEGER)
+        String BIRTHDAY_REWARD_APPLY_DATE = "birthday_reward_apply_date";
 
         @NotNull
         @Column(type = Column.Type.INTEGER)
@@ -3861,6 +3870,9 @@ public abstract class ShopStore {
 
         @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_INCENTIVE_ITEM, onColumn = LoyaltyIncentiveItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
+
+        /*@Join(joinTable =  CustomerTable.TABLE_NAME, joinColumn = CustomerTable.LOYALTY_PLAN_ID, onTableAlias = TABLE_PLAN, onColumn = LoyaltyPlanTable.GUID)
+        String TABLE_CUSTOMER = "customer_table";*/
     }
 
     @RawQuery(RecalcQtyQuery.VIEW_NAME)

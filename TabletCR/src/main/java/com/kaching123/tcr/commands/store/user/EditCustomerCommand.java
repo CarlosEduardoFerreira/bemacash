@@ -8,9 +8,6 @@ import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
-import com.telly.groundy.annotations.OnFailure;
-import com.telly.groundy.annotations.OnSuccess;
-import com.telly.groundy.annotations.Param;
 
 import java.util.ArrayList;
 
@@ -20,7 +17,7 @@ import java.util.ArrayList;
 public class EditCustomerCommand extends BaseCustomerCommand {
 
     @Override
-    protected boolean ignoreEmailCheck() {
+    protected boolean ignoreChecks() {
         return false;
     }
 
@@ -45,31 +42,7 @@ public class EditCustomerCommand extends BaseCustomerCommand {
         return batch;
     }
 
-    public static void start(Context context, BaseEditCustomerCallback callback, CustomerModel customer) {
+    public static void start(Context context, BaseCustomerCallback callback, CustomerModel customer) {
         create(EditCustomerCommand.class).arg(ARG_CUSTOMER, customer).callback(callback).queueUsing(context);
-    }
-
-    public static abstract class BaseEditCustomerCallback {
-
-        @OnSuccess(EditCustomerCommand.class)
-        public void onSuccess() {
-            onCustomerUpdated();
-        }
-
-        @OnFailure(EditCustomerCommand.class)
-        public void onFailure(@Param(EXTRA_ERROR) BaseCustomerCommand.Error error) {
-            if (error == null){
-                onCustomerUpdateError();
-            }else if (error == Error.EMAIL_EXISTS){
-                onEmailExists();
-            }
-        }
-
-        protected abstract void onCustomerUpdated();
-
-        protected abstract void onCustomerUpdateError();
-
-        protected abstract void onEmailExists();
-
     }
 }

@@ -18,6 +18,8 @@ import com.kaching123.tcr.model.LoyaltyViewModel;
 import com.kaching123.tcr.model.LoyaltyViewModel.IncentiveExModel;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by vkompaniets on 06.07.2016.
@@ -29,12 +31,14 @@ public class LoyaltyProcessor {
     private IncentiveExModel currentIncentive;
     private String orderGuid;
     private String customerGuid;
+    private Set<String> bannedIncentives;
 
     private LoyaltyProcessorCallback callback;
 
     private LoyaltyProcessor(String customerGuid, String orderGuid){
         this.customerGuid = customerGuid;
         this.orderGuid = orderGuid;
+        bannedIncentives = new HashSet<>();
     }
 
     public static LoyaltyProcessor create(String customerGuid, String orderGuid){
@@ -126,6 +130,7 @@ public class LoyaltyProcessor {
     private void applyItemIncentive(IncentiveExModel incentive){
         currentIncentive = incentive;
         ItemExModel item = ItemExModel.loadSync(context, incentive.incentiveItemExModel.item.guid);
+        item.isIncentive = true;
         callback.onAddItemRequest(item, incentive.incentiveItemExModel.price, incentive.incentiveItemExModel.qty);
     }
 
@@ -145,7 +150,6 @@ public class LoyaltyProcessor {
         AddSaleIncentiveCommand.start(context, incentive.guid, customerGuid, orderGuid, new AddSaleIncentiveCallback() {
             @Override
             protected void onAdded(String saleIncentiveId) {
-                banIncentive(incentive.guid);
                 showApplySuccessfulDialog(incentive);
             }
         });
@@ -163,11 +167,11 @@ public class LoyaltyProcessor {
     }
 
     private void banIncentive(String incentiveId){
-        LoyaltyIncentiveCache.get().put(orderGuid, incentiveId);
+        bannedIncentives.add(incentiveId);
     }
 
     private boolean checkIncentiveBanned(String incentiveId){
-        return LoyaltyIncentiveCache.get().isIncentiveBannedForOrder(orderGuid, incentiveId);
+        return bannedIncentives.contains(incentiveId);
     }
 
     public interface LoyaltyProcessorCallback {

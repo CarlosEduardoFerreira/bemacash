@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
+import com.google.common.base.Function;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderCostInfo;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderInfo;
@@ -23,6 +24,7 @@ import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentivePlanTab
 import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentiveTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyView;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
@@ -34,6 +36,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.util.DateUtils.cutTime;
@@ -51,6 +55,7 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
+
         String customerId = getStringArg(ARG_CUSTOMER_ID);
         String orderId = getStringArg(ARG_ORDER_ID);
 
@@ -63,30 +68,37 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
         if (customer.loyaltyPlanId == null)
             return succeeded();
 
+        SaleOrderCostInfo orderCostInfo = loadSaleOrderCostInfo(getContext(), orderId);
+
         Query query = ProviderAction.query(URI_LOYALTY_VIEW);
         query.where(LoyaltyIncentivePlanTable.PLAN_GUID + " = ?", customer.loyaltyPlanId);
         query.where("(" + _castAsReal(LoyaltyIncentiveTable.POINT_THRESHOLD) + " <= ? OR " + LoyaltyIncentiveTable.TYPE + " = ?)", customer.loyaltyPoints, LoyaltyType.BIRTHDAY.ordinal());
         if (customer.birthday == null){
             query.where(LoyaltyIncentiveTable.TYPE + " = ?", LoyaltyType.POINTS.ordinal());
         }
+        //do not apply discount reward if order already has discount
         if (order.discount != null && order.discount.compareTo(BigDecimal.ZERO) != 0){
+            query.where(LoyaltyIncentiveTable.REWARD_TYPE + " <> ?", LoyaltyRewardType.DISCOUNT.ordinal());
+        }
+        //do not apply discount reward if order total = 0
+        if (orderCostInfo.totalOrderPrice.compareTo(BigDecimal.ZERO) == 0){
             query.where(LoyaltyIncentiveTable.REWARD_TYPE + " <> ?", LoyaltyRewardType.DISCOUNT.ordinal());
         }
 
         Cursor c = query.perform(getContext());
         LoyaltyViewModel loyalty = new LoyaltyViewWrapFunction().apply(c);
+        c.close();
         if (loyalty == null)
             return succeeded();
 
-        filterByBirthday(loyalty.incentiveExModels, customer.birthday);
-        filterByOrderValue(loyalty.incentiveExModels, calculateOrderTotal(getContext(), orderId));
-
-        c.close();
+        filterByUsedIncentives(loyalty.incentiveExModels, orderId, getContext());
+        filterByBirthday(loyalty.incentiveExModels, customer.birthday, customer.birthdayRewardApplyDate);
+        filterByOrderValue(loyalty.incentiveExModels, orderCostInfo.totalDiscountableItemTotal);
 
         return succeeded().add(EXTRA_LOYALTY, loyalty);
     }
 
-    private static BigDecimal calculateOrderTotal(Context context, String orderId){
+    private static SaleOrderCostInfo loadSaleOrderCostInfo(Context context, String orderId){
         Cursor c = ProviderAction.query(ShopProvider.contentUri(SaleOrderItemsView.URI_CONTENT))
                 .projection(OrderTotalPriceLoaderCallback.PROJECTION)
                 .where(SaleItemTable.ORDER_GUID + " = ? ", orderId)
@@ -94,24 +106,45 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
                 .perform(context);
 
         SaleOrderInfo saleOrderInfo = OrderTotalPriceLoaderCallback.readCursor(c);
-        if (saleOrderInfo == null){
-            c.close();
-            return BigDecimal.ZERO;
-        }
         c.close();
 
-        SaleOrderCostInfo saleOrderCostInfo = OrderTotalPriceCalculator.calculate(saleOrderInfo);
-
-        return saleOrderCostInfo.totalOrderPrice;
+        return OrderTotalPriceCalculator.calculate(saleOrderInfo);
     }
 
-    private static void filterByBirthday(List<IncentiveExModel> incentives, Date birthdayDate){
+    private static void filterByUsedIncentives(List<IncentiveExModel> incentives, String orderId, Context context){
+        Set<String> usedIncentives = ProviderAction.query(ShopProvider.contentUri(SaleIncentiveTable.URI_CONTENT))
+                .projection(SaleIncentiveTable.INCENTIVE_ID)
+                .where(SaleIncentiveTable.ORDER_ID + " = ?", orderId)
+                .perform(context)
+                .toFluentIterable(new Function<Cursor, String>() {
+                    @Override
+                    public String apply(Cursor input) {
+                        return input.getString(0);
+                    }
+                }).toImmutableSet();
+
+        if (usedIncentives.isEmpty())
+            return;
+
+        Iterator<IncentiveExModel> it = incentives.iterator();
+        while (it.hasNext()){
+            IncentiveExModel incentive = it.next();
+            if (usedIncentives.contains(incentive.guid))
+                it.remove();
+        }
+    }
+
+    private static void filterByBirthday(List<IncentiveExModel> incentives, Date birthdayDate, Date birthdayRewardDate){
+        final long halfYear = TimeUnit.DAYS.toMillis(365 / 2);
         Iterator<IncentiveExModel> it = incentives.iterator();
         while (it.hasNext()){
             IncentiveExModel incentive = it.next();
             if (incentive.type == LoyaltyType.POINTS){
                 continue;
             }else if (birthdayDate == null){
+                it.remove();
+                continue;
+            }else if (birthdayRewardDate != null && new Date().getTime() - birthdayRewardDate.getTime() < halfYear){
                 it.remove();
                 continue;
             }
