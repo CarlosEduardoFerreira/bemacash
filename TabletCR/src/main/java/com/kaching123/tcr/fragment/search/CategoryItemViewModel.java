@@ -37,6 +37,7 @@ public class CategoryItemViewModel extends ItemExModel {
                                  int modifiersCount,
                                  int addonsCount,
                                  int optionalCount,
+                                 int unitCount,
                                  String departmentGuid,
                                  String categoryName,
                                  BigDecimal tax,
@@ -81,6 +82,7 @@ public class CategoryItemViewModel extends ItemExModel {
                 modifiersCount,
                 addonsCount,
                 optionalCount,
+                unitCount,
                 departmentGuid,
                 tax,
                 tax2,
@@ -95,8 +97,7 @@ public class CategoryItemViewModel extends ItemExModel {
                 commission,
                 referenceItemGuid,
                 itemRefType,
-                loyaltyPoints,
-                excludeFromLoyaltyPlan);
+                loyaltyPoints, excludeFromLoyaltyPlan);
         this.categoryName = categoryName;
     }
 

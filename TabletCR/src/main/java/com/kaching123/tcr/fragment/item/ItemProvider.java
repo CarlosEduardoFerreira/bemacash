@@ -7,5 +7,6 @@ import com.kaching123.tcr.model.ItemExModel;
  */
 public interface ItemProvider {
     ItemExModel getModel();
+    ItemExModel getModel2();
     boolean isCreate();
 }

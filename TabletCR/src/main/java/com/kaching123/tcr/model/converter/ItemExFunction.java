@@ -15,12 +15,14 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._caseCount;
 import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
+import static com.kaching123.tcr.model.ContentValuesUtil._count;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
@@ -68,6 +70,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             _caseCount(ModifierTable.TYPE, ModifierType.MODIFIER, ItemExtView.MODIFIERS_COUNT),
             _caseCount(ModifierTable.TYPE, ModifierType.ADDON, ItemExtView.ADDONS_COUNT),
             _caseCount(ModifierTable.TYPE, ModifierType.OPTIONAL, ItemExtView.OPTIONAL_COUNT),
+            _count(UnitTable.ID, ItemExtView.UNITS_COUNT),
             TaxGroupTable.TAX,
             ShopSchema2.ItemExtView2.TaxGroupTable2.TAX,
             ItemTable.ORDER_NUM,
@@ -124,6 +127,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getInt(indexHolder.get(ItemExtView.MODIFIERS_COUNT)),
                 c.getInt(indexHolder.get(ItemExtView.ADDONS_COUNT)),
                 c.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT)),
+                c.getInt(indexHolder.get(ItemExtView.UNITS_COUNT)),
                 c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
                 _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX))),
                 _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX))),
@@ -138,8 +142,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 _decimal(c, indexHolder.get(ItemTable.COMMISSION)),
                 c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
                 _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
-                _decimal(c, indexHolder.get(ItemTable.LOYALTY_POINTS)),
-                _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)))
+                _decimal(c, indexHolder.get(ItemTable.LOYALTY_POINTS)), _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)))
                 .setIsAComposer(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.HostComposerTable.ID)) != null)
                 .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null)
                 .setMatrixGuid(matrixGuid);

@@ -62,7 +62,7 @@
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label.Required"
-                android:text="@string/item_activity_discount_type" />
+                android:text="@string/item_activity_price_type" />
 
             <Spinner
                 android:id="@+id/price_type"

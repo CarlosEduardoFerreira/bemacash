@@ -34,6 +34,7 @@ public class ItemExModel extends ItemModel {
     public final int modifiersCount;
     public final int addonsCount;
     public final int optionalCount;
+    public int unitCount;
 
     public String departmentGuid;
     public BigDecimal tax;
@@ -52,6 +53,7 @@ public class ItemExModel extends ItemModel {
         this.modifiersCount = 0;
         this.addonsCount = 0;
         this.optionalCount = 0;
+        this.unitCount = 0;
     }
 
     public ItemExModel(PrepaidSendResult result) {
@@ -94,6 +96,7 @@ public class ItemExModel extends ItemModel {
         this.modifiersCount = 0;
         this.addonsCount = 0;
         this.optionalCount = 0;
+        this.unitCount = 0;
         this.departmentGuid = null;
         if (result.taxAmount != null && result.itemTaxable)
             this.tax = result.taxAmount;
@@ -135,6 +138,7 @@ public class ItemExModel extends ItemModel {
                        int modifiersCount,
                        int addonsCount,
                        int optionalCount,
+                       int unitCount,
                        String departmentGuid,
                        BigDecimal tax,
                        BigDecimal tax2,
@@ -192,6 +196,7 @@ public class ItemExModel extends ItemModel {
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;
         this.optionalCount = optionalCount;
+        this.unitCount = unitCount;
         this.departmentGuid = departmentGuid;
         this.tax = tax;
         this.tax2 = tax2;

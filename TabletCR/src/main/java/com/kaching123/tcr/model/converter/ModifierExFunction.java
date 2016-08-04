@@ -70,6 +70,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     0,
                     0,
                     0,
+                    0,
                     null,
                     null,
                     null,
@@ -85,8 +86,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     null,
                     null,
                     null,
-                    false
-            );
+                    false);
         }
         String id = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.MODIFIER_GUID));
         if (TextUtils.isEmpty(itemGroupGuid)) {

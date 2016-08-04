@@ -24,6 +24,7 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitTable;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import org.androidannotations.annotations.EFragment;
@@ -36,6 +37,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._caseCount;
 import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
+import static com.kaching123.tcr.model.ContentValuesUtil._count;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
@@ -135,6 +137,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 _caseCount(ModifierTable.TYPE, ModifierType.MODIFIER, ItemExtView.MODIFIERS_COUNT),
                 _caseCount(ModifierTable.TYPE, ModifierType.ADDON, ItemExtView.ADDONS_COUNT),
                 _caseCount(ModifierTable.TYPE, ModifierType.OPTIONAL, ItemExtView.OPTIONAL_COUNT),
+                _count(UnitTable.ID, ItemExtView.UNITS_COUNT),
                 CategoryTable.DEPARTMENT_GUID,
                 CategoryTable.TITLE,
                 TaxGroupTable.TAX,
@@ -182,6 +185,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getInt(indexHolder.get(ItemExtView.MODIFIERS_COUNT)),
                     c.getInt(indexHolder.get(ItemExtView.ADDONS_COUNT)),
                     c.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT)),
+                    c.getInt(indexHolder.get(ItemExtView.UNITS_COUNT)),
                     c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
                     c.getString(indexHolder.get(CategoryTable.TITLE)),
                     _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX))),
@@ -198,8 +202,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
                     ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))),
                     _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS)),
-                    _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN))
-            );
+                    _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
         }
     }
 }

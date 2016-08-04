@@ -15,12 +15,13 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ItemMovementModelFactory;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
-import com.kaching123.tcr.util.MovementUtils;
+import com.kaching123.tcr.util.InventoryUtils;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -33,14 +34,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
 /**
  * @author Ivan v. Rikhmayer
  *         This class is intended to
  */
-public class AddUnitsCommand extends AsyncCommand  {
+public class AddUnitsCommand extends AsyncCommand {
 
     private static final Uri UNIT_URI = ShopProvider.getContentUri(UnitTable.URI_CONTENT);
     private static final Uri ITEM_URI = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
@@ -59,7 +59,7 @@ public class AddUnitsCommand extends AsyncCommand  {
     @Override
     protected TaskResult doCommand() {
 
-        ops = new ArrayList<ContentProviderOperation>();
+        ops = new ArrayList<>();
         sqlCommand = batchInsert(Unit.class);
         JdbcConverter jdbcConverter = JdbcFactory.getConverter(UnitTable.TABLE_NAME);
 
@@ -73,62 +73,41 @@ public class AddUnitsCommand extends AsyncCommand  {
         int itemUnitCount = items.size();
         if (itemUnitCount == 0) { // OK
             if (shouldAdd) {
-                /*****************************************************************************************************/
                 ops.add(ContentProviderOperation.newInsert(UNIT_URI).withValues(unit.toValues()).build());
                 sqlCommand.add(jdbcConverter.insertSQL(unit, this.getAppCommandContext()));
-                /*****************************************************************************************************/
-                if (parent.availableQty == null) {
-                    parent.availableQty = BigDecimal.ONE;
-                } else {
-                    parent.availableQty = parent.availableQty.add(new BigDecimal(1));
-                }
-
             } else {
                 return failed().add(RESULT_DESC, "Item with the provided serial is missing.");
             }
         } else {
-            if (itemUnitCount == 1 && !shouldAdd)  { // OK
+            if (itemUnitCount == 1 && !shouldAdd) { // OK
                 unit = items.get(0);
                 ops.add(ContentProviderOperation.newUpdate(UNIT_URI)
                         .withValues(ShopStore.DELETE_VALUES)
                         .withSelection(UnitTable.ID + " = ?", new String[]{unit.guid})
                         .build());
                 sqlCommand.add(jdbcConverter.deleteSQL(unit, this.getAppCommandContext()));
-                /*****************************************************************************************************/
-                if (parent.availableQty == null) {
-                    parent.availableQty = BigDecimal.ZERO;
-                } else if (unit.status.equals(Unit.Status.NEW)) {
-                    parent.availableQty = parent.availableQty.subtract(new BigDecimal(1));
-                }
-
-
             } else {
                 return failed().add(RESULT_DESC, "The item with the same serial already exists.");
             }
         }
-        /***************************************************************************************************************/
-        BigDecimal availableQty = null;
-        ItemMovementModel movementModel = null;
-        Cursor cursor = ProviderAction.query(ITEM_URI)
-                .projection(ShopStore.ItemTable.TMP_AVAILABLE_QTY)
-                .where(ShopStore.ItemTable.GUID + " = ?", parent.guid)
+
+        Cursor c = ProviderAction.query(UNIT_URI)
+                .projection("1")
+                .where(UnitTable.ITEM_ID + " = ?", parent.guid)
+                .where(UnitTable.STATUS + " != ?", Status.SOLD.ordinal())
                 .perform(getContext());
-        if (cursor.moveToFirst()) {
-            availableQty = _decimalQty(cursor, 0);
-        }
-        cursor.close();
-        //TODO: check item movements implementation
-        /*****************************************************************************************************/
-        if (parent.isStockTracking && parent.availableQty != null && parent.availableQty.compareTo(availableQty) != 0) {
-            parent.updateQtyFlag = UUID.randomUUID().toString();
-            movementModel = ItemMovementModelFactory.getNewModel(
-                    parent.guid,
-                    parent.updateQtyFlag,
-                    parent.availableQty,
-                    true,
-                    new Date()
-            );
-        }
+
+        parent.availableQty = new BigDecimal(c.getCount() + (shouldAdd ? 1 : -1));
+        c.close();
+
+        parent.updateQtyFlag = UUID.randomUUID().toString();
+        ItemMovementModel movementModel = ItemMovementModelFactory.getNewModel(
+                parent.guid,
+                parent.updateQtyFlag,
+                parent.availableQty,
+                true,
+                new Date()
+        );
 
         jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemTable.TABLE_NAME);
         ops.add(ContentProviderOperation.newUpdate(ITEM_URI)
@@ -136,23 +115,24 @@ public class AddUnitsCommand extends AsyncCommand  {
                 .withValues(parent.toValues()).build());
         sqlCommand.add(jdbcConverter.updateSQL(parent, this.getAppCommandContext()));
 
-        /******************************************************************************************************/
-        if (movementModel != null) {
-            ops.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI).withValues(movementModel.toValues()).build());
-            jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemMovementTable.TABLE_NAME);
-            sqlCommand.add(jdbcConverter.insertSQL(movementModel, this.getAppCommandContext()));
+        ops.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI).withValues(movementModel.toValues()).build());
+        jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemMovementTable.TABLE_NAME);
+        sqlCommand.add(jdbcConverter.insertSQL(movementModel, this.getAppCommandContext()));
+
+        if (!InventoryUtils.pollItem(parent.guid, getContext(), getAppCommandContext(), ops, sqlCommand)) {
+            return failed().add(RESULT_DESC, "Database has responded with a failure code!");
         }
 
         return succeeded().add(RESULT_ITEM, parent);
     }
 
     @Override
-    protected ArrayList<ContentProviderOperation> createDbOperations() {
+    protected ArrayList<ContentProviderOperation> createDbOperations () {
         return ops;
     }
 
     @Override
-    protected ISqlCommand createSqlCommand() {
+    protected ISqlCommand createSqlCommand () {
         return sqlCommand;
     }
 
@@ -171,10 +151,10 @@ public class AddUnitsCommand extends AsyncCommand  {
 
     public static final TaskHandler start(Context context,
                                           boolean add,
-                                           Unit unit,
-                                           ItemExModel model,
-                                           UnitCallback callback) {
-        return  create(AddUnitsCommand.class)
+                                          Unit unit,
+                                          ItemExModel model,
+                                          UnitCallback callback) {
+        return create(AddUnitsCommand.class)
                 .arg(PARAM_GUID, unit)
                 .arg(PARAM_GUILD, model)
                 .arg(PARAM_PURPOSE, add)

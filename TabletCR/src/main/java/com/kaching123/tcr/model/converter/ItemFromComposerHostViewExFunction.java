@@ -66,6 +66,7 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 0,
                 0,
                 0,
+                0,
                 null,
                 null,
                 null,
@@ -81,8 +82,7 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 null,
                 null,
                 null,
-                false
-        );
+                false);
     }
 
 

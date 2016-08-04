@@ -2,15 +2,17 @@ package com.kaching123.tcr.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ItemPagerAdapter;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
@@ -19,6 +21,8 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.item.ItemCommonInformationFragment;
+import com.kaching123.tcr.fragment.item.ItemMonitoringFragment;
+import com.kaching123.tcr.fragment.item.ItemMonitoringFragment_;
 import com.kaching123.tcr.fragment.item.ItemProvider;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.Permission;
@@ -83,6 +87,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @Extra
     protected ItemExModel model;
 
+    //holds actual database model
+    protected ItemExModel model2;
+
     @Extra
     protected StartMode mode;
 
@@ -94,11 +101,32 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         viewPager.setAdapter(adapter);
         tabs.setDistributeEvenly(false);
         tabs.setViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
     public ItemExModel getModel() {
         return model;
+    }
+
+    @Override
+    public ItemExModel getModel2() {
+        return model2;
     }
 
     @Override
@@ -115,17 +143,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     public void onResume() {
         super.onResume();
         getSupportLoaderManager().restartLoader(0, null, new ItemLoader());
-        /*RecalculateHostCompositionMetadataCommand2.start(self(), model.guid, new RecalculateHostCompositionMetadataCommand2.ComposerCallback() {
-            @Override
-            protected void handleSuccess(List<ComposerModel> unit, BigDecimal qty, BigDecimal cost) {
-                Logger.d("success");
-            }
-
-            @Override
-            protected void handleError() {
-                Logger.d("error");
-            }
-        });*/
     }
 
     /** Options menu **/
@@ -198,13 +215,36 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
         @Override
         public void onLoadFinished(Loader<ItemExModel> loader, ItemExModel data) {
-            Logger.d("success");
+            model.availableQty = data.availableQty;
+            model.updateQtyFlag = data.updateQtyFlag;
+            model.isAComposer = data.isAComposer;
+            model.unitCount = data.unitCount;
+            model2 = data;
+
+            updateFragments();
+            Toast.makeText(self(), "item was updated", Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onLoaderReset(Loader<ItemExModel> loader) {
 
         }
+    }
+
+    private void updateFragments(){
+        ItemMonitoringFragment fr = (ItemMonitoringFragment) getFragment(ItemMonitoringFragment_.class);
+        if (fr != null){
+            fr.showQuantities();
+        }
+    }
+
+    private Fragment getFragment(Class clazz){
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for (Fragment fr : fragments){
+            if (fr.getClass() == clazz)
+                return fr;
+        }
+        return null;
     }
 
     public static void start(Context context, ItemExModel model, StartMode mode){

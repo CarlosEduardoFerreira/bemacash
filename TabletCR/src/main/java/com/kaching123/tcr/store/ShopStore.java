@@ -2680,6 +2680,8 @@ public abstract class ShopStore {
 
         String OPTIONAL_COUNT = "oc";
 
+        String UNITS_COUNT = "uc";
+
         @From(ItemTable.TABLE_NAME)
         String TABLE_ITEM = "item_table";
 
@@ -2731,6 +2733,9 @@ public abstract class ShopStore {
         @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_CHILD_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
         String TABLE_HOST_COMPOSER = "host_composer_table";
 
+        @Columns(UnitTable.ID)
+        @Join(type = Join.Type.LEFT, joinTable = UnitTable.TABLE_NAME, joinColumn = UnitTable.ITEM_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
+        String TABLE_UNIT = "unit_table";
     }
 
     @SimpleView(ShiftView.VIEW_NAME)
