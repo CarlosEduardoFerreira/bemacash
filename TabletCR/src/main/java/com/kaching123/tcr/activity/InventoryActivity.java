@@ -299,7 +299,7 @@ public class InventoryActivity extends ScannerBaseActivity {
         model.categoryId = selectedCategoryGuid;
         model.departmentGuid = selectedDeartmentGuid;
 
-        BaseItemActivity2.start(self(), model, StartMode.EDIT);
+        BaseItemActivity2.start(self(), model, StartMode.ADD);
 
         /*if (TcrApplication.isEcuadorVersion()) {
             AddEcuadorItemActivity.start(InventoryActivity.this, model);

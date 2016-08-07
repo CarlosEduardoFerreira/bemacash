@@ -1,8 +1,11 @@
 package com.kaching123.tcr.fragment.item;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -15,6 +18,8 @@ import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseItemActivity2;
 import com.kaching123.tcr.activity.UnitLabelActivity;
 import com.kaching123.tcr.adapter.UnitsLabelAdapter;
 import com.kaching123.tcr.commands.wireless.CollectUnitsCommand;
@@ -22,6 +27,7 @@ import com.kaching123.tcr.commands.wireless.DropUnitsCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment.IButtonViewDialogListener;
+import com.kaching123.tcr.function.NextProductCodeQuery;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.Unit;
@@ -63,6 +69,9 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
 
     @Override
     protected void setViews() {
+        InputFilter[] productCodeFilter = new InputFilter[]{new InputFilter.LengthFilter(TcrApplication.PRODUCT_CODE_MAX_LEN), alphanumericFilter};
+        productCode.setFilters(productCodeFilter);
+
         unitsLabelAdapter = new UnitsLabelAdapter(getActivity());
         unitsLabel.setAdapter(unitsLabelAdapter);
 
@@ -88,6 +97,9 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         });
 
         getLoaderManager().initLoader(0, null, new UnitsLabelLoader());
+        if (getItemProvider().isCreate()){
+            new GetNextProductCodeTask().execute();
+        }
     }
 
     @Override
@@ -157,9 +169,11 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
 
     void onUnitTypeSelected(){
         final CodeType codeType = ((SerializationTypeHolder) unitsType.getSelectedItem()).type;
+        final CodeType oldCodeType = getModel().codeType;
         getModel().codeType = codeType;
         getModel().serializable = codeType != null;
         getActivity().invalidateOptionsMenu();
+        ((BaseItemActivity2) getActivity()).reloadItem();
     }
 
     void onUnitTypeSelected2(){
@@ -242,6 +256,31 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         @Override
         public String toString() {
             return label;
+        }
+    }
+
+    final InputFilter alphanumericFilter = new InputFilter() {
+        public CharSequence filter(CharSequence source, int start, int end,
+                                   Spanned dest, int dstart, int dend) {
+            for (int i = start; i < end; i++) {
+                if (!Character.isLetterOrDigit(source.charAt(i))) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    };
+
+    class GetNextProductCodeTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+            return NextProductCodeQuery.getCode(getActivity());
+        }
+
+        @Override
+        protected void onPostExecute(String code) {
+            productCode.setText(code);
         }
     }
 }

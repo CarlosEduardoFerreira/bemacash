@@ -43,7 +43,6 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     @ViewById protected EditText salesPrice;
     @ViewById protected Spinner department;
     @ViewById protected Spinner category;
-    //dunno why, but generated id = 'R.id.taxGroup', so we set id explicitly here
     @ViewById(R.id.tax_group) protected Spinner taxGroup;
     @ViewById protected CheckBox activeStatus;
 
@@ -59,16 +58,6 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     protected void setViews() {
         departmentAdapter = new DepartmentSpinnerAdapter(getActivity());
         department.setAdapter(departmentAdapter);
-        /*department.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                getModel().departmentGuid = departmentAdapter.getGuid(position);
-                getLoaderManager().restartLoader(CATEGORY_LOADER_ID, null, ItemCommonInformationFragment.this);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });*/
 
         categoryAdapter = new CategorySpinnerAdapter(getActivity());
         category.setAdapter(categoryAdapter);
@@ -77,7 +66,6 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         taxGroup.setAdapter(taxGroupAdapter);
 
         setFilters();
-
         initLoaders();
     }
 

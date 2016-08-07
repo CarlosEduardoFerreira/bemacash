@@ -36,8 +36,7 @@ public abstract class BaseComposerCommand extends AsyncCommand {
 
     protected String hostItemId;
 
-    @Override
-    protected void afterCommand(ContentProviderResult[] dbOperationResults) {
+    protected void afterCommand2(ContentProviderResult[] dbOperationResults) {
         super.afterCommand(dbOperationResults);
 
         ItemModel hostItem = ProviderAction.query(ITEM_URI)

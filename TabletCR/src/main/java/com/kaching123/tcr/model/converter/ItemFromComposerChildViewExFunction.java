@@ -73,6 +73,9 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 0,
                 0,
                 0,
+                0,
+                0,
+                0,
                 null,
                 null,
                 null,
@@ -85,10 +88,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 null,
                 false,
                 null,
-                null,
-                null,
-                null,
-                false);
+                null, null, null, false);
     }
 }
 

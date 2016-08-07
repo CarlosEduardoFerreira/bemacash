@@ -7,9 +7,12 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ChildComposerTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.HostComposerTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemMatrixTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
@@ -28,6 +31,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._itemRefType;
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
+import static com.kaching123.tcr.model.ContentValuesUtil._sum;
 
 /**
  * Created by gdubina on 22/11/13.
@@ -67,10 +71,15 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             ItemTable.LOYALTY_POINTS,
             ItemTable.EXCLUDE_FROM_LOYALTY_PLAN,
             CategoryTable.DEPARTMENT_GUID,
-            _caseCount(ModifierTable.TYPE, ModifierType.MODIFIER, ItemExtView.MODIFIERS_COUNT),
-            _caseCount(ModifierTable.TYPE, ModifierType.ADDON, ItemExtView.ADDONS_COUNT),
-            _caseCount(ModifierTable.TYPE, ModifierType.OPTIONAL, ItemExtView.OPTIONAL_COUNT),
+            _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.MODIFIER.ordinal()), ItemExtView.MODIFIERS_COUNT),
+            _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.ADDON.ordinal()), ItemExtView.ADDONS_COUNT),
+            _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.OPTIONAL.ordinal()), ItemExtView.OPTIONAL_COUNT),
             _count(UnitTable.ID, ItemExtView.UNITS_COUNT),
+            _caseCount(UnitTable.STATUS,
+                    new String[]{String.valueOf(Status.NEW.ordinal()), String.valueOf(Status.USED.ordinal()), String.valueOf(Status.BROKEN.ordinal())},
+                    ItemExtView.AVAILABLE_UNITS_COUNT),
+            _count(ChildComposerTable.ID, ItemExtView.COMPOSERS_COUNT),
+            _sum(ChildComposerTable.FREE_OF_CHARGE_COMPOSER, ItemExtView.RESTRICT_COMPOSERS_COUNT),
             TaxGroupTable.TAX,
             ShopSchema2.ItemExtView2.TaxGroupTable2.TAX,
             ItemTable.ORDER_NUM,
@@ -81,8 +90,8 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             ItemTable.CODE_TYPE,
             ItemTable.ELIGIBLE_FOR_COMMISSION,
             ItemTable.COMMISSION,
-            ShopSchema2.ItemExtView2.ChildComposerTable.ID,
-            ShopSchema2.ItemExtView2.HostComposerTable.ID,
+            ChildComposerTable.ID,
+            HostComposerTable.ID,
             ItemTable.REFERENCE_ITEM_ID,
             ItemTable.ITEM_REF_TYPE,
             ItemMatrixTable.PARENT_GUID
@@ -128,6 +137,9 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getInt(indexHolder.get(ItemExtView.ADDONS_COUNT)),
                 c.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT)),
                 c.getInt(indexHolder.get(ItemExtView.UNITS_COUNT)),
+                c.getInt(indexHolder.get(ItemExtView.AVAILABLE_UNITS_COUNT)),
+                c.getInt(indexHolder.get(ItemExtView.COMPOSERS_COUNT)),
+                c.getInt(indexHolder.get(ItemExtView.RESTRICT_COMPOSERS_COUNT)),
                 c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
                 _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX))),
                 _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX))),
@@ -139,10 +151,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                 _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                _decimal(c, indexHolder.get(ItemTable.COMMISSION)),
-                c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
-                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
-                _decimal(c, indexHolder.get(ItemTable.LOYALTY_POINTS)), _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)))
+                _decimal(c, indexHolder.get(ItemTable.COMMISSION)), c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)), _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)), _decimal(c, indexHolder.get(ItemTable.LOYALTY_POINTS)), _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)))
                 .setIsAComposer(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.HostComposerTable.ID)) != null)
                 .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null)
                 .setMatrixGuid(matrixGuid);

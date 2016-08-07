@@ -1,13 +1,25 @@
 package com.kaching123.tcr.fragment.item;
 
+import android.text.InputFilter;
+import android.text.InputType;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseItemActivity2;
+import com.kaching123.tcr.activity.ComposerActivity;
+import com.kaching123.tcr.activity.UnitActivity;
 import com.kaching123.tcr.component.BrandTextWatcher;
+import com.kaching123.tcr.component.RegisterQtyFormatInputFilter;
 import com.kaching123.tcr.fragment.UiHelper;
+import com.kaching123.tcr.fragment.inventory.InventoryQtyEditDialog;
+import com.kaching123.tcr.fragment.inventory.InventoryQtyEditDialog.OnEditQtyListener;
+import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
 
 import org.androidannotations.annotations.EFragment;
@@ -17,7 +29,6 @@ import java.math.BigDecimal;
 
 import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
 import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
-import static com.kaching123.tcr.util.UnitUtil.isPcs;
 
 /**
  * Created by vkompaniets on 21.07.2016.
@@ -30,8 +41,13 @@ public class ItemMonitoringFragment extends ItemBaseFragment{
     @ViewById protected EditText minimumQty;
     @ViewById protected EditText recommendedQty;
 
+    private EditText[] qtyViews;
+
     @Override
     protected void setViews() {
+
+        qtyViews = new EditText[]{availableQty, minimumQty, recommendedQty};
+
         monitoring.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -63,7 +79,9 @@ public class ItemMonitoringFragment extends ItemBaseFragment{
 
     @Override
     protected void setModel() {
-        showQuantities();
+        final ItemExModel model = getModel();
+        monitoring.setChecked(model.isStockTracking);
+        updateQty();
     }
 
     @Override
@@ -73,17 +91,90 @@ public class ItemMonitoringFragment extends ItemBaseFragment{
         model.recommendedQty = parseBigDecimal(recommendedQty, BigDecimal.ZERO);
     }
 
+    public void updateQty(){
+        final int inputType = getModel().isPcsUnit() ? InputType.TYPE_CLASS_NUMBER : InputType.TYPE_CLASS_PHONE;
+        final InputFilter[] filter = new InputFilter[]{getModel().isPcsUnit() ? new InputFilter.LengthFilter(10) : new RegisterQtyFormatInputFilter()};
+        for (EditText v : qtyViews){
+            v.setInputType(inputType);
+            v.setFilters(filter);
+        }
+        showQuantities();
+    }
+
     public void showQuantities(){
         final ItemModel model = getModel();
+
+        availableQty.setEnabled(model.isStockTracking);
+        availableQty.setEnabled(model.isStockTracking);
+        availableQty.setEnabled(model.isStockTracking);
+
         if (model.isStockTracking){
-            boolean isPcs = isPcs(model.priceType);
-            showQuantity(availableQty, model.availableQty, isPcs);
-            showQuantity(minimumQty, model.minimumQty, isPcs);
-            showQuantity(recommendedQty, model.recommendedQty, isPcs);
+            showQuantity(availableQty, model.availableQty, model.isPcsUnit());
+            showQuantity(minimumQty, model.minimumQty, model.isPcsUnit());
+            showQuantity(recommendedQty, model.recommendedQty, model.isPcsUnit());
         }else{
             availableQty.setText(null);
             minimumQty.setText(null);
             recommendedQty.setText(null);
         }
+
+        //setup onClickListener
+        if (getItemProvider().isCreate()){
+            if (getModel().codeType == null){
+                availableQty.setFocusable(true);
+                availableQty.setOnClickListener(null);
+            }else{
+                availableQty.setFocusable(false);
+                availableQty.setOnClickListener(clickListener);
+            }
+        }else{
+            availableQty.setFocusable(false);
+            availableQty.setOnClickListener(clickListener);
+        }
+    }
+
+    private OnClickListener clickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (getModel().codeType != null){
+                onSerialQtyClicked();
+                return;
+            }else if (getModel().restrictComposersCount > 0){
+                onComposedQtyClicked();
+                return;
+            }else {
+                onQtyClicked();
+                return;
+            }
+        }
+    };
+
+    private void onSerialQtyClicked() {
+        if (getItemProvider().isCreate()){
+            Toast.makeText(getActivity(), "Item should be saved first", Toast.LENGTH_SHORT).show();
+        }else{
+            UnitActivity.start(getActivity(), getModel(), BaseItemActivity2.TAG_RESULT_SERIAL);
+        }
+    }
+
+    private void onComposedQtyClicked() {
+        ComposerActivity.start(getActivity(), getModel(), BaseItemActivity2.TAG_RESULT_COMPOSER);
+    }
+
+    private void onQtyClicked() {
+        InventoryQtyEditDialog.show(getActivity(),
+                getModel().availableQty == null ? BigDecimal.ZERO : getModel().availableQty,
+                getModel().isPcsUnit(),
+                new OnEditQtyListener() {
+                    @Override
+                    public void onReplace(BigDecimal value) {
+
+                    }
+
+                    @Override
+                    public void onAdjust(BigDecimal value) {
+
+                    }
+                });
     }
 }

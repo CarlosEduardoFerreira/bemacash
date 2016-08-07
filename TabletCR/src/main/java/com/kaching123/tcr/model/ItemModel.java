@@ -44,6 +44,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public String updateQtyFlag;
     public String taxGroupGuid;
     public String taxGroupGuid2;
+    @Deprecated
     public boolean isPcsUnit;
     public String defaultModifierGuid;
     public int orderNum;
@@ -246,6 +247,10 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.TMP_AVAILABLE_QTY, _decimalQty(availableQty));
         values.put(ItemTable.COST, _decimal(cost));
         return values;
+    }
+
+    public boolean isPcsUnit(){
+        return UnitUtil.isPcs(this.priceType) || codeType != null;
     }
 
 }

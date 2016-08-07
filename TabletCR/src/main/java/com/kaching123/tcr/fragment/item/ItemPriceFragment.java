@@ -16,6 +16,7 @@ import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.PriceType;
 
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ItemSelect;
 import org.androidannotations.annotations.ViewById;
 
 import static com.kaching123.tcr.fragment.UiHelper.getDecimalValue;
@@ -85,5 +86,11 @@ public class ItemPriceFragment extends ItemBaseFragment {
         commission.setFilters(percentFilter);
         discount.addTextChangedListener(new CurrencyTextWatcher(discount));
         cost.addTextChangedListener(new CurrencyTextWatcher(cost));
+    }
+
+    @ItemSelect
+    protected void priceTypeItemSelected(boolean selected, int position){
+        getModel().priceType = (PriceType) priceType.getItemAtPosition(position);
+        getItemProvider().updateQtyBlock();
     }
 }

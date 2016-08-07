@@ -50,22 +50,22 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 0,
                 0,
                 0,
+                0,
+                0,
+                0,
                 null,
+                null,   //printer alias
+                null,   //btnView
+                null,    //hasNotes
+                0,   //serializable
                 null,
-                null,
-                null,
-                0,//printer alias
-                null, //btnView
-                0,  //hasNotes
-                false, //serializable
+                0,
+                false,
                 false,
                 null,
                 false,
                 null,
-                null,
-                null,
-                null,
-                false);
+                null, null, null, false);
 
         String shortCut;
         try {
@@ -103,6 +103,9 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 0,
                 0,
                 0,
+                0,
+                0,
+                0,
                 null,
                 null,
                 null,
@@ -115,10 +118,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 null,
                 false,
                 null,
-                null,
-                null,
-                null,
-                false);
+                null, null, null, false);
 
         return new ComposerExModel(
                 c.getString(c.getColumnIndex(ComposerTable.ID)),

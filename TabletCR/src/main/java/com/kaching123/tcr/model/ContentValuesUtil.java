@@ -329,8 +329,26 @@ public final class ContentValuesUtil {
         return String.format(Locale.US, " count(%s) as %s", column, as);
     }
 
-    public static String _caseCount(String column, ModifierType type, String as) {
-        return String.format(Locale.US, "sum(case when %s = %d then 1 else 0 end) as %s", column, type.ordinal(), as);
+    public static String _caseCount(String column, String value, String as) {
+        return String.format(Locale.US, "sum(case when %s = %s then 1 else 0 end) as %s", column, value, as);
+    }
+
+    public static String _caseCount(String column, String[] values, String as) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < values.length; i++){
+            if (i > 0)
+                builder.append(" or ");
+            builder.append("%1$s = %" + (i + 3) + "$s");
+        }
+        String selection = "sum(case when(" + builder + ") then 1 else 0 end) as %2$s";
+        String[] selectionArgs = new String[values.length + 2];
+        selectionArgs[0] = column;
+        selectionArgs[1] = as;
+        for (int i = 0; i < values.length; i++){
+            selectionArgs[i + 2] = values[i];
+        }
+
+        return String.format(Locale.US, selection, selectionArgs);
     }
 
     public static String _castAsReal(String column){
@@ -339,6 +357,10 @@ public final class ContentValuesUtil {
 
     public static String _sum(String column){
         return String.format(Locale.US, "sum(%s)", column);
+    }
+
+    public static String _sum(String column, String as){
+        return String.format(Locale.US, "sum(%s) as %s", column, as);
     }
 
     private ContentValuesUtil() {

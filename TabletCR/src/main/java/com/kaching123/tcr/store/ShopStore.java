@@ -2674,13 +2674,13 @@ public abstract class ShopStore {
 
         String VIEW_NAME = "items_ext_view";
 
-        String MODIFIERS_COUNT = "mc";
-
-        String ADDONS_COUNT = "ac";
-
-        String OPTIONAL_COUNT = "oc";
-
-        String UNITS_COUNT = "uc";
+        String MODIFIERS_COUNT = "modifiers_count";
+        String ADDONS_COUNT = "addons_count";
+        String OPTIONAL_COUNT = "options_count";
+        String UNITS_COUNT = "units_count";
+        String AVAILABLE_UNITS_COUNT = "available_units_count";
+        String COMPOSERS_COUNT = "composers_count";
+        String RESTRICT_COMPOSERS_COUNT = "restrict_composers_count";
 
         @From(ItemTable.TABLE_NAME)
         String TABLE_ITEM = "item_table";
@@ -2725,7 +2725,7 @@ public abstract class ShopStore {
                 onColumn = ItemTable.GUID)
         String TABLE_ITEM_MATRIX = "item_matrix_table";
 
-        @Columns(ComposerTable.ID)
+        @Columns({ComposerTable.ID, ComposerTable.FREE_OF_CHARGE_COMPOSER})
         @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_HOST_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
         String TABLE_CHILD_COMPOSER = "child_composer_table";
 
@@ -2733,7 +2733,7 @@ public abstract class ShopStore {
         @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_CHILD_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
         String TABLE_HOST_COMPOSER = "host_composer_table";
 
-        @Columns(UnitTable.ID)
+        @Columns({UnitTable.ID, UnitTable.STATUS})
         @Join(type = Join.Type.LEFT, joinTable = UnitTable.TABLE_NAME, joinColumn = UnitTable.ITEM_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
         String TABLE_UNIT = "unit_table";
     }

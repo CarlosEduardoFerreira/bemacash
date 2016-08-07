@@ -10,11 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.OptionsMenu;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.wireless.AddUnitsCommand;
@@ -24,6 +19,12 @@ import com.kaching123.tcr.fragment.wireless.UnitsEditFragment;
 import com.kaching123.tcr.fragment.wireless.UnitsRecursiveAddFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.Unit;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OptionsMenu;
 
 import java.util.List;
 
@@ -46,6 +47,8 @@ public class UnitActivity extends ScannerBaseActivity implements UnitItemListFra
     protected UnitItemListFragment listFragment;
 
     protected boolean redirectBarcodeResult;
+
+    private boolean changesDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +120,7 @@ public class UnitActivity extends ScannerBaseActivity implements UnitItemListFra
         UnitsEditFragment.show(self(), model, unit, model.codeType, serial, new UnitsEditFragment.UnitCallback() {
             @Override
             public void handleSuccess(final boolean add, final ItemExModel parent) {
+                changesDone = true;
                 hide();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -179,6 +183,7 @@ public class UnitActivity extends ScannerBaseActivity implements UnitItemListFra
         UnitsRecursiveAddFragment.show(self(), model, null, model.codeType, new UnitsRecursiveAddFragment.UnitCallback() {
             @Override
             public void handleSuccess(ItemExModel parent) {
+                changesDone = true;
                 self().model = parent;
                 hide();
             }
@@ -220,6 +225,7 @@ public class UnitActivity extends ScannerBaseActivity implements UnitItemListFra
         AddUnitsCommand.start(self(), false, unit, model, new AddUnitsCommand.UnitCallback() {
             @Override
             protected void handleSuccess(ItemExModel model) {
+                changesDone = true;
                 self().model = model;
                 onDelete(units);
             }

@@ -250,7 +250,7 @@ public final class UiHelper {
         if (decimal == null) {
             textView.setText(null);
         } else if (isPcsUnit){
-            textView.setText(quantityIntegerFormat.format(decimal));
+            textView.setText(integralIntegerFormat.format(decimal));
         } else{
             textView.setText(quantityFormat.format(decimal));
         }

@@ -12,8 +12,6 @@ import com.kaching123.tcr.function.UnitWrapFunction;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.ItemMovementModel;
-import com.kaching123.tcr.model.ItemMovementModelFactory;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.service.BatchSqlCommand;
@@ -30,9 +28,7 @@ import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
@@ -100,24 +96,24 @@ public class AddUnitsCommand extends AsyncCommand {
         parent.availableQty = new BigDecimal(c.getCount() + (shouldAdd ? 1 : -1));
         c.close();
 
-        parent.updateQtyFlag = UUID.randomUUID().toString();
+        /*parent.updateQtyFlag = UUID.randomUUID().toString();
         ItemMovementModel movementModel = ItemMovementModelFactory.getNewModel(
                 parent.guid,
                 parent.updateQtyFlag,
                 parent.availableQty,
                 true,
                 new Date()
-        );
+        );*/
 
         jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemTable.TABLE_NAME);
         ops.add(ContentProviderOperation.newUpdate(ITEM_URI)
                 .withSelection(ShopStore.ItemTable.GUID + " = ?", new String[]{parent.guid})
-                .withValues(parent.toValues()).build());
+                .withValues(parent.toQtyValues()).build());
         sqlCommand.add(jdbcConverter.updateSQL(parent, this.getAppCommandContext()));
 
-        ops.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI).withValues(movementModel.toValues()).build());
+        /*ops.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI).withValues(movementModel.toValues()).build());
         jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemMovementTable.TABLE_NAME);
-        sqlCommand.add(jdbcConverter.insertSQL(movementModel, this.getAppCommandContext()));
+        sqlCommand.add(jdbcConverter.insertSQL(movementModel, this.getAppCommandContext()));*/
 
         if (!InventoryUtils.pollItem(parent.guid, getContext(), getAppCommandContext(), ops, sqlCommand)) {
             return failed().add(RESULT_DESC, "Database has responded with a failure code!");

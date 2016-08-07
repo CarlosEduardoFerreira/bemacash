@@ -31,10 +31,13 @@ public class ItemExModel extends ItemModel {
 
     public String tmpBarcode;
 
-    public final int modifiersCount;
-    public final int addonsCount;
-    public final int optionalCount;
+    public int modifiersCount;
+    public int addonsCount;
+    public int optionalCount;
     public int unitCount;
+    public int availableUnitCount;
+    public int composersCount;
+    public int restrictComposersCount;
 
     public String departmentGuid;
     public BigDecimal tax;
@@ -50,10 +53,6 @@ public class ItemExModel extends ItemModel {
 
     public ItemExModel() {
         super();
-        this.modifiersCount = 0;
-        this.addonsCount = 0;
-        this.optionalCount = 0;
-        this.unitCount = 0;
     }
 
     public ItemExModel(PrepaidSendResult result) {
@@ -93,10 +92,6 @@ public class ItemExModel extends ItemModel {
                 ItemRefType.Simple,
                 null,
                 false);
-        this.modifiersCount = 0;
-        this.addonsCount = 0;
-        this.optionalCount = 0;
-        this.unitCount = 0;
         this.departmentGuid = null;
         if (result.taxAmount != null && result.itemTaxable)
             this.tax = result.taxAmount;
@@ -139,6 +134,9 @@ public class ItemExModel extends ItemModel {
                        int addonsCount,
                        int optionalCount,
                        int unitCount,
+                       int availableUnitCount,
+                       int composersCount,
+                       int restrictComposersCount,
                        String departmentGuid,
                        BigDecimal tax,
                        BigDecimal tax2,
@@ -197,6 +195,8 @@ public class ItemExModel extends ItemModel {
         this.addonsCount = addonsCount;
         this.optionalCount = optionalCount;
         this.unitCount = unitCount;
+        this.composersCount = composersCount;
+        this.restrictComposersCount = restrictComposersCount;
         this.departmentGuid = departmentGuid;
         this.tax = tax;
         this.tax2 = tax2;

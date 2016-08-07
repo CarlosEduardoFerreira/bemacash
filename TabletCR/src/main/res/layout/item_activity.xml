@@ -16,9 +16,9 @@
 
     <com.kaching123.tcr.component.slidingtab.SlidingTabLayout
         android:id="@+id/tabs"
+        android:layout_below="@id/common_information_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/common_information_fragment"
         android:layout_marginTop="26dp"/>
 
     <android.support.v4.view.ViewPager
