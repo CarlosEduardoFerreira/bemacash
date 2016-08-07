@@ -8,29 +8,22 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.BaseItemActivity2;
 import com.kaching123.tcr.activity.UnitLabelActivity;
 import com.kaching123.tcr.adapter.UnitsLabelAdapter;
-import com.kaching123.tcr.commands.wireless.CollectUnitsCommand;
-import com.kaching123.tcr.commands.wireless.DropUnitsCommand;
-import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment.IButtonViewDialogListener;
 import com.kaching123.tcr.function.NextProductCodeQuery;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
-import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.UnitLabelFunction;
@@ -40,10 +33,9 @@ import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ItemSelect;
 import org.androidannotations.annotations.ViewById;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.getDecimalValue;
@@ -84,17 +76,6 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
                 });
         unitTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         unitsType.setAdapter(unitTypeAdapter);
-        unitsType.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                onUnitTypeSelected();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
         getLoaderManager().initLoader(0, null, new UnitsLabelLoader());
         if (getItemProvider().isCreate()){
@@ -115,7 +96,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
     }
 
     @Override
-    protected void collectData() {
+    public void collectData() {
         ItemModel model = getModel();
         model.eanCode = eanUpc.getText().toString();
         model.productCode = productCode.getText().toString();
@@ -138,6 +119,13 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
                 buttonView.getBackground().setLevel(level);
             }
         });
+    }
+
+    @ItemSelect
+    protected void unitsTypeItemSelected(boolean selected, int position){
+        getModel().codeType = ((SerializationTypeHolder) unitsType.getItemAtPosition(position)).type;
+        getModel().serializable = getModel().codeType != null;
+        getItemProvider().onStockTypeChanged();
     }
 
     private class UnitsLabelLoader implements LoaderCallbacks<List<UnitLabelModel>> {
@@ -167,82 +155,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         }
     }
 
-    void onUnitTypeSelected(){
-        final CodeType codeType = ((SerializationTypeHolder) unitsType.getSelectedItem()).type;
-        final CodeType oldCodeType = getModel().codeType;
-        getModel().codeType = codeType;
-        getModel().serializable = codeType != null;
-        getActivity().invalidateOptionsMenu();
-        ((BaseItemActivity2) getActivity()).reloadItem();
-    }
 
-    void onUnitTypeSelected2(){
-        final CodeType oldCodeType = getModel().codeType;
-        final CodeType newCodeType = ((SerializationTypeHolder) unitsType.getSelectedItem()).type;
-
-        CollectUnitsCommand.start(getActivity(), null, getModel().guid, null, null, null, false, false, new CollectUnitsCommand.UnitCallback() {
-            @Override
-            protected void handleSuccess(final List<Unit> unit) {
-
-                if (oldCodeType != null && newCodeType == null && !unit.isEmpty()) {
-                    AlertDialogWithCancelFragment.showWithTwo(getActivity(),
-                            R.string.wireless_remove_items_title,
-                            getString(R.string.wireless_remove_items_body),
-                            R.string.btn_ok,
-                            new AlertDialogWithCancelFragment.OnDialogListener() {
-                                @Override
-                                public boolean onClick() {
-                                    getModel().codeType = newCodeType;
-                                    DropUnitsCommand.start(getActivity(),
-                                            (ArrayList<Unit>) unit, getModel(), new DropUnitsCommand.UnitCallback() {
-                                                @Override
-                                                protected void handleSuccess(ItemExModel model) {
-                                                    Toast.makeText(getActivity(), getString(R.string.unit_drop_ok), Toast.LENGTH_LONG).show();
-                                                    getModel().serializable = false;
-                                                    getModel().availableQty = BigDecimal.ZERO;
-                                                    getActivity().invalidateOptionsMenu();
-                                                    onSerializableSet(false);
-                                                }
-
-                                                @Override
-                                                protected void handleError() {
-                                                    Toast.makeText(getActivity(), getString(R.string.unit_drop_partially_faield), Toast.LENGTH_LONG).show();
-                                                }
-                                            });
-                                    return true;
-                                }
-
-                                @Override
-                                public boolean onCancel() {
-                                    int oldPosition = oldCodeType == null ? null : oldCodeType.ordinal() + 1;
-                                    unitsType.setSelection(oldPosition);
-                                    return true;
-                                }
-                            }
-                    );
-
-                } else if (oldCodeType == null && newCodeType != null) {
-                    getModel().codeType = newCodeType;
-                    getModel().serializable = true;
-                    getModel().availableQty = new BigDecimal(unit.size());
-                    getActivity().invalidateOptionsMenu();
-                    onSerializableSet(true);
-                } else {
-                    onSerializableSet((getModel().codeType = newCodeType) != null);
-                    getActivity();
-                }
-            }
-
-            @Override
-            protected void handleError() {
-                Toast.makeText(getActivity(), getString(R.string.unit_drop_failed), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void onSerializableSet(boolean isSerializable){
-
-    }
 
     private static class SerializationTypeHolder {
         final String label;

@@ -65,7 +65,7 @@ public class ItemPriceFragment extends ItemBaseFragment {
     }
 
     @Override
-    protected void collectData() {
+    public void collectData() {
         final ItemModel model = getModel();
         model.isDiscountable = discountable.isChecked();
         model.discountType = (DiscountType) discountType.getSelectedItem();
@@ -91,6 +91,6 @@ public class ItemPriceFragment extends ItemBaseFragment {
     @ItemSelect
     protected void priceTypeItemSelected(boolean selected, int position){
         getModel().priceType = (PriceType) priceType.getItemAtPosition(position);
-        getItemProvider().updateQtyBlock();
+        getItemProvider().onPriceTypeChanged();
     }
 }

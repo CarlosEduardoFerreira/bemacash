@@ -21,7 +21,7 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment{
     }
 
     @Override
-    protected void collectData() {
+    public void collectData() {
 
     }
 }

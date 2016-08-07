@@ -71,7 +71,7 @@ public class CollectUnitsCommand extends AsyncCommand  {
                 status = (Status) value;
             }
         }
-        if (clean == false) {
+        if (!clean) {
             clean = getArgs().getBoolean(PARAM_CLEAN);
         }
         List<Unit> items = _wrap(syncQuery(guid, itemId, orderId, serial, status, getArgs().getBoolean(PARAM_ALLBUTSOLD))

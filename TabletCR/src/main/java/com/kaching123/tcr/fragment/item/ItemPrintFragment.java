@@ -50,7 +50,7 @@ public class ItemPrintFragment extends ItemBaseFragment{
     }
 
     @Override
-    protected void collectData() {
+    public void collectData() {
         final ItemModel model = getModel();
         model.printerAliasGuid = ((PrinterAliasModel) kitchen.getSelectedItem()).guid;
     }

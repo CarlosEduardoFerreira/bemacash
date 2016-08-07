@@ -85,10 +85,11 @@ public class ItemMonitoringFragment extends ItemBaseFragment{
     }
 
     @Override
-    protected void collectData() {
+    public void collectData() {
         final ItemModel model = getModel();
         model.minimumQty = parseBigDecimal(minimumQty, BigDecimal.ZERO);
         model.recommendedQty = parseBigDecimal(recommendedQty, BigDecimal.ZERO);
+        model.availableQty = getItemProvider().getQtyInfo().availableQty;
     }
 
     public void updateQty(){
@@ -109,7 +110,7 @@ public class ItemMonitoringFragment extends ItemBaseFragment{
         availableQty.setEnabled(model.isStockTracking);
 
         if (model.isStockTracking){
-            showQuantity(availableQty, model.availableQty, model.isPcsUnit());
+            showQuantity(availableQty, getItemProvider().getQtyInfo().availableQty, model.isPcsUnit());
             showQuantity(minimumQty, model.minimumQty, model.isPcsUnit());
             showQuantity(recommendedQty, model.recommendedQty, model.isPcsUnit());
         }else{
@@ -118,7 +119,7 @@ public class ItemMonitoringFragment extends ItemBaseFragment{
             recommendedQty.setText(null);
         }
 
-        //setup onClickListener
+        //set onClickListener
         if (getItemProvider().isCreate()){
             if (getModel().codeType == null){
                 availableQty.setFocusable(true);
@@ -139,7 +140,7 @@ public class ItemMonitoringFragment extends ItemBaseFragment{
             if (getModel().codeType != null){
                 onSerialQtyClicked();
                 return;
-            }else if (getModel().restrictComposersCount > 0){
+            }else if (getItemProvider().getQtyInfo().restrictComposersCount > 0){
                 onComposedQtyClicked();
                 return;
             }else {
@@ -168,12 +169,14 @@ public class ItemMonitoringFragment extends ItemBaseFragment{
                 new OnEditQtyListener() {
                     @Override
                     public void onReplace(BigDecimal value) {
-
+                        getModel().availableQty = value;
+                        getItemProvider().onStockTypeChanged();
                     }
 
                     @Override
                     public void onAdjust(BigDecimal value) {
-
+                        getModel().availableQty = getModel().availableQty.add(value);
+                        getItemProvider().onStockTypeChanged();
                     }
                 });
     }

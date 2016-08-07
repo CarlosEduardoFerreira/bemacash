@@ -1,13 +1,11 @@
 package com.kaching123.tcr.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,28 +13,34 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ItemPagerAdapter;
+import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
+import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
+import com.kaching123.tcr.commands.wireless.CollectUnitsCommand;
+import com.kaching123.tcr.commands.wireless.CollectUnitsCommand.UnitCallback;
 import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
+import com.kaching123.tcr.fragment.item.ItemBaseFragment;
 import com.kaching123.tcr.fragment.item.ItemCommonInformationFragment;
 import com.kaching123.tcr.fragment.item.ItemMonitoringFragment;
 import com.kaching123.tcr.fragment.item.ItemMonitoringFragment_;
 import com.kaching123.tcr.fragment.item.ItemProvider;
+import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.StartMode;
-import com.kaching123.tcr.model.converter.ItemExFunction;
-import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
-import com.kaching123.tcr.store.ShopStore.ItemExtView;
+import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.Unit.Status;
+import com.kaching123.tcr.store.composer.CollectComposersCommand;
+import com.kaching123.tcr.store.composer.CollectComposersCommand.ComposerCallback;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
@@ -90,14 +94,20 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     //holds actual database model
     protected ItemExModel model2;
 
-
     @Extra
     protected StartMode mode;
 
     private ItemPagerAdapter adapter;
 
+    private ItemQtyInfo qtyInfo;
+
+    private boolean changesInSubActivitiesDone;
+
     @AfterViews
     protected void init(){
+        qtyInfo = new ItemQtyInfo();
+        qtyInfo.availableQty = model.availableQty;
+
         String[] tabNames = getResources().getStringArray(R.array.item_tabs);
         adapter = new ItemPagerAdapter(getSupportFragmentManager(), tabNames);
         viewPager.setAdapter(adapter);
@@ -105,6 +115,11 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         tabs.setDistributeEvenly(false);
         tabs.setViewPager(viewPager);
 
+        if (model.codeType == null){
+            loadComposersInfo();
+        }else{
+            loadUnitsInfo();
+        }
     }
 
     @Override
@@ -113,21 +128,27 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     }
 
     @Override
-    public ItemExModel getModel2() {
-        return model2;
-    }
-
-    @Override
     public boolean isCreate() {
         return StartMode.ADD == mode;
     }
 
     @Override
-    public void updateQtyBlock() {
-        ItemMonitoringFragment fr = (ItemMonitoringFragment) getFragment(ItemMonitoringFragment_.class);
-        if (fr != null){
-            fr.updateQty();
+    public void onStockTypeChanged() {
+        if (model.codeType == null){
+            loadComposersInfo();
+        }else{
+            loadUnitsInfo();
         }
+    }
+
+    @Override
+    public void onPriceTypeChanged() {
+        updateQtyBlock();
+    }
+
+    @Override
+    public ItemQtyInfo getQtyInfo() {
+        return qtyInfo;
     }
 
     @Override
@@ -136,13 +157,40 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        reloadItem();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == TAG_RESULT_SERIAL){
+            changesInSubActivitiesDone |= data.getBooleanExtra(UnitActivity.RESULT_OK, false);
+            loadUnitsInfo();
+        }else if (resultCode == RESULT_OK && requestCode == TAG_RESULT_COMPOSER){
+            changesInSubActivitiesDone |= data.getBooleanExtra(ComposerActivity.RESULT_OK, false);
+            loadComposersInfo();
+        }
     }
 
-    public void reloadItem(){
-        getSupportLoaderManager().restartLoader(0, null, new ItemLoader());
+    @Click
+    protected void btnSaveClicked(){
+        collectDataFromFragments();
+        if (StartMode.ADD == mode){
+            AddItemCommand.start(self(), model);
+        }else{
+            EditItemCommand.start(self(), model);
+        }
+    }
+
+    private void collectDataFromFragments(){
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for (Fragment fr : fragments){
+            ((ItemBaseFragment) fr).collectData();
+        }
+    }
+
+    public void updateQtyBlock() {
+        ItemMonitoringFragment fr = (ItemMonitoringFragment) getFragment(ItemMonitoringFragment_.class);
+        if (fr != null){
+            fr.updateQty();
+        }
     }
 
     /** Options menu **/
@@ -195,7 +243,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (!isCreate()){
-            actionComposer.setIcon(buildCounterDrawable(self(), model.composersCount, android.R.drawable.ic_dialog_dialer));
+            actionComposer.setIcon(buildCounterDrawable(self(), qtyInfo.composersCount, android.R.drawable.ic_dialog_dialer));
             actionComposer.setVisible(!model.isSerializable() && !model.isAComposer);
             actionSerial.setVisible(model.isSerializable() && PlanOptions.isSerializableAllowed());
         }
@@ -203,44 +251,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     }
 
     /******************/
-
-    private class ItemLoader implements LoaderCallbacks<List<ItemExModel>>{
-        @Override
-        public Loader<List<ItemExModel>> onCreateLoader(int id, Bundle args) {
-            return CursorLoaderBuilder.forUri(ShopProvider.contentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID))
-                    .projection(ItemExFunction.PROJECTION)
-                    .where(ItemTable.GUID + " = ?", model.guid)
-                    .transform(new ItemExFunction())
-                    .build(self());
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> data) {
-            if (data.isEmpty())
-                return;
-
-            model2 = data.get(0);
-            model.availableQty = model2.availableQty;
-            model.updateQtyFlag = model2.updateQtyFlag;
-            model.isAComposer = model2.isAComposer;
-            model.isAComposisiton = model2.isAComposisiton;
-            model.composersCount = model2.composersCount;
-            model.restrictComposersCount = model2.restrictComposersCount;
-            model.unitCount = model2.unitCount;
-            model.availableUnitCount = model2.availableUnitCount;
-
-            if (model.codeType != null)
-                model.availableQty = new BigDecimal(model.availableUnitCount);
-
-            invalidateOptionsMenu();
-            updateQtyBlock();
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<ItemExModel>> loader) {
-
-        }
-    }
 
     private Fragment getFragment(Class clazz){
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
@@ -275,6 +285,72 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         view.setDrawingCacheEnabled(false);
 
         return new BitmapDrawable(context.getResources(), bitmap);
+    }
+
+    private void loadUnitsInfo(){
+        CollectUnitsCommand.start(self(), null, getModel().guid, null, null, null, false, false, new UnitCallback() {
+            @Override
+            protected void handleSuccess(List<Unit> units) {
+                qtyInfo.unitsCount = units.size();
+                int availableUnitsCount = 0;
+                for (Unit unit : units){
+                    if (unit.status != Status.SOLD)
+                        availableUnitsCount++;
+                }
+                qtyInfo.availableUnitsCount = availableUnitsCount;
+                qtyInfo.availableQty = new BigDecimal(availableUnitsCount);
+
+                qtyInfo.composersCount = 0;
+                qtyInfo.restrictComposersCount = 0;
+                qtyInfo.cost = null;
+
+                updateQtyBlock();
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            protected void handleError() {
+
+            }
+        });
+    }
+
+    private void loadComposersInfo(){
+        CollectComposersCommand.start(self(), getModel().guid, new ComposerCallback() {
+            @Override
+            protected void handleSuccess(List<ComposerExModel> composers, BigDecimal qty, BigDecimal cost) {
+                qtyInfo.composersCount = composers.size();
+                int restrictComposersCount = 0;
+                for (ComposerExModel composer : composers){
+                    if (composer.restricted)
+                        restrictComposersCount++;
+                }
+
+                qtyInfo.cost = cost;
+                qtyInfo.restrictComposersCount = restrictComposersCount;
+                qtyInfo.availableQty = restrictComposersCount == 0 ? getModel().availableQty : qty;
+
+                qtyInfo.unitsCount = 0;
+                qtyInfo.availableUnitsCount = 0;
+
+                updateQtyBlock();
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            protected void handleError() {
+
+            }
+        });
+    }
+
+    public class ItemQtyInfo{
+        public BigDecimal availableQty;
+        public BigDecimal cost;
+        public int unitsCount;
+        public int availableUnitsCount;
+        public int composersCount;
+        public int restrictComposersCount;
     }
 
     public static void start(Context context, ItemExModel model, StartMode mode){

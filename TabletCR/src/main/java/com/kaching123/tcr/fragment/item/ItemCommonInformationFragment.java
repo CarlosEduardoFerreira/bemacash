@@ -79,7 +79,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     }
 
     @Override
-    protected void collectData() {
+    public void collectData() {
         final ItemModel model = getModel();
         model.description = description.getText().toString();
         model.price = UiHelper.getDecimalValue(salesPrice);

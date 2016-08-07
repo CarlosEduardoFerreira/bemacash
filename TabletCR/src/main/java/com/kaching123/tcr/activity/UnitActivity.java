@@ -109,7 +109,7 @@ public class UnitActivity extends ScannerBaseActivity implements UnitItemListFra
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra(RESULT_OK, model);
+        intent.putExtra(RESULT_OK, changesDone);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

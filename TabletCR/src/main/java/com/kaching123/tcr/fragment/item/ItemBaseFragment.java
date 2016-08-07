@@ -39,5 +39,5 @@ public abstract class ItemBaseFragment extends SuperBaseFragment {
 
     protected abstract void setViews();
     protected abstract void setModel();
-    protected abstract void collectData();
+    public abstract void collectData();
 }
