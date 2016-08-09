@@ -501,7 +501,6 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 priceType,
                 price,
                 quantity,
-                oldUnitLabel,
                 unitLabelId,
                 (Boolean) fields.get(FIELD_STOCK_TRACKING),
                 true,

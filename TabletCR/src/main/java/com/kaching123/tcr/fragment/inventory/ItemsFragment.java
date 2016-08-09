@@ -28,7 +28,6 @@ import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.PriceType;
-import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
@@ -332,7 +331,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
                     showPrice(holder.totalCost, getSubTotal(item.availableQty.setScale(0, BigDecimal.ROUND_FLOOR), item.cost));
                 } else {
                     showBrandQty(holder.qty, item.availableQty);
-                    holder.units.setText(UnitLabelModel.getUnitLabelShortcut(getContext(), item));
+                    holder.units.setText(item.shortCut);
                     showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
                 }
             } else {
@@ -347,7 +346,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
                     showPrice(holder.totalCost, getSubTotal(item.availableQty.setScale(0, BigDecimal.ROUND_FLOOR), item.cost));
                 } else {
                     showBrandQty(holder.qty, item.availableQty);
-                    holder.units.setText(UnitLabelModel.getUnitLabelShortcut(getContext(), item));
+                    holder.units.setText(item.shortCut);
                     showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
                 }
             } else {

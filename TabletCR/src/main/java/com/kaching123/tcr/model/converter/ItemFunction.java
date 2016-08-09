@@ -71,7 +71,6 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 _priceType(c, indexHolder.get(ItemTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
-                c.getString(indexHolder.get(ItemTable.UNITS_LABEL)),
                 c.getString(indexHolder.get(ItemTable.UNIT_LABEL_ID)),
                 c.getInt(indexHolder.get(ItemTable.STOCK_TRACKING)) == 1,
                 c.getInt(indexHolder.get(ItemTable.ACTIVE_STATUS)) == 1,

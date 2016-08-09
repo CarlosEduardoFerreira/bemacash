@@ -30,7 +30,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public CodeType codeType;
     public BigDecimal price;
     public BigDecimal availableQty;
-    public String unitsLabel;
     public String unitsLabelId;
     public boolean isStockTracking;
     public boolean isActiveStatus;
@@ -78,7 +77,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      PriceType priceType,
                      BigDecimal price,
                      BigDecimal availableQty,
-                     String unitsLabel,
                      String unitsLabelId,
                      boolean isStockTracking,
                      boolean isActiveStatus,
@@ -116,7 +114,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.priceType = priceType;
         this.price = price;
         this.availableQty = availableQty;
-        this.unitsLabel = unitsLabel;
         this.unitsLabelId = unitsLabelId;
         this.isStockTracking = isStockTracking;
         this.isActiveStatus = isActiveStatus;
@@ -158,7 +155,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.priceType = itemModel.priceType;
         this.price = itemModel.price;
         this.availableQty = itemModel.availableQty;
-        this.unitsLabel = itemModel.unitsLabel;
         this.unitsLabelId = itemModel.unitsLabelId;
         this.isStockTracking = itemModel.isStockTracking;
         this.isActiveStatus = itemModel.isActiveStatus;
@@ -205,7 +201,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.PRODUCT_CODE, productCode);
         values.put(ItemTable.PRICE_TYPE, priceType.ordinal());
         values.put(ItemTable.SALE_PRICE, _decimal(price));
-        values.put(ItemTable.UNITS_LABEL, unitsLabel);
         values.put(ItemTable.UNIT_LABEL_ID, unitsLabelId);
         values.put(ItemTable.STOCK_TRACKING, isStockTracking);
         values.put(ItemTable.ACTIVE_STATUS, isActiveStatus);

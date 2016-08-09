@@ -51,7 +51,6 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     _priceType(c, c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.PRICE_TYPE)),
                     _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.SALE_PRICE))),
                     _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.TMP_AVAILABLE_QTY))),
-                    c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UNITS_LABEL)),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UNIT_LABEL_ID)),
                     shortCut,
                     c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.STOCK_TRACKING)) == 1,

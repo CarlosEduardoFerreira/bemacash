@@ -47,7 +47,6 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 _priceType(c, indexHolder.get(ItemHostTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemHostTable.SALE_PRICE))),
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.TMP_AVAILABLE_QTY))),
-                c.getString(indexHolder.get(ItemHostTable.UNITS_LABEL)),
                 c.getString(indexHolder.get(ItemHostTable.UNIT_LABEL_ID)),
                 null,
                 c.getInt(indexHolder.get(ItemHostTable.STOCK_TRACKING)) == 1,

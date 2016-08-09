@@ -26,6 +26,7 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ChildComposerTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitTable;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
@@ -179,8 +180,8 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     PriceType.valueOf(c.getInt(indexHolder.get(ItemTable.PRICE_TYPE))),
                     _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
                     _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
-                    c.getString(indexHolder.get(ItemTable.UNITS_LABEL)),
                     c.getString(indexHolder.get(ItemTable.UNIT_LABEL_ID)),
+                    c.getString(indexHolder.get(UnitLabelTable.SHORTCUT)),
                     c.getInt(indexHolder.get(ItemTable.STOCK_TRACKING)) == 1,
                     c.getInt(indexHolder.get(ItemTable.ACTIVE_STATUS)) == 1,
                     c.getInt(indexHolder.get(ItemTable.DISCOUNTABLE)) == 1,
@@ -211,8 +212,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     _bool(c, c.getColumnIndex(ItemTable.ELIGIBLE_FOR_COMMISSION)),
                     _decimal(c, c.getColumnIndex(ItemTable.COMMISSION)),
                     c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
-                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))),
-                    _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS)), _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
+                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))), _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS)), _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
         }
     }
 }

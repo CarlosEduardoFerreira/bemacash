@@ -53,7 +53,6 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 _priceType(c, indexHolder.get(ItemChildTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemChildTable.SALE_PRICE))),
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.TMP_AVAILABLE_QTY))),
-                c.getString(indexHolder.get(ItemChildTable.UNITS_LABEL)),
                 c.getString(indexHolder.get(ItemChildTable.UNIT_LABEL_ID)),
                 shortCut,
                 c.getInt(indexHolder.get(ItemChildTable.STOCK_TRACKING)) == 1,

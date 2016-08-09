@@ -86,7 +86,6 @@ public class EditReferenceItemCommand extends AsyncCommand {
             EditItemCommand editItemCommand = new EditItemCommand();
             for (ItemModel itemModel : models) {
                 itemModel.categoryId = newItem.categoryId;
-                itemModel.unitsLabel = newItem.unitsLabel;
                 itemModel.unitsLabelId = newItem.unitsLabelId;
                 itemModel.priceType = newItem.priceType;
                 itemModel.serializable = newItem.serializable;

@@ -79,7 +79,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 _enum(PriceType.class, rs.getString(PRICE_TYPE), PriceType.OPEN),
                 rs.getBigDecimal(SALE_PRICE),
                 BigDecimal.ZERO,
-                rs.getString(UNITS_LABEL),
                 rs.getString(UNITS_LABEL_ID),
                 rs.getBoolean(STOCK_TRACKING),
                 rs.getBoolean(ACTIVE_STATUS),
@@ -123,7 +122,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 _enum(PriceType.class, rs.getString(PRICE_TYPE), PriceType.OPEN),
                 rs.getBigDecimal(SALE_PRICE),
                 BigDecimal.ZERO,
-                rs.getString(UNITS_LABEL),
                 rs.getString(UNITS_LABEL_ID),
                 rs.getBoolean(STOCK_TRACKING),
                 rs.getBoolean(ACTIVE_STATUS),
@@ -175,7 +173,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(PRODUCT_CODE, item.productCode)
                 .add(PRICE_TYPE, item.priceType)
                 .add(SALE_PRICE, item.price)
-                .add(UNITS_LABEL, item.unitsLabel)
                 .add(UNITS_LABEL_ID, item.unitsLabelId)
                 .add(STOCK_TRACKING, item.isStockTracking)
                 .add(ACTIVE_STATUS, item.isActiveStatus)
@@ -215,7 +212,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(PRODUCT_CODE, item.productCode)
                 .add(PRICE_TYPE, item.priceType)
                 .add(SALE_PRICE, item.price)
-                .add(UNITS_LABEL, item.unitsLabel)
                 .add(UNITS_LABEL_ID, item.unitsLabelId)
                 .add(STOCK_TRACKING, item.isStockTracking)
                 .add(ACTIVE_STATUS, item.isActiveStatus)

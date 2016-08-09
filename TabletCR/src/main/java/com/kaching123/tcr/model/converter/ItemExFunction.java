@@ -117,7 +117,6 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 _priceType(c, indexHolder.get(ItemTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
-                c.getString(indexHolder.get(ItemTable.UNITS_LABEL)),
                 c.getString(c.getColumnIndex(ItemTable.UNIT_LABEL_ID)),
                 shortCut,
                 c.getInt(indexHolder.get(ItemTable.STOCK_TRACKING)) == 1,

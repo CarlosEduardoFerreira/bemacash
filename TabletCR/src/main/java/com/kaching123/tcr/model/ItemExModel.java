@@ -7,7 +7,6 @@ package com.kaching123.tcr.model;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.model.Unit.CodeType;
@@ -65,7 +64,6 @@ public class ItemExModel extends ItemModel {
                 PriceType.FIXED,
                 result.itemPrice,
                 result.itemQty,
-                "pcs",
                 null,
                 false, true, // temp to true
                 false,
@@ -98,11 +96,6 @@ public class ItemExModel extends ItemModel {
         else
             this.tax = null;
         this.tax2 = null;
-        if (TextUtils.isEmpty(unitsLabelId)) {
-            this.shortCut = unitsLabel;
-        } else {
-            this.shortCut = null;
-        }
     }
 
     public ItemExModel(String guid,
@@ -114,7 +107,6 @@ public class ItemExModel extends ItemModel {
                        PriceType priceType,
                        BigDecimal price,
                        BigDecimal availableQty,
-                       String unitsLabel,
                        String unitsLabelId,
                        String shortCut,
                        boolean isStockTracking,
@@ -162,7 +154,6 @@ public class ItemExModel extends ItemModel {
                 priceType,
                 price,
                 availableQty,
-                unitsLabel,
                 unitsLabelId,
                 isStockTracking,
                 isActiveStatus,
@@ -200,11 +191,7 @@ public class ItemExModel extends ItemModel {
         this.departmentGuid = departmentGuid;
         this.tax = tax;
         this.tax2 = tax2;
-        if (TextUtils.isEmpty(unitsLabelId)) {
-            this.shortCut = unitsLabel;
-        } else {
-            this.shortCut = shortCut;
-        }
+        this.shortCut = shortCut;
     }
 
     public ItemExModel setMatrixGuid(String matrixGuid) {

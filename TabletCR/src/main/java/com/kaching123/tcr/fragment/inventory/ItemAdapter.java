@@ -47,7 +47,7 @@ public class ItemAdapter extends ObjectsCursorAdapter<ItemExModel> {
                 item.priceType,
                 item.availableQty,
                 item.cost,
-                item.isPcsUnit ? null : item.unitsLabel);
+                item.isPcsUnit ? null : item.shortCut);
         return view;
     }
 
