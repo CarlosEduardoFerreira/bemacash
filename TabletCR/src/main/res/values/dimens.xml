@@ -207,4 +207,29 @@
     <dimen name="activity_padding_horizontal">80dp</dimen>
     <dimen name="activity_padding_vertical">25dp</dimen>
 
+    <dimen name="ebt_chooser_dlg_main_layout_padding_top">10dp</dimen>
+    <dimen name="ebt_chooser_dlg_main_layout_padding_left">20dp</dimen>
+    <dimen name="ebt_chooser_dlg_main_layout_padding_right">20dp</dimen>
+    <dimen name="ebt_chooser_dlg_button_width">140dp</dimen>
+    <dimen name="ebt_chooser_dlg_btn_padding_right">10dp</dimen>
+
+
+
+    <dimen name="payment_tender_dlg_button_width">120dp</dimen>
+    <dimen name="payment_tender_dlg_main_layout_padding_top">10dp</dimen>
+    <dimen name="payment_tender_dlg_main_layout_padding_left">20dp</dimen>
+    <dimen name="payment_tender_dlg_main_layout_padding_right">20dp</dimen>
+
+    <dimen name="payment_tender_dlg_dialog_content_padding_bottom">5dp</dimen>
+    <dimen name="payment_tender_dlg_dialog_content_padding_left">12dp</dimen>
+    <dimen name="payment_tender_dlg_dialog_content_padding_right">12dp</dimen>
+    <dimen name="payment_tender_dlg_keyboard_layout_margin">12dp</dimen>
+
+    <dimen name="payment_tender_dlg_payment_gridview_layout_width">300dp</dimen>
+    <dimen name="payment_tender_dlg_payment_gridview_column_width">74dp</dimen>
+    <dimen name="payment_tender_dlg_payment_gridview_vertical_spacing">8dp</dimen>
+    <dimen name="payment_tender_dlg_payment_gridview_horizontal_spacing">8dp</dimen>
+
+    <dimen name="payment_tender_dlg_report_layout_margin_left">10dp</dimen>
+
 </resources>

@@ -15,6 +15,7 @@ import java.util.List;
  * @author Ivan v. Rikhmayer
  */
 public class BondItemAdapter extends ArrayAdapter<Integer> {
+    public static final int ARG_EXACT_BUTTON_POSITION = -1;
 
     private final List<Integer> list;
     private final Context context;
@@ -34,7 +35,15 @@ public class BondItemAdapter extends ArrayAdapter<Integer> {
         } else {
             view = (Button)convertView;
         }
-        view.setText(list.get(position).toString());
+        int value = list.get(position);
+        String name;
+        if(value == ARG_EXACT_BUTTON_POSITION)
+        {
+            name = context.getResources().getString(R.string.button_exact);
+        } else {
+            name = String.valueOf(list.get(position));
+        }
+        view.setText(name);
         view.setTag(list.get(position));
         return view;
     }

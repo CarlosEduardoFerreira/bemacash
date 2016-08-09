@@ -383,6 +383,7 @@
     <string name="blackstone_pay_failure_body_3nd">There was a non-banking related issue: </string>
     <string name="blackstone_pay_progress_body">Generating payment...</string>
     <string name="blackstone_pay_total">Total:</string>
+    <string name="blackstone_pay_remaining_balance">Remaining Balance</string>
     <string name="blackstone_pay_pending_amount">Pending amount:</string>
     <string name="blackstone_pay_charge">Change:</string>
     <string name="blackstone_pay_charge_finish">Change: %s</string>
@@ -1404,6 +1405,8 @@
     <string name="display_change_title">Change:</string>
     <string name="display_pending_title">Pending:</string>
     <string name="payment_charge_amount">Charge amount:</string>
+    <string name="payment_charge_amount_united">Type tender amount:</string>
+
     <string name="credit_receipt_num">Receipt #:</string>
     <string name="credit_receipt_date">Date:</string>
     <string name="credit_receipt_expire">Valid through:</string>
@@ -1687,14 +1690,21 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_search">Search</string>
     <string name="button_cash">Cash</string>
-    <string name="button_check">Check</string>
+    <string name="button_check">Check\n</string>
     <string name="button_credit">Credit</string>
     <string name="button_debit">Debit Card</string>
     <string name="button_ebt_cash">EBT Cash</string>
+    <string name="button_ebt_cash_dlg">EBT\n Cash</string>
+    <string name="button_ebt_united_tender">EBT</string>
+
     <string name="button_ebt_foodstamp">EBT Food Stamp</string>
+    <string name="button_ebt_foodstamp_dlg">EBT\n Food Stamp</string>
     <string name="button_offline_credit">Offline Credit</string>
+    <string name="button_offline_credit_united">Offline\nCredit</string>
+
     <string name="button_receipt">Receipt</string>
     <string name="button_store_credit">Store Credit</string>
+    <string name="button_store_credit_united">Store\n Credit</string>
     <string name="button_clockin">CLOCK IN</string>
     <string name="button_clockout">CLOCK OUT</string>
     <string name="button_close_shift">CLOSE SHIFT</string>
@@ -1957,4 +1967,7 @@
 
     <string name="loyalty_wait_message">Searching for Incentives</string>
     <string name="loyalty_applied_msg">%s incentive applied</string>
+
+
+    <string name="ebt_type_chooser_dlg_title">Please choose:</string>
 </resources>

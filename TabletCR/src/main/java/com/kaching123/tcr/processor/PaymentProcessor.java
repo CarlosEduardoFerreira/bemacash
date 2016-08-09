@@ -50,7 +50,7 @@ import com.kaching123.tcr.fragment.tendering.payment.CloseTransPendingFragmentDi
 import com.kaching123.tcr.fragment.tendering.payment.CloseTransactionsFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.CloseTransactionsFragmentDialog.CloseTransactionsListener;
 import com.kaching123.tcr.fragment.tendering.payment.INotificationConfirmListener;
-import com.kaching123.tcr.fragment.tendering.payment.IPaymentDialogListener.IPayTenderListener;
+import com.kaching123.tcr.fragment.tendering.payment.IPaymentDialogListener;
 import com.kaching123.tcr.fragment.tendering.payment.PayCashFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayCashFragmentDialog.ISaleCashListener;
 import com.kaching123.tcr.fragment.tendering.payment.PayChargeFragmentDialog;
@@ -62,7 +62,7 @@ import com.kaching123.tcr.fragment.tendering.payment.PayOtherFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayPrintAndFinishFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PaySwipePendingFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PaySwipePendingFragmentDialog.ISaleSwipeListener;
-import com.kaching123.tcr.fragment.tendering.payment.PayTenderFragmentDialog;
+import com.kaching123.tcr.fragment.tendering.payment.PayTenderUnitedFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayTransPendingFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.SettlementNotificationFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.SettlementTransPendingFragmentDialog;
@@ -649,7 +649,23 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         if (getDisplayBinder(context) != null)
             getDisplayBinder(context).startCommand(new DisplayOrderCommand(orderGuid));
 
-        PayTenderFragmentDialog.show(context, orderGuid, orderType, new IPayTenderListener() {
+        PayTenderUnitedFragmentDialog.show(context, orderGuid, orderType, new IPaymentDialogListener.IPayTenderUnitedListener() {
+
+            @Override
+            public void onUnitedPaymentAmountSelected(PaymentMethod method, BigDecimal orderTotal, BigDecimal amount) {
+                Logger.d("We have finished step 2 : %s credits!", amount);
+                hide();
+                PaymentProcessor.this.orderTotal = orderTotal;
+                PaymentProcessor.this.onPaymentAmountSelected(context, method, amount);
+            }
+
+            @Override
+            public void onUnitedCancel() {
+                Logger.d("We have cancelled step 2. This may happen only on first cycle, so we dont care much");
+                hide();
+                proceedToTender(context, 0);
+            }
+
 
             @Override
             public void onPaymentMethodSelected(PaymentMethod method, BigDecimal orderTotal, BigDecimal pendingAmount, boolean singleTender) {
@@ -710,7 +726,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             }
 
             private void hide() {
-                PayTenderFragmentDialog.hide(context);
+                PayTenderUnitedFragmentDialog.hide(context);
             }
 
         }, animation, singleTenderEnabled);
