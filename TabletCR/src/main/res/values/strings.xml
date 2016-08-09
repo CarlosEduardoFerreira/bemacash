@@ -476,19 +476,19 @@
     <string name="item_activity_exclude_from_loyalty_plan">Exclude from\nloyalty plan:</string>
     <string name="item_activity_hide_item_dialog_title">Delete item</string>
     <string name="item_activity_hide_item_dialog_message">Are you sure you want to delete item?</string>
-    <string name="item_activity_alert_description_msg">Name is empty!</string>
-    <string name="item_activity_alert_unit_label">Label Unit is empty!</string>
-    <string name="item_activity_alert_category_msg">Category is empty!</string>
-    <string name="item_activity_alert_ean_msg" formatted="false">Ean should be %d to %d symbols!</string>
+    <string name="item_activity_alert_description_msg">Name is empty</string>
+    <string name="item_activity_alert_unit_label">Label Unit is empty</string>
+    <string name="item_activity_alert_category_msg">Category is empty</string>
+    <string name="item_activity_alert_ean_msg" formatted="false">Ean should be %d to %d symbols</string>
     <string name="item_activity_alert_ean_error" formatted="false">EAN\\UPC Code should be numeric and can\'t be more than %d digits</string>
     <string name="item_activity_alert_product_code_error" formatted="false">Product Code can\'t be more than %d symbols</string>
-    <string name="item_activity_alert_product_code_msg" formatted="false">Product code should be %d to %d symbols!</string>
-    <string name="item_activity_alert_ean_duplicate_msg">Item with such ean is already exists!</string>
-    <string name="item_activity_alert_product_code_duplicate_msg">Item with such product code already exists!</string>
-    <string name="item_activity_alert_units_label_msg">Units label is empty!</string>
-    <string name="item_activity_alert_units_label_not_match_msg">Units label should be PCS, LB or OZ!</string>
-    <string name="item_activity_alert_price_empty_msg">Price is empty!</string>
-    <string name="item_activity_alert_price_positive_msg">Price should be positive!</string>
+    <string name="item_activity_alert_product_code_msg" formatted="false">Product code should be %d to %d symbols</string>
+    <string name="item_activity_alert_ean_duplicate_msg">Item with such ean is already exists</string>
+    <string name="item_activity_alert_product_code_duplicate_msg">Item with such product code already exists</string>
+    <string name="item_activity_alert_units_label_msg">Units label is empty</string>
+    <string name="item_activity_alert_units_label_not_match_msg">Units label should be PCS, LB or OZ</string>
+    <string name="item_activity_alert_price_empty_msg">Price is empty</string>
+    <string name="item_activity_alert_price_positive_msg">Price should be positive</string>
     <string name="item_activity_alert_discount_less_100_msg">Discount should be less then 100%</string>
     <string name="item_activity_alert_discount_less_price_msg">Discount should be less then sale price</string>
     <string name="item_activity_alert_code_type_title">Code type</string>

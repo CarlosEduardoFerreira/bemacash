@@ -1,9 +1,11 @@
 package com.kaching123.tcr.fragment.item;
 
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
@@ -31,6 +34,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
 
+import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemSelect;
@@ -59,6 +63,13 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
 
     private UnitsLabelAdapter unitsLabelAdapter;
 
+    private static final int UNIT_LABEL_LOADER_ID = 0;
+    private static final int EAN_LOADER_ID = 1;
+    private static final int PRODUCT_CODE_LOADER_ID = 2;
+
+    private boolean duplicateEanUpc;
+    private boolean duplicateProductCode;
+
     @Override
     protected void setViews() {
         InputFilter[] productCodeFilter = new InputFilter[]{new InputFilter.LengthFilter(TcrApplication.PRODUCT_CODE_MAX_LEN), alphanumericFilter};
@@ -77,7 +88,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         unitTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         unitsType.setAdapter(unitTypeAdapter);
 
-        getLoaderManager().initLoader(0, null, new UnitsLabelLoader());
+        getLoaderManager().initLoader(UNIT_LABEL_LOADER_ID, null, new UnitsLabelLoader());
         if (getItemProvider().isCreate()){
             new GetNextProductCodeTask().execute();
         }
@@ -100,10 +111,24 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         ItemModel model = getModel();
         model.eanCode = eanUpc.getText().toString();
         model.productCode = productCode.getText().toString();
-        model.unitsLabelId = ((UnitLabelModel)unitsType.getSelectedItem()).getGuid();
+        model.unitsLabelId = ((UnitLabelModel)unitsLabel.getSelectedItem()).getGuid();
         model.btnView = buttonView.getBackground().getLevel();
         model.loyaltyPoints = getDecimalValue(bonusPoints);
         model.excludeFromLoyaltyPlan = excludeFromLoyaltyPlan.isChecked();
+    }
+
+    @Override
+    public boolean validateData() {
+        if (duplicateEanUpc) {
+            Toast.makeText(getActivity(), R.string.item_activity_alert_ean_duplicate_msg, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (duplicateProductCode) {
+            Toast.makeText(getActivity(), R.string.item_activity_alert_product_code_duplicate_msg, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     @Click
@@ -126,6 +151,24 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         getModel().codeType = ((SerializationTypeHolder) unitsType.getItemAtPosition(position)).type;
         getModel().serializable = getModel().codeType != null;
         getItemProvider().onStockTypeChanged();
+    }
+
+    @AfterTextChange
+    protected void eanUpcAfterTextChanged(Editable s){
+        if (s.length() > 0){
+            getLoaderManager().restartLoader(EAN_LOADER_ID, null, new EanLoader());
+        }else{
+            duplicateEanUpc = false;
+        }
+    }
+
+    @AfterTextChange
+    protected void productCodeAfterTextChanged(Editable s){
+        if (s.length() > 0){
+            getLoaderManager().restartLoader(PRODUCT_CODE_LOADER_ID, null, new ProductCodeLoader());
+        }else{
+            duplicateProductCode = false;
+        }
     }
 
     private class UnitsLabelLoader implements LoaderCallbacks<List<UnitLabelModel>> {
@@ -155,8 +198,6 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         }
     }
 
-
-
     private static class SerializationTypeHolder {
         final String label;
         final CodeType type;
@@ -184,7 +225,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         }
     };
 
-    class GetNextProductCodeTask extends AsyncTask<Void, Void, String> {
+    private class GetNextProductCodeTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
@@ -196,4 +237,45 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
             productCode.setText(code);
         }
     }
+
+    private class EanLoader implements LoaderCallbacks<Cursor> {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(ShopStore.ItemTable.URI_CONTENT))
+                    .projection(ShopStore.ItemTable.GUID)
+                    .where(ShopStore.ItemTable.EAN_CODE + " = ?", eanUpc.getText())
+                    .where(ShopStore.ItemTable.GUID + " <> ?", getModel().guid)
+                    .build(getActivity());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+            duplicateEanUpc = cursor.getCount() > 0;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> cursorLoader) {}
+    }
+
+    private class ProductCodeLoader implements LoaderCallbacks<Cursor> {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(ShopStore.ItemTable.URI_CONTENT))
+                    .projection(ShopStore.ItemTable.GUID)
+                    .where(ShopStore.ItemTable.PRODUCT_CODE + " = ?", productCode.getText())
+                    .where(ShopStore.ItemTable.GUID + " <> ?", getModel().guid)
+                    .build(getActivity());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+            duplicateProductCode = cursor.getCount() > 0;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> cursorLoader) {}
+    }
+
 }

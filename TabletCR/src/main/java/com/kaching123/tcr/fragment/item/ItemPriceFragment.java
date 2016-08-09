@@ -1,10 +1,13 @@
 package com.kaching123.tcr.fragment.item;
 
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
@@ -14,12 +17,17 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.PriceType;
+import com.kaching123.tcr.util.CalculationUtil;
 
+import org.androidannotations.annotations.CheckedChange;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemSelect;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
+
 import static com.kaching123.tcr.fragment.UiHelper.getDecimalValue;
+import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 
 /**
@@ -78,6 +86,27 @@ public class ItemPriceFragment extends ItemBaseFragment {
         model.isSalable = forSale.isChecked();
     }
 
+    @Override
+    public boolean validateData() {
+        if (!TextUtils.isEmpty(discount.getText())) {
+            switch ((DiscountType) discountType.getSelectedItem()) {
+                case PERCENT:
+                    if (parseBigDecimal(discount.getText().toString(), BigDecimal.ZERO).compareTo(CalculationUtil.ONE_HUNDRED) >= 0) {
+                        Toast.makeText(getActivity(), R.string.item_activity_alert_discount_less_100_msg, Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                    break;
+                case VALUE:
+                    if (parseBigDecimal(discount.getText().toString(), BigDecimal.ZERO).compareTo(getModel().price) >= 0) {
+                        Toast.makeText(getActivity(), R.string.item_activity_alert_discount_less_price_msg, Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                    break;
+            }
+        }
+        return true;
+    }
+
     private void setFilters(){
         InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
         InputFilter[] percentFilter = new InputFilter[]{new PercentFormatInputFilter()};
@@ -92,5 +121,10 @@ public class ItemPriceFragment extends ItemBaseFragment {
     protected void priceTypeItemSelected(boolean selected, int position){
         getModel().priceType = (PriceType) priceType.getItemAtPosition(position);
         getItemProvider().onPriceTypeChanged();
+    }
+
+    @CheckedChange
+    protected void forSaleCheckedChanged(CompoundButton cb, boolean isChecked){
+        getModel().isSalable = isChecked;
     }
 }

@@ -7,12 +7,15 @@ import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
@@ -21,15 +24,20 @@ import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 
+import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemSelect;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
+
+import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
@@ -37,7 +45,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
  * Created by vkompaniets on 21.07.2016.
  */
 @EFragment(R.layout.item_common_information_fragment)
-public class ItemCommonInformationFragment extends ItemBaseFragment implements LoaderCallbacks<Cursor> {
+public class ItemCommonInformationFragment extends ItemBaseFragment implements LoaderCallbacks<Cursor>{
 
     @ViewById protected EditText description;
     @ViewById protected EditText salesPrice;
@@ -88,6 +96,24 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         model.taxGroupGuid = taxGroupAdapter.getGuid(taxGroup.getSelectedItemPosition());
     }
 
+    @Override
+    public boolean validateData() {
+        if (TextUtils.isEmpty(description.getText())) {
+            Toast.makeText(getActivity(), R.string.item_activity_alert_description_msg, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (getModel().priceType != PriceType.OPEN && getModel().isSalable) {
+            BigDecimal priceValue = parseBigDecimal(salesPrice.getText().toString(), null);
+            if (priceValue == null) {
+                Toast.makeText(getActivity(), R.string.item_activity_alert_price_empty_msg, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void initLoaders() {
         getLoaderManager().initLoader(DEPARTMENT_LOADER_ID, null, this);
         getLoaderManager().initLoader(TAX_GROUP_LOADER_ID, null, this);
@@ -103,6 +129,11 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     protected void departmentItemSelected(boolean selected, int position){
         getModel().departmentGuid = departmentAdapter.getGuid(position);
         getLoaderManager().restartLoader(CATEGORY_LOADER_ID, null, this);
+    }
+
+    @AfterTextChange
+    protected void salesPriceAfterTextChanged(Editable s){
+        getModel().price = parseBigDecimal(s.toString(), BigDecimal.ZERO);
     }
 
     @Override

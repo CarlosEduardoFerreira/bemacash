@@ -34,7 +34,7 @@ import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
  * Created by vkompaniets on 21.07.2016.
  */
 @EFragment(R.layout.item_monitoring_fragment)
-public class ItemMonitoringFragment extends ItemBaseFragment{
+public class ItemMonitoringFragment extends ItemBaseFragment {
 
     @ViewById protected CheckBox monitoring;
     @ViewById protected EditText availableQty;
@@ -87,9 +87,14 @@ public class ItemMonitoringFragment extends ItemBaseFragment{
     @Override
     public void collectData() {
         final ItemModel model = getModel();
+        model.availableQty = getItemProvider().getQtyInfo().availableQty;
         model.minimumQty = parseBigDecimal(minimumQty, BigDecimal.ZERO);
         model.recommendedQty = parseBigDecimal(recommendedQty, BigDecimal.ZERO);
-        model.availableQty = getItemProvider().getQtyInfo().availableQty;
+    }
+
+    @Override
+    public boolean validateData() {
+        return true;
     }
 
     public void updateQty(){

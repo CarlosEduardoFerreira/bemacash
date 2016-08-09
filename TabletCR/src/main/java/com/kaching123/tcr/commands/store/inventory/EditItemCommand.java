@@ -104,7 +104,7 @@ public class EditItemCommand extends AsyncCommand {
         } else {
             taskResult = succeeded();
         }
-        return taskResult;
+        return failed();
     }
 
     private TaskResult clearParentDuplicates() {

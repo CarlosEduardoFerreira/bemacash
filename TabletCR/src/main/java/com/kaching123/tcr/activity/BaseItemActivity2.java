@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ItemPagerAdapter;
@@ -31,6 +32,7 @@ import com.kaching123.tcr.fragment.item.ItemMonitoringFragment_;
 import com.kaching123.tcr.fragment.item.ItemProvider;
 import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.StartMode;
@@ -106,7 +108,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @AfterViews
     protected void init(){
         qtyInfo = new ItemQtyInfo();
-        qtyInfo.availableQty = model.availableQty;
+        qtyInfo.setAvailableQty(model.availableQty);
 
         String[] tabNames = getResources().getStringArray(R.array.item_tabs);
         adapter = new ItemPagerAdapter(getSupportFragmentManager(), tabNames);
@@ -115,10 +117,12 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         tabs.setDistributeEvenly(false);
         tabs.setViewPager(viewPager);
 
-        if (model.codeType == null){
-            loadComposersInfo();
-        }else{
-            loadUnitsInfo();
+        if (!isCreate()) {
+            if (model.codeType == null){
+                loadComposersInfo();
+            }else{
+                loadUnitsInfo();
+            }
         }
     }
 
@@ -171,22 +175,35 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
     @Click
     protected void btnSaveClicked(){
-        collectDataFromFragments();
+        if (!validateData())
+            return;
+
+        collectData();
         if (StartMode.ADD == mode){
             AddItemCommand.start(self(), model);
         }else{
             EditItemCommand.start(self(), model);
         }
+        finish();
     }
 
-    private void collectDataFromFragments(){
+    private boolean validateData(){
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for (Fragment fr : fragments){
+            if (!((ItemBaseFragment) fr).validateData())
+                return false;
+        }
+        return true;
+    }
+
+    private void collectData(){
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fr : fragments){
             ((ItemBaseFragment) fr).collectData();
         }
     }
 
-    public void updateQtyBlock() {
+    private void updateQtyBlock() {
         ItemMonitoringFragment fr = (ItemMonitoringFragment) getFragment(ItemMonitoringFragment_.class);
         if (fr != null){
             fr.updateQty();
@@ -250,6 +267,16 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (changesInSubActivitiesDone){
+            Toast.makeText(self(), "You must save changes before leave this screen", Toast.LENGTH_LONG).show();
+            return;
+        }else{
+            super.onBackPressed();
+        }
+    }
+
     /******************/
 
     private Fragment getFragment(Class clazz){
@@ -298,7 +325,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
                         availableUnitsCount++;
                 }
                 qtyInfo.availableUnitsCount = availableUnitsCount;
-                qtyInfo.availableQty = new BigDecimal(availableUnitsCount);
+                qtyInfo.setAvailableQty(new BigDecimal(availableUnitsCount));
 
                 qtyInfo.composersCount = 0;
                 qtyInfo.restrictComposersCount = 0;
@@ -328,7 +355,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
                 qtyInfo.cost = cost;
                 qtyInfo.restrictComposersCount = restrictComposersCount;
-                qtyInfo.availableQty = restrictComposersCount == 0 ? getModel().availableQty : qty;
+                qtyInfo.setAvailableQty(restrictComposersCount == 0 ? getModel().availableQty : qty);
 
                 qtyInfo.unitsCount = 0;
                 qtyInfo.availableUnitsCount = 0;
@@ -345,12 +372,16 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     }
 
     public class ItemQtyInfo{
-        public BigDecimal availableQty;
+        public BigDecimal availableQty = BigDecimal.ZERO;
         public BigDecimal cost;
         public int unitsCount;
         public int availableUnitsCount;
         public int composersCount;
         public int restrictComposersCount;
+
+        public void setAvailableQty(BigDecimal availableQty){
+            this.availableQty = availableQty == null ? BigDecimal.ZERO : availableQty;
+        }
     }
 
     public static void start(Context context, ItemExModel model, StartMode mode){
@@ -359,6 +390,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             model.isActiveStatus = true;
             model.isStockTracking = true;
             model.isDiscountable = true;
+            model.refType = ItemRefType.Simple;
         }
         BaseItemActivity2_.intent(context).model(model).mode(mode).start();
     }

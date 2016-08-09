@@ -29,7 +29,7 @@ import java.util.List;
  * Created by vkompaniets on 21.07.2016.
  */
 @EFragment(R.layout.item_printer_fragment)
-public class ItemPrintFragment extends ItemBaseFragment{
+public class ItemPrintFragment extends ItemBaseFragment {
 
     @ViewById protected Spinner kitchen;
     @ViewById protected Spinner kds;
@@ -53,6 +53,11 @@ public class ItemPrintFragment extends ItemBaseFragment{
     public void collectData() {
         final ItemModel model = getModel();
         model.printerAliasGuid = ((PrinterAliasModel) kitchen.getSelectedItem()).guid;
+    }
+
+    @Override
+    public boolean validateData() {
+        return true;
     }
 
     private class PrinterAliasAdapter extends ObjectsCursorAdapter<PrinterAliasModel> {

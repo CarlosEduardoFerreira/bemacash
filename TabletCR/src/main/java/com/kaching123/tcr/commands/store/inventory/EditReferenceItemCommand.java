@@ -105,7 +105,7 @@ public class EditReferenceItemCommand extends AsyncCommand {
                 itemModel.commission = newItem.commission;
                 itemModel.btnView = newItem.btnView;
                 itemModel.loyaltyPoints = newItem.loyaltyPoints;
-                success = success && editItemCommand.sync(getContext(), itemModel, getAppCommandContext());
+                success &= editItemCommand.sync(getContext(), itemModel, getAppCommandContext());
             }
         }
         return success;
