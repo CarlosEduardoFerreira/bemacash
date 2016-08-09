@@ -37,6 +37,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 
+import static com.kaching123.tcr.fragment.UiHelper.getDecimalValue;
 import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -90,7 +91,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     public void collectData() {
         final ItemModel model = getModel();
         model.description = description.getText().toString();
-        model.price = UiHelper.getDecimalValue(salesPrice);
+        model.price = getDecimalValue(salesPrice);
         model.categoryId = categoryAdapter.getGuid(category.getSelectedItemPosition());
         model.isActiveStatus = activeStatus.isChecked();
         model.taxGroupGuid = taxGroupAdapter.getGuid(taxGroup.getSelectedItemPosition());

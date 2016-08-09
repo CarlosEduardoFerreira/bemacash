@@ -62,7 +62,7 @@ public class EditItemCommand extends AsyncCommand {
                 .where(ItemTable.GUID + " = ?", item.guid)
                 .perform(getContext());
         if (c.moveToFirst()) {
-            availableQty = _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY));//_decimalQty(c, 0);
+            availableQty = _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY));
             item.defaultModifierGuid = c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID));
         }
         c.close();
@@ -104,7 +104,7 @@ public class EditItemCommand extends AsyncCommand {
         } else {
             taskResult = succeeded();
         }
-        return failed();
+        return taskResult;
     }
 
     private TaskResult clearParentDuplicates() {

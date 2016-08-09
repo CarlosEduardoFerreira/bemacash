@@ -190,8 +190,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private boolean validateData(){
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fr : fragments){
-            if (!((ItemBaseFragment) fr).validateData())
-                return false;
+            if (fr instanceof ItemBaseFragment)
+                if (!((ItemBaseFragment) fr).validateData())
+                    return false;
         }
         return true;
     }
@@ -199,7 +200,8 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private void collectData(){
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fr : fragments){
-            ((ItemBaseFragment) fr).collectData();
+            if (fr instanceof ItemBaseFragment)
+                ((ItemBaseFragment) fr).collectData();
         }
     }
 

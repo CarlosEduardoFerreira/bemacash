@@ -75,6 +75,18 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
                 }
             }
         });
+
+        if (getItemProvider().isCreate()){
+            availableQty.addTextChangedListener(new BrandTextWatcher(availableQty, true){
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    super.onTextChanged(s, start, before, count);
+                    if(getModel().isStockTracking){
+                        getItemProvider().getQtyInfo().setAvailableQty(UiHelper.getDecimalValue(s));
+                    }
+                }
+            });
+        }
     }
 
     @Override
