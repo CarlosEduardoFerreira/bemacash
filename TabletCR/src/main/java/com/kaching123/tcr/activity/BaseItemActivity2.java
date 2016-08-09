@@ -17,8 +17,10 @@ import android.widget.Toast;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ItemPagerAdapter;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
+import com.kaching123.tcr.commands.store.inventory.AddVariantMatrixItemsCommand;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
+import com.kaching123.tcr.commands.store.inventory.EditVariantMatrixItemCommand;
 import com.kaching123.tcr.commands.wireless.CollectUnitsCommand;
 import com.kaching123.tcr.commands.wireless.CollectUnitsCommand.UnitCallback;
 import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
@@ -32,6 +34,7 @@ import com.kaching123.tcr.fragment.item.ItemMonitoringFragment_;
 import com.kaching123.tcr.fragment.item.ItemProvider;
 import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
@@ -52,8 +55,10 @@ import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by vkompaniets on 21.07.2016.
@@ -104,6 +109,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private ItemQtyInfo qtyInfo;
 
     private boolean changesInSubActivitiesDone;
+
+    private ItemExModel parentItem;
+    private ItemMatrixModel parentItemMatrix;
 
     @AfterViews
     protected void init(){
@@ -156,6 +164,16 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     }
 
     @Override
+    public void setParentItem(ItemExModel parent) {
+        this.parentItem = parent;
+    }
+
+    @Override
+    public void setParentMatrixItem(ItemMatrixModel parentMatrixItem) {
+        this.parentItemMatrix = parentMatrixItem;
+    }
+
+    @Override
     protected void onBarcodeReceived(String barcode) {
 
     }
@@ -179,12 +197,32 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             return;
 
         collectData();
+        saveReference();
         if (StartMode.ADD == mode){
             AddItemCommand.start(self(), model);
         }else{
             EditItemCommand.start(self(), model);
         }
         finish();
+    }
+
+    private void saveReference() {
+        if (parentItem != null){ //item was linked to reference item
+            if (parentItemMatrix == null){ //matrix variant wasn't selected, create new one
+                parentItemMatrix = new ItemMatrixModel(
+                        UUID.randomUUID().toString(),
+                        model.description,
+                        parentItem.guid,
+                        model.guid
+                );
+                ArrayList<ItemMatrixModel> matrix = new ArrayList<>(1);
+                matrix.add(parentItemMatrix);
+                AddVariantMatrixItemsCommand.start(self(), matrix);
+            }else{ //matrix variant was selected, update it
+                EditVariantMatrixItemCommand.start(self(), parentItemMatrix);
+            }
+            model.referenceItemGuid = null;  //surprise!
+        }
     }
 
     private boolean validateData(){

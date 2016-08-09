@@ -3,6 +3,7 @@ package com.kaching123.tcr.fragment.item;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.Editable;
@@ -26,14 +27,18 @@ import com.kaching123.tcr.commands.wireless.DropUnitsCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment.IButtonViewDialogListener;
+import com.kaching123.tcr.fragment.inventory.ChooseParentItemDialogFragment;
 import com.kaching123.tcr.function.NextProductCodeQuery;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.UnitLabelFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.ItemMatrixByParentView;
+import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -69,6 +74,8 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
     private static final int UNIT_LABEL_LOADER_ID = 0;
     private static final int EAN_LOADER_ID = 1;
     private static final int PRODUCT_CODE_LOADER_ID = 2;
+    private static final int ITEM_MATRIX_LOADER_ID = 3;
+    private static final int ITEM_PARENT_LOADER_ID = 4;
 
     private boolean duplicateEanUpc;
     private boolean duplicateProductCode;
@@ -92,6 +99,11 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         unitsType.setAdapter(unitTypeAdapter);
 
         getLoaderManager().initLoader(UNIT_LABEL_LOADER_ID, null, new UnitsLabelLoader());
+        if (getModel().referenceItemGuid == null) {
+            getLoaderManager().restartLoader(ITEM_MATRIX_LOADER_ID, null, cursorLoaderCallbacks);
+        } else {
+            getLoaderManager().restartLoader(ITEM_PARENT_LOADER_ID, null, cursorLoaderCallbacks);
+        }
         if (getItemProvider().isCreate()){
             new GetNextProductCodeTask().execute();
         }
@@ -147,6 +159,20 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
                 buttonView.getBackground().setLevel(level);
             }
         });
+    }
+
+    @Click
+    protected void referenceItemClicked(){
+        ChooseParentItemDialogFragment.show(getActivity(), getModel().guid,
+                new ChooseParentItemDialogFragment.OnItemChosenListener() {
+                    @Override
+                    public void onItemChosen(ItemExModel parentItem, ItemMatrixModel parentItemMatrix) {
+                        referenceItem.setText(parentItem.description);
+                        getItemProvider().setParentItem(parentItem);
+                        getItemProvider().setParentMatrixItem(parentItemMatrix);
+                    }
+                }
+        );
     }
 
     @ItemSelect
@@ -320,5 +346,43 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         @Override
         public void onLoaderReset(Loader<Cursor> cursorLoader) {}
     }
+
+    private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            switch (id) {
+                case ITEM_MATRIX_LOADER_ID:
+                    return CursorLoaderBuilder.forUri(ShopProvider.contentUri(ItemMatrixByParentView.URI_CONTENT))
+                            .where(ItemMatrixByParentView.CHILD_ITEM_GUID + " = ?", getModel().guid).build(getActivity());
+                case ITEM_PARENT_LOADER_ID:
+                    return CursorLoaderBuilder.forUri(ShopProvider.contentUri(ItemTable.URI_CONTENT))
+                            .where(ItemTable.GUID + " = ?", getModel().referenceItemGuid).build(getActivity());
+                default:
+                    throw new IllegalArgumentException("Unsupported loader id: "
+                            + Integer.toHexString(id));
+            }
+
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            switch (loader.getId()) {
+                case ITEM_MATRIX_LOADER_ID:
+                    if (data.moveToFirst()) {
+                        referenceItem.setText(data.getString(data.getColumnIndex(ItemMatrixByParentView.ITEM_DESCRIPTION)));
+                    }
+                    break;
+                case ITEM_PARENT_LOADER_ID:
+                    if (data.moveToFirst()) {
+                        referenceItem.setText(data.getString(data.getColumnIndex(ItemTable.DESCRIPTION)));
+                    }
+                default:
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+        }
+    };
 
 }
