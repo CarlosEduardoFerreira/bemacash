@@ -8,6 +8,7 @@ import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ComposerTable;
+import com.kaching123.tcr.store.ShopSchema2.ComposerView2.HostUnitLabelTable;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ItemHostTable;
 import com.kaching123.tcr.util.ContentValuesUtilBase;
 
@@ -31,7 +32,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 ContentValuesUtilBase._decimal(c.getString(c.getColumnIndex(ItemHostTable.SALE_PRICE))),
                 ContentValuesUtilBase._decimalQty(c.getString(c.getColumnIndex(ItemHostTable.TMP_AVAILABLE_QTY))),
                 c.getString(c.getColumnIndex(ItemHostTable.UNIT_LABEL_ID)),
-                null,
+                c.getString(c.getColumnIndex(HostUnitLabelTable.SHORTCUT)),
                 c.getInt(c.getColumnIndex(ItemHostTable.STOCK_TRACKING)) == 1,
                 c.getInt(c.getColumnIndex(ItemHostTable.ACTIVE_STATUS)) == 1,
                 false,
@@ -68,7 +69,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
 
         String shortCut;
         try {
-            shortCut = c.getString(c.getColumnIndex(ShopSchema2.ComposerView2.UnitLabelTable.SHORTCUT));
+            shortCut = c.getString(c.getColumnIndex(HostUnitLabelTable.SHORTCUT));
         } catch (IllegalArgumentException noItem) {
             shortCut = null;
         }

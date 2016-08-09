@@ -127,7 +127,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 ItemTable.PRICE_TYPE,
                 ItemTable.SALE_PRICE,
                 ItemTable.TMP_AVAILABLE_QTY,
-                ItemTable.UNITS_LABEL,
+                UnitLabelTable.SHORTCUT,
                 ItemTable.UNIT_LABEL_ID,
                 ItemTable.STOCK_TRACKING,
                 ItemTable.ACTIVE_STATUS,

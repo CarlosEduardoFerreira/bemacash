@@ -28,7 +28,6 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
             ItemTable.PRICE_TYPE,
             ItemTable.SALE_PRICE,
             ItemTable.TMP_AVAILABLE_QTY,
-            ItemTable.UNITS_LABEL,
             ItemTable.UNIT_LABEL_ID,
             ItemTable.STOCK_TRACKING,
             ItemTable.ACTIVE_STATUS,

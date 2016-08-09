@@ -17,6 +17,7 @@ import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.payment.HistoryDetailedOrderItemModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
@@ -83,7 +84,7 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                             null,
                             c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
                             c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
-                            c.getString(c.getColumnIndex(ItemTable.UNITS_LABEL)),
+                            c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT)),
                             _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
                             _bool(c, c.getColumnIndex(ItemTable.SERIALIZABLE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),

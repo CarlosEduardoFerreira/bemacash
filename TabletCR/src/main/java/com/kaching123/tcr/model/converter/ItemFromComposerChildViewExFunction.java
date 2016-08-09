@@ -3,7 +3,7 @@ package com.kaching123.tcr.model.converter;
 import android.database.Cursor;
 
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ChildUnitLabelTable;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ItemChildTable;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -24,7 +24,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
             ItemChildTable.PRICE_TYPE,
             ItemChildTable.SALE_PRICE,
             ItemChildTable.TMP_AVAILABLE_QTY,
-            ItemChildTable.UNITS_LABEL,
+            ChildUnitLabelTable.SHORTCUT,
             ItemChildTable.UNIT_LABEL_ID,
             ItemChildTable.STOCK_TRACKING,
             ItemChildTable.ACTIVE_STATUS,
@@ -39,7 +39,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
         super.apply(c);
         String shortCut;
         try {
-            shortCut = c.getString(indexHolder.get(ShopSchema2.ComposerView2.UnitLabelTable.SHORTCUT));
+            shortCut = c.getString(indexHolder.get(ChildUnitLabelTable.SHORTCUT));
         } catch (IllegalArgumentException noItem) {
             shortCut = null;
         }

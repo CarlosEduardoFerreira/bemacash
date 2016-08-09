@@ -50,7 +50,6 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             ItemTable.PRICE_TYPE,
             ItemTable.SALE_PRICE,
             ItemTable.TMP_AVAILABLE_QTY,
-            ItemTable.UNITS_LABEL,
             ItemTable.UNIT_LABEL_ID,
             UnitLabelTable.SHORTCUT,
             ItemTable.STOCK_TRACKING,

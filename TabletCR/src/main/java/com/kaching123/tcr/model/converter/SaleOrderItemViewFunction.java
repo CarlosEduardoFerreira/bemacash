@@ -13,6 +13,7 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleOrderTable;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.ContentValuesUtilBase;
 
@@ -83,7 +84,7 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                 null,//stub
                 c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
                 c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
-                c.getString(c.getColumnIndex(ItemTable.UNITS_LABEL)),
+                c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT)),
                 _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
                 _bool(c, c.getColumnIndex(ItemTable.SERIALIZABLE)),
                 _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),

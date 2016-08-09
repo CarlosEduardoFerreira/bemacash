@@ -23,7 +23,7 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
             ItemHostTable.PRICE_TYPE,
             ItemHostTable.SALE_PRICE,
             ItemHostTable.TMP_AVAILABLE_QTY,
-            ItemHostTable.UNITS_LABEL,
+            null,
             ItemHostTable.UNIT_LABEL_ID,
             ItemHostTable.STOCK_TRACKING,
             ItemHostTable.ACTIVE_STATUS,

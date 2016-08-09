@@ -404,10 +404,6 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String SALE_PRICE = "sale_price";
 
-        @NotNull
-        @Column(type = Column.Type.TEXT)
-        String UNITS_LABEL = "units_label";
-
         @Column(type = Type.TEXT)
         String UNIT_LABEL_ID = "unit_label_id";
 
@@ -2806,7 +2802,7 @@ public abstract class ShopStore {
         String PRICE_TYPE = ItemExtView.TABLE_ITEM + "_" + ItemTable.PRICE_TYPE;
         String SALE_PRICE = ItemExtView.TABLE_ITEM + "_" + ItemTable.SALE_PRICE;
         String QUANTITY = ItemExtView.TABLE_ITEM + "_" + ItemTable.TMP_AVAILABLE_QTY;
-        String UNITS_LABEL = ItemExtView.TABLE_ITEM + "_" + ItemTable.UNITS_LABEL;
+        String UNITS_LABEL = ItemExtView.TABLE_UNIT_LABEL + "_" + UnitLabelTable.SHORTCUT;
         String STOCK_TRACKING = ItemExtView.TABLE_ITEM + "_" + ItemTable.STOCK_TRACKING;
         String ACTIVE_STATUS = ItemExtView.TABLE_ITEM + "_" + ItemTable.ACTIVE_STATUS;
         String DISCOUNTABLE = ItemExtView.TABLE_ITEM + "_" + ItemTable.DISCOUNTABLE;
@@ -3563,8 +3559,12 @@ public abstract class ShopStore {
         String TABLE_CHILD_ITEM = "item_child_table";
 
         @Columns(UnitLabelTable.SHORTCUT)
+        @Join(type = Join.Type.LEFT, joinTable = UnitLabelTable.TABLE_NAME, joinColumn = UnitLabelTable.GUID, onTableAlias = TABLE_HOST_ITEM, onColumn = ItemTable.UNIT_LABEL_ID)
+        String TABLE_HOST_UNIT_LABEL = "host_unit_label_table";
+
+        @Columns(UnitLabelTable.SHORTCUT)
         @Join(type = Join.Type.LEFT, joinTable = UnitLabelTable.TABLE_NAME, joinColumn = UnitLabelTable.GUID, onTableAlias = TABLE_CHILD_ITEM, onColumn = ItemTable.UNIT_LABEL_ID)
-        String TABLE_UNIT_LABEL = "unit_label_table";
+        String TABLE_CHILD_UNIT_LABEL = "child_unit_label_table";
     }
 
     @SimpleView(TipsReportView.VIEW_NAME)
