@@ -55,20 +55,18 @@ public class EditItemCommand extends AsyncCommand {
 
         movementModel = null;
 
-        BigDecimal availableQty = null;
-
+        BigDecimal currentAvailableQty = BigDecimal.ZERO;
         Cursor c = ProviderAction.query(ITEM_URI)
                 .projection(ItemTable.TMP_AVAILABLE_QTY, ItemTable.DEFAULT_MODIFIER_GUID)
                 .where(ItemTable.GUID + " = ?", item.guid)
                 .perform(getContext());
         if (c.moveToFirst()) {
-            availableQty = _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY));
+            currentAvailableQty = _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY));
             item.defaultModifierGuid = c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID));
         }
         c.close();
 
-        if (item.isStockTracking && item.availableQty != null
-                && item.availableQty.compareTo(availableQty) != 0 && !item.ignoreMovementupdate) {
+        if (currentAvailableQty.compareTo(item.availableQty) != 0){
             item.updateQtyFlag = UUID.randomUUID().toString();
             movementModel = ItemMovementModelFactory.getNewModel(
                     item.guid,
@@ -77,6 +75,7 @@ public class EditItemCommand extends AsyncCommand {
                     true,
                     new Date());
         }
+
         operations = new ArrayList<>();
 
         operations.add(ContentProviderOperation.newUpdate(ITEM_URI)
@@ -94,10 +93,16 @@ public class EditItemCommand extends AsyncCommand {
             sql.add(JdbcFactory.getConverter(movementModel).insertSQL(movementModel,
                     getAppCommandContext()));
         }
-        if (item.serializable && !InventoryUtils.pollItem(item.guid, getContext(),
-                getAppCommandContext(), operations, sql)) {
-            return failed();
+
+        if (item.codeType != null){
+            if (!InventoryUtils.removeComposers(item.guid, getContext(), getAppCommandContext(), operations, sql))
+                return failed();
+        }else{
+            if (!InventoryUtils.removeUnits(item.guid, getContext(), getAppCommandContext(), operations, sql))
+                return failed();
         }
+        item.serializable = item.codeType != null;
+
         TaskResult taskResult;
         if (item.referenceItemGuid != null) {
             taskResult = clearParentDuplicates();

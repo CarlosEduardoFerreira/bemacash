@@ -22,6 +22,8 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.UnitLabelActivity;
 import com.kaching123.tcr.adapter.UnitsLabelAdapter;
+import com.kaching123.tcr.commands.wireless.DropUnitsCommand;
+import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment.IButtonViewDialogListener;
 import com.kaching123.tcr.function.NextProductCodeQuery;
@@ -40,6 +42,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemSelect;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.getDecimalValue;
@@ -148,9 +151,49 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
 
     @ItemSelect
     protected void unitsTypeItemSelected(boolean selected, int position){
-        getModel().codeType = ((SerializationTypeHolder) unitsType.getItemAtPosition(position)).type;
-        getModel().serializable = getModel().codeType != null;
-        getItemProvider().onStockTypeChanged();
+        final CodeType oldType = getModel().codeType;
+        final CodeType newType = ((SerializationTypeHolder) unitsType.getItemAtPosition(position)).type;
+
+        if (oldType != null && newType == null && getItemProvider().getQtyInfo().unitsCount > 0) {
+            AlertDialogWithCancelFragment.showWithTwo(getActivity(),
+                    R.string.wireless_remove_items_title,
+                    getString(R.string.wireless_remove_items_body),
+                    R.string.btn_ok,
+                    new AlertDialogWithCancelFragment.OnDialogListener() {
+                        @Override
+                        public boolean onClick() {
+                            getModel().codeType = newType;
+                            DropUnitsCommand.start(getActivity(),
+                                    null, getModel(), new DropUnitsCommand.UnitCallback() {
+                                        @Override
+                                        protected void handleSuccess(ItemExModel model) {
+                                            getModel().codeType = newType;
+                                            getModel().serializable = getModel().codeType != null;
+                                            getModel().availableQty = BigDecimal.ZERO;
+                                            getItemProvider().getQtyInfo().setAvailableQty(BigDecimal.ZERO);
+                                            getItemProvider().onStockTypeChanged();
+                                        }
+
+                                        @Override
+                                        protected void handleError() {
+                                            Toast.makeText(getActivity(), getString(R.string.unit_drop_partially_faield), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onCancel() {
+                            unitsType.setSelection(oldType.ordinal() + 1);
+                            return true;
+                        }
+                    }
+            );
+        }else{
+            getModel().codeType = newType;
+            getModel().serializable = getModel().codeType != null;
+            getItemProvider().onStockTypeChanged();
+        }
     }
 
     @AfterTextChange

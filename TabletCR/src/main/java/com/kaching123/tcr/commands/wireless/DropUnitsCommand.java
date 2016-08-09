@@ -2,35 +2,29 @@ package com.kaching123.tcr.commands.wireless;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.ItemMovementModel;
-import com.kaching123.tcr.model.ItemMovementModelFactory;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.converter.UnitFunction;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
-import com.kaching123.tcr.util.MovementUtils;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.UUID;
-
-import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
+import java.util.List;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -42,7 +36,7 @@ public class DropUnitsCommand extends AsyncCommand  {
     private static final Uri ITEM_URI = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
     private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ShopStore.ItemMovementTable.URI_CONTENT);
 
-    private static final String PARAM_GUILD = "PARAM_ITEM_ID";
+    private static final String PARAM_UNITS = "PARAM_ITEM_ID";
     private static final String PARAM_ITEM = "PARAM_ITEM";
 
     private static final String RESULT_ITEM = "RESULT_ITEM";
@@ -52,11 +46,15 @@ public class DropUnitsCommand extends AsyncCommand  {
 
     @Override
     protected TaskResult doCommand() {
-        ops = new ArrayList<ContentProviderOperation>();
+        ops = new ArrayList<>();
         sqlCommand = batchDelete(Unit.class);
         JdbcConverter jdbcConverter = JdbcFactory.getConverter(UnitTable.TABLE_NAME);
 
-        ArrayList<Unit> units = (ArrayList<Unit>) getArgs().getSerializable(PARAM_GUILD);
+        ItemExModel parent = (ItemExModel) getArgs().getSerializable(PARAM_ITEM);
+        List<Unit> units = (ArrayList<Unit>) getArgs().getSerializable(PARAM_UNITS);
+        if (units == null){
+            units = loadItemUnits(parent.guid);
+        }
         for (Unit unit : units) {
             ops.add(ContentProviderOperation.newUpdate(UNIT_URI)
                     .withValues(ShopStore.DELETE_VALUES)
@@ -65,8 +63,7 @@ public class DropUnitsCommand extends AsyncCommand  {
             sqlCommand.add(jdbcConverter.deleteSQL(unit, this.getAppCommandContext()));
         }
 
-        ItemExModel parent = (ItemExModel) getArgs().getSerializable(PARAM_ITEM);
-        parent.availableQty = BigDecimal.ZERO;
+        /*parent.availableQty = BigDecimal.ZERO;
         BigDecimal availableQty = null;
         ItemMovementModel movementModel = null;
         Cursor cursor = ProviderAction.query(ITEM_URI)
@@ -77,7 +74,7 @@ public class DropUnitsCommand extends AsyncCommand  {
             availableQty = _decimalQty(cursor, 0);
         }
         cursor.close();
-        /*****************************************************************************************************/
+        *//*****************************************************************************************************//*
         if (parent.isStockTracking && parent.availableQty != null && parent.availableQty.compareTo(availableQty) != 0) {
             parent.updateQtyFlag = UUID.randomUUID().toString();
             movementModel = ItemMovementModelFactory.getNewModel(
@@ -87,7 +84,6 @@ public class DropUnitsCommand extends AsyncCommand  {
                     true,
                     new Date()
             );
-
         }
 
         jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemTable.TABLE_NAME);
@@ -96,14 +92,22 @@ public class DropUnitsCommand extends AsyncCommand  {
                 .withValues(parent.toValues()).build());
         sqlCommand.add(jdbcConverter.updateSQL(parent, this.getAppCommandContext()));
 
-        /******************************************************************************************************/
+        *//******************************************************************************************************//*
         if (movementModel != null) {
             ops.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI).withValues(movementModel.toValues()).build());
             jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemMovementTable.TABLE_NAME);
             sqlCommand.add(jdbcConverter.insertSQL(movementModel, this.getAppCommandContext()));
-        }
+        }*/
 
         return succeeded().add(RESULT_ITEM, parent);
+    }
+
+    private List<Unit> loadItemUnits(String itemId) {
+        return ProviderAction.query(UNIT_URI)
+                .where(UnitTable.ITEM_ID + " = ?", itemId)
+                .perform(getContext())
+                .toFluentIterable(new UnitFunction())
+                .toImmutableList();
     }
 
     @Override
@@ -121,10 +125,20 @@ public class DropUnitsCommand extends AsyncCommand  {
                                           ItemExModel model,
                                           UnitCallback callback) {
         return  create(DropUnitsCommand.class)
-                .arg(PARAM_GUILD, unit)
+                .arg(PARAM_UNITS, unit)
                 .arg(PARAM_ITEM, model)
                 .callback(callback)
                 .queueUsing(context);
+    }
+
+    public SyncResult sync(Context context,
+                                  ArrayList<Unit> units,
+                                  ItemExModel model,
+                                  IAppCommandContext appCommandContext){
+        Bundle args = new Bundle(2);
+        args.putSerializable(PARAM_UNITS, units);
+        args.putSerializable(PARAM_ITEM, model);
+        return syncDependent(context, args, appCommandContext);
     }
 
     public static abstract class UnitCallback {

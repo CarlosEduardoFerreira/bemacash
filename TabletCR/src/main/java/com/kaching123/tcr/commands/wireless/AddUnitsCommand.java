@@ -2,7 +2,6 @@ package com.kaching123.tcr.commands.wireless;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
@@ -13,7 +12,6 @@ import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.Unit;
-import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -26,7 +24,6 @@ import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +84,7 @@ public class AddUnitsCommand extends AsyncCommand {
             }
         }
 
-        Cursor c = ProviderAction.query(UNIT_URI)
+        /*Cursor c = ProviderAction.query(UNIT_URI)
                 .projection("1")
                 .where(UnitTable.ITEM_ID + " = ?", parent.guid)
                 .where(UnitTable.STATUS + " != ?", Status.SOLD.ordinal())
@@ -96,26 +93,17 @@ public class AddUnitsCommand extends AsyncCommand {
         parent.availableQty = new BigDecimal(c.getCount() + (shouldAdd ? 1 : -1));
         c.close();
 
-        /*parent.updateQtyFlag = UUID.randomUUID().toString();
-        ItemMovementModel movementModel = ItemMovementModelFactory.getNewModel(
-                parent.guid,
-                parent.updateQtyFlag,
-                parent.availableQty,
-                true,
-                new Date()
-        );*/
-
         jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemTable.TABLE_NAME);
         ops.add(ContentProviderOperation.newUpdate(ITEM_URI)
                 .withSelection(ShopStore.ItemTable.GUID + " = ?", new String[]{parent.guid})
                 .withValues(parent.toQtyValues()).build());
         sqlCommand.add(jdbcConverter.updateSQL(parent, this.getAppCommandContext()));
 
-        /*ops.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI).withValues(movementModel.toValues()).build());
+        ops.add(ContentProviderOperation.newInsert(ITEM_MOVEMENT_URI).withValues(movementModel.toValues()).build());
         jdbcConverter = JdbcFactory.getConverter(ShopStore.ItemMovementTable.TABLE_NAME);
         sqlCommand.add(jdbcConverter.insertSQL(movementModel, this.getAppCommandContext()));*/
 
-        if (!InventoryUtils.pollItem(parent.guid, getContext(), getAppCommandContext(), ops, sqlCommand)) {
+        if (!InventoryUtils.removeComposers(parent.guid, getContext(), getAppCommandContext(), ops, sqlCommand)) {
             return failed().add(RESULT_DESC, "Database has responded with a failure code!");
         }
 

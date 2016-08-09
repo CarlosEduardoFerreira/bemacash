@@ -105,7 +105,7 @@ public class DeleteItemCommand extends AsyncCommand {
             }
         }
 
-        if (!InventoryUtils.pollItem(itemGuid, getContext(), getAppCommandContext(), operations, sql)) {
+        if (!InventoryUtils.removeComposers(itemGuid, getContext(), getAppCommandContext(), operations, sql)) {
             return failed();
         } else {
             return succeeded();
