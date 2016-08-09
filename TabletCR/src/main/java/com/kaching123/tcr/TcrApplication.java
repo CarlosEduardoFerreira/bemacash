@@ -385,20 +385,14 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public synchronized long getShopId() {
-        if (operator == null || operator.shopId == 0L)
-            Logger.e("[CREDS] TcrApplication.getShopId(): NO SHOP ID! operator: " + operator, new RuntimeException());
         return operator == null ? 0 : operator.shopId;
     }
 
     public synchronized String getOperatorGuid() {
-        if (operator == null || TextUtils.isEmpty(operator.guid))
-            Logger.e("[CREDS] TcrApplication.getOperatorGuid(): NO OPERATOR ID! operator: " + operator, new RuntimeException());
         return operator == null ? null : operator.guid;
     }
 
     public synchronized String getOperatorLogin() {
-        if (operator == null || TextUtils.isEmpty(operator.login))
-            Logger.e("[CREDS] TcrApplication.getOperatorLogin(): NO OPERATOR LOGIN! operator: " + operator, new RuntimeException());
         return operator == null ? null : operator.login;
     }
 
@@ -439,8 +433,6 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public String getShiftGuid() {
-        if (TextUtils.isEmpty(shiftGuid))
-            Logger.e("[CREDS] TcrApplication.getShiftGuid(): NO SHIFT ID! shiftGuid: " + shiftGuid, new RuntimeException());
         return shiftGuid;
     }
 
@@ -479,14 +471,10 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public long getRegisterId() {
-        if (registerId == 0L)
-            Logger.e("[CREDS] TcrApplication.getRegisterId(): NO REGISTER ID! registerId: " + registerId, new RuntimeException());
         return registerId;
     }
 
     public String getRegisterSerial() {
-        if (TextUtils.isEmpty(registerSerial))
-            Logger.e("[CREDS] TcrApplication.getRegisterSerial(): NO REGISTER SERIAL! registerSerial: " + registerSerial, new RuntimeException());
         return registerSerial;
     }
 
