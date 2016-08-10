@@ -248,4 +248,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         return UnitUtil.isPcs(this.priceType) || codeType != null;
     }
 
+    public boolean isReferenceItem() {
+        return this.refType == ItemRefType.Reference;
+    }
+
 }

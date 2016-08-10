@@ -2,11 +2,13 @@ package com.kaching123.tcr.fragment.item;
 
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
@@ -45,7 +47,7 @@ public class ItemPriceFragment extends ItemBaseFragment {
     @ViewById protected CheckBox commissionEligible;
     @ViewById protected EditText commission;
     @ViewById protected CheckBox forSale;
-
+    @ViewById protected TableRow forSaleRow;
 
     @Override
     protected void setViews() {
@@ -56,6 +58,11 @@ public class ItemPriceFragment extends ItemBaseFragment {
         ArrayAdapter<DiscountType> discountTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_light, DiscountType.values());
         discountTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         discountType.setAdapter(discountTypeAdapter);
+
+        if (getModel().isReferenceItem()){
+            forSale.setChecked(false);
+            forSaleRow.setVisibility(View.GONE);
+        }
 
         setFilters();
     }

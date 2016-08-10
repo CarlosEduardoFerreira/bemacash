@@ -61,9 +61,12 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
 
     @ViewById protected EditText eanUpc;
     @ViewById protected EditText productCode;
+    @ViewById protected View eanUpcRow;
+    @ViewById protected View productCodeRow;
     @ViewById protected Spinner unitsLabel;
     @ViewById protected Spinner unitsType;
     @ViewById protected TextView referenceItem;
+    @ViewById protected View referenceItemRow;
     @ViewById protected View buttonView;
     @ViewById protected CheckBox ebtEligible;
     @ViewById protected EditText bonusPoints;
@@ -98,15 +101,22 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         unitTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         unitsType.setAdapter(unitTypeAdapter);
 
+        if (!getModel().isReferenceItem()){
+            if (getModel().referenceItemGuid == null) {
+                getLoaderManager().restartLoader(ITEM_MATRIX_LOADER_ID, null, cursorLoaderCallbacks);
+            } else {
+                getLoaderManager().restartLoader(ITEM_PARENT_LOADER_ID, null, cursorLoaderCallbacks);
+            }
+            if (getItemProvider().isCreate()){
+                new GetNextProductCodeTask().execute();
+            }
+        }else{
+           eanUpcRow.setVisibility(View.GONE);
+           productCodeRow.setVisibility(View.GONE);
+           referenceItemRow.setVisibility(View.GONE);
+        }
+
         getLoaderManager().initLoader(UNIT_LABEL_LOADER_ID, null, new UnitsLabelLoader());
-        if (getModel().referenceItemGuid == null) {
-            getLoaderManager().restartLoader(ITEM_MATRIX_LOADER_ID, null, cursorLoaderCallbacks);
-        } else {
-            getLoaderManager().restartLoader(ITEM_PARENT_LOADER_ID, null, cursorLoaderCallbacks);
-        }
-        if (getItemProvider().isCreate()){
-            new GetNextProductCodeTask().execute();
-        }
     }
 
     @Override
@@ -124,8 +134,10 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
     @Override
     public void collectData() {
         ItemModel model = getModel();
-        model.eanCode = eanUpc.getText().toString();
-        model.productCode = productCode.getText().toString();
+        if (!getModel().isReferenceItem()){
+            model.eanCode = eanUpc.getText().toString();
+            model.productCode = productCode.getText().toString();
+        }
         model.unitsLabelId = ((UnitLabelModel)unitsLabel.getSelectedItem()).getGuid();
         model.btnView = buttonView.getBackground().getLevel();
         model.loyaltyPoints = getDecimalValue(bonusPoints);

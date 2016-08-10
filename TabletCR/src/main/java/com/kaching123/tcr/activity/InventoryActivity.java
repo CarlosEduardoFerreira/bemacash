@@ -32,7 +32,6 @@ import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.BaseIm
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.ImportType;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.WrongImportInfo;
 import com.kaching123.tcr.commands.store.inventory.UpdateDeletedItemCommand;
-import com.kaching123.tcr.ecuador.AddEcuadorReferenceItemActivity;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
@@ -165,7 +164,7 @@ public class InventoryActivity extends ScannerBaseActivity {
         itemsFragment.setListener(new BaseItemsPickFragment.IItemListener() {
             @Override
             public void onItemSelected(long id, ItemExModel model) {
-                BaseItemActivity2.start(self(), model, StartMode.EDIT);
+                BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.EDIT);
                 /*switch (model.refType) {
                     case Simple:
                         if (TcrApplication.isEcuadorVersion()) {
@@ -281,11 +280,12 @@ public class InventoryActivity extends ScannerBaseActivity {
         model.categoryId = selectedCategoryGuid;
         model.departmentGuid = selectedDeartmentGuid;
 
-        if (TcrApplication.isEcuadorVersion()) {
+        BaseItemActivity2.start(self(), model, ItemRefType.Reference, StartMode.ADD);
+        /*if (TcrApplication.isEcuadorVersion()) {
             AddEcuadorReferenceItemActivity.start(InventoryActivity.this, model);
         } else {
             AddReferenceItemActivity.start(InventoryActivity.this, model);
-        }
+        }*/
     }
 
     @OptionsItem
@@ -299,7 +299,7 @@ public class InventoryActivity extends ScannerBaseActivity {
         model.categoryId = selectedCategoryGuid;
         model.departmentGuid = selectedDeartmentGuid;
 
-        BaseItemActivity2.start(self(), model, StartMode.ADD);
+        BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.ADD);
 
         /*if (TcrApplication.isEcuadorVersion()) {
             AddEcuadorItemActivity.start(InventoryActivity.this, model);

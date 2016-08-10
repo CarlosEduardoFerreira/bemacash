@@ -11,6 +11,7 @@
         android:stretchColumns="1">
 
         <TableRow
+            android:id="@+id/ean_upc_row"
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
@@ -24,6 +25,7 @@
         </TableRow>
 
         <TableRow
+            android:id="@+id/product_code_row"
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
@@ -86,6 +88,7 @@
         </TableRow>
 
         <TableRow
+            android:id="@+id/reference_item_row"
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"

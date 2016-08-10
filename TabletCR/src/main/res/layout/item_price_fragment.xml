@@ -135,6 +135,7 @@
         </TableRow>
 
         <TableRow
+            android:id="@+id/for_sale_row"
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"

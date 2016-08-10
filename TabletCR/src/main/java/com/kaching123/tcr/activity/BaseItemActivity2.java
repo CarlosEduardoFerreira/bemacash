@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,9 +18,11 @@ import android.widget.Toast;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ItemPagerAdapter;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
+import com.kaching123.tcr.commands.store.inventory.AddReferenceItemCommand;
 import com.kaching123.tcr.commands.store.inventory.AddVariantMatrixItemsCommand;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
+import com.kaching123.tcr.commands.store.inventory.EditReferenceItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditVariantMatrixItemCommand;
 import com.kaching123.tcr.commands.wireless.CollectUnitsCommand;
 import com.kaching123.tcr.commands.wireless.CollectUnitsCommand.UnitCallback;
@@ -27,11 +30,16 @@ import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
+import com.kaching123.tcr.fragment.item.ItemAdditionalInformationFragment_;
 import com.kaching123.tcr.fragment.item.ItemBaseFragment;
 import com.kaching123.tcr.fragment.item.ItemCommonInformationFragment;
 import com.kaching123.tcr.fragment.item.ItemMonitoringFragment;
 import com.kaching123.tcr.fragment.item.ItemMonitoringFragment_;
+import com.kaching123.tcr.fragment.item.ItemPriceFragment_;
+import com.kaching123.tcr.fragment.item.ItemPrintFragment_;
 import com.kaching123.tcr.fragment.item.ItemProvider;
+import com.kaching123.tcr.fragment.item.ItemSpecialPricingFragment_;
+import com.kaching123.tcr.fragment.item.ItemVariantsFragment_;
 import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
@@ -98,13 +106,10 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @Extra
     protected ItemExModel model;
 
-    //holds actual database model
-    protected ItemExModel model2;
-
     @Extra
     protected StartMode mode;
 
-    private ItemPagerAdapter adapter;
+    private FragmentPagerAdapter adapter;
 
     private ItemQtyInfo qtyInfo;
 
@@ -118,10 +123,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         qtyInfo = new ItemQtyInfo();
         qtyInfo.setAvailableQty(model.availableQty);
 
-        String[] tabNames = getResources().getStringArray(R.array.item_tabs);
-        adapter = new ItemPagerAdapter(getSupportFragmentManager(), tabNames);
+        adapter = createAdapter();
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(tabNames.length);
+        viewPager.setOffscreenPageLimit(10);
         tabs.setDistributeEvenly(false);
         tabs.setViewPager(viewPager);
 
@@ -133,6 +137,30 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             }
         }
     }
+
+    private FragmentPagerAdapter createAdapter(){
+        String[] tabTitles = getResources().getStringArray(R.array.item_tabs);
+        ArrayList<TabHolder> tabHolders = new ArrayList<>();
+        tabHolders.add(new TabHolder(tabTitles[0], new ItemPriceFragment_()));
+        tabHolders.add(new TabHolder(tabTitles[1], new ItemAdditionalInformationFragment_()));
+        tabHolders.add(new TabHolder(tabTitles[2], new ItemPrintFragment_()));
+        tabHolders.add(new TabHolder(tabTitles[3], new ItemSpecialPricingFragment_()));
+        if (model.refType == ItemRefType.Simple){
+            tabHolders.add(new TabHolder(tabTitles[4], new ItemMonitoringFragment_()));
+        }else{
+            tabHolders.add(new TabHolder(tabTitles[5], new ItemVariantsFragment_()));
+        }
+
+        String[] titles = new String[tabHolders.size()];
+        ItemBaseFragment[] fragments = new ItemBaseFragment[tabHolders.size()];
+        for (int i = 0; i < tabHolders.size(); i++){
+            titles[i] = tabHolders.get(i).name;
+            fragments[i] = tabHolders.get(i).fragment;
+        }
+
+        return new ItemPagerAdapter(getSupportFragmentManager(), fragments, titles);
+    }
+
 
     @Override
     public ItemExModel getModel() {
@@ -199,9 +227,17 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         collectData();
         saveReference();
         if (StartMode.ADD == mode){
-            AddItemCommand.start(self(), model);
+            if (model.isReferenceItem()){
+                AddReferenceItemCommand.start(self(), model);
+            }else{
+                AddItemCommand.start(self(), model);
+            }
         }else{
-            EditItemCommand.start(self(), model);
+            if (model.isReferenceItem()){
+                EditReferenceItemCommand.start(self(), model);
+            }else{
+                EditItemCommand.start(self(), model);
+            }
         }
         finish();
     }
@@ -301,8 +337,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (!isCreate()){
             actionComposer.setIcon(buildCounterDrawable(self(), qtyInfo.composersCount, android.R.drawable.ic_dialog_dialer));
-            actionComposer.setVisible(!model.isSerializable() && !model.isAComposer);
-            actionSerial.setVisible(model.isSerializable() && PlanOptions.isSerializableAllowed());
+            actionComposer.setVisible(!model.isSerializable() && !model.isAComposer && model.refType == ItemRefType.Simple);
+            actionSerial.setVisible(model.isSerializable() && PlanOptions.isSerializableAllowed() && model.refType == ItemRefType.Simple);
+            actionModifier.setVisible(model.refType == ItemRefType.Simple);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -424,14 +461,25 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         }
     }
 
-    public static void start(Context context, ItemExModel model, StartMode mode){
+    public static void start(Context context, ItemExModel model, ItemRefType refType, StartMode mode){
+        boolean isCommonItem = refType == ItemRefType.Simple;
         if (StartMode.ADD == mode){
-            model.isSalable = true;
+            model.isSalable = isCommonItem;
             model.isActiveStatus = true;
-            model.isStockTracking = true;
+            model.isStockTracking = isCommonItem;
             model.isDiscountable = true;
-            model.refType = ItemRefType.Simple;
+            model.refType = refType;
         }
         BaseItemActivity2_.intent(context).model(model).mode(mode).start();
+    }
+
+    private class TabHolder{
+        String name;
+        ItemBaseFragment fragment;
+
+        public TabHolder(String name, ItemBaseFragment fragment) {
+            this.name = name;
+            this.fragment = fragment;
+        }
     }
 }
