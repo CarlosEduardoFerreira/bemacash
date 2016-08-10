@@ -179,95 +179,6 @@
             android:horizontalSpacing="@dimen/payment_tender_dlg_payment_gridview_horizontal_spacing"
             android:stretchMode="columnWidth"/>
 </LinearLayout>
-    <RelativeLayout
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/flipper"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="@dimen/payment_tender_dlg_report_layout_margin_left"
-        android:id="@+id/h1"
-        android:background="@drawable/addon_background"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_marginLeft="4dp"
-            android:padding="5dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center"
-            android:text="@string/blackstone_pay_total"
-            android:id="@+id/a1"
-            style="@style/PaymentItem.18"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
-
-        <TextView
-            android:layout_toLeftOf="@+id/total"
-            android:layout_toRightOf="@+id/a1"
-            android:text="@string/lots_o_dots"
-            android:lines="1"
-            android:paddingTop="5dp"
-            android:layout_gravity="center"
-            style="@style/PaymentItem.18"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"/>
-
-        <TextView
-            android:id="@+id/total"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="4dp"
-            android:padding="5dp"
-            android:layout_gravity="center"
-            android:text="Total"
-            style="@style/PaymentItem.Total"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:id="@+id/list_view_holder"
-            android:layout_below="@+id/a2"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"/>
-
-        <TextView
-            android:layout_marginLeft="4dp"
-            android:padding="5dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="false"
-            android:layout_gravity="center"
-            android:text="@string/blackstone_pay_remaining_balance"
-            android:id="@+id/a2"
-            style="@style/PaymentItem.Grayed"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_below="@+id/total" />
-
-        <TextView
-            android:layout_alignBaseline="@+id/a2"
-            android:layout_toLeftOf="@+id/difference"
-            android:layout_toRightOf="@+id/a2"
-            android:id="@+id/dots"
-            android:text="@string/lots_o_dots"
-            android:lines="1"
-            android:padding="5dp"
-            android:layout_gravity="center"
-            style="@style/PaymentItem.Grayed"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"/>
-
-        <TextView
-            android:layout_alignBaseline="@+id/a2"
-            android:id="@+id/difference"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="4dp"
-            android:padding="5dp"
-            android:layout_gravity="center"
-            android:text="Total"
-            style="@style/PaymentItem.Diff"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
-    </RelativeLayout>
 
     <GridLayout
         android:id="@+id/flipper"
@@ -361,4 +272,166 @@
             android:background="@drawable/simple_tender_btn"
             style="@style/LocalizableButton.Gold.20"/>
     </GridLayout>
+
+    <RelativeLayout
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/flipper"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="@dimen/payment_tender_dlg_report_layout_margin_left"
+        android:id="@+id/h1"
+        android:background="@drawable/addon_background"
+        android:orientation="horizontal"
+        android:layout_above="@+id/ebt_info">
+
+        <TextView
+            android:layout_marginLeft="4dp"
+            android:padding="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:text="@string/blackstone_pay_total"
+            android:id="@+id/a1"
+            style="@style/PaymentItem.18"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_toLeftOf="@+id/total"
+            android:layout_toRightOf="@+id/a1"
+            android:text="@string/lots_o_dots"
+            android:lines="1"
+            android:paddingTop="5dp"
+            android:layout_gravity="center"
+            style="@style/PaymentItem.18"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/total"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="4dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:text="Total"
+            style="@style/PaymentItem.Total"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/list_view_holder"
+            android:layout_below="@+id/a2"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"/>
+
+        <TextView
+            android:layout_marginLeft="4dp"
+            android:padding="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="false"
+            android:layout_gravity="center"
+            android:text="@string/blackstone_pay_remaining_balance"
+            android:id="@+id/a2"
+            style="@style/PaymentItem.Grayed"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/total" />
+
+        <TextView
+            android:layout_alignBaseline="@+id/a2"
+            android:layout_toLeftOf="@+id/difference"
+            android:layout_toRightOf="@+id/a2"
+            android:id="@+id/dots"
+            android:text="@string/lots_o_dots"
+            android:lines="1"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            style="@style/PaymentItem.Grayed"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"/>
+
+        <TextView
+            android:layout_alignBaseline="@+id/a2"
+            android:id="@+id/difference"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="4dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:text="Total"
+            style="@style/PaymentItem.Diff"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="@dimen/payment_tender_dlg_ebt_info_layout_width"
+        android:layout_height="wrap_content"
+        android:id="@+id/ebt_info"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/payment_tender_dlg_ebt_info_layout_margin_top"
+        android:layout_marginBottom="@dimen/payment_tender_dlg_ebt_info_layout_margin_bottom"
+        android:layout_alignParentRight="true">
+
+        <TextView
+            android:layout_width="@dimen/payment_tender_dlg_allowed_ebt_name_tw_layout_width"
+            android:layout_height="@dimen/payment_tender_dlg_allowed_ebt_name_tw_layout_height"
+            android:text="Allowed Food\n Stamps"
+            android:id="@+id/allowed_ebt_name_tw"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:background="#ffffff"
+            android:paddingLeft="@dimen/payment_tender_dlg_allowed_ebt_name_tw_padding_left" />
+        <TextView
+            android:layout_width="@dimen/payment_tender_dlg_ebt_names_separator_tw_layout_width"
+            android:layout_height="@dimen/payment_tender_dlg_ebt_names_separator_tw_layout_height"
+            android:id="@+id/ebt_names_separator_tw"
+            android:layout_toRightOf="@+id/allowed_ebt_name_tw"
+            android:background="#605c5c" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/payment_tender_dlg_allowed_ebt_value_tw_layout_height"
+            android:text="$30.00"
+            android:id="@+id/allowed_ebt_value_tw"
+            android:layout_below="@+id/allowed_ebt_name_tw"
+            android:layout_toLeftOf="@+id/ebt_values_separator_tw"
+            android:background="#d3d0c4"
+            android:layout_alignParentRight="false"
+            android:gravity="center_vertical|right"
+            android:paddingRight="@dimen/payment_tender_dlg_allowed_ebt_value_tw_padding_right" />
+        <TextView
+            android:layout_width="@dimen/payment_tender_dlg_remaining_ebt_name_tw_layout_width"
+            android:layout_height="@dimen/payment_tender_dlg_remaining_ebt_name_tw_layout_height"
+            android:text="Remaining Amount"
+            android:id="@+id/remaining_ebt_name_tw"
+            android:layout_toRightOf="@+id/ebt_names_separator_tw"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:gravity="right"
+            android:background="#ffffff"
+            android:paddingRight="@dimen/payment_tender_dlg_remaining_ebt_name_tw_padding_right" />
+        <TextView
+            android:layout_width="@dimen/payment_tender_dlg_ebt_values_separator_tw_layout_width"
+            android:layout_height="@dimen/payment_tender_dlg_ebt_values_separator_tw_layout_height"
+            android:id="@+id/ebt_values_separator_tw"
+            android:layout_toRightOf="@+id/allowed_ebt_name_tw"
+            android:background="#605c5c"
+            android:layout_below="@+id/ebt_names_separator_tw" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/payment_tender_dlg_remaining_ebt_value_tw_layout_height"
+            android:text="$30.00"
+            android:id="@+id/remaining_ebt_value_tw"
+            android:layout_alignLeft="@+id/remaining_ebt_name_tw"
+            android:layout_below="@+id/remaining_ebt_name_tw"
+            android:background="#FFD3D0C4"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center_vertical|right"
+            android:paddingRight="@dimen/payment_tender_dlg_remaining_ebt_value_tw_padding_right" />
+    </RelativeLayout>
+
 </RelativeLayout>

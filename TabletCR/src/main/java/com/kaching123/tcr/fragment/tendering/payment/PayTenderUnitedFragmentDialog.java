@@ -125,6 +125,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         final String amount = UiHelper.valueOf(pendingValue);
         total_.setText(amount);
         charge.setText(amount);
+        difference.setText(amount);
         pending.setText(UiHelper.valueOf(BigDecimal.ZERO));
         BigDecimal value = totalValue.subtract(pendingValue);
         if (value.compareTo(BigDecimal.ZERO) > 0) {
@@ -405,15 +406,14 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             BigDecimal alreadyPayed = orderTotal.subtract(completedAmount);
             listener.onDataLoaded(completedAmount, orderTotal, saleOrderModels);
             difference.setText(UiHelper.valueOf(alreadyPayed));
-
             total_.setText(UiHelper.valueOf(alreadyPayed));
             charge.setText(UiHelper.valueOf(alreadyPayed));
 
-        } else {
+        } /*else {
             difference.setVisibility(View.GONE);
             dots.setVisibility(View.GONE);
             a2.setVisibility(View.GONE);
-        }
+        }*/
         enable(true);
         getPositiveButton().setText(hasCompletedTransactions() ? R.string.btn_void : R.string.btn_cancel);
     }
