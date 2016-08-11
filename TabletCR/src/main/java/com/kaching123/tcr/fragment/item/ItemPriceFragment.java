@@ -75,7 +75,7 @@ public class ItemPriceFragment extends ItemBaseFragment {
         taxable.setChecked(model.isTaxable);
         showPrice(cost, model.cost);
         commissionEligible.setChecked(model.commissionEligible);
-        showPrice(cost, model.commission);
+        showPrice(commission, model.commission);
         forSale.setChecked(model.isSalable);
     }
 

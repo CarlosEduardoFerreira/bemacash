@@ -123,8 +123,8 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
         final ItemModel model = getModel();
 
         availableQty.setEnabled(model.isStockTracking);
-        availableQty.setEnabled(model.isStockTracking);
-        availableQty.setEnabled(model.isStockTracking);
+        minimumQty.setEnabled(model.isStockTracking);
+        recommendedQty.setEnabled(model.isStockTracking);
 
         if (model.isStockTracking){
             showQuantity(availableQty, getItemProvider().getQtyInfo().availableQty, model.isPcsUnit());

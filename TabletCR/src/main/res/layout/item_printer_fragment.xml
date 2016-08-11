@@ -35,7 +35,7 @@
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_kitchen" />
+                android:text="@string/item_activity_kds" />
 
             <Spinner
                 android:id="@+id/kds"
