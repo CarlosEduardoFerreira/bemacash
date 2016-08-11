@@ -7,6 +7,10 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.TaxGroupModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.kaching123.tcr.fragment.UiHelper.qtyFormat;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /**
@@ -32,4 +36,34 @@ public class TaxHelper {
         return displayText;
     }
 
+
+    public static TaxGroupModel getTaxById(List<TaxGroupModel> taxes, String id){
+        if (id == null)
+            return null;
+
+        for (TaxGroupModel tax : taxes){
+            if (id.equals(tax.guid))
+                return tax;
+        }
+        return null;
+    }
+
+    public static List<TaxGroupModel> getDefaultTaxes(List<TaxGroupModel> taxes){
+        ArrayList<TaxGroupModel> defaultTaxes = new ArrayList<>();
+        for (TaxGroupModel tax : taxes){
+            if (tax.isDefault)
+                defaultTaxes.add(tax);
+        }
+        return defaultTaxes;
+    }
+
+    public static String getTaxDisplayText(List<TaxGroupModel> taxes){
+        String builder = "";
+        for (TaxGroupModel tax : taxes){
+            if (tax == null)
+                continue;
+            builder += String.format("(%s%%) %s", qtyFormat(tax.tax, false), tax.title) + "\n";
+        }
+        return builder.substring(0, builder.length() - 1);
+    }
 }

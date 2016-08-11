@@ -12,7 +12,7 @@
         android:id="@+id/common_information_fragment"
         android:name="com.kaching123.tcr.fragment.item.ItemCommonInformationFragment_"
         android:layout_width="match_parent"
-        android:layout_height="150dp"/>
+        android:layout_height="wrap_content"/>
 
     <com.kaching123.tcr.component.slidingtab.SlidingTabLayout
         android:id="@+id/tabs"
