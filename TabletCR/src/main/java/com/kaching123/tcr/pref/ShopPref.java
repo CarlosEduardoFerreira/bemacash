@@ -126,6 +126,8 @@ public interface ShopPref {
 
     boolean pricePointsEnabled();
 
+    boolean autoFillPaymentAmountEnabled();
+
     /**
      * user **
      */

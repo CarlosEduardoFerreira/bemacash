@@ -255,7 +255,9 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.customerPopupScreenMessage().get(),
                     shopPref.blackStonePRepaidSolution().get(),
                     shopPref.defaultLoyaltyPlanId().get(),
-                    shopPref.pricePointsEnabled().getOr(false));
+                    shopPref.pricePointsEnabled().getOr(false),
+                    shopPref.autoFillPaymentAmountEnabled().getOr(false)
+                    );
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -602,6 +604,7 @@ public class TcrApplication extends MultiDexApplication {
                 .blackStonePRepaidSolution().put(info.blackStonePRepaidSolution)
                 .defaultLoyaltyPlanId().put(info.defaultLoyaltyPlanId)
                 .pricePointsEnabled().put(info.loyaltyPointsForDollarAmount)
+                .autoFillPaymentAmountEnabled().put(info.autoFillPaymentAmount)
                 .apply();
 
         setUsers();
@@ -674,11 +677,16 @@ public class TcrApplication extends MultiDexApplication {
         return isFreemium;
     }
 
+    public boolean isAutoFillPaymentAmount() {
+        return shopPref.autoFillPaymentAmountEnabled().get();
+    }
+
+
     public boolean hasPermission(Permission permissions) {
         if (permissions == null)
             return true;
         Set<Permission> operatorPermissions = getOperatorPermissions();
-        return operatorPermissions == null ? false : operatorPermissions.contains(permissions);
+        return operatorPermissions != null && operatorPermissions.contains(permissions);
     }
 
     public synchronized boolean isTipsEnabled() {

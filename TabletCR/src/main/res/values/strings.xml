@@ -1695,7 +1695,7 @@
     <string name="button_debit">Debit Card</string>
     <string name="button_ebt_cash">EBT Cash</string>
     <string name="button_ebt_cash_dlg">EBT\n Cash</string>
-    <string name="button_ebt_united_tender">EBT</string>
+    <string name="button_ebt_united_tender">\nEBT</string>
 
     <string name="button_ebt_foodstamp">EBT Food Stamp</string>
     <string name="button_ebt_foodstamp_dlg">EBT\n Food Stamp</string>

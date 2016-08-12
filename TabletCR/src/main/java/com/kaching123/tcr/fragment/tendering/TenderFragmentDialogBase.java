@@ -8,9 +8,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -22,6 +19,10 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
