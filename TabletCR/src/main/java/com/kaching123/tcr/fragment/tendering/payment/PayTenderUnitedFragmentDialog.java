@@ -122,10 +122,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                     BigDecimal alreadyPayed = orderTotal!=null ? orderTotal.subtract(completedAmount): BigDecimal.ZERO;
                     charge.setText(UiHelper.valueOf(alreadyPayed));
                 } else {
-                    String entered = charge.getText().toString();
-                    float enteredValue =  entered.isEmpty()? 0.00f :Float.valueOf(entered);
-                    enteredValue+=value;
-                    charge.setText(String.valueOf(enteredValue));
+                    addValue((int) id);
                 }
             }
         });
@@ -423,5 +420,16 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     public static void hide(FragmentActivity activity) {
         DialogUtil.hide(activity, DIALOG_NAME);
     }
+
+    private void addValue(Integer value) {
+        BigDecimal bigDecimal = new BigDecimal(value);
+        BigDecimal current = getDecimalValue();
+        setValue(current == null ? bigDecimal : current.add(bigDecimal));
+    }
+
+    private void setValue(BigDecimal value) {
+        charge.setText(UiHelper.valueOf(value));
+    }
+
 
 }
