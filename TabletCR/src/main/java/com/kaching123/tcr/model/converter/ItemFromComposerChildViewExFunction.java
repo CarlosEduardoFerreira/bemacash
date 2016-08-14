@@ -52,6 +52,11 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 c.getString(indexHolder.get(ItemChildTable.PRODUCT_CODE)),
                 _priceType(c, indexHolder.get(ItemChildTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemChildTable.SALE_PRICE))),
+                null,
+                null,
+                null,
+                null,
+                null,
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemChildTable.UNIT_LABEL_ID)),
                 shortCut,
@@ -82,12 +87,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 0,
                 null,
                 0,
-                false,
-                false,
-                null,
-                false,
-                null,
-                null, null, null, false);
+                false, false, null, false, null, null, null, null, false);
     }
 }
 

@@ -63,9 +63,15 @@ public class ItemExModel extends ItemModel {
                 result.transactionId,
                 PriceType.FIXED,
                 result.itemPrice,
+                null,
+                null,
+                null,
+                null,
+                null,
                 result.itemQty,
                 null,
-                false, true, // temp to true
+                false,
+                true,
                 false,
                 false,
                 BigDecimal.ZERO,
@@ -84,12 +90,7 @@ public class ItemExModel extends ItemModel {
                 false,
                 false,
                 null,
-                true,
-                null,
-                null,
-                ItemRefType.Simple,
-                null,
-                false);
+                true, null, null, ItemRefType.Simple, null, false);
         this.departmentGuid = null;
         if (result.taxAmount != null && result.itemTaxable)
             this.tax = result.taxAmount;
@@ -106,6 +107,11 @@ public class ItemExModel extends ItemModel {
                        String productCode,
                        PriceType priceType,
                        BigDecimal price,
+                       BigDecimal price1,
+                       BigDecimal price2,
+                       BigDecimal price3,
+                       BigDecimal price4,
+                       BigDecimal price5,
                        BigDecimal availableQty,
                        String unitsLabelId,
                        String shortCut,
@@ -153,6 +159,11 @@ public class ItemExModel extends ItemModel {
                 productCode,
                 priceType,
                 price,
+                price1,
+                price2,
+                price3,
+                price4,
+                price5,
                 availableQty,
                 unitsLabelId,
                 isStockTracking,
@@ -176,12 +187,7 @@ public class ItemExModel extends ItemModel {
                 serializable,
                 codeType,
                 commissionEligible,
-                commission,
-                referenceItemGuid,
-                itemRefType,
-                loyaltyPoints,
-                excludeFromLoyaltyPlan
-        );
+                commission, referenceItemGuid, itemRefType, loyaltyPoints, excludeFromLoyaltyPlan);
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;
         this.optionalCount = optionalCount;

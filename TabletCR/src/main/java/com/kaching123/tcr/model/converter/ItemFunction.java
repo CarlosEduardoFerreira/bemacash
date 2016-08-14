@@ -27,6 +27,11 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
             ItemTable.PRODUCT_CODE,
             ItemTable.PRICE_TYPE,
             ItemTable.SALE_PRICE,
+            ItemTable.PRICE_1,
+            ItemTable.PRICE_2,
+            ItemTable.PRICE_3,
+            ItemTable.PRICE_4,
+            ItemTable.PRICE_5,
             ItemTable.TMP_AVAILABLE_QTY,
             ItemTable.UNIT_LABEL_ID,
             ItemTable.STOCK_TRACKING,
@@ -69,6 +74,11 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 c.getString(indexHolder.get(ItemTable.PRODUCT_CODE)),
                 _priceType(c, indexHolder.get(ItemTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1))),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2))),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3))),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4))),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5))),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemTable.UNIT_LABEL_ID)),
                 c.getInt(indexHolder.get(ItemTable.STOCK_TRACKING)) == 1,
@@ -92,12 +102,7 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                 _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                _decimal(c, indexHolder.get(ItemTable.COMMISSION)),
-                c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
-                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
-                _decimal(c.getString(indexHolder.get(ItemTable.LOYALTY_POINTS))),
-                _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN))
-        );
+                _decimal(c, indexHolder.get(ItemTable.COMMISSION)), c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)), _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)), _decimal(c.getString(indexHolder.get(ItemTable.LOYALTY_POINTS))), _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
     }
 
 }

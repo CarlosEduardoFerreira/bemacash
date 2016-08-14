@@ -8,6 +8,7 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ItemTable;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
@@ -50,6 +51,11 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.PRODUCT_CODE)),
                     _priceType(c, c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.PRICE_TYPE)),
                     _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.SALE_PRICE))),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_1))),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_2))),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_3))),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_4))),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_5))),
                     _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.TMP_AVAILABLE_QTY))),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UNIT_LABEL_ID)),
                     shortCut,
@@ -80,12 +86,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     0,
                     null,
                     0,
-                    false,
-                    false,
-                    null,
-                    false,
-                    null,
-                    null, null, null, false);
+                    false, false, null, false, null, null, null, null, false);
         }
         String id = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.MODIFIER_GUID));
         if (TextUtils.isEmpty(itemGroupGuid)) {

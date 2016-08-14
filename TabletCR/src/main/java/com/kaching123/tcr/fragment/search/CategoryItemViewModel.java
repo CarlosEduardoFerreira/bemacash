@@ -23,6 +23,11 @@ public class CategoryItemViewModel extends ItemExModel {
                                  String productCode,
                                  PriceType priceType,
                                  BigDecimal price,
+                                 BigDecimal price1,
+                                 BigDecimal price2,
+                                 BigDecimal price3,
+                                 BigDecimal price4,
+                                 BigDecimal price5,
                                  BigDecimal qty,
                                  String unitsLabelId,
                                  String shortcut,
@@ -67,10 +72,16 @@ public class CategoryItemViewModel extends ItemExModel {
                 productCode,
                 priceType,
                 price,
+                price1,
+                price2,
+                price3,
+                price4,
+                price5,
                 qty,
                 unitsLabelId,
                 shortcut,
-                isStockTracking, isActiveStatus,
+                isStockTracking,
+                isActiveStatus,
                 isDiscountable,
                 isSalable,
                 discount,
@@ -95,12 +106,7 @@ public class CategoryItemViewModel extends ItemExModel {
                 defaultModifierGuid,
                 orderNum,
                 printerAliasGuid,
-                btnView,
-                hasNotes,
-                serializable,
-                codeType,
-                commissionEligible,
-                commission, referenceItemGuid, itemRefType, loyaltyPoints, excludeFromLoyaltyPlan);
+                btnView, hasNotes, serializable, codeType, commissionEligible, commission, referenceItemGuid, itemRefType, loyaltyPoints, excludeFromLoyaltyPlan);
         this.categoryName = categoryName;
     }
 

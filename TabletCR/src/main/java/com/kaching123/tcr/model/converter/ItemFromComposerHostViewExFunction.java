@@ -23,7 +23,6 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
             ItemHostTable.PRICE_TYPE,
             ItemHostTable.SALE_PRICE,
             ItemHostTable.TMP_AVAILABLE_QTY,
-            null,
             ItemHostTable.UNIT_LABEL_ID,
             ItemHostTable.STOCK_TRACKING,
             ItemHostTable.ACTIVE_STATUS,
@@ -46,6 +45,11 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 c.getString(indexHolder.get(ItemHostTable.PRODUCT_CODE)),
                 _priceType(c, indexHolder.get(ItemHostTable.PRICE_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemHostTable.SALE_PRICE))),
+                null,
+                null,
+                null,
+                null,
+                null,
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemHostTable.UNIT_LABEL_ID)),
                 null,
@@ -77,12 +81,7 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 null,
                 0,
                 false,
-                false,
-                null,
-                false,
-                null,
-                null,
-                null, null, false);
+                false, null, false, null, null, null, null, false);
     }
 
 

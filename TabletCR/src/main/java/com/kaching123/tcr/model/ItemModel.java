@@ -29,6 +29,11 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public PriceType priceType = PriceType.FIXED;
     public CodeType codeType;
     public BigDecimal price;
+    public BigDecimal price1;
+    public BigDecimal price2;
+    public BigDecimal price3;
+    public BigDecimal price4;
+    public BigDecimal price5;
     public BigDecimal availableQty;
     public String unitsLabelId;
     public boolean isStockTracking;
@@ -76,6 +81,11 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      String productCode,
                      PriceType priceType,
                      BigDecimal price,
+                     BigDecimal price1,
+                     BigDecimal price2,
+                     BigDecimal price3,
+                     BigDecimal price4,
+                     BigDecimal price5,
                      BigDecimal availableQty,
                      String unitsLabelId,
                      boolean isStockTracking,
@@ -113,6 +123,11 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.productCode = productCode;
         this.priceType = priceType;
         this.price = price;
+        this.price1 = price1;
+        this.price2 = price2;
+        this.price3 = price3;
+        this.price4 = price4;
+        this.price5 = price5;
         this.availableQty = availableQty;
         this.unitsLabelId = unitsLabelId;
         this.isStockTracking = isStockTracking;
@@ -154,6 +169,11 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.productCode = itemModel.productCode;
         this.priceType = itemModel.priceType;
         this.price = itemModel.price;
+        this.price1 = itemModel.price1;
+        this.price2 = itemModel.price2;
+        this.price3 = itemModel.price3;
+        this.price4 = itemModel.price4;
+        this.price5 = itemModel.price5;
         this.availableQty = itemModel.availableQty;
         this.unitsLabelId = itemModel.unitsLabelId;
         this.isStockTracking = itemModel.isStockTracking;
@@ -201,6 +221,11 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.PRODUCT_CODE, productCode);
         values.put(ItemTable.PRICE_TYPE, priceType.ordinal());
         values.put(ItemTable.SALE_PRICE, _decimal(price));
+        values.put(ItemTable.PRICE_1, _decimal(price1));
+        values.put(ItemTable.PRICE_2, _decimal(price2));
+        values.put(ItemTable.PRICE_3, _decimal(price3));
+        values.put(ItemTable.PRICE_4, _decimal(price4));
+        values.put(ItemTable.PRICE_5, _decimal(price5));
         values.put(ItemTable.UNIT_LABEL_ID, unitsLabelId);
         values.put(ItemTable.STOCK_TRACKING, isStockTracking);
         values.put(ItemTable.ACTIVE_STATUS, isActiveStatus);

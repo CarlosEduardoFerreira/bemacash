@@ -404,6 +404,21 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String SALE_PRICE = "sale_price";
 
+        @Column(type = Column.Type.TEXT)
+        String PRICE_1 = "price_1";
+
+        @Column(type = Column.Type.TEXT)
+        String PRICE_2 = "price_2";
+
+        @Column(type = Column.Type.TEXT)
+        String PRICE_3 = "price_3";
+
+        @Column(type = Column.Type.TEXT)
+        String PRICE_4 = "price_4";
+
+        @Column(type = Column.Type.TEXT)
+        String PRICE_5 = "price_5";
+
         @Column(type = Type.TEXT)
         String UNIT_LABEL_ID = "unit_label_id";
 
