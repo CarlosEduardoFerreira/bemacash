@@ -22,7 +22,7 @@ public class TBPJdbcConverter extends JdbcConverter<TBPModel> {
     private static final String ID = "ID";
     private static final String DESCRIPTION = "DESCRIPTION";
     private static final String PRICE_LEVEL = "PRICE_LEVEL";
-    private static final String IS_ACTIVE = "IS_ACTIVE";
+    private static final String IS_ACTIVE = "STATUS";
     private static final String START_DATE = "START_DATE";
     private static final String END_DATE = "END_DATE";
     private static final String MON_START = "MON_START";
@@ -49,10 +49,10 @@ public class TBPJdbcConverter extends JdbcConverter<TBPModel> {
     @Override
     public TBPModel toValues(JdbcJSONObject rs) throws JSONException {
         return new TBPModel(
-                rs.getLong(ID),
+                rs.getString(ID),
                 rs.getString(DESCRIPTION),
                 rs.getInt(PRICE_LEVEL),
-                rs.getBoolean(IS_ACTIVE),
+                rs.getString(IS_ACTIVE).equals("ACTIVE"),
                 rs.getSimpleDate(START_DATE),
                 rs.getSimpleDate(END_DATE),
                 rs.getString(MON_START),

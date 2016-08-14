@@ -2178,8 +2178,8 @@ public abstract class ShopStore {
         String URI_CONTENT = TABLE_NAME;
 
         @PrimaryKey
-        @Column(type = Type.INTEGER)
-        String ID = "_id";
+        @Column(type = Type.TEXT)
+        String ID = "id";
 
         @NotNull
         @Column(type = Type.TEXT)
@@ -2240,6 +2240,32 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String SUN_END = "sun_end";
+    }
+
+    @Table(TBPxRegisterTable.TABLE_NAME)
+    public static interface TBPxRegisterTable {
+
+        String TABLE_NAME = "tbp_x_register";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String TBP_ID = "tbp_id";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String REGISTER_ID = "register_id";
+    }
+    static {
+        applyForeignKeys(TBPxRegisterTable.TABLE_NAME,
+                foreignKey(TBPxRegisterTable.TBP_ID, TBPTable.TABLE_NAME, TBPTable.ID),
+                foreignKey(TBPxRegisterTable.REGISTER_ID, RegisterTable.TABLE_NAME, RegisterTable.ID));
     }
 
 

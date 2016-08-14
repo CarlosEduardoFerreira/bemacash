@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class TBPModel implements IValueModel, Serializable {
 
-    public long id;
+    public String id;
     public String description;
     public int priceLevel;
     public boolean isActive;
@@ -33,7 +33,7 @@ public class TBPModel implements IValueModel, Serializable {
     public String sunStart;
     public String sunEnd;
 
-    public TBPModel(long id, String description, int priceLevel, boolean isActive, Date startDate, Date endDate, String monStart, String monEnd, String tueStart, String tueEnd, String wedStart, String wedEnd, String thuStart, String thuEnd, String friStart, String friEnd, String satStart, String satEnd, String sunStart, String sunEnd) {
+    public TBPModel(String id, String description, int priceLevel, boolean isActive, Date startDate, Date endDate, String monStart, String monEnd, String tueStart, String tueEnd, String wedStart, String wedEnd, String thuStart, String thuEnd, String friStart, String friEnd, String satStart, String satEnd, String sunStart, String sunEnd) {
         this.id = id;
         this.description = description;
         this.priceLevel = priceLevel;
