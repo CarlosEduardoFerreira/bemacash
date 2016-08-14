@@ -2154,6 +2154,79 @@ public abstract class ShopStore {
                 foreignKey(SaleIncentiveTable.SALE_ITEM_ID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID));
     }
 
+    @Table(TBPTable.TABLE_NAME)
+    public interface TBPTable  extends IBemaSyncTable{
+
+        String TABLE_NAME = "tbp";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String DESCRIPTION = "description";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String PRICE_LEVEL = "price_level";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String IS_ACTIVE = "is_active";
+
+        @Column(type = Type.INTEGER)
+        String START_DATE = "start_date";
+
+        @Column(type = Type.INTEGER)
+        String END_DATE = "end_date";
+
+        @Column(type = Type.TEXT)
+        String MON_START = "mon_start";
+
+        @Column(type = Type.TEXT)
+        String MON_END = "mon_end";
+
+        @Column(type = Type.TEXT)
+        String TUE_START = "tue_start";
+
+        @Column(type = Type.TEXT)
+        String TUE_END = "tue_end";
+
+        @Column(type = Type.TEXT)
+        String WED_START = "wed_start";
+
+        @Column(type = Type.TEXT)
+        String WED_END = "wed_end";
+
+        @Column(type = Type.TEXT)
+        String THU_START = "thu_start";
+
+        @Column(type = Type.TEXT)
+        String THU_END = "thu_end";
+
+        @Column(type = Type.TEXT)
+        String FRI_START = "fri_start";
+
+        @Column(type = Type.TEXT)
+        String FRI_END = "fri_end";
+
+        @Column(type = Type.TEXT)
+        String SAT_START = "sat_start";
+
+        @Column(type = Type.TEXT)
+        String SAT_END = "sat_end";
+
+        @Column(type = Type.TEXT)
+        String SUN_START = "sun_start";
+
+        @Column(type = Type.TEXT)
+        String SUN_END = "sun_end";
+    }
+
 
     /**
      * views *
