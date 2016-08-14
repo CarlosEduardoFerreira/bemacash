@@ -3994,6 +3994,20 @@ public abstract class ShopStore {
         String TABLE_CUSTOMER = "customer_table";*/
     }
 
+    @SimpleView(TBPRegisterView.VIEW_NAME)
+    public interface TBPRegisterView {
+        String VIEW_NAME = "register_tbp_view";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = VIEW_NAME;
+
+        @From(TBPxRegisterTable.TABLE_NAME)
+        String TABLE_TBP_X_REGISTER = "tbp_x_register_table";
+
+        @Join(joinTable = TBPTable.TABLE_NAME, joinColumn = TBPTable.ID, onTableAlias = TABLE_TBP_X_REGISTER, onColumn = TBPxRegisterTable.TBP_ID)
+        String TABLE_TBP = "tbp_table";
+    }
+
     @RawQuery(RecalcQtyQuery.VIEW_NAME)
     public interface RecalcQtyQuery {
 

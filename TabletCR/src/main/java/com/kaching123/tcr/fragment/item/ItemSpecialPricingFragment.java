@@ -1,8 +1,41 @@
 package com.kaching123.tcr.fragment.item;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
+import android.text.InputFilter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.google.common.base.Function;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.component.CurrencyFormatInputFilter;
+import com.kaching123.tcr.component.CurrencyTextWatcher;
+import com.kaching123.tcr.model.TBPModel;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
+import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpXRegisterTable;
+import com.kaching123.tcr.store.ShopStore.TBPRegisterView;
 
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
+import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 
 /**
  * Created by vkompaniets on 21.07.2016.
@@ -10,9 +43,16 @@ import org.androidannotations.annotations.EFragment;
 @EFragment(R.layout.item_special_pricing_fragment)
 public class ItemSpecialPricingFragment extends ItemBaseFragment {
 
+    @ViewById protected ListView list;
+
+    private TBPAdapter adapter;
+
     @Override
     protected void setViews() {
+        adapter = new TBPAdapter(getActivity());
+        list.setAdapter(adapter);
 
+        getLoaderManager().restartLoader(0, null, new TBPLoader());
     }
 
     @Override
@@ -28,5 +68,108 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
     @Override
     public boolean validateData() {
         return true;
+    }
+
+    private class TBPLoader implements LoaderCallbacks<List<TBPWrapper>>{
+
+        @Override
+        public Loader<List<TBPWrapper>> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(TBPRegisterView.URI_CONTENT))
+                    .where(TbpXRegisterTable.REGISTER_ID + " = ?", getApp().getRegisterId())
+                    .where(TbpTable.IS_ACTIVE + " = ?", 1)
+                    .orderBy(TbpTable.PRICE_LEVEL)
+                    .transform(new Function<Cursor, TBPModel>() {
+                        @Override
+                        public TBPModel apply(Cursor input) {
+                            return TBPModel.fromView(input);
+                        }
+                    }).transform(new Function<TBPModel, TBPWrapper>() {
+                        @Override
+                        public TBPWrapper apply(TBPModel input) {
+                            BigDecimal price = getModel().getPrice(input.priceLevel);
+                            boolean isChecked = price != null;
+                            return new TBPWrapper(input, price, isChecked);
+                        }
+                    }).build(getActivity());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<TBPWrapper>> loader, List<TBPWrapper> data) {
+            adapter.changeCursor(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<TBPWrapper>> loader) {
+            adapter.changeCursor(null);
+        }
+    }
+
+    private class TBPAdapter extends ObjectsCursorAdapter<TBPWrapper>{
+
+        public TBPAdapter(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected View newView(int position, ViewGroup parent) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.tbp_item_view, parent, false);
+            ViewHolder holder = new ViewHolder(view, getItem(position));
+            view.setTag(holder);
+            return view;
+        }
+
+        @Override
+        protected View bindView(View convertView, int position, TBPWrapper item) {
+            ViewHolder holder = (ViewHolder) convertView.getTag();
+            holder.description.setText(item.model.description);
+            holder.cb.setChecked(item.isChecked);
+            holder.price.setEnabled(item.isChecked);
+            showPrice(holder.price, item.price);
+            return convertView;
+        }
+    }
+
+    private class ViewHolder implements OnCheckedChangeListener{
+        TextView description;
+        EditText price;
+        CheckBox cb;
+        TBPWrapper item;
+
+        ViewHolder(View v, TBPWrapper item){
+            this.description = (TextView) v.findViewById(R.id.description);
+            this.price = (EditText) v.findViewById(R.id.price);
+            this.cb = (CheckBox) v.findViewById(R.id.cb);
+            this.item = item;
+
+            InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
+            price.setFilters(currencyFilter);
+            price.addTextChangedListener(new CurrencyTextWatcher(price));
+
+            cb.setOnCheckedChangeListener(this);
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            item.isChecked = isChecked;
+            price.setEnabled(isChecked);
+            if (isChecked){
+                showPrice(price, item.price);
+            }else{
+                item.price = parseBigDecimal(price, null);
+                price.setText(null);
+            }
+        }
+    }
+
+    private class TBPWrapper {
+        TBPModel model;
+        BigDecimal price;
+        boolean isChecked;
+
+        public TBPWrapper(TBPModel model, BigDecimal price, boolean isChecked) {
+            this.model = model;
+            this.price = price;
+            this.isChecked = isChecked;
+        }
     }
 }

@@ -269,6 +269,28 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         return values;
     }
 
+    public BigDecimal getPrice(int level){
+        switch (level){
+            case 1 : return price1;
+            case 2 : return price2;
+            case 3 : return price3;
+            case 4 : return price4;
+            case 5 : return price5;
+            default: return price;
+        }
+    }
+
+    public void setPrice(BigDecimal price, int level){
+        switch (level){
+            case 1 : price1 = price; break;
+            case 2 : price2 = price; break;
+            case 3 : price3 = price; break;
+            case 4 : price4 = price; break;
+            case 5 : price5 = price; break;
+            default: this.price = price;
+        }
+    }
+
     public boolean isPcsUnit(){
         return UnitUtil.isPcs(this.priceType) || codeType != null;
     }

@@ -1,11 +1,16 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
+import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
 import com.kaching123.tcr.store.ShopStore.TBPTable;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import static com.kaching123.tcr.util.ContentValuesUtilBase._bool;
+import static com.kaching123.tcr.util.ContentValuesUtilBase._nullableDate;
 
 /**
  * Created by vkompaniets on 12.08.2016.
@@ -54,6 +59,32 @@ public class TBPModel implements IValueModel, Serializable {
         this.satEnd = satEnd;
         this.sunStart = sunStart;
         this.sunEnd = sunEnd;
+    }
+
+    //TBPRegisterView
+    public static TBPModel fromView(Cursor c){
+        return new TBPModel(
+                c.getString(c.getColumnIndex(TbpTable.ID)),
+                c.getString(c.getColumnIndex(TbpTable.DESCRIPTION)),
+                c.getInt(c.getColumnIndex(TbpTable.PRICE_LEVEL)),
+                _bool(c, c.getColumnIndex(TbpTable.IS_ACTIVE)),
+                _nullableDate(c, c.getColumnIndex(TbpTable.START_DATE)),
+                _nullableDate(c, c.getColumnIndex(TbpTable.END_DATE)),
+                c.getString(c.getColumnIndex(TbpTable.MON_START)),
+                c.getString(c.getColumnIndex(TbpTable.MON_END)),
+                c.getString(c.getColumnIndex(TbpTable.TUE_START)),
+                c.getString(c.getColumnIndex(TbpTable.TUE_END)),
+                c.getString(c.getColumnIndex(TbpTable.WED_START)),
+                c.getString(c.getColumnIndex(TbpTable.WED_END)),
+                c.getString(c.getColumnIndex(TbpTable.THU_START)),
+                c.getString(c.getColumnIndex(TbpTable.THU_END)),
+                c.getString(c.getColumnIndex(TbpTable.FRI_START)),
+                c.getString(c.getColumnIndex(TbpTable.FRI_END)),
+                c.getString(c.getColumnIndex(TbpTable.SAT_START)),
+                c.getString(c.getColumnIndex(TbpTable.SAT_END)),
+                c.getString(c.getColumnIndex(TbpTable.SUN_START)),
+                c.getString(c.getColumnIndex(TbpTable.SUN_END))
+        );
     }
 
     @Override
