@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,7 +63,10 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
 
     @Override
     public void collectData() {
-
+        for (int i = 0; i < adapter.getCount(); i++){
+            TBPWrapper item = adapter.getItem(i);
+            getModel().setPrice(item.isChecked ? item.price : null, item.model.priceLevel);
+        }
     }
 
     @Override
@@ -143,7 +147,13 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
 
             InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
             price.setFilters(currencyFilter);
-            price.addTextChangedListener(new CurrencyTextWatcher(price));
+            price.addTextChangedListener(new CurrencyTextWatcher(price){
+                @Override
+                public synchronized void afterTextChanged(Editable amount) {
+                    super.afterTextChanged(amount);
+                    ViewHolder.this.item.price = parseBigDecimal(amount.toString(), null);
+                }
+            });
 
             cb.setOnCheckedChangeListener(this);
         }

@@ -2243,7 +2243,7 @@ public abstract class ShopStore {
     }
 
     @Table(TBPxRegisterTable.TABLE_NAME)
-    public static interface TBPxRegisterTable {
+    public interface TBPxRegisterTable extends IBemaSyncTable{
 
         String TABLE_NAME = "tbp_x_register";
 

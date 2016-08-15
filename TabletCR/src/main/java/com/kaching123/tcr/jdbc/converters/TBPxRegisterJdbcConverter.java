@@ -17,7 +17,7 @@ import java.sql.SQLException;
  */
 public class TBPxRegisterJdbcConverter extends JdbcConverter<TBPxRegisterModel> {
 
-    private static final String TABLE_NAME = "TIMA_BASED_PRICING_REGISTER";
+    private static final String TABLE_NAME = "TIME_BASED_PRICING_REGISTER";
 
     private static final String ID = "ID";
     private static final String TBP_ID = "TIME_BASED_PRICING_ID";

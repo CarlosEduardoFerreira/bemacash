@@ -61,7 +61,7 @@ public class TBPModel implements IValueModel, Serializable {
         this.sunEnd = sunEnd;
     }
 
-    //TBPRegisterView
+    //ShopStore.TBPRegisterView
     public static TBPModel fromView(Cursor c){
         return new TBPModel(
                 c.getString(c.getColumnIndex(TbpTable.ID)),
