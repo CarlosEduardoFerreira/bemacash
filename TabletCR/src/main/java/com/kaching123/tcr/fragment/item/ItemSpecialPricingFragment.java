@@ -16,6 +16,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
@@ -33,6 +34,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
@@ -47,6 +49,8 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
     @ViewById protected ListView list;
 
     private TBPAdapter adapter;
+
+    private boolean tbpOverlaps;
 
     @Override
     protected void setViews() {
@@ -71,6 +75,26 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
 
     @Override
     public boolean validateData() {
+        List<TBPModel> checkedModels = new ArrayList<>();
+        for (int i = 0; i < adapter.getCount(); i++){
+            TBPWrapper item = adapter.getItem(i);
+            if (item.isChecked && item.price == null) {
+                Toast.makeText(getActivity(), "Special price is empty", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if (item.isChecked)
+                checkedModels.add(item.model);
+        }
+
+        int size = checkedModels.size();
+        for (int i = 0; i < size; i++){
+            for (int j = i + 1; j < size; j++){
+                if (checkedModels.get(i).isOverlapping(checkedModels.get(j))){
+                    Toast.makeText(getActivity(), "Special price overlapping", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -182,4 +206,5 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
             this.isChecked = isChecked;
         }
     }
+
 }

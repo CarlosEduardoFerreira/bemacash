@@ -117,4 +117,38 @@ public class TBPModel implements IValueModel, Serializable {
         cv.put(TBPTable.SUN_END, sunEnd);
         return cv;
     }
+
+    public boolean isOverlapping(TBPModel other){
+        if (!isActive || !other.isActive)
+            return false;
+
+        if (startDate != null && endDate != null && other.startDate != null && other.endDate != null){
+            if (!isOverlapping(startDate, endDate, other.startDate, other.endDate))
+                return false;
+        }
+
+        if (isOverlapping(monStart, monEnd, other.monStart, other.monEnd))
+            return true;
+        if (isOverlapping(tueStart, tueEnd, other.tueStart, other.tueEnd))
+            return true;
+        if (isOverlapping(wedStart, wedEnd, other.wedStart, other.wedEnd))
+            return true;
+        if (isOverlapping(thuStart, thuEnd, other.thuStart, other.thuEnd))
+            return true;
+        if (isOverlapping(friStart, friEnd, other.friStart, other.friEnd))
+            return true;
+        if (isOverlapping(satStart, satEnd, other.satStart, other.satEnd))
+            return true;
+        if (isOverlapping(sunStart, sunEnd, other.sunEnd, other.sunEnd))
+            return true;
+
+        return false;
+    }
+
+    private static <T extends Comparable<T>> boolean isOverlapping(T start1, T end1, T start2, T end2){
+        if (start1 == null || end1 == null || start2 == null || end2 == null)
+            return false;
+
+        return start1.compareTo(end2) < 0 && start2.compareTo(end1) < 0;
+    }
 }

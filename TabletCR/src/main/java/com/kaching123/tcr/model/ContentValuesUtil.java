@@ -73,7 +73,7 @@ public final class ContentValuesUtil {
 
     public static String _decimal(BigDecimal decimal, int scale) {
         if (decimal == null) {
-            return "";
+            return null;
         }
 
         return scale <= DECIMAL_SCALE ? decimalFormat.get().format(decimal) : quantityFormat.get().format(decimal);
@@ -85,14 +85,14 @@ public final class ContentValuesUtil {
 
     public static String _decimal(BigDecimal decimal) {
         if (decimal == null) {
-            return "";
+            return null;
         }
         return decimalFormat.get().format(decimal);
     }
 
     public static String _decimalWithScale(BigDecimal decimal) {
         if (decimal == null) {
-            return "";
+            return null;
         }
         int scale = decimal.scale();
         return scale <= DECIMAL_SCALE ? decimalFormat.get().format(decimal) : quantityFormat.get().format(decimal);
@@ -100,7 +100,7 @@ public final class ContentValuesUtil {
 
     public static String _long(Long value) {
         if (value == null) {
-            return "";
+            return null;
         }
         return String.valueOf(value.longValue());
     }
@@ -129,7 +129,7 @@ public final class ContentValuesUtil {
 
     public static String _date(Date value) {
         if (value == null) {
-            return "";
+            return null;
         }
         return String.valueOf(value.getTime());
     }
