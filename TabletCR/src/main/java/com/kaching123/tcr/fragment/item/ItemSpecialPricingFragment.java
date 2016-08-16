@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +21,8 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.component.BrandTextWatcher;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
-import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.model.TBPModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
@@ -78,11 +77,7 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
         List<TBPModel> checkedModels = new ArrayList<>();
         for (int i = 0; i < adapter.getCount(); i++){
             TBPWrapper item = adapter.getItem(i);
-            if (item.isChecked && item.price == null) {
-                Toast.makeText(getActivity(), "Special price is empty", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            if (item.isChecked)
+            if (item.isChecked && item.price != null)
                 checkedModels.add(item.model);
         }
 
@@ -106,17 +101,17 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
                     .where(TbpXRegisterTable.REGISTER_ID + " = ?", getApp().getRegisterId())
                     .where(TbpTable.IS_ACTIVE + " = ?", 1)
                     .orderBy(TbpTable.PRICE_LEVEL)
-                    .transform(new Function<Cursor, TBPModel>() {
+                    .wrap(new Function<Cursor, List<TBPWrapper>>() {
                         @Override
-                        public TBPModel apply(Cursor input) {
-                            return TBPModel.fromView(input);
-                        }
-                    }).transform(new Function<TBPModel, TBPWrapper>() {
-                        @Override
-                        public TBPWrapper apply(TBPModel input) {
-                            BigDecimal price = getModel().getPrice(input.priceLevel);
-                            boolean isChecked = price != null;
-                            return new TBPWrapper(input, price, isChecked);
+                        public List<TBPWrapper> apply(Cursor input) {
+                            ArrayList<TBPWrapper> output = new ArrayList<>(input.getCount());
+                            while (input.moveToNext()){
+                                TBPModel tbp = TBPModel.fromView(input);
+                                BigDecimal price = getModel().getPrice(tbp.priceLevel);
+                                boolean isChecked = price != null;
+                                output.add(new TBPWrapper(tbp, price, isChecked));
+                            }
+                            return output;
                         }
                     }).build(getActivity());
         }
@@ -141,57 +136,61 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
         @Override
         protected View newView(int position, ViewGroup parent) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.tbp_item_view, parent, false);
-            ViewHolder holder = new ViewHolder(view, getItem(position));
+            ViewHolder holder = new ViewHolder(view);
             view.setTag(holder);
             return view;
         }
 
         @Override
-        protected View bindView(View convertView, int position, TBPWrapper item) {
-            ViewHolder holder = (ViewHolder) convertView.getTag();
+        protected View bindView(View convertView, int position, final TBPWrapper item) {
+            final ViewHolder holder = (ViewHolder) convertView.getTag();
             holder.description.setText(item.model.description);
             holder.cb.setChecked(item.isChecked);
             holder.price.setEnabled(item.isChecked);
             showPrice(holder.price, item.price);
+            holder.position = position;
+
             return convertView;
         }
     }
 
-    private class ViewHolder implements OnCheckedChangeListener{
+    private class ViewHolder {
         TextView description;
         EditText price;
         CheckBox cb;
-        TBPWrapper item;
+        int position = -1;
 
-        ViewHolder(View v, TBPWrapper item){
+        ViewHolder(View v){
             this.description = (TextView) v.findViewById(R.id.description);
             this.price = (EditText) v.findViewById(R.id.price);
             this.cb = (CheckBox) v.findViewById(R.id.cb);
-            this.item = item;
 
             InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
             price.setFilters(currencyFilter);
-            price.addTextChangedListener(new CurrencyTextWatcher(price){
+            price.addTextChangedListener(new BrandTextWatcher(price, true){
                 @Override
-                public synchronized void afterTextChanged(Editable amount) {
-                    super.afterTextChanged(amount);
-                    ViewHolder.this.item.price = parseBigDecimal(amount.toString(), null);
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    super.onTextChanged(s, start, before, count);
+                    if (position == -1)
+                        return;
+
+                    if (price.isEnabled())
+                        adapter.getItem(position).price = parseBigDecimal(s.toString(), null);
                 }
             });
 
-            cb.setOnCheckedChangeListener(this);
-        }
+            cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (position == -1)
+                        return;
 
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            item.isChecked = isChecked;
-            price.setEnabled(isChecked);
-            if (isChecked){
-                showPrice(price, item.price);
-            }else{
-                item.price = parseBigDecimal(price, null);
-                price.setText(null);
-            }
+                    TBPWrapper item = adapter.getItem(position);
+                    item.isChecked = isChecked;
+                    price.setEnabled(isChecked);
+                    showPrice(price, isChecked ? item.price : null);
+                }
+            });
         }
     }
 

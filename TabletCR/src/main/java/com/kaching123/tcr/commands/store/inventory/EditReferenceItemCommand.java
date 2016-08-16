@@ -95,6 +95,11 @@ public class EditReferenceItemCommand extends AsyncCommand {
                 itemModel.printerAliasGuid = newItem.printerAliasGuid;
                 itemModel.hasNotes = newItem.hasNotes;
                 itemModel.price = newItem.price;
+                itemModel.price1 = newItem.price1;
+                itemModel.price2 = newItem.price2;
+                itemModel.price3 = newItem.price3;
+                itemModel.price4 = newItem.price4;
+                itemModel.price5 = newItem.price5;
                 itemModel.isDiscountable = newItem.isDiscountable;
                 itemModel.discountType = newItem.discountType;
                 itemModel.discount = newItem.discount;
