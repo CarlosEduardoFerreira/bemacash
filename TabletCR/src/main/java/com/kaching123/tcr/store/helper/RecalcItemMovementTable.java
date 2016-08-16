@@ -16,9 +16,7 @@ import com.kaching123.tcr.store.ShopStore.RecalcItemMovementTableView;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 
@@ -227,7 +225,7 @@ public class RecalcItemMovementTable extends ProviderHelper {
                 if (!nextFlag.equals(flag))
                     break;
 
-                availableQty = availableQty.add(_decimalQty(c, 1));
+                availableQty = availableQty.add(_decimalQty(c, 1, BigDecimal.ZERO));
             }
 
             return new AvailableQuantity(flag, availableQty);

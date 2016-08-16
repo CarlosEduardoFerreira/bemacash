@@ -33,8 +33,8 @@ public class TopItemsFunction extends ListConverterFunction<Optional<List<TopIte
         do {
             final String guid = cursor.getString(indexHolder.get(ReportsTopItemsView2.ItemTable.GUID));
             final String description = cursor.getString(indexHolder.get(ReportsTopItemsView2.ItemTable.DESCRIPTION));
-            final BigDecimal quantity = _decimalQty(cursor, indexHolder.get(SaleItemTable.QUANTITY));
-            final BigDecimal refundQuantity = _decimalQty(cursor, indexHolder.get(ReportsTopItemsView2.SaleItemTable.TMP_REFUND_QUANTITY));//negative value
+            final BigDecimal quantity = _decimalQty(cursor, indexHolder.get(SaleItemTable.QUANTITY), BigDecimal.ZERO);
+            final BigDecimal refundQuantity = _decimalQty(cursor, indexHolder.get(ReportsTopItemsView2.SaleItemTable.TMP_REFUND_QUANTITY), BigDecimal.ZERO);//negative value
             final BigDecimal resultQuantity = quantity.add(refundQuantity);
 
             TopItemModel topItemModel = itemQuantityMap.get(guid);

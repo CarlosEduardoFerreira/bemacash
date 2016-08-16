@@ -1081,8 +1081,8 @@ public class DashboardActivity extends SuperBaseActivity {
                     c.getString(indexHolder.get(ShiftTable.OPEN_MANAGER_ID)),
                     c.getString(indexHolder.get(ShiftTable.CLOSE_MANAGER_ID)),
                     c.getLong(indexHolder.get(ShiftTable.REGISTER_ID)),
-                    _decimal(c, indexHolder.get(ShopStore.ShiftTable.OPEN_AMOUNT)),
-                    _decimal(c, indexHolder.get(ShopStore.ShiftTable.CLOSE_AMOUNT)));
+                    _decimal(c, indexHolder.get(ShopStore.ShiftTable.OPEN_AMOUNT), BigDecimal.ZERO),
+                    _decimal(c, indexHolder.get(ShopStore.ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO));
         }
 
         private FluentCursor loadSalesStatistics(ShiftModel shiftModel) {
@@ -1095,7 +1095,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         private void gatherSalesStatistics(Cursor cursor, SalesStatisticsModel salesStatisticsModel) {
-            BigDecimal amount = _decimal(cursor, 0).subtract(cursor.isNull(2) ? BigDecimal.ZERO : _decimal(cursor, 2));
+            BigDecimal amount = _decimal(cursor, 0, BigDecimal.ZERO).subtract(cursor.isNull(2) ? BigDecimal.ZERO : _decimal(cursor, 2, BigDecimal.ZERO));
             Integer gatewayOrdinal = cursor.isNull(1) ? null : cursor.getInt(1);
             PaymentGateway gateway = gatewayOrdinal == null ? null : PaymentGateway.values()[gatewayOrdinal];
 
@@ -1137,7 +1137,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         private void gatherTipsStaticstics(Cursor c, SalesStatisticsModel salesStatisticsModel) {
-            BigDecimal amount = _decimal(c, 0);
+            BigDecimal amount = _decimal(c, 0, BigDecimal.ZERO);
             TipsModel.PaymentType paymentType = _tipsPaymentType(c, 1);
             if (paymentType == TipsModel.PaymentType.CASH) {
                 salesStatisticsModel.cashTips = salesStatisticsModel.cashTips.add(amount);
@@ -1154,7 +1154,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         private void gatherCashBackStaticstics(Cursor c, SalesStatisticsModel salesStatisticsModel) {
-            BigDecimal cashBackAmount = _decimal(c, 0);
+            BigDecimal cashBackAmount = _decimal(c, 0, BigDecimal.ZERO);
             salesStatisticsModel.cashBack = salesStatisticsModel.cashBack.add(cashBackAmount);
 
         }

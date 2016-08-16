@@ -33,6 +33,7 @@ import com.kaching123.tcr.store.ShopStore.ItemExtView;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -183,12 +184,12 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getString(indexHolder.get(ItemTable.EAN_CODE)),
                     c.getString(indexHolder.get(ItemTable.PRODUCT_CODE)),
                     PriceType.valueOf(c.getInt(indexHolder.get(ItemTable.PRICE_TYPE))),
-                    _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1))),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2))),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3))),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4))),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5))),
+                    _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE)), BigDecimal.ZERO),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1)), BigDecimal.ZERO),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2)), BigDecimal.ZERO),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3)), BigDecimal.ZERO),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4)), BigDecimal.ZERO),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5)), BigDecimal.ZERO),
                     _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
                     c.getString(indexHolder.get(ItemTable.UNIT_LABEL_ID)),
                     c.getString(indexHolder.get(UnitLabelTable.SHORTCUT)),
@@ -196,7 +197,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getInt(indexHolder.get(ItemTable.ACTIVE_STATUS)) == 1,
                     c.getInt(indexHolder.get(ItemTable.DISCOUNTABLE)) == 1,
                     c.getInt(indexHolder.get(ItemTable.SALABLE)) == 1,
-                    _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT))),
+                    _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT)), BigDecimal.ZERO),
                     _discountType(c, indexHolder.get(ItemTable.DISCOUNT_TYPE)),
                     c.getInt(indexHolder.get(ItemTable.TAXABLE)) == 1,
                     c.getString(indexHolder.get(ItemTable.TAX_GROUP_GUID)),
@@ -210,8 +211,8 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getInt(indexHolder.get(ItemExtView.RESTRICT_COMPOSERS_COUNT)),
                     c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
                     c.getString(indexHolder.get(CategoryTable.TITLE)),
-                    _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX))),
-                    _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX))),
+                    _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX)), BigDecimal.ZERO),
+                    _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX)), BigDecimal.ZERO),
                     c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID)),
                     c.getInt(indexHolder.get(ItemTable.ORDER_NUM)),
                     c.getString(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
@@ -220,9 +221,9 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                     _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                     _bool(c, c.getColumnIndex(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                    _decimal(c, c.getColumnIndex(ItemTable.COMMISSION)),
+                    _decimal(c, c.getColumnIndex(ItemTable.COMMISSION), BigDecimal.ZERO),
                     c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
-                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))), _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS)), _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
+                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))), _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS), BigDecimal.ZERO), _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
         }
     }
 }

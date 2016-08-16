@@ -32,7 +32,7 @@ public class ReadTipsFunction {
                     public BigDecimal apply(Cursor cursor) {
                         BigDecimal result = BigDecimal.ZERO;
                         while (cursor.moveToNext()) {
-                            BigDecimal amount = _decimal(cursor, 0);
+                            BigDecimal amount = _decimal(cursor, 0, BigDecimal.ZERO);
                             result = result.add(amount);
                         }
                         return result;

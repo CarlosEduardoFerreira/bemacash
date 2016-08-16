@@ -71,7 +71,7 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.NOTES)),
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.CUSTOMER_IDENTIFICATION)),
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_PLAN_ID)),
-                _decimal(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.TMP_LOYALTY_POINTS)),
+                _decimal(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO),
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_BARCODE)));
     }
 
@@ -95,7 +95,7 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(CustomerTable.NOTES)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.CUSTOMER_IDENTIFICATION)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_PLAN_ID)),
-                _decimal(cursor, cursor.getColumnIndex(CustomerTable.TMP_LOYALTY_POINTS)), cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)));
+                _decimal(cursor, cursor.getColumnIndex(CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO), cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)));
     }
 
     public CustomerModel(String guid, String firstName, String lastName, String street,

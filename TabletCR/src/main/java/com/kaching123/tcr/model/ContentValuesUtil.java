@@ -55,16 +55,16 @@ public final class ContentValuesUtil {
         }
     };
 
-    public static BigDecimal _decimal(Cursor c, int columnIndex) {
-        return _decimal(c.getString(columnIndex));
+    public static BigDecimal _decimal(Cursor c, int columnIndex, BigDecimal def) {
+        return _decimal(c.getString(columnIndex), def);
     }
 
-    public static BigDecimal _decimal(Cursor c, int columnIndex, int scale) {
-        return _decimal(c.getString(columnIndex), scale);
+    public static BigDecimal _decimal(Cursor c, int columnIndex, int scale, BigDecimal def) {
+        return _decimal(c.getString(columnIndex), scale, def);
     }
 
-    public static BigDecimal _decimalQty(Cursor c, int columnIndex) {
-        return _decimal(c.getString(columnIndex), QUANTITY_SCALE);
+    public static BigDecimal _decimalQty(Cursor c, int columnIndex, BigDecimal def) {
+        return _decimal(c.getString(columnIndex), QUANTITY_SCALE, def);
     }
 
     public static ItemRefType _itemRefType(Cursor c, int index) {
@@ -153,15 +153,15 @@ public final class ContentValuesUtil {
         return BigDecimal.ZERO;
     }
 
-    public static BigDecimal _decimal(String decimalValue) {
+    public static BigDecimal _decimal(String decimalValue, BigDecimal def) {
         if (TextUtils.isEmpty(decimalValue))
-            return BigDecimal.ZERO;
+            return def;
         try {
             return (BigDecimal) decimalFormat.get().parse(decimalValue);
         } catch (ParseException e) {
             Logger.e("Parse number error", e);
         }
-        return BigDecimal.ZERO;
+        return def;
     }
 
     public static int getDecimalScale(String decimalValue) {
@@ -171,15 +171,15 @@ public final class ContentValuesUtil {
         return dotIndex < 0 ? 0 : decimalValue.length() - (dotIndex + 1);
     }
 
-    public static BigDecimal _decimal(String decimalValue, int scale) {
+    public static BigDecimal _decimal(String decimalValue, int scale, BigDecimal def) {
         if (TextUtils.isEmpty(decimalValue))
-            return BigDecimal.ZERO;
+            return def;
         try {
             return (BigDecimal) (scale <= DECIMAL_SCALE ? decimalFormat.get().parse(decimalValue) : quantityFormat.get().parse(decimalValue));
         } catch (ParseException e) {
             Logger.e("Parse number error", e);
         }
-        return BigDecimal.ZERO;
+        return def;
     }
 
     public static ContentValues _putItemRefType(ContentValues v, String key, ItemRefType itemRefType) {
@@ -192,7 +192,7 @@ public final class ContentValuesUtil {
     }
 
     public static BigDecimal _decimalQty(String decimalValue) {
-        return _decimal(decimalValue, QUANTITY_SCALE);
+        return _decimal(decimalValue, QUANTITY_SCALE, BigDecimal.ZERO);
     }
 
     public static DiscountType _discountType(Cursor c, int index) {

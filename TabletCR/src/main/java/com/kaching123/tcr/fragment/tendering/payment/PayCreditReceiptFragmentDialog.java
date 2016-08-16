@@ -562,7 +562,7 @@ public class PayCreditReceiptFragmentDialog extends StyledDialogFragment impleme
                                 c.getString(0),
                                 null, 0, null,
                                 new Date(c.getLong(1)),
-                                _decimal(c, 2),
+                                _decimal(c, 2, BigDecimal.ZERO),
                                 receiptNum,
                                 c.getInt(3));
                     }

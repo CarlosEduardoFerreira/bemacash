@@ -64,7 +64,7 @@ public class EmployeeTipsReportQuery {
                 shiftTipsInfo.tempEmployeeTipsInfos.put(employeeGuid, employeeTipsInfo);
             }
 
-            final BigDecimal tipsAmount = ContentValuesUtil._decimal(c, c.getColumnIndex(TipsTable.AMOUNT));
+            final BigDecimal tipsAmount = ContentValuesUtil._decimal(c, c.getColumnIndex(TipsTable.AMOUNT), BigDecimal.ZERO);
             final PaymentType paymentType = ContentValuesUtil._tipsPaymentType(c, c.getColumnIndex(TipsTable.PAYMENT_TYPE));
             if (paymentType == PaymentType.CASH){
                 employeeTipsInfo.cashTips = employeeTipsInfo.cashTips.add(tipsAmount);

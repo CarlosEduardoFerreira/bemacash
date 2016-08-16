@@ -85,7 +85,7 @@ public final class OrderTotalPriceCursorQuery {
                 .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid)
                 .perform(context);
         if (c.moveToFirst()) {
-            transactionFee = _decimal(c, 0);
+            transactionFee = _decimal(c, 0, BigDecimal.ZERO);
         }
         c.close();
         return transactionFee;
@@ -321,7 +321,7 @@ public final class OrderTotalPriceCursorQuery {
                 .perform(context);
 
         if (c.moveToFirst())
-            tips = _decimal(c, 0);
+            tips = _decimal(c, 0, BigDecimal.ZERO);
         c.close();
 
         return tips;

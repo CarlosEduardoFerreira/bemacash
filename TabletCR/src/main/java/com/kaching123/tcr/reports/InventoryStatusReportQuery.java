@@ -94,7 +94,7 @@ public class InventoryStatusReportQuery {
                     c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
                     c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
                     _decimalQty(c.getString(c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY))),
-                    _decimal(c.getString(c.getColumnIndex(ItemTable.COST))),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.COST)), BigDecimal.ZERO),
                     c.getInt(c.getColumnIndex(ItemTable.ACTIVE_STATUS)) == 1
             );
         }

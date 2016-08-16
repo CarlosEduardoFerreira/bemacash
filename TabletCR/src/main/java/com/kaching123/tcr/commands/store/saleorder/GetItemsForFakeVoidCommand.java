@@ -15,6 +15,7 @@ import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
@@ -38,7 +39,7 @@ public class GetItemsForFakeVoidCommand extends PublicGroundyTask{
                 .perform(getContext());
         ArrayList<RefundSaleItemInfo> result = new ArrayList<RefundSaleItemInfo>();
         while(c.moveToNext()){
-            result.add(new RefundSaleItemInfo(c.getString(0), _decimalQty(c, 1)));
+            result.add(new RefundSaleItemInfo(c.getString(0), _decimalQty(c, 1, BigDecimal.ZERO)));
         }
         c.close();
         return succeeded().add(EXTRA_RESULT, result);

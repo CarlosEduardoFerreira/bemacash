@@ -47,8 +47,8 @@ public class ItemManualMovementQuery {
         while (c.moveToNext()) {
             String guid = c.getString(0);
             String itemName = c.getString(1);
-            BigDecimal qty = _decimalQty(c, 2);
-            BigDecimal availableQty = _decimalQty(c, 3);
+            BigDecimal qty = _decimalQty(c, 2, BigDecimal.ZERO);
+            BigDecimal availableQty = _decimalQty(c, 3, BigDecimal.ZERO);
             long date = c.getLong(4);
             BigDecimal prev = prevValue.get(guid);
             BigDecimal diff = qty;

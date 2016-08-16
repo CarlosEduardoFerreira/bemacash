@@ -58,7 +58,7 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 .perform(context);
         if (c.moveToFirst()) {
             tippedTransactionGuid = c.getString(0);
-            tipAmount = _decimal(c, 1);
+            tipAmount = _decimal(c, 1, BigDecimal.ZERO);
             tippedOrder = true;
         }
         c.close();

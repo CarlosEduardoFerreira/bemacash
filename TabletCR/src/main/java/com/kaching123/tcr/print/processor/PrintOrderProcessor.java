@@ -259,7 +259,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         if (c.moveToFirst()) {
             do {
                 String unitLabel = c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT));
-                itemQty = unitLabel != null && unitLabel.equalsIgnoreCase("LB") ? BigDecimal.ONE : _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.QUANTITY)));
+                itemQty = unitLabel != null && unitLabel.equalsIgnoreCase("LB") ? BigDecimal.ONE : _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.QUANTITY)), BigDecimal.ZERO);
                 String itemGuid = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.SALE_ITEM_GUID));
                 list.put(itemGuid, itemQty);
 //                if(!unitLabel.equalsIgnoreCase("LB"))

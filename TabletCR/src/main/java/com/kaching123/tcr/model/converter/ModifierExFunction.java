@@ -10,6 +10,8 @@ import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ItemTable;
 
+import java.math.BigDecimal;
+
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
@@ -50,12 +52,12 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.EAN_CODE)),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.PRODUCT_CODE)),
                     _priceType(c, c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.PRICE_TYPE)),
-                    _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.SALE_PRICE))),
-                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_1))),
-                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_2))),
-                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_3))),
-                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_4))),
-                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_5))),
+                    _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.SALE_PRICE)), BigDecimal.ZERO),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_1)), BigDecimal.ZERO),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_2)), BigDecimal.ZERO),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_3)), BigDecimal.ZERO),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_4)), BigDecimal.ZERO),
+                    _decimal(c.getString(c.getColumnIndex(ItemTable.PRICE_5)), BigDecimal.ZERO),
                     _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.TMP_AVAILABLE_QTY))),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UNIT_LABEL_ID)),
                     shortCut,
@@ -66,7 +68,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     null,
                     null,
                     false,
-                    _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.COST))),
+                    _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.COST)), BigDecimal.ZERO),
                     _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.MINIMUM_QTY))),
                     _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.RECOMMENDED_QTY))),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UPDATE_QTY_FLAG)),
@@ -107,7 +109,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                 c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.ITEM_GUID)),
                 _modifierType(c, c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.TYPE)),
                 c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.TITLE)),
-                _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.EXTRA_COST))),
+                _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.EXTRA_COST)), BigDecimal.ZERO),
                 itemGuid,
                 _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.ITEM_SUB_QTY))),
                 itemGroupGuid,

@@ -338,7 +338,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
             ((TextView) view.findViewById(android.R.id.text1)).setText(
                     String.format("%s (%s)",
                             c.getString(c.getColumnIndex(TaxGroupTable.TITLE)),
-                            UiHelper.percentFormat(_decimal(c, c.getColumnIndex(TaxGroupTable.TAX)))
+                            UiHelper.percentFormat(_decimal(c, c.getColumnIndex(TaxGroupTable.TAX), BigDecimal.ZERO))
                     )
             );
         }

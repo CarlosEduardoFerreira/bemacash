@@ -195,9 +195,9 @@ public class CreditReceiptListFragment extends SuperBaseFragment implements Cred
             }
 
             do {
-                BigDecimal amount = _decimal(cursor, cursor.getColumnIndex(CreditReceiptTable.AMOUNT));
+                BigDecimal amount = _decimal(cursor, cursor.getColumnIndex(CreditReceiptTable.AMOUNT), BigDecimal.ZERO);
                 long usedTime = cursor.getLong(cursor.getColumnIndex(PaymentTable.CREATE_TIME));
-                BigDecimal usedAmount = _decimal(cursor, cursor.getColumnIndex(PaymentTable.AMOUNT));
+                BigDecimal usedAmount = _decimal(cursor, cursor.getColumnIndex(PaymentTable.AMOUNT), BigDecimal.ZERO);
 
                 if (usedTime <= 0)
                     creditReceiptsInfo.total = creditReceiptsInfo.total.add(amount);
@@ -248,12 +248,12 @@ public class CreditReceiptListFragment extends SuperBaseFragment implements Cred
             holder.expireTime.setText(DateUtils.dateOnlyFormat(calendar.getTime()));
             holder.number.setText(c.getString(c.getColumnIndex(RegisterTable.TITLE)) + "-" + c.getString(c.getColumnIndex(CreditReceiptTable.PRINT_NUMBER)));
             holder.cashier.setText(c.getString(c.getColumnIndex(CashierTable.FIRST_NAME)) + " " + c.getString(c.getColumnIndex(CashierTable.LAST_NAME)));
-            showPrice(holder.amount, _decimal(c, c.getColumnIndex(CreditReceiptTable.AMOUNT)));
+            showPrice(holder.amount, _decimal(c, c.getColumnIndex(CreditReceiptTable.AMOUNT), BigDecimal.ZERO));
 
             long usedTime = c.getLong(c.getColumnIndex(PaymentTable.CREATE_TIME));
             if (usedTime > 0) {
                 holder.usedTime.setText(DateUtils.dateOnlyFormat(usedTime));
-                showPrice(holder.usedAmount, _decimal(c, c.getColumnIndex(PaymentTable.AMOUNT)));
+                showPrice(holder.usedAmount, _decimal(c, c.getColumnIndex(PaymentTable.AMOUNT), BigDecimal.ZERO));
             } else {
                 holder.usedTime.setText(null);
                 holder.usedAmount.setText(null);
@@ -269,13 +269,13 @@ public class CreditReceiptListFragment extends SuperBaseFragment implements Cred
 
         public BigDecimal getAmount(int pos) {
             Cursor c = (Cursor) getItem(pos);
-            return _decimal(c, c.getColumnIndex(CreditReceiptTable.AMOUNT));
+            return _decimal(c, c.getColumnIndex(CreditReceiptTable.AMOUNT), BigDecimal.ZERO);
         }
 
         public BigDecimal getUsedAmount(int pos) {
             Cursor c = (Cursor) getItem(pos);
             long usedTime = c.getLong(c.getColumnIndex(PaymentTable.CREATE_TIME));
-            return usedTime > 0 ? _decimal(c, c.getColumnIndex(PaymentTable.AMOUNT)) : null;
+            return usedTime > 0 ? _decimal(c, c.getColumnIndex(PaymentTable.AMOUNT), BigDecimal.ZERO) : null;
         }
     }
 

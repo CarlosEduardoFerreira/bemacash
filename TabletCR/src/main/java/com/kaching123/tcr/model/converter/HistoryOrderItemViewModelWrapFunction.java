@@ -28,6 +28,7 @@ import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderItemsView;
 import com.kaching123.tcr.util.ContentValuesUtilBase;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,9 +88,9 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                             c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT)),
                             _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
                             _bool(c, c.getColumnIndex(ItemTable.SERIALIZABLE)),
-                            _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),
+                            _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT), BigDecimal.ZERO),
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
-                            _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
+                            _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO),
                             !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
                             c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 0 ? false : true,
                             taxModel1, taxModel2
@@ -130,26 +131,26 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                 c.getString(c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID)),
                 c.getString(c.getColumnIndex(SaleItemTable.ORDER_GUID)),
                 c.getString(c.getColumnIndex(SaleItemTable.ITEM_GUID)),
-                _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY)),
-                _decimalQty(c, c.getColumnIndex(SaleItemTable.KITCHEN_PRINTED_QTY)),
+                _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY), BigDecimal.ZERO),
+                _decimalQty(c, c.getColumnIndex(SaleItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO),
                 _priceType(c, c.getColumnIndex(SaleItemTable.PRICE_TYPE)),
-                _decimal(c, c.getColumnIndex(SaleItemTable.PRICE)),
+                _decimal(c, c.getColumnIndex(SaleItemTable.PRICE), BigDecimal.ZERO),
                 _bool(c, c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),
-                _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT)),
+                _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT), BigDecimal.ZERO),
                 _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                 _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
-                _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
-                _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),
+                _decimal(c, c.getColumnIndex(SaleItemTable.TAX), BigDecimal.ZERO),
+                _decimal(c, c.getColumnIndex(SaleItemTable.TAX2), BigDecimal.ZERO),
                 c.getLong(c.getColumnIndex(SaleItemTable.SEQUENCE)),
                 c.getString(c.getColumnIndex(SaleItemTable.PARENT_GUID)),
-                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE)),
-                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX)),
-                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT)),
-                _decimalQty(c, c.getColumnIndex(SaleItemTable.TMP_REFUND_QUANTITY)),
+                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE), BigDecimal.ZERO),
+                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX), BigDecimal.ZERO),
+                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT), BigDecimal.ZERO),
+                _decimalQty(c, c.getColumnIndex(SaleItemTable.TMP_REFUND_QUANTITY), BigDecimal.ZERO),
                 c.getString(c.getColumnIndex(SaleItemTable.NOTES)),
                 c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
-                _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
+                _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS), BigDecimal.ZERO),
                 _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)));
     }
 
@@ -162,7 +163,7 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                             c.getString(c.getColumnIndex(SaleAddonTable.GUID)),
                             addonGuid,
                             c.getString(c.getColumnIndex(SaleAddonTable.ITEM_GUID)),
-                            _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST)),
+                            _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST), BigDecimal.ZERO),
                             _modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)),
                             c.getString(c.getColumnIndex(SaleAddonTable.CHILD_ITEM_ID)),
                             ContentValuesUtilBase._decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY))),

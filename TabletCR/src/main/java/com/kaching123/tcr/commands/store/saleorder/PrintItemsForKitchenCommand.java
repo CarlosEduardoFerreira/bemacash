@@ -17,7 +17,6 @@ import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.print.printer.PosKitchenPrinter;
 import com.kaching123.tcr.print.processor.PrintItemsForKitchenProcessor;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleItemExDelView2.ItemTable;
@@ -224,8 +223,8 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                         return new ItemInfo(
                                 c.getString(0),
                                 c.getString(1),
-                                _decimalQty(c, 2),
-                                _decimalQty(c, 3),
+                                _decimalQty(c, 2, BigDecimal.ZERO),
+                                _decimalQty(c, 3, BigDecimal.ZERO),
                                 c.getString(4),
                                 c.getString(5));
                     }

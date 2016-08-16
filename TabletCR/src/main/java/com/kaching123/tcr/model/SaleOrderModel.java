@@ -70,21 +70,21 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.OPERATOR_GUID)),
                 c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.SHIFT_GUID)),
                 c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)),
-                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.DISCOUNT)),
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.DISCOUNT), BigDecimal.ZERO),
                 _discountType(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.DISCOUNT_TYPE)),
                 _orderStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.STATUS)),
                 c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.HOLD_NAME)),
                 _bool(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TAXABLE)),
-                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_PRICE)),
-                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_TAX)),
-                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_DISCOUNT)),
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_PRICE), BigDecimal.ZERO),
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_TAX), BigDecimal.ZERO),
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_DISCOUNT), BigDecimal.ZERO),
                 c.getInt(c.getColumnIndex(SaleOrderView2.SaleOrderTable.PRINT_SEQ_NUM)),
                 c.getLong(c.getColumnIndex(SaleOrderView2.SaleOrderTable.REGISTER_ID)),
                 c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.PARENT_ID)),
                 _orderType(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.ORDER_TYPE)),
                 _bool(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.IS_TIPPED)),
                 _kitchenPrintStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.KITCHEN_PRINT_STATUS)),
-                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TRANSACTION_FEE))
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO)
         );
     }
 
@@ -94,21 +94,21 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 c.getString(c.getColumnIndex(ShopStore.SaleOrderTable.OPERATOR_GUID)),
                 c.getString(c.getColumnIndex(ShopStore.SaleOrderTable.SHIFT_GUID)),
                 c.getString(c.getColumnIndex(SaleOrderTable.CUSTOMER_GUID)),
-                _decimal(c, c.getColumnIndex(ShopStore.SaleOrderTable.DISCOUNT)),
+                _decimal(c, c.getColumnIndex(ShopStore.SaleOrderTable.DISCOUNT), BigDecimal.ZERO),
                 _discountType(c, c.getColumnIndex(ShopStore.SaleOrderTable.DISCOUNT_TYPE)),
                 _orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)),
                 c.getString(c.getColumnIndex(SaleOrderTable.HOLD_NAME)),
                 _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
-                _decimal(c, c.getColumnIndex(SaleOrderTable.TML_TOTAL_PRICE)),
-                _decimal(c, c.getColumnIndex(SaleOrderTable.TML_TOTAL_TAX)),
-                _decimal(c, c.getColumnIndex(SaleOrderTable.TML_TOTAL_DISCOUNT)),
+                _decimal(c, c.getColumnIndex(SaleOrderTable.TML_TOTAL_PRICE), BigDecimal.ZERO),
+                _decimal(c, c.getColumnIndex(SaleOrderTable.TML_TOTAL_TAX), BigDecimal.ZERO),
+                _decimal(c, c.getColumnIndex(SaleOrderTable.TML_TOTAL_DISCOUNT), BigDecimal.ZERO),
                 c.getInt(c.getColumnIndex(SaleOrderTable.PRINT_SEQ_NUM)),
                 c.getLong(c.getColumnIndex(SaleOrderTable.REGISTER_ID)),
                 c.getString(c.getColumnIndex(SaleOrderTable.PARENT_ID)),
                 _orderType(c, c.getColumnIndex(SaleOrderTable.ORDER_TYPE)),
                 _bool(c, c.getColumnIndex(SaleOrderTable.IS_TIPPED)),
                 _kitchenPrintStatus(c, c.getColumnIndex(SaleOrderTable.KITCHEN_PRINT_STATUS)),
-                _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE))
+                _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO)
         );
     }
 

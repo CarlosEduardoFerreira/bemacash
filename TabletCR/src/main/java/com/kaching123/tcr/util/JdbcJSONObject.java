@@ -96,14 +96,14 @@ public class JdbcJSONObject extends JSONObject{
         String decimal = getString(column);
         if (TextUtils.isEmpty(decimal))
             return null;
-        return _decimal(decimal);
+        return _decimal(decimal, BigDecimal.ZERO);
     }
 
     public BigDecimal getBigDecimal(String column, int scale) throws JSONException {
         String decimal = getString(column);
         if (TextUtils.isEmpty(decimal))
             return null;
-        return _decimal(decimal, scale);
+        return _decimal(decimal, scale, BigDecimal.ZERO);
     }
 
     @Override

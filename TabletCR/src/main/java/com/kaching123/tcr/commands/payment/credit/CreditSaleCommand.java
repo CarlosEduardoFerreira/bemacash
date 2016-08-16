@@ -118,7 +118,7 @@ public class CreditSaleCommand extends AsyncCommand {
         String guid = null;
         if (c.moveToFirst()) {
             guid = c.getString(0);
-            availableAmount = _decimal(c, 1);
+            availableAmount = _decimal(c, 1, BigDecimal.ZERO);
             createTime = new Date(c.getLong(2));
             expireTime = c.getInt(3);
         }

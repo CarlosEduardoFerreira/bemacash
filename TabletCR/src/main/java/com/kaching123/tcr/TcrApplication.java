@@ -182,7 +182,7 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.shopId().get(),
                     shopPref.shopName().get(),
                     _enum(ViewType.class, shopPref.shopViewType().get(), ViewType.RETAIL),
-                    _decimal(shopPref.shopTaxVat().getOr(null)),
+                    _decimal(shopPref.shopTaxVat().getOr(null), BigDecimal.ZERO),
                     shopPref.shopAddress1().getOr(null),
                     shopPref.shopAddress2().getOr(null),
                     shopPref.shopAddress3().getOr(null),
@@ -201,7 +201,7 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.shopUseCreditReceipt().getOr(false),
                     shopPref.shopDisplayWelcomeMsg().getOr(null),
                     shopPref.shopDisplayWelcomeMsgBottom().getOr(null),
-                    _decimal(shopPref.signaturePrintLimit().getOr(null)),
+                    _decimal(shopPref.signaturePrintLimit().getOr(null), BigDecimal.ZERO),
                     shopPref.shopOwnerEmail().getOr(null),
                     shopPref.shopCreditReceiptExpireTime().getOr(0),
                     shopPref.prepaidUrl().getOr(null),
@@ -209,9 +209,9 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.prepaidPassword().getOr(null),
                     shopPref.prepaidTransactionMode().getOr(null),
                     shopPref.tipsEnabled().get(),
-                    _decimal(shopPref.tipsSplitTreshold().getOr(null)),
+                    _decimal(shopPref.tipsSplitTreshold().getOr(null), BigDecimal.ZERO),
                     shopPref.tipsEnabled().get(),
-                    _decimal(shopPref.tipsWarnThreshold().getOr(null)),
+                    _decimal(shopPref.tipsWarnThreshold().getOr(null), BigDecimal.ZERO),
                     shopPref.zipMandatory().getOr(false),
                     shopPref.cvnMandatory().getOr(true),
 
@@ -231,7 +231,7 @@ public class TcrApplication extends MultiDexApplication {
 
                     shopPref.autoSettlementTime().getOr(null),
                     shopPref.commissionControl().getOr(false),
-                    _decimal(shopPref.defaultStoreCommission().getOr(null)),
+                    _decimal(shopPref.defaultStoreCommission().getOr(null), BigDecimal.ZERO),
                     shopPref.offlinePeriodHours().getOr(0),
 
                     shopPref.unitLabelDefaultShortcut().getOr(null),
@@ -271,12 +271,12 @@ public class TcrApplication extends MultiDexApplication {
         );
 
         prepaidTaxes = new HashMap<Broker, BigDecimal>();
-        prepaidTaxes.put(Broker.WIRELESS_RECHARGE, _decimal(shopPref.wirelessRechargeTax().getOr("0")));
-        prepaidTaxes.put(Broker.INTERNATIONAL_TOPUP, _decimal(shopPref.internationalTopupTax().getOr("0")));
-        prepaidTaxes.put(Broker.BILL_PAYMENT, _decimal(shopPref.billPaymentTax().getOr("0")));
-        prepaidTaxes.put(Broker.LONG_DISTANCE, _decimal(shopPref.longDistanceTax().getOr("0")));
-        prepaidTaxes.put(Broker.SUNPASS, _decimal(shopPref.sunpassTax().getOr("0")));
-        prepaidTaxes.put(Broker.PINLESS, _decimal(shopPref.pinlessTax().getOr("0")));
+        prepaidTaxes.put(Broker.WIRELESS_RECHARGE, _decimal(shopPref.wirelessRechargeTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.INTERNATIONAL_TOPUP, _decimal(shopPref.internationalTopupTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.BILL_PAYMENT, _decimal(shopPref.billPaymentTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.LONG_DISTANCE, _decimal(shopPref.longDistanceTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.SUNPASS, _decimal(shopPref.sunpassTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.PINLESS, _decimal(shopPref.pinlessTax().getOr("0"), BigDecimal.ZERO));
 
         registerSerial = !Build.UNKNOWN.equals(Build.SERIAL) ? Build.SERIAL : Secure.getString(getContentResolver(), Secure.ANDROID_ID);
         registerSerial += cut4Symbols(Secure.getString(getContentResolver(), Secure.ANDROID_ID));

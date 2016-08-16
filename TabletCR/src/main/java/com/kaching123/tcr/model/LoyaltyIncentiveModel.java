@@ -43,8 +43,8 @@ public class LoyaltyIncentiveModel implements IValueModel, Serializable {
                 LoyaltyType.valueOf(c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.TYPE))),
                 LoyaltyRewardType.valueOf(c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.REWARD_TYPE))),
                 c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.BIRTHDAY_OFFSET)),
-                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.POINT_THRESHOLD)),
-                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.REWARD_VALUE)),
+                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.POINT_THRESHOLD), BigDecimal.ZERO),
+                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.REWARD_VALUE), BigDecimal.ZERO),
                 _discountType(c, c.getColumnIndex(LoyaltyIncentiveTable.REWARD_VALUE_TYPE))
         );
     }

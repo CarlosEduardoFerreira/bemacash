@@ -2235,7 +2235,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         BigDecimal itemQty = BigDecimal.ZERO;
         if (c.moveToFirst()) {
             do {
-                itemQty = _decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)));
+                itemQty = _decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)), BigDecimal.ZERO);
                 saleItemAmount = saleItemAmount.add(itemQty);
             } while (c.moveToNext());
             c.close();

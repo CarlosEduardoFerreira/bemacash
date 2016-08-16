@@ -38,6 +38,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -136,7 +137,7 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         }
         model.loyaltyPlanId = ((LoyaltyPlanModel) loyaltyPlan.getSelectedItem()).guid;
         model.loyaltyBarcode = loyaltyBarcode.getText().toString();
-        model.loyaltyPoints = _decimal(bonusPoints.getText().toString());
+        model.loyaltyPoints = _decimal(bonusPoints.getText().toString(), BigDecimal.ZERO);
     }
 
     @Override

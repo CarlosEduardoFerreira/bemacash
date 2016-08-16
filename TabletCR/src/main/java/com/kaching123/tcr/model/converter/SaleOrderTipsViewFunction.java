@@ -12,6 +12,7 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.TipsTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTipsQuery;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -79,14 +80,14 @@ public class SaleOrderTipsViewFunction extends ListConverterFunction<SaleOrderTi
                 c.getString(indexHolder.get(SaleOrderTable.OPERATOR_GUID)),
                 c.getString(indexHolder.get(SaleOrderTable.SHIFT_GUID)),
                 c.getString(indexHolder.get(SaleOrderTable.CUSTOMER_GUID)),
-                _decimal(c, indexHolder.get(SaleOrderTable.DISCOUNT)),
+                _decimal(c, indexHolder.get(SaleOrderTable.DISCOUNT), BigDecimal.ZERO),
                 _discountType(c, indexHolder.get(SaleOrderTable.DISCOUNT_TYPE)),
                 _orderStatus(c, indexHolder.get(SaleOrderTable.STATUS)),
                 c.getString(indexHolder.get(SaleOrderTable.HOLD_NAME)),
                 _bool(c, indexHolder.get(SaleOrderTable.TAXABLE)),
-                _decimal(c, indexHolder.get(SaleOrderTable.TML_TOTAL_PRICE)),
-                _decimal(c, indexHolder.get(SaleOrderTable.TML_TOTAL_TAX)),
-                _decimal(c, indexHolder.get(SaleOrderTable.TML_TOTAL_DISCOUNT)),
+                _decimal(c, indexHolder.get(SaleOrderTable.TML_TOTAL_PRICE), BigDecimal.ZERO),
+                _decimal(c, indexHolder.get(SaleOrderTable.TML_TOTAL_TAX), BigDecimal.ZERO),
+                _decimal(c, indexHolder.get(SaleOrderTable.TML_TOTAL_DISCOUNT), BigDecimal.ZERO),
                 c.getInt(indexHolder.get(SaleOrderTable.PRINT_SEQ_NUM)),
                 c.getInt(indexHolder.get(SaleOrderTable.REGISTER_ID)),
                 c.getString(indexHolder.get(SaleOrderTable.PARENT_ID)),
@@ -97,11 +98,11 @@ public class SaleOrderTipsViewFunction extends ListConverterFunction<SaleOrderTi
                 concatFullname(c.getString(indexHolder.get(CustomerTable.FISRT_NAME)), c.getString(indexHolder.get(CustomerTable.LAST_NAME))),
                 c.getString(indexHolder.get(CustomerTable.PHONE)),
                 c.getString(indexHolder.get(CustomerTable.EMAIL)),
-                _decimal(c, indexHolder.get(TipsTable.AMOUNT)),
+                _decimal(c, indexHolder.get(TipsTable.AMOUNT), BigDecimal.ZERO),
                 transactionState,
                 tenderType,
                 _kitchenPrintStatus(c, indexHolder.get(SaleOrderTable.KITCHEN_PRINT_STATUS)),
-                _decimal(c, indexHolder.get(SaleOrderTable.TRANSACTION_FEE))
+                _decimal(c, indexHolder.get(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO)
         );
     }
 

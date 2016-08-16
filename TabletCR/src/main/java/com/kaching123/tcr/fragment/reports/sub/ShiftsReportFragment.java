@@ -34,6 +34,7 @@ import com.kaching123.tcr.store.ShopSchema2.ShiftView2.ShiftTable;
 import com.kaching123.tcr.store.ShopStore.ShiftView;
 import com.kaching123.tcr.util.DateUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -115,8 +116,8 @@ public class ShiftsReportFragment extends SuperBaseFragment implements IDetailsF
                         cursor.getString(indexHolder.get(ShiftTable.OPEN_MANAGER_ID)),
                         cursor.getString(indexHolder.get(ShiftTable.CLOSE_MANAGER_ID)),
                         cursor.getLong(indexHolder.get(ShiftTable.REGISTER_ID)),
-                        _decimal(cursor, indexHolder.get(ShiftTable.OPEN_AMOUNT)),
-                        _decimal(cursor, indexHolder.get(ShiftTable.CLOSE_AMOUNT)),
+                        _decimal(cursor, indexHolder.get(ShiftTable.OPEN_AMOUNT), BigDecimal.ZERO),
+                        _decimal(cursor, indexHolder.get(ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO),
                         concatFullname(cursor.getString(indexHolder.get(OpenManagerTable.FIRST_NAME)), cursor.getString(indexHolder.get(OpenManagerTable.LAST_NAME))),
                         concatFullname(cursor.getString(indexHolder.get(CloseManagerTable.FIRST_NAME)), cursor.getString(indexHolder.get(CloseManagerTable.LAST_NAME))),
                         cursor.getString(indexHolder.get(RegisterTable.TITLE))

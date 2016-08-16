@@ -116,7 +116,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         try{
             if (c.moveToFirst()){
                 String customerId = c.getString(0);
-                BigDecimal points = _decimal(c, 1);
+                BigDecimal points = _decimal(c, 1, BigDecimal.ZERO);
                 addLoyaltyPointsResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, points, getAppCommandContext());
                 return addLoyaltyPointsResult != null;
             }else{

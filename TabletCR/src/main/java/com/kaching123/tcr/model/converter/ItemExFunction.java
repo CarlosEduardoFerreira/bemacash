@@ -22,6 +22,8 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
+import java.math.BigDecimal;
+
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._caseCount;
 import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
@@ -119,12 +121,12 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getString(indexHolder.get(ItemTable.EAN_CODE)),
                 c.getString(indexHolder.get(ItemTable.PRODUCT_CODE)),
                 _priceType(c, indexHolder.get(ItemTable.PRICE_TYPE)),
-                _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5))),
+                _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE)), BigDecimal.ZERO),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1)), null),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2)), null),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3)), null),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4)), null),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5)), null),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
                 c.getString(c.getColumnIndex(ItemTable.UNIT_LABEL_ID)),
                 shortCut,
@@ -132,10 +134,10 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getInt(indexHolder.get(ItemTable.ACTIVE_STATUS)) == 1,
                 c.getInt(indexHolder.get(ItemTable.DISCOUNTABLE)) == 1,
                 c.getInt(indexHolder.get(ItemTable.SALABLE)) == 1,
-                _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT))),
+                _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT)), BigDecimal.ZERO),
                 _discountType(c, indexHolder.get(ItemTable.DISCOUNT_TYPE)),
                 c.getInt(indexHolder.get(ItemTable.TAXABLE)) == 1,
-                _decimal(c.getString(indexHolder.get(ItemTable.COST))),
+                _decimal(c.getString(indexHolder.get(ItemTable.COST)), BigDecimal.ZERO),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.MINIMUM_QTY))),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.RECOMMENDED_QTY))),
                 c.getString(indexHolder.get(ItemTable.UPDATE_QTY_FLAG)),
@@ -149,12 +151,12 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getInt(indexHolder.get(ItemExtView.COMPOSERS_COUNT)),
                 c.getInt(indexHolder.get(ItemExtView.RESTRICT_COMPOSERS_COUNT)),
                 c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
-                _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX))),
-                _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX))),
+                _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX)), BigDecimal.ZERO),
+                _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX)), BigDecimal.ZERO),
                 c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID)),
                 c.getInt(indexHolder.get(ItemTable.ORDER_NUM)),
                 c.getString(indexHolder.get(ItemTable.PRINTER_ALIAS_GUID)),
-                c.getInt(indexHolder.get(ItemTable.BUTTON_VIEW)), c.getInt(indexHolder.get(ItemTable.HAS_NOTES)) == 1, c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1, _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)), _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)), _decimal(c, indexHolder.get(ItemTable.COMMISSION)), c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)), _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)), _decimal(c, indexHolder.get(ItemTable.LOYALTY_POINTS)), _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)))
+                c.getInt(indexHolder.get(ItemTable.BUTTON_VIEW)), c.getInt(indexHolder.get(ItemTable.HAS_NOTES)) == 1, c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1, _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)), _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)), _decimal(c, indexHolder.get(ItemTable.COMMISSION), BigDecimal.ZERO), c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)), _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)), _decimal(c, indexHolder.get(ItemTable.LOYALTY_POINTS), BigDecimal.ZERO), _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)))
                 .setIsAComposer(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.HostComposerTable.ID)) != null)
                 .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null)
                 .setMatrixGuid(matrixGuid);

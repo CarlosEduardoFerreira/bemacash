@@ -68,7 +68,7 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
 
         BigDecimal oldPoints;
         if (c.moveToFirst()){
-            oldPoints = _decimal(c, 0);
+            oldPoints = _decimal(c, 0, BigDecimal.ZERO);
         }else {
             oldPoints = BigDecimal.ZERO;
         }

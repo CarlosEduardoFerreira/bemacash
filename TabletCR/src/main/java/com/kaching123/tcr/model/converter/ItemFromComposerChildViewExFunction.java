@@ -6,6 +6,8 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ChildUnitLabelTable;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ItemChildTable;
 
+import java.math.BigDecimal;
+
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
@@ -51,7 +53,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 c.getString(indexHolder.get(ItemChildTable.EAN_CODE)),
                 c.getString(indexHolder.get(ItemChildTable.PRODUCT_CODE)),
                 _priceType(c, indexHolder.get(ItemChildTable.PRICE_TYPE)),
-                _decimal(c.getString(indexHolder.get(ItemChildTable.SALE_PRICE))),
+                _decimal(c.getString(indexHolder.get(ItemChildTable.SALE_PRICE)), BigDecimal.ZERO),
                 null,
                 null,
                 null,
@@ -67,7 +69,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 null,
                 null,
                 false,
-                _decimal(c.getString(indexHolder.get(ItemChildTable.COST))),
+                _decimal(c.getString(indexHolder.get(ItemChildTable.COST)), BigDecimal.ZERO),
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.MINIMUM_QTY))),
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.RECOMMENDED_QTY))),
                 null,

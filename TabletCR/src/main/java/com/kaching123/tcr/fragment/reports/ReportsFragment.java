@@ -571,8 +571,8 @@ public class ReportsFragment extends DateRangeFragment {
                     cursor.getString(indexHolder.get(ShiftTable.OPEN_MANAGER_ID)),
                     cursor.getString(indexHolder.get(ShiftTable.CLOSE_MANAGER_ID)),
                     cursor.getLong(indexHolder.get(ShiftView2.ShiftTable.REGISTER_ID)),
-                    _decimal(cursor, indexHolder.get(ShiftView2.ShiftTable.OPEN_AMOUNT)),
-                    _decimal(cursor, indexHolder.get(ShiftView2.ShiftTable.CLOSE_AMOUNT)),
+                    _decimal(cursor, indexHolder.get(ShiftView2.ShiftTable.OPEN_AMOUNT), BigDecimal.ZERO),
+                    _decimal(cursor, indexHolder.get(ShiftView2.ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO),
                     cursor.getString(indexHolder.get(OpenManagerTable.FIRST_NAME)) + " " + cursor.getString(indexHolder.get(OpenManagerTable.LAST_NAME)),
                     cursor.getString(indexHolder.get(CloseManagerTable.FIRST_NAME)) + " " + cursor.getString(indexHolder.get(CloseManagerTable.LAST_NAME)),
                     cursor.getString(indexHolder.get(RegisterTable.TITLE)));
@@ -610,11 +610,11 @@ public class ReportsFragment extends DateRangeFragment {
             do {
 
                 final Date paymentTransactionCreateTime = new Date(cursor.getLong(indexHolder.get(PaymentTransactionView2.PaymentTransactionTable.CREATE_TIME)));
-                BigDecimal paymentTransactionAmount = _decimal(cursor, indexHolder.get(PaymentTransactionView2.PaymentTransactionTable.AMOUNT));
+                BigDecimal paymentTransactionAmount = _decimal(cursor, indexHolder.get(PaymentTransactionView2.PaymentTransactionTable.AMOUNT), BigDecimal.ZERO);
                 final String paymentTransactionOrderGuid = cursor.getString(indexHolder.get(PaymentTransactionView2.PaymentTransactionTable.ORDER_GUID));
 
                 if (!cursor.isNull(indexHolder.get(EmployeeTipsTable.AMOUNT))) {
-                    paymentTransactionAmount = paymentTransactionAmount.subtract(_decimal(cursor, indexHolder.get(EmployeeTipsTable.AMOUNT)));
+                    paymentTransactionAmount = paymentTransactionAmount.subtract(_decimal(cursor, indexHolder.get(EmployeeTipsTable.AMOUNT), BigDecimal.ZERO));
                 }
 
                 calendar.setTimeInMillis(paymentTransactionCreateTime.getTime());

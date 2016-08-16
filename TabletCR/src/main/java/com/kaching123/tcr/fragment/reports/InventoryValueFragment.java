@@ -85,7 +85,7 @@ public class InventoryValueFragment extends Fragment implements LoaderCallbacks<
                         BigDecimal cost = BigDecimal.ZERO;
                         while (c.moveToNext()) {
                             BigDecimal q = _decimalQty(c.getString(0));
-                            BigDecimal cc = _decimal(c.getString(1));
+                            BigDecimal cc = _decimal(c.getString(1), BigDecimal.ZERO);
 
                             qty = qty.add(q);
                             cost = cost.add(CalculationUtil.getSubTotal(q, cc));

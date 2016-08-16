@@ -20,6 +20,7 @@ import com.kaching123.tcr.store.ShopStore.RegisterTable;
 import com.telly.groundy.TaskResult;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -84,7 +85,7 @@ public class PrintCreditReceiptCommand extends BasePrintCommand<PosOrderTextPrin
                             c.getLong(c.getColumnIndex(CreditReceiptTable.REGISTER_ID)),
                             c.getString(c.getColumnIndex(CreditReceiptTable.SHIFT_ID)),
                             new Date(c.getLong(c.getColumnIndex(CreditReceiptTable.CREATE_TIME))),
-                            _decimal(c, c.getColumnIndex(CreditReceiptTable.AMOUNT)),
+                            _decimal(c, c.getColumnIndex(CreditReceiptTable.AMOUNT), BigDecimal.ZERO),
                             c.getLong(c.getColumnIndex(CreditReceiptTable.PRINT_NUMBER)),
                             c.getInt(c.getColumnIndex(CreditReceiptTable.EXPIRE_TIME))),
                     c.getString(c.getColumnIndex(CreditReceiptView2.RegisterTable.TITLE))

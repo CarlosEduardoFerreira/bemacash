@@ -152,22 +152,22 @@ public abstract class ExportBaseTop10ItemsCommand extends ExportToFileCommand {
             if (item == null) {
                 result.put(itemGuid, item = new ReportItem(
                         c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)),
-                        _decimal(c, c.getColumnIndex(ItemTable.COST)),
-                        _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY))));
+                        _decimal(c, c.getColumnIndex(ItemTable.COST), BigDecimal.ZERO),
+                        _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY), BigDecimal.ZERO)));
             }
             if (_orderStatus(c, c.getColumnIndex(SaleOrderTable.STATUS)) == OrderStatus.RETURN) {
                 item.addReturn(
-                        _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY)),
-                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE)),
-                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX)),
-                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT))
+                        _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY), BigDecimal.ZERO),
+                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE), BigDecimal.ZERO),
+                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX), BigDecimal.ZERO),
+                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT), BigDecimal.ZERO)
                 );
             } else {
                 item.addSale(
-                        _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY)),
-                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE)),
-                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX)),
-                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT))
+                        _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY), BigDecimal.ZERO),
+                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE), BigDecimal.ZERO),
+                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX), BigDecimal.ZERO),
+                        _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT), BigDecimal.ZERO)
                 );
             }
 

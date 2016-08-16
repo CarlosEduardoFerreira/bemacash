@@ -14,6 +14,7 @@ import com.kaching123.tcr.util.CalculationUtil;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -50,7 +51,7 @@ public class ReprintRefundCommand extends PublicGroundyTask {
                     .toFluentIterable(new Function<Cursor, RefundSaleItemInfo>() {
                         @Override
                         public RefundSaleItemInfo apply(Cursor input) {
-                            return new RefundSaleItemInfo(input.getString(0), CalculationUtil.negative(_decimal(input, 1)));
+                            return new RefundSaleItemInfo(input.getString(0), CalculationUtil.negative(_decimal(input, 1, BigDecimal.ZERO)));
                         }
                     }).toImmutableList();
 

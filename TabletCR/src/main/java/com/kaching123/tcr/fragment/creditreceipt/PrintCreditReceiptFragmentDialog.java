@@ -28,6 +28,7 @@ import com.kaching123.tcr.store.ShopSchema2.CreditReceiptView2.CreditReceiptTabl
 import com.kaching123.tcr.store.ShopStore.CreditReceiptView;
 import com.kaching123.tcr.util.DateUtils;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -221,7 +222,7 @@ public class PrintCreditReceiptFragmentDialog extends StyledDialogFragment {
                                 0,
                                 null,
                                 new Date(c.getLong(1)),
-                                _decimal(c, 2),
+                                _decimal(c, 2, BigDecimal.ZERO),
                                 c.getLong(4),
                                 c.getInt(3));
                     }

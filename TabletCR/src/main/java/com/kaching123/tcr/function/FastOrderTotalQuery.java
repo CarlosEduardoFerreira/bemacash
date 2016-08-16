@@ -184,7 +184,7 @@ public final class FastOrderTotalQuery {
                     result = new SaleOrderInfo(
                             null,
                             _bool(c, SaleOrderTable_TAXABLE),
-                            _decimal(c, SaleOrderTable_DISCOUNT),
+                            _decimal(c, SaleOrderTable_DISCOUNT, BigDecimal.ZERO),
                             _discountType(c, SaleOrderTable_DISCOUNT_TYPE)
                     );
                 }
@@ -208,7 +208,7 @@ public final class FastOrderTotalQuery {
                     order = new SaleOrderInfo(
                             orderGuid,
                             _bool(c, SaleOrderTable_TAXABLE),
-                            _decimal(c, SaleOrderTable_DISCOUNT),
+                            _decimal(c, SaleOrderTable_DISCOUNT, BigDecimal.ZERO),
                             _discountType(c, SaleOrderTable_DISCOUNT_TYPE));
                     result.put(orderGuid, order);
                 }
@@ -238,15 +238,15 @@ public final class FastOrderTotalQuery {
                 saleItemId,
                 c.getString(SaleItemTable_ITEM_GUID),
                 //c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)),
-                _decimalQty(c, SaleItemTable_QUANTITY),
+                _decimalQty(c, SaleItemTable_QUANTITY, BigDecimal.ZERO),
                 _bool(c, SaleItemTable_DISCOUNTABLE),
-                _decimal(c, SaleItemTable_DISCOUNT),
+                _decimal(c, SaleItemTable_DISCOUNT, BigDecimal.ZERO),
                 _discountType(c, SaleItemTable_DISCOUNT_TYPE),
                 _bool(c, SaleItemTable_TAXABLE),
-                _decimal(c, SaleItemTable_TAX),
-                _decimal(c, SaleItemTable_FINAL_GROSS_PRICE),
-                _decimal(c, SaleItemTable_FINAL_DISCOUNT),
-                _decimal(c, SaleItemTable_FINAL_TAX)
+                _decimal(c, SaleItemTable_TAX, BigDecimal.ZERO),
+                _decimal(c, SaleItemTable_FINAL_GROSS_PRICE, BigDecimal.ZERO),
+                _decimal(c, SaleItemTable_FINAL_DISCOUNT, BigDecimal.ZERO),
+                _decimal(c, SaleItemTable_FINAL_TAX, BigDecimal.ZERO)
         );
         result.items.add(value);
     }
@@ -367,7 +367,7 @@ public final class FastOrderTotalQuery {
             SaleOrderInfo orderInfo = new SaleOrderInfo(
                     orderGuid,
                     _bool(c, SaleOrderTable_TAXABLE),
-                    _decimal(c, SaleOrderTable_DISCOUNT),
+                    _decimal(c, SaleOrderTable_DISCOUNT, BigDecimal.ZERO),
                     _discountType(c, SaleOrderTable_DISCOUNT_TYPE));
 
             readCursorRow(c, orderInfo);

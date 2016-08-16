@@ -89,7 +89,7 @@ public abstract class BaseComposerCommand extends AsyncCommand {
 
         BigDecimal qty = BigDecimal.ZERO;
         if (c.moveToFirst()){
-            qty = _decimalQty(c, 2);
+            qty = _decimalQty(c, 2, BigDecimal.ZERO);
         }
         c.close();
 

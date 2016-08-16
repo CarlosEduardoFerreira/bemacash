@@ -19,6 +19,7 @@ import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentiveItemTab
 import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentiveTable;
 import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyPlanTable;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,8 +78,8 @@ public class LoyaltyViewWrapFunction implements Function<Cursor, LoyaltyViewMode
                 LoyaltyType.valueOf(c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.TYPE))),
                 LoyaltyRewardType.valueOf(c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.REWARD_TYPE))),
                 c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.BIRTHDAY_OFFSET)),
-                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.POINT_THRESHOLD)),
-                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.REWARD_VALUE)),
+                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.POINT_THRESHOLD), BigDecimal.ZERO),
+                _decimal(c, c.getColumnIndex(LoyaltyIncentiveTable.REWARD_VALUE), BigDecimal.ZERO),
                 DiscountType.valueOf(c.getInt(c.getColumnIndex(LoyaltyIncentiveTable.REWARD_VALUE_TYPE)))
         );
     }
@@ -88,8 +89,8 @@ public class LoyaltyViewWrapFunction implements Function<Cursor, LoyaltyViewMode
                 c.getString(c.getColumnIndex(LoyaltyIncentiveItemTable.GUID)),
                 c.getString(c.getColumnIndex(LoyaltyIncentiveItemTable.INCENTIVE_GUID)),
                 c.getString(c.getColumnIndex(LoyaltyIncentiveItemTable.ITEM_GUID)),
-                _decimal(c, c.getColumnIndex(LoyaltyIncentiveItemTable.PRICE)),
-                _decimalQty(c, c.getColumnIndex(LoyaltyIncentiveItemTable.QTY))
+                _decimal(c, c.getColumnIndex(LoyaltyIncentiveItemTable.PRICE), BigDecimal.ZERO),
+                _decimalQty(c, c.getColumnIndex(LoyaltyIncentiveItemTable.QTY), BigDecimal.ZERO)
         );
     }
 

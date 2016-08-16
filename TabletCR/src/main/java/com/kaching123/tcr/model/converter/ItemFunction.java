@@ -5,6 +5,8 @@ import android.database.Cursor;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 
+import java.math.BigDecimal;
+
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -73,22 +75,22 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 c.getString(indexHolder.get(ItemTable.EAN_CODE)),
                 c.getString(indexHolder.get(ItemTable.PRODUCT_CODE)),
                 _priceType(c, indexHolder.get(ItemTable.PRICE_TYPE)),
-                _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4))),
-                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5))),
+                _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE)), BigDecimal.ZERO),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1)), BigDecimal.ZERO),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2)), BigDecimal.ZERO),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3)), BigDecimal.ZERO),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4)), BigDecimal.ZERO),
+                _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5)), BigDecimal.ZERO),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
                 c.getString(indexHolder.get(ItemTable.UNIT_LABEL_ID)),
                 c.getInt(indexHolder.get(ItemTable.STOCK_TRACKING)) == 1,
                 c.getInt(indexHolder.get(ItemTable.ACTIVE_STATUS)) == 1,
                 c.getInt(indexHolder.get(ItemTable.DISCOUNTABLE)) == 1,
                 c.getInt(indexHolder.get(ItemTable.SALABLE)) == 1,
-                _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT))),
+                _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT)), BigDecimal.ZERO),
                 _discountType(c, indexHolder.get(ItemTable.DISCOUNT_TYPE)),
                 c.getInt(indexHolder.get(ItemTable.TAXABLE)) == 1,
-                _decimal(c.getString(indexHolder.get(ItemTable.COST))),
+                _decimal(c.getString(indexHolder.get(ItemTable.COST)), BigDecimal.ZERO),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.MINIMUM_QTY))),
                 _decimalQty(c.getString(indexHolder.get(ItemTable.RECOMMENDED_QTY))),
                 c.getString(indexHolder.get(ItemTable.UPDATE_QTY_FLAG)),
@@ -102,7 +104,7 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                 _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                _decimal(c, indexHolder.get(ItemTable.COMMISSION)), c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)), _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)), _decimal(c.getString(indexHolder.get(ItemTable.LOYALTY_POINTS))), _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
+                _decimal(c, indexHolder.get(ItemTable.COMMISSION), BigDecimal.ZERO), c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)), _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)), _decimal(c.getString(indexHolder.get(ItemTable.LOYALTY_POINTS)), BigDecimal.ZERO), _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
     }
 
 }
