@@ -82,6 +82,7 @@ import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.UnitUtil;
+import com.kaching123.tcr.websvc.api.prepaid.Category;
 import com.thomashaertel.widget.MultiSpinner;
 
 import org.androidannotations.annotations.Click;
@@ -295,6 +296,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model = (ItemExModel) data.getSerializableExtra(UnitActivity.RESULT_OK);
     }
 
+    private long OriCategory;
     protected void initTaxes() {
         taxGroupDefault.setVisibility(View.GONE);
         taxGroup.setVisibility(View.VISIBLE);
@@ -482,6 +484,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 break;
             case CATEGORY_LOADER_ID:
                 categoryAdapter.changeCursor(cursor);
+
+                OriCategory = category.getSelectedItemId();
                 break;
             case TAX_GROUP_LOADER_ID:
                 onTaxLoaded(cursor);
@@ -758,6 +762,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         c = (Cursor) this.category.getSelectedItem();
         model.categoryId = c == null ? "0" : c.getString(c.getColumnIndex(CategoryTable.GUID));
 
+        long ChangedCategory = category.getSelectedItemId();
         UnitLabelModel unitLabel = (UnitLabelModel) this.unitsLabel.getSelectedItem();
         model.unitsLabelId = unitLabel.guid;
         model.unitsLabel = unitLabel.shortcut;
@@ -810,6 +815,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         model.commissionEligible = this.commissionsEligible.isChecked();
 
+        if(OriCategory != (ChangedCategory))
+           saveItemKdsAlias(new boolean[0]);
         model.loyaltyPoints = parseBigDecimal(this.loyaltyPoints, BigDecimal.ZERO);
         model.excludeFromLoyaltyPlan = useLoyaltyPoints.isChecked();
     }
