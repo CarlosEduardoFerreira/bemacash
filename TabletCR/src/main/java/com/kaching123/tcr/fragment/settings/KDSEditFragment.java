@@ -115,12 +115,8 @@ public class KDSEditFragment extends KeyboardDialogFragment implements LoaderCal
         model.ip = ip;
         model.port = port;
         model.aliasGuid = aliasGuid;
-        EditKDSCommand.start(getActivity(), model, new EditKDSCommand.Callback() {
-            @Override
-            protected void handleSuccess() {
-                dismiss();
-            }
-        });
+        EditKDSCommand.start(getActivity(), model);
+        dismiss();
         return true;
     }
 

@@ -63,6 +63,12 @@ public class EditKDSCommand extends PublicGroundyTask {
                 .queueUsing(context);
     }
 
+    public static void start(Context context, KDSModel model){
+        create(EditKDSCommand.class)
+                .arg(ARG_KDS, model)
+                .queueUsing(context);
+    }
+
     public static abstract class Callback {
 
         @OnSuccess(EditKDSCommand.class)

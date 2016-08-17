@@ -59,14 +59,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int i, long l) {
-                KDSModel model = adapter.getModel(i);
-                KDSEditFragment fragment = KDSEditFragment.show(getActivity(), model);
-                fragment.setListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        getLoaderManager().restartLoader(LOADER_ID, null, KDSListFragment.this);
-                    }
-                });
+                KDSEditFragment.show(getActivity(), adapter.getModel(i));
             }
         });
         getLoaderManager().initLoader(LOADER_ID, null,this);
@@ -74,13 +67,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
     @OptionsItem
     protected void actionAddSelected() {
-        KDSEditFragment fragment = KDSEditFragment.show(getActivity(), null);
-        fragment.setListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                getLoaderManager().restartLoader(LOADER_ID, null, KDSListFragment.this);
-            }
-        });
+        KDSEditFragment.show(getActivity(), null);
     }
 
     @OptionsItem
@@ -187,12 +174,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        DeleteKDSCommand.start(getActivity(), model.guid, new DeleteKDSCommand.Callback() {
-                            @Override
-                            protected void handleSuccess() {
-                                getLoaderManager().restartLoader(LOADER_ID, null, KDSListFragment.this);
-                            }
-                        });
+                        DeleteKDSCommand.start(getActivity(), model.guid);
                         return true;
                     }
                 }, new OnDialogClickListener() {

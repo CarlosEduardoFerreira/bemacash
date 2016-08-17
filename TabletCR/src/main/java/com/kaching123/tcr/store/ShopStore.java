@@ -1659,7 +1659,7 @@ public abstract class ShopStore {
     @Table(KDSTable.TABLE_NAME)
     public static interface KDSTable {
 
-        @URI(altNotify = {PrinterView.URI_CONTENT})
+        @URI(altNotify = {KDSView.URI_CONTENT})
         String URI_CONTENT = "kds_table";
 
         String TABLE_NAME = "kds_table";

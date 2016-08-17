@@ -38,6 +38,10 @@ public class DeleteKDSCommand extends PublicGroundyTask {
         create(DeleteKDSCommand.class).callback(callback).arg(ARG_GUID, kdsGuid).queueUsing(context);
     }
 
+    public static void start(Context context, String kdsGuid){
+        create(DeleteKDSCommand.class).arg(ARG_GUID, kdsGuid).queueUsing(context);
+    }
+
     public static abstract class Callback {
 
         @OnSuccess(DeleteKDSCommand.class)
