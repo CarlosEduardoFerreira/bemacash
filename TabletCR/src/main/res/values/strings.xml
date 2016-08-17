@@ -1970,4 +1970,6 @@
 
 
     <string name="ebt_type_chooser_dlg_title">Please choose:</string>
+    <string name="payment_fragment_ebt_not_enabled">N/A</string>
+    <string name="bond_item_adapter_btn_value_format">%1$d\u0024</string>
 </resources>

@@ -61,7 +61,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         BONDS_LIST.add(10);
         BONDS_LIST.add(20);
         BONDS_LIST.add(50);
-        BONDS_LIST.add(BondItemAdapter.ARG_EXACT_BUTTON_POSITION);
+        BONDS_LIST.add(100);
     }
 
     @ViewById
@@ -117,13 +117,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int value = (int) id;
-                if(value == BondItemAdapter.ARG_EXACT_BUTTON_POSITION){
-                    BigDecimal alreadyPayed = orderTotal!=null ? orderTotal.subtract(completedAmount): BigDecimal.ZERO;
-                    charge.setText(UiHelper.valueOf(alreadyPayed));
-                } else {
                     addValue((int) id);
-                }
             }
         });
 

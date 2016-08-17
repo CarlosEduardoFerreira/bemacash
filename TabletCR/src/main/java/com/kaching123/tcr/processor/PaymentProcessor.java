@@ -51,8 +51,6 @@ import com.kaching123.tcr.fragment.tendering.payment.CloseTransactionsFragmentDi
 import com.kaching123.tcr.fragment.tendering.payment.CloseTransactionsFragmentDialog.CloseTransactionsListener;
 import com.kaching123.tcr.fragment.tendering.payment.INotificationConfirmListener;
 import com.kaching123.tcr.fragment.tendering.payment.IPaymentDialogListener;
-import com.kaching123.tcr.fragment.tendering.payment.PayCashFragmentDialog;
-import com.kaching123.tcr.fragment.tendering.payment.PayCashFragmentDialog.ISaleCashListener;
 import com.kaching123.tcr.fragment.tendering.payment.PayChargeFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayChargeFragmentDialog.ISaleChargeListener;
 import com.kaching123.tcr.fragment.tendering.payment.PayCreditReceiptFragmentDialog;
@@ -60,6 +58,7 @@ import com.kaching123.tcr.fragment.tendering.payment.PayCreditReceiptFragmentDia
 import com.kaching123.tcr.fragment.tendering.payment.PayNotificationFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayOtherFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayPrintAndFinishFragmentDialog;
+import com.kaching123.tcr.fragment.tendering.payment.PaySilentCashFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PaySwipePendingFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PaySwipePendingFragmentDialog.ISaleSwipeListener;
 import com.kaching123.tcr.fragment.tendering.payment.PayTenderUnitedFragmentDialog;
@@ -985,7 +984,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
      * Follow with the cash payment
      */
     private void proceedToCashPayment(final FragmentActivity context, final BigDecimal amount, final Transaction transaction) {
-        PayCashFragmentDialog.show(context, transaction, new ISaleCashListener() {
+        PaySilentCashFragmentDialog.show(context, transaction, new PaySilentCashFragmentDialog.ISaleCashListener() {
 
             @Override
             public void onPaymentAmountSelected(BigDecimal amount, BigDecimal changeAmount) {
@@ -1008,7 +1007,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             }
 
             private void hide() {
-                PayCashFragmentDialog.hide(context);
+                PaySilentCashFragmentDialog.hide(context);
             }
 
         });
