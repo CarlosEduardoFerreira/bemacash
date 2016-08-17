@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -33,6 +31,7 @@ import com.kaching123.tcr.fragment.settings.DiagnoseFragment;
 import com.kaching123.tcr.fragment.settings.DisplayFragment;
 import com.kaching123.tcr.fragment.settings.DrawerSettingsFragment;
 import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
+import com.kaching123.tcr.fragment.settings.KDSListFragment;
 import com.kaching123.tcr.fragment.settings.PaxListFragment;
 import com.kaching123.tcr.fragment.settings.PrinterListFragment;
 import com.kaching123.tcr.fragment.settings.ScaleFragment;
@@ -40,7 +39,6 @@ import com.kaching123.tcr.fragment.settings.ScannerFragment;
 import com.kaching123.tcr.fragment.settings.SyncSettingsFragment;
 import com.kaching123.tcr.fragment.settings.TrainingModeSettingsFragment;
 import com.kaching123.tcr.fragment.settings.USBMsrFragment;
-import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.service.IScannerBinder;
 import com.kaching123.tcr.service.ScannerBinder;
@@ -127,6 +125,7 @@ public class SettingsActivity extends ScannerBaseActivity implements SyncSetting
                 new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
                 new NavigationItem(getString(R.string.pref_msr_header_title), getString(R.string.pref_msr_header_summary)),
                 new NavigationItem(getString(R.string.pref_scale_header_title), getString(R.string.pref_scale_header_summary)),
+                new NavigationItem(getString(R.string.pref_kds_header_title), getString(R.string.pref_kds_header_summary)),
                 new NavigationItem(getString(R.string.pref_devices_diagnose_title), getString(R.string.pref_devices_diagnose_summary))
         )));
 
@@ -188,6 +187,9 @@ public class SettingsActivity extends ScannerBaseActivity implements SyncSetting
                         ScaleFragment.instance() : UnavailabledOptionFragment.instance();
                 break;
             case 7:
+                fragment = KDSListFragment.instance();
+                break;
+            case 8:
                 fragment = DiagnoseFragment.instance();
                 break;
 

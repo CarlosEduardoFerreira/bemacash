@@ -221,6 +221,8 @@
     <string name="pref_scanner_header_summary">Barcode scanner settings</string>
     <string name="pref_msr_header_title">Msr settings</string>
     <string name="pref_msr_header_summary">USB MSR settings</string>
+    <string name="pref_kds_header_title">KDS settings</string>
+    <string name="pref_kds_header_summary">KDS settings</string>
     <string name="pref_swiper_header_title">Credit Card Swiper</string>
     <string name="pref_swiper_header_summary">Credit Card Swiper settings</string>
     <string name="pref_devices_diagnose_title">Devices</string>
