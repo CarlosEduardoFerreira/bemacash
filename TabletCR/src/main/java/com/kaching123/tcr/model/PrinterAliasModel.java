@@ -9,21 +9,10 @@ import java.io.Serializable;
 /**
  * Created by vkompaniets on 11.02.14.
  */
-public class PrinterAliasModel implements Serializable, IValueModel {
-
-    private static final long serialVersionUID = 1L;
-
-    public String guid;
-    public String alias;
+public class PrinterAliasModel extends AliasModel {
 
     public PrinterAliasModel(String guid, String alias) {
-        this.guid = guid;
-        this.alias = alias;
-    }
-
-    @Override
-    public String getGuid() {
-        return guid;
+        super(guid, alias);
     }
 
     @Override
@@ -32,10 +21,5 @@ public class PrinterAliasModel implements Serializable, IValueModel {
         cv.put(PrinterAliasTable.GUID, guid);
         cv.put(PrinterAliasTable.ALIAS, alias);
         return cv;
-    }
-
-    @Override
-    public String toString() {
-        return alias;
     }
 }

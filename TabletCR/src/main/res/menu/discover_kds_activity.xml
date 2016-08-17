@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<!--
+    <item
+        android:id="@+id/action_cancel"
+        android:showAsAction="always|withText"
+        android:icon="@drawable/ic_action_printer_cancel"
+        android:title="@string/pref_printer_cancel"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
+        android:id="@+id/action_refresh"
+        android:showAsAction="always|withText"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/pref_printer_refresh"
+        android:orderInCategory="@integer/menu_order_default"/>-->
+
+    <item
+        android:icon="@drawable/ic_action_add"
+        android:id="@+id/action_add"
+        android:showAsAction="always"
+        android:title="@string/printers_action_add"
+        android:orderInCategory="@integer/menu_order_default"/>
+    <item
+        android:id="@+id/action_manage_kds_alias"
+        android:showAsAction="never"
+        android:title="@string/inventory_action_manage_kds_alias"
+        android:orderInCategory="@integer/menu_order_default"/>
+</menu>

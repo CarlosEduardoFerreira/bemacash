@@ -14,10 +14,14 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.store.inventory.AddKDSAliasCommand;
 import com.kaching123.tcr.commands.store.inventory.AddPrinterAliasCommand;
+import com.kaching123.tcr.commands.store.inventory.EditKDSAliasCommand;
 import com.kaching123.tcr.commands.store.inventory.EditPrinterAliasCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.model.AliasModel;
+import com.kaching123.tcr.model.KDSAliasModel;
 import com.kaching123.tcr.model.PrinterAliasModel;
 
 /**
@@ -29,7 +33,7 @@ public class AddEditDialog extends StyledDialogFragment {
     public static final String DIALOG_NAME = "add_edit_dialog";
 
     @FragmentArg
-    protected PrinterAliasModel model;
+    protected AliasModel model;
 
     @ViewById
     protected EditText title;
@@ -95,9 +99,15 @@ public class AddEditDialog extends StyledDialogFragment {
             String title = this.title.getText().toString().trim();
             if (model != null){
                 model.alias = title;
-                EditPrinterAliasCommand.start(getActivity(), model);
+                if(model instanceof PrinterAliasModel)
+                    EditPrinterAliasCommand.start(getActivity(), (PrinterAliasModel) model);
+                else
+                    EditKDSAliasCommand.start(getActivity(), (KDSAliasModel) model);
             }else{
-                AddPrinterAliasCommand.start(getActivity(), title);
+                if(model instanceof PrinterAliasModel)
+                    AddPrinterAliasCommand.start(getActivity(), title);
+                else
+                    AddKDSAliasCommand.start(getActivity(), title);
             }
             return true;
         }
@@ -111,7 +121,7 @@ public class AddEditDialog extends StyledDialogFragment {
         return true;
     }
 
-    public static void show (FragmentActivity activity, PrinterAliasModel model){
+    public static void show (FragmentActivity activity, AliasModel model){
         DialogUtil.show(activity, DIALOG_NAME, AddEditDialog_.builder().model(model).build());
     }
 

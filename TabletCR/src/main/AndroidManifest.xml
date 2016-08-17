@@ -243,6 +243,10 @@
             android:label="@string/printer_alias_label"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".activity.KDSAliasActivity_"
+            android:label="@string/kds_alias_label"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".activity.CreditReceiptsActivity_"
             android:label="@string/credit_receipt_activity"
             android:screenOrientation="sensorLandscape"

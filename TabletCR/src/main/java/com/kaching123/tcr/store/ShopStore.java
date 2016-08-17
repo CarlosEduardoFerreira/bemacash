@@ -464,6 +464,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String PRINTER_ALIAS_GUID = "printer_alias_guid";
 
+        @Column(type = Column.Type.TEXT)
+        String KDS_ALIAS_GUID = "kds_alias_guid";
+
         @Column(type = Column.Type.INTEGER)
         String BUTTON_VIEW = "button_view";
 
@@ -1557,6 +1560,23 @@ public abstract class ShopStore {
         String ALIAS = "alias";
     }
 
+    @Table(KDSAliasTable.TABLE_NAME)
+    public static interface KDSAliasTable extends IBemaSyncTable {
+        @URI
+        String URI_CONTENT = "kds_alias_table";
+
+        String TABLE_NAME = "kds_alias_table";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ALIAS = "alias";
+    }
+
     @Table(PaxTable.TABLE_NAME)
     public static interface PaxTable {
 
@@ -1633,6 +1653,32 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String DHCP = "dhcp";
+
+    }
+
+    @Table(KDSTable.TABLE_NAME)
+    public static interface KDSTable {
+
+        @URI(altNotify = {PrinterView.URI_CONTENT})
+        String URI_CONTENT = "kds_table";
+
+        String TABLE_NAME = "kds_table";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String IP = "ip";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String PORT = "port";
+
+        @Column(type = Type.TEXT)
+        String ALIAS_GUID = "alias_guid";
 
     }
 
@@ -2507,6 +2553,22 @@ public abstract class ShopStore {
 
         @Columns(PrinterAliasTable.ALIAS)
         @Join(type = Join.Type.LEFT, joinTable = PrinterAliasTable.TABLE_NAME, joinColumn = PrinterAliasTable.GUID, onTableAlias = TABLE_PRINTER, onColumn = PrinterTable.ALIAS_GUID)
+        String TABLE_ALIAS = "alias_table";
+    }
+
+    @SimpleView(KDSView.VIEW_NAME)
+    public static interface KDSView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "kds_view";
+
+        String VIEW_NAME = "kds_view";
+
+        @From(KDSTable.TABLE_NAME)
+        String TABLE_KDS = "kds_table";
+
+        @Columns(KDSAliasTable.ALIAS)
+        @Join(type = Join.Type.LEFT, joinTable = KDSAliasTable.TABLE_NAME, joinColumn = KDSAliasTable.GUID, onTableAlias = TABLE_KDS, onColumn = KDSTable.ALIAS_GUID)
         String TABLE_ALIAS = "alias_table";
     }
 

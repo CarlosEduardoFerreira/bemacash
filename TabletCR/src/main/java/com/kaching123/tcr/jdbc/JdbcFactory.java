@@ -18,6 +18,7 @@ import com.kaching123.tcr.jdbc.converters.ItemsModifierGroupsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsModifiersJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.jdbc.converters.KDSAliasJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.LoyaltyIncentiveItemJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.LoyaltyIncentiveJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.LoyaltyIncentivePlanJdbcConverter;
@@ -55,6 +56,7 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemMovementModel;
+import com.kaching123.tcr.model.KDSAliasModel;
 import com.kaching123.tcr.model.LoyaltyIncentiveItemModel;
 import com.kaching123.tcr.model.LoyaltyIncentiveModel;
 import com.kaching123.tcr.model.LoyaltyIncentivePlanModel;
@@ -98,6 +100,7 @@ import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
+import com.kaching123.tcr.store.ShopStore.KDSAliasTable;
 import com.kaching123.tcr.store.ShopStore.RegisterTable;
 import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
@@ -265,6 +268,12 @@ public class JdbcFactory {
 
         API_METHOD.put(PrinterAliasTable.TABLE_NAME, "printer_aliases");
         API_METHOD2.put(PrinterAliasModel.class, "printer_aliases");
+
+        CONVERTERS.put(KDSAliasTable.TABLE_NAME, c = new KDSAliasJdbcConverter());
+        CONVERTERS2.put(KDSAliasModel.class, c);
+
+        API_METHOD.put(KDSAliasTable.TABLE_NAME, "printer_aliases");
+        API_METHOD2.put(KDSAliasModel.class, "printer_aliases");
 
         CONVERTERS.put(CreditReceiptTable.TABLE_NAME, c = new CreditReceiptJdbcConverter());
         CONVERTERS2.put(CreditReceiptModel.class, c);

@@ -1,6 +1,7 @@
 package com.kaching123.tcr.fragment.settings;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,38 +22,35 @@ import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.commands.device.DeletePaxCommand;
+import com.kaching123.tcr.activity.KDSAliasActivity;
+import com.kaching123.tcr.commands.device.DeleteKDSCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
-import com.kaching123.tcr.model.PaxModel;
+import com.kaching123.tcr.model.KDSModel;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore.PaxTable;
+import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.KDSView;
+import com.kaching123.tcr.store.ShopSchema2.KDSView2.AliasTable;
+import com.kaching123.tcr.store.ShopSchema2.KDSView2.KdsTable;
 import com.mobeta.android.dslv.DragSortListView;
 
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
-@EFragment(R.layout.settings_pax_list_fragment)
-@OptionsMenu(R.menu.discover_pax_activity)
+@EFragment(R.layout.settings_kds_list_fragment)
+@OptionsMenu(R.menu.discover_kds_activity)
 public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
-    private static final Uri URI_PRINTER = ShopProvider.getContentUri(PaxTable.URI_CONTENT);
+    private static final Uri URI_KDS = ShopProvider.getContentUri(KDSView.URI_CONTENT);
     public static final int LOADER_ID = 123;
 
-    private PaxListAdapter adapter;
+    private KDSListAdapter adapter;
 
     @ViewById
     protected DragSortListView list;
-
-    @ViewById
-    protected EditText timeOutInput;
-
-    private final int PAX_TIME_OUT_DEFAULT = 100;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -61,54 +59,33 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int i, long l) {
-                PaxModel model = adapter.getModel(i);
-                PaxEditFragment.show(getActivity(), model);
+                KDSModel model = adapter.getModel(i);
+                KDSEditFragment fragment = KDSEditFragment.show(getActivity(), model);
+                fragment.setListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        getLoaderManager().restartLoader(LOADER_ID, null, KDSListFragment.this);
+                    }
+                });
             }
         });
-        getLoaderManager().initLoader(LOADER_ID, null, this);
-    }
-
-    @AfterTextChange(R.id.time_out_input)
-    protected void afterTextChangedOntimeOutInput(Editable s, TextView view) {
-        if (validTimeout(s.toString()))
-            setPaxTimeout(Integer.parseInt(s.toString()));
-    }
-
-    @AfterViews
-    protected void init() {
-        timeOutInput.setText("" + (getPaxTimeout() == 0 ? PAX_TIME_OUT_DEFAULT : getPaxTimeout()));
-    }
-
-    private int getPaxTimeout() {
-        return ((TcrApplication) (getActivity().getApplication())).getPaxTimeOut();
-    }
-
-    private void setPaxTimeout(int timeout) {
-        ((TcrApplication) (getActivity().getApplication())).setPaxTimeOut(timeout);
-    }
-
-    private boolean validTimeout(String timeout) {
-        int t = 0;
-        try {
-            t = Integer.parseInt(timeout);
-        } catch (NumberFormatException e) {
-            return false;
-        } catch (NullPointerException e) {
-            return false;
-        }
-        if (t > 0)
-            return true;
-        else
-            return false;
+        getLoaderManager().initLoader(LOADER_ID, null,this);
     }
 
     @OptionsItem
     protected void actionAddSelected() {
-        if (list != null && list.getCount() > 0) {
-            Toast.makeText(getActivity(), "Only one active pinpad is available", Toast.LENGTH_LONG).show();
-        } else {
-            PaxEditFragment.show(getActivity(), null);
-        }
+        KDSEditFragment fragment = KDSEditFragment.show(getActivity(), null);
+        fragment.setListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                getLoaderManager().restartLoader(LOADER_ID, null, KDSListFragment.this);
+            }
+        });
+    }
+
+    @OptionsItem
+    protected void actionManageKdsAliasSelected(){
+        KDSAliasActivity.start(getActivity());
     }
 
 //    @OptionsItem
@@ -122,22 +99,19 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), URI_PRINTER, new String[]{
+        return new CursorLoader(getActivity(), URI_KDS, new String[]{
                 "0 as _id",
-                PaxTable.GUID,
-                PaxTable.IP,
-                PaxTable.PORT,
-                PaxTable.MAC,
-                PaxTable.SUBNET,
-                PaxTable.GATEWAY,
-                PaxTable.DHCP,
-                PaxTable.SERIAL,
-        }, null, null, PaxTable.PORT);
+                KdsTable.GUID,
+                KdsTable.IP,
+                KdsTable.PORT,
+                KdsTable.ALIAS_GUID,
+                AliasTable.ALIAS
+        }, null, null, AliasTable.ALIAS);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter = new PaxListAdapter(getActivity());
+        adapter = new KDSListAdapter(getActivity());
         adapter.changeCursor(data);
         list.setAdapter(adapter);
     }
@@ -147,9 +121,9 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
         list.setAdapter(null);
     }
 
-    private class PaxListAdapter extends ResourceCursorAdapter implements DragSortListView.RemoveListener {
+    private class KDSListAdapter extends ResourceCursorAdapter implements DragSortListView.RemoveListener {
 
-        public PaxListAdapter(Context context) {
+        public KDSListAdapter(Context context) {
             super(context, R.layout.settings_printers_list_item_view, null, false);
         }
 
@@ -174,28 +148,26 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
         @Override
         public void bindView(View v, Context context, Cursor c) {
-
+            String aliasGuid = c.getString(c.getColumnIndex(KdsTable.ALIAS_GUID));
+            String alias = c.getString(c.getColumnIndex(AliasTable.ALIAS));
             UiHolder holder = (UiHolder) v.getTag();
             holder.pos = c.getPosition();
             holder.editView.setTag(holder.pos);
             holder.configView.setTag(holder.pos);
             holder.editView.setVisibility(View.INVISIBLE);
-            holder.text2.setText(c.getString(c.getColumnIndex(PaxTable.IP)) + ":" + c.getString(c.getColumnIndex(PaxTable.PORT)));
+            holder.text1.setText(TextUtils.isEmpty(aliasGuid) ? getString(R.string.edit_kds_default) : TextUtils.isEmpty(alias) ? getString(R.string.edit_kds_default) : alias);
+            holder.text2.setText(c.getString(c.getColumnIndex(KdsTable.IP)) + ":" + c.getString(c.getColumnIndex(KdsTable.PORT)));
 
-            holder.configView.setEnabled(!TextUtils.isEmpty(c.getString(4)));
+            holder.configView.setVisibility(View.INVISIBLE);
         }
 
-        public PaxModel getModel(int position) {
+        public KDSModel getModel(int position) {
             Cursor c = (Cursor) getItem(position);
-            return new PaxModel(
-                    c.getString(1),
-                    c.getString(2),
-                    c.getInt(3),
-                    c.getString(4),
-                    c.getString(5),
-                    c.getString(6),
-                    c.getInt(7) == 1,
-                    c.getString(8));
+            return new KDSModel(
+                    c.getString(c.getColumnIndex(KdsTable.GUID)),
+                    c.getString(c.getColumnIndex(KdsTable.IP)),
+                    c.getInt(c.getColumnIndex(KdsTable.PORT)),
+                    c.getString(c.getColumnIndex(AliasTable.ALIAS)));
         }
 
         @Override
@@ -205,7 +177,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
     }
 
-    private void handleRemove(final PaxModel model) {
+    private void handleRemove(final KDSModel model) {
         AlertDialogFragment.show(
                 getActivity(),
                 DialogType.CONFIRM_NONE,
@@ -215,7 +187,12 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        DeletePaxCommand.start(getActivity(), model, false);
+                        DeleteKDSCommand.start(getActivity(), model.guid, new DeleteKDSCommand.Callback() {
+                            @Override
+                            protected void handleSuccess() {
+                                getLoaderManager().restartLoader(LOADER_ID, null, KDSListFragment.this);
+                            }
+                        });
                         return true;
                     }
                 }, new OnDialogClickListener() {
@@ -233,10 +210,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
         @Override
         public void onClick(View v) {
             Integer pos = (Integer) v.getTag();
-            final PaxModel model = adapter.getModel(pos);
-            if (TextUtils.isEmpty(model.mac)) {
-                return;
-            }
+            final KDSModel model = adapter.getModel(pos);
 //            PrinterConfigFragment.show(getActivity(), model);
         }
     };
@@ -261,6 +235,6 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
     }
 
     public static Fragment instance() {
-        return PaxListFragment_.builder().build();
+        return KDSListFragment_.builder().build();
     }
 }

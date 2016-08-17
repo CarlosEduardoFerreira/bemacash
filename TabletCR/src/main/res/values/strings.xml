@@ -16,6 +16,7 @@
     <string name="activation_activity_label">Activation Center</string>
     <string name="signup_activity_label">Sign up</string>
     <string name="printer_alias_label">Printer Alias</string>
+    <string name="kds_alias_label">KDS Alias</string>
     <string name="employees_attendance_activity_label">Employees Attendance</string>
     <string name="items_list_empty">No items in the category</string>
     <string name="order_header_title">Name</string>
@@ -139,9 +140,11 @@
     <string name="printers_searching">Printers searching...</string>
     <string name="pax_searching">searching device...</string>
     <string name="pref_current_pax_msg">You can setup PAX pinpad here</string>
+    <string name="pref_current_kds_msg">You can setup KDS here</string>
     <string name="pref_timeout_config">Configure Pax Search Timeout</string>
     <string name="btn_exact">Exact</string>
     <string name="pref_current_pax">Configured PAX pinpads</string>
+    <string name="pref_current_kds">Configured KDS</string>
     <string name="pref_current_printer">Configured printers</string>
     <string name="pref_current_printer_msg">You can setup printers here</string>
     <string name="pref_current_printer_empty">Printer is not configured</string>
@@ -424,6 +427,7 @@
     <string name="inventory_action_manage_departments">Manage Departments</string>
     <string name="inventory_action_manage_tax_groups">Manage Tax Groups</string>
     <string name="inventory_action_manage_printer_alias">Manage Printer Alias</string>
+    <string name="inventory_action_manage_kds_alias">Manage KDS Alias</string>
     <string name="inventory_action_manage_units">Manage Unit Labels</string>
     <string name="inventory_action_export">Export</string>
     <string name="inventory_action_quickbooks_export">Export to Quickbooks</string>
@@ -1344,10 +1348,13 @@
     <string name="email_order_customer_hint">Name or email</string>
     <string name="settings_no_printers">No printers configured!</string>
     <string name="settings_no_pax">No PAX pinpad configured!</string>
+    <string name="settings_no_kds">No KDS configured!</string>
     <string name="edit_printer_default">Receipt Printer</string>
+    <string name="edit_kds_default">Default KDS</string>
     <string name="edit_pax_default">PAX pinpad</string>
     <string name="edit_printer_unknown">&lt;Unknown></string>
     <string name="printer_edit_dialog_title">Edit printer</string>
+    <string name="kds_edit_dialog_title">Edit KDS</string>
     <string name="pax_edit_dialog_title">Edit PAX pinpad</string>
     <string name="printer_delete_dialog_title">Delete printer</string>
     <string name="printer_delete_dialog_msg">Are you sure you want to delete printer?</string>
