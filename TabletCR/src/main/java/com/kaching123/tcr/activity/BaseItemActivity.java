@@ -542,6 +542,15 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         if(selected == null) return;
         for(int i = 0; i < selected.length; i++){
             if(selected[i]){
+                // check if it already exist before saving
+                Cursor c = ProviderAction.query(KDS_URI)
+                            .where(ShopStore.ItemKDSTable.ITEM_GUID + " = ?", model.guid)
+                            .where(ShopStore.ItemKDSTable.KDS_ALIAS_GUID + " = ?", kdsAliasAdapter.getItem(i).guid)
+                            .perform(getApplicationContext());
+                if(c.moveToFirst()){
+                    c.close();
+                    continue;
+                }
                 ContentValues cv = new ContentValues();
                 cv.put(ShopStore.ItemKDSTable.ITEM_GUID, model.guid);
                 cv.put(ShopStore.ItemKDSTable.KDS_ALIAS_GUID, kdsAliasAdapter.getItem(i).guid);
