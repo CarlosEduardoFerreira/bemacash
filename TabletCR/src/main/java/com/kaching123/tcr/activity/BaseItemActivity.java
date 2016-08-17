@@ -746,10 +746,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.printerAliasGuid = ((PrinterAliasModel) this.printerAlias.getSelectedItem()).guid;
 
         int counter = 0;
-        if(selectedKds != null)
-            for(boolean b: selectedKds){
-                if(b) counter++;
+        if(selectedKds != null) {
+            for (boolean b : selectedKds) {
+                if (b) counter++;
             }
+        }
         model.kdsAliasGuid = counter;
 
         String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?
@@ -1138,7 +1139,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         @Override
         public void onLoadFinished(Loader<List<KDSAliasModel>> listLoader, List<KDSAliasModel> kdsAliasModels) {
-            ArrayList<KDSAliasModel> models = new ArrayList<>(kdsAliasModels.size() + 1);
+            ArrayList<KDSAliasModel> models = new ArrayList<>(kdsAliasModels.size());
 //            models.add(new KDSAliasModel(null, "None"));
             models.addAll(kdsAliasModels);
 
