@@ -621,6 +621,41 @@ public abstract class ShopStore {
                 foreignKey(ModifierTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
     }
 
+
+
+    @Table(ItemKDSTable.TABLE_NAME)
+    public interface ItemKDSTable extends IBemaSyncTable {
+
+        @URI  //(altNotify = {KDSView.URI_CONTENT})
+        String URI_CONTENT = "items_kds";
+
+        String TABLE_NAME = "items_kds";
+
+        @PrimaryKey
+        @Autoincrement
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @NotNull
+        @Column(type = Column.Type.TEXT)
+        String KDS_ALIAS_GUID = "kds_alias_guid";
+
+        @NotNull
+        @Column(type = Column.Type.TEXT)
+        String TITLE = "title";
+
+        @NotNull
+        @Column(type = Column.Type.TEXT)
+        String ITEM_GUID = "item_guid";
+
+
+    }
+
+    static {
+        applyForeignKeys(ItemKDSTable.TABLE_NAME,
+                foreignKey(ItemKDSTable.KDS_ALIAS_GUID, KDSAliasTable.TABLE_NAME, KDSAliasTable.GUID));
+    }
+
     @Table(SaleOrderTable.TABLE_NAME)
     @Indexes({
             @Index(name = "create_time", columns = SaleOrderTable.CREATE_TIME),

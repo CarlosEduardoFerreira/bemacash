@@ -1,5 +1,6 @@
 package com.kaching123.tcr.activity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -36,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -92,8 +94,10 @@ import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
@@ -109,6 +113,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     private static final String[] UNITS_LABEL = {"PCS", "LB", "OZ"};
 
     private static final Uri MODIFIER_URI = ShopProvider.getContentUri(ModifierTable.URI_CONTENT);
+    private static final Uri KDS_URI = ShopProvider.getContentUri(ShopStore.ItemKDSTable.URI_CONTENT);
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
@@ -255,6 +260,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     protected int count;
 
+    protected boolean[] selectedKds;
+
     @OptionsItem
     protected void actionSerialSelected() {
         if (model.isSerializable()) {
@@ -331,7 +338,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         kdsAlias.setAdapter(kdsAliasAdapter, false, new MultiSpinner.MultiSpinnerListener() {
             @Override
             public void onItemsSelected(boolean[] selected) {
-
+                selectedKds = selected;
             }
         });
 
@@ -515,6 +522,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         if (validateForm()) {
             collectDataToModel(model);
             callCommand(model);
+            saveItemKdsAlias(selectedKds);
             this.finish();
         }
     }
@@ -523,9 +531,29 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         if (validateForm()) {
             collectDataToModel(model);
             callCommand(model);
+            saveItemKdsAlias(selectedKds);
             return true;
         } else {
             return false;
+        }
+    }
+
+    protected void saveItemKdsAlias(boolean[] selected) {
+        for(int i = 0; i < selected.length; i++){
+            if(selected[i]){
+                ContentValues cv = new ContentValues();
+                cv.put(ShopStore.ItemKDSTable.ITEM_GUID, model.guid);
+                cv.put(ShopStore.ItemKDSTable.KDS_ALIAS_GUID, kdsAliasAdapter.getItem(i).guid);
+                cv.put(ShopStore.ItemKDSTable.TITLE, kdsAliasAdapter.getItem(i).alias);
+                ProviderAction.insert(KDS_URI)
+                        .values(cv)
+                        .perform(getApplicationContext());
+            }else {
+                ProviderAction.delete(KDS_URI)
+                        .where(ShopStore.ItemKDSTable.ITEM_GUID + " = ?", model.guid)
+                        .where(ShopStore.ItemKDSTable.KDS_ALIAS_GUID + " = ?", kdsAliasAdapter.getItem(i).guid)
+                        .perform(getApplicationContext());
+            }
         }
     }
 
@@ -1103,18 +1131,31 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         @Override
         public void onLoadFinished(Loader<List<KDSAliasModel>> listLoader, List<KDSAliasModel> kdsAliasModels) {
             ArrayList<KDSAliasModel> models = new ArrayList<>(kdsAliasModels.size() + 1);
-            models.add(new KDSAliasModel(null, "None"));
+//            models.add(new KDSAliasModel(null, "None"));
             models.addAll(kdsAliasModels);
 
             kdsAliasAdapter.changeCursor(models);
 
-            final String aliasGuid = model.kdsAliasGuid;
-            boolean[] selected = new boolean[kdsAliasModels.size()];
-            for(int i = 0; i < kdsAliasModels.size(); i++){
-                if(kdsAliasModels.get(i).getGuid().equals(aliasGuid))
+            final String itemGuid = model.guid;
+            Cursor c = ProviderAction.query(KDS_URI)
+                    .projection(ShopStore.ItemKDSTable.KDS_ALIAS_GUID)
+                    .where(ShopStore.ItemKDSTable.ITEM_GUID + " = ?", itemGuid)
+                    .perform(BaseItemActivity.this);
+            Set<String> kdsAliasGuids = new HashSet<>();
+            if(c.moveToFirst()){
+                do{
+                    kdsAliasGuids.add(c.getString(0));
+                }while (c.moveToNext());
+            }
+            c.close();
+            boolean[] selected = new boolean[models.size()];
+//            Arrays.fill(selected, true);
+//            selected[0] = false;
+            for(int i = 0; i < models.size(); i++){
+                if(kdsAliasGuids.contains(models.get(i).getGuid()))
                     selected[i] = true;
             }
-            if (!TextUtils.isEmpty(aliasGuid)) {
+            if (!kdsAliasGuids.isEmpty()) {
                 kdsAlias.setSelected(selected);
             }
 
@@ -1124,10 +1165,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         @Override
         public void onLoaderReset(Loader<List<KDSAliasModel>> listLoader) {
-            printerAliasAdapter.changeCursor(null);
+            kdsAliasAdapter.changeCursor(null);
         }
 
     }
+
 
     private class TextChangeListener implements TextWatcher {
 
