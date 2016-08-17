@@ -26,7 +26,7 @@ public class EditKDSCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
-        kdsModel = (KDSModel)getArgs().getSerializable(ARG_KDS);
+        kdsModel = getArgs().getParcelable(ARG_KDS);
 
         boolean needInsert = kdsModel.guid == null;
         if(needInsert){

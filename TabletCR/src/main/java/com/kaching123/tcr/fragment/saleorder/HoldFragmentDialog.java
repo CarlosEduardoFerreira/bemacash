@@ -248,13 +248,13 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, new KDSPrintCallback());
+        PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, false, new KDSPrintCallback());
 //        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
     }
 
     private void printItemToKds(){
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, new KDSPrintCallback());
+        PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, false, new KDSPrintCallback());
     }
 
     private class KitchenKitchenPrintCallback extends BaseKitchenPrintCallback {

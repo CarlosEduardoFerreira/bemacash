@@ -15,7 +15,6 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ResourceCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -37,9 +36,6 @@ import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.StringRes;
-
-import java.util.Arrays;
 
 import static com.kaching123.tcr.R.layout.spinner_item_dark;
 import static com.kaching123.tcr.util.Util.toInt;
@@ -51,7 +47,7 @@ import static com.kaching123.tcr.util.Util.toInt;
 public class KDSEditFragment extends KeyboardDialogFragment implements LoaderCallbacks<Cursor> {
 
     private static final Uri URI_ALIAS = ShopProvider.getContentUri(ShopStore.KDSAliasTable.URI_CONTENT);
-    public static final String KDS_EDIT_FRAGMENT = "KDS_EDIT_FRAGMENT";
+    public static final String KDS_EDIT_FRAGMENT = "KDS_ROUTER_EDIT_FRAGMENT";
 
     @FragmentArg
     protected KDSModel model;
@@ -68,10 +64,8 @@ public class KDSEditFragment extends KeyboardDialogFragment implements LoaderCal
 
     @ViewById(R.id.alias)
     protected Spinner alias;
-    @ViewById(R.id.ip)
-    protected CustomEditBox ipText;
-    @ViewById(R.id.port)
-    protected CustomEditBox portText;
+    @ViewById(R.id.kds_station)
+    protected CustomEditBox kdsStationText;
 
     private AliasAdapter aliasAdapter;
 
@@ -108,33 +102,23 @@ public class KDSEditFragment extends KeyboardDialogFragment implements LoaderCal
     }
 
     private boolean onEdit() {
-        String ip = ipText.getText().toString();
-        int port = toInt(portText.getText().toString(), 0);
+        String stationId = kdsStationText.getText().toString();
         String aliasGuid = aliasAdapter.getGuid(alias.getSelectedItemPosition());
 
-        model.ip = ip;
-        model.port = port;
+        model.stationId = stationId;
         model.aliasGuid = aliasGuid;
         EditKDSCommand.start(getActivity(), model);
         dismiss();
         return true;
     }
 
-    private boolean isValidIp(){
-        return Validator.isIp(ipText.getText().toString());
-    }
-
-    private boolean isValidPort(){
-        return toInt(portText.getText().toString(), 0) > 0;
-    }
-
     private boolean isValidAll() {
-        return isValidIp() && isValidPort() && aliasAdapter.getCount() != 0;
+        return TextUtils.isDigitsOnly(kdsStationText.getText().toString());
     }
 
     @AfterTextChange
     protected void ipAfterTextChanged(Editable s) {
-        keyboard.setEnterEnabled(isValidIp());
+        keyboard.setEnterEnabled(isValidAll());
         enablePositiveButton(isValidAll(), greenBtnColor);
     }
 
@@ -148,7 +132,7 @@ public class KDSEditFragment extends KeyboardDialogFragment implements LoaderCal
         super.onActivityCreated(savedInstanceState);
 
         if (model == null) {
-            model = new KDSModel(null, "", 3000, null);
+            model = new KDSModel(null, "", null);
         }
         getDialog().getWindow().setLayout(
                 getResources().getDimensionPixelOffset(R.dimen.printer_edit_dialog_width),
@@ -156,33 +140,23 @@ public class KDSEditFragment extends KeyboardDialogFragment implements LoaderCal
 
 //        defCursor.addRow(new String[]{"0", null, null});
 
-        ipText.setFilters(new InputFilter[]{new IpAddressFormatInputFilter()});
-        portText.setFilters(new InputFilter[]{new PortFormatInputFilter()});
+        kdsStationText.setFilters(new InputFilter[]{new IpAddressFormatInputFilter()});
 
-        ipText.setKeyboardSupportConteiner(this);
-        portText.setKeyboardSupportConteiner(this);
+        kdsStationText.setKeyboardSupportConteiner(this);
 
-        ipText.setEditListener(new CustomEditBox.IEditListener() {
+        kdsStationText.setEditListener(new CustomEditBox.IEditListener() {
             @Override
             public boolean onChanged(String text) {
-                portText.requestFocusFromTouch();
                 return false;
             }
         });
-        portText.setEditListener(new CustomEditBox.IEditListener() {
-            @Override
-            public boolean onChanged(String text) {
-                return onEdit();
-            }
-        });
 
-        ipText.requestFocusFromTouch();
+        kdsStationText.requestFocusFromTouch();
 
         aliasAdapter = new AliasAdapter(getActivity());
         alias.setAdapter(aliasAdapter);
 
-        ipText.setText(model.ip);
-        portText.setText(String.valueOf(model.port));
+        kdsStationText.setText(model.stationId);
 
         enablePositiveButtons(isValidAll());
         getLoaderManager().initLoader(0, null, this);
@@ -191,7 +165,7 @@ public class KDSEditFragment extends KeyboardDialogFragment implements LoaderCal
 
     @Override
     public void attachMe2Keyboard(CustomEditBox v) {
-        if (v == ipText){
+        if (v == kdsStationText){
             keyboard.setDotEnabled(true);
         }else{
             keyboard.setDotEnabled(false);

@@ -18,6 +18,11 @@ public interface ShopPref {
     boolean need2DownloadAfter1stLaunch();
 
     /**
+     *  KDS setting
+     */
+    String kdsRouterIp();
+    int kdsRouterPort();
+    /**
      * scanner **
      */
     String scannerAddress();

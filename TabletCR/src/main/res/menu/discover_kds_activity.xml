@@ -22,6 +22,12 @@
         android:title="@string/printers_action_add"
         android:orderInCategory="@integer/menu_order_default"/>
     <item
+        android:icon="@drawable/ic_action_add_reference"
+        android:id="@+id/action_add_router"
+        android:showAsAction="always"
+        android:title="@string/printers_action_add"
+        android:orderInCategory="@integer/menu_order_default"/>
+    <item
         android:id="@+id/action_manage_kds_alias"
         android:showAsAction="never"
         android:title="@string/inventory_action_manage_kds_alias"

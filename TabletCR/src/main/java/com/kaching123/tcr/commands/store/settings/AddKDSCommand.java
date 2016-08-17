@@ -26,21 +26,13 @@ public class AddKDSCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
-        ArrayList<PrinterInfo> printers = getArgs().getParcelableArrayList(ARG_KDS);
-        models = new ArrayList<KDSModel>(printers.size());
+        models = getArgs().getParcelableArrayList(ARG_KDS);
 
-        ContentValues[] values = new ContentValues[printers.size()];
-        for (int i = 0; i < printers.size(); i++){
-            PrinterInfo p = printers.get(i);
+        ContentValues[] values = new ContentValues[models.size()];
+        for (int i = 0; i < models.size(); i++){
+            KDSModel p = models.get(i);
 
-            KDSModel model = new KDSModel(
-                    UUID.randomUUID().toString(),
-                    p.ip,
-                    p.port,
-                    null);
-            models.add(model);
-
-            values[i] = model.toValues();
+            values[i] = p.toValues();
         }
         getContext().getContentResolver()
                 .bulkInsert(URI_KDS, values);

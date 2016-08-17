@@ -2,6 +2,8 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore.KDSTable;
@@ -11,25 +13,22 @@ import java.io.Serializable;
 /**
  * Created by long.jiao on 06.21.16.
  */
-public class KDSModel implements IValueModel, Serializable{
+public class KDSModel implements IValueModel, Parcelable {
 
     public String guid;
-    public String ip;
-    public int port;
+    public String stationId;
 
     public String aliasGuid;
 
-    public KDSModel(String guid, String ip, int port, String aliasGuid) {
+    public KDSModel(String guid, String stationId, String aliasGuid) {
         this.guid = guid;
-        this.ip = ip;
-        this.port = port;
+        this.stationId = stationId;
         this.aliasGuid = aliasGuid;
     }
 
     public KDSModel(Cursor c) {
         this(c.getString(c.getColumnIndex(KDSTable.GUID)),
-                c.getString(c.getColumnIndex(KDSTable.IP)),
-                c.getInt(c.getColumnIndex(KDSTable.PORT)),
+                c.getString(c.getColumnIndex(KDSTable.STATION_ID)),
                 c.getString(c.getColumnIndex(KDSTable.ALIAS_GUID)));
     }
 
@@ -42,9 +41,38 @@ public class KDSModel implements IValueModel, Serializable{
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
         values.put(KDSTable.GUID, guid);
-        values.put(KDSTable.IP, ip);
-        values.put(KDSTable.PORT, port);
+        values.put(KDSTable.STATION_ID, stationId);
         values.put(KDSTable.ALIAS_GUID, aliasGuid);
         return values;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.guid);
+        dest.writeString(this.stationId);
+        dest.writeString(this.aliasGuid);
+    }
+
+    protected KDSModel(Parcel in) {
+        this.guid = in.readString();
+        this.stationId = in.readString();
+        this.aliasGuid = in.readString();
+    }
+
+    public static final Parcelable.Creator<KDSModel> CREATOR = new Parcelable.Creator<KDSModel>() {
+        @Override
+        public KDSModel createFromParcel(Parcel source) {
+            return new KDSModel(source);
+        }
+
+        @Override
+        public KDSModel[] newArray(int size) {
+            return new KDSModel[size];
+        }
+    };
 }

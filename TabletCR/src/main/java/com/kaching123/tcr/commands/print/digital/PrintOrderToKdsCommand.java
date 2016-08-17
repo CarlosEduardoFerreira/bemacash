@@ -10,6 +10,8 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.google.common.base.Function;
 import com.kaching123.tcr.commands.device.KDSCommand;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderKdsPrintStatusCommand;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderKitchenPrintStatusCommand;
 import com.kaching123.tcr.model.KDSModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -61,6 +63,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
     private static final String EXTRA_ERROR_KDS = "EXTRA_ERROR_KDS";
     private static final String EXTRA_KDS = "EXTRA_KDS";
     private static final String EXTRA_ALIAS_TITLE = "EXTRA_ALIAS_TITLE";
+    private static final String ARG_KDS_STATUS = "ARG_KDS_STATUS";
 
     private static final Uri URI_KDS = ShopProvider.getContentUri(ShopStore.KDSTable.URI_CONTENT);
     private static final Uri URI_ALIAS = ShopProvider.getContentUri(ShopStore.KDSAliasTable.URI_CONTENT);
@@ -77,6 +80,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
     @Override
     protected TaskResult doInBackground() {
         String orderGuid = getStringArg(ARG_ORDER_GUID);
+        boolean isVoidOrder = getBooleanArg(ARG_KDS_STATUS);
         List<ItemInfo> items = loadItems(orderGuid);
 
         LinkedHashMap<String, List<ItemInfo>> itemsMap = new LinkedHashMap<>();
@@ -102,13 +106,19 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
             if(kdsModels == null || kdsModels.isEmpty()){
                 return failed().add(EXTRA_ERROR_KDS, KDSError.NOT_CONFIGURED).add(EXTRA_KDS, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
             }
+            StringBuilder sb = new StringBuilder();
             for (KDSModel kdsModel : kdsModels) {
-                TaskResult result = new SendToKDSCommand().sync(getContext(), kdsModel, orderGuid, e.getValue(),isOrderUpdated(orderGuid) , getAppCommandContext());
-                if (isFailed(result)) {
-                    return result.add(EXTRA_KDS, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
-                }
+                sb.append(kdsModel.stationId).append(',');
+            }
+            sb.deleteCharAt(sb.length()-1);// delete last ','
+            TaskResult result = new SendToKDSCommand().sync(getContext(), sb.toString(), orderGuid, e.getValue(), isVoidOrder , getAppCommandContext());
+            if (isFailed(result)) {
+                return result.add(EXTRA_KDS, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
             }
         }
+
+        if (!new UpdateSaleOrderKdsPrintStatusCommand().syncStandalone(getContext(), orderGuid, KDSSendStatus.PRINTED, getAppCommandContext()))
+            return failed();
 
         return succeeded();
     }
@@ -128,32 +138,27 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
         return kdsGuids;
     }
 
-    private boolean isOrderUpdated(String orderGuid) {
-        Cursor c = ProviderAction.query(ShopProvider.getContentWithLimitUri(ShopStore.SaleOrderTable.URI_CONTENT, 1))
-                .projection(ShopStore.SaleOrderTable.KDS_SEND_STATUS)
-                .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid)
-                .perform(getContext());
-
-        boolean result = false;
-        if (c.moveToFirst()) {
-            result = _kdsSendStatus(c, 0) == KDSSendStatus.UPDATED;
-        }
-        c.close();
-        return result;
-    }
+//    private boolean isOrderUpdated(String orderGuid) {
+//        Cursor c = ProviderAction.query(ShopProvider.getContentWithLimitUri(ShopStore.SaleOrderTable.URI_CONTENT, 1))
+//                .projection(ShopStore.SaleOrderTable.KDS_SEND_STATUS)
+//                .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid)
+//                .perform(getContext());
+//
+//        boolean result = false;
+//        if (c.moveToFirst()) {
+//            result = _kdsSendStatus(c, 0) == KDSSendStatus.UPDATED;
+//        }
+//        c.close();
+//        return result;
+//    }
 
     private class SendToKDSCommand extends KDSCommand {
         private String orderGuid;
         private List<ItemInfo> items;
-        private KDSModel kdsModel;
-        private boolean isUpdated;
-
-        protected KDSModel getKds() {
-            return kdsModel;
-        }
+        private boolean isVoid;
 
         @Override
-        protected TaskResult execute(Socket socket) throws IOException {
+        protected TaskResult execute() throws IOException {
 
             KdsTransaction kdsTransaction = covertItemsToKdsOrder(orderGuid, items);
             Serializer serializer = new Persister();
@@ -200,9 +205,15 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                             .perform(getContext());
             if(!c.moveToFirst()) return transaction;
             String registerTitle = c.getString(0);
-            KdsOrder order = new KdsOrder(saleOrderModel.registerId+"-"+saleOrderModel.printSeqNum,
+            c.close();
+//            if(isVoid){
+//                KdsOrder order = new KdsOrder(registerTitle+"-"+saleOrderModel.printSeqNum);
+//                transaction.setOrder(order);
+//                return transaction;
+//            }
+            KdsOrder order = new KdsOrder(registerTitle+"-"+saleOrderModel.printSeqNum,
                                             saleOrderModel.registerId,
-                                            saleOrderModel.kdsSendStatus == null ? 1:saleOrderModel.kdsSendStatus.ordinal()+1,
+                                            isVoid ? 2:saleOrderModel.kdsSendStatus == KDSSendStatus.PRINT ? 1:6,
                                             2, // put as in processing for now
                                             "", // normal order
                                             getApp().getOperatorFullName(),
@@ -210,7 +221,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
             ArrayList<KdsOrderItem> itemList = new ArrayList<>();
             order.setItems(itemList);
             for (ItemInfo item : items){
-                KdsOrderItem kdsItem = new KdsOrderItem(item.guid, 1, item.description, item.qty.setScale(2, BigDecimal.ROUND_CEILING).toString());
+                KdsOrderItem kdsItem = new KdsOrderItem(item.guid, 1, item.description, item.qty.setScale(2, BigDecimal.ROUND_CEILING).toString(), kdsModels);
                 if(!item.addons.isEmpty()){
                     ArrayList<KDSModifier> modifiers = new ArrayList<>();
                     for(int i = 0; i < item.addons.size(); i++){
@@ -221,17 +232,15 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                 itemList.add(kdsItem);
             }
             transaction.setOrder(order);
-            c.close();
             return transaction;
         }
 
-        public TaskResult sync(Context context, KDSModel kdsModel,String orderGuid, List<ItemInfo> items, boolean isUpdated, IAppCommandContext appCommandContext) {
+        public TaskResult sync(Context context, String kdsModels,String orderGuid, List<ItemInfo> items, boolean isVoid, IAppCommandContext appCommandContext) {
             this.orderGuid = orderGuid;
             this.items = items;
-            this.kdsModel = kdsModel;
-            this.isUpdated = isUpdated;
+            this.isVoid = isVoid;
 
-            return sync(context, null, appCommandContext);
+            return sync(context, kdsModels, appCommandContext);
         }
     }
 
@@ -378,9 +387,10 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
         }
     }
 
-    public static void start(Context context, String orderGuid, BasePrintOrderToKdsCallback callback) {
+    public static void start(Context context, String orderGuid, boolean isVoidOrder, BasePrintOrderToKdsCallback callback) {
         create(PrintOrderToKdsCommand.class)
                 .arg(ARG_ORDER_GUID, orderGuid)
+                .arg(ARG_KDS_STATUS, isVoidOrder)
                 .callback(callback).queueUsing(context);
     }
 

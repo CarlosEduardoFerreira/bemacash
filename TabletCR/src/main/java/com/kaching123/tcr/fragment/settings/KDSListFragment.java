@@ -51,6 +51,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
     @ViewById
     protected DragSortListView list;
+    private TextView subTitle;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -65,9 +66,26 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
         getLoaderManager().initLoader(LOADER_ID, null,this);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        subTitle = (TextView) getView().findViewById(R.id.title_sublabel);
+        subTitle.setText(TcrApplication.get().getShopPref().kdsRouterIp().getOr("") + ":" + TcrApplication.get().getShopPref().kdsRouterPort().getOr(3000));
+    }
+
     @OptionsItem
     protected void actionAddSelected() {
         KDSEditFragment.show(getActivity(), null);
+    }
+
+    @OptionsItem
+    protected void actionAddRouterSelected(){
+        KDSRouterEditFragment.show(getActivity(), new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                subTitle.setText(TcrApplication.get().getShopPref().kdsRouterIp().getOr("") + ":" + TcrApplication.get().getShopPref().kdsRouterPort().getOr(3000));
+            }
+        });
     }
 
     @OptionsItem
@@ -89,8 +107,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
         return new CursorLoader(getActivity(), URI_KDS, new String[]{
                 "0 as _id",
                 KdsTable.GUID,
-                KdsTable.IP,
-                KdsTable.PORT,
+                KdsTable.STATION_ID,
                 KdsTable.ALIAS_GUID,
                 AliasTable.ALIAS
         }, null, null, AliasTable.ALIAS);
@@ -143,7 +160,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
             holder.configView.setTag(holder.pos);
             holder.editView.setVisibility(View.INVISIBLE);
             holder.text1.setText(TextUtils.isEmpty(aliasGuid) ? getString(R.string.edit_kds_default) : TextUtils.isEmpty(alias) ? getString(R.string.edit_kds_default) : alias);
-            holder.text2.setText(c.getString(c.getColumnIndex(KdsTable.IP)) + ":" + c.getString(c.getColumnIndex(KdsTable.PORT)));
+            holder.text2.setText(c.getString(c.getColumnIndex(KdsTable.STATION_ID)));
 
             holder.configView.setVisibility(View.INVISIBLE);
         }
@@ -152,8 +169,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
             Cursor c = (Cursor) getItem(position);
             return new KDSModel(
                     c.getString(c.getColumnIndex(KdsTable.GUID)),
-                    c.getString(c.getColumnIndex(KdsTable.IP)),
-                    c.getInt(c.getColumnIndex(KdsTable.PORT)),
+                    c.getString(c.getColumnIndex(KdsTable.STATION_ID)),
                     c.getString(c.getColumnIndex(AliasTable.ALIAS)));
         }
 

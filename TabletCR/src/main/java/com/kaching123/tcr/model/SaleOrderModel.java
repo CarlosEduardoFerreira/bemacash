@@ -227,6 +227,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
         values.put(SaleOrderTable.ORDER_TYPE, type.ordinal());
         values.put(SaleOrderTable.IS_TIPPED, isTipped);
         values.put(SaleOrderTable.KITCHEN_PRINT_STATUS, kitchenPrintStatus.ordinal());
+        values.put(SaleOrderTable.KDS_SEND_STATUS, kdsSendStatus.ordinal());
         values.put(SaleOrderTable.TRANSACTION_FEE, _decimal(transactionFee));
 
         return values;

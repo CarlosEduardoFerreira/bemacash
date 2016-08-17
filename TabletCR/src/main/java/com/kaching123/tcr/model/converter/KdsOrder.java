@@ -103,4 +103,9 @@ public class KdsOrder {
         this.serverName = serverName;
         this.destination = destination;
     }
+
+    public KdsOrder(String id) {
+        this.id = id;
+        this.transType = 2;
+    }
 }

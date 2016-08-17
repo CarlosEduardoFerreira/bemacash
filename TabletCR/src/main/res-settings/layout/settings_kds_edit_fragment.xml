@@ -6,25 +6,12 @@
 
     <com.kaching123.tcr.component.CustomEditBox
         style="@style/StyledDialog.Content.EditText"
-        android:layout_alignParentRight="true"
-        android:id="@+id/port"
-        android:layout_width="95dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/printer_config_port_hint"
-        android:focusableInTouchMode="true"
-        android:focusable="true"
-        android:clickable="true"
-        android:gravity="right"/>
-
-    <com.kaching123.tcr.component.CustomEditBox
-        style="@style/StyledDialog.Content.EditText"
-        android:nextFocusDown="@id/port"
-        android:layout_toLeftOf="@id/port"
-        android:layout_marginRight="8dp"
-        android:id="@+id/ip"
+        android:layout_alignParentLeft="true"
+        android:inputType="number"
+        android:id="@+id/kds_station"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/printer_config_ip_hint"
+        android:hint="@string/kds_config_station_hint"
         android:focusableInTouchMode="true"
         android:focusable="true"
         android:clickable="true"
@@ -34,7 +21,7 @@
         style="@style/StyledDialog.Content.Spinner"
         android:id="@+id/alias"
         android:layout_marginTop="12dp"
-        android:layout_below="@id/ip"
+        android:layout_below="@id/kds_station"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"/>
 

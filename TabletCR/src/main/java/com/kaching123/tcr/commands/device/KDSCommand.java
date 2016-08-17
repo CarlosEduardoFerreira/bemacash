@@ -1,7 +1,9 @@
 package com.kaching123.tcr.commands.device;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
@@ -22,6 +24,8 @@ import java.net.Socket;
  */
 public abstract class KDSCommand extends PublicGroundyTask {
 
+    protected Socket socket;
+
     public enum KDSError {NOT_CONFIGURED, OFFLINE, IP_NOT_FOUND}
 
     public static final String EXTRA_ERROR_KDS = "EXTRA_ERROR_KDS";
@@ -30,30 +34,31 @@ public abstract class KDSCommand extends PublicGroundyTask {
 
     protected static final Uri URI_KDS = ShopProvider.getContentWithLimitUri(KDSTable.URI_CONTENT, 1);
 
-    protected KDSModel getKds() {
-        Cursor c = ProviderAction.query(URI_KDS)
-                .where(KDSTable.ALIAS_GUID + " IS NULL")
-                .perform(getContext());
-        KDSModel kdsModel = null;
-        if (c.moveToFirst()) {
-            kdsModel = new KDSModel(c);
-        }
-        c.close();
-        return kdsModel;
-    }
+    protected String kdsModels;
+
+//    protected KDSModel getKds() {
+//        Cursor c = ProviderAction.query(URI_KDS)
+//                .where(KDSTable.ALIAS_GUID + " IS NULL")
+//                .perform(getContext());
+//        KDSModel kdsModel = null;
+//        if (c.moveToFirst()) {
+//            kdsModel = new KDSModel(c);
+//        }
+//        c.close();
+//        return kdsModel;
+//    }
 
     @Override
     protected TaskResult doInBackground() {
 
-        KDSModel kdsModel = getKds();
-        if (kdsModel == null) {
+        if (TextUtils.isEmpty(kdsModels)) {
             Logger.e("PrinterCommand: printer doesn't configured");
             return failed().add(EXTRA_ERROR_KDS, KDSError.NOT_CONFIGURED);
         }
-        Socket socket = null;
+        socket = null;
         try {
-             socket = connectToKds(kdsModel);
-            return execute(socket);
+             socket = connectToKds();
+            return execute();
         } catch (IOException e){
             return failed().add(EXTRA_ERROR_KDS, KDSError.IP_NOT_FOUND);
         } catch (Exception e) {
@@ -70,11 +75,11 @@ public abstract class KDSCommand extends PublicGroundyTask {
         }
     }
 
-    private Socket connectToKds(KDSModel kdsModel) throws IOException {
-        return new Socket(kdsModel.ip, kdsModel.port);
+    private Socket connectToKds() throws IOException {
+        return new Socket(getApp().getShopPref().kdsRouterIp().getOr(""), getApp().getShopPref().kdsRouterPort().getOr(3000));
     }
 
-    protected abstract TaskResult execute(Socket socket) throws IOException;
+    protected abstract TaskResult execute() throws IOException;
 
     public byte[] buildXmlCommand(String strXml)
     {
@@ -113,7 +118,12 @@ public abstract class KDSCommand extends PublicGroundyTask {
         return str;
     }
 
-    public static abstract class SuperBaseKdsCallback {
+    public TaskResult sync(Context context, String kdsModels, IAppCommandContext appCommandContext){
+        this.kdsModels = kdsModels;
+        return super.sync(context, null, appCommandContext);
+    }
+
+    public static abstract class BaseKdsCallback {
 
         @OnSuccess(KDSCommand.class)
         public void handleSuccess() {

@@ -214,6 +214,13 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .build(JdbcFactory.getApiMethod(order));
     }
 
+    public SingleSqlCommand updateKdsPrintStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
+        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
+                .add(KDS_SEND_STATUS, order.kdsSendStatus)
+                .where(ID, order.guid)
+                .build(JdbcFactory.getApiMethod(order));
+    }
+
     public SingleSqlCommand deleteUpdateStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(ORDER_STATUS, order.orderStatus)

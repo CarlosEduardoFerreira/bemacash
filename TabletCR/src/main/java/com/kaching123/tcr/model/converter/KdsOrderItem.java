@@ -21,8 +21,8 @@ public class KdsOrderItem {
     String quantity;
     @Element(name = "Category", required = false)
     String category;
-    @Element(name = "KDSStation", required = false)
-    int kdsStation;
+    @Element(name = "KDSStation")
+    String kdsStation;
 
     public ArrayList<KDSModifier> getModifiers() {
         return modifiers;
@@ -38,16 +38,16 @@ public class KdsOrderItem {
         super();
     }
 
-    public KdsOrderItem (String id, int transType, String name, String category, String quantity, int kdsStation){
-        this(id, transType, name, quantity);
+    public KdsOrderItem (String id, int transType, String name, String category, String quantity, String kdsStation){
+        this(id, transType, name, quantity, kdsStation);
         this.category = category;
-        this.kdsStation = kdsStation;
     }
-    public KdsOrderItem (String id, int transType, String name, String quantity){
+    public KdsOrderItem (String id, int transType, String name, String quantity, String kdsStation){
         this.id = id;
         this.transType = transType;
         this.name = name;
         this.quantity = quantity;
+        this.kdsStation = kdsStation;
     }
 
 }

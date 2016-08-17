@@ -1709,12 +1709,8 @@ public abstract class ShopStore {
         String GUID = "guid";
 
         @NotNull
-        @Column(type = Type.TEXT)
-        String IP = "ip";
-
-        @NotNull
         @Column(type = Type.INTEGER)
-        String PORT = "port";
+        String STATION_ID = "station_id";
 
         @Column(type = Type.TEXT)
         String ALIAS_GUID = "alias_guid";
@@ -3082,6 +3078,20 @@ public abstract class ShopStore {
         @Columns({EmployeeTipsTable.AMOUNT, EmployeeTipsTable.CREATE_TIME})
         @Join(type = Join.Type.LEFT, joinTable = EmployeeTipsTable.TABLE_NAME, joinColumn = EmployeeTipsTable.ORDER_ID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.GUID)
         String TABLE_TIPS = "tips_table";
+
+    }
+
+    @SimpleView(SaleOrderWithDelView.VIEW_NAME)
+    public static interface SaleOrderWithDelView {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "so_with_del_view";
+
+        String VIEW_NAME = "so_with_del_view";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @From(SaleOrderTable.TABLE_NAME)
+        String TABLE_SALE_ORDER = "sale_order_table";
 
     }
 

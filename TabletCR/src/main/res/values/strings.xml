@@ -1386,6 +1386,7 @@
     <string name="printer_config_port_hint">Port</string>
     <string name="printer_config_subnet_hint">Network mask</string>
     <string name="printer_config_gateway_hint">Gateway</string>
+    <string name="kds_config_station_hint">KDS station ID</string>
     <string name="printer_edit_mac_hint">MAC address</string>
     <string name="kitchen_receipt_order_label">Order:</string>
     <string name="kitchen_receipt_operator_label">Cashier:</string>

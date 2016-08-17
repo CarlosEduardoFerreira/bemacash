@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+    <com.kaching123.tcr.component.CustomEditBox
+        style="@style/StyledDialog.Content.EditText"
+        android:layout_alignParentRight="true"
+        android:id="@+id/port"
+        android:layout_width="95dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/printer_config_port_hint"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true"
+        android:gravity="right"/>
+
+    <com.kaching123.tcr.component.CustomEditBox
+        style="@style/StyledDialog.Content.EditText"
+        android:nextFocusDown="@id/port"
+        android:layout_toLeftOf="@id/port"
+        android:layout_marginRight="8dp"
+        android:id="@+id/ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/printer_config_ip_hint"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true"
+        />
+
+</RelativeLayout>

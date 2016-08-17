@@ -63,6 +63,7 @@ import com.kaching123.tcr.commands.payment.blackstone.payment.BlackRefundCommand
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSaleCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackVoidCommand;
 import com.kaching123.tcr.commands.prepaid.BillPaymentDescriptionCommand;
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
 import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
@@ -2002,6 +2003,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
+                        PrintOrderToKdsCommand.start(BaseCashierActivity.this, orderGuid, true, null);
                         RemoveSaleOrderCommand.start(BaseCashierActivity.this, BaseCashierActivity.this, BaseCashierActivity.this.orderGuid);
                         return true;
                     }
