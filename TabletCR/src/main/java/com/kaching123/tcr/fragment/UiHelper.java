@@ -260,7 +260,7 @@ public final class UiHelper {
     public static String priceFormat(BigDecimal price) {
         if (price == null)
             return null;
-        return priceFormat.format(price);
+        return priceFormat.format(price.setScale(2, BigDecimal.ROUND_HALF_UP));
     }
 
     public static BigDecimal parseBrandQtyInput(String text) {

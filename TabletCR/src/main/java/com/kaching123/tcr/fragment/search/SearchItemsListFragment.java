@@ -158,6 +158,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
         @Override
         public CategoryItemViewModel apply(Cursor c) {
             super.apply(c);
+            if(c == null) return null;
             return new CategoryItemViewModel(
                     c.getString(indexHolder.get(ItemTable.GUID)),
                     c.getString(indexHolder.get(ItemTable.CATEGORY_ID)),

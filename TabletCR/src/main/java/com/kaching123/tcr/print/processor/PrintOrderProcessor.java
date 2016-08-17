@@ -3,6 +3,7 @@ package com.kaching123.tcr.print.processor;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
@@ -118,6 +119,10 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                         int dif = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
                         if (dif != 0)
                             return dif;
+                        boolean l = TextUtils.isEmpty(lhs.groupName), r = TextUtils.isEmpty(rhs.groupName);
+                        if(l && r) return 0;
+                        if(l) return 1;
+                        if(r) return -1;
                         return lhs.groupName.compareTo(rhs.groupName);
                     }
                 };
