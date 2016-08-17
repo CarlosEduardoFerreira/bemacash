@@ -64,6 +64,9 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     @ViewById
     protected Button btnOfflineCredit;
 
+    @ViewById(R.id.allowed_ebt_value_tw)
+    protected TextView totalEbt;
+
     @ViewById
     protected TextView total;
 
@@ -82,6 +85,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     protected OrderType orderType;
 
     protected BigDecimal orderTotal;
+    protected BigDecimal orderEbtTotal;
     protected int customAnimationResource;
 
     protected BigDecimal completedAmount = BigDecimal.ZERO;
@@ -265,11 +269,11 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
                     BigDecimal totalItemTotal,
                     BigDecimal totalTaxVatValue,
                     BigDecimal totalItemDiscount,
-                    BigDecimal totalOrderPrice,
+                    BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice,
                     BigDecimal availableDiscount,
                     BigDecimal transactionFee) {
                 Logger.d("-= Loading reached level 2 =-");
-                calcTotal(totalOrderPrice.add(transactionFee));
+                calcTotal(totalOrderPrice.add(transactionFee), totalOrderEbtPrice);
 
             }
         });
@@ -279,9 +283,10 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
         showPrice(this.total, BigDecimal.ZERO);
     }
 
-    protected void calcTotal(BigDecimal totalOrderPrice) {
+    protected void calcTotal(BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice) {
 
         showPrice(this.total, orderTotal = totalOrderPrice);
+        showPrice(this.totalEbt, orderEbtTotal = totalOrderEbtPrice);
         if (orderTotal != null) {
             updateAfterCalculated();
         }

@@ -148,13 +148,15 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                                        BigDecimal itemPriceWithAddons,
                                        BigDecimal itemSubTotal,
                                        BigDecimal itemTotal,
+                                       BigDecimal itemEbtTotal,
                                        BigDecimal itemFinalPrice,
                                        BigDecimal itemFinalDiscount,
                                        BigDecimal itemFinalTax) {
-                    SaleOrderItemViewModel item = saleItemsMap.get(saleItemGuid);
+                 /*   SaleOrderItemViewModel item = saleItemsMap.get(saleItemGuid);
                     if (item != null) {
                         item.finalPrice = itemFinalPrice;
-                    }
+                        item.finalEbtPrice = itemEbtTotal;
+                    }*/
                 }
 
                 @Override
@@ -211,7 +213,8 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
                 _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
-                _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)));
+                _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)),
+                _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)));
     }
 
     private AddonInfo readModifier(Cursor c) {

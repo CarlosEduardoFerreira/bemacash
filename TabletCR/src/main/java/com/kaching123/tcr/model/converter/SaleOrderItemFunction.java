@@ -43,6 +43,7 @@ public class SaleOrderItemFunction implements Function<Cursor, SaleOrderItemMode
                 c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
                 _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
-                _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)));
+                _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)),
+                _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)));
     }
 }
