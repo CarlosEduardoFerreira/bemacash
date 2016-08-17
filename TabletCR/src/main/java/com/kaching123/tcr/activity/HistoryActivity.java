@@ -207,7 +207,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
             return;
         }
 
-        PaymentProcessor.create(orderItemsListFragment.guid, OrderType.SALE, null).closePreauth(this, isOrderTipped, preauthTransactions, totalCostFragment.getTotalAmount());
+        PaymentProcessor.create(orderItemsListFragment.guid, OrderType.SALE, null, null).closePreauth(this, isOrderTipped, preauthTransactions, totalCostFragment.getTotalAmount());
     }
 
     private void startRefund(final ArrayList<PaymentTransactionModel> transactions) {

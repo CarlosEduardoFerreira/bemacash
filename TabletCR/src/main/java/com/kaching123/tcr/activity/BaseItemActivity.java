@@ -746,9 +746,10 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.printerAliasGuid = ((PrinterAliasModel) this.printerAlias.getSelectedItem()).guid;
 
         int counter = 0;
-        for(boolean b: selectedKds){
-            if(b) counter++;
-        }
+        if(selectedKds != null)
+            for(boolean b: selectedKds){
+                if(b) counter++;
+            }
         model.kdsAliasGuid = counter;
 
         String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?

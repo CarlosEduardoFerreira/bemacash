@@ -644,6 +644,7 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String TITLE = "title";
 
+        @Unique
         @NotNull
         @Column(type = Column.Type.TEXT)
         String ITEM_GUID = "item_guid";

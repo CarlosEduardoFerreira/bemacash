@@ -312,7 +312,7 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
             @Override
             protected void handleSuccess(final String orderGuid, final long prepaidOrderId) {
                 hide();
-                PaymentProcessor.create(orderGuid, OrderType.PREPAID, null).callback(new PaymentProcessor.IPaymentProcessor() {
+                PaymentProcessor.create(orderGuid, OrderType.PREPAID, null, null).callback(new PaymentProcessor.IPaymentProcessor() {
                     @Override
                     public void onSuccess() {
                         if (broker != Broker.BILL_PAYMENT)

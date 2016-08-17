@@ -28,17 +28,24 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.SettingsActivity;
+import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.commands.device.KDSCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.BaseKitchenPrintCallback;
 import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper;
 import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper.IKitchenPrintCallback;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.OrderStatus;
+import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.SaleOrderFunction;
 import com.kaching123.tcr.service.SyncCommand;
@@ -80,6 +87,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
     private NavigationLoader loaderCallback = new NavigationLoader();
 
     private Calendar calendar = Calendar.getInstance();
+    private boolean printToKitchenFlag, printToKdsFlag;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -120,6 +128,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
                 if(EditorInfo.IME_ACTION_DONE == actionId){
                     if (printBox.isChecked()) {
                         printItemsToKitchen(null, false, false, false);
+                        printItemToKds();
                         return false;
                     }
                     onPositiveHandler();
@@ -178,6 +187,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
             public boolean onClick() {
                 if (printBox.isChecked()){
                     printItemsToKitchen(null, false, false, false);
+                    printItemToKds();
                     return false;
                 }
                 onPositiveHandler();
@@ -247,13 +257,13 @@ public class HoldFragmentDialog extends StyledDialogFragment {
     }
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
+        printToKitchenFlag = false;
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, false, new KDSPrintCallback());
-//        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
+        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
     }
 
     private void printItemToKds(){
-        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        printToKdsFlag = false;
         PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, false, new KDSPrintCallback());
     }
 
@@ -274,8 +284,12 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
         @Override
         protected void onPrintSuccess() {
-            WaitDialogFragment.hide(getActivity());
-            printItemToKds();
+            printToKitchenFlag = true;
+            if(printToKdsFlag){
+                WaitDialogFragment.hide(getActivity());
+                onPositiveHandler();
+                dismiss();
+            }
         }
 
         @Override
@@ -308,14 +322,99 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
         @Override
         protected void onDigitalPrintSuccess() {
-            WaitDialogFragment.hide(getActivity());
-            onPositiveHandler();
-            dismiss();
+            printToKdsFlag = true;
+            if(printToKitchenFlag){
+                WaitDialogFragment.hide(getActivity());
+                onSkip();
+            }
         }
 
         @Override
-        protected void onDigitalPrintError() {
+        protected void onDigitalPrintError(KDSCommand.KDSError error) {
             WaitDialogFragment.hide(getActivity());
+            AlertDialogFragment.showAlertWithSkip(
+                    getActivity(),
+                    R.string.error_dialog_title,
+                    "Cannot connect to the host " + getApp().getShopPref().kdsRouterIp().getOr(""),
+                    R.string.btn_try_again,
+                    new OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
+                            printItemToKds();
+                            return true;
+                        }
+                    },
+                    new OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
+                            onSkip();
+                            return true;
+                        }
+                    }
+            );
+        }
+
+        @Override
+        protected void onKdsNotConfigured() {
+            WaitDialogFragment.hide(getActivity());
+            AlertDialogFragment.showAlert(
+                    getActivity(),
+                    R.string.error_dialog_title,
+                    getActivity().getString(R.string.kds_station_not_configured),
+                    R.string.btn_configure,
+                    new OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
+                            boolean adminPermitted = ((TcrApplication) getActivity().getApplicationContext()).hasPermission(Permission.ADMIN);
+                            if (!adminPermitted) {
+                                PermissionFragment.showCancelable(getActivity(), new SuperBaseActivity.BaseTempLoginListener(getActivity()) {
+                                    @Override
+                                    public void onLoginComplete() {
+                                        super.onLoginComplete();
+                                        onKdsNotConfigured();
+                                    }
+                                }, Permission.ADMIN);
+                                return true;
+                            }
+                            SettingsActivity.start(getActivity());
+                            return true;
+                        }
+                    }
+            );
+        }
+
+        @Override
+        protected void onRouterNotConfigured() {
+            WaitDialogFragment.hide(getActivity());
+            AlertDialogFragment.showAlert(
+                    getActivity(),
+                    R.string.error_dialog_title,
+                    getActivity().getString(R.string.kds_router_not_configured),
+                    R.string.btn_configure,
+                    new OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
+                            boolean adminPermitted = ((TcrApplication) getActivity().getApplicationContext()).hasPermission(Permission.ADMIN);
+                            if (!adminPermitted) {
+                                PermissionFragment.showCancelable(getActivity(), new SuperBaseActivity.BaseTempLoginListener(getActivity()) {
+                                    @Override
+                                    public void onLoginComplete() {
+                                        super.onLoginComplete();
+                                        onRouterNotConfigured();
+                                    }
+                                }, Permission.ADMIN);
+                                return true;
+                            }
+                            SettingsActivity.start(getActivity());
+                            return true;
+                        }
+                    }
+            );
+        }
+
+        private void onSkip(){
+            onPositiveHandler();
+            dismiss();
         }
     }
 

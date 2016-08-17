@@ -184,8 +184,8 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
         AlertDialogFragment.show(
                 getActivity(),
                 DialogType.CONFIRM_NONE,
-                R.string.pax_delete_dialog_title,
-                getString(R.string.pax_delete_dialog_msg),
+                R.string.kds_delete_dialog_title,
+                getString(R.string.kds_delete_dialog_msg),
                 R.string.btn_confirm,
                 new OnDialogClickListener() {
                     @Override

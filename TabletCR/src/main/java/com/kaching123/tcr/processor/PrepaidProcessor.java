@@ -150,7 +150,7 @@ public class PrepaidProcessor {
             @Override
             protected void handleSuccess(final String orderGuid, final long prepaidOrderId) {
                 hide();
-                PaymentProcessor.create(orderGuid, OrderType.PREPAID, null).callback(new IPaymentProcessor() {
+                PaymentProcessor.create(orderGuid, OrderType.PREPAID, null, null).callback(new IPaymentProcessor() {
                     @Override
                     public void onSuccess() {
                         delegate.onComplete(context, null, null, prepaidOrderId);

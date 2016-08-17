@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
@@ -26,6 +27,7 @@ import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
+import com.telly.groundy.annotations.Param;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -55,7 +57,6 @@ import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
  */
 public class PrintOrderToKdsCommand extends PublicGroundyTask {
 
-    public enum KDSError {NOT_CONFIGURED, OFFLINE, IP_NOT_FOUND}
     public enum KDSSendStatus {
         PRINT, PRINTED, UPDATED
     }
@@ -104,7 +105,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
             String aliasGuid = e.getKey();
             List<KDSModel> kdsModels = kdsMap.get(aliasGuid);
             if(kdsModels == null || kdsModels.isEmpty()){
-                return failed().add(EXTRA_ERROR_KDS, KDSError.NOT_CONFIGURED).add(EXTRA_KDS, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
+                return failed().add(EXTRA_ERROR_KDS, KDSCommand.KDSError.NOT_CONFIGURED).add(EXTRA_KDS, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
             }
             StringBuilder sb = new StringBuilder();
             for (KDSModel kdsModel : kdsModels) {
@@ -159,7 +160,8 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
 
         @Override
         protected TaskResult execute() throws IOException {
-
+            if(TextUtils.isEmpty(getApp().getShopPref().kdsRouterIp().getOr("")))
+                return failed().add(EXTRA_ERROR_KDS, KDSError.IP_NOT_FOUND);
             KdsTransaction kdsTransaction = covertItemsToKdsOrder(orderGuid, items);
             Serializer serializer = new Persister();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -402,12 +404,27 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
         }
 
         @OnFailure(PrintOrderToKdsCommand.class)
-        public void onPrintError() {
-            onDigitalPrintError();
+        public void onPrintError(@Param(EXTRA_ERROR_KDS)
+                                 KDSCommand.KDSError kdsError) {
+            if(kdsError != null){
+                if(kdsError == KDSCommand.KDSError.IP_NOT_FOUND){
+                    onRouterNotConfigured();
+                    return;
+                }
+                if(kdsError == KDSCommand.KDSError.NOT_CONFIGURED){
+                    onKdsNotConfigured();
+                    return;
+                }
+            }
+            onDigitalPrintError(kdsError);
         }
 
         protected abstract void onDigitalPrintSuccess();
 
-        protected abstract void onDigitalPrintError();
+        protected abstract void onDigitalPrintError(KDSCommand.KDSError kdsError);
+
+        protected abstract void onKdsNotConfigured();
+
+        protected abstract void onRouterNotConfigured();
     }
 }

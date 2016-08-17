@@ -247,7 +247,7 @@ public class PrepaidSunPassActivity extends PrepaidBaseFragmentActivity {
             @Override
             protected void handleSuccess(final String orderGuid, final long prepaidOrderId) {
                 hide();
-                PaymentProcessor.create(orderGuid, OrderType.PREPAID, null).callback(new PaymentProcessor.IPaymentProcessor() {
+                PaymentProcessor.create(orderGuid, OrderType.PREPAID, null, null).callback(new PaymentProcessor.IPaymentProcessor() {
                     @Override
                     public void onSuccess() {
                         proceedToBilling(context, request, response, dRequest, dResponse, prepaidOrderId, new BigDecimal(request.feeAmount));

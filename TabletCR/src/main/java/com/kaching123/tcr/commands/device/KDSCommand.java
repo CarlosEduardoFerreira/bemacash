@@ -18,6 +18,7 @@ import com.telly.groundy.annotations.Param;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * Created by gdubina on 04.12.13.
@@ -51,7 +52,7 @@ public abstract class KDSCommand extends PublicGroundyTask {
     @Override
     protected TaskResult doInBackground() {
 
-        if (TextUtils.isEmpty(kdsModels)) {
+        if (TextUtils.isEmpty(getApp().getShopPref().kdsRouterIp().getOr(""))) {
             Logger.e("PrinterCommand: printer doesn't configured");
             return failed().add(EXTRA_ERROR_KDS, KDSError.NOT_CONFIGURED);
         }
