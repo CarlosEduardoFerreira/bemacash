@@ -189,7 +189,6 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
             }
             String str = new String( baos.toByteArray(), "UTF-8");
             str = removeTags(str);
-            str = CharacterFilter(str);
             writeToFile(str);
             byte[] command = buildXmlCommand(str);
             OutputStream outputStream = socket.getOutputStream();
