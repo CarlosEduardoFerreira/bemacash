@@ -653,6 +653,7 @@ public abstract class ShopStore {
 
     static {
         applyForeignKeys(ItemKDSTable.TABLE_NAME,
+//                foreignKey(ItemKDSTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID),
                 foreignKey(ItemKDSTable.KDS_ALIAS_GUID, KDSAliasTable.TABLE_NAME, KDSAliasTable.GUID));
     }
 
