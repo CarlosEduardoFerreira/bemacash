@@ -329,6 +329,10 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                 String title = c.getString(1);
                 String groupGuid = c.getString(2);
                 if (type == ModifierType.MODIFIER) {
+                    if(TextUtils.isEmpty(groupGuid)){
+                        modifiers.add(new SimpleModifier(title, null));
+                        continue;
+                    }
                     Cursor cursor = ProviderAction.query((URI_MODIFIERS_GROUP))
                             .projection(ShopStore.ModifierGroupTable.TITLE)
                             .where(ShopStore.ModifierGroupTable.GUID + " = ?", groupGuid)

@@ -113,7 +113,7 @@ public class KDSEditFragment extends KeyboardDialogFragment implements LoaderCal
     }
 
     private boolean isValidAll() {
-        return TextUtils.isDigitsOnly(kdsStationText.getText().toString());
+        return TextUtils.isDigitsOnly(kdsStationText.getText().toString()) && !aliasAdapter.isEmpty();
     }
 
     @AfterTextChange

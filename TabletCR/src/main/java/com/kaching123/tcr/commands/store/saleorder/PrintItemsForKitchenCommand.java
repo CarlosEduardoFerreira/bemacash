@@ -3,6 +3,7 @@ package com.kaching123.tcr.commands.store.saleorder;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
@@ -245,6 +246,10 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 String title = c.getString(1);
                 String groupGuid = c.getString(2);
                 if (type == ModifierType.MODIFIER) {
+                    if(TextUtils.isEmpty(groupGuid)){
+                        modifiers.add(new SimpleModifier(title, null));
+                        continue;
+                    }
                     Cursor cursor = ProviderAction.query((URI_MODIFIERS_GROUP))
                             .projection(ShopStore.ModifierGroupTable.TITLE)
                             .where(ShopStore.ModifierGroupTable.GUID + " = ?", groupGuid)
