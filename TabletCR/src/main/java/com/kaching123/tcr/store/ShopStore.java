@@ -739,6 +739,9 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER)
         String KITCHEN_PRINT_STATUS = "kitchen_print_status";
 
+        @Column(type = Type.INTEGER)
+        String KDS_SEND_STATUS = "kds_print_status";
+
         @Column(type = Column.Type.TEXT)
         String TRANSACTION_FEE = "transaction_fee";
 

@@ -369,7 +369,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         }
     }
 
-    public static class ItemInfo {
+    public class ItemInfo {
         public String guid;
         public String description;
         public BigDecimal qty;

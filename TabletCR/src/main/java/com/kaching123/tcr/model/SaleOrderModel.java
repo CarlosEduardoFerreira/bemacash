@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand.KDSSendStatus;
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.store.ShopProvider;
@@ -20,6 +21,7 @@ import java.util.Date;
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
+import static com.kaching123.tcr.model.ContentValuesUtil._kdsSendStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._kitchenPrintStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
@@ -56,6 +58,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
 
     public boolean isTipped;
     public KitchenPrintStatus kitchenPrintStatus;
+    public KDSSendStatus kdsSendStatus;
 
     public BigDecimal transactionFee;
 
@@ -84,6 +87,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 _orderType(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.ORDER_TYPE)),
                 _bool(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.IS_TIPPED)),
                 _kitchenPrintStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.KITCHEN_PRINT_STATUS)),
+                _kdsSendStatus(c, c.getColumnIndex(SaleOrderTable.KDS_SEND_STATUS)),
                 _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TRANSACTION_FEE))
         );
     }
@@ -108,6 +112,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 _orderType(c, c.getColumnIndex(SaleOrderTable.ORDER_TYPE)),
                 _bool(c, c.getColumnIndex(SaleOrderTable.IS_TIPPED)),
                 _kitchenPrintStatus(c, c.getColumnIndex(SaleOrderTable.KITCHEN_PRINT_STATUS)),
+                _kdsSendStatus(c, c.getColumnIndex(SaleOrderTable.KDS_SEND_STATUS)),
                 _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE))
         );
     }
@@ -131,8 +136,9 @@ public class SaleOrderModel implements Serializable, IValueModel {
             String parentGuid,
             OrderType type,
             KitchenPrintStatus kitchenPrintStatus,
+            KDSSendStatus kdsSendStatus,
             BigDecimal transactionFee) {
-        this(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentGuid, type, false, kitchenPrintStatus, transactionFee);
+        this(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentGuid, type, false, kitchenPrintStatus, kdsSendStatus, transactionFee);
     }
 
     public SaleOrderModel(
@@ -155,6 +161,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
             OrderType type,
             boolean isTipped,
             KitchenPrintStatus kitchenPrintStatus,
+            KDSSendStatus kdsSendStatus,
             BigDecimal transactionFee) {
         super();
         this.guid = guid;
@@ -179,6 +186,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
         this.type = type;
         this.isTipped = isTipped;
         this.kitchenPrintStatus = kitchenPrintStatus;
+        this.kdsSendStatus = kdsSendStatus;
         this.transactionFee = transactionFee;
     }
 

@@ -8,6 +8,7 @@ import com.google.common.base.Optional;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel.PrepaidType;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
@@ -253,6 +254,10 @@ public final class ContentValuesUtil {
 
     public static KitchenPrintStatus _kitchenPrintStatus(Cursor c, int index) {
         return c.isNull(index) ? null : KitchenPrintStatus.values()[(c.getInt(index))];
+    }
+
+    public static PrintOrderToKdsCommand.KDSSendStatus _kdsSendStatus(Cursor c, int index) {
+        return c.isNull(index) ? null : PrintOrderToKdsCommand.KDSSendStatus.values()[(c.getInt(index))];
     }
 
     public static Date _nullableDate(Cursor c, int index) {

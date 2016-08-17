@@ -1,7 +1,9 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore.KDSTable;
 
 import java.io.Serializable;
@@ -22,6 +24,13 @@ public class KDSModel implements IValueModel, Serializable{
         this.ip = ip;
         this.port = port;
         this.aliasGuid = aliasGuid;
+    }
+
+    public KDSModel(Cursor c) {
+        this(c.getString(c.getColumnIndex(KDSTable.GUID)),
+                c.getString(c.getColumnIndex(KDSTable.IP)),
+                c.getInt(c.getColumnIndex(KDSTable.PORT)),
+                c.getString(c.getColumnIndex(KDSTable.ALIAS_GUID)));
     }
 
     @Override

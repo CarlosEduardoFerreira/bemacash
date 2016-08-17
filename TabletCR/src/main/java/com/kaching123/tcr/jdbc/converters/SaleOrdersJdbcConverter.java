@@ -2,6 +2,7 @@ package com.kaching123.tcr.jdbc.converters;
 
 import android.content.ContentValues;
 
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -44,6 +45,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     private static final String ORDER_TYPE = "ORDER_TYPE";
     private static final String IS_TIPPED = "IS_TIPPED";
     private static final String KITCHEN_PRINT_STATUS = "KITCHEN_PRINT_STATUS";
+    private static final String KDS_SEND_STATUS = "KDS_SEND_STATUS";
     private static final String TRANSACTION_FEE = "TRANSACTION_FEE";
 
     @Override
@@ -68,6 +70,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 _enum(OrderType.class, rs.getString(ORDER_TYPE), OrderType.SALE),
                 rs.getBoolean(IS_TIPPED),
                 _enum(KitchenPrintStatus.class, rs.getString(KITCHEN_PRINT_STATUS), KitchenPrintStatus.PRINT),
+                _enum(PrintOrderToKdsCommand.KDSSendStatus.class, rs.getString(KDS_SEND_STATUS), PrintOrderToKdsCommand.KDSSendStatus.PRINT),
                 rs.getBigDecimal(TRANSACTION_FEE)
         );
         return order.toValues();
@@ -95,6 +98,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 _enum(OrderType.class, rs.getString(ORDER_TYPE), OrderType.SALE),
                 rs.getBoolean(IS_TIPPED),
                 _enum(KitchenPrintStatus.class, rs.getString(KITCHEN_PRINT_STATUS), KitchenPrintStatus.PRINT),
+                _enum(PrintOrderToKdsCommand.KDSSendStatus.class, rs.getString(KDS_SEND_STATUS), PrintOrderToKdsCommand.KDSSendStatus.PRINT),
                 rs.getBigDecimal(TRANSACTION_FEE)
         );
     }

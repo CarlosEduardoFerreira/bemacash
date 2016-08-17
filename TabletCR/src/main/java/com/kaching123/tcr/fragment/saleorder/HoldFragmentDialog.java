@@ -30,6 +30,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.BaseKitchenPrintCallback;
 import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper;
@@ -250,6 +251,11 @@ public class HoldFragmentDialog extends StyledDialogFragment {
         PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
     }
 
+    private void printItemToKds(){
+        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, new KDSPrintCallback());
+    }
+
     private class KitchenKitchenPrintCallback extends BaseKitchenPrintCallback {
 
         private IKitchenPrintCallback skipListener = new IKitchenPrintCallback() {
@@ -268,9 +274,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
         @Override
         protected void onPrintSuccess() {
             WaitDialogFragment.hide(getActivity());
-            onPositiveHandler();
-
-            dismiss();
+            printItemToKds();
         }
 
         @Override
@@ -296,6 +300,22 @@ public class HoldFragmentDialog extends StyledDialogFragment {
         @Override
         protected void onPrinterPaperNearTheEnd(String fromPrinter, String aliasTitle) {
             KitchenPrintCallbackHelper.onPrinterPaperNearTheEnd(getActivity(), fromPrinter, aliasTitle, skipListener);
+        }
+    }
+
+    private class KDSPrintCallback extends PrintOrderToKdsCommand.BasePrintOrderToKdsCallback {
+
+        @Override
+        protected void onDigitalPrintSuccess() {
+            WaitDialogFragment.hide(getActivity());
+            onPositiveHandler();
+            dismiss();
+        }
+
+        @Override
+        protected void onDigitalPrintError() {
+            WaitDialogFragment.hide(getActivity());
+            printItemToKds();
         }
     }
 

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -105,6 +106,7 @@ public class AddSaleOrderCommand extends AsyncCommand {
                 null,
                 type,
                 KitchenPrintStatus.PRINT,
+                PrintOrderToKdsCommand.KDSSendStatus.PRINT,
                 transactionFee
         );
     }

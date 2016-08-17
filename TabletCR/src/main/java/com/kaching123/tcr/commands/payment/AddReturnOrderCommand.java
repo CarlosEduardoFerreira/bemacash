@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -95,6 +96,7 @@ public class AddReturnOrderCommand extends AsyncCommand {
                 parentGuid,
                 type,
                 KitchenPrintStatus.PRINT,
+                PrintOrderToKdsCommand.KDSSendStatus.PRINT,
                 BigDecimal.ZERO
         );
 

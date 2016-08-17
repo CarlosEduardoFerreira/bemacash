@@ -8,6 +8,7 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.OperatorTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.TipsTable;
+import com.kaching123.tcr.store.ShopStore;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
+import static com.kaching123.tcr.model.ContentValuesUtil._kdsSendStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._kitchenPrintStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
@@ -53,6 +55,7 @@ public class SaleOrderViewFunction extends ListConverterFunction<SaleOrderViewMo
                 c.getString(indexHolder.get(CustomerTable.EMAIL)),
                 _decimal(c, indexHolder.get(TipsTable.AMOUNT)),
                 _kitchenPrintStatus(c, indexHolder.get(SaleOrderTable.KITCHEN_PRINT_STATUS)),
+                _kdsSendStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KDS_SEND_STATUS)),
                 _decimal(c, indexHolder.get(SaleOrderTable.TRANSACTION_FEE))
         );
     }

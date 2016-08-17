@@ -1,5 +1,6 @@
 package com.kaching123.tcr.model;
 
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 
 import java.math.BigDecimal;
@@ -20,8 +21,8 @@ public class SaleOrderViewModel extends SaleOrderModel{
     public SaleOrderViewModel(String guid, Date createTime, String operatorGuid, String shiftGuid, String customerGuid, BigDecimal discount, DiscountType discountType, OrderStatus orderStatus, String holdName, boolean taxable,
                               BigDecimal tmpTotalPrice, BigDecimal tmpTotalTax, BigDecimal tmpTotalDiscount,
                               int printSeqNum, long registerId, String parentId, OrderType type, boolean isTipped, String operatorName, String registerTitle,
-                              String customerName, String customerPhone, String customerEmail, BigDecimal tipsAmount, KitchenPrintStatus kitchenPrintStatus, BigDecimal transactionFee) {
-        super(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentId, type, isTipped, kitchenPrintStatus, transactionFee);
+                              String customerName, String customerPhone, String customerEmail, BigDecimal tipsAmount, KitchenPrintStatus kitchenPrintStatus, PrintOrderToKdsCommand.KDSSendStatus kdsSendStatus, BigDecimal transactionFee) {
+        super(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentId, type, isTipped, kitchenPrintStatus, kdsSendStatus, transactionFee);
         this.operatorName = operatorName;
         this.registerTitle = registerTitle;
         this.customerName = customerName;
