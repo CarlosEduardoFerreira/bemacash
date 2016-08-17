@@ -117,7 +117,7 @@ public class KDSEditFragment extends KeyboardDialogFragment implements LoaderCal
     }
 
     @AfterTextChange
-    protected void ipAfterTextChanged(Editable s) {
+    protected void kdsStationAfterTextChanged(Editable s) {
         keyboard.setEnterEnabled(isValidAll());
         enablePositiveButton(isValidAll(), greenBtnColor);
     }
