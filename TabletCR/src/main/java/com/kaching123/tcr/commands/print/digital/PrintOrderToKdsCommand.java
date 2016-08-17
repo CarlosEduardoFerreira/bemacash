@@ -107,12 +107,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
             if(kdsModels == null || kdsModels.isEmpty()){
                 return failed().add(EXTRA_ERROR_KDS, KDSCommand.KDSError.NOT_CONFIGURED).add(EXTRA_KDS, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
             }
-            StringBuilder sb = new StringBuilder();
-            for (KDSModel kdsModel : kdsModels) {
-                sb.append(kdsModel.stationId).append(',');
-            }
-            sb.deleteCharAt(sb.length()-1);// delete last ','
-            TaskResult result = new SendToKDSCommand().sync(getContext(), sb.toString(), orderGuid, e.getValue(), isVoidOrder , getAppCommandContext());
+            TaskResult result = new SendToKDSCommand().sync(getContext(), orderGuid, e.getValue(), isVoidOrder , getAppCommandContext());
             if (isFailed(result)) {
                 return result.add(EXTRA_KDS, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
             }
@@ -137,6 +132,27 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
         }
         c.close();
         return kdsGuids;
+    }
+
+    private String getKdsStationsOfItem(List<String> kdsAliasGuids) {
+        StringBuilder sb = new StringBuilder();
+        Cursor c = null;
+        for(String guid: kdsAliasGuids) {
+            c = ProviderAction.query(URI_KDS)
+                    .projection(ShopStore.KDSTable.STATION_ID)
+                    .where(ShopStore.KDSTable.ALIAS_GUID + " = ?", guid)
+                    .perform(getContext());
+            if (c.moveToFirst()) {
+                do{
+                    sb.append(c.getString(0)).append(',');
+                }while (c.moveToNext());
+            }
+        }
+        if(c != null)
+            c.close();
+        if(sb.charAt(sb.length()-1) == ',')
+            sb.deleteCharAt(sb.length()-1);
+        return sb.toString();
     }
 
 //    private boolean isOrderUpdated(String orderGuid) {
@@ -223,7 +239,9 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
             ArrayList<KdsOrderItem> itemList = new ArrayList<>();
             order.setItems(itemList);
             for (ItemInfo item : items){
-                KdsOrderItem kdsItem = new KdsOrderItem(item.guid, 1, item.description, item.qty.setScale(2, BigDecimal.ROUND_CEILING).toString(), kdsModels);
+                List<String> kdsAliasGuids = getKdsListOfItem(item.itemGuid);
+                String kdsStations = getKdsStationsOfItem(kdsAliasGuids);
+                KdsOrderItem kdsItem = new KdsOrderItem(item.guid, 1, item.description, item.qty.setScale(2, BigDecimal.ROUND_CEILING).toString(), kdsStations);
                 if(!item.addons.isEmpty()){
                     ArrayList<KDSModifier> modifiers = new ArrayList<>();
                     for(int i = 0; i < item.addons.size(); i++){
@@ -237,12 +255,12 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
             return transaction;
         }
 
-        public TaskResult sync(Context context, String kdsModels,String orderGuid, List<ItemInfo> items, boolean isVoid, IAppCommandContext appCommandContext) {
+        public TaskResult sync(Context context,String orderGuid, List<ItemInfo> items, boolean isVoid, IAppCommandContext appCommandContext) {
             this.orderGuid = orderGuid;
             this.items = items;
             this.isVoid = isVoid;
 
-            return sync(context, kdsModels, appCommandContext);
+            return sync(context, null, appCommandContext);
         }
     }
 

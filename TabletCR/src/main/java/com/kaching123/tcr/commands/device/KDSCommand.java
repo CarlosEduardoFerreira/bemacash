@@ -35,8 +35,6 @@ public abstract class KDSCommand extends PublicGroundyTask {
 
     protected static final Uri URI_KDS = ShopProvider.getContentWithLimitUri(KDSTable.URI_CONTENT, 1);
 
-    protected String kdsModels;
-
 //    protected KDSModel getKds() {
 //        Cursor c = ProviderAction.query(URI_KDS)
 //                .where(KDSTable.ALIAS_GUID + " IS NULL")
@@ -57,14 +55,15 @@ public abstract class KDSCommand extends PublicGroundyTask {
             return failed().add(EXTRA_ERROR_KDS, KDSError.NOT_CONFIGURED);
         }
         socket = null;
+        TaskResult result;
         try {
              socket = connectToKds();
-            return execute();
+             result = execute();
         } catch (IOException e){
-            return failed().add(EXTRA_ERROR_KDS, KDSError.IP_NOT_FOUND);
+            result = failed().add(EXTRA_ERROR_KDS, KDSError.IP_NOT_FOUND);
         } catch (Exception e) {
             Logger.e("PrinterCommand execute error: ", e);
-            return failed();
+            result = failed();
         } finally {
             if (socket != null) {
                 try {
@@ -74,6 +73,7 @@ public abstract class KDSCommand extends PublicGroundyTask {
                 }
             }
         }
+        return result;
     }
 
     private Socket connectToKds() throws IOException {
@@ -117,11 +117,6 @@ public abstract class KDSCommand extends PublicGroundyTask {
         str = str.replace("<modifiers>","");
         str = str.replace("</modifiers>","");
         return str;
-    }
-
-    public TaskResult sync(Context context, String kdsModels, IAppCommandContext appCommandContext){
-        this.kdsModels = kdsModels;
-        return super.sync(context, null, appCommandContext);
     }
 
     public static abstract class BaseKdsCallback {
