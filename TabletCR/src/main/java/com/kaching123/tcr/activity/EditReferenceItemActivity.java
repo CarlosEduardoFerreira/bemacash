@@ -65,7 +65,7 @@ public class EditReferenceItemActivity extends BaseReferenceItemActivity {
 
     @Override
     protected void callCommand(ItemModel model, final AddItemCallBack callaBck) {
-        EditReferenceItemCommand.start(this, model, new AddItemCommand.AddItemCommandCallback()
+        EditReferenceItemCommand.start(this, model, new EditReferenceItemCommand.EditReferenceItemCommandCallback()
         {
 
             @Override

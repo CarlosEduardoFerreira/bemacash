@@ -18,6 +18,8 @@ import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CursorUtil;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnFailure;
+import com.telly.groundy.annotations.OnSuccess;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +113,7 @@ public class EditReferenceItemCommand extends AsyncCommand {
         return success;
     }
 
-    public static void start(Context context, ItemModel item, AddItemCommand.AddItemCommandCallback callback) {
+    public static void start(Context context, ItemModel item, EditReferenceItemCommandCallback callback) {
         create(EditReferenceItemCommand.class).arg(ARG_ITEM, item).callback(callback).queueUsing(context);
     }
 
@@ -122,5 +124,23 @@ public class EditReferenceItemCommand extends AsyncCommand {
         this.newItem = item;
         TaskResult result = syncStandalone(context, appCommandContext);
         return !isFailed(result);
+    }
+
+    public static abstract class EditReferenceItemCommandCallback {
+
+        @OnSuccess(EditReferenceItemCommand.class)
+        public void onSuccess() {
+            handleSuccess();
+        }
+
+        @OnFailure(EditReferenceItemCommand.class)
+        public void onFailure() {
+            handleFailure();
+        }
+
+        protected abstract void handleSuccess();
+
+        protected abstract void handleFailure();
+
     }
 }

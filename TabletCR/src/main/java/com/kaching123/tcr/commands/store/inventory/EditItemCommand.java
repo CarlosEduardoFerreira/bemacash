@@ -23,6 +23,8 @@ import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.CursorUtil;
 import com.kaching123.tcr.util.InventoryUtils;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnFailure;
+import com.telly.groundy.annotations.OnSuccess;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -131,7 +133,7 @@ public class EditItemCommand extends AsyncCommand {
         return sql;
     }
 
-    public static void start(Context context, ItemModel item, AddItemCommand.AddItemCommandCallback callback) {
+    public static void start(Context context, ItemModel item, EditItemCommandCallback callback) {
         create(EditItemCommand.class)
                 .arg(ARG_ITEM, item)
                 .callback(callback)
@@ -150,5 +152,23 @@ public class EditItemCommand extends AsyncCommand {
     public SyncResult syncDependent(Context context, ItemModel item, IAppCommandContext appCommandContext) {
         this.item = item;
         return syncDependent(context, appCommandContext);
+    }
+
+    public static abstract class EditItemCommandCallback {
+
+        @OnSuccess(EditItemCommand.class)
+        public void onSuccess() {
+            handleSuccess();
+        }
+
+        @OnFailure(EditItemCommand.class)
+        public void onFailure() {
+            handleFailure();
+        }
+
+        protected abstract void handleSuccess();
+
+        protected abstract void handleFailure();
+
     }
 }

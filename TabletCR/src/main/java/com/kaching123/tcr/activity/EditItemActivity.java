@@ -155,7 +155,7 @@ public class EditItemActivity extends BaseCommonItemActivity {
             EditVariantMatrixItemCommand.start(EditItemActivity.this, parentItemMatrix);
             model.referenceItemGuid = null;
         }
-        EditItemCommand.start(this, model, new AddItemCommand.AddItemCommandCallback()
+        EditItemCommand.start(this, model, new EditItemCommand.EditItemCommandCallback()
         {
 
             @Override

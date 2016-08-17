@@ -39,7 +39,7 @@ public class AddReferenceItemActivity extends BaseReferenceItemActivity {
 
     @Override
     protected void callCommand(ItemModel model, final AddItemCallBack callBack) {
-        AddReferenceItemCommand.start(this, model, new AddItemCommand.AddItemCommandCallback()
+        AddReferenceItemCommand.start(this, model, new AddReferenceItemCommand.AddReferenceItemCommandCallback()
         {
 
             @Override
