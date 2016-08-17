@@ -10,6 +10,7 @@ import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.facebook.stetho.Stetho;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 import com.kaching123.display.SerialPortScale;
@@ -131,6 +132,7 @@ public class TcrApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        Stetho.initializeWithDefaults(this);
 
         self = this;
         Resources res = getResources();

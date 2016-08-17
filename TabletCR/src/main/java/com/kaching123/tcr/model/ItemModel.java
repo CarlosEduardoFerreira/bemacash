@@ -57,7 +57,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public ItemRefType refType;
     public String referenceItemGuid;
     public boolean ignoreMovementupdate;
-    public String kdsAliasGuid;
+    public int kdsAliasGuid;
     public BigDecimal loyaltyPoints;
     public boolean excludeFromLoyaltyPlan;
 
@@ -96,7 +96,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      String defaultModifierGuid,
                      int orderNum,
                      String printerAliasGuid,
-                     String kdsAliasGuid,
+                     int kdsAliasGuid,
                      int btnView,
                      boolean hasNotes,
                      boolean serializable,

@@ -78,7 +78,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 null,
                 0,
                 null,
-                null,// kds alias
+                0,// kds alias
                 0,
                 false,
                 false,

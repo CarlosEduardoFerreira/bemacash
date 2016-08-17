@@ -3,6 +3,8 @@ package com.kaching123.tcr.commands.print.digital;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
@@ -27,8 +29,11 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -59,6 +64,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
 
     private static final Uri URI_KDS = ShopProvider.getContentUri(ShopStore.KDSTable.URI_CONTENT);
     private static final Uri URI_ALIAS = ShopProvider.getContentUri(ShopStore.KDSAliasTable.URI_CONTENT);
+    private static final Uri URI_ITEM_KDS_ALIAS = ShopProvider.getContentUri(ShopStore.ItemKDSTable.URI_CONTENT);
 
     private static final Uri URI_ORDER = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(ShopStore.SaleItemExDelView.URI_CONTENT);
@@ -73,13 +79,19 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
         String orderGuid = getStringArg(ARG_ORDER_GUID);
         List<ItemInfo> items = loadItems(orderGuid);
 
-        LinkedHashMap<String, List<ItemInfo>> itemsMap = new LinkedHashMap<String, List<ItemInfo>>();
+        LinkedHashMap<String, List<ItemInfo>> itemsMap = new LinkedHashMap<>();
         for (ItemInfo i : items) {
-            List<ItemInfo> ii = itemsMap.get(i.printAliasGuid);
-            if (ii == null) {
-                itemsMap.put(i.printAliasGuid, ii = new ArrayList<>());
+            if(i.kdsAliasGuid != 0){
+                List<String> kdsGuidList = getKdsListOfItem(i.itemGuid);
+                for(String s: kdsGuidList){
+                    if(itemsMap.containsKey(s))
+                        itemsMap.get(s).add(i);
+                    else{
+                        itemsMap.put(s, new ArrayList<ItemInfo>());
+                        itemsMap.get(s).add(i);
+                    }
+                }
             }
-            ii.add(i);
         }
 
         Map<String, List<KDSModel>> kdsMap = loadKds(itemsMap.keySet());
@@ -99,6 +111,21 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
         }
 
         return succeeded();
+    }
+
+    private List<String> getKdsListOfItem(String guid) {
+        ArrayList<String> kdsGuids = new ArrayList<>();
+        Cursor c = ProviderAction.query(URI_ITEM_KDS_ALIAS)
+                            .projection(ShopStore.ItemKDSTable.KDS_ALIAS_GUID)
+                            .where(ShopStore.ItemKDSTable.ITEM_GUID + " = ?", guid)
+                            .perform(getContext());
+        if(c.moveToFirst()){
+            do{
+                kdsGuids.add(c.getString(0));
+            } while (c.moveToNext());
+        }
+        c.close();
+        return kdsGuids;
     }
 
     private boolean isOrderUpdated(String orderGuid) {
@@ -139,10 +166,25 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
             }
             String str = new String( baos.toByteArray(), "UTF-8");
             str = removeTags(str);
+            writeToFile(str);
             byte[] command = buildXmlCommand(str);
             OutputStream outputStream = socket.getOutputStream();
             outputStream.write(command);
             return succeeded();
+        }
+
+        private void writeToFile(String data) {
+            try {
+                OutputStream outputStream = new FileOutputStream(new File(Environment.getExternalStorageDirectory()+"/example.xml"), false); // true will be same as Context.MODE_APPEND
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+                outputStreamWriter.write(data);
+                outputStreamWriter.close();
+                outputStream.flush();
+                outputStream.close();
+            }
+            catch (IOException e) {
+                Log.e("Exception", "File write failed: " + e.toString());
+            }
         }
 
         private KdsTransaction covertItemsToKdsOrder(String orderGuid, List<ItemInfo> items) {
@@ -158,9 +200,9 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                             .perform(getContext());
             if(!c.moveToFirst()) return transaction;
             String registerTitle = c.getString(0);
-            KdsOrder order = new KdsOrder(saleOrderModel.registerId+saleOrderModel.printSeqNum+"",
+            KdsOrder order = new KdsOrder(saleOrderModel.registerId+"-"+saleOrderModel.printSeqNum,
                                             saleOrderModel.registerId,
-                                            saleOrderModel.kdsSendStatus.ordinal(),
+                                            saleOrderModel.kdsSendStatus == null ? 1:saleOrderModel.kdsSendStatus.ordinal()+1,
                                             2, // put as in processing for now
                                             "", // normal order
                                             getApp().getOperatorFullName(),
@@ -201,7 +243,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                 .perform(getContext());
         HashMap<String, List<KDSModel>> result = new HashMap<>();
         while (c.moveToNext()) {
-            String aliasGuid = c.getString(0);
+            String aliasGuid = c.getString(c.getColumnIndex(ShopStore.KDSTable.ALIAS_GUID));
             List<KDSModel> printers = result.get(aliasGuid);
             if (printers == null) {
                 result.put(aliasGuid, printers = new ArrayList<>());
@@ -236,12 +278,11 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                         ShopSchema2.SaleItemExDelView2.SaleItemTable.SALE_ITEM_GUID,
                         ShopSchema2.SaleItemExDelView2.ItemTable.DESCRIPTION,
                         ShopSchema2.SaleItemExDelView2.SaleItemTable.QUANTITY,
-                        ShopSchema2.SaleItemExDelView2.SaleItemTable.KITCHEN_PRINTED_QTY,
-                        ShopSchema2.SaleItemExDelView2.SaleItemTable.NOTES,
-                        ShopSchema2.SaleItemExDelView2.ItemTable.PRINTER_ALIAS_GUID
+                        ShopSchema2.SaleItemExDelView2.ItemTable.GUID,
+                        ShopSchema2.SaleItemExDelView2.ItemTable.KDS_ALIAS_GUID,
+                        ShopSchema2.SaleItemExDelView2.SaleItemTable.NOTES
                 )
-                .where(ShopSchema2.SaleItemExDelView2.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
-                .where(ShopSchema2.SaleItemExDelView2.ItemTable.PRINTER_ALIAS_GUID + " IS NOT NULL");
+                .where(ShopSchema2.SaleItemExDelView2.SaleItemTable.ORDER_GUID + " = ?", orderGuid);
 
 //        if (!printAllItems) {
 //            query.where(ShopSchema2.SaleItemExDelView2.SaleItemTable.QUANTITY + " != " + ShopSchema2.SaleItemExDelView2.SaleItemTable.KITCHEN_PRINTED_QTY);
@@ -257,8 +298,8 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                                 c.getString(0),
                                 c.getString(1),
                                 _decimalQty(c, 2),
-                                _decimalQty(c, 3),
-                                c.getString(4),
+                                c.getString(3),
+                                c.getInt(4),
                                 c.getString(5));
                     }
                 }).toImmutableList();
@@ -319,21 +360,21 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
         public String guid;
         public String description;
         public BigDecimal qty;
-        public BigDecimal printedQty;
-        public String printAliasGuid;
+        public String itemGuid;
+        public int kdsAliasGuid;
         public String notes;
 
         public ArrayList<String> modifier = new ArrayList<>();
         public ArrayList<String> addons = new ArrayList<String>();
         public ArrayList<String> options = new ArrayList<String>();
 
-        private ItemInfo(String guid, String description, BigDecimal qty, BigDecimal printedQty, String notes, String printAliasGuid) {
+        private ItemInfo(String guid, String description, BigDecimal qty, String itemGuid, int kdsAliasGuid, String notes) {
             this.guid = guid;
             this.description = description;
             this.qty = qty;
-            this.printedQty = printedQty;
+            this.itemGuid = itemGuid;
+            this.kdsAliasGuid = kdsAliasGuid;
             this.notes = notes;
-            this.printAliasGuid = printAliasGuid;
         }
     }
 

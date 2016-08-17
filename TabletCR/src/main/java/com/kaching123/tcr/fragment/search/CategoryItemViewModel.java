@@ -44,7 +44,7 @@ public class CategoryItemViewModel extends ItemExModel {
                                  String defaultModifierGuid,
                                  int orderNum,
                                  String printerAliasGuid,
-                                 String kdsAliasGuid,
+                                 int kdsAliasGuid,
                                  int btnView,
                                  boolean hasNotes,
                                  boolean serializable,

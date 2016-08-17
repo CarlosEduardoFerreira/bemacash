@@ -248,7 +248,8 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
+        PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, new KDSPrintCallback());
+//        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
     }
 
     private void printItemToKds(){
@@ -267,7 +268,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
             @Override
             public void onSkip(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-                printItemsToKitchen(fromPrinter, true, ignorePaperEnd, searchByMac);
+//                printItemsToKitchen(fromPrinter, true, ignorePaperEnd, searchByMac);
             }
         };
 
@@ -315,7 +316,6 @@ public class HoldFragmentDialog extends StyledDialogFragment {
         @Override
         protected void onDigitalPrintError() {
             WaitDialogFragment.hide(getActivity());
-            printItemToKds();
         }
     }
 

@@ -55,7 +55,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 null,
                 0,
                 null,//printer alias
-                null,//kds alias
+                0,//kds alias
                 0,//btnView
                 false, //hasNotes
                 false,//serializable
@@ -109,7 +109,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 null,
                 0,
                 null,
-                null, //kds alias
+                0, //kds alias
                 0,
                 false,
                 false,

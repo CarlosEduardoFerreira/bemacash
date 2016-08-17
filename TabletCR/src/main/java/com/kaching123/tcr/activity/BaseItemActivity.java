@@ -539,6 +539,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     }
 
     protected void saveItemKdsAlias(boolean[] selected) {
+        if(selected == null) return;
         for(int i = 0; i < selected.length; i++){
             if(selected[i]){
                 ContentValues cv = new ContentValues();
@@ -743,6 +744,12 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         model.isActiveStatus = this.active.isChecked();
 
         model.printerAliasGuid = ((PrinterAliasModel) this.printerAlias.getSelectedItem()).guid;
+
+        int counter = 0;
+        for(boolean b: selectedKds){
+            if(b) counter++;
+        }
+        model.kdsAliasGuid = counter;
 
         String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?
                 BigDecimal.ZERO.toString() : this.salesPrice.getText().toString();
