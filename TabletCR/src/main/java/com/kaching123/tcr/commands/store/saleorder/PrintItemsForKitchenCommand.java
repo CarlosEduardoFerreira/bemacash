@@ -71,6 +71,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     private static final String ARG_ORDER_TITLE = "ARG_ORDER_TITLE";
     private static final String EXTRA_PRINTER = "EXTRA_PRINTER";
     private static final String EXTRA_ALIAS_TITLE = "EXTRA_ALIAS_TITLE";
+    private static final String ARG_VOID_ORDER = "ARG_VOID_ORDER";
 
     private String orderGuid;
     private String orderTitle;
@@ -80,6 +81,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     private boolean searchByMac;
     private boolean isUpdated;
     private boolean printAllItems;
+    private boolean isVoidOrder;
 
     @Override
     protected TaskResult doInBackground() {
@@ -91,6 +93,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         searchByMac = getBooleanArg(ARG_SEARCH_BY_MAC);
         orderTitle = getStringArg(ARG_ORDER_TITLE);
         isUpdated = isOrderUpdated();
+        isVoidOrder = getBooleanArg(ARG_VOID_ORDER);
 
         List<ItemInfo> items = loadItems();
         ArrayList<String> guids = new ArrayList<String>(items.size());
@@ -321,7 +324,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         @Override
         protected TaskResult execute(PosPrinter printer) throws IOException {
             final PosKitchenPrinter kitchenPrinter = new PosKitchenPrinter();
-
+            kitchenPrinter.setVoidOrder(isVoidOrder);
             PrintItemsForKitchenProcessor processor = new PrintItemsForKitchenProcessor(items, this.printer, aliasGuid, orderGuid, isUpdated, orderTitle, printAllItems, this.getAppCommandContext());
             processor.print(getContext(), getApp(), kitchenPrinter);
 
@@ -449,6 +452,19 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 .arg(ARG_PRINT_ALL_ITEMS, printAllItems)
                 .arg(ARG_SEARCH_BY_MAC, searchByMac)
                 .arg(ARG_ORDER_TITLE, argOrderTitle)
+                .callback(callback)
+                .queueUsing(context);
+    }
+    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter, boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle, boolean isVoidOrder) {
+        create(PrintItemsForKitchenCommand.class)
+                .arg(ARG_ORDER_GUID, orderGuid)
+                .arg(ARG_FROM_PRINTER, fromPrinter)
+                .arg(ARG_SKIP_PRINTER, skip)
+                .arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning)
+                .arg(ARG_PRINT_ALL_ITEMS, printAllItems)
+                .arg(ARG_SEARCH_BY_MAC, searchByMac)
+                .arg(ARG_ORDER_TITLE, argOrderTitle)
+                .arg(ARG_VOID_ORDER, isVoidOrder)
                 .callback(callback)
                 .queueUsing(context);
     }

@@ -13,6 +13,16 @@ import java.math.BigDecimal;
 public class PosKitchenPrinter extends PosOrderTextPrinter implements IKitchenPrinter {
     public static final int PRINTER_KITCHEN_MAX_TEXT_LEN = 39;
 
+    public boolean isVoidOrder() {
+        return isVoidOrder;
+    }
+
+    public void setVoidOrder(boolean voidOrder) {
+        isVoidOrder = voidOrder;
+    }
+
+    private boolean isVoidOrder;
+
     public PosKitchenPrinter() {
         add(new InitPrintAction());
         //add(new SelectPOSAction());
@@ -30,6 +40,9 @@ public class PosKitchenPrinter extends PosOrderTextPrinter implements IKitchenPr
         tabbed(operatorLabel, operatorName);
         if (orderTitle != null)
             tabbed(orderHolder, orderTitle);
+        if(isVoidOrder){
+            boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, "****VOID****")));
+        }
     }
 
     @Override

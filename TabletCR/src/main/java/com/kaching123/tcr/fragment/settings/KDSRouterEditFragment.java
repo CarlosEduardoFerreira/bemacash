@@ -149,7 +149,7 @@ public class KDSRouterEditFragment extends KeyboardDialogFragment{
 
 
         ipText.setText(getApp().getShopPref().kdsRouterIp().getOr(""));
-        portText.setText(String.valueOf(getApp().getShopPref().kdsRouterPort().getOr(3000)));
+        portText.setText(String.valueOf(getApp().getShopPref().kdsRouterPort().getOr(4000)));
 
         enablePositiveButtons(isValidAll());
     }

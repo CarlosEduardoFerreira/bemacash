@@ -77,7 +77,7 @@ public abstract class KDSCommand extends PublicGroundyTask {
     }
 
     private Socket connectToKds() throws IOException {
-        return new Socket(getApp().getShopPref().kdsRouterIp().getOr(""), getApp().getShopPref().kdsRouterPort().getOr(3000));
+        return new Socket(getApp().getShopPref().kdsRouterIp().getOr(""), getApp().getShopPref().kdsRouterPort().getOr(4000));
     }
 
     protected abstract TaskResult execute() throws IOException;

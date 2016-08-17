@@ -70,7 +70,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
     public void onResume(){
         super.onResume();
         subTitle = (TextView) getView().findViewById(R.id.title_sublabel);
-        subTitle.setText(TcrApplication.get().getShopPref().kdsRouterIp().getOr("") + ":" + TcrApplication.get().getShopPref().kdsRouterPort().getOr(3000));
+        subTitle.setText(TcrApplication.get().getShopPref().kdsRouterIp().getOr("") + ":" + TcrApplication.get().getShopPref().kdsRouterPort().getOr(4000));
     }
 
     @OptionsItem
@@ -83,7 +83,7 @@ public class KDSListFragment extends Fragment implements LoaderCallbacks<Cursor>
         KDSRouterEditFragment.show(getActivity(), new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                subTitle.setText(TcrApplication.get().getShopPref().kdsRouterIp().getOr("") + ":" + TcrApplication.get().getShopPref().kdsRouterPort().getOr(3000));
+                subTitle.setText(TcrApplication.get().getShopPref().kdsRouterIp().getOr("") + ":" + TcrApplication.get().getShopPref().kdsRouterPort().getOr(4000));
             }
         });
     }
