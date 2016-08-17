@@ -196,7 +196,7 @@ public final class UiHelper {
         if (price == null) {
             textView.setText(null);
         } else {
-            String formattedPrice = priceFormat.format(price);
+            String formattedPrice = priceFormat.format(price.setScale(2, BigDecimal.ROUND_HALF_UP));
             textView.setText(formattedPrice);
         }
     }

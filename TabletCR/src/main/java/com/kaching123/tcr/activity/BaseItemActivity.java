@@ -60,6 +60,7 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemRefType;
+import com.kaching123.tcr.model.KDSAliasModel;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.Permission;
@@ -79,6 +80,7 @@ import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.UnitUtil;
+import com.thomashaertel.widget.MultiSpinner;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -136,6 +138,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected static final Uri TAX_GROUP_URI = ShopProvider.getContentUri(TaxGroupTable.URI_CONTENT);
     protected static final Uri PRINTER_ALIAS_URI = ShopProvider.getContentUri(PrinterAliasTable.URI_CONTENT);
     protected static final Uri UNIT_LABEL_URI = ShopProvider.contentUri(ShopStore.UnitLabelTable.URI_CONTENT);
+    protected static final Uri KDS_ALIAS_URI = ShopProvider.contentUri(ShopStore.KDSAliasTable.URI_CONTENT);
 
     protected static final int DEPARTMENT_LOADER_ID = 0;
     protected static final int CATEGORY_LOADER_ID = 1;
@@ -146,6 +149,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected static final int PRODUCT_CODE_LOADER_ID = 6;
     protected static final int UNITS_LABEL_LOADER = 7;
     protected static final int TAX_GROUP2_LOADER_ID = 8;
+    protected static final int KDS_ALIAS_LOADER_ID = 9;
 
     @ViewById
     protected CheckBox taxable;
@@ -173,6 +177,8 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected CheckBox active;
     @ViewById
     protected Spinner printerAlias;
+    @ViewById
+    protected MultiSpinner kdsAlias;
     @ViewById
     protected TextView addons;
     @ViewById
@@ -223,6 +229,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected CategorySpinnerAdapter categoryAdapter;
     protected TaxGroupSpinnerAdapter taxGroupAdapter;
     protected PrinterAliasAdapter printerAliasAdapter;
+    protected KDSAliasAdapter kdsAliasAdapter;
 
     protected long lastBackPressedTime;
 
@@ -311,6 +318,23 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         printerAliasAdapter = new PrinterAliasAdapter(this);
         printerAlias.setAdapter(printerAliasAdapter);
 
+
+//        ArrayAdapter<String>adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+//        adapter.add("Item1");
+//        adapter.add("Item2");
+//        adapter.add("Item3");
+//        adapter.add("Item4");
+//        adapter.add("Item5");
+
+
+        kdsAliasAdapter = new KDSAliasAdapter(this);
+        kdsAlias.setAdapter(kdsAliasAdapter, false, new MultiSpinner.MultiSpinnerListener() {
+            @Override
+            public void onItemsSelected(boolean[] selected) {
+
+            }
+        });
+
         ArrayAdapter<PriceTypeHolder> priceTypeAdapter = new ArrayAdapter<>(this,
                 R.layout.spinner_item_light, new PriceTypeHolder[]{
                 new PriceTypeHolder("Fixed", PriceType.FIXED),
@@ -368,6 +392,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         getSupportLoaderManager().initLoader(TAX_GROUP2_LOADER_ID, null, this);
         getSupportLoaderManager().initLoader(PRINTER_ALIAS_LOADER_ID, null, new PrinterAliasLoader());
         getSupportLoaderManager().initLoader(UNITS_LABEL_LOADER, null, new UnitsLabelLoader());
+        getSupportLoaderManager().initLoader(KDS_ALIAS_LOADER_ID, null, new KDSAliasLoader());
 
         setFieldsFilters();
     }
@@ -977,6 +1002,42 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     }
 
+    private class KDSAliasAdapter extends ObjectsCursorAdapter<KDSAliasModel> {
+
+        public KDSAliasAdapter(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected View newView(int position, ViewGroup parent) {
+            return LayoutInflater.from(getContext()).inflate(R.layout.spinner_item_light, parent, false);
+        }
+
+        @Override
+        protected View bindView(View convertView, int position, KDSAliasModel item) {
+            ((TextView) convertView).setText(item.alias);
+            return convertView;
+        }
+
+        @Override
+        protected View newDropDownView(int position, ViewGroup parent) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.spinner_dropdown_item, parent, false);
+            return view;
+        }
+
+        public int getPosition(String guid) {
+            if (guid == null)
+                return 0;
+
+            for (int i = 0; i < getCount(); i++) {
+                if (guid.equals(getItem(i).guid))
+                    return i;
+            }
+            return 0;
+        }
+
+    }
+
     /*private class ModifierModelLoader implements LoaderCallbacks<List<ModifierModel>> {
 
         @Override
@@ -1025,6 +1086,44 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         @Override
         public void onLoaderReset(Loader<List<PrinterAliasModel>> listLoader) {
+            printerAliasAdapter.changeCursor(null);
+        }
+
+    }
+
+    private class KDSAliasLoader implements LoaderCallbacks<List<KDSAliasModel>> {
+
+        @Override
+        public Loader<List<KDSAliasModel>> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder.forUri(KDS_ALIAS_URI)
+                    .transform(new KDSAliasActivity.KDSAliasConverter())
+                    .build(BaseItemActivity.this);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<KDSAliasModel>> listLoader, List<KDSAliasModel> kdsAliasModels) {
+            ArrayList<KDSAliasModel> models = new ArrayList<>(kdsAliasModels.size() + 1);
+            models.add(new KDSAliasModel(null, "None"));
+            models.addAll(kdsAliasModels);
+
+            kdsAliasAdapter.changeCursor(models);
+
+            final String aliasGuid = model.kdsAliasGuid;
+            boolean[] selected = new boolean[kdsAliasModels.size()];
+            for(int i = 0; i < kdsAliasModels.size(); i++){
+                if(kdsAliasModels.get(i).getGuid().equals(aliasGuid))
+                    selected[i] = true;
+            }
+            if (!TextUtils.isEmpty(aliasGuid)) {
+                kdsAlias.setSelected(selected);
+            }
+
+//            printerAlias.setOnItemSelectedListener(new SpinnerChangeListener(aliasGuid != null ? printerAliasAdapter.getPosition(model.printerAliasGuid) : 0));
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<KDSAliasModel>> listLoader) {
             printerAliasAdapter.changeCursor(null);
         }
 

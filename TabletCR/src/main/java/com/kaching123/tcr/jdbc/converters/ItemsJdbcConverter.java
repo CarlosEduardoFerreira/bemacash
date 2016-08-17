@@ -56,6 +56,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String ORDER_NUM = "ORDER_NUM";
     private static final String DEFAULT_MODIFIER_ID = "DEFAULT_MODIFIER_ID";
     private static final String PRINTER_ID = "PRINTER_ID";
+    private static final String KDS_ID = "KDS_ID";
     private static final String BUTTON_VIEW = "BUTTON_VIEW";
     private static final String HAS_NOTES = "HAS_NOTES";
     private static final String ELIGIBLE_FOR_COMMISSION = "ELIGIBLE_FOR_COMMISSION";
@@ -97,6 +98,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getString(DEFAULT_MODIFIER_ID),
                 rs.getInt(ORDER_NUM),
                 rs.getString(PRINTER_ID),
+                rs.getString(KDS_ID),
                 rs.getInt(BUTTON_VIEW),
                 rs.getBoolean(HAS_NOTES),
                 rs.getBoolean(SERIALIZABLE),
@@ -141,6 +143,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getString(DEFAULT_MODIFIER_ID),
                 rs.getInt(ORDER_NUM),
                 rs.getString(PRINTER_ID),
+                rs.getString(KDS_ID),
                 rs.getInt(BUTTON_VIEW),
                 rs.getBoolean(HAS_NOTES),
                 rs.getBoolean(SERIALIZABLE),
@@ -193,6 +196,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(DEFAULT_MODIFIER_ID, item.defaultModifierGuid)
                 .add(ORDER_NUM, item.orderNum)
                 .add(PRINTER_ID, item.printerAliasGuid)
+                .add(KDS_ID, item.kdsAliasGuid)
                 .add(HAS_NOTES, item.hasNotes)
                 .add(SERIALIZABLE, item.serializable)
                 .add(CODE_TYPE, item.codeType)
@@ -233,6 +237,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(DEFAULT_MODIFIER_ID, item.defaultModifierGuid)
                 .add(ORDER_NUM, item.orderNum)
                 .add(PRINTER_ID, item.printerAliasGuid)
+                .add(KDS_ID, item.kdsAliasGuid)
                 .add(BUTTON_VIEW, item.btnView)
                 .add(HAS_NOTES, item.hasNotes)
                 .add(SERIALIZABLE, item.serializable)

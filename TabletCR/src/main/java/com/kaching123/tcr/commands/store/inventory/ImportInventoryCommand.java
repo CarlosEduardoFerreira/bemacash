@@ -519,6 +519,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 null,
                 0,
                 null,
+                null,
                 0,
                 false,
                 false,

@@ -57,6 +57,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public ItemRefType refType;
     public String referenceItemGuid;
     public boolean ignoreMovementupdate;
+    public String kdsAliasGuid;
     public BigDecimal loyaltyPoints;
     public boolean excludeFromLoyaltyPlan;
 
@@ -95,6 +96,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      String defaultModifierGuid,
                      int orderNum,
                      String printerAliasGuid,
+                     String kdsAliasGuid,
                      int btnView,
                      boolean hasNotes,
                      boolean serializable,
@@ -134,6 +136,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.orderNum = orderNum;
         this.defaultModifierGuid = defaultModifierGuid;
         this.printerAliasGuid = printerAliasGuid;
+        this.kdsAliasGuid = kdsAliasGuid;
         this.btnView = btnView;
         this.hasNotes = hasNotes;
         this.serializable = serializable;
@@ -176,6 +179,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.orderNum = itemModel.orderNum;
         this.defaultModifierGuid = itemModel.defaultModifierGuid;
         this.printerAliasGuid = itemModel.printerAliasGuid;
+        this.kdsAliasGuid = itemModel.kdsAliasGuid;
         this.btnView = itemModel.btnView;
         this.hasNotes = itemModel.hasNotes;
         this.serializable = itemModel.serializable;
@@ -222,6 +226,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.DEFAULT_MODIFIER_GUID, defaultModifierGuid);
         values.put(ItemTable.ORDER_NUM, orderNum);
         values.put(ItemTable.PRINTER_ALIAS_GUID, printerAliasGuid);
+        values.put(ItemTable.KDS_ALIAS_GUID, kdsAliasGuid);
         values.put(ItemTable.BUTTON_VIEW, btnView);
         values.put(ItemTable.HAS_NOTES, hasNotes);
         values.put(ItemTable.SERIALIZABLE, serializable);
