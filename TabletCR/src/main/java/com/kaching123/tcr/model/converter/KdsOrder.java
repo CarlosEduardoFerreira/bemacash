@@ -108,4 +108,5 @@ public class KdsOrder {
         this.id = id;
         this.transType = 2;
     }
+
 }
