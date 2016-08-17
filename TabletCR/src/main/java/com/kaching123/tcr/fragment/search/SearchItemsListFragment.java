@@ -143,6 +143,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 ItemTable.DEFAULT_MODIFIER_GUID,
                 ItemTable.ORDER_NUM,
                 ItemTable.PRINTER_ALIAS_GUID,
+                ItemTable.KDS_ALIAS_GUID,
                 ItemTable.BUTTON_VIEW,
                 ItemTable.HAS_NOTES,
                 ItemTable.SERIALIZABLE,
@@ -158,7 +159,7 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
         @Override
         public CategoryItemViewModel apply(Cursor c) {
             super.apply(c);
-            if(c == null) return null;
+            if (c == null) return null;
             return new CategoryItemViewModel(
                     c.getString(indexHolder.get(ItemTable.GUID)),
                     c.getString(indexHolder.get(ItemTable.CATEGORY_ID)),

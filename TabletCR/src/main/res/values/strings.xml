@@ -1435,7 +1435,7 @@
     <string name="credit_receipt_header_total_used_amount">Total:</string>
     <string name="credit_receipt_filter_num">Receipt:</string>
     <string name="credit_receipt_filter_total">Receipts found</string>
-    <string name="credit_receipt_print_register_id">Register ID:</string>
+    <string name="credit_receipt_print_register_id">Register Description:</string>
     <string name="credit_receipt_print_date">Date:</string>
     <string name="credit_receipt_print_subtitle">Store Credit</string>
     <string name="credit_receipt_print_amount">Amount:</string>

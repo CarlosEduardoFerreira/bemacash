@@ -47,7 +47,7 @@ public class KdsOrder {
     String serverName;
     @Element(name = "Destination")
     String destination;
-    @Element(name = "GuestTable", required = false)
+    @Element(name = "CustomersName", required = false)
     String guestTable;
     @Element(name = "UserInfo", required = false)
     String userInfo;
