@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.commands.device.DeleteKDSCommand;
 import com.kaching123.tcr.commands.store.inventory.DeleteKDSAliasCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
@@ -123,6 +124,7 @@ public class KDSAliasActivity extends SuperBaseActivity {
     }
 
     private void handleRemove(final KDSAliasModel model) {
+        DeleteKDSCommand.sync(KDSAliasActivity.this, model.guid);
         AlertDialogFragment.show(
                 this,
                 DialogType.CONFIRM_NONE,

@@ -189,11 +189,42 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
             }
             String str = new String( baos.toByteArray(), "UTF-8");
             str = removeTags(str);
+//            str = CharacterFilter(str);
             writeToFile(str);
             byte[] command = buildXmlCommand(str);
             OutputStream outputStream = socket.getOutputStream();
             outputStream.write(command);
             return succeeded();
+        }
+
+        private static final String SMALL_AMPERSAND= "&lt;";
+        private static final String BIG_AMPERSAND= "&gt;";
+        private static final String AND_AMPERSAND= "&amp;";
+        private static final String QUOTE_AMPERSAND= "&apos;";
+        private static final String DOUBLE_QUOTE_AMPERSAND= "&quot;";
+        private static final String PERCENT_AMPERSAND= "&#37;";
+
+        private String CharacterFilter(String name)
+        {
+            name.replace("Item","ssss");
+            name.replace("<",SMALL_AMPERSAND);
+            name.replace(">",BIG_AMPERSAND);
+            name.replace("&",AND_AMPERSAND);
+            name.replace("\'",QUOTE_AMPERSAND);
+            name.replace("\"",DOUBLE_QUOTE_AMPERSAND);
+            name.replace("%",PERCENT_AMPERSAND);
+            return name;
+        }
+
+        private String CharacterFilterReverse(String name)
+        {
+            name.replace(SMALL_AMPERSAND, "<");
+            name.replace(BIG_AMPERSAND, ">");
+            name.replace(AND_AMPERSAND, "&");
+            name.replace(QUOTE_AMPERSAND, "\'");
+            name.replace(DOUBLE_QUOTE_AMPERSAND, "\"");
+            name.replace(PERCENT_AMPERSAND, "%");
+            return name;
         }
 
         private void writeToFile(String data) {

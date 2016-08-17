@@ -11,12 +11,6 @@ import java.util.ArrayList;
  */
 @Root(name = "Item")
 public class KdsOrderItem {
-    private static final String SMALL_AMPERSAND= "&lt;";
-    private static final String BIG_AMPERSAND= "&gt;";
-    private static final String AND_AMPERSAND= "&amp;";
-    private static final String QUOTE_AMPERSAND= "&apos;";
-    private static final String DOUBLE_QUOTE_AMPERSAND= "&quot;";
-    private static final String PERCENT_AMPERSAND= "&#37;";
     @Element(name = "ID")
     String id;
     @Element(name = "TransType")
@@ -56,14 +50,4 @@ public class KdsOrderItem {
         this.kdsStation = kdsStation;
     }
 
-    private String CharacterFilter(String name)
-    {
-        name.replace("<",SMALL_AMPERSAND);
-        name.replace(">",BIG_AMPERSAND);
-        name.replace("&",AND_AMPERSAND);
-        name.replace("\'",QUOTE_AMPERSAND);
-        name.replace("\"",DOUBLE_QUOTE_AMPERSAND);
-        name.replace("%",PERCENT_AMPERSAND);
-        return name;
-    }
 }

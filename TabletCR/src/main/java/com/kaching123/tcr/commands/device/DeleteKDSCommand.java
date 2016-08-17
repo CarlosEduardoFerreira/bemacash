@@ -38,6 +38,14 @@ public class DeleteKDSCommand extends PublicGroundyTask {
         create(DeleteKDSCommand.class).callback(callback).arg(ARG_GUID, kdsGuid).queueUsing(context);
     }
 
+    public static void sync(Context context, String aliasGuid)
+    {
+        ProviderAction
+                .delete(URI_KDS)
+                .where(KDSTable.ALIAS_GUID + " = ?", aliasGuid)
+                .perform(context);
+    }
+
     public static void start(Context context, String kdsGuid){
         create(DeleteKDSCommand.class).arg(ARG_GUID, kdsGuid).queueUsing(context);
     }

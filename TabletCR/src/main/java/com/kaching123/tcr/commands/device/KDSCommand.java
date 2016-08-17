@@ -57,6 +57,7 @@ public abstract class KDSCommand extends PublicGroundyTask {
         socket = null;
         TaskResult result;
         try {
+            // todo if kds test need
              socket = connectToKds();
              result = execute();
         } catch (IOException e){
