@@ -25,6 +25,13 @@ import java.net.UnknownHostException;
  */
 public abstract class KDSCommand extends PublicGroundyTask {
 
+    private static final String SMALL_AMPERSAND= "&lt;";
+    private static final String BIG_AMPERSAND= "&gt;";
+    private static final String AND_AMPERSAND= "&amp;";
+    private static final String QUOTE_AMPERSAND= "&apos;";
+    private static final String DOUBLE_QUOTE_AMPERSAND= "&quot;";
+    private static final String PERCENT_AMPERSAND= "&#37;";
+
     protected Socket socket;
 
     public enum KDSError {NOT_CONFIGURED, OFFLINE, IP_NOT_FOUND}
@@ -117,6 +124,17 @@ public abstract class KDSCommand extends PublicGroundyTask {
         str = str.replace("<modifiers>","");
         str = str.replace("</modifiers>","");
         return str;
+    }
+
+    public String CharacterFilter(String name)
+    {
+        name.replace("<",SMALL_AMPERSAND);
+        name.replace(">",BIG_AMPERSAND);
+        name.replace("&",AND_AMPERSAND);
+        name.replace("\'",QUOTE_AMPERSAND);
+        name.replace("\"",DOUBLE_QUOTE_AMPERSAND);
+        name.replace("%",PERCENT_AMPERSAND);
+        return name;
     }
 
     public static abstract class BaseKdsCallback {
