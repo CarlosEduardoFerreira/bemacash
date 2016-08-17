@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditVariantMatrixItemCommand;
@@ -145,7 +146,7 @@ public class EditItemActivity extends BaseCommonItemActivity {
     }
 
     @Override
-    protected void callCommand(ItemModel model) {
+    protected void callCommand(ItemModel model, final AddItemCallBack callaBck) {
         if (parentItemMatrix == null) {
             if (parentItem != null) {
                 model.referenceItemGuid = parentItem.guid;
@@ -154,7 +155,19 @@ public class EditItemActivity extends BaseCommonItemActivity {
             EditVariantMatrixItemCommand.start(EditItemActivity.this, parentItemMatrix);
             model.referenceItemGuid = null;
         }
-        EditItemCommand.start(this, model);
+        EditItemCommand.start(this, model, new AddItemCommand.AddItemCommandCallback()
+        {
+
+            @Override
+            protected void handleSuccess() {
+                callaBck.success();
+        }
+
+            @Override
+            protected void handleFailure() {
+
+        }
+        });
     }
 
     @Override

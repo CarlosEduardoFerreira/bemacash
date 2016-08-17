@@ -111,8 +111,8 @@ public class EditReferenceItemCommand extends AsyncCommand {
         return success;
     }
 
-    public static void start(Context context, ItemModel item) {
-        create(EditReferenceItemCommand.class).arg(ARG_ITEM, item).queueUsing(context);
+    public static void start(Context context, ItemModel item, AddItemCommand.AddItemCommandCallback callback) {
+        create(EditReferenceItemCommand.class).arg(ARG_ITEM, item).callback(callback).queueUsing(context);
     }
 
     /**

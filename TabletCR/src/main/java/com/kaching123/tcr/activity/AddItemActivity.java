@@ -89,7 +89,7 @@ public class AddItemActivity extends BaseCommonItemActivity {
     }
 
     @Override
-    protected void callCommand(ItemModel model) {
+    protected void callCommand(ItemModel model, final AddItemCallBack callaBck) {
         if (parentItemMatrix == null) {
             if (parentItem != null) {
                 model.referenceItemGuid = parentItem.guid;
@@ -98,7 +98,19 @@ public class AddItemActivity extends BaseCommonItemActivity {
             EditVariantMatrixItemCommand.start(AddItemActivity.this, parentItemMatrix);
             model.referenceItemGuid = null;
         }
-        AddItemCommand.start(this, model);
+        AddItemCommand.start(this, model, new AddItemCommand.AddItemCommandCallback()
+        {
+
+            @Override
+            protected void handleSuccess() {
+                callaBck.success();
+            }
+
+            @Override
+            protected void handleFailure() {
+
+            }
+        });
     }
 
     public static void start(Context context, String barcode) {

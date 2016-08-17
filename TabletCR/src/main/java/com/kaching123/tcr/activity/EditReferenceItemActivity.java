@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditReferenceItemCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
@@ -63,9 +64,22 @@ public class EditReferenceItemActivity extends BaseReferenceItemActivity {
     }
 
     @Override
-    protected void callCommand(ItemModel model) {
-        EditReferenceItemCommand.start(this, model);
+    protected void callCommand(ItemModel model, final AddItemCallBack callaBck) {
+        EditReferenceItemCommand.start(this, model, new AddItemCommand.AddItemCommandCallback()
+        {
+
+            @Override
+            protected void handleSuccess() {
+                callaBck.success();
+            }
+
+            @Override
+            protected void handleFailure() {
+
+            }
+        });
     }
+
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {

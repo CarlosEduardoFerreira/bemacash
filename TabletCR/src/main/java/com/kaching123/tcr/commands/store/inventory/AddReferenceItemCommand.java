@@ -55,8 +55,8 @@ public class AddReferenceItemCommand extends AsyncCommand {
         return batch;
     }
 
-    public static void start(Context context, ItemModel item) {
-        create(AddReferenceItemCommand.class).arg(ARG_ITEM, item).queueUsing(context);
+    public static void start(Context context, ItemModel item, AddItemCommand.AddItemCommandCallback callback) {
+        create(AddReferenceItemCommand.class).arg(ARG_ITEM, item).callback(callback).queueUsing(context);
     }
 
     /**

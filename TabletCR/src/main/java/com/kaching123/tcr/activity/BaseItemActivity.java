@@ -521,8 +521,14 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected void buttonClicked() {
         if (validateForm()) {
             collectDataToModel(model);
-            callCommand(model);
-            saveItemKdsAlias(selectedKds);
+            callCommand(model, new AddItemCallBack()
+            {
+                @Override
+                public void success() {
+                    saveItemKdsAlias(selectedKds);
+
+                }
+            });
             this.finish();
         }
     }
@@ -530,12 +536,23 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
     protected boolean saveItem() {
         if (validateForm()) {
             collectDataToModel(model);
-            callCommand(model);
+            callCommand(model, new AddItemCallBack()
+            {
+                @Override
+                public void success() {
+                    saveItemKdsAlias(selectedKds);
+
+                }
+            });
             saveItemKdsAlias(selectedKds);
             return true;
         } else {
             return false;
         }
+    }
+
+    public interface AddItemCallBack{
+        void success();
     }
 
     protected void saveItemKdsAlias(boolean[] selected) {
@@ -627,7 +644,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 });
     }
 
-    protected abstract void callCommand(ItemModel model);
+    protected abstract void callCommand(ItemModel model, AddItemCallBack callBack);
 
     protected void setFieldsFilters() {
         InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};

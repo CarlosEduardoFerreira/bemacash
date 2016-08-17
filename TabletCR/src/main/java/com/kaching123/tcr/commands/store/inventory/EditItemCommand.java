@@ -131,9 +131,10 @@ public class EditItemCommand extends AsyncCommand {
         return sql;
     }
 
-    public static void start(Context context, ItemModel item) {
+    public static void start(Context context, ItemModel item, AddItemCommand.AddItemCommandCallback callback) {
         create(EditItemCommand.class)
                 .arg(ARG_ITEM, item)
+                .callback(callback)
                 .queueUsing(context);
     }
 

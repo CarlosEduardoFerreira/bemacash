@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.widget.ImageButton;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
 import com.kaching123.tcr.commands.store.inventory.AddReferenceItemCommand;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
@@ -37,8 +38,20 @@ public class AddReferenceItemActivity extends BaseReferenceItemActivity {
     }
 
     @Override
-    protected void callCommand(ItemModel model) {
-        AddReferenceItemCommand.start(this, model);
+    protected void callCommand(ItemModel model, final AddItemCallBack callBack) {
+        AddReferenceItemCommand.start(this, model, new AddItemCommand.AddItemCommandCallback()
+        {
+
+            @Override
+            protected void handleSuccess() {
+                callBack.success();
+            }
+
+            @Override
+            protected void handleFailure() {
+
+            }
+        });
     }
 
     @Override

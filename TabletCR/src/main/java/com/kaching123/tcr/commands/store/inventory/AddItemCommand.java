@@ -18,6 +18,8 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnFailure;
+import com.telly.groundy.annotations.OnSuccess;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,8 +89,8 @@ public class AddItemCommand extends AsyncCommand {
         return batch;
     }
 
-    public static void start(Context context, ItemModel item) {
-        create(AddItemCommand.class).arg(ARG_ITEM, item).queueUsing(context);
+    public static void start(Context context, ItemModel item, AddItemCommandCallback callback) {
+        create(AddItemCommand.class).arg(ARG_ITEM, item).callback(callback).queueUsing(context);
     }
 
     /**
@@ -115,4 +117,21 @@ public class AddItemCommand extends AsyncCommand {
         }
     }
 
+    public static abstract class AddItemCommandCallback {
+
+        @OnSuccess(AddItemCommand.class)
+        public void onSuccess() {
+            handleSuccess();
+        }
+
+        @OnFailure(AddItemCommand.class)
+        public void onFailure() {
+            handleFailure();
+        }
+
+        protected abstract void handleSuccess();
+
+        protected abstract void handleFailure();
+
+    }
 }

@@ -254,7 +254,17 @@ public class VariantsMatrixFragment extends Fragment {
 
     @UiThread
     protected void callAddItemCommand(ItemModel model) {
-        AddItemCommand.start(getActivity(), model);
+        AddItemCommand.start(getActivity(), model, new AddItemCommand.AddItemCommandCallback() {
+            @Override
+            protected void handleSuccess() {
+
+            }
+
+            @Override
+            protected void handleFailure() {
+
+            }
+        });
     }
 
     @UiThread
