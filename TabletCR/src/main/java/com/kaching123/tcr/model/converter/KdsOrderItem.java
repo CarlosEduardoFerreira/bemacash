@@ -51,7 +51,7 @@ public class KdsOrderItem {
     public KdsOrderItem (String id, int transType, String name, String quantity, String kdsStation){
         this.id = id;
         this.transType = transType;
-        this.name = CharacterFilter(name);
+        this.name = name;
         this.quantity = quantity;
         this.kdsStation = kdsStation;
     }
