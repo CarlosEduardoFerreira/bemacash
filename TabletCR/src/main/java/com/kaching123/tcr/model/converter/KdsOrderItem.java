@@ -61,7 +61,7 @@ public class KdsOrderItem {
         name.replace("<",SMALL_AMPERSAND);
         name.replace(">",BIG_AMPERSAND);
         name.replace("&",AND_AMPERSAND);
-        name.replace("'",QUOTE_AMPERSAND);
+        name.replace("\'",QUOTE_AMPERSAND);
         name.replace("\"",DOUBLE_QUOTE_AMPERSAND);
         name.replace("%",PERCENT_AMPERSAND);
         return name;
