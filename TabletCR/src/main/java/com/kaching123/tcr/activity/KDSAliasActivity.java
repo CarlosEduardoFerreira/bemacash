@@ -1,5 +1,6 @@
 package com.kaching123.tcr.activity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.device.DeleteKDSCommand;
@@ -122,9 +124,19 @@ public class KDSAliasActivity extends SuperBaseActivity {
             TextView title;
         }
     }
+    private static final Uri KDS_URI = ShopProvider.getContentUri(ShopStore.ItemKDSTable.URI_CONTENT);
 
     private void handleRemove(final KDSAliasModel model) {
         DeleteKDSCommand.sync(KDSAliasActivity.this, model.guid);
+
+        ContentValues cv = new ContentValues();
+        cv.put(ShopStore.ItemKDSTable.IS_DELETED, 1);
+        ProviderAction.update(KDS_URI)
+                .values(cv)
+                .where(ShopStore.ItemKDSTable.KDS_ALIAS_GUID + " = ?", model.guid)
+                .perform(getApplicationContext());
+
+
         AlertDialogFragment.show(
                 this,
                 DialogType.CONFIRM_NONE,
