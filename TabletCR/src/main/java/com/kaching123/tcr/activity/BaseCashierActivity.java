@@ -119,6 +119,7 @@ import com.kaching123.tcr.fragment.tendering.ChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.ChooseCustomerDialog.CustomerPickListener;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment.RefundAmount;
+import com.kaching123.tcr.fragment.tendering.payment.PayCashFragmentDialog;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
@@ -1038,7 +1039,17 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 GiftCardFragmentDialog.show(BaseCashierActivity.this, new GiftCardFragmentDialog.IGiftCardListener() {
                     @Override
                     public void Reload() {
+                        PayCashFragmentDialog.show(BaseCashierActivity.this, null, new PayCashFragmentDialog.ISaleCashListener() {
+                            @Override
+                            public void onPaymentAmountSelected(BigDecimal amount, BigDecimal changeAmount) {
 
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
                     }
 
                     @Override
