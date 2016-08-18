@@ -17,6 +17,13 @@
         android:orderInCategory="@integer/menu_order_default"/>
 
     <item
+        android:icon="@drawable/gift_card_dashboard_button_bg"
+        android:id="@+id/action_card"
+        android:title="@string/cashier_action_gift_card"
+        android:showAsAction="collapseActionView|always"
+        android:orderInCategory="@integer/menu_order_default"/>
+
+    <item
         android:icon="@drawable/prepaid_dashborad_button_bg"
         android:id="@+id/action_prepaid"
         android:showAsAction="always"
