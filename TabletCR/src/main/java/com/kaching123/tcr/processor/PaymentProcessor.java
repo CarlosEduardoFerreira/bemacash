@@ -1248,6 +1248,22 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         return true;
     }
 
+    private boolean needGiftCardBilling(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions) {
+        Cursor cursor = ProviderAction.query(URI_SALE_ITEMS_PREPAID)
+                .where(ShopSchema2.SaleOrderItemsView2.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
+                .perform(context);
+
+        List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor,
+                new SaleOrderItemViewModelWrapFunction(context));
+
+        List<SaleOrderItemViewModel> prepaidList = getPrepaidSaleOrderItems(saleItemsList);
+        if (prepaidList.size() == 0) {
+            return false;
+        }
+        callback.onBilling(transactions, prepaidList);
+        return true;
+    }
+
     private List<SaleOrderItemViewModel> getPrepaidSaleOrderItems(List<SaleOrderItemViewModel> saleItemsList) {
         List<SaleOrderItemViewModel> list = new ArrayList<SaleOrderItemViewModel>();
         for (SaleOrderItemViewModel item : saleItemsList) {

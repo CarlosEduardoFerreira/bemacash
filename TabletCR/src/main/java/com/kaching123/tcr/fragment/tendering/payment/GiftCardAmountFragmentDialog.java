@@ -21,6 +21,7 @@ import com.kaching123.tcr.component.CashAdjustableNumpadView.IExactClickListener
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.CustomEditBox;
+import com.kaching123.tcr.component.GiftCardAmountAdjustableNumpadView;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -48,24 +49,18 @@ import static com.kaching123.tcr.fragment.UiHelper.priceFormat;
  * @author Ivan v. Rikhmayer
  */
 @EFragment
-public class GiftCardAmountFragmentDialog extends StyledDialogFragment implements CustomEditBox.IKeyboardSupport, IDrawerFriend {
+public class GiftCardAmountFragmentDialog extends StyledDialogFragment implements CustomEditBox.IKeyboardSupport {
 
-    private static final String DIALOG_NAME = "PayCashFragmentDialog";
+    private static final String DIALOG_NAME = "GiftCardAmountFragmentDialog";
 
     @ViewById
     protected CustomEditBox charge;
 
     @ViewById
-    protected TextView pending;
-
-    @ViewById
     protected ViewFlipper flipper;
 
     @ViewById
-    protected TextView total;
-
-    @ViewById
-    protected CashAdjustableNumpadView containerHolder;
+    protected GiftCardAmountAdjustableNumpadView containerHolder;
 
     @ColorRes(R.color.dlg_text_green)
     protected int colorPaymentOk;
@@ -76,23 +71,13 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
     @ColorRes(R.color.dlg_btn_text_disabled)
     protected int colorPaymentDisabled;
 
-    protected Transaction transaction;
-
-    protected ISaleCashListener listener;
-    private TaskHandler waitCashTask;
+    protected IGiftCardListener listener;
 
     @Override
     public void onStop() {
         super.onStop();
-        cancelWaitCashTask();
     }
 
-    public void cancelWaitCashTask() {
-        if (waitCashTask != null) {
-            waitCashTask.cancel(getActivity(), 0, null);
-            waitCashTask = null;
-        }
-    }
 
     @Override
     public void attachMe2Keyboard(CustomEditBox v) {
@@ -107,7 +92,7 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
     @AfterViews
     protected void attachViews() {
         containerHolder.attachEditView(charge);
-        containerHolder.setExactClickListener(new IExactClickListener() {
+        containerHolder.setExactClickListener(new GiftCardAmountAdjustableNumpadView.IExactClickListener() {
             @Override
             public void onExactClicked() {
                 getPositiveButtonListener().onClick();
@@ -121,13 +106,13 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
         charge.setKeyboardSupportConteiner(this);
         charge.setFilters(new InputFilter[]{new CurrencyFormatInputFilter()});
         charge.addTextChangedListener(new CurrencyTextWatcher(charge));
-        charge.setEditListener(new CustomEditBox.IEditListener() {
-
-            @Override
-            public boolean onChanged(String text) {
-                return try2GetCash(false);
-            }
-        });
+//        charge.setEditListener(new CustomEditBox.IEditListener() {
+//
+//            @Override
+//            public boolean onChanged(String text) {
+//                return try2GetCash(false);
+//            }
+//        });
     }
 
     @Override
@@ -144,10 +129,7 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
 
     private void initLabels() {
         charge.requestFocus();
-        total.setText(UiHelper.valueOf(transaction.getAmount()));
-        pending.setText(UiHelper.valueOf(BigDecimal.ZERO));
         getPositiveButton().setTypeface(null, Typeface.BOLD);
-        containerHolder.exactValue = transaction.getAmount();
     }
 
     @AfterTextChange
@@ -159,9 +141,11 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
         BigDecimal tenderAmount = BigDecimal.ZERO;
         BigDecimal changeAmount = BigDecimal.ZERO;
         String chargeStr = charge.getText().toString();
+
         try {
             tenderAmount = UiHelper.parseBrandDecimalInput(chargeStr);
-            resumeNavigationButtons(tenderAmount);
+            if (tenderAmount.compareTo(BigDecimal.ZERO) == 1)
+                turnPositiveButton(true);
         } catch (NumberFormatException e) {
             turnPositiveButton(false);
         }
@@ -170,17 +154,6 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
         }
     }
 
-    private void resumeNavigationButtons(final BigDecimal receivedAmount) {
-        BigDecimal changeAmount = receivedAmount.subtract(transaction.getAmount());
-        if (changeAmount.compareTo(BigDecimal.ZERO) >= 0) {
-            GiftCardAmountFragmentDialog.this.pending.setText(priceFormat(changeAmount));
-            transaction.changeValue = changeAmount;
-            turnPositiveButton(true);
-        } else {
-            turnPositiveButton(false);
-            GiftCardAmountFragmentDialog.this.pending.setText(priceFormat(BigDecimal.ZERO));
-        }
-    }
 
     private IDisplayBinder getDisplayBinder() {
         if (getActivity() instanceof IDisplayBinder) {
@@ -189,14 +162,9 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
         return null;
     }
 
-    public GiftCardAmountFragmentDialog setTransaction(Transaction transaction) {
-        this.transaction = transaction;
-        return this;
-    }
-
     @Override
     protected int getDialogContentLayout() {
-        return R.layout.payment_cash_fragment;
+        return R.layout.gift_card_amount_fragment;
     }
 
     @Override
@@ -224,7 +192,8 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
         return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
-                return try2GetCash(false);
+                listener.onPaymentAmountSelected(new BigDecimal(charge.getText().toString()));
+                return true;
             }
         };
     }
@@ -234,94 +203,14 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
         return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
-                tryCancel();
-                return false;
+                return true;
             }
         };
     }
 
-    public GiftCardAmountFragmentDialog setListener(ISaleCashListener listener) {
+    public GiftCardAmountFragmentDialog setListener(IGiftCardListener listener) {
         this.listener = listener;
         return this;
-    }
-
-    private boolean tryCancel() {
-        if (listener != null) {
-            listener.onCancel();
-            cancelWaitCashTask();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean try2GetCash(boolean searchByMac) {
-        Logger.d("PayCashFragmentDialog: try2GetCash()");
-        if (TextUtils.isEmpty(charge.getText())) {
-            Toast.makeText(getActivity(), R.string.pay_toast_zero, Toast.LENGTH_LONG).show();
-            return false;
-        }
-        WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_open_drawer));
-        setButtonsEnabled(false);
-        waitCashTask = WaitForCashInDrawerCommand.start(getActivity(), searchByMac, new OpenDrawerListener(this));
-        return false;
-    }
-
-    @Override
-    public TaskHandler getHandler() {
-        return waitCashTask;
-    }
-
-    @Override
-    public void setHandler(TaskHandler handler) {
-        waitCashTask = handler;
-    }
-
-    private void flip() {
-        flipper.showNext();
-    }
-
-    @Override
-    public void onDrawerOpened() {
-        Logger.d("PayCashFragmentDialog: onDrawerOpened()");
-        WaitDialogFragment.hide(getActivity());
-        //TODO change image ???
-        flipper.setDisplayedChild(1);
-    }
-
-    @Override
-    public void onFailure() {
-        Logger.d("PayCashFragmentDialog: onFailure()");
-        WaitDialogFragment.hide(getActivity());
-    }
-
-    @Override
-    public void onPopupCancelled() {
-        tryCancel();
-    }
-
-    @Override
-    public void onCashReceived() {
-        Logger.d("PayCashFragmentDialog: onCashReceived()");
-        WaitDialogFragment.hide(getActivity());
-        PaymentGateway.CASH.gateway().sale(getActivity(), this, null, null, transaction);
-    }
-
-    @OnFailure(CashSaleCommand.class)
-    public void onTransactionFailure() {
-        Logger.d("OnFail AddTransactionCommand received signal");
-    }
-
-    @OnSuccess(CashSaleCommand.class)
-    public void onTransactionSuccess() {
-        getPositiveButton().setEnabled(true);
-        listener.onPaymentAmountSelected(transaction.getAmount(), transaction.getChangeAmount());
-        Logger.d("OnSuccess AddTransactionCommand received signal");
-    }
-
-    private void setButtonsEnabled(boolean on) {
-        turnPositiveButton(on);
-        turnNegativeButton(on);
     }
 
     private void turnPositiveButton(boolean on) {
@@ -329,9 +218,6 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
 
         getPositiveButton().setEnabled(on);
         getPositiveButton().setTextColor(on ? colorPaymentOk : colorPaymentDisabled);
-
-        BigDecimal pendingAmount = UiHelper.parseBigDecimal(pending, BigDecimal.ZERO);
-        pending.setTextColor(pendingAmount.compareTo(BigDecimal.ZERO) == 1 ? colorPaymentOk : colorPaymentDisabled);
     }
 
     private void turnNegativeButton(boolean on) {
@@ -339,20 +225,15 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
         getNegativeButton().setEnabled(on);
     }
 
-    public static interface ISaleCashListener {
+    public static interface IGiftCardListener {
 
-        void onPaymentAmountSelected(BigDecimal amount, BigDecimal changeAmount);
+        void onPaymentAmountSelected(BigDecimal amount);
 
         void onCancel();
 
     }
 
-    public static GiftCardAmountFragmentDialog show(FragmentActivity context, Transaction transaction, ISaleCashListener listener) {
-        Logger.d("About to show second dialog");
-        return DialogUtil.show(context, DIALOG_NAME, GiftCardAmountFragmentDialog_.builder().build()).setListener(listener).setTransaction(transaction);
-    }
-
-    public static GiftCardAmountFragmentDialog show(FragmentActivity context, ISaleCashListener listener) {
+    public static GiftCardAmountFragmentDialog show(FragmentActivity context, IGiftCardListener listener) {
         Logger.d("About to show second dialog");
         return DialogUtil.show(context, DIALOG_NAME, GiftCardAmountFragmentDialog_.builder().build()).setListener(listener);
     }

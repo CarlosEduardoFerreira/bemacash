@@ -60,7 +60,7 @@ public class ItemExModel extends ItemModel {
                 "Gift Card",
                 null,
                 null,
-                null,
+                "Gift Card",
                 PriceType.FIXED,
                 itemPrice,
                 BigDecimal.ONE,
@@ -95,6 +95,15 @@ public class ItemExModel extends ItemModel {
         this.modifiersCount = 0;
         this.addonsCount = 0;
         this.optionalCount = 0;
+        this.departmentGuid = null;
+
+        this.tax = null;
+        this.tax2 = null;
+        if (TextUtils.isEmpty(unitsLabelId)) {
+            this.shortCut = unitsLabel;
+        } else {
+            this.shortCut = null;
+        }
     }
 
     public ItemExModel(PrepaidSendResult result) {

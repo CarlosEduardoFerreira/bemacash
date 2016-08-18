@@ -136,6 +136,7 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
     {
         PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX.gateway();
         listener.Reload();
+        this.dismiss();
 //        paxGateway.reload(getActivity(), reloadGiftCardCallBack(),  null, null, transaction, reloadResponse);
     }
 

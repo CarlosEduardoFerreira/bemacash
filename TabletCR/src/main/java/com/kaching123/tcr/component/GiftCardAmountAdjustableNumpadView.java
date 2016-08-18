@@ -22,25 +22,8 @@ import java.util.List;
 @EViewGroup(R.layout.gift_card_amount_adjustable_numpad_view)
 public class GiftCardAmountAdjustableNumpadView extends KeyboardView {
 
-    private static final List<Integer> BONDS_LIST = new ArrayList<Integer>();
 
     public BigDecimal exactValue;
-
-    static {
-        BONDS_LIST.add(new Integer(1));
-        //BONDS_LIST.add(new Integer(2));
-        BONDS_LIST.add(new Integer(5));
-        BONDS_LIST.add(new Integer(10));
-        BONDS_LIST.add(new Integer(20));
-        BONDS_LIST.add(new Integer(50));
-        BONDS_LIST.add(new Integer(100));
-    }
-
-    @ViewById
-    protected GridView bonds;
-
-    @ViewById
-    protected View btnExact;
 
     private IExactClickListener exactClickListener;
 
@@ -56,31 +39,10 @@ public class GiftCardAmountAdjustableNumpadView extends KeyboardView {
         super(context, attrs, defStyle);
     }
 
-    public GridView getBonds() {
-        return bonds;
-    }
 
     @AfterViews
     protected void init() {
         super.init();
-        bonds.setAdapter(new BondItemAdapter(getContext(), BONDS_LIST));
-        bonds.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                addValue(Integer.valueOf((int) id));
-            }
-        });
-        btnExact.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                setValue(exactValue);
-                if(exactClickListener != null){
-                    exactClickListener.onExactClicked();
-                }
-            }
-        });
     }
 
     public void setExactClickListener(IExactClickListener exactClickListener) {
