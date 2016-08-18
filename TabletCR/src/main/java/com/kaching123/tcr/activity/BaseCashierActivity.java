@@ -789,8 +789,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         closeSearch();
     }
 
-    protected void setCountZero()
-    {
+    protected void setCountZero() {
         saleItemCount = 0;
         strItemCount = "0";
     }
@@ -1024,13 +1023,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             R.string.dlg_prepaid_app_missing_title,
                             getString(R.string.dlg_prepaid_app_missing));
 
-
+                }
                 return false;
             }
         });
 
         giftcardItem = menu.findItem(R.id.action_card);
-        giftcardItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+        giftcardItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -1058,9 +1057,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
                     }
                 });
-
-                }
                 return false;
+
             }
         });
 
@@ -1567,7 +1565,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void addItemModel(final ItemExModel model, final ArrayList<String> modifierGiud, final ArrayList<String> addonsGuids,
                               final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final boolean checkDrawerState, Unit unit) {
-        if (model == null){
+        if (model == null) {
             notifyLoyaltyProcessorItemAddedToOrder(false);
             return;
         }
@@ -1584,7 +1582,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                          ArrayList<String> modifierGiud,
                          ArrayList<String> addonsGuids,
                          ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, boolean checkDrawerState, Unit unit) {
-        if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit)){
+        if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit)) {
             notifyLoyaltyProcessorItemAddedToOrder(false);
             return;
         }
@@ -1767,9 +1765,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             StartTransactionCommand.start(BaseCashierActivity.this);
             SuccessOrderCommand.start(this, orderGuid, isCreateReturnOrder, new SuccessOrderCommand4ReturnCallback());
         } else if (!isPaying) {
-            if (customer == null || customer.loyaltyPlanId == null){
+            if (customer == null || customer.loyaltyPlanId == null) {
                 doPayment();
-            }else {
+            } else {
                 loyaltyProcessor = LoyaltyProcessor.create(customer.guid, orderGuid);
                 loyaltyProcessor.setCallback(new LoyaltyProcessorCallback() {
                     @Override
@@ -1782,7 +1780,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         doPayment();
                     }
                 })
-                .init(self());
+                        .init(self());
             }
         }
     }
@@ -1864,7 +1862,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     }
 
-    private void notifyLoyaltyProcessorItemAddedToOrder(boolean success){
+    private void notifyLoyaltyProcessorItemAddedToOrder(boolean success) {
         if (loyaltyProcessor == null)
             return;
 
@@ -2311,12 +2309,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     .wrap(new Function<Cursor, SaleOrderViewResult>() {
                         @Override
                         public SaleOrderViewResult apply(Cursor cursor) {
-                            if (!cursor.moveToFirst()){
+                            if (!cursor.moveToFirst()) {
                                 return new SaleOrderViewResult(null, null);
-                            }else{
+                            } else {
                                 SaleOrderModel order = SaleOrderModel.fromView(cursor);
                                 CustomerModel customer = null;
-                                if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))){
+                                if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))) {
                                     customer = CustomerModel.fromOrderView(cursor);
                                 }
                                 return new SaleOrderViewResult(order, customer);
@@ -2865,7 +2863,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    private class SaleIncentivesLoader implements LoaderCallbacks<Cursor>{
+    private class SaleIncentivesLoader implements LoaderCallbacks<Cursor> {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {

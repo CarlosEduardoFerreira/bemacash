@@ -102,6 +102,17 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
 
     }
 
+    public static PaxGateway giftCard() {
+        int sId;
+        int rId;
+
+        sId = PaxProcessorSaleCommand.TRANSACTION_ID_GIFT;
+        rId = PaxProcessorSaleCommand.TRANS_TYPE_RETURN;
+
+        return new PaxGateway(sId, rId, PaxMethod.GIFT);
+
+    }
+
     public PaxGateway(int saleId, int refundId, PaxMethod self) {
         this.saleId = saleId;
         this.refundId = refundId;

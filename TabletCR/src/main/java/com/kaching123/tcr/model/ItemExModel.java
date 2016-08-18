@@ -82,13 +82,16 @@ public class ItemExModel extends ItemModel {
                 0,
                 null,
                 0,
+                0,
                 false,
                 false,
                 null,
                 true,
                 null,
                 null,
-                ItemRefType.Simple);
+                ItemRefType.Simple,
+                null,
+                false);
         this.modifiersCount = 0;
         this.addonsCount = 0;
         this.optionalCount = 0;
