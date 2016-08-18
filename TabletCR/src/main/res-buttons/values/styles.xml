@@ -70,6 +70,11 @@
         <item name="android:paddingLeft">42dp</item>
     </style>
 
+    <style name="LocalizableButton.Gold.36">
+        <item name="android:textSize">24sp</item>
+        <item name="android:paddingLeft">75dp</item>
+    </style>
+
     <style name="LocalizableButton.Yellow">
         <item name="android:textColor">@color/text_yellow</item>
     </style>

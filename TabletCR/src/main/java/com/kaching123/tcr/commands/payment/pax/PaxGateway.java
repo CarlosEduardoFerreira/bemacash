@@ -13,6 +13,7 @@ import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneSaleComma
 import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneSettlementCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorAddTipsCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBalanceCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorGiftCardReloadCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorRefundCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSettlementCommand;
@@ -101,17 +102,6 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
 
     }
 
-    public static PaxGateway giftCard() {
-        int sId;
-        int rId;
-
-        sId = PaxProcessorSaleCommand.TRANSACTION_ID_GIFT;
-        rId = PaxProcessorSaleCommand.TRANS_TYPE_RETURN;
-
-        return new PaxGateway(sId, rId, PaxMethod.GIFT);
-
-    }
-
     public PaxGateway(int saleId, int refundId, PaxMethod self) {
         this.saleId = saleId;
         this.refundId = refundId;
@@ -167,6 +157,24 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
                 saleId,
                 (SaleActionResponse) reloadResponse,
                 (PaxBlackstoneSaleCommand.PaxSaleCommandBaseCallback) callback);
+    }
+
+    public TaskHandler reload(Context context,
+                            Object callback,
+                            User user,
+                            Void ignore,
+                            Transaction transaction,
+                            Object reloadResponse) {
+        transaction.setCode(TransactionStatusCode.OPERATION_COMPLETED_SUCCESSFULLY);
+
+            return PaxProcessorGiftCardReloadCommand.startSaleFromData(
+                    context,
+                    PaxModel.get(),
+                    transaction,
+                    saleId,
+                    (SaleActionResponse) reloadResponse,
+                    (PaxProcessorGiftCardReloadCommand.PaxSaleCommandBaseCallback) callback);
+
     }
 
     @Override
@@ -270,6 +278,11 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
             return PaxProcessorBalanceCommand.start(context, PaxModel.get(), (PaxProcessorBalanceCommand.PaxBalanceCommandBaseCallback) callback);
         }
         return PaxBlackstoneBalanceCommand.start(context, PaxModel.get(), (PaxBlackstoneBalanceCommand.PaxBalanceCommandBaseCallback) callback);
+    }
+
+    public TaskHandler doGiftCardBalance(Context context,
+                                         Object callback) {
+        return PaxProcessorBalanceCommand.start(context, PaxModel.get(), (PaxProcessorBalanceCommand.PaxBalanceCommandBaseCallback) callback);
     }
 
     @Override

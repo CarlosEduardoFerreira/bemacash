@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingTop="10dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
+    <GridLayout
+        android:id="@+id/flipper"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/h1"
+        android:rowCount="1"
+        android:columnCount="2"
+        android:useDefaultMargins="true">
+
+        <Button
+            style="@style/LocalizableButton.Gold.36"
+            android:text="@string/button_gift_balance"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:id="@+id/btn_balance"
+            android:background="@drawable/sale_tender_cash_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <Button
+            style="@style/LocalizableButton.Gold.36"
+            android:layout_marginLeft="30dp"
+            android:text="@string/button_gift_reload"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:id="@+id/btn_reload"
+            android:background="@drawable/sale_tender_card_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+    </GridLayout>
+
+</RelativeLayout>

@@ -366,8 +366,10 @@
     <string name="dlg_edit_tax">Apply tax</string>
     <string name="dlg_edit_order_discount">Order discount</string>
     <string name="dlg_hold_title">Hold On list</string>
+    <string name="dlg_gift_card_title">Please Choose</string>
     <string name="dlg_hold_print_checkbox">Kitchen print</string>
     <string name="btn_new_order">Confirm</string>
+    <string name="btn_gift_card_cancel">Cancel</string>
     <string name="order_footer_total">TOTAL</string>
     <string name="modify_dialog_title">Modification</string>
     <string name="blackstone_pay">Achieving goals...</string>
@@ -1704,6 +1706,8 @@
     <string name="button_cash">Cash</string>
     <string name="button_check">Check</string>
     <string name="button_credit">Credit</string>
+    <string name="button_gift_balance">Gift Card Balance</string>
+    <string name="button_gift_reload">Reload Gift Card</string>
     <string name="button_debit">Debit Card</string>
     <string name="button_ebt_cash">EBT Cash</string>
     <string name="button_ebt_gift_card">Gift Card</string>

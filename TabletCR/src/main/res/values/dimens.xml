@@ -24,6 +24,8 @@
     <dimen name="swipe_dlg_width">352dp</dimen>
     <dimen name="holdon_dlg_width">342dp</dimen>
     <dimen name="holdon_dlg_heigth">279dp</dimen>
+    <dimen name="holdon_gift_card_width">650dp</dimen>
+    <dimen name="holdon_gift_card_heigth">279dp</dimen>
     <dimen name="holdon_dlg_expanded_heigth">390dp</dimen>
     <dimen name="clockin_dlg_width">342dp</dimen>
     <dimen name="wireless_dlg_width">450dp</dimen>

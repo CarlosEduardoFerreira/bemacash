@@ -108,6 +108,7 @@ import com.kaching123.tcr.fragment.edit.SaleOrderDiscountEditFragment;
 import com.kaching123.tcr.fragment.edit.TaxEditFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
+import com.kaching123.tcr.fragment.saleorder.GiftCardFragmentDialog;
 import com.kaching123.tcr.fragment.saleorder.HoldFragmentDialog;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHandlerHandler;
@@ -236,6 +237,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected MenuItem searchItem;
     protected MenuItem prepaidItem;
+    protected MenuItem giftcardItem;
     protected MenuItem itemCount;
 
     private MenuItem holdCounterItem;
@@ -1027,7 +1029,31 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             }
         });
 
-        //todo add gift card listner
+        giftcardItem = menu.findItem(R.id.action_card);
+        giftcardItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //todo add gift card listner
+
+                GiftCardFragmentDialog.show(BaseCashierActivity.this, new GiftCardFragmentDialog.IGiftCardListener() {
+                    @Override
+                    public void Reload() {
+
+                    }
+
+                    @Override
+                    public void Balance() {
+
+                    }
+                });
+                {
+
+                }
+                return false;
+            }
+        });
+
 
         itemCount = menu.findItem(R.id.action_item_account);
         if (itemCount != null && strItemCount != null)
