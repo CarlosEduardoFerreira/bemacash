@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_height="wrap_content"
+                android:id="@+id/container_holder"
+                android:layout_width="fill_parent">
+
+    <com.kaching123.tcr.component.KeyboardView_
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/keyboard"
+        android:layout_height="wrap_content"
+        android:layout_width="@dimen/keyboard_width"/>
+
+</RelativeLayout>
