@@ -11,8 +11,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseCashierActivity;
+import com.kaching123.tcr.activity.BaseCashierActivity.IPriceLevelListener;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.ModifierType;
@@ -34,6 +37,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -48,7 +52,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._sum;
 
 @EFragment(R.layout.search_items_list_fragment)
-public class SearchItemsListFragment extends Fragment implements LoaderCallbacks<List<CategoryItemViewModel>> {
+public class SearchItemsListFragment extends Fragment implements IPriceLevelListener, LoaderCallbacks<List<CategoryItemViewModel>> {
 
     private static final Uri URI_ITEMS = ShopProvider.getContentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID);
 
@@ -99,13 +103,25 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                                 + " like ?" + " OR " + ItemTable.PRODUCT_CODE + " like ? )", 1, 1,
                         "%" + searchText + "%", "%" + searchText + "%")
                 .orderBy(ItemTable.CATEGORY_ID + ", " + ItemTable.ORDER_NUM)
-                .transform(new ItemConverter()).build(getActivity());
+                .wrap(new Function<Cursor, List<CategoryItemViewModel>>() {
+                    @Override
+                    public List<CategoryItemViewModel> apply(Cursor input) {
+                        ItemConverter func = new ItemConverter();
+                        ArrayList<CategoryItemViewModel> output = new ArrayList<>(input.getCount());
+                        while (input.moveToNext()){
+                            output.add(func.apply(input));
+                        }
+                        return output;
+                    }
+                })
+                .build(getActivity());
 
     }
 
     @Override
     public void onLoadFinished(Loader<List<CategoryItemViewModel>> loader, List<CategoryItemViewModel> list) {
         adapter.changeCursor(list);
+        setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
     }
 
     @Override
@@ -117,7 +133,22 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
         this.listener = listener;
     }
 
-    public static interface IItemListener {
+    @Override
+    public void onPriceLevelChanged(List<Integer> priceLevels) {
+        setPriceLevels(priceLevels);
+    }
+
+    protected void setPriceLevels(List<Integer> priceLevels){
+        if (adapter == null)
+            return;
+
+        final int count = adapter.getCount();
+        for (int i = 0; i < count; i++) {
+            adapter.getItem(i).setCurrentPriceLevel(priceLevels);
+        }
+    }
+
+    public interface IItemListener {
         void onItemSelected(long id, ItemExModel model);
     }
 
@@ -190,11 +221,11 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getString(indexHolder.get(ItemTable.PRODUCT_CODE)),
                     PriceType.valueOf(c.getInt(indexHolder.get(ItemTable.PRICE_TYPE))),
                     _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE)), BigDecimal.ZERO),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1)), BigDecimal.ZERO),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2)), BigDecimal.ZERO),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3)), BigDecimal.ZERO),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4)), BigDecimal.ZERO),
-                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5)), BigDecimal.ZERO),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1)), null),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2)), null),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3)), null),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4)), null),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5)), null),
                     _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
                     c.getString(indexHolder.get(ItemTable.UNIT_LABEL_ID)),
                     c.getString(indexHolder.get(UnitLabelTable.SHORTCUT)),

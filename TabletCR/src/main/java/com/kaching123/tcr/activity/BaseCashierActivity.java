@@ -192,6 +192,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
@@ -367,6 +371,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         bindToDisplayService();
         bindToScaleService();
+        tbpLoadFuture = tbpLoadScheduler.scheduleWithFixedDelay(tbpLoadTask, 0, 30, TimeUnit.SECONDS);
     }
 
     @Override
@@ -375,6 +380,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         unbindFromDisplayService();
         unbindFromScaleService();
+        if (tbpLoadFuture != null)
+            tbpLoadFuture.cancel(true);
         if (!isFinishing())
             return;
 
@@ -533,8 +540,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         //ScannerProcessor.get(barcodeListener).start();
 
         releaseResultList = new ArrayList<PrepaidReleaseResult>();
-
-        getSupportLoaderManager().restartLoader(LOADER_TBP, null, tbpLoader);
     }
 
 
@@ -1581,7 +1586,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 quantity == null ? (model.priceType == PriceType.UNIT_PRICE ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
                 BigDecimal.ZERO,
                 isCreateReturnOrder ? PriceType.OPEN : model.priceType,
-                price == null ? model.price : price,
+                price == null ? model.getCurrentPrice() : price,
                 isCreateReturnOrder || model.isDiscountable,
                 model.isDiscountable ? model.discount : null,
                 model.isDiscountable ? model.discountType : null,
@@ -2924,17 +2929,24 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public void onLoadFinished(Loader<List<Integer>> loader, List<Integer> data) {
-            if (priceLevels.equals(data)){
-                Logger.d("ALARM! they are equal");
-            }else{
+            if (!priceLevels.equals(data)){
                 priceLevels = data;
-                Logger.d("ALARM! they are NOT equal");
+                notifyFragmentsPriceLevelChanged();
             }
         }
 
         @Override
         public void onLoaderReset(Loader<List<Integer>> loader) {
 
+        }
+    }
+
+    private void notifyFragmentsPriceLevelChanged(){
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for (Fragment fr : fragments){
+            if (fr instanceof  IPriceLevelListener){
+                ((IPriceLevelListener) fr).onPriceLevelChanged(priceLevels);
+            }
         }
     }
 
@@ -3036,5 +3048,19 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private Set<Permission> getOperatorPermissions() {
         return getApp().getOperatorPermissions();
     }
+
+    private Future tbpLoadFuture;
+    private ScheduledExecutorService tbpLoadScheduler = Executors.newSingleThreadScheduledExecutor();
+    private Runnable tbpLoadTask = new Runnable() {
+        @Override
+        public void run() {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    getSupportLoaderManager().restartLoader(LOADER_TBP, null, tbpLoader);
+                }
+            });
+        }
+    };
 
 }

@@ -1,5 +1,6 @@
 package com.kaching123.tcr.fragment.catalog;
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,7 +8,9 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.BaseCashierActivity.IPriceLevelListener;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.model.ItemExModel;
@@ -18,6 +21,8 @@ import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import org.androidannotations.annotations.EFragment;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,15 +54,8 @@ public abstract class BaseItemsPickFragment extends Fragment implements IPriceLe
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Logger.d("restartLoader from onResume");
-        restartItemsLoader();
-    }
-
-    @Override
     public void onPriceLevelChanged(List<Integer> priceLevels) {
-
+        setPriceLevels(priceLevels);
     }
 
     protected void restartItemsLoader() {
@@ -74,7 +72,20 @@ public abstract class BaseItemsPickFragment extends Fragment implements IPriceLe
                 .where(ItemTable.CATEGORY_ID + " = ? ", categoryGuid == null ? "" : categoryGuid)
                 .projection(ItemExFunction.PROJECTION)
                 .orderBy(ItemTable.ORDER_NUM)
-                .transform(new ItemExFunction()).build(getActivity());
+                /*.wrap(itemWrapFunc)*/
+                /*.transform(new ItemExFunction())*/
+                .wrap(new Function<Cursor, List<ItemExModel>>() {
+                    @Override
+                    public List<ItemExModel> apply(Cursor input) {
+                        ItemExFunction func = new ItemExFunction();
+                        ArrayList<ItemExModel> output = new ArrayList<>(input.getCount());
+                        while(input.moveToNext()){
+                            output.add(func.apply(input));
+                        }
+                        return output;
+                    }
+                })
+                .build(getActivity());
     }
 
     @Override
@@ -82,7 +93,40 @@ public abstract class BaseItemsPickFragment extends Fragment implements IPriceLe
         if (adapter != null) {
             adapter.changeCursor(list);
         }
+
+        if (getActivity() instanceof BaseCashierActivity){
+            setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
+        }
     }
+
+    protected void setPriceLevels(List<Integer> priceLevels){
+        if (adapter == null)
+            return;
+
+        final int count = adapter.getCount();
+        for (int i = 0; i < count; i++) {
+            adapter.getItem(i).setCurrentPriceLevel(priceLevels);
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    private Function<Cursor, List<ItemExModel>> itemWrapFunc = new Function<Cursor, List<ItemExModel>>() {
+        @Override
+        public List<ItemExModel> apply(Cursor input) {
+            ArrayList<ItemExModel> output = new ArrayList<>(input.getCount());
+            ItemExFunction func = new ItemExFunction();
+            List<Integer> priceLevels = Collections.EMPTY_LIST;
+            if (getActivity() instanceof BaseCashierActivity){
+                priceLevels = ((BaseCashierActivity) getActivity()).getPriceLevels();
+            }
+            while (input.moveToNext()){
+                ItemExModel model = func.apply(input);
+                model.setCurrentPriceLevel(priceLevels);
+                output.add(model);
+            }
+            return output;
+        }
+    };
 
     @Override
     public void onLoaderReset(Loader<List<ItemExModel>> loader) {

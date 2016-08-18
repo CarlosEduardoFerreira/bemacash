@@ -27,12 +27,12 @@ public class TBPJdbcConverter extends JdbcConverter<TBPModel> {
     private static final String END_DATE = "END_DATE";
     private static final String MON_START = "MON_START";
     private static final String MON_END = "MON_END";
-    private static final String TUE_START = "TUE_START";
-    private static final String TUE_END = "TUE_END";
+    private static final String TUE_START = "TUES_START";
+    private static final String TUE_END = "TUES_END";
     private static final String WED_START = "WED_START";
     private static final String WED_END = "WED_END";
-    private static final String THU_START = "THU_START";
-    private static final String THU_END = "THU_END";
+    private static final String THU_START = "THURS_START";
+    private static final String THU_END = "THURS_END";
     private static final String FRI_START = "FRI_START";
     private static final String FRI_END = "FRI_END";
     private static final String SAT_START = "SAT_START";

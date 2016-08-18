@@ -18,6 +18,7 @@ import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class ItemExModel extends ItemModel {
@@ -29,7 +30,7 @@ public class ItemExModel extends ItemModel {
     public ArrayList<Unit> tmpUnit = new ArrayList<>();
 
     public String tmpBarcode;
-
+    public int currentPriceLevel;
     public int modifiersCount;
     public int addonsCount;
     public int optionalCount;
@@ -227,6 +228,25 @@ public class ItemExModel extends ItemModel {
         return serializable && codeType != null;
     }
 
+    public void setCurrentPriceLevel(List<Integer> currentPriceLevels){
+        if (currentPriceLevels == null){
+            currentPriceLevel = 0;
+            return;
+        }
+
+        for (Integer level : currentPriceLevels){
+            BigDecimal price = getPrice(level);
+            if (price != null){
+                currentPriceLevel = level;
+                return;
+            }
+        }
+        currentPriceLevel = 0;
+    }
+
+    public BigDecimal getCurrentPrice(){
+        return getPrice(currentPriceLevel);
+    }
 
     public int getMaxMatrixCount(Context context) {
         Cursor variantCursor = ProviderAction.query(URI_VARIANT_ITEMS)

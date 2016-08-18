@@ -80,7 +80,7 @@ public class StickyItemsAdapter extends ObjectsCursorAdapter<CategoryItemViewMod
 
         boolean isDiscountable = i.isDiscountable;
         DiscountType discountType = i.discountType;
-        BigDecimal price = i.price;
+        BigDecimal price = i.getCurrentPrice();
 
         holder.price.setCompoundDrawables(null, null, i.priceType == PriceType.OPEN ? pencilDrawable : pencilTransparent, null);
         holder.name.setText(i.description);

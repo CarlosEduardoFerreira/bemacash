@@ -12,14 +12,16 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.viewpagerindicator.LinePageIndicator;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
@@ -60,6 +62,7 @@ public class QuickItemsFragment extends BaseItemsPickFragment {
     @Override
     public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> list) {
         adapter.setList(list);
+        setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
     }
 
     @Override
@@ -69,8 +72,18 @@ public class QuickItemsFragment extends BaseItemsPickFragment {
 
     @Override
     protected ObjectsCursorAdapter<ItemExModel> createAdapter() {
-        //throw new UnsupportedOperationException();
         return null;
+    }
+
+    @Override
+    protected void setPriceLevels(List<Integer> priceLevels) {
+        if (adapter == null || adapter.list == null)
+            return;
+
+        for (ItemExModel model : adapter.list){
+            model.setCurrentPriceLevel(priceLevels);
+        }
+        adapter.notifyDataSetChanged();
     }
 
     public class ItemsPageAdapter extends PagerAdapter {
