@@ -161,11 +161,14 @@ import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
+import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
+import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpXRegisterTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
+import com.kaching123.tcr.store.ShopStore.TBPRegisterView;
 import com.kaching123.tcr.util.DateUtils;
 import com.kaching123.tcr.util.KeyboardUtils;
 import com.telly.groundy.annotations.OnCancel;
@@ -183,6 +186,7 @@ import org.androidannotations.annotations.ViewById;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -215,6 +219,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 5;
     private static final int LOADER_SEARCH_BARCODE = 10;
     private static final int LOADER_SALE_INCENTIVES = 12;
+    private static final int LOADER_TBP = 13;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
 
@@ -248,6 +253,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
     private SaleIncentivesLoader saleIncentivesLoader = new SaleIncentivesLoader();
+    private TBPLoader tbpLoader = new TBPLoader();
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -301,6 +307,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private ArrayList<PrepaidReleaseResult> releaseResultList;
     protected String strItemCount;
     protected int saleItemCount;
+    private List<Integer> priceLevels = Collections.EMPTY_LIST;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -527,6 +534,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         releaseResultList = new ArrayList<PrepaidReleaseResult>();
 
+        getSupportLoaderManager().restartLoader(LOADER_TBP, null, tbpLoader);
     }
 
 
@@ -1453,6 +1461,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 BaseCashierActivity.this.salesmanGuids = salesmanGuids;
             }
         });
+    }
+
+    @OptionsItem
+    protected void actionReloadTbpSelected() {
+        getSupportLoaderManager().restartLoader(LOADER_TBP, null, tbpLoader);
     }
 
     /**
@@ -2846,6 +2859,93 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
+    private class TBPLoader implements LoaderCallbacks<List<Integer>> {
+
+        @Override
+        public Loader<List<Integer>> onCreateLoader(int id, Bundle args) {
+            CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.contentUri(TBPRegisterView.URI_CONTENT))
+                    .projection(TbpTable.PRICE_LEVEL)
+                    .orderBy(TbpTable.PRICE_LEVEL);
+
+            builder.where(TbpXRegisterTable.REGISTER_ID + " = ?", getApp().getRegisterId());
+            builder.where(TbpTable.IS_ACTIVE + " = ?", 1);
+
+            Calendar current = Calendar.getInstance();
+            current.setTime(new Date());
+            String currentTime = DateUtils.timeOnlyFullFormat(current.getTime());
+
+            String columnStart = null;
+            String columnEnd = null;
+            switch(calendar.get(Calendar.DAY_OF_WEEK)){
+                case Calendar.MONDAY:
+                    columnStart = TbpTable.MON_START;
+                    columnEnd = TbpTable.MON_END;
+                    break;
+                case Calendar.TUESDAY:
+                    columnStart = TbpTable.TUE_START;
+                    columnEnd = TbpTable.TUE_END;
+                    break;
+                case Calendar.WEDNESDAY:
+                    columnStart = TbpTable.WED_START;
+                    columnEnd = TbpTable.WED_END;
+                    break;
+                case Calendar.THURSDAY:
+                    columnStart = TbpTable.THU_START;
+                    columnEnd = TbpTable.THU_END;
+                    break;
+                case Calendar.FRIDAY:
+                    columnStart = TbpTable.FRI_START;
+                    columnEnd = TbpTable.FRI_END;
+                    break;
+                case Calendar.SATURDAY:
+                    columnStart = TbpTable.SAT_START;
+                    columnEnd = TbpTable.SAT_END;
+                    break;
+                case Calendar.SUNDAY:
+                    columnStart = TbpTable.SUN_START;
+                    columnEnd = TbpTable.SUN_END;
+                    break;
+            }
+
+            builder.where(columnStart + " < ?", currentTime);
+            builder.where(columnEnd + " > ?", currentTime);
+
+            return builder.wrap(new Function<Cursor, List<Integer>>() {
+                @Override
+                public List<Integer> apply(Cursor input) {
+                    ArrayList<Integer> output = new ArrayList<>(input.getCount());
+                    while (input.moveToNext()){
+                        output.add(input.getInt(0));
+                    }
+                    return output;
+                }
+            }).build(self());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<Integer>> loader, List<Integer> data) {
+            if (priceLevels.equals(data)){
+                Logger.d("ALARM! they are equal");
+            }else{
+                priceLevels = data;
+                Logger.d("ALARM! they are NOT equal");
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<Integer>> loader) {
+
+        }
+    }
+
+    public List<Integer> getPriceLevels(){
+        return priceLevels;
+    }
+
+    public interface IPriceLevelListener {
+        void onPriceLevelChanged(List<Integer> priceLevels);
+    }
+
     private boolean isVoidNeedPermission() {
         Cursor c = ProviderAction.query(ORDER_URI)
                 .projection(
@@ -2891,59 +2991,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             this.kitchenPrintStatus = kitchenPrintStatus;
         }
     }
-
-    //    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderViewResult> {
-//
-//        @Override
-//        public Loader<SaleOrderViewResult> onCreateLoader(int i, Bundle bundle) {
-//            return CursorLoaderBuilder.forUri(ORDER_URI)
-//                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-//                    .transform(new Function<Cursor, SaleOrderModel>() {
-//                        @Override
-//                        public SaleOrderModel apply(Cursor cursor) {
-//                            return new SaleOrderModel(cursor);
-//                        }
-//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderViewResult>() {
-//                        @Override
-//                        public SaleOrderViewResult apply(List<SaleOrderModel> saleOrderModels) {
-//                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
-//                                return new SaleOrderViewResult(null);
-//                            } else {
-//                                return new SaleOrderViewResult(saleOrderModels.get(0));
-//                            }
-//                        }
-//                    }).build(BaseCashierActivity.this);
-//        }
-//
-//        @Override
-//        public void onLoadFinished(Loader<SaleOrderViewResult> saleOrderModelLoader, final SaleOrderViewResult saleOrderModel) {
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (saleOrderModel.model != null)
-//                        if (saleOrderModel.model.orderStatus != OrderStatus.COMPLETED && orderGuid != null)
-//                            if ((saleOrderModel.model.kitchenPrintStatus == PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
-//                                showVoidConfirmDialog();
-//                            else {
-//                                PermissionFragment.showCancelable(BaseCashierActivity.this, new BaseTempLoginListener(BaseCashierActivity.this) {
-//                                    @Override
-//                                    public void onLoginComplete() {
-//                                        super.onLoginComplete();
-//                                        showVoidConfirmDialog();
-//                                    }
-//                                }, Permission.VOID_SALES);
-//                            }
-//                }
-//            });
-//
-//
-//        }
-//
-//        @Override
-//        public void onLoaderReset(Loader<SaleOrderViewResult> saleOrderModelLoader) {
-//            updateOrderInfo(null);
-//        }
-//    }
 
     private BroadcastReceiver syncGapReceiver = new BroadcastReceiver() {
 

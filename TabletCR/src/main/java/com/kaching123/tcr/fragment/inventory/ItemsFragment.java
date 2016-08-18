@@ -20,8 +20,8 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.adapter.IObjectsAdapter;
 import com.kaching123.tcr.adapter.ObjectCursorDragAdapter;
+import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.store.inventory.UpdateItemOrderCommand;
 import com.kaching123.tcr.commands.store.inventory.UpdateItemOrderCommand.BaseUpdateItemOrderCommandCallback;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
@@ -77,7 +77,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
     public boolean child;
 
     @Override
-    protected IObjectsAdapter<ItemExModel> createAdapter() {
+    protected ObjectsCursorAdapter<ItemExModel> createAdapter() {
         Adapter adapter = new Adapter(getActivity(), draggable);
         list.setAdapter(adapter);
         return adapter;

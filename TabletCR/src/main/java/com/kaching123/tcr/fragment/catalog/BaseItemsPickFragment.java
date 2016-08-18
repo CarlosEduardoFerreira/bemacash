@@ -8,7 +8,8 @@ import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.adapter.IObjectsAdapter;
+import com.kaching123.tcr.activity.BaseCashierActivity.IPriceLevelListener;
+import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopProvider;
@@ -23,7 +24,7 @@ import java.util.List;
  * Created by gdubina on 25/11/13.
  */
 @EFragment
-public abstract class BaseItemsPickFragment extends Fragment implements LoaderCallbacks<List<ItemExModel>> {
+public abstract class BaseItemsPickFragment extends Fragment implements IPriceLevelListener, LoaderCallbacks<List<ItemExModel>> {
 
     protected static final Uri URI_ITEMS = ShopProvider.contentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID);
 
@@ -31,9 +32,9 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
 
     protected String categoryGuid;
 
-    protected IObjectsAdapter<ItemExModel> adapter;
+    protected ObjectsCursorAdapter<ItemExModel> adapter;
 
-    protected abstract IObjectsAdapter<ItemExModel> createAdapter();
+    protected abstract ObjectsCursorAdapter<ItemExModel> createAdapter();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -52,6 +53,11 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
         super.onResume();
         Logger.d("restartLoader from onResume");
         restartItemsLoader();
+    }
+
+    @Override
+    public void onPriceLevelChanged(List<Integer> priceLevels) {
+
     }
 
     protected void restartItemsLoader() {

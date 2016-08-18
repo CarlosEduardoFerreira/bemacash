@@ -45,7 +45,7 @@ import java.util.ArrayList;
 @OptionsMenu(R.menu.quick_service_activity)
 public class QuickServiceActivity extends BaseCashierActivity implements CustomEditBox.IKeyboardSupport {
 
-@FragmentById
+    @FragmentById
     protected QuickCategoriesFragment categoriesFragment;
 
     @FragmentById

@@ -86,6 +86,11 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public Loader<List<CategoryItemViewModel>> onCreateLoader(int loaderId, Bundle args) {
         Logger.d("ItemsListFragment onCreateLoader");
         return CursorLoaderBuilder.forUri(URI_ITEMS)
