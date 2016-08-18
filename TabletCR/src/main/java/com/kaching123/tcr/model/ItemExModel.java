@@ -54,6 +54,46 @@ public class ItemExModel extends ItemModel {
         this.optionalCount = 0;
     }
 
+    public ItemExModel(BigDecimal itemPrice ){
+        super(UUID.randomUUID().toString(),
+                null,
+                "Gift Card",
+                null,
+                null,
+                null,
+                PriceType.FIXED,
+                itemPrice,
+                BigDecimal.ONE,
+                "pcs",
+                null,
+                false, true, // temp to true
+                false,
+                false,
+                BigDecimal.ZERO,
+                DiscountType.PERCENT,
+                false,
+                null,
+                null,
+                null,
+                UUID.randomUUID().toString(),
+                null,
+                null,
+                null,
+                0,
+                null,
+                0,
+                false,
+                false,
+                null,
+                true,
+                null,
+                null,
+                ItemRefType.Simple);
+        this.modifiersCount = 0;
+        this.addonsCount = 0;
+        this.optionalCount = 0;
+    }
+
     public ItemExModel(PrepaidSendResult result) {
         super(UUID.randomUUID().toString(),
                 null,

@@ -1039,10 +1039,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 GiftCardFragmentDialog.show(BaseCashierActivity.this, new GiftCardFragmentDialog.IGiftCardListener() {
                     @Override
                     public void Reload() {
+
                         PayCashFragmentDialog.show(BaseCashierActivity.this, null, new PayCashFragmentDialog.ISaleCashListener() {
                             @Override
                             public void onPaymentAmountSelected(BigDecimal amount, BigDecimal changeAmount) {
-
+                                ItemExModel model = new ItemExModel(amount);
                             }
 
                             @Override

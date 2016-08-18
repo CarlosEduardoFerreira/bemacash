@@ -352,6 +352,11 @@ public class PayCashFragmentDialog extends StyledDialogFragment implements Custo
         return DialogUtil.show(context, DIALOG_NAME, PayCashFragmentDialog_.builder().build()).setListener(listener).setTransaction(transaction);
     }
 
+    public static PayCashFragmentDialog show(FragmentActivity context, ISaleCashListener listener) {
+        Logger.d("About to show second dialog");
+        return DialogUtil.show(context, DIALOG_NAME, PayCashFragmentDialog_.builder().build()).setListener(listener);
+    }
+
     public static void hide(FragmentActivity activity) {
         DialogUtil.hide(activity, DIALOG_NAME);
     }
