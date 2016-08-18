@@ -172,6 +172,17 @@
 
         <Button
             style="@style/LocalizableButton.Gold.28"
+            android:text="@string/button_ebt_gift_card"
+            android:layout_row="1"
+            android:layout_column="2"
+            android:id="@+id/btn_pax_gift_card"
+            android:background="@drawable/sale_ebt_cash_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone"/>
+
+        <Button
+            style="@style/LocalizableButton.Gold.28"
             android:text="@string/button_store_credit"
             android:layout_row="1"
             android:layout_column="2"

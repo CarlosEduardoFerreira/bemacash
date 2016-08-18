@@ -111,6 +111,7 @@ public class PayTenderFragmentDialog extends TenderFragmentDialogBase<PayTenderF
             if (paxGateway.acceptPaxEbtEnabled()) {
                 btnPaxEbtCash.setVisibility(View.VISIBLE);
                 btnPaxEbtFoodstamp.setVisibility(View.VISIBLE);
+                btnPaxGiftCard.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -190,6 +191,14 @@ public class PayTenderFragmentDialog extends TenderFragmentDialogBase<PayTenderF
     @Click
     protected void btnCheckClicked(){
         listener.onPaymentMethodSelected(PaymentMethod.CHECK,
+                orderTotal,
+                orderTotal.subtract(completedAmount),
+                checkboxSingle.isChecked());
+    }
+
+    @Click
+    protected void btnPaxGiftCard() {
+        listener.onPaymentMethodSelected(PaymentMethod.GIFT_CARD,
                 orderTotal,
                 orderTotal.subtract(completedAmount),
                 checkboxSingle.isChecked());

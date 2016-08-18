@@ -23,7 +23,8 @@ public enum PaymentGateway {
     /*7*/OFFLINE_CREDIT(new OfflineCreditGateway()),
     /*8*/CHECK(new CheckGateway()),
     /*9*/PAYPAL(new PayPalGateway()),//gateway for credit card, shop can use just one, this is not implemented yet
-    /*10*/CREDIT_RECEIPT(new CreditGateway());//credit receipt, NOT credit card
+    /*10*/CREDIT_RECEIPT(new CreditGateway()),//credit receipt, NOT credit card
+    /*11*/PAX_GIFT_CARD(PaxGateway.giftCard());//credit receipt, NOT credit card
 
     private IPaymentGateway gateway;
 
@@ -42,7 +43,7 @@ public enum PaymentGateway {
 
     public boolean isCreditCard() {
         return this == BLACKSTONE || this == PAYPAL || this == PAX
-                || this == PAX_EBT_CASH || this == PAX_EBT_FOODSTAMP || this == PAX_DEBIT;
+                || this == PAX_EBT_CASH || this == PAX_EBT_FOODSTAMP || this == PAX_DEBIT || this == PAX_GIFT_CARD;
     }
     public boolean isEbt ()
     {

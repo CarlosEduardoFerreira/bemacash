@@ -1027,6 +1027,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             }
         });
 
+        //todo add gift card listner
+
         itemCount = menu.findItem(R.id.action_item_account);
         if (itemCount != null && strItemCount != null)
             updateItemCountMsg();

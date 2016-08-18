@@ -101,6 +101,17 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
 
     }
 
+    public static PaxGateway giftCard() {
+        int sId;
+        int rId;
+
+        sId = PaxProcessorSaleCommand.TRANSACTION_ID_GIFT;
+        rId = PaxProcessorSaleCommand.TRANS_TYPE_RETURN;
+
+        return new PaxGateway(sId, rId, PaxMethod.GIFT);
+
+    }
+
     public PaxGateway(int saleId, int refundId, PaxMethod self) {
         this.saleId = saleId;
         this.refundId = refundId;
@@ -193,18 +204,17 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
     }
 
     public PaxProcessorVoidCommand.VoidResponse Void_PosLink(
-    Context context,
-    Object callback,
-    User user,
-    Void ignore,
-    PaymentTransactionModel transaction,
-    BigDecimal amount,
-    SaleActionResponse reloadResponse,
-    SaleOrderModel childOrderModel,
-    boolean refundTips,
-    boolean isManualReturn
-    )
-    {
+            Context context,
+            Object callback,
+            User user,
+            Void ignore,
+            PaymentTransactionModel transaction,
+            BigDecimal amount,
+            SaleActionResponse reloadResponse,
+            SaleOrderModel childOrderModel,
+            boolean refundTips,
+            boolean isManualReturn
+    ) {
         //todo do void first
         PaxProcessorVoidCommand.VoidResponse response = new PaxProcessorVoidCommand().Sync(refundId, transaction, amount, refundTips, isManualReturn, transaction);
         if (response.getErrorReason().equalsIgnoreCase("")) {

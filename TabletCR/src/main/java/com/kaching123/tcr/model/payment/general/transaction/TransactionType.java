@@ -22,7 +22,8 @@ public enum TransactionType {
     PAX("Payed via PAX - credit terminal", 11),
     PAX_DEBIT("Payed via PAX - debit terminal", 12),
     PAX_EBT_FOODSTAMP("Payed via PAX - ebtFoodstamp terminal", 13),
-    PAX_EBT_CASH("Payed via PAX - ebtFoodstamp terminal", 14);
+    PAX_EBT_CASH("Payed via PAX - ebtFoodstamp terminal", 14),
+    PAX_GIFT_CARD("Payed via PAX - giftCard terminal", 15),;
 
 
     private String name;
@@ -57,6 +58,7 @@ public enum TransactionType {
             case PAX_DEBIT: return PAX_DEBIT;
             case PAX_EBT_FOODSTAMP: return PAX_EBT_FOODSTAMP;
             case PAX_EBT_CASH: return PAX_EBT_CASH;
+            case PAX_GIFT_CARD: return PAX_GIFT_CARD;
         }
         return UNKNOWN;
     }

@@ -136,14 +136,17 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
             case PAX_EBT_CASH:
                 request.TenderType = TRANSACTION_ID_EBT_CASH_SALE;
                 break;
+            case PAX_GIFT_CARD:
+                request.TransType = TRANSACTION_ID_GIFT;
+                break;
             default:
-                request.TenderType = 0;
+                request.TenderType = TRANS_TYPE_SALE;
 
         }
 //        if (transaction.getType() == TransactionType.PRE_AUTHORIZATION) {
 //            request.TransType = TRANS_TYPE_AUTH;
 //        } else {
-        request.TransType = TRANS_TYPE_SALE;
+//        request.TransType = TRANS_TYPE_SALE;
 //        }
 //        request.CashBackAmt = transaction.getCashBack().toPlainString();
 //        request.ClerkID = transaction.getOperatorId();

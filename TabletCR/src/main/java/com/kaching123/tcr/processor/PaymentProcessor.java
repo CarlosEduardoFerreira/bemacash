@@ -801,14 +801,11 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 proceedToPAXPayment(context, transaction);
                 break;
             }
-            case GIFT_CARD: {//it's not implemented yet. 25/04/2014
-                transaction = PaymentGateway.CASH.gateway().createTransaction(context, amount, orderGuid);
+            case GIFT_CARD: {//used for Poslink pax
+                transaction = PaymentGateway.PAX_GIFT_CARD.gateway().createTransaction(context, amount, orderGuid);
                 transaction.cashBack = BigDecimal.ZERO;
-                transaction.setType(TransactionType.PREPAID_CARD);
-
-                if (getDisplayBinder(context) != null) {
-                    getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
-                }
+                transaction.setType(TransactionType.PAX_GIFT_CARD);
+                proceedToPAXPayment(context, transaction);
                 break;
             }
             case CREDIT_RECEIPT: {

@@ -1273,6 +1273,7 @@
     <string name="button_credit">Cr\u00e9dito</string>
     <string name="button_debit">Débito</string>
     <string name="button_ebt_cash">EBT Cash</string>
+    <string name="button_ebt_gift_card">Gift Card</string>
     <string name="button_ebt_foodstamp">EBT Food Stamp</string>
     <string name="button_offline_credit">Cr\u00e9dito offline</string>
     <string name="printer_check_ecu">CHEQUE</string>
