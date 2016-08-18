@@ -42,6 +42,7 @@ import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper.IKitchenPrintCallb
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.SaleOrderFunction;
@@ -134,6 +135,7 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
     protected void btnReload()
     {
         PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX.gateway();
+        listener.Reload();
 //        paxGateway.reload(getActivity(), reloadGiftCardCallBack(),  null, null, transaction, reloadResponse);
     }
 
@@ -163,13 +165,12 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
 
             @Override
             protected void handleSuccess(BigDecimal result, String last4, String errorReason) {
-                listener.Reload();
-
+                listener.Balance(result, last4, errorReason);
             }
 
             @Override
             protected void handleError() {
-                listener.Balance();
+                listener.Balance(BigDecimal.ZERO, "", "Error");
             }
         };
     }
@@ -232,7 +233,7 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
 
     public static interface IGiftCardListener {
         void Reload();
-        void Balance();
+        void Balance(BigDecimal result, String last4, String errorReason);
     }
 
     public static void show(FragmentActivity context, IGiftCardListener listener) {

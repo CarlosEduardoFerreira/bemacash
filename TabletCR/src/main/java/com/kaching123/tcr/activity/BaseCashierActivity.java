@@ -1024,7 +1024,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             getString(R.string.dlg_prepaid_app_missing));
 
 
-                }
                 return false;
             }
         });
@@ -1043,11 +1042,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     }
 
                     @Override
-                    public void Balance() {
+                    public void Balance(BigDecimal result, String last4, String errorReason) {
 
                     }
                 });
-                {
 
                 }
                 return false;
