@@ -53,6 +53,7 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                 c.getString(c.getColumnIndex(SaleItemTable.NOTES)),
                 c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
+                c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 1,
                 _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
                 _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT))
         );
@@ -90,7 +91,8 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                 _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
                 _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
                 !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
-                c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) != 0,
+                c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 0 ? false : true,
+                c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 0 ? false : true,
                 taxModel1, taxModel2
         );
     }

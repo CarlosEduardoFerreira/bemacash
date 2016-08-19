@@ -91,10 +91,11 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                             _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
                             !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
                             c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 0 ? false : true,
+                            c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 0 ? false : true,
                             taxModel1, taxModel2
                     );
                     item.finalPrice = itemModel.finalGrossPrice.subtract(itemModel.finalDiscount).add(itemModel.finalTax);
-                    if (item.isPrepaidItem) {
+                    if (item.isPrepaidItem || item.isGiftCard) {
                         item.description = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.BillPaymentDescriptionTable.DESCRIPTION));
                         item.productCode = c.getString(c.getColumnIndex(SaleOrderItemsView2.BillPaymentDescriptionTable.PREPAID_ORDER_ID));
                     }
@@ -148,6 +149,7 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                 c.getString(c.getColumnIndex(SaleItemTable.NOTES)),
                 c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
+                c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 1,
                 _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
                 _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)));
     }

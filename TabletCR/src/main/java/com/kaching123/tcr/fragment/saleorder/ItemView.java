@@ -152,7 +152,7 @@ public class ItemView extends FrameLayout {
         }
     }
 
-    private void showHiddenSerialCodes(String codes){
+    private void showHiddenSerialCodes(String codes) {
         if (!TextUtils.isEmpty(codes)) {
             this.itemSerialHidden.setVisibility(View.VISIBLE);
             this.itemSerialTitleHidden.setVisibility(View.VISIBLE);

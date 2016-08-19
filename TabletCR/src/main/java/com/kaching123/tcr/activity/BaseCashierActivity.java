@@ -296,6 +296,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private final static String PREPAID_MINI_START_ALL = "all";
 
     private boolean isPrepaidItemStart = false;
+    private boolean isGiftCardReload = false;
     private boolean isPrepaidItemRelease = false;
 
     private PaymentProcessor processor;
@@ -1621,6 +1622,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 null,
                 !isCreateReturnOrder && model.hasNotes,
                 isPrepaidItemStart,
+                isGiftCardReload,
                 model.isIncentive || model.excludeFromLoyaltyPlan ? BigDecimal.ZERO : model.loyaltyPoints,
                 model.isIncentive || model.excludeFromLoyaltyPlan ? false : getApp().getShopInfo().loyaltyPointsForDollarAmount);
 

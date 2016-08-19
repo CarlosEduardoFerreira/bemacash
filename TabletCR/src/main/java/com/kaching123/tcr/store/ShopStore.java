@@ -861,6 +861,10 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER, defVal = "0")
         String IS_PREPAID_ITEM = "is_prepaid_item";
 
+        @NotNull
+        @Column(type = Type.INTEGER, defVal = "0")
+        String IS_GIFT_CARD = "is_gift_card";
+
         @Column(type = Column.Type.TEXT)
         String LOYALTY_POINTS = "loyalty_points";
 

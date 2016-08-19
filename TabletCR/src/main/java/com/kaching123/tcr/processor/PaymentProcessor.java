@@ -1267,7 +1267,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
     private List<SaleOrderItemViewModel> getPrepaidSaleOrderItems(List<SaleOrderItemViewModel> saleItemsList) {
         List<SaleOrderItemViewModel> list = new ArrayList<SaleOrderItemViewModel>();
         for (SaleOrderItemViewModel item : saleItemsList) {
-            if (item.isPrepaidItem)
+            if (item.isPrepaidItem || item.isGiftCard)
                 list.add(item);
         }
         return list;

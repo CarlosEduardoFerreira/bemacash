@@ -46,6 +46,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public String notes;
     public boolean hasNotes;
     public boolean isPrepaidItem;
+    public boolean isGiftCard;
     public BigDecimal loyaltyPoints;
     public boolean pointsForDollarAmount;
 
@@ -63,6 +64,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               String notes,
                               boolean hasNotes,
                               boolean isPrepaidItem,
+                              boolean isGiftCard,
                               BigDecimal loyaltyPoints,
                               boolean pointsForDollarAmount) {
         this.saleItemGuid = saleItemGuid;
@@ -87,6 +89,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.hasNotes = hasNotes;
         this.kitchenPrintedQty = kitchenPrintedQty;
         this.isPrepaidItem = isPrepaidItem;
+        this.isGiftCard = isGiftCard;
         this.loyaltyPoints = loyaltyPoints;
         this.pointsForDollarAmount = pointsForDollarAmount;
     }
@@ -102,6 +105,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               String notes,
                               boolean hasNotes,
                               boolean isPrepaidItem,
+                              boolean isGiftCard,
                               BigDecimal loyaltyPoints,
                               boolean pointsForDollarAmount) {
         this.saleItemGuid = saleItemGuid;
@@ -127,6 +131,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.hasNotes = hasNotes;
         this.kitchenPrintedQty = kitchenPrintedQty;
         this.isPrepaidItem = isPrepaidItem;
+        this.isGiftCard = isGiftCard;
         this.loyaltyPoints = loyaltyPoints;
         this.pointsForDollarAmount = pointsForDollarAmount;
     }
@@ -163,6 +168,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         values.put(SaleItemTable.NOTES, notes);
         values.put(SaleItemTable.HAS_NOTES, hasNotes);
         values.put(SaleItemTable.IS_PREPAID_ITEM, isPrepaidItem);
+        values.put(SaleItemTable.IS_GIFT_CARD, isGiftCard);
         values.put(SaleItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
         values.put(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT, pointsForDollarAmount);
 

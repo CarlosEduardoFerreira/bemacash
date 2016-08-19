@@ -47,6 +47,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
 
     public boolean isKitchenPrintable;
     public boolean isPrepaidItem;
+    public boolean isGiftCard;
 
     public SaleOrderItemViewModel(SaleOrderItemModel itemModel,
                                   String description,
@@ -60,6 +61,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
                                   BigDecimal orderTransactionFee,
                                   boolean isKitchenPrintable,
                                   boolean isPrepaidItem,
+                                  boolean isGiftCard,
                                   TaxGroupModel taxGroup1,
                                   TaxGroupModel taxGroup2) {
         this.itemModel = itemModel;
@@ -76,6 +78,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
         this.isKitchenPrintable = isKitchenPrintable;
         this.isSerializable = isSerializable;
         this.isPrepaidItem = isPrepaidItem;
+        this.isGiftCard = isGiftCard;
         this.taxGroup1 = taxGroup1;
         this.taxGroup2 = taxGroup2;
     }

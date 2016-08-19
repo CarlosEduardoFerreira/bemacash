@@ -134,7 +134,7 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
         boolean hasPrepaid = false;
         for(HistoryDetailedOrderItemModel model : saleOrderModels)
         {
-            if(model.saleItemModel.isPrepaidItem)
+            if (model.saleItemModel.isPrepaidItem || model.saleItemModel.isGiftCard)
             {
                 hasPrepaid = true;
                 break;
@@ -221,7 +221,7 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
         BigDecimal pickedValue = BigDecimal.ZERO;
         for (int i = 0; i < adapter.getCount(); i++) {
             HistoryDetailedOrderItemModel historyItem = adapter.getItem(i);
-            if (!historyItem.wanted || historyItem.saleItemModel.isPrepaidItem) {
+            if (!historyItem.wanted || historyItem.saleItemModel.isPrepaidItem || historyItem.saleItemModel.isGiftCard) {
                 Logger.d("not wanted");
                 continue;
             }
