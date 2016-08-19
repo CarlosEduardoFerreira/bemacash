@@ -7,10 +7,8 @@ import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
 import com.kaching123.tcr.store.ShopStore.TBPTable;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import static com.kaching123.tcr.util.ContentValuesUtilBase._bool;
-import static com.kaching123.tcr.util.ContentValuesUtilBase._nullableDate;
 
 /**
  * Created by vkompaniets on 12.08.2016.
@@ -21,8 +19,6 @@ public class TBPModel implements IValueModel, Serializable {
     public String description;
     public int priceLevel;
     public boolean isActive;
-    public Date startDate;
-    public Date endDate;
     public String monStart;
     public String monEnd;
     public String tueStart;
@@ -38,13 +34,11 @@ public class TBPModel implements IValueModel, Serializable {
     public String sunStart;
     public String sunEnd;
 
-    public TBPModel(String id, String description, int priceLevel, boolean isActive, Date startDate, Date endDate, String monStart, String monEnd, String tueStart, String tueEnd, String wedStart, String wedEnd, String thuStart, String thuEnd, String friStart, String friEnd, String satStart, String satEnd, String sunStart, String sunEnd) {
+    public TBPModel(String id, String description, int priceLevel, boolean isActive, String monStart, String monEnd, String tueStart, String tueEnd, String wedStart, String wedEnd, String thuStart, String thuEnd, String friStart, String friEnd, String satStart, String satEnd, String sunStart, String sunEnd) {
         this.id = id;
         this.description = description;
         this.priceLevel = priceLevel;
         this.isActive = isActive;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.monStart = monStart;
         this.monEnd = monEnd;
         this.tueStart = tueStart;
@@ -68,8 +62,6 @@ public class TBPModel implements IValueModel, Serializable {
                 c.getString(c.getColumnIndex(TbpTable.DESCRIPTION)),
                 c.getInt(c.getColumnIndex(TbpTable.PRICE_LEVEL)),
                 _bool(c, c.getColumnIndex(TbpTable.IS_ACTIVE)),
-                _nullableDate(c, c.getColumnIndex(TbpTable.START_DATE)),
-                _nullableDate(c, c.getColumnIndex(TbpTable.END_DATE)),
                 c.getString(c.getColumnIndex(TbpTable.MON_START)),
                 c.getString(c.getColumnIndex(TbpTable.MON_END)),
                 c.getString(c.getColumnIndex(TbpTable.TUE_START)),
@@ -99,8 +91,6 @@ public class TBPModel implements IValueModel, Serializable {
         cv.put(TBPTable.DESCRIPTION, description);
         cv.put(TBPTable.PRICE_LEVEL, priceLevel);
         cv.put(TBPTable.IS_ACTIVE, isActive);
-        cv.put(TBPTable.START_DATE, startDate == null ? null : startDate.getTime());
-        cv.put(TBPTable.END_DATE, endDate == null ? null : endDate.getTime());
         cv.put(TBPTable.MON_START, monStart);
         cv.put(TBPTable.MON_END, monEnd);
         cv.put(TBPTable.TUE_START, tueStart);
@@ -121,11 +111,6 @@ public class TBPModel implements IValueModel, Serializable {
     public boolean isOverlapping(TBPModel other){
         if (!isActive || !other.isActive)
             return false;
-
-        if (startDate != null && endDate != null && other.startDate != null && other.endDate != null){
-            if (!isOverlapping(startDate, endDate, other.startDate, other.endDate))
-                return false;
-        }
 
         if (isOverlapping(monStart, monEnd, other.monStart, other.monEnd))
             return true;

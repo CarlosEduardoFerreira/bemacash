@@ -53,8 +53,6 @@ public class TBPJdbcConverter extends JdbcConverter<TBPModel> {
                 rs.getString(DESCRIPTION),
                 rs.getInt(PRICE_LEVEL),
                 rs.getString(IS_ACTIVE).equals("ACTIVE"),
-                rs.getSimpleDate(START_DATE),
-                rs.getSimpleDate(END_DATE),
                 rs.getString(MON_START),
                 rs.getString(MON_END),
                 rs.getString(TUE_START),

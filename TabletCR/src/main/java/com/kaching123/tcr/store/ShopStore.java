@@ -2193,12 +2193,6 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER)
         String IS_ACTIVE = "is_active";
 
-        @Column(type = Type.INTEGER)
-        String START_DATE = "start_date";
-
-        @Column(type = Type.INTEGER)
-        String END_DATE = "end_date";
-
         @Column(type = Type.TEXT)
         String MON_START = "mon_start";
 
