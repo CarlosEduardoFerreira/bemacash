@@ -176,9 +176,9 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         getLoaderManager().restartLoader(CATEGORY_LOADER_ID, null, this);
     }
 
-    @ItemSelect
+    @ItemSelect(R.id.tax_group)
     protected void taxGroupItemSelected(boolean selected, int position){
-        taxGroupAdapter.getGuid(position);
+        getModel().taxGroupGuid = taxGroupAdapter.getGuid(position);
     }
 
     @AfterTextChange
@@ -255,7 +255,6 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         while (cursor.moveToNext()){
             storeTaxes.add(new TaxGroupModel(cursor));
         }
-        cursor.close();
 
         ArrayList<TaxGroupModel> itemTaxes = new ArrayList<>();
         final TaxGroupModel virtualStoreTax = new TaxGroupModel(null, getString(R.string.item_tax_group_default), getApp().getShopInfo().taxVat);

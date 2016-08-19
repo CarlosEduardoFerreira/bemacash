@@ -831,7 +831,7 @@
     <string name="employee_tips_split_success_msg">Tips splitted among %d employees</string>
     <string name="employee_tips_add_failed_msg">Failed to add tips</string>
     <string name="item_commissions_eligible_label">Commission\neligible:</string>
-    <string name="item_commissions_label">Commission:</string>
+    <string name="item_commissions_label">Commission (%):</string>
     <string name="item_loyalty_points_label">Loyalty Points:</string>
     <string name="item_exclude_from_loyalty_plan_label">Exclude From\nLoyalty Plan:</string>
     <string name="sync_wait_msg_tmpl" formatted="false">Sync %s data: %d/%d</string>
