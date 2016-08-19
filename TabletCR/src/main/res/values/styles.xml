@@ -812,6 +812,10 @@
         <item name="android:textColor">@color/activity_gray_primary_text</item>
     </style>
 
+    <style name="EditItem.Table.CheckBox">
+        <item name="android:button">@drawable/apptheme_btn_check_holo_light</item>
+    </style>
+
     <style name="DashboardModule" />
     <style name="DashboardModule.Container"/>
     <style name="DashboardModule.Container.green">

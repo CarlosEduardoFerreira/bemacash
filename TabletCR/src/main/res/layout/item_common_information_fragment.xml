@@ -106,7 +106,7 @@
                     android:id="@+id/active_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:button="@drawable/checkbox_mint"
+                    style="@style/EditItem.Table.CheckBox"
                     android:checked="true"/>
             </TableRow>
 

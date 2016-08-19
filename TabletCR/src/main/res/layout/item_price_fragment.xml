@@ -20,7 +20,7 @@
                 android:id="@+id/discountable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
+                style="@style/EditItem.Table.CheckBox"
                 android:checked="true"/>
         </TableRow>
 
@@ -80,7 +80,7 @@
                 android:id="@+id/taxable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
+                style="@style/EditItem.Table.CheckBox"
                 android:checked="true"/>
         </TableRow>
 
@@ -116,7 +116,7 @@
                 android:id="@+id/commission_eligible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
+                style="@style/EditItem.Table.CheckBox"
                 android:checked="true"/>
         </TableRow>
 
@@ -145,7 +145,7 @@
                 android:id="@+id/for_sale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
+                style="@style/EditItem.Table.CheckBox"
                 android:checked="true"/>
         </TableRow>
     </TableLayout>
