@@ -169,7 +169,7 @@ public class PrepaidProcessor {
                     }
 
                     @Override
-                    public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList) {
+                    public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList, boolean isPrepaid) {
 
                     }
 

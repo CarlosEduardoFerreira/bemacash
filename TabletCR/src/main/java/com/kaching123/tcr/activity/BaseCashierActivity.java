@@ -1822,8 +1822,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     }
 
                     @Override
-                    public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> list) {
-//                            callback.onBillingSuccess();
+                    public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> list, boolean isPrepaid) {
                         EndTransactionCommand.start(BaseCashierActivity.this);
 
                         prepaidList = list;
@@ -1832,6 +1831,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
                         OnPrepaidBilling();
                     }
+
 
                     @Override
                     public void onRefund(RefundAmount a) {

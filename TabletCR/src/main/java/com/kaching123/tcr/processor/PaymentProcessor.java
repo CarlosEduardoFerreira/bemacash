@@ -683,7 +683,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                         @Override
                         public void run() {
                             hide();
-                            if (!needPrepaidBilling(context, successfullCCtransactionModels))
+                            if (!needPPD_GCBilling(context, successfullCCtransactionModels))
                                 proceedToTipsApply(context, successfullCCtransactionModels);
                         }
                     });
@@ -852,7 +852,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 applyAmount(amount);
                 if (orderTotal.compareTo(orderPayed) == 0) {
                     Logger.d("Payment complete! just closing");
-                    if (!needPrepaidBilling(context, successfullCCtransactionModels))
+                    if (!needPPD_GCBilling(context, successfullCCtransactionModels))
                         proceedToTipsApply(context, successfullCCtransactionModels);
                 } else {
                     proceedToTender(context, 0);
@@ -975,7 +975,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 hide();
                 if (orderTotal.compareTo(orderPayed) == 0) {
                     Logger.d("Payment complete! just closing");
-                    if (!needPrepaidBilling(context, successfullCCtransactionModels))
+                    if (!needPPD_GCBilling(context, successfullCCtransactionModels))
                         proceedToTipsApply(context, successfullCCtransactionModels);
                 } else {
                     proceedToTender(context, 0);
@@ -1108,7 +1108,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 hide();
                 if (orderTotal.compareTo(orderPayed) == 0) {
                     Logger.d("Payment complete! just closing");
-                    if (!needPrepaidBilling(context, successfullCCtransactionModels))
+                    if (!needPPD_GCBilling(context, successfullCCtransactionModels))
                         proceedToTipsApply(context, successfullCCtransactionModels);
                 } else {
                     proceedToTender(context, 0);
@@ -1136,7 +1136,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 hide();
                 if (orderTotal.compareTo(orderPayed) == 0) {
                     Logger.d("Payment complete! just closing");
-                    if (!needPrepaidBilling(context, successfullCCtransactionModels))
+                    if (!needPPD_GCBilling(context, successfullCCtransactionModels))
                         proceedToTipsApply(context, successfullCCtransactionModels);
                 } else {
                     proceedToTender(context, 0);
@@ -1218,7 +1218,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 hide();
                 if (success && orderTotal.compareTo(orderPayed) <= 0) {
                     Logger.d("Payment complete! just closing");
-                    if (!needPrepaidBilling(context, successfullCCtransactionModels))
+                    if (!needPPD_GCBilling(context, successfullCCtransactionModels))
                         proceedToTipsApply(context, successfullCCtransactionModels);
                 } else {
                     proceedToTender(context, 0);
@@ -1231,8 +1231,10 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         });
     }
 
-    //todo billing for prepaid
-    private boolean needPrepaidBilling(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions) {
+    //todo billing for prepaid and giftcard
+    private boolean needPPD_GCBilling(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions) {
+        boolean hasPrepaidItem = false;
+        boolean hasGiftCardItem = false;
         Cursor cursor = ProviderAction.query(URI_SALE_ITEMS_PREPAID)
                 .where(ShopSchema2.SaleOrderItemsView2.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .perform(context);
@@ -1240,35 +1242,34 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor,
                 new SaleOrderItemViewModelWrapFunction(context));
 
-        List<SaleOrderItemViewModel> prepaidList = getPrepaidSaleOrderItems(saleItemsList);
+        List<SaleOrderItemViewModel> prepaidList = getSaleOrderItems(saleItemsList, true);
         if (prepaidList.size() == 0) {
-            return false;
+
+        } else {
+            hasPrepaidItem = true;
+            callback.onBilling(transactions, prepaidList, true);
         }
-        callback.onBilling(transactions, prepaidList);
-        return true;
+
+        List<SaleOrderItemViewModel> giftCardItemsList = getSaleOrderItems(saleItemsList, false);
+        if (giftCardItemsList.size() == 0) {
+
+        } else {
+            hasGiftCardItem = true;
+            callback.onBilling(transactions, prepaidList, false);
+        }
+        return (hasPrepaidItem || hasGiftCardItem);
     }
 
-    private boolean needGiftCardBilling(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions) {
-        Cursor cursor = ProviderAction.query(URI_SALE_ITEMS_PREPAID)
-                .where(ShopSchema2.SaleOrderItemsView2.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
-                .perform(context);
-
-        List<SaleOrderItemViewModel> saleItemsList = _wrap(cursor,
-                new SaleOrderItemViewModelWrapFunction(context));
-
-        List<SaleOrderItemViewModel> prepaidList = getPrepaidSaleOrderItems(saleItemsList);
-        if (prepaidList.size() == 0) {
-            return false;
-        }
-        callback.onBilling(transactions, prepaidList);
-        return true;
-    }
-
-    private List<SaleOrderItemViewModel> getPrepaidSaleOrderItems(List<SaleOrderItemViewModel> saleItemsList) {
+    private List<SaleOrderItemViewModel> getSaleOrderItems(List<SaleOrderItemViewModel> saleItemsList, boolean isPrepaid) {
         List<SaleOrderItemViewModel> list = new ArrayList<SaleOrderItemViewModel>();
         for (SaleOrderItemViewModel item : saleItemsList) {
-            if (item.isPrepaidItem || item.isGiftCard)
-                list.add(item);
+            if (isPrepaid) {
+                if (item.isPrepaidItem)
+                    list.add(item);
+            } else {
+                if (item.isGiftCard)
+                    list.add(item);
+            }
         }
         return list;
     }
@@ -1579,7 +1580,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
         public void onPrintValues(String order, ArrayList<PaymentTransactionModel> list, BigDecimal changeAmount);
 
-        public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList);
+        public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList, boolean isPrepaid);
 
         public void onRefund(final HistoryDetailedOrderItemListFragment.RefundAmount amount);
 

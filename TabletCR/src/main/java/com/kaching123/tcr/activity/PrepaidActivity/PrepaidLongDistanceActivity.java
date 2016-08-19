@@ -341,7 +341,7 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
                     }
 
                     @Override
-                    public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList) {
+                    public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList, boolean isPrepaid) {
 
                     }
 
