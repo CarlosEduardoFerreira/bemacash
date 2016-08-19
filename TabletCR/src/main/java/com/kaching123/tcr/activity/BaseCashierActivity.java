@@ -44,6 +44,7 @@ import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
+import com.getbase.android.db.provider.Query;
 import com.google.common.base.Function;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
@@ -257,7 +258,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
     private SaleIncentivesLoader saleIncentivesLoader = new SaleIncentivesLoader();
-    private TBPLoader tbpLoader = new TBPLoader();
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -1466,11 +1466,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 BaseCashierActivity.this.salesmanGuids = salesmanGuids;
             }
         });
-    }
-
-    @OptionsItem
-    protected void actionReloadTbpSelected() {
-        getSupportLoaderManager().restartLoader(LOADER_TBP, null, tbpLoader);
     }
 
     /**
@@ -2864,92 +2859,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    private class TBPLoader implements LoaderCallbacks<List<Integer>> {
-
-        @Override
-        public Loader<List<Integer>> onCreateLoader(int id, Bundle args) {
-            CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.contentUri(TBPRegisterView.URI_CONTENT))
-                    .projection(TbpTable.PRICE_LEVEL)
-                    .orderBy(TbpTable.PRICE_LEVEL);
-
-            builder.where(TbpXRegisterTable.REGISTER_ID + " = ?", getApp().getRegisterId());
-            builder.where(TbpTable.IS_ACTIVE + " = ?", 1);
-
-            Calendar current = Calendar.getInstance();
-            current.setTime(new Date());
-            String currentTime = DateUtils.timeOnlyFullFormat(current.getTime());
-
-            String columnStart = null;
-            String columnEnd = null;
-            switch(calendar.get(Calendar.DAY_OF_WEEK)){
-                case Calendar.MONDAY:
-                    columnStart = TbpTable.MON_START;
-                    columnEnd = TbpTable.MON_END;
-                    break;
-                case Calendar.TUESDAY:
-                    columnStart = TbpTable.TUE_START;
-                    columnEnd = TbpTable.TUE_END;
-                    break;
-                case Calendar.WEDNESDAY:
-                    columnStart = TbpTable.WED_START;
-                    columnEnd = TbpTable.WED_END;
-                    break;
-                case Calendar.THURSDAY:
-                    columnStart = TbpTable.THU_START;
-                    columnEnd = TbpTable.THU_END;
-                    break;
-                case Calendar.FRIDAY:
-                    columnStart = TbpTable.FRI_START;
-                    columnEnd = TbpTable.FRI_END;
-                    break;
-                case Calendar.SATURDAY:
-                    columnStart = TbpTable.SAT_START;
-                    columnEnd = TbpTable.SAT_END;
-                    break;
-                case Calendar.SUNDAY:
-                    columnStart = TbpTable.SUN_START;
-                    columnEnd = TbpTable.SUN_END;
-                    break;
-            }
-
-            builder.where(columnStart + " < ?", currentTime);
-            builder.where(columnEnd + " > ?", currentTime);
-
-            return builder.wrap(new Function<Cursor, List<Integer>>() {
-                @Override
-                public List<Integer> apply(Cursor input) {
-                    ArrayList<Integer> output = new ArrayList<>(input.getCount());
-                    while (input.moveToNext()){
-                        output.add(input.getInt(0));
-                    }
-                    return output;
-                }
-            }).build(self());
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Integer>> loader, List<Integer> data) {
-            if (!priceLevels.equals(data)){
-                priceLevels = data;
-                notifyFragmentsPriceLevelChanged();
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Integer>> loader) {
-
-        }
-    }
-
-    private void notifyFragmentsPriceLevelChanged(){
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        for (Fragment fr : fragments){
-            if (fr instanceof  IPriceLevelListener){
-                ((IPriceLevelListener) fr).onPriceLevelChanged(priceLevels);
-            }
-        }
-    }
-
     public List<Integer> getPriceLevels(){
         return priceLevels;
     }
@@ -3054,13 +2963,82 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private Runnable tbpLoadTask = new Runnable() {
         @Override
         public void run() {
-            handler.post(new Runnable() {
+            Query query = ProviderAction.query(ShopProvider.contentUri(TBPRegisterView.URI_CONTENT))
+                    .projection(TbpTable.PRICE_LEVEL)
+                    .orderBy(TbpTable.PRICE_LEVEL);
+
+
+            query.where(TbpXRegisterTable.REGISTER_ID + " = ?", getApp().getRegisterId());
+            query.where(TbpTable.IS_ACTIVE + " = ?", 1);
+
+            Calendar current = Calendar.getInstance();
+            current.setTime(new Date());
+            String currentTime = DateUtils.timeOnlyFullFormat(current.getTime());
+
+            String columnStart = null;
+            String columnEnd = null;
+            switch(calendar.get(Calendar.DAY_OF_WEEK)){
+                case Calendar.MONDAY:
+                    columnStart = TbpTable.MON_START;
+                    columnEnd = TbpTable.MON_END;
+                    break;
+                case Calendar.TUESDAY:
+                    columnStart = TbpTable.TUE_START;
+                    columnEnd = TbpTable.TUE_END;
+                    break;
+                case Calendar.WEDNESDAY:
+                    columnStart = TbpTable.WED_START;
+                    columnEnd = TbpTable.WED_END;
+                    break;
+                case Calendar.THURSDAY:
+                    columnStart = TbpTable.THU_START;
+                    columnEnd = TbpTable.THU_END;
+                    break;
+                case Calendar.FRIDAY:
+                    columnStart = TbpTable.FRI_START;
+                    columnEnd = TbpTable.FRI_END;
+                    break;
+                case Calendar.SATURDAY:
+                    columnStart = TbpTable.SAT_START;
+                    columnEnd = TbpTable.SAT_END;
+                    break;
+                case Calendar.SUNDAY:
+                    columnStart = TbpTable.SUN_START;
+                    columnEnd = TbpTable.SUN_END;
+                    break;
+            }
+
+            query.where(columnStart + " < ?", currentTime);
+            query.where(columnEnd + " > ?", currentTime);
+
+            List<Integer> priceLevels = query.perform(self()).toFluentIterable(new Function<Cursor, Integer>() {
                 @Override
-                public void run() {
-                    getSupportLoaderManager().restartLoader(LOADER_TBP, null, tbpLoader);
+                public Integer apply(Cursor input) {
+                    return input.getInt(0);
                 }
-            });
+            }).toImmutableList();
+
+            if (!BaseCashierActivity.this.priceLevels.equals(priceLevels)){
+                BaseCashierActivity.this.priceLevels = priceLevels;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyFragmentsPriceLevelChanged();
+                    }
+                });
+            }
+
+
         }
     };
+
+    private void notifyFragmentsPriceLevelChanged(){
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for (Fragment fr : fragments){
+            if (fr instanceof  IPriceLevelListener){
+                ((IPriceLevelListener) fr).onPriceLevelChanged(priceLevels);
+            }
+        }
+    }
 
 }

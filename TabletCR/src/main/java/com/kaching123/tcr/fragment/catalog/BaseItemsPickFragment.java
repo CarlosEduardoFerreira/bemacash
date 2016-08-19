@@ -22,7 +22,6 @@ import com.kaching123.tcr.store.ShopStore.ItemExtView;
 import org.androidannotations.annotations.EFragment;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -109,24 +108,6 @@ public abstract class BaseItemsPickFragment extends Fragment implements IPriceLe
         }
         adapter.notifyDataSetChanged();
     }
-
-    private Function<Cursor, List<ItemExModel>> itemWrapFunc = new Function<Cursor, List<ItemExModel>>() {
-        @Override
-        public List<ItemExModel> apply(Cursor input) {
-            ArrayList<ItemExModel> output = new ArrayList<>(input.getCount());
-            ItemExFunction func = new ItemExFunction();
-            List<Integer> priceLevels = Collections.EMPTY_LIST;
-            if (getActivity() instanceof BaseCashierActivity){
-                priceLevels = ((BaseCashierActivity) getActivity()).getPriceLevels();
-            }
-            while (input.moveToNext()){
-                ItemExModel model = func.apply(input);
-                model.setCurrentPriceLevel(priceLevels);
-                output.add(model);
-            }
-            return output;
-        }
-    };
 
     @Override
     public void onLoaderReset(Loader<List<ItemExModel>> loader) {
