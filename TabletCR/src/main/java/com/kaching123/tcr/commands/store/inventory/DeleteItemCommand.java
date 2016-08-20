@@ -1,11 +1,13 @@
 package com.kaching123.tcr.commands.store.inventory;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.function.ItemMatrixWrapFunction;
@@ -51,11 +53,14 @@ public class DeleteItemCommand extends AsyncCommand {
     private String itemGuid;
     ArrayList<ContentProviderOperation> operations;
     private BatchSqlCommand sql;
+    private String categoryId;
 
     @Override
     protected TaskResult doCommand() {
         Logger.d("DeleteItemCommand doCommand");
         itemGuid = getStringArg(ARG_ITEM_GUID);
+
+        categoryId = getCategory(getContext(), itemGuid);
 
         operations = new ArrayList<>(1);
         operations.add(ContentProviderOperation.newUpdate(ITEM_URI)
@@ -107,9 +112,76 @@ public class DeleteItemCommand extends AsyncCommand {
 
         if (!InventoryUtils.removeComposers(itemGuid, getContext(), getAppCommandContext(), operations, sql)) {
             return failed();
-        } else {
-            return succeeded();
         }
+
+        shiftOrderNums();
+
+        return succeeded();
+    }
+
+    private static String getCategory(Context context, String itemGuid) {
+        Cursor c = ProviderAction.query(ITEM_URI)
+                .projection(ItemTable.CATEGORY_ID)
+                .where(ItemTable.GUID + " = ?", itemGuid)
+                .perform(context);
+
+        c.moveToFirst();
+        String categoryId = c.getString(0);
+        c.close();
+
+        return categoryId;
+    }
+
+    private void shiftOrderNums(){
+        ItemModel model = ProviderAction.query(ITEM_URI)
+                .projection(ItemTable.CATEGORY_ID, ItemTable.ORDER_NUM)
+                .where(ItemTable.GUID + " = ?", itemGuid)
+                .perform(getContext())
+                .toFluentIterable(new Function<Cursor, ItemModel>() {
+                    @Override
+                    public ItemModel apply(Cursor input) {
+                        ItemModel model = new ItemModel();
+                        model.categoryId = input.getString(0);
+                        model.orderNum = input.getInt(1);
+                        return model;
+                    }
+                }).first().orNull();
+
+        if (model == null)
+            return;
+
+        List<ItemModel> models = ProviderAction.query(ITEM_URI)
+                .projection(ItemTable.GUID, ItemTable.ORDER_NUM)
+                .where(ItemTable.CATEGORY_ID + " = ?", model.categoryId)
+                .where(ItemTable.ORDER_NUM + " > ?", model.orderNum)
+                .orderBy(ItemTable.ORDER_NUM)
+                .perform(getContext())
+                .toFluentIterable(new Function<Cursor, ItemModel>() {
+                    @Override
+                    public ItemModel apply(Cursor input) {
+                        ItemModel model = new ItemModel(input.getString(0));
+                        model.orderNum = input.getInt(1);
+                        return model;
+                    }
+                }).toImmutableList();
+
+        for (ItemModel m : models){
+            InventoryUtils.updateOrderNum(m.guid, m.orderNum - 1, getAppCommandContext(), operations, sql);
+        }
+    }
+
+    @Override
+    protected void afterCommand(ContentProviderResult[] dbOperationResults) {
+        super.afterCommand(dbOperationResults);
+
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+        BatchSqlCommand sql = batchUpdate(ItemModel.class);
+
+        InventoryUtils.shiftOrderNums(categoryId, getContext(), getAppCommandContext(), operations, sql);
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        if (!operations.isEmpty())
+            operations.addAll(ops);
+
     }
 
     @Override

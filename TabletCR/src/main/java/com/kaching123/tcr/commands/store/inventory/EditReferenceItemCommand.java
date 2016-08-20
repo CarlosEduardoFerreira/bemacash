@@ -15,6 +15,7 @@ import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.CursorUtil;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
@@ -33,12 +34,26 @@ public class EditReferenceItemCommand extends AsyncCommand {
     private static final String ARG_ITEM = "arg_item";
 
     private ItemModel newItem;
+    private String currentCategoryId;
 
     @Override
     protected TaskResult doCommand() {
         Logger.d("EditReferenceItemCommand doCommand");
         if (newItem == null)
             newItem = (ItemModel) getArgs().getSerializable(ARG_ITEM);
+
+        Cursor c = ProviderAction.query(ITEM_URI)
+                .projection(ItemTable.CATEGORY_ID)
+                .where(ItemTable.GUID + " = ?", newItem.guid)
+                .perform(getContext());
+        if (c.moveToFirst())
+            currentCategoryId = c.getString(0);
+        c.close();
+
+        if (!newItem.categoryId.equals(currentCategoryId)){
+
+        }
+
         if (!updateChildItems()) {
             return failed();
         }

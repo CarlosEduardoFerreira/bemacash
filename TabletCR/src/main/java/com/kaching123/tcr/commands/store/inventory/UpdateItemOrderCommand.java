@@ -34,7 +34,7 @@ public class UpdateItemOrderCommand extends AsyncCommand {
 
         ItemsJdbcConverter jdbcConverter = (ItemsJdbcConverter) JdbcFactory.getConverter(ItemTable.TABLE_NAME);
         sqlCommand = batchUpdate(ItemModel.class);
-        ops = new ArrayList<ContentProviderOperation>();
+        ops = new ArrayList<>();
         for (int i = 0; i < guids.length; i++){
             String guid = guids[i];
             ops.add(ContentProviderOperation.newUpdate(ShopProvider.contentUri(ItemTable.URI_CONTENT))

@@ -1,8 +1,13 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 
+import com.getbase.android.db.provider.ProviderAction;
+import com.google.common.base.Function;
 import com.kaching123.tcr.model.Unit.CodeType;
+import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.UnitUtil;
 
@@ -12,6 +17,7 @@ import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
+import static com.kaching123.tcr.model.ContentValuesUtil._max;
 import static com.kaching123.tcr.model.ContentValuesUtil._putDiscount;
 import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
 import static com.kaching123.tcr.model.ContentValuesUtil._putItemRefType;
@@ -205,6 +211,21 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.excludeFromLoyaltyPlan = itemModel.excludeFromLoyaltyPlan;
     }
 
+    public static int getMaxOrderNum(Context context, String categoryId){
+        Integer i = ProviderAction.query(ShopProvider.contentUri(ItemTable.URI_CONTENT))
+                .projection(_max(ItemTable.ORDER_NUM))
+                .where(ItemTable.CATEGORY_ID + " = ?", categoryId)
+                .perform(context)
+                .toFluentIterable(new Function<Cursor, Integer>() {
+                    @Override
+                    public Integer apply(Cursor input) {
+                        return input.getInt(0);
+                    }
+                }).first().or(0);
+
+        return i;
+    }
+
     @Override
     public String getGuid() {
         return guid;
@@ -298,5 +319,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public boolean isReferenceItem() {
         return this.refType == ItemRefType.Reference;
     }
+
+
 
 }

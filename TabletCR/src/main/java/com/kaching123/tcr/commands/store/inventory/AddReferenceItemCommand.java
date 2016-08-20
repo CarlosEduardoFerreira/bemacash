@@ -32,7 +32,7 @@ public class AddReferenceItemCommand extends AsyncCommand {
         Logger.d("AddReferenceItemCommand doCommand");
         item = (ItemModel) getArgs().getSerializable(ARG_ITEM);
 
-        item.orderNum = 0;
+        item.orderNum = ItemModel.getMaxOrderNum(getContext(), item.categoryId) + 1;
         item.updateQtyFlag = UUID.randomUUID().toString();
         return succeeded();
     }

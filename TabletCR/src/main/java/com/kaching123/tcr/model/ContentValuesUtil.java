@@ -363,6 +363,10 @@ public final class ContentValuesUtil {
         return String.format(Locale.US, "sum(%s) as %s", column, as);
     }
 
+    public static String _max(String column){
+        return String.format(Locale.US, "max(%s)", column);
+    }
+
     private ContentValuesUtil() {
     }
 }
