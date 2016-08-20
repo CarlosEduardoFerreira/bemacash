@@ -168,6 +168,7 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
                 saleId,
                 (SaleActionResponse) reloadResponse,
                 (PaxBlackstoneSaleCommand.PaxSaleCommandBaseCallback) callback);
+
     }
 
     public TaskHandler reload(Context context,
@@ -184,7 +185,7 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
                     transaction,
                     saleId,
                     (SaleActionResponse) reloadResponse,
-                    (PaxProcessorGiftCardReloadCommand.PaxSaleCommandBaseCallback) callback);
+                    (PaxProcessorGiftCardReloadCommand.PaxGiftCardReloadCallback) callback);
 
     }
 

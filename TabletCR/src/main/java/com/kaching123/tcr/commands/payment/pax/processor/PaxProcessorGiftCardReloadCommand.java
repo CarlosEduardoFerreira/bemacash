@@ -39,12 +39,13 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
 
 
     private static final String ARG_AMOUNT = "ARG_AMOUNT";
-    public static final String RESULT_TRANSACTION = "RES_TRANSACTION";
+//    public static final String RESULT_TRANSACTION = "RES_TRANSACTION";
     public static final String RESULT_ERROR_REASON = "ERROR";
     private static final String ARG_SALEACTIONRESPONSE = "SaleActionResponse";
+    public static final String SUCCESS = "SUCCESS";
     private static final String ARG_PURPOSE = "ARG_AMOUNT_1";
 
-    private PaxTransaction transaction;
+//    private PaxTransaction transaction;
     private String errorReason;
 
     private ArrayList<ContentProviderOperation> operations;
@@ -52,13 +53,11 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
 
     public static final TaskHandler startSale(Context context,
                                               PaxModel paxTerminal,
-                                              Transaction transaction,
-                                              int saleId,
-                                              PaxSaleCommandBaseCallback callback) {
+                                              String amount,
+                                              PaxGiftCardReloadCallback callback) {
         return create(PaxProcessorGiftCardReloadCommand.class)
                 .arg(ARG_DATA_PAX, paxTerminal)
-                .arg(ARG_AMOUNT, transaction)
-                .arg(ARG_PURPOSE, saleId)
+                .arg(ARG_AMOUNT, amount)
                 .callback(callback)
                 .queueUsing(context);
     }
@@ -68,7 +67,7 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
                                                       Transaction transaction,
                                                       int saleId,
                                                       SaleActionResponse response,
-                                                      PaxSaleCommandBaseCallback callback) {
+                                                      PaxGiftCardReloadCallback callback) {
         return create(PaxProcessorGiftCardReloadCommand.class)
                 .arg(ARG_DATA_PAX, paxTerminal)
                 .arg(ARG_AMOUNT, transaction)
@@ -88,14 +87,14 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
         }
 
         if (isFailed(result)) {
-            if (transaction != null)
-                transaction.allowReload = true;
+//            if (transaction != null)
+//                transaction.allowReload = true;
             if (TextUtils.isEmpty(errorReason))
                 errorReason = ErrorReason.UNKNOWN.getDescription();
         }
 
         return succeeded()
-                .add(RESULT_TRANSACTION, transaction)
+//                .add(RESULT_TRANSACTION, transaction)
                 .add(RESULT_ERROR_REASON, errorReason);
     }
 
@@ -119,12 +118,12 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
             //TODO: startSaleFromData (PaymentResponse) When does it get here/?
         }
 
-        int transactionId = getIntArg(ARG_PURPOSE);
-        transaction = getArgs().getParcelable(ARG_AMOUNT);
+//        int transactionId = getIntArg(ARG_PURPOSE);
+//        transaction = getArgs().getParcelable(ARG_AMOUNT);
 
-        BigDecimal cents = transaction.getAmount();
+        BigDecimal cents = new BigDecimal(getArgs().getString(ARG_AMOUNT));
         String sAmount = String.valueOf((cents.multiply(CalculationUtil.ONE_HUNDRED)).intValue());
-        Logger.d("PaxProcessorSaleCommand %d - %s", transactionId, sAmount);
+//        Logger.d("PaxProcessorSaleCommand %d - %s", transactionId, sAmount);
         try {
 
             PaymentRequest request = new PaymentRequest();
@@ -146,22 +145,23 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
                 response = posLink.PaymentResponse;
 
                 if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
-                    transaction.updateWith(response);
-
-                    PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
-                    operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
-                            .withValues(transactionModel.toValues())
-                            .build());
-                    sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
+//                    transaction.updateWith(response);
+//
+//                    PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
+//                    operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
+//                            .withValues(transactionModel.toValues())
+//                            .build());
+//                    sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
+                    errorReason = SUCCESS;
                 } else {
-                    transaction.allowReload = true;
+//                    transaction.allowReload = true;
                     errorReason = "Result Code: " + response.ResultCode + " (" + response.ResultTxt + ")";
                     Logger.d("Pax Error code: " + response.ResultCode + ", Message: " + response.ResultTxt);
                 }
 
 
             } else if (ptr.Code == ProcessTransResultCode.TimeOut) {
-                transaction.allowReload = true;
+//                transaction.allowReload = true;
                 errorReason = "Payment cancelled or connection problem.";
                 Logger.d("Pax TimeOUt");
 
@@ -174,7 +174,7 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
             new PaxProcessorHelloCommand().sync(getContext(), getPaxModel());
 
         } catch (Exception ex) {
-            transaction.allowReload = true;
+//            transaction.allowReload = true;
             errorReason = "Exception occured." + ex.getMessage();
             Logger.e("Sale Pax", ex);
         }
@@ -197,15 +197,14 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
         return sqlCommand;
     }
 
-    public static abstract class PaxSaleCommandBaseCallback {
+    public static abstract class PaxGiftCardReloadCallback {
 
         @OnSuccess(PaxProcessorGiftCardReloadCommand.class)
-        public final void onSuccess(@Param(PaxProcessorGiftCardReloadCommand.RESULT_TRANSACTION) Transaction result,
-                                    @Param(PaxProcessorGiftCardReloadCommand.RESULT_ERROR_REASON) String errorReason) {
-            handleSuccess(result, errorReason);
+        public final void onSuccess(@Param(PaxProcessorGiftCardReloadCommand.RESULT_ERROR_REASON) String response) {
+            handleSuccess(response);
         }
 
-        protected abstract void handleSuccess(Transaction result, String errorReason);
+        protected abstract void handleSuccess(String errorReason);
 
         @OnFailure(PaxProcessorGiftCardReloadCommand.class)
         public final void onFailure() {

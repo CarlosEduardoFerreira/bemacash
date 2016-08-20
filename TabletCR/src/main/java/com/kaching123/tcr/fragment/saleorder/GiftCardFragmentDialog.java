@@ -148,10 +148,11 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
     }
 
     private Object reloadGiftCardCallBack(){
-        return new PaxProcessorGiftCardReloadCommand.PaxSaleCommandBaseCallback(){
+        return new PaxProcessorGiftCardReloadCommand.PaxGiftCardReloadCallback(){
+
 
             @Override
-            protected void handleSuccess(Transaction result, String errorReason) {
+            protected void handleSuccess(String errorReason) {
 
             }
 
