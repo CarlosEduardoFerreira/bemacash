@@ -82,7 +82,8 @@ public class PrintGiftCardProcessor extends BasePrintProcessor<ITextPrinter> {
             printerWrapper.footer(phone);
         }
 
-        printerWrapper.header(new Date().toString(),app.getOperatorFullName());
+        printerWrapper.header(context.getString(R.string.printer_date),new Date().toString());
+        printerWrapper.header(context.getString(R.string.tendering_history_total_cashier),app.getOperatorFullName());
         printerWrapper.emptyLine();
 
 //        super.printHeader(context, app, printerWrapper);
