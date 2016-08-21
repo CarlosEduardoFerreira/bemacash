@@ -37,6 +37,7 @@ import com.kaching123.tcr.commands.device.WaitForCloseDrawerCommand;
 import com.kaching123.tcr.commands.device.WaitForCloseDrawerCommand.BaseWaitForCloseDrawerCallback;
 import com.kaching123.tcr.commands.local.ClearSalesHistoryCommand;
 import com.kaching123.tcr.commands.local.ClearSalesHistoryCommand.BaseClearSalesHistoryCallback;
+import com.kaching123.tcr.commands.payment.ClosePreauthBatchCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand.BasePrintCallback;
 import com.kaching123.tcr.commands.print.pos.PrintDropPayoutCommand;
@@ -85,6 +86,7 @@ import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
@@ -107,13 +109,18 @@ import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
+import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
+import static com.kaching123.tcr.model.ContentValuesUtil._paymentStatus;
+import static com.kaching123.tcr.model.ContentValuesUtil._paymentType;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
 
 /**
@@ -235,6 +242,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
     private List<ActivationCarrierModel> activationCarriers;
     private int openedTrnsactionsCount;
+    private ArrayList<PaymentTransactionModel> openedTrnsactions;
 
     private boolean goToSaleOrder;
     private boolean isSqlCommandLoaderFinished = true;
@@ -676,7 +684,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
 
-        if (isShiftOpened && openedTrnsactionsCount > 0) {
+        if (isShiftOpened && openedTrnsactionsCount == 0) {
             AlertDialogFragment.show(DashboardActivity.this,
                     AlertDialogFragment.DialogType.ALERT3,
                     false,
@@ -688,29 +696,23 @@ public class DashboardActivity extends SuperBaseActivity {
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            AlertDialogFragment.show(DashboardActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm,  new StyledDialogFragment.OnDialogClickListener() {
+                            WaitDialogFragment.show(DashboardActivity.this, getString(R.string.batch_close_dialog_waiting_msg));
+                            AlertDialogFragment.show(DashboardActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm, new StyledDialogFragment.OnDialogClickListener() {
                                 @Override
                                 public boolean onClick() {
-                                    PAXBatchOutFragmentDialog.show(DashboardActivity.this, new PAXBatchOutFragmentDialog.IPaxBatchOutListener() {
+                                    ClosePreauthBatchCommand.start(DashboardActivity.this, openedTrnsactions, getApp().getOperatorGuid(), new ClosePreauthBatchCommand.ClosePreauthCommandCallback() {
+
                                         @Override
-                                        public void onComplete(String msg) {
+                                        public void onCloseSuccess() {
+                                            WaitDialogFragment.hide(DashboardActivity.this);
                                             startShiftAction();
-                                            hide();
                                         }
 
                                         @Override
-                                        public void onCancel() {
-                                            hide();
+                                        public void onCloseFailure() {
+                                            WaitDialogFragment.hide(DashboardActivity.this);
                                         }
-
-                                        @Override
-                                        public void onRetry() {
-
-                                        }
-                                        private void hide() {
-                                            PAXBatchOutFragmentDialog.hide(DashboardActivity.this);
-                                        }
-                                    }, PaxModel.get());
+                                    });
                                     return true;
                                 }
                             }, new StyledDialogFragment.OnDialogClickListener() {
@@ -719,7 +721,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
                                     return true;
                                 }
-                            }, null );
+                            }, null);
                             return true;
                         }
                     }, new OnDialogClickListener() {
@@ -1683,34 +1685,68 @@ public class DashboardActivity extends SuperBaseActivity {
         }
     };
 
-    private LoaderCallbacks<Integer> openedTransactionsLoader = new LoaderCallbacks<Integer>() {
+    private LoaderCallbacks<List<PaymentTransactionModel>> openedTransactionsLoader = new LoaderCallbacks<List<PaymentTransactionModel>>() {
 
         @Override
-        public Loader<Integer> onCreateLoader(int i, Bundle bundle) {
+        public Loader<List<PaymentTransactionModel>> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder
                     .forUri(OPENED_TRANSACTIONS_URI)
-                    .projection("count(" + PaymentTransactionTable.GUID + ")")
+//                    .projection("count(" + PaymentTransactionTable.GUID + ")")
                     .where(PaymentTransactionTable.STATUS + " = ?", PaymentStatus.PRE_AUTHORIZED.ordinal())
-                    .wrap(new Function<Cursor, Integer>() {
+                    .wrap(new Function<Cursor, List<PaymentTransactionModel>>() {
                         @Override
-                        public Integer apply(Cursor c) {
-                            if (c.moveToFirst()) {
-                                return c.getInt(0);
+                        public List<PaymentTransactionModel> apply(Cursor c) {
+                            List<PaymentTransactionModel> list = new ArrayList<PaymentTransactionModel>();
+                            while (c.moveToNext()) {
+                                PaymentTransactionModel model = new PaymentTransactionModel(
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.GUID)),
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID)),
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.ORDER_GUID)),
+                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.AMOUNT)),
+                                        _paymentType(c, c.getColumnIndex(PaymentTransactionTable.TYPE)),
+                                        _paymentStatus(c, c.getColumnIndex(PaymentTransactionTable.STATUS)),
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.OPERATOR_GUID)),
+                                        _paymentGateway(c, c.getColumnIndex(PaymentTransactionTable.GATEWAY)),
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.GATEWAY_PAYMENT_ID)),
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.GATEWAY_PREAUTH_PAYMENT_ID)),
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.GATEWAY_CLOSED_PERAUTH_GUID)),
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.DECLINE_REASON)),
+                                        new Date(c.getLong(c.getColumnIndex(PaymentTransactionTable.CREATE_TIME))),
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.SHIFT_GUID)),
+                                        c.getString(c.getColumnIndex(PaymentTransactionTable.CARD_NAME)),
+                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CHANGE_AMOUNT)),
+                                        _bool(c, c.getColumnIndex(PaymentTransactionTable.IS_PREAUTH)),
+                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK)),
+                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE))
+                                );
+
+                                list.add(model);
                             }
-                            return 0;
+                            return list;
                         }
                     }).build(DashboardActivity.this);
+//                    .wrap(new Function<Cursor, Integer>() {
+//                        @Override
+//                        public Integer apply(Cursor c) {
+//                            if (c.moveToFirst()) {
+//                                return c.getInt(0);
+//                            }
+//                            return 0;
+//                        }
+//                    }).build(DashboardActivity.this);
         }
 
         @Override
-        public void onLoadFinished(Loader<Integer> integerLoader, Integer value) {
-            DashboardActivity.this.openedTrnsactionsCount = value == null ? 0 : value;
+        public void onLoadFinished(Loader<List<PaymentTransactionModel>> loader, List<PaymentTransactionModel> data) {
+            DashboardActivity.this.openedTrnsactionsCount = data == null ? 0 : data.size();
+            DashboardActivity.this.openedTrnsactions = (ArrayList<PaymentTransactionModel>) data;
         }
 
         @Override
-        public void onLoaderReset(Loader<Integer> integerLoader) {
+        public void onLoaderReset(Loader<List<PaymentTransactionModel>> loader) {
 
         }
+
     };
 
     private LoaderCallbacks<Boolean> timesheetLoader = new LoaderCallbacks<Boolean>() {

@@ -1367,6 +1367,7 @@
     <string name="printer_delete_dialog_msg">Are you sure you want to delete printer?</string>
     <string name="pax_delete_dialog_title">Delete Pax pinpad</string>
     <string name="batch_close_dialog_msg">Are you sure you want to close Batch?</string>
+    <string name="batch_close_dialog_waiting_msg">Waiting for Batch close</string>
     <string name="batch_close_dialog_title">Batch Close</string>
     <string name="action_batchout_label">Batch Close</string>
     <string name="pax_delete_dialog_msg">Are you sure you want to delete Pax pinpad?</string>
@@ -1968,6 +1969,8 @@
     <string name="prepaid_dialog_title">Prepaid</string>
     <string name="prepaid_dialog_des">Please choose a vendor for Prepaid.</string>
     <string name="release_note_link">http://www.bemacashus.com/change-log/</string>
+
+    <string name="batch_close_tips_comments">Batch Close</string>
 
     <string name="loyalty_incentive_dialog_title">Please choose:</string>
     <string name="loyalty_incentive_dialog_msg1">Reward Available</string>
