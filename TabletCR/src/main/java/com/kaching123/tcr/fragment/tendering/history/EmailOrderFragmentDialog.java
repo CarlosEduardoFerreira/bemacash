@@ -19,9 +19,23 @@ public class EmailOrderFragmentDialog extends ChooseCustomerBaseDialog {
 
     private static final String DIALOG_NAME = EmailOrderFragmentDialog.class.getSimpleName();
 
+    private EmailOrderCompleteListener listener;
     @Override
-    protected void sendDigitalOrder(String email) {
+    protected void sendDigitalOrder(final String email) {
+        ResendDigitalOrderCommand.start(getActivity(), orderGuid, email, new BaseResendDigitalOrderCallback() {
+            @Override
+            protected void onDigitalOrderSent() {
+//                Toast.makeText(getContext(), getContext().getString(R.string.send_email_toast_msg) + " " + email, Toast.LENGTH_LONG).show();
+                dismiss();
+                listener.onConfirmed(email);
+            }
 
+            @Override
+            protected void onDigitalOrderSendError() {
+                dismiss();
+            }
+        });
+        dismiss();
     }
 
     @Override
@@ -30,13 +44,33 @@ public class EmailOrderFragmentDialog extends ChooseCustomerBaseDialog {
 		dismiss();    }
 
     @Override
-    protected void sendDigitalOrderForGiftCard(String email, String amount) {
-        SendDigitalOrderForGiftCardCommand.start(getActivity(),email, amount, null);
+    protected void sendDigitalOrderForGiftCard(final String email, String amount) {
+        SendDigitalOrderForGiftCardCommand.start(getActivity(), email, amount, new SendDigitalOrderForGiftCardCommand.BaseSendDigitalOrderCallback() {
+            @Override
+            protected void onDigitalOrderSent() {
+//                Toast.makeText(getActivity(), getActivity().getString(R.string.send_email_toast_msg) + " " + email, Toast.LENGTH_LONG).show();
+                dismiss();
+                listener.onConfirmed(email);
+            }
+
+            @Override
+            protected void onDigitalOrderSendError() {
+                dismiss();
+            }
+        });
         dismiss();
     }
 
-    public static void show(FragmentActivity context, String orderGuid) {
-        DialogUtil.show(context, DIALOG_NAME, EmailOrderFragmentDialog_.builder().orderGuid(orderGuid).build());
+    public static void show(FragmentActivity context, String orderGuid, EmailOrderCompleteListener listener) {
+        DialogUtil.show(context, DIALOG_NAME, EmailOrderFragmentDialog_.builder().orderGuid(orderGuid).build()).setListener(listener);
     }
 
+    public void setListener(EmailOrderCompleteListener listener)
+    {
+        this.listener = listener;
+    }
+    public  interface EmailOrderCompleteListener {
+
+        void onConfirmed(String email);
+    }
 }

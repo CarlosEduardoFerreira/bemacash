@@ -1971,6 +1971,7 @@
     <string name="release_note_link">http://www.bemacashus.com/change-log/</string>
 
     <string name="batch_close_tips_comments">Batch Close</string>
+    <string name="send_email_toast_msg">Receipt has been sent to </string>
 
     <string name="loyalty_incentive_dialog_title">Please choose:</string>
     <string name="loyalty_incentive_dialog_msg1">Reward Available</string>

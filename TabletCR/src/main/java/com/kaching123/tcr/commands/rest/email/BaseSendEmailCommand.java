@@ -1,6 +1,9 @@
 package com.kaching123.tcr.commands.rest.email;
 
+import android.widget.Toast;
+
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;

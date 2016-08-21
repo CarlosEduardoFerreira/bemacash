@@ -318,7 +318,12 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     @Override
     public void onEmailClick() {
-        EmailOrderFragmentDialog.show(this, orderItemsListFragment.guid);
+        EmailOrderFragmentDialog.show(this, orderItemsListFragment.guid, new EmailOrderFragmentDialog.EmailOrderCompleteListener() {
+            @Override
+            public void onConfirmed(String email) {
+                Toast.makeText(HistoryActivity.this, getString(R.string.send_email_toast_msg) + " " + email, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
