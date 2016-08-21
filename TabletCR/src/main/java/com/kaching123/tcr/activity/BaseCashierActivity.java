@@ -44,6 +44,9 @@ import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.base.Function;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
@@ -62,10 +65,13 @@ import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackRefundCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSaleCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackVoidCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorGiftCardReloadCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.prepaid.BillPaymentDescriptionCommand;
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
+import com.kaching123.tcr.commands.print.pos.ReprintRefundCommand;
 import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
@@ -82,6 +88,7 @@ import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand.BaseSuccessOrderCommandCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
+import com.kaching123.tcr.commands.store.user.BaseClockInOutCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
@@ -119,6 +126,8 @@ import com.kaching123.tcr.fragment.tendering.ChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.ChooseCustomerDialog.CustomerPickListener;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment.RefundAmount;
+import com.kaching123.tcr.fragment.tendering.pax.PAXReloadFragmentDialog;
+import com.kaching123.tcr.fragment.tendering.payment.GiftCardAmountFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayCashFragmentDialog;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
@@ -129,8 +138,10 @@ import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
+import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
@@ -147,6 +158,7 @@ import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
+import com.kaching123.tcr.print.processor.GiftCardBillingResult;
 import com.kaching123.tcr.processor.LoyaltyProcessor;
 import com.kaching123.tcr.processor.LoyaltyProcessor.LoyaltyProcessorCallback;
 import com.kaching123.tcr.processor.MoneybackProcessor;
@@ -303,9 +315,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private LoyaltyProcessor loyaltyProcessor;
     private ArrayList<PaymentTransactionModel> successfullCCtransactionModels;
     private List<SaleOrderItemViewModel> prepaidList;
+    private List<SaleOrderItemViewModel> giftcardList;
     private ArrayList<PrepaidReleaseResult> releaseResultList;
+    private ArrayList<GiftCardBillingResult> giftCardResultList;
     protected String strItemCount;
     protected int saleItemCount;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -354,7 +373,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onPostResume();
         if (releaseResultList != null && releaseResultList.size() > 0 && !isPrepaidItemStart && isPrepaidItemRelease && prepaidCount == 0) {
             isPrepaidItemRelease = false;
-//            processor.proceedToPrepaidCheck(this, successfullCCtransactionModels, releaseResultList);
+            processor.proceedToPrepaidCheck(this, successfullCCtransactionModels, releaseResultList, new PaymentProcessor.PrepaidCheckCallBack() {
+                @Override
+                public void finish() {
+                    OnGiftCardBilling();
+                }
+            });
             releaseResultList = new ArrayList<PrepaidReleaseResult>();
         }
     }
@@ -362,14 +386,43 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
 
         bindToDisplayService();
         bindToScaleService();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "BaseCashier Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.kaching123.tcr.activity/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "BaseCashier Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.kaching123.tcr.activity/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
 
         unbindFromDisplayService();
         unbindFromScaleService();
@@ -379,6 +432,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (isCreateReturnOrder && !TextUtils.isEmpty(orderGuid)) {
             RemoveSaleOrderCommand.start(BaseCashierActivity.this, BaseCashierActivity.this, BaseCashierActivity.this.orderGuid);
         }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.disconnect();
     }
 
     private void bindToDisplayService() {
@@ -531,6 +587,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         //ScannerProcessor.get(barcodeListener).start();
 
         releaseResultList = new ArrayList<PrepaidReleaseResult>();
+        giftCardResultList = new ArrayList<GiftCardBillingResult>();
 
     }
 
@@ -564,6 +621,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //        result.print();
 //        final ItemExModel model = new ItemExModel(result);
 //        tryToAddItem(model);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -935,7 +995,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
 
         @Override
-        public void onPrintError(PrinterCommand.PrinterError errorType) {
+        public void onPrintError(PrinterError errorType) {
             PrintCallbackHelper2.onPrintError(BaseCashierActivity.this, errorType, callback);
         }
 
@@ -1030,36 +1090,43 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         });
 
         giftcardItem = menu.findItem(R.id.action_card);
+        giftcardItem.setVisible(!getApp().getEnableGiftCard());
         giftcardItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 //todo add gift card listner
 
-                GiftCardFragmentDialog.show(BaseCashierActivity.this, new GiftCardFragmentDialog.IGiftCardListener() {
-                    @Override
-                    public void Reload() {
+                if (!getApp().isPaxConfigured()) {
+                    AlertDialogFragment.showAlert(BaseCashierActivity.this, R.string.error_dialog_title, getString(R.string.gift_card_require_pax_configure));
+                } else {
+                    GiftCardFragmentDialog.show(BaseCashierActivity.this, new GiftCardFragmentDialog.IGiftCardListener() {
+                        @Override
+                        public void Reload() {
 
-                        PayCashFragmentDialog.show(BaseCashierActivity.this, null, new PayCashFragmentDialog.ISaleCashListener() {
-                            @Override
-                            public void onPaymentAmountSelected(BigDecimal amount, BigDecimal changeAmount) {
-                                ItemExModel model = new ItemExModel(amount);
-                            }
+                            GiftCardAmountFragmentDialog.show(BaseCashierActivity.this, new GiftCardAmountFragmentDialog.IGiftCardListener() {
+                                @Override
+                                public void onPaymentAmountSelected(BigDecimal amount) {
 
-                            @Override
-                            public void onCancel() {
+                                    isGiftCardReload = true;
+                                    ItemExModel model = new ItemExModel(amount);
+                                    tryToAddItem(model);
+                                }
 
-                            }
-                        });
-                    }
+                                @Override
+                                public void onCancel() {
 
-                    @Override
-                    public void Balance(BigDecimal result, String last4, String errorReason) {
+                                }
+                            });
+                        }
 
-                    }
-                });
+                        @Override
+                        public void Balance(BigDecimal result, String last4, String errorReason) {
+
+                        }
+                    });
+                }
                 return false;
-
             }
         });
 
@@ -1637,9 +1704,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             generateOrderId();
             isOrderGuid = false;
         }
-        if (isPrepaidItemStart) {
+        if (isPrepaidItemStart || isGiftCardReload) {
             isPrepaidItemStart = false;
-            BillPaymentDescriptionModel billPaymentDescriptionModel = new BillPaymentDescriptionModel(UUID.randomUUID().toString(), model.description, BillPaymentDescriptionModel.PrepaidType.WIRELESS_TOPUP, Integer.parseInt(model.productCode), false, false, saleOrderItemGuid);
+            BillPaymentDescriptionModel billPaymentDescriptionModel = null;
+            if (!isGiftCardReload)
+                billPaymentDescriptionModel = new BillPaymentDescriptionModel(UUID.randomUUID().toString(), model.description, BillPaymentDescriptionModel.PrepaidType.WIRELESS_TOPUP, Integer.parseInt(model.productCode), false, false, saleOrderItemGuid);
+            else
+                billPaymentDescriptionModel = new BillPaymentDescriptionModel(UUID.randomUUID().toString(), model.description, BillPaymentDescriptionModel.PrepaidType.GIFT_CARD_RELOAD, 0, false, false, saleOrderItemGuid);
+
+            isGiftCardReload = false;
+
             BillPaymentDescriptionCommand.start(this, billPaymentDescriptionModel, isOrderGuid, new BillPaymentDescriptionCommand.BillPaymentDescriptionCallback() {
                 @Override
                 protected void onSuccess(boolean isOrderGuid) {
@@ -1822,14 +1896,23 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     }
 
                     @Override
-                    public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> list, List<SaleOrderItemViewModel> giftCardList) {
+                    public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> prepaidResultList, List<SaleOrderItemViewModel> giftCardList) {
+//                        callback.onBillingSuccess();
                         EndTransactionCommand.start(BaseCashierActivity.this);
 
-                        prepaidList = list;
+
+                        prepaidList = prepaidResultList;
                         prepaidCount = prepaidList.size();
+
+                        giftcardList = giftCardList;
+                        giftcardCount = giftcardList.size();
+
                         successfullCCtransactionModels = transactionModels;
 
-                        OnPrepaidBilling();
+                        if (prepaidCount > 0)
+                            OnPrepaidBilling();
+                        else if (giftcardCount > 0)
+                            OnGiftCardBilling();
                     }
 
 
@@ -1876,13 +1959,98 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     public int prepaidCount;
+    public int giftcardCount;
 
     private void OnPrepaidBilling() {
         callReleaseSingleMini(PREPAID_MINI_RELEASE, prepaidList.get(0).productCode);
     }
 
-    private HistoryDetailedOrderItemListFragment.RefundAmount amount;
-    private LoaderManager.LoaderCallbacks<ArrayList<PaymentTransactionModel>> refundTransactionsLoaderCallback = new LoaderManager.LoaderCallbacks<ArrayList<PaymentTransactionModel>>() {
+    private void OnGiftCardBilling() {
+
+        if (giftcardList.size() != 0) {
+            PAXReloadFragmentDialog.show(this, new PAXReloadFragmentDialog.IPaxReloadListener() {
+
+                @Override
+                public void onComplete(String msg) {
+                    if (PaxProcessorGiftCardReloadCommand.SUCCESS.equalsIgnoreCase(msg)) {
+                        ProceedToGiftCard(true, giftcardList.get(giftcardList.size() - giftcardCount));
+                        PAXReloadFragmentDialog.hide(BaseCashierActivity.this);
+                    } else {
+                        ProceedToGiftCard(false, giftcardList.get(giftcardList.size() - giftcardCount));
+                    }
+
+//                    else {
+//                        processor.proceedToTipsApply(BaseCashierActivity.this, successfullCCtransactionModels);
+//                    }
+                }
+
+                @Override
+                public void onCancel() {
+                    PAXReloadFragmentDialog.hide(BaseCashierActivity.this);
+                    ProceedToGiftCard(false, giftcardList.get(giftcardList.size() - giftcardCount));
+//                    if (--giftcardCount > 0)
+//                        OnGiftCardBilling();
+//                    else {
+//                        processor.proceedToTipsApply(BaseCashierActivity.this, successfullCCtransactionModels);
+//                    }
+                }
+
+                @Override
+                public void onRetry() {
+                    OnGiftCardBilling();
+                }
+            }, PaxModel.get(), giftcardList.get(giftcardList.size() - giftcardCount).getPrice().toString());
+        }
+
+
+//            PaxProcessorGiftCardReloadCommand.startSale(this,
+//                    PaxModel.get(),
+//                    giftcardList.get(giftcardList.size() - giftcardCount).getPrice().toString(),
+//                    new PaxProcessorGiftCardReloadCommand.PaxGiftCardReloadCallback() {
+//                        @Override
+//                        protected void handleSuccess(String errorReason) {
+//                            if (PaxProcessorGiftCardReloadCommand.SUCCESS.equalsIgnoreCase(errorReason)) {
+//                                ProceedToGiftCard(true, giftcardList.get(giftcardList.size() - giftcardCount--));
+//                            } else {
+//                                ProceedToGiftCard(false, giftcardList.get(giftcardList.size() - giftcardCount--));
+//                            }
+//                            OnGiftCardBilling();
+//                        }
+//
+//                        @Override
+//                        protected void handleError() {
+//                            ProceedToGiftCard(false, giftcardList.get(giftcardList.size() - giftcardCount));
+//                            OnGiftCardBilling();
+//                        }
+//                    });
+    }
+
+    private void ProceedToGiftCard(boolean success, SaleOrderItemViewModel model) {
+        if (success)
+            giftCardResultList.add(new GiftCardBillingResult(PaxProcessorGiftCardReloadCommand.SUCCESS, model));
+        else
+            giftCardResultList.add(new GiftCardBillingResult(PaxProcessorGiftCardReloadCommand.FAIL, model));
+
+        if (--giftcardCount > 0)
+            OnGiftCardBilling();
+        if (giftcardCount == 0) {
+            processor.proceedToGiftCard(BaseCashierActivity.this, successfullCCtransactionModels, giftCardResultList);
+            giftCardResultList = new ArrayList<GiftCardBillingResult>();
+        }
+    }
+
+    @OnSuccess(PaxProcessorGiftCardReloadCommand.class)
+    public void handleSuccess(@Param(PaxProcessorGiftCardReloadCommand.RESULT_ERROR_REASON) String errorReason) {
+
+    }
+
+    @OnFailure(PaxProcessorGiftCardReloadCommand.class)
+    public void handleFailure() {
+
+    }
+
+    private RefundAmount amount;
+    private LoaderCallbacks<ArrayList<PaymentTransactionModel>> refundTransactionsLoaderCallback = new LoaderCallbacks<ArrayList<PaymentTransactionModel>>() {
         @Override
         public Loader<ArrayList<PaymentTransactionModel>> onCreateLoader(int loaderId, Bundle args) {
             return ReadPaymentTransactionsFunction.createLoaderOnlySaleOrderByAmount(BaseCashierActivity.this, orderGuid);
@@ -2222,7 +2390,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     };
 
-    private class OrdersCountLoader implements LoaderManager.LoaderCallbacks<OrdersStatInfo> {
+    private class OrdersCountLoader implements LoaderCallbacks<OrdersStatInfo> {
 
         @Override
         public Loader<OrdersStatInfo> onCreateLoader(int arg0, Bundle arg1) {
@@ -2302,7 +2470,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         return isDiscounted;
     }
 
-    private class OrderInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderViewResult> {
+    private class OrderInfoLoader implements LoaderCallbacks<SaleOrderViewResult> {
 
         @Override
         public Loader<SaleOrderViewResult> onCreateLoader(int i, Bundle bundle) {
@@ -3030,13 +3198,4 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         return getApp().getOperatorPermissions();
     }
 
-    public class GiftCardBillingResult {
-        public String msg;
-        public SaleOrderItemViewModel model;
-
-        public GiftCardBillingResult(String result, SaleOrderItemViewModel model) {
-            this.msg = result;
-            this.model = model;
-        }
-    }
 }
