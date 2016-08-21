@@ -72,7 +72,9 @@ public class QuickItemsFragment extends BaseItemsPickFragment {
                 Collections.sort(arrayList, new Comparator<ItemExModel>() {
                     @Override
                     public int compare(ItemExModel p1, ItemExModel p2) {
-                        return p1.description.compareTo(p2.description);
+                        String str1 = p1.description.toString().toUpperCase();
+                        String str2 = p2.description.toString().toUpperCase();
+                        return str1.compareTo(str2);
                     }
                 });
             } catch (Exception e) {

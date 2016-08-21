@@ -118,7 +118,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         builder.projection(ItemExFunction.PROJECTION);
 
         //builder.orderBy(sortByName && LOAD_ALL_CATEGORIES.equals(categoryGuid)? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
-        builder.orderBy(sortByName ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
+        builder.orderBy(sortByName ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM + "  COLLATE NOCASE");
 
         builder.where(ItemTable.IS_DELETED + " = ?", 0);
 

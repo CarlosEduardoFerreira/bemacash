@@ -8,6 +8,7 @@ import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.IObjectsAdapter;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
@@ -77,16 +78,17 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
     @Override
     public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> list) {
         ArrayList<ItemExModel> arrayList = new ArrayList(list);
-        if (list != null) {
-            Collections.sort(arrayList, new Comparator<ItemExModel>() {
-                @Override
-                public int compare(ItemExModel lhs, ItemExModel rhs) {
-                    String   str1   =   lhs.description.toString().toUpperCase();
-                    String   str2   =   rhs.description.toString().toUpperCase();
-                    return str1.compareTo(str2);
-                }
-            });
-        }
+        if (((TcrApplication) getContext().getApplicationContext()).isEnableABCOrder())
+            if (list != null) {
+                Collections.sort(arrayList, new Comparator<ItemExModel>() {
+                    @Override
+                    public int compare(ItemExModel lhs, ItemExModel rhs) {
+                        String str1 = lhs.description.toString().toUpperCase();
+                        String str2 = rhs.description.toString().toUpperCase();
+                        return str1.compareTo(str2);
+                    }
+                });
+            }
         if (adapter != null) {
             adapter.changeCursor(arrayList);
         }
