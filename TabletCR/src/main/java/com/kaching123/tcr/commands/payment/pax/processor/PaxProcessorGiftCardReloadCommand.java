@@ -43,6 +43,7 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
     public static final String RESULT_ERROR_REASON = "ERROR";
     private static final String ARG_SALEACTIONRESPONSE = "SaleActionResponse";
     public static final String SUCCESS = "SUCCESS";
+    public static final String FAIL = "FAIL";
     private static final String ARG_PURPOSE = "ARG_AMOUNT_1";
 
 //    private PaxTransaction transaction;

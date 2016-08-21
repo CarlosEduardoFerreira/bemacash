@@ -27,6 +27,7 @@ import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackGateway;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorGiftCardReloadCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorHelloCommand;
 import com.kaching123.tcr.commands.print.pos.PrintSignatureOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
@@ -133,6 +134,9 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
     private ArrayList<PrepaidReleaseResult> ReleaseResultList;
     private ArrayList<PrepaidReleaseResult> failReleaseResultList;
+
+    private ArrayList<BaseCashierActivity.GiftCardBillingResult> successGiftCardResultList;
+    private ArrayList<BaseCashierActivity.GiftCardBillingResult> failGiftCardResultList;
     private final int PREPAID_RELEASE_BILLING_SUCC = 200;
 
     private static final Uri URI_SALE_ITEMS_PREPAID = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
@@ -1247,7 +1251,6 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
         } else {
             hasPrepaidItem = true;
-            callback.onBilling(transactions, prepaidList, true);
         }
 
         List<SaleOrderItemViewModel> giftCardItemsList = getSaleOrderItems(saleItemsList, false);
@@ -1255,8 +1258,10 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
         } else {
             hasGiftCardItem = true;
-            callback.onBilling(transactions, prepaidList, false);
         }
+        if (hasPrepaidItem || hasGiftCardItem)
+            callback.onBilling(transactions, prepaidList, giftCardItemsList);
+
         return (hasPrepaidItem || hasGiftCardItem);
     }
 
@@ -1286,6 +1291,17 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         for (PrepaidReleaseResult result : list) {
             if (Integer.parseInt(result.error) != PREPAID_RELEASE_BILLING_SUCC)
                 failReleaseResultList.add(result);
+        }
+
+        proceedToTipsApply(context, transactions);
+    }
+
+    public void proceedToGiftCard(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions, ArrayList<BaseCashierActivity.GiftCardBillingResult> list) {
+        failReleaseResultList = new ArrayList<PrepaidReleaseResult>();
+        successGiftCardResultList = list;
+        for (BaseCashierActivity.GiftCardBillingResult result : list) {
+            if (result.msg.equalsIgnoreCase(PaxProcessorGiftCardReloadCommand.SUCCESS))
+                failGiftCardResultList.add(result);
         }
 
         proceedToTipsApply(context, transactions);
@@ -1580,7 +1596,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
         public void onPrintValues(String order, ArrayList<PaymentTransactionModel> list, BigDecimal changeAmount);
 
-        public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList, boolean isPrepaid);
+        public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList, List<SaleOrderItemViewModel> giftCardList);
 
         public void onRefund(final HistoryDetailedOrderItemListFragment.RefundAmount amount);
 

@@ -1822,7 +1822,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     }
 
                     @Override
-                    public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> list, boolean isPrepaid) {
+                    public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> list, List<SaleOrderItemViewModel> giftCardList) {
                         EndTransactionCommand.start(BaseCashierActivity.this);
 
                         prepaidList = list;
@@ -3030,4 +3030,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         return getApp().getOperatorPermissions();
     }
 
+    public class GiftCardBillingResult {
+        public String msg;
+        public SaleOrderItemViewModel model;
+
+        public GiftCardBillingResult(String result, SaleOrderItemViewModel model) {
+            this.msg = result;
+            this.model = model;
+        }
+    }
 }
