@@ -140,7 +140,7 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
                 request.TransType = TRANSACTION_ID_GIFT;
                 break;
             default:
-                request.TenderType = TRANS_TYPE_SALE;
+                request.TenderType = 0;
 
         }
 //        if (transaction.getType() == TransactionType.PRE_AUTHORIZATION) {
