@@ -157,7 +157,7 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
     protected void btnBalance()
     {
         PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX.gateway();
-        paxGateway.doBalance(getActivity(), reloadGiftCardCallBack());
+//        paxGateway.doBalance(getActivity(), reloadGiftCardCallBack());
 
         PAXBalanceFragmentDialog.show(getActivity(), new PAXBalanceFragmentDialog.IPaxBalanceListener(){
 

@@ -1,6 +1,7 @@
 package com.kaching123.tcr.commands.payment.pax.processor;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
@@ -16,6 +17,8 @@ import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
+
+import org.jsoup.select.Evaluator;
 
 import java.math.BigDecimal;
 
@@ -69,6 +72,8 @@ public class PaxProcessorBalanceCommand extends PaxProcessorBaseCommand {
 
 
             ProcessTransResult ptr = posLink.ProcessTrans();
+            Logger.e("PaxProcessor ptr.Code:" + ptr.Code);
+
             if (ptr.Code == ProcessTransResult.ProcessTransResultCode.OK) {
 
                 PaymentResponse response = posLink.PaymentResponse;
@@ -91,6 +96,7 @@ public class PaxProcessorBalanceCommand extends PaxProcessorBaseCommand {
             }
         } catch (Exception e) {
             Logger.e("PaxProcessorAddTipsCommand failed", e);
+
             error = PaxGateway.Error.CONNECTIVITY;
         }
         return succeeded().add(RESULT_LAST4, lastFour).add(RESULT_AMOUNT, amount).add(RESULT_ERROR_REASON, errorReason);
