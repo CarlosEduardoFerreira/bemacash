@@ -101,6 +101,9 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 keyboard.detachEditView();
             }
         });
+
+        keyboard.setEnterVisibility(View.GONE);
+
         charge.setFilters(new InputFilter[]{new CurrencyFormatInputFilter()});
         charge.addTextChangedListener(currencyTextWatcher);
         charge.setEditListener(new CustomEditBox.IEditListener() {
@@ -178,7 +181,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 getDisplayBinder().startCommand(new DisplayTenderCommand(entered, null));
             }
 
-            enablePositiveButtons(entered.compareTo(PaymentGateway.getCreditCardPaymentMethod().minimalAmount()) >= 0);
          }
     }
 
@@ -219,10 +221,10 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     protected void calculateDlgHeight(){
         boolean expand = saleOrderModels != null && saleOrderModels.size() > 0;
 
-        int height = expand ? R.dimen.pay_tender_dialog_height_3_expanded : R.dimen.pay_tender_dialog_height_3;
+        int height = expand ? R.dimen.pay_tender_dialog_height_3_expanded_large : R.dimen.pay_tender_dialog_height_3;
 
         getDialog().getWindow().setLayout(
-                getResources().getDimensionPixelOffset(R.dimen.pay_tender_dialog_width),
+                getResources().getDimensionPixelOffset(R.dimen.pay_tender_dialog_width_large),
                 getResources().getDimensionPixelOffset(height)
         );
     }

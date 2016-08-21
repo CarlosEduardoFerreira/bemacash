@@ -41,20 +41,9 @@
                 android:paddingTop="@dimen/payment_side_padding_charge"
                 android:text="@string/payment_charge_amount_united" />
 
-            <TextView
-                style="@style/PaymentItem.Dots"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/charge"
-                android:layout_toLeftOf="@+id/charge"
-                android:layout_toRightOf="@+id/a2_"
-                android:lines="1"
-                android:text="@string/lots_o_dots" />
-
-
             <com.kaching123.tcr.component.CustomEditBox
                 android:id="@+id/charge"
-                style="@style/CustomEditBox.PaymentInputField.32"
+                style="@style/CustomEditBox.PaymentInputField.34"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true" />
@@ -74,17 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/payment_tender_dlg_keyboard_layout_margin" />
-        <Button
-            style="@style/LocalizableButton.LightGrey"
-            android:id="@+id/btn_exact"
-            android:background="@drawable/exact_btn_bg"
-            android:text="@string/button_exact"
-            android:textSize="22sp"
-            android:paddingBottom="4dp"
-            android:focusable="false"
-            android:clickable="false"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
+
         <GridView
             android:id="@+id/bonds"
             android:layout_width="@dimen/payment_tender_dlg_payment_gridview_layout_width"
@@ -97,7 +76,17 @@
             android:numColumns="3"
             android:stretchMode="columnWidth"
             android:verticalSpacing="@dimen/payment_tender_dlg_payment_gridview_vertical_spacing" />
-
+        <Button
+            style="@style/LocalizableButton.LightGrey"
+            android:id="@+id/btn_exact"
+            android:background="@drawable/exact_btn_bg"
+            android:text="@string/button_exact"
+            android:textSize="22sp"
+            android:paddingBottom="4dp"
+            android:focusable="false"
+            android:clickable="false"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/payment_tender_dlg_payment_gridview_layout_width"/>
 
     </LinearLayout>
 
@@ -204,7 +193,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="@dimen/payment_tender_dlg_report_layout_margin_left"
         android:layout_toRightOf="@+id/flipper"
-        android:background="@drawable/addon_background"
+
         android:orientation="horizontal">
 
         <TextView
@@ -247,9 +236,10 @@
         <LinearLayout
             android:id="@+id/list_view_holder"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/a2"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:background="@drawable/addon_background"/>
 
         <TextView
             android:id="@+id/a2"

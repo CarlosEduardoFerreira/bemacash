@@ -44,8 +44,10 @@
     <dimen name="pay_tender_dialog_height">526dp</dimen>
     <dimen name="pay_tender_dialog_height_expanded">630dp</dimen>
     <dimen name="pay_tender_dialog_width">900dp</dimen>
+    <dimen name="pay_tender_dialog_width_large">1200dp</dimen>
     <dimen name="pay_tender_dialog_height_3">648dp</dimen>
     <dimen name="pay_tender_dialog_height_3_expanded">672dp</dimen>
+    <dimen name="pay_tender_dialog_height_3_expanded_large">750dp</dimen>
     <dimen name="listPreferredItemHeight">48dp</dimen>
     <dimen name="listPreferredItemHeight2">86dp</dimen>
     <dimen name="listPreferredHeaderHeight">50dp</dimen>

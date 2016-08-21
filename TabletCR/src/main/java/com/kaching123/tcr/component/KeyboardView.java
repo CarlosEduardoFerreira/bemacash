@@ -7,10 +7,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
+import com.kaching123.tcr.R;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-import com.kaching123.tcr.R;
 
 @EViewGroup(R.layout.component_keyboard_view)
 public class KeyboardView extends FrameLayout {
@@ -76,7 +77,12 @@ public class KeyboardView extends FrameLayout {
     public void setEnterEnabled(boolean enabled) {
         numEnter.setEnabled(enabled);
     }
-    public void setNumMinusEnabled(boolean enabled) {
+
+    public void setEnterVisibility(int visible) {
+        numEnter.setVisibility(visible);
+    }
+
+     public void setNumMinusEnabled(boolean enabled) {
         numMinus.setEnabled(enabled);
     }
 
