@@ -3,6 +3,7 @@ package com.kaching123.tcr.print.processor;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
@@ -11,6 +12,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
+import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -24,12 +26,14 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
+import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,6 +64,25 @@ public class PrintGiftCardProcessor extends BasePrintProcessor<ITextPrinter> {
     @Override
     public void printHeader(Context context, TcrApplication app, ITextPrinter printerWrapper) {
         printerWrapper.subTitle(context.getString(R.string.print_gift_card_balance_header));
+        ShopInfoViewJdbcConverter.ShopInfo shopInfo = app.getShopInfo();
+
+        printerWrapper.header(shopInfo.name);
+
+        if (!TextUtils.isEmpty(shopInfo.address1)) {
+            printerWrapper.footer(shopInfo.address1);
+        }
+
+        String cityStateZip = getCityStateZip(shopInfo);
+        if (!TextUtils.isEmpty(cityStateZip)) {
+            printerWrapper.footer(cityStateZip);
+        }
+
+        String phone = PhoneUtil.parse(shopInfo.phone);
+        if (!TextUtils.isEmpty(phone)) {
+            printerWrapper.footer(phone);
+        }
+
+        printerWrapper.header(new Date().toString(),app.getOperatorFullName());
         printerWrapper.emptyLine();
 
 //        super.printHeader(context, app, printerWrapper);
