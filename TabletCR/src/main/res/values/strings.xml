@@ -393,7 +393,7 @@
     <string name="blackstone_pay_total">Total:</string>
     <string name="blackstone_pay_pending_amount">Pending amount:</string>
     <string name="blackstone_pay_charge">Change:</string>
-    <string name="blackstone_pay_charge_finish">Change: %s</string>
+    <string name="blackstone_pay_charge_finish">Gift Card Balance: %s</string>
     <string name="blackstone_pay_required_amount">Required amount:</string>
     <string name="blackstone_pay_received_cash">Received cash:</string>
     <string name="blackstone_pay_transaction_constructor" formatted="false">%s payment</string>
