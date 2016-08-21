@@ -5,12 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +34,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
+import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
 import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneBalanceCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBalanceCommand;
@@ -42,10 +47,18 @@ import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper.IKitchenPrintCallb
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
+import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase;
+import com.kaching123.tcr.fragment.tendering.pax.PAXBalanceFragmentDialog;
+import com.kaching123.tcr.fragment.tendering.payment.GiftCardBalanceFragmentDialog;
+import com.kaching123.tcr.fragment.tendering.payment.PayTransPendingFragmentDialog;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.OrderStatus;
+import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.SaleOrderFunction;
+import com.kaching123.tcr.model.payment.blackstone.payment.ResponseBase;
+import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -144,23 +157,45 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
     protected void btnBalance()
     {
         PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX.gateway();
-        paxGateway.doBalance(getActivity(),balanceGiftCardCallBack());
+        paxGateway.doBalance(getActivity(), reloadGiftCardCallBack());
+
+        PAXBalanceFragmentDialog.show(getActivity(), new PAXBalanceFragmentDialog.IPaxBalanceListener(){
+
+            @Override
+            public void onComplete(BigDecimal amount, String errorReason) {
+                Logger.d("proceedToCCardPayment onComplete");
+                PAXBalanceFragmentDialog.hide(getActivity());
+                GiftCardBalanceFragmentDialog.show(getActivity(), new PrintAndFinishFragmentDialogBase.IFinishConfirmListener()
+                {
+                    @Override
+                    public void onConfirmed() {
+
+                    }
+                },amount);
+            }
+
+            @Override
+            public void onCancel() {
+                Logger.d("proceedToCCardPayment onCancel");
+                // TODO its impossible, remove this
+                PAXBalanceFragmentDialog.hide(getActivity());
+            }
+        });
     }
 
     private Object reloadGiftCardCallBack(){
-        return new PaxProcessorGiftCardReloadCommand.PaxGiftCardReloadCallback(){
+       return new PaxProcessorBalanceCommand.PaxBalanceCommandBaseCallback(){
 
+           @Override
+           protected void handleSuccess(BigDecimal result, String last4, String errorReason) {
 
-            @Override
-            protected void handleSuccess(String errorReason) {
+           }
 
-            }
+           @Override
+           protected void handleError() {
 
-            @Override
-            protected void handleError() {
-
-            }
-        };
+           }
+       };
     }
     private Object balanceGiftCardCallBack () {
         return new PaxBlackstoneBalanceCommand.PaxBalanceCommandBaseCallback() {
@@ -168,6 +203,7 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
             @Override
             protected void handleSuccess(BigDecimal result, String last4, String errorReason) {
                 listener.Balance(result, last4, errorReason);
+
             }
 
             @Override
@@ -176,6 +212,8 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
             }
         };
     }
+
+
 //    private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
 //        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
 //        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());

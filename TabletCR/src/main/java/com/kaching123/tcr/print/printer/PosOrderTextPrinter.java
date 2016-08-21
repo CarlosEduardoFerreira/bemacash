@@ -158,7 +158,7 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
 
     @Override
     public void orderFooter(String label, BigDecimal price) {
-        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, label, commaPriceFormat(price))));
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, label, commaPriceFormat(price == null ? BigDecimal.ZERO : price))));
     }
 
     @Override

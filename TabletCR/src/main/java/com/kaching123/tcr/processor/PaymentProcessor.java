@@ -97,6 +97,7 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActio
 
 import junit.framework.Assert;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -1285,7 +1286,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
     }
 
-    public void proceedToPrepaidCheck(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions, ArrayList<PrepaidReleaseResult> list) {
+    public void proceedToPrepaidCheck(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions, ArrayList<PrepaidReleaseResult> list, PrepaidCheckCallBack callBack) {
         failReleaseResultList = new ArrayList<PrepaidReleaseResult>();
         ReleaseResultList = list;
         for (PrepaidReleaseResult result : list) {
@@ -1293,7 +1294,13 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 failReleaseResultList.add(result);
         }
 
-        proceedToTipsApply(context, transactions);
+        callBack.finish();
+//        proceedToTipsApply(context, transactions);
+    }
+
+    public interface PrepaidCheckCallBack
+    {
+        void finish();
     }
 
     public void proceedToGiftCard(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions, ArrayList<BaseCashierActivity.GiftCardBillingResult> list) {
@@ -1307,17 +1314,21 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         proceedToTipsApply(context, transactions);
     }
 
-    private ArrayList<SaleOrderItemViewModel> getOderItems(ArrayList<PrepaidReleaseResult> ReleaseResultList) {
-        ArrayList<SaleOrderItemViewModel> orderItems = new ArrayList<SaleOrderItemViewModel>(ReleaseResultList.size());
-        for (PrepaidReleaseResult result : ReleaseResultList) {
+    private ArrayList<SaleOrderItemViewModel> getOderItems(ArrayList<PrepaidReleaseResult> failPrepaidResultList, ArrayList<BaseCashierActivity.GiftCardBillingResult> failGiftCardResultList) {
+        ArrayList<SaleOrderItemViewModel> orderItems = new ArrayList<SaleOrderItemViewModel>(failPrepaidResultList.size());
+        for (PrepaidReleaseResult result : failPrepaidResultList) {
             orderItems.add(result.model);
+        }
+        for(BaseCashierActivity.GiftCardBillingResult gResult : failGiftCardResultList)
+        {
+            orderItems.add(gResult.model);
         }
         return orderItems;
     }
 
     public HistoryDetailedOrderItemListFragment.RefundAmount getReturnAmount() {
         BigDecimal pickedValue = BigDecimal.ZERO;
-        ArrayList<SaleOrderItemViewModel> orderItems = getOderItems(failReleaseResultList);
+        ArrayList<SaleOrderItemViewModel> orderItems = getOderItems(failReleaseResultList, failGiftCardResultList);
         ArrayList<MoneybackProcessor.RefundSaleItemInfo> refundItems = new ArrayList<MoneybackProcessor.RefundSaleItemInfo>(failReleaseResultList.size());
 
         for (SaleOrderItemViewModel model : orderItems) {
@@ -1414,7 +1425,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 public void onConfirmed() {
 
                     callback.onPrintComplete();
-                    if (failReleaseResultList != null && failReleaseResultList.size() != 0) {
+                    if ((failReleaseResultList != null && failReleaseResultList.size() != 0) || (failGiftCardResultList != null && failGiftCardResultList.size() != 0)) {
                         final HistoryDetailedOrderItemListFragment.RefundAmount amount = getReturnAmount();
                         if (BigDecimal.ZERO.compareTo(amount.pickedValue) == 0) {
                             Logger.d("just notify");

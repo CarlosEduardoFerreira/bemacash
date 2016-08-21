@@ -123,6 +123,8 @@ public class ShopInfoViewJdbcConverter {
     private static final String DEFAULT_LOYALTY_PLAN_ID = "DEFAULT_LOYALTY_PLAN";
     private static final String LOYALTY_POINTS_FOR_DOLLAR_AMOUNT = "PRICE_POINTS_ENABLED";
 
+    public static final String GIFT_CARD  = "GIFT_CARD";
+
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
                 rs.getLong(ID),
@@ -194,6 +196,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED),
                 rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE),
                 rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION),
+                rs.getBoolean(GIFT_CARD),
                 rs.getString(DEFAULT_LOYALTY_PLAN_ID),
                 rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT));
     }
@@ -269,6 +272,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(CUSTOMER_POPUP_SCREEN_ENABLED),
                 rs.getString(CUSTOMER_POPUP_SCREEN_MESSAGE),
                 rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION ),
+                rs.getBoolean(GIFT_CARD ),
                 rs.getString(DEFAULT_LOYALTY_PLAN_ID),
                 rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT));
     }
@@ -367,6 +371,8 @@ public class ShopInfoViewJdbcConverter {
         public final boolean loyaltyPointsForDollarAmount;
 
 
+        public final boolean giftCard;
+
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
                         String address2,
@@ -431,7 +437,9 @@ public class ShopInfoViewJdbcConverter {
                         long countryId,
                         boolean customerPopupScreenEnabled,
                         String customerPopupScreenMessage,
-                        boolean blackStonePRepaidSolution, String defaultLoyaltyPlanId,
+                        boolean blackStonePRepaidSolution,
+                        boolean giftCard,
+                        String defaultLoyaltyPlanId,
                         boolean loyaltyPointsForDollarAmount) {
             this.id = id;
             this.name = name;
@@ -522,6 +530,7 @@ public class ShopInfoViewJdbcConverter {
             this.customerPopupScreenEnabled = customerPopupScreenEnabled;
             this.customerPopupScreenMessage = customerPopupScreenMessage;
             this.blackStonePRepaidSolution = blackStonePRepaidSolution;
+            this.giftCard = giftCard;
             
             this.defaultLoyaltyPlanId = defaultLoyaltyPlanId;
             this.loyaltyPointsForDollarAmount = loyaltyPointsForDollarAmount;

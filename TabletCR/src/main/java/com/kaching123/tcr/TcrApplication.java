@@ -256,6 +256,7 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.customerPopupScreenEnabled().get(),
                     shopPref.customerPopupScreenMessage().get(),
                     shopPref.blackStonePRepaidSolution().get(),
+                    shopPref.enableGiftCard().get(),
                     shopPref.defaultLoyaltyPlanId().get(),
                     shopPref.pricePointsEnabled().getOr(false));
         }
@@ -602,6 +603,7 @@ public class TcrApplication extends MultiDexApplication {
                 .customerPopupScreenEnabled().put(info.customerPopupScreenEnabled)
                 .customerPopupScreenMessage().put(info.customerPopupScreenMessage)
                 .blackStonePRepaidSolution().put(info.blackStonePRepaidSolution)
+                .enableGiftCard().put(info.giftCard)
                 .defaultLoyaltyPlanId().put(info.defaultLoyaltyPlanId)
                 .pricePointsEnabled().put(info.loyaltyPointsForDollarAmount)
                 .apply();
@@ -701,6 +703,10 @@ public class TcrApplication extends MultiDexApplication {
 
     public synchronized boolean getBlackStonePrepaidSulution() {
         return shopInfo.blackStonePRepaidSolution;
+    }
+
+    public synchronized boolean getEnableGiftCard() {
+        return shopInfo.giftCard;
     }
 
     public void setSunpassActivated(boolean activated) {

@@ -354,7 +354,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         super.onPostResume();
         if (releaseResultList != null && releaseResultList.size() > 0 && !isPrepaidItemStart && isPrepaidItemRelease && prepaidCount == 0) {
             isPrepaidItemRelease = false;
-            processor.proceedToPrepaidCheck(this, successfullCCtransactionModels, releaseResultList);
+//            processor.proceedToPrepaidCheck(this, successfullCCtransactionModels, releaseResultList);
             releaseResultList = new ArrayList<PrepaidReleaseResult>();
         }
     }

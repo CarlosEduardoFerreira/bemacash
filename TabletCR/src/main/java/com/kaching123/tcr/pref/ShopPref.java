@@ -399,4 +399,6 @@ public interface ShopPref {
 
     boolean blackStonePRepaidSolution();
 
+    boolean enableGiftCard();
+
 }

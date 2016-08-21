@@ -515,6 +515,7 @@
     <string name="modifiers_activity_new_item_title">New Item</string>
     <string name="printer_discount">Discount</string>
     <string name="printer_cash_back">CashBack</string>
+    <string name="printer_gift_card_balance_title">Gift Card Balance:</string>
     <string name="printer_subtotal">Subtotal</string>
     <string name="printer_tax">Tax Total</string>
     <string name="printer_total">Total</string>
@@ -1382,6 +1383,7 @@
     <string name="email_order_title">Email</string>
     <string name="email_order_send_label">Send</string>
     <string name="print_order_copy_header">COPY</string>
+    <string name="print_gift_card_balance_header">Gift Card Balance</string>
     <string name="printers_action_add">Add</string>
     <string name="printers_action_search">Search</string>
     <string name="login_login_label">You are logged in as</string>
