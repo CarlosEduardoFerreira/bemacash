@@ -9,6 +9,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
@@ -75,6 +76,10 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
     public void setPrepaidReleaseResults(ArrayList<PrepaidReleaseResult> results) {
         this.prepaidReleaseResults = results;
+    }
+
+    public void setGiftCardResults(ArrayList<GiftCardBillingResult> giftCardResults) {
+        this.giftCardResults = giftCardResults;
     }
 
 
@@ -232,6 +237,10 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                     printerWrapper.header(context.getString(R.string.prepaid_mini_fail_error_msg), result.errorMSG);
                 }
 
+            }
+        if (giftCardResults != null)
+            for (GiftCardBillingResult result : giftCardResults) {
+                printerWrapper.addAddsOn(result.model.description, result.model.finalPrice);
             }
     }
 

@@ -76,8 +76,8 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
                 .add(ID, model.guid)
                 .add(DESCRIPTION, model.description)
                 .add(TYPE, model.type.name())
-                .add(TRANSACTION_ID, model.orderId)
-                .add(IS_VOIDED, model.isVoided)
+                .add(TRANSACTION_ID,  model.description.equalsIgnoreCase("Gift Card") ? 0 : model.orderId)
+                .add(IS_VOIDED,model.isVoided)
                 .add(IS_FAILED, model.isFailed)
                 .add(ORDER_ID, model.saleOrderId)
                 .build(JdbcFactory.getApiMethod(CategoryModel.class));

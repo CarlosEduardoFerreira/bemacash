@@ -17,6 +17,7 @@
         android:text="@string/blackstone_pay_progress_body"
         />
     <ProgressBar
+        android:id="@+id/progress_bar"
         android:layout_marginTop="15dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"/>

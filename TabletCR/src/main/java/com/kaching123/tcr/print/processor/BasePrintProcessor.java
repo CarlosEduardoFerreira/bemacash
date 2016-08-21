@@ -9,6 +9,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.IHeaderFooterPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -47,6 +48,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     protected ArrayList<PaymentTransactionModel> transactions;
     protected String amountTotal;
     protected ArrayList<PrepaidReleaseResult> prepaidReleaseResults;
+    protected ArrayList<GiftCardBillingResult> giftCardResults;
 
     private final IAppCommandContext appCommandContext;
     protected PrintOrderInfo orderInfo;

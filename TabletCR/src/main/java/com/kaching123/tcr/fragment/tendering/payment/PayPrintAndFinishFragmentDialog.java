@@ -8,6 +8,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
@@ -33,6 +34,7 @@ import com.kaching123.tcr.fragment.tendering.PrintAndFinishFragmentDialogBase;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
+import com.kaching123.tcr.print.processor.GiftCardBillingResult;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -57,6 +59,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     protected boolean isPrinterTwoCopiesReceipt;
     @FragmentArg
     protected ArrayList<PrepaidReleaseResult> releaseResultList;
+    @FragmentArg
+    protected ArrayList<GiftCardBillingResult> giftCardResults;
 
     @ViewById
     protected CheckBox signatureBox;
@@ -159,7 +163,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, releaseResultList, printOrderCallback);
+        PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, releaseResultList, giftCardResults, printOrderCallback);
     }
 
     protected void chooseCustomer(){
@@ -245,8 +249,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, null);
     }
 
-    public static void show(FragmentActivity context, String orderGuid, IFinishConfirmListener listener, ArrayList<PaymentTransactionModel> transactions, KitchenPrintStatus kitchenPrintStatus, BigDecimal changeAmount, ReceiptType debitGateway, boolean isPrinterTwoCopiesReceipt, ArrayList<PrepaidReleaseResult> releaseResultList) {
-        DialogUtil.show(context, DIALOG_NAME, PayPrintAndFinishFragmentDialog_.builder().transactions(transactions).orderGuid(orderGuid).kitchenPrintStatus(kitchenPrintStatus).changeAmount(changeAmount).releaseResultList(releaseResultList).gateWay(debitGateway).isPrinterTwoCopiesReceipt(isPrinterTwoCopiesReceipt).build()).setListener(listener);
+    public static void show(FragmentActivity context, String orderGuid, IFinishConfirmListener listener, ArrayList<PaymentTransactionModel> transactions, KitchenPrintStatus kitchenPrintStatus, BigDecimal changeAmount, ReceiptType debitGateway, boolean isPrinterTwoCopiesReceipt, ArrayList<PrepaidReleaseResult> releaseResultList, ArrayList<GiftCardBillingResult> giftCardResults) {
+        DialogUtil.show(context, DIALOG_NAME, PayPrintAndFinishFragmentDialog_.builder().transactions(transactions).orderGuid(orderGuid).kitchenPrintStatus(kitchenPrintStatus).changeAmount(changeAmount).releaseResultList(releaseResultList).gateWay(debitGateway).giftCardResults(giftCardResults).isPrinterTwoCopiesReceipt(isPrinterTwoCopiesReceipt).build()).setListener(listener);
     }
 
     public static void show(FragmentActivity context, String orderGuid, IFinishConfirmListener listener, ArrayList<PaymentTransactionModel> transactions, KitchenPrintStatus kitchenPrintStatus, BigDecimal changeAmount, ReceiptType debitGateway, boolean isPrinterTwoCopiesReceipt) {

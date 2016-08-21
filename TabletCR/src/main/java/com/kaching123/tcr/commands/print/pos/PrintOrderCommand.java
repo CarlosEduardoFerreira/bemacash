@@ -4,10 +4,12 @@ import android.content.Context;
 
 import com.kaching123.pos.PosPrinter;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.ecuador.EcuadorPrintProcessor;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
+import com.kaching123.tcr.print.processor.GiftCardBillingResult;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
 import com.telly.groundy.TaskResult;
 
@@ -26,6 +28,7 @@ public class PrintOrderCommand extends BasePrintOrderCommand {
     protected static final String ARG_ORDER_TAXTOTAL = "ARG_ORDER_TAXTOTAL";
     protected static final String ARG_ORDER_TOTALAMOUNT = "ARG_ORDER_TOTALAMOUNT";
     protected static final String ARG_ORDER_TRANSACTIONS = "ARG_ORDER_TRANSACTIONS";
+    protected static final String ARG_GIFT_CARD_TRANSACTIONS = "ARG_GIFT_CARD_TRANSACTIONS";
 
     @Override
     protected TaskResult execute(PosPrinter printer) throws IOException {
@@ -37,6 +40,7 @@ public class PrintOrderCommand extends BasePrintOrderCommand {
     protected void printBody(PosOrderTextPrinter printerWrapper) {
         String orderGuid = getStringArg(ARG_ORDER_GUID);
         ArrayList<PaymentTransactionModel> transactions = (ArrayList<PaymentTransactionModel>) getArgs().getSerializable(ARG_ORDER_TRANSACTIONS);
+        ArrayList<GiftCardBillingResult> giftCardBillingResults = (ArrayList<GiftCardBillingResult>) getArgs().getSerializable(ARG_GIFT_CARD_TRANSACTIONS);
 
         PrintOrderProcessor printProcessor = getPrintOrderProcessor(orderGuid, getAppCommandContext());
         printProcessor.setTitle(getStringArg(ARG_ORDER_TITLE));
@@ -55,8 +59,8 @@ public class PrintOrderCommand extends BasePrintOrderCommand {
                 new EcuadorPrintProcessor(orderGuid, appCommandContext) : new PrintOrderProcessor(orderGuid, appCommandContext);
     }
 
-    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, ArrayList<PaymentTransactionModel> transactions, ArrayList<PrepaidReleaseResult> receipts, BasePrintCallback callback) {
-        create(PrintOrderCommand.class).arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning).arg(ARG_PREPAID_RECEIPTS, receipts).arg(ARG_SEARCH_BY_MAC, searchByMac).arg(ARG_ORDER_GUID, orderGuid).arg(ARG_ORDER_TRANSACTIONS, transactions).callback(callback).queueUsing(context);
+    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, ArrayList<PaymentTransactionModel> transactions, ArrayList<PrepaidReleaseResult> receipts, ArrayList<GiftCardBillingResult> giftCardResults, BasePrintCallback callback) {
+        create(PrintOrderCommand.class).arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning).arg(ARG_PREPAID_RECEIPTS, receipts).arg(ARG_SEARCH_BY_MAC, searchByMac).arg(ARG_ORDER_GUID, orderGuid).arg(ARG_ORDER_TRANSACTIONS, transactions).arg(ARG_GIFT_CARD_TRANSACTIONS, giftCardResults).callback(callback).queueUsing(context);
     }
 
     public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, BasePrintCallback callback, String title, String subTotal, String discountTotal, String taxTotal, String amountTotal) {

@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
@@ -40,6 +41,8 @@ public class PAXReloadFragmentDialog extends TransactionPendingFragmentDialogBas
 
     @ViewById
     protected TextView message;
+    @ViewById
+    protected ProgressBar progressBar;
 
     protected IPaxReloadListener listener;
 
@@ -121,6 +124,7 @@ public class PAXReloadFragmentDialog extends TransactionPendingFragmentDialogBas
                     hasNegativeButton();
                     getPositiveButton().setVisibility(View.VISIBLE);
                     getNegativeButton().setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
                 }
                 else
                     listener.onComplete(errorReason);

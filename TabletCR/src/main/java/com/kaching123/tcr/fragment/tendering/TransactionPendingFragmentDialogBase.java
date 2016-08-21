@@ -1,6 +1,7 @@
 package com.kaching123.tcr.fragment.tendering;
 
 import android.os.Bundle;
+import android.widget.ProgressBar;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
@@ -9,6 +10,8 @@ import com.kaching123.tcr.model.payment.blackstone.payment.ResponseBase;
 import com.kaching123.tcr.model.payment.blackstone.payment.User;
 import com.kaching123.tcr.model.payment.general.card.CreditCard;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
+
+import org.androidannotations.annotations.ViewById;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -20,6 +23,7 @@ public abstract class TransactionPendingFragmentDialogBase<T extends Transaction
     protected User user;
     protected Transaction transaction;
     protected CreditCard card;
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

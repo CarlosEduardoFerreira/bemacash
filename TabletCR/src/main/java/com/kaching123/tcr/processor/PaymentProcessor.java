@@ -87,6 +87,7 @@ import com.kaching123.tcr.model.payment.general.card.CreditCard;
 import com.kaching123.tcr.model.payment.general.transaction.BlackStoneTransactionFactory;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.model.payment.general.transaction.TransactionType;
+import com.kaching123.tcr.print.processor.GiftCardBillingResult;
 import com.kaching123.tcr.processor.MoneybackProcessor.IVoidCallback;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
 import com.kaching123.tcr.store.ShopProvider;
@@ -136,8 +137,8 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
     private ArrayList<PrepaidReleaseResult> ReleaseResultList;
     private ArrayList<PrepaidReleaseResult> failReleaseResultList;
 
-    private ArrayList<BaseCashierActivity.GiftCardBillingResult> successGiftCardResultList;
-    private ArrayList<BaseCashierActivity.GiftCardBillingResult> failGiftCardResultList;
+    private ArrayList<GiftCardBillingResult> successGiftCardResultList;
+    private ArrayList<GiftCardBillingResult> failGiftCardResultList;
     private final int PREPAID_RELEASE_BILLING_SUCC = 200;
 
     private static final Uri URI_SALE_ITEMS_PREPAID = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
@@ -1303,23 +1304,24 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         void finish();
     }
 
-    public void proceedToGiftCard(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions, ArrayList<BaseCashierActivity.GiftCardBillingResult> list) {
+    public void proceedToGiftCard(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions, ArrayList<GiftCardBillingResult> list) {
         failReleaseResultList = new ArrayList<PrepaidReleaseResult>();
+        failGiftCardResultList = new ArrayList<GiftCardBillingResult>();
         successGiftCardResultList = list;
-        for (BaseCashierActivity.GiftCardBillingResult result : list) {
-            if (result.msg.equalsIgnoreCase(PaxProcessorGiftCardReloadCommand.SUCCESS))
+        for (GiftCardBillingResult result : list) {
+            if (!result.msg.equalsIgnoreCase(PaxProcessorGiftCardReloadCommand.SUCCESS))
                 failGiftCardResultList.add(result);
         }
 
         proceedToTipsApply(context, transactions);
     }
 
-    private ArrayList<SaleOrderItemViewModel> getOderItems(ArrayList<PrepaidReleaseResult> failPrepaidResultList, ArrayList<BaseCashierActivity.GiftCardBillingResult> failGiftCardResultList) {
+    private ArrayList<SaleOrderItemViewModel> getOderItems(ArrayList<PrepaidReleaseResult> failPrepaidResultList, ArrayList<GiftCardBillingResult> failGiftCardResultList) {
         ArrayList<SaleOrderItemViewModel> orderItems = new ArrayList<SaleOrderItemViewModel>(failPrepaidResultList.size());
         for (PrepaidReleaseResult result : failPrepaidResultList) {
             orderItems.add(result.model);
         }
-        for(BaseCashierActivity.GiftCardBillingResult gResult : failGiftCardResultList)
+        for(GiftCardBillingResult gResult : failGiftCardResultList)
         {
             orderItems.add(gResult.model);
         }
@@ -1417,6 +1419,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         }
 
         assert transactions != null && !transactions.isEmpty();
+        WaitDialogFragment.hide(context);
         updateOrderStatus(context);
         if (!prepaidMode) {
             PayPrintAndFinishFragmentDialog.show(context, orderGuid, new PrintAndFinishFragmentDialogBase.IFinishConfirmListener() {
@@ -1438,7 +1441,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                     } else
                         finish();
                 }
-            }, transactions, kitchenPrintStatus, orderChange, gateWay, isPrinterTwoCopiesReceipt(), ReleaseResultList);
+            }, transactions, kitchenPrintStatus, orderChange, gateWay, isPrinterTwoCopiesReceipt(), ReleaseResultList, successGiftCardResultList);
         } else {
 //            if (transactions != null && !transactions.isEmpty()) {
 //                callback.onPrintValues(orderGuid, transactions, orderChange);
