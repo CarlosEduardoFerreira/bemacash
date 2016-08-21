@@ -146,7 +146,7 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
 //        if (transaction.getType() == TransactionType.PRE_AUTHORIZATION) {
 //            request.TransType = TRANS_TYPE_AUTH;
 //        } else {
-//        request.TransType = TRANS_TYPE_SALE;
+        request.TransType = TRANS_TYPE_SALE;
 //        }
 //        request.CashBackAmt = transaction.getCashBack().toPlainString();
 //        request.ClerkID = transaction.getOperatorId();

@@ -121,7 +121,7 @@ public class GiftCardBalanceFragmentDialog extends PrintAndFinishFragmentDialogB
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintGiftCardBalanceCommand.start(getActivity(), changeAmount.toString(), printOrderCallback);
+        PrintGiftCardBalanceCommand.start(getActivity(), changeAmount == null ? BigDecimal.ZERO.toString() : changeAmount.toString(), printOrderCallback);
     }
 
     protected void sendDigitalOrder() {

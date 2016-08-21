@@ -1,7 +1,9 @@
 package com.kaching123.tcr.fragment.tendering.pax;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
@@ -11,6 +13,7 @@ import com.kaching123.tcr.commands.payment.pax.PaxGateway;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBalanceCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorGiftCardReloadCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
+import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
@@ -45,6 +48,30 @@ public class PAXReloadFragmentDialog extends TransactionPendingFragmentDialogBas
         return this;
     }
 
+    @Override
+    protected OnDialogClickListener getNegativeButtonListener() {
+        return new OnDialogClickListener()
+        {
+            @Override
+            public boolean onClick() {
+                listener.onRetry();
+                return false;
+            }
+        };
+    }
+
+    @Override
+    protected OnDialogClickListener getPositiveButtonListener() {
+        return new OnDialogClickListener()
+        {
+            @Override
+            public boolean onClick() {
+                listener.onCancel();
+                return false;
+            }
+        };
+    }
+
     private static final String DIALOG_NAME = "PAXReloadFragmentDialog";
 
     @Override
@@ -53,22 +80,56 @@ public class PAXReloadFragmentDialog extends TransactionPendingFragmentDialogBas
         setCancelable(false);
         message.setSingleLine(false);
         message.setText(R.string.pax_instructions);
+        getPositiveButton().setVisibility(View.INVISIBLE);
+        getNegativeButton().setVisibility(View.INVISIBLE);
     }
 
+
+    @Override
+    protected boolean hasNegativeButton() {
+        return true;
+    }
+
+    @Override
+    protected boolean hasPositiveButton() {
+        return true;
+    }
+
+    @Override
+    protected int getPositiveButtonTitle() {
+        return  R.string.btn_item_cancel;
+    }
+
+    @Override
+    protected int getNegativeButtonTitle() {
+        return  R.string.blackstone_pay_reload_btn;
+    }
 
     @Override
     protected void doCommand() {
 //        PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX.gateway();
 //        paxGateway.doBalance(getActivity(), reloadGiftCardCallBack());
-        PaxProcessorGiftCardReloadCommand.startSale(getContext(),model, amount,  new PaxProcessorGiftCardReloadCommand.PaxGiftCardReloadCallback() {
+        PaxProcessorGiftCardReloadCommand.startSale(getContext(), model, amount, new PaxProcessorGiftCardReloadCommand.PaxGiftCardReloadCallback() {
 
             @Override
             protected void handleSuccess(String errorReason) {
-                listener.onComplete(errorReason);
+                if (!errorReason.equalsIgnoreCase(PaxProcessorGiftCardReloadCommand.SUCCESS)) {
+                    message.setText(errorReason);
+                    message.setTextColor(Color.RED);
+                    getPositiveButton().setEnabled(true);
+                    getNegativeButton().setEnabled(true);
+                    hasNegativeButton();
+                    getPositiveButton().setVisibility(View.VISIBLE);
+                    getNegativeButton().setVisibility(View.VISIBLE);
+                }
+                else
+                    listener.onComplete(errorReason);
             }
 
             @Override
             protected void handleError() {
+                message.setText(R.string.error_dialog_title);
+
                 listener.onCancel();
             }
         });
@@ -79,6 +140,8 @@ public class PAXReloadFragmentDialog extends TransactionPendingFragmentDialogBas
         void onComplete(String msg);
 
         void onCancel();
+
+        void onRetry();
 
     }
 
