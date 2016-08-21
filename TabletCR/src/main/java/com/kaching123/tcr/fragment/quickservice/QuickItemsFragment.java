@@ -14,14 +14,20 @@ import android.widget.GridView;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.viewpagerindicator.LinePageIndicator;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by gdubina on 22.11.13.
@@ -59,7 +65,20 @@ public class QuickItemsFragment extends BaseItemsPickFragment {
 
     @Override
     public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> list) {
-        adapter.setList(list);
+
+        List arrayList = new ArrayList(list);
+        if (((TcrApplication) getActivity().getApplication()).isEnableABCOrder())
+            try {
+                Collections.sort(arrayList, new Comparator<ItemExModel>() {
+                    @Override
+                    public int compare(ItemExModel p1, ItemExModel p2) {
+                        return p1.description.compareTo(p2.description);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        adapter.setList(arrayList);
     }
 
     @Override

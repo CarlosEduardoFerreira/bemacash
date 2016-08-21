@@ -932,6 +932,14 @@ public class TcrApplication extends MultiDexApplication {
         return shopPref.invalidOrdersFound().getOr(false);
     }
 
+    public void setEnableABCOrder(boolean value) {
+        shopPref.enableABCOrder().put(value);
+    }
+
+    public boolean isEnableABCOrder() {
+        return shopPref.enableABCOrder().getOr(false);
+    }
+
     public void setInvalidOrdersFound(boolean value) {
         shopPref.invalidOrdersFound().put(value);
     }

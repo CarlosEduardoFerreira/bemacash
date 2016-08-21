@@ -401,4 +401,6 @@ public interface ShopPref {
 
     boolean enableGiftCard();
 
+    boolean enableABCOrder();
+
 }

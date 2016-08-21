@@ -98,7 +98,7 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     private static final Uri ITEMS_URI = ShopProvider.getContentUri(ItemTable.URI_CONTENT);
 
-    private int level = 0;
+//    private int level = 0;
 
     @OptionsMenuItem(R.id.action_sort)
     protected MenuItem sort;
@@ -116,7 +116,7 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     private MenuItem sortItem;
 
-    private boolean sortByName;
+//    private boolean sortByName;
 
     private String selectedDeartmentGuid;
 
@@ -192,6 +192,7 @@ public class InventoryActivity extends ScannerBaseActivity {
             }
         });
 
+
         getSupportLoaderManager().initLoader(INITCOUNT_LOADER_ID, Bundle.EMPTY, itemsCountLoader);
     }
 
@@ -227,6 +228,8 @@ public class InventoryActivity extends ScannerBaseActivity {
         boolean b = super.onCreateOptionsMenu(menu);
         searchItem = menu.findItem(R.id.action_search);
         sortItem = menu.findItem(R.id.action_sort);
+        sortItem.getIcon().setLevel(getApp().isEnableABCOrder() ? 1 : 0);
+        sort.setIcon(getResources().getDrawable(getApp().isEnableABCOrder() ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
         assert searchItem != null;
         initSearchView();
         return b;
@@ -268,12 +271,27 @@ public class InventoryActivity extends ScannerBaseActivity {
     @OptionsItem
     protected void actionSortSelected() {
         //level = sortItem.getIcon().getLevel();
-        level ^= 1;
-        final boolean sortByName = (level == 1);
-        itemsFragment.sortByName(sortByName);
-        sortItem.getIcon().setLevel(level);
+        if (getApp().isEnableABCOrder())
+            getApp().setEnableABCOrder(false);
+        else
+            getApp().setEnableABCOrder(true);
+        boolean enableABCSort = getApp().isEnableABCOrder();
+//        level ^= 1;
+//        final boolean sortByName = (level == 1);
+        setSort();
+    }
+
+    private void setSort() {
+        boolean enableABCSort = getApp().isEnableABCOrder();
+//        level ^= 1;
+//        final boolean sortByName = (level == 1);
+        itemsFragment.sortByName(enableABCSort);
+        int level = enableABCSort ? 1 : 0;
+        if (sortItem != null)
+            sortItem.getIcon().setLevel(level);
         //sortItem.setIcon(sortByName ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category);
-        sort.setIcon(getResources().getDrawable(sortByName ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
+        if (sort != null)
+            sort.setIcon(getResources().getDrawable(enableABCSort ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
     }
 
     @OptionsItem
@@ -552,6 +570,7 @@ public class InventoryActivity extends ScannerBaseActivity {
         @Override
         public void onLoadFinished(Loader<Integer> integerLoader, Integer value) {
             itemsCount = value == null ? 0 : value;
+            setSort();
         }
 
         @Override
