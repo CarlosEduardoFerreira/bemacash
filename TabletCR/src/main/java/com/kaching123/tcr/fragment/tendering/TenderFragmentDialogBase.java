@@ -67,6 +67,11 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     @ViewById(R.id.allowed_ebt_value_tw)
     protected TextView totalEbt;
 
+
+    @ViewById(R.id.remaining_ebt_value_tw)
+    protected TextView remainingEbt;
+
+
     @ViewById
     protected TextView total;
 
@@ -89,6 +94,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     protected int customAnimationResource;
 
     protected BigDecimal completedAmount = BigDecimal.ZERO;
+    protected BigDecimal completedEbtAmount = BigDecimal.ZERO;
     protected ArrayList<PaymentTransactionModel> saleOrderModels = new ArrayList<PaymentTransactionModel>();
     protected ArrayList<PaymentTransactionModel> fakeTransactions = new ArrayList<PaymentTransactionModel>();
 
@@ -153,6 +159,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
                     && PaymentType.SALE.equals(transaction.paymentType)) {
 
                 completedAmount = completedAmount.add(transaction.availableAmount);
+                completedEbtAmount = completedEbtAmount.add(transaction.balance);
             }
         }
 

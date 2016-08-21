@@ -1563,7 +1563,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         //---------------------------
         model.setEbtParams(true);
-        if(model.description.compareTo("prod1") == 0){
+        if(!model.description.contains("ebt")){
             model.setEbtParams(false);
         }
         //----------------------------
