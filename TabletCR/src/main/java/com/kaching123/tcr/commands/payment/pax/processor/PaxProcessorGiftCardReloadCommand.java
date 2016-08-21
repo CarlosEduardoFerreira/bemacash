@@ -133,6 +133,7 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
             request.Amount = sAmount;
             request.ECRRefNum = ECRREFNUM_DEFAULT;
             //request.OrigRefNum = what goes here??//
+            request.TransType = TRANSACTION_ID_GIFT;
 
             PosLink posLink = createPosLink();
             posLink.PaymentRequest = request;
