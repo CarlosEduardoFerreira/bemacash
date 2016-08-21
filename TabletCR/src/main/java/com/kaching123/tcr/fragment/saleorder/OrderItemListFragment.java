@@ -64,6 +64,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -440,7 +441,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, List<SaleOrderItemViewModel> list) {
-        itemsListHandler.onTotolQtyUpdated(getCount(list), false, list);
+        itemsListHandler.onTotolQtyUpdated(getCount(list), false, null);
+        Collections.sort(list, SaleOrderItemViewModel.filterOrderItem);
         adapter.changeCursor(list);
         if (need2ScrollList) {
             getListView().postDelayed(new Runnable() {

@@ -83,6 +83,13 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
         this.taxGroup2 = taxGroup2;
     }
 
+    public static Comparator<SaleOrderItemViewModel> filterOrderItem= new Comparator<SaleOrderItemViewModel>(){
+        @Override
+        public int compare(SaleOrderItemViewModel lhs, SaleOrderItemViewModel rhs) {
+            return lhs.description.compareTo(rhs.description);
+        }
+    };
+
     public SaleOrderItemViewModel setItemModel(SaleOrderItemModel itemModel) {
         this.itemModel = itemModel;
         return this;
