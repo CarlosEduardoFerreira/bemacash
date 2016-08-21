@@ -25,14 +25,19 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.ApkDownloadCommand;
+import com.kaching123.tcr.commands.device.DeletePaxCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBatchOutCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
 import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
+import com.kaching123.tcr.fragment.tendering.pax.PAXBatchOutFragmentDialog;
+import com.kaching123.tcr.fragment.tendering.pax.PayPAXPendingFragmentDialog;
 import com.kaching123.tcr.fragment.user.LoginFragment;
 import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
+import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.service.SerialPortScannerService;
 import com.kaching123.tcr.util.ReceiverWrapper;
@@ -335,6 +340,47 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
             }
         });
 
+        MenuItem batchOutItem = menu.add(Menu.CATEGORY_ALTERNATIVE, Menu.NONE, getResources().getInteger(R.integer.menu_order_default), R.string.action_batchout_label);
+
+        batchOutItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm,  new StyledDialogFragment.OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        PAXBatchOutFragmentDialog.show(SuperBaseActivity.this, new PAXBatchOutFragmentDialog.IPaxBatchOutListener() {
+                            @Override
+                            public void onComplete(String msg) {
+                                hide();
+                            }
+
+                            @Override
+                            public void onCancel() {
+                                hide();
+                            }
+
+                            @Override
+                            public void onRetry() {
+
+                            }
+                            private void hide() {
+                                PAXBatchOutFragmentDialog.hide(SuperBaseActivity.this);
+                            }
+                        }, PaxModel.get());
+                        return true;
+                    }
+                }, new StyledDialogFragment.OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+
+                        return true;
+                    }
+                }, null );
+
+                return true;
+            }
+        });
         if (getApp().hasPrevOperator()) {
             MenuItem tempLoginItem = menu.add(Menu.NONE, Menu.NONE, getResources().getInteger(R.integer.menu_order_first), null);
             tempLoginItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);

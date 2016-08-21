@@ -54,6 +54,7 @@ import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2.IPrintCallback;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
+import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.edit.CashDrawerMovementEditFragment;
@@ -65,6 +66,7 @@ import com.kaching123.tcr.fragment.shift.CloseDrawerFragment;
 import com.kaching123.tcr.fragment.shift.OpenAmountFragment;
 import com.kaching123.tcr.fragment.shift.PrintXReportFragment;
 import com.kaching123.tcr.fragment.shift.PutCashFragment;
+import com.kaching123.tcr.fragment.tendering.pax.PAXBatchOutFragmentDialog;
 import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginFragment.OnLoginCompleteListener;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
@@ -73,6 +75,7 @@ import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.user.TimesheetNewFragment;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.ActivationCarrierModel;
+import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.Permission;
@@ -672,29 +675,68 @@ public class DashboardActivity extends SuperBaseActivity {
             return;
         }
 
-        if (getApp().isTipsEnabled() && isShiftOpened && openedTrnsactionsCount > 0) {
-            AlertDialogFragment.showAlertWithSkip(DashboardActivity.this,
+
+        if (isShiftOpened && openedTrnsactionsCount > 0) {
+            AlertDialogFragment.show(DashboardActivity.this,
+                    AlertDialogFragment.DialogType.ALERT3,
+                    false,
                     R.string.dashboard_activity_opened_transactions_warning_title,
                     getString(R.string.dashboard_activity_opened_transactions_warning_message),
-                    R.string.btn_close, new OnDialogClickListener() {
+                    R.string.btn_close,
+                    R.string.btn_cancel,
+                    R.string.btn_view,
+                    new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            HistoryActivity.start(DashboardActivity.this, true);
+                            AlertDialogFragment.show(DashboardActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm,  new StyledDialogFragment.OnDialogClickListener() {
+                                @Override
+                                public boolean onClick() {
+                                    PAXBatchOutFragmentDialog.show(DashboardActivity.this, new PAXBatchOutFragmentDialog.IPaxBatchOutListener() {
+                                        @Override
+                                        public void onComplete(String msg) {
+                                            startShiftAction();
+                                            hide();
+                                        }
+
+                                        @Override
+                                        public void onCancel() {
+                                            hide();
+                                        }
+
+                                        @Override
+                                        public void onRetry() {
+
+                                        }
+                                        private void hide() {
+                                            PAXBatchOutFragmentDialog.hide(DashboardActivity.this);
+                                        }
+                                    }, PaxModel.get());
+                                    return true;
+                                }
+                            }, new StyledDialogFragment.OnDialogClickListener() {
+                                @Override
+                                public boolean onClick() {
+
+                                    return true;
+                                }
+                            }, null );
                             return true;
                         }
                     }, new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
+
                             return true;
                         }
                     },
                     new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            startShiftAction();
+//                            startShiftAction();
+                            HistoryActivity.start(DashboardActivity.this, true);
                             return true;
                         }
-                    });
+                    }, null);
             return;
         }
 

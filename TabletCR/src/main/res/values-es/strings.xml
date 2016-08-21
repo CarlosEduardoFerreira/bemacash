@@ -187,6 +187,7 @@
     <string name="btn_finish">Terminar</string>
     <string name="btn_try_again">intentar nuevamente</string>
     <string name="btn_skip">Omitir</string>
+    <string name="btn_view">View</string>
     <string name="btn_save">Guardar Cambios</string>
     <string name="btn_select">Seleccionar</string>
     <string name="btn_update">Actualizar</string>
@@ -929,6 +930,7 @@
     <string name="login_login_label">Registrado en el sistema como</string>
     <string name="login_switch_user_label">Cambio de usuario</string>
     <string name="action_lock_label">Cambio de usuario</string>
+    <string name="action_batchout_label">Batch Close</string>
     <string name="action_print_label">Imprimir Comprobante</string>
 
     <string name="printer_config_dialog_title">Configuraci\u00F3n</string>
