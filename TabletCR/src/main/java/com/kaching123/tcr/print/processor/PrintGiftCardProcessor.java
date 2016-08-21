@@ -30,6 +30,7 @@ import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +38,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -81,8 +83,11 @@ public class PrintGiftCardProcessor extends BasePrintProcessor<ITextPrinter> {
         if (!TextUtils.isEmpty(phone)) {
             printerWrapper.footer(phone);
         }
+        Date date=new Date();
 
-        printerWrapper.header(context.getString(R.string.printer_date),new Date().toString());
+        SimpleDateFormat df=new SimpleDateFormat("MMM dd, yyyy, hh:mm a");
+
+        printerWrapper.header(context.getString(R.string.printer_date),df.format(new Date()).toString());
         printerWrapper.header(context.getString(R.string.tendering_history_total_cashier),app.getOperatorFullName());
         printerWrapper.emptyLine();
 
