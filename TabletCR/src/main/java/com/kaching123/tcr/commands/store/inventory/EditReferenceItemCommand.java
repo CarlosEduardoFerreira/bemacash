@@ -1,6 +1,7 @@
 package com.kaching123.tcr.commands.store.inventory;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,11 +18,14 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.CursorUtil;
+import com.kaching123.tcr.util.InventoryUtils;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.kaching123.tcr.model.ContentValuesUtil._in;
 
 /**
  * Created by vkompaniets on 04.12.13.
@@ -34,36 +38,51 @@ public class EditReferenceItemCommand extends AsyncCommand {
     private static final String ARG_ITEM = "arg_item";
 
     private ItemModel newItem;
-    private String currentCategoryId;
+    private ArrayList<ContentProviderOperation> operations;
+    private BatchSqlCommand sql;
 
     @Override
     protected TaskResult doCommand() {
         Logger.d("EditReferenceItemCommand doCommand");
-        if (newItem == null)
+        if (newItem == null) {
             newItem = (ItemModel) getArgs().getSerializable(ARG_ITEM);
+        }
+
+        operations = new ArrayList<>();
+        sql = batchUpdate(newItem);
 
         Cursor c = ProviderAction.query(ITEM_URI)
                 .projection(ItemTable.CATEGORY_ID)
                 .where(ItemTable.GUID + " = ?", newItem.guid)
                 .perform(getContext());
+        String oldCategoryId = "";
         if (c.moveToFirst())
-            currentCategoryId = c.getString(0);
+            oldCategoryId = c.getString(0);
         c.close();
 
-        if (!newItem.categoryId.equals(currentCategoryId)){
-
-        }
-
-        if (!updateChildItems()) {
+        boolean categoryChanged = !newItem.categoryId.equals(oldCategoryId);
+        int orderNum = ItemModel.getMaxOrderNum(getContext(), newItem.categoryId);
+        if (!updateChildItems(categoryChanged, orderNum)) {
             return failed();
         }
+
+        if (categoryChanged){
+            newItem.orderNum = orderNum + 1;
+            shiftOrderNums(oldCategoryId);
+        }
+
         return succeeded();
+    }
+
+    private void shiftOrderNums(String categoryId) {
+        ContentValues cv = new ContentValues(1);
+        cv.put(ItemTable.CATEGORY_ID, newItem.categoryId);
+        getContext().getContentResolver().update(ShopProvider.contentUri(ItemTable.URI_CONTENT), cv, ItemTable.GUID + " = ?", new String[]{newItem.guid});
+        InventoryUtils.shiftOrderNums(categoryId, getContext(), getAppCommandContext(), operations, sql);
     }
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
-
         operations.add(ContentProviderOperation.newUpdate(ITEM_URI)
                 .withSelection(ShopStore.ItemTable.GUID + " = ?", new String[]{newItem.guid})
                 .withValues(newItem.toValues())
@@ -74,12 +93,11 @@ public class EditReferenceItemCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        BatchSqlCommand batch = batchUpdate(newItem);
-        batch.add(JdbcFactory.getConverter(newItem).updateSQL(newItem, getAppCommandContext()));
-        return batch;
+        sql.add(JdbcFactory.getConverter(newItem).updateSQL(newItem, getAppCommandContext()));
+        return sql;
     }
 
-    private boolean updateChildItems() {
+    private boolean updateChildItems(boolean categoryChanged, int orderNum) {
         boolean success = true;
         Cursor c = ProviderAction.query(ITEM_MATRIX_VIEW_URI)
                 .where(ShopStore.ItemMatrixByChildView.ITEM_MATRIX_PARENT_GUID + "=?", newItem.guid)
@@ -95,10 +113,18 @@ public class EditReferenceItemCommand extends AsyncCommand {
         }
         c.close();
         if (childGuids.size() > 0) {
+            if (categoryChanged){
+                ContentValues cv = new ContentValues(1);
+                cv.put(ItemTable.CATEGORY_ID, newItem.categoryId);
+                getContext().getContentResolver().update(ShopProvider.contentUri(ItemTable.URI_CONTENT), cv, _in(ItemTable.GUID, childGuids.size()), childGuids.toArray(new String[childGuids.size()]));
+            }
+
             List<ItemModel> models = CursorUtil._wrap(ProviderAction.query(ITEM_URI)
                             .whereIn(ShopStore.ItemTable.GUID, childGuids).perform(getContext()),
                     new ItemWrapFunction());
+
             EditItemCommand editItemCommand = new EditItemCommand();
+            int i = 2;
             for (ItemModel itemModel : models) {
                 itemModel.categoryId = newItem.categoryId;
                 itemModel.unitsLabelId = newItem.unitsLabelId;
@@ -124,6 +150,8 @@ public class EditReferenceItemCommand extends AsyncCommand {
                 itemModel.commission = newItem.commission;
                 itemModel.btnView = newItem.btnView;
                 itemModel.loyaltyPoints = newItem.loyaltyPoints;
+                if (categoryChanged)
+                    itemModel.orderNum = orderNum + i++;
                 success &= editItemCommand.sync(getContext(), itemModel, getAppCommandContext());
             }
         }

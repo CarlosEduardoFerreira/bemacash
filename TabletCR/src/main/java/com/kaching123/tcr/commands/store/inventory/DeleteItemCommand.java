@@ -1,13 +1,11 @@
 package com.kaching123.tcr.commands.store.inventory;
 
 import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.function.ItemMatrixWrapFunction;
@@ -53,16 +51,12 @@ public class DeleteItemCommand extends AsyncCommand {
     private String itemGuid;
     ArrayList<ContentProviderOperation> operations;
     private BatchSqlCommand sql;
-    private String categoryId;
 
     @Override
     protected TaskResult doCommand() {
         Logger.d("DeleteItemCommand doCommand");
         itemGuid = getStringArg(ARG_ITEM_GUID);
-
-        categoryId = getCategory(getContext(), itemGuid);
-
-        operations = new ArrayList<>(1);
+        operations = new ArrayList<>();
         operations.add(ContentProviderOperation.newUpdate(ITEM_URI)
                 .withValues(DELETE_VALUES)
                 .withSelection(ItemTable.GUID + " = ?", new String[]{itemGuid}).build());
@@ -114,7 +108,7 @@ public class DeleteItemCommand extends AsyncCommand {
             return failed();
         }
 
-        shiftOrderNums();
+        shiftOrderNums(getCategory(getContext(), itemGuid));
 
         return succeeded();
     }
@@ -132,8 +126,11 @@ public class DeleteItemCommand extends AsyncCommand {
         return categoryId;
     }
 
-    private void shiftOrderNums(){
-        ItemModel model = ProviderAction.query(ITEM_URI)
+    private void shiftOrderNums(String categoryId){
+        getContext().getContentResolver().update(operations.get(0).getUri(), DELETE_VALUES, ItemTable.GUID + " = ?", new String[]{itemGuid});
+        operations.remove(0);
+        InventoryUtils.shiftOrderNums(categoryId, getContext(), getAppCommandContext(), operations, sql);
+        /*ItemModel model = ProviderAction.query(ITEM_URI)
                 .projection(ItemTable.CATEGORY_ID, ItemTable.ORDER_NUM)
                 .where(ItemTable.GUID + " = ?", itemGuid)
                 .perform(getContext())
@@ -167,21 +164,7 @@ public class DeleteItemCommand extends AsyncCommand {
 
         for (ItemModel m : models){
             InventoryUtils.updateOrderNum(m.guid, m.orderNum - 1, getAppCommandContext(), operations, sql);
-        }
-    }
-
-    @Override
-    protected void afterCommand(ContentProviderResult[] dbOperationResults) {
-        super.afterCommand(dbOperationResults);
-
-        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-        BatchSqlCommand sql = batchUpdate(ItemModel.class);
-
-        InventoryUtils.shiftOrderNums(categoryId, getContext(), getAppCommandContext(), operations, sql);
-        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        if (!operations.isEmpty())
-            operations.addAll(ops);
-
+        }*/
     }
 
     @Override

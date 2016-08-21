@@ -1,6 +1,7 @@
 package com.kaching123.tcr.commands.store.inventory;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -58,7 +59,7 @@ public class EditItemCommand extends AsyncCommand {
         movementModel = null;
 
         BigDecimal currentAvailableQty = BigDecimal.ZERO;
-        String currentCategoryId = "";
+        String oldCategoryId = "";
         Cursor c = ProviderAction.query(ITEM_URI)
                 .projection(ItemTable.TMP_AVAILABLE_QTY, ItemTable.DEFAULT_MODIFIER_GUID, ItemTable.CATEGORY_ID)
                 .where(ItemTable.GUID + " = ?", item.guid)
@@ -66,9 +67,14 @@ public class EditItemCommand extends AsyncCommand {
         if (c.moveToFirst()) {
             currentAvailableQty = _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY), BigDecimal.ZERO);
             item.defaultModifierGuid = c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID));
-            currentCategoryId = c.getString(c.getColumnIndex(ItemTable.CATEGORY_ID));
+            oldCategoryId = c.getString(c.getColumnIndex(ItemTable.CATEGORY_ID));
         }
         c.close();
+
+        boolean categoryChanged = !oldCategoryId.equals(item.categoryId);
+        if (categoryChanged){
+            item.orderNum = ItemModel.getMaxOrderNum(getContext(), item.categoryId) + 1;
+        }
 
         if (currentAvailableQty.compareTo(item.availableQty) != 0){
             item.updateQtyFlag = UUID.randomUUID().toString();
@@ -111,11 +117,18 @@ public class EditItemCommand extends AsyncCommand {
             clearParentDuplicates();
         }
 
-        if (!currentCategoryId.equals(item.categoryId)){
-            item.orderNum = ItemModel.getMaxOrderNum(getContext(), item.categoryId) + 1;
-            updateItemOrderNums();
+        if (categoryChanged){
+            shiftOrderNums(oldCategoryId);
         }
+
         return succeeded();
+    }
+
+    private void shiftOrderNums(String categoryId){
+        ContentValues cv = new ContentValues(1);
+        cv.put(ItemTable.CATEGORY_ID, item.categoryId);
+        getContext().getContentResolver().update(ShopProvider.contentUri(ItemTable.URI_CONTENT), cv, ItemTable.GUID + " = ?", new String[]{item.guid});
+        InventoryUtils.shiftOrderNums(categoryId, getContext(), getAppCommandContext(), operations, sql);
     }
 
     private void updateItemOrderNums(){

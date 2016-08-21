@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -365,6 +367,14 @@ public final class ContentValuesUtil {
 
     public static String _max(String column){
         return String.format(Locale.US, "max(%s)", column);
+    }
+
+    public static String _in(String column, int count){
+        return column + " IN (" + Joiner.on(",").join(Collections.nCopies(count, "?")) + ")";
+    }
+
+    public static String _notIn(String column, int count){
+        return column + " NOT IN (" + Joiner.on(",").join(count, "?") + ")";
     }
 
     private ContentValuesUtil() {

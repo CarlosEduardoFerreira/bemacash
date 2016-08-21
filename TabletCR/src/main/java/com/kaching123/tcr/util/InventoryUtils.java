@@ -103,6 +103,11 @@ public class InventoryUtils {
         return true;
     }
 
+    /**
+     * This method removes order num gaps in selected category
+     * for example
+     * [1, 2, 4, 5] -> [1, 2, 3, 4]
+     */
     public static void shiftOrderNums(String categoryId,
                                             Context context, IAppCommandContext appCommandContext,
                                             ArrayList<ContentProviderOperation> operations,

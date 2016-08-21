@@ -312,9 +312,6 @@ public class ItemsFragment extends BaseItemsPickFragment {
             if (item == null)
                 return convertView;
 
-            if ("Nexus 5X".equals(item.description))
-                Logger.d("success");
-
             holder.description.setText(item.description);
 
             showEanOrProductCode(holder, item.productCode, item.eanCode);
