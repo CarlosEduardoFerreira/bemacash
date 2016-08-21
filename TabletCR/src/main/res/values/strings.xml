@@ -1561,6 +1561,7 @@
     <string name="blackstone_pax_failure_reason_pax">Payment cancelled or connection problem.</string>
     <string name="blackstone_pax_failure_reason_wrong_gateway">Selected transaction was not created with PAX and can not be processed with it.</string>
     <string name="blackstone_pax_failure_reason_tips_disabled">Contact BamaCash representative to enable tips in your pin pad.</string>
+    <string name="gift_card_require_pax_configure">Please connect pax first.</string>
     <string name="blackstone_pax_reload_failure_reason_service">The response is empty or related to another transaction, so the actual data is not going to be gathered.</string>
     <string name="blackstone_failure_reason_wrong_gateway">Selected transaction was not created with MSR and can not be processed with it.</string>
     <string name="close_transactions_list_fragment_title">Opened transactions</string>

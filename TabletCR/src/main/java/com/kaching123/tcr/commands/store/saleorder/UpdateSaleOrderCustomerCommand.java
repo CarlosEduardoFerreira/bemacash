@@ -31,6 +31,10 @@ public class UpdateSaleOrderCustomerCommand extends AsyncCommand {
 
     private static final String ARG_SALE_ORDER_GUID = "arg_sale_order_guid";
     private static final String ARG_CUSTOMER_GUID = "arg_customer_guid";
+    private static final String ARG_IS_GIFT_CARD = "ARG_IS_GIFT_CARD";
+    private static final String ARG_AMOUNT = "ARG_AMOUNT";
+    private static final String RESULT_IS_GIFT_CARD = "RESULT_IS_GIFT_CARD";
+    private static final String RESULT_AMOUNT = "RESULT_AMOUNT";
     private static final String EXTRA_ORDER_GUID = "extra_order_guid";
     private static final String CALLBACK_ADD_ORDER = "callback_add_order";
 
@@ -51,7 +55,7 @@ public class UpdateSaleOrderCustomerCommand extends AsyncCommand {
             return succeeded();
         }
 
-        return succeeded();
+        return succeeded().add(RESULT_IS_GIFT_CARD, getArgs().getBoolean(ARG_IS_GIFT_CARD)).add(RESULT_AMOUNT, getArgs().getStringArrayList(ARG_AMOUNT) == null ? BigDecimal.ZERO.toString() : getArgs().getStringArrayList(ARG_AMOUNT));
     }
 
     @Override
@@ -80,10 +84,11 @@ public class UpdateSaleOrderCustomerCommand extends AsyncCommand {
         callback(CALLBACK_ADD_ORDER, bundle);
     }
 
-    public static void start(Context context, String saleOrderGuid, String customerId, BaseUpdateOrderCustomerCallback callback) {
+    public static void start(Context context, String saleOrderGuid, String customerId, boolean isGiftCard, BaseUpdateOrderCustomerCallback callback) {
         create(UpdateSaleOrderCustomerCommand.class)
                 .arg(ARG_SALE_ORDER_GUID, saleOrderGuid)
                 .arg(ARG_CUSTOMER_GUID, customerId)
+                .arg(ARG_IS_GIFT_CARD, isGiftCard)
                 .callback(callback)
                 .queueUsing(context);
     }
@@ -95,8 +100,8 @@ public class UpdateSaleOrderCustomerCommand extends AsyncCommand {
     public static abstract class BaseUpdateOrderCustomerCallback {
 
         @OnSuccess(UpdateSaleOrderCustomerCommand.class)
-        public void onSuccess() {
-            onOrderCustomerUpdated();
+        public void onSuccess(@Param(UpdateSaleOrderCustomerCommand.RESULT_IS_GIFT_CARD) boolean giftCard, @Param(UpdateSaleOrderCustomerCommand.RESULT_AMOUNT) String amount) {
+            onOrderCustomerUpdated(giftCard, amount);
         }
 
         @OnFailure(UpdateSaleOrderCustomerCommand.class)
@@ -109,7 +114,7 @@ public class UpdateSaleOrderCustomerCommand extends AsyncCommand {
             onOrderAdded(orderGuid);
         }
 
-        protected abstract void onOrderCustomerUpdated();
+        protected abstract void onOrderCustomerUpdated(boolean isGiftCard, String amount);
 
         protected abstract void onOrderCustomerUpdateError();
 

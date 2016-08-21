@@ -28,6 +28,11 @@ public class ChooseCustomerDialog extends ChooseCustomerBaseDialog implements Ba
     }
 
     @Override
+    protected void sendDigitalOrder(String email) {
+
+    }
+
+    @Override
     protected void onCustomerPicked(CustomerModel customer) {
         if (pickListener != null)
             pickListener.onCustomerPicked(customer);
@@ -39,6 +44,11 @@ public class ChooseCustomerDialog extends ChooseCustomerBaseDialog implements Ba
         if (pickListener != null)
             pickListener.onOrderAdded(orderGuid);
         dismiss();
+    }
+
+    @Override
+    protected void sendDigitalOrderForGiftCard(String email, String amount) {
+
     }
 
     public static void show(FragmentActivity activity, String orderGuid, CustomerPickListener listener){

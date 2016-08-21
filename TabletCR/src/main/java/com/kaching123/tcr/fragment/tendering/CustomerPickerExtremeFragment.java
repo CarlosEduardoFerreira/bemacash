@@ -120,7 +120,7 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
         String guid = model.guid;
         String email = model.email;
         if (!threshold || !TextUtils.isEmpty(model.customerIdentification)) {
-            UpdateSaleOrderCustomerCommand.start(getActivity(), getCurrentOrderGuid(), guid, null);
+            UpdateSaleOrderCustomerCommand.start(getActivity(), getCurrentOrderGuid(), guid, false, null);
             callback.onChosen(email);
         } else {
             Toast.makeText(getActivity(), getString(R.string.user_no_cpf), Toast.LENGTH_LONG).show();
@@ -128,7 +128,17 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
     }
 
     @Override
+    protected void sendDigitalOrder(String email) {
+
+    }
+
+    @Override
     protected void onCustomerPicked(CustomerModel customer) {
+    }
+
+    @Override
+    protected void sendDigitalOrderForGiftCard(String email, String amount) {
+
     }
 
     @Override
@@ -152,7 +162,7 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
             AddCustomerCommand.start(getActivity(), null, customer);
             DeleteCustomerCommand.start(getActivity(), customer, null);
         }
-        UpdateSaleOrderCustomerCommand.start(getActivity(), getCurrentOrderGuid(), customer.guid, null);
+        UpdateSaleOrderCustomerCommand.start(getActivity(), getCurrentOrderGuid(), customer.guid, false, null);
         callback.onChosen(customer.email);
         WaitDialogFragment.hide(getActivity());
     }

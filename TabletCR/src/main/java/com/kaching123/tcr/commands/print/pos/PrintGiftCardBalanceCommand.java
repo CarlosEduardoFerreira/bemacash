@@ -33,6 +33,7 @@ public class PrintGiftCardBalanceCommand extends BasePrintOrderCommand {
     protected void printBody(PosOrderTextPrinter printerWrapper) {
         PrintGiftCardProcessor printProcessor = new PrintGiftCardProcessor(getAppCommandContext());
 //
+        printProcessor.setAmount(new BigDecimal(getArgs().getString(ARG_AMOUNT)));
         printProcessor.print(getContext(), getApp(), printerWrapper);
     }
 
@@ -41,7 +42,7 @@ public class PrintGiftCardBalanceCommand extends BasePrintOrderCommand {
                 new EcuadorPrintProcessor(orderGuid, appCommandContext) : new PrintOrderProcessor(orderGuid, appCommandContext);
     }
 
-    public static void start(Context context, BigDecimal amount, BasePrintCallback callback) {
+    public static void start(Context context, String amount, BasePrintCallback callback) {
         create(PrintGiftCardBalanceCommand.class).arg(ARG_AMOUNT, amount).callback(callback).queueUsing(context);
     }
 

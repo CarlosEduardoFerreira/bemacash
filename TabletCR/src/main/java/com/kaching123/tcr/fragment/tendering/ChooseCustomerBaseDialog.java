@@ -73,6 +73,12 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
     protected ArrayList<PaymentTransactionModel> transactions;
 
     @FragmentArg
+    protected String amount;
+
+    @FragmentArg
+    protected boolean isGiftCard;
+
+    @FragmentArg
     protected String orderGuid;
 
     @FragmentArg
@@ -156,18 +162,22 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
             return;
         }
         this.email = email;
-        UpdateSaleOrderCustomerCommand.start(getActivity(), getCurrentOrderGuid(), guid, updateOrderCustomerCallback);
+        UpdateSaleOrderCustomerCommand.start(getActivity(), getCurrentOrderGuid(), guid, isGiftCard, updateOrderCustomerCallback);
     }
 
     protected String getCurrentOrderGuid() {
         return orderGuid;
     }
 
+    protected abstract void sendDigitalOrder(String email);
+
     protected abstract void onCustomerPicked(CustomerModel customer);
 
     protected void onOrderAdded(String orderGuid){
 
     };
+
+    protected abstract void sendDigitalOrderForGiftCard(String email, String amount);
 
     @AfterTextChange
     protected void customerFilterAfterTextChanged(Editable s) {
@@ -236,7 +246,11 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
     private BaseUpdateOrderCustomerCallback updateOrderCustomerCallback = new BaseUpdateOrderCustomerCallback() {
 
         @Override
-        protected void onOrderCustomerUpdated() {
+        protected void onOrderCustomerUpdated(boolean isGiftCard, String amount) {
+            if(!isGiftCard)
+                sendDigitalOrder(email);
+            else
+                sendDigitalOrderForGiftCard(email,amount);
             CustomerModel customer = new CustomerModel((Cursor) adapter.getItem(positionClicked));
             onCustomerPicked(customer);
         }

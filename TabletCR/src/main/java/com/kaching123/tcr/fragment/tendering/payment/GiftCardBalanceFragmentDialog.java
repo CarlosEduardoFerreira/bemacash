@@ -110,7 +110,7 @@ public class GiftCardBalanceFragmentDialog extends PrintAndFinishFragmentDialogB
 
     @Override
     protected int getDialogContentLayout() {
-        return R.layout.payment_complete;
+        return R.layout.gift_card_balance_complete;
     }
 
     @Override
@@ -121,17 +121,17 @@ public class GiftCardBalanceFragmentDialog extends PrintAndFinishFragmentDialogB
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintGiftCardBalanceCommand.start(getActivity(), changeAmount, printOrderCallback);
+        PrintGiftCardBalanceCommand.start(getActivity(), changeAmount.toString(), printOrderCallback);
     }
 
     protected void sendDigitalOrder() {
-        PayChooseCustomerDialog.show(getActivity(), orderGuid, transactions, new ChooseCustomerBaseDialog.emailSenderListener() {
+        PayChooseCustomerDialog.show(getActivity(), true, new ChooseCustomerBaseDialog.emailSenderListener() {
             @Override
             public void onComplete() {
                 listener.onConfirmed();
                 dismiss();
             }
-        }, null);
+        }, changeAmount == null ? BigDecimal.ZERO.toString() : changeAmount.toString());
     }
 
 
