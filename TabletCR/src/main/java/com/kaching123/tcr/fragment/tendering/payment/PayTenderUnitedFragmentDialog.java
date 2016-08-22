@@ -24,6 +24,7 @@ import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.KeyboardView;
 import com.kaching123.tcr.fragment.UiHelper;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.EBTPaymentTypeChooserDialogFragment;
 import com.kaching123.tcr.fragment.tendering.TenderFragmentDialogBase;
@@ -103,7 +104,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         });
 
         keyboard.setEnterVisibility(View.GONE);
-       // editText.setSelectAllOnFocus(true);
+        // editText.setSelectAllOnFocus(true);
 
         charge.setFilters(new InputFilter[]{new CurrencyFormatInputFilter()});
         charge.addTextChangedListener(currencyTextWatcher);
@@ -121,19 +122,35 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    addValue((int) id);
+                addValue((int) id);
             }
         });
 
     }
 
     @Click
-    protected void btnExactClicked(){
+    protected void btnExactClicked() {
         BigDecimal alreadyPayed = orderTotal.subtract(completedAmount);
         charge.setText(UiHelper.valueOf(alreadyPayed));
     }
 
     private boolean tryProceed(PaymentMethod method) {
+        final String value = charge.getText().toString();
+        BigDecimal entered;
+        BigDecimal alreadyPayed = BigDecimal.ZERO;
+        if (orderTotal != null && completedAmount != null) {
+            alreadyPayed = orderTotal.subtract(completedAmount);
+        }
+
+        entered = getDecimalValue();
+        if (!method.equals(PaymentMethod.PAX_EBT_CASH) || !method.equals(PaymentMethod.PAX_EBT_FOODSTAMP)
+                && value.length() > 0 && alreadyPayed.compareTo(entered) < 0) {
+            entered = alreadyPayed;
+            charge.setText(UiHelper.valueOf(entered));
+            AlertDialogFragment.showAlert(getActivity(), R.string.pay_tender_wrong_amount_title, getString(R.string.pay_tender_wrong_amount_error_message));
+            return false;
+        }
+
         if (listener != null && String.valueOf(charge.getText()).length() > 0) {
             listener.onUnitedPaymentAmountSelected(method, orderTotal, getDecimalValue());
             return true;
@@ -161,18 +178,8 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             super.afterTextChanged(amount);
             final String value = charge.getText().toString();
             BigDecimal entered;
-            BigDecimal alreadyPayed = BigDecimal.ZERO;
-            if(orderTotal != null && completedAmount != null) {
-                alreadyPayed = orderTotal.subtract(completedAmount);
-            }
-
-                try {
+            try {
                 entered = UiHelper.parseBrandDecimalInput(value);
-                if (value.length() > 0 && alreadyPayed.compareTo(entered) < 0) {
-                    entered = alreadyPayed;
-                    isEditMode = true;
-                    charge.setText(UiHelper.valueOf(entered));
-                }
             } catch (NumberFormatException e) {
                 entered = BigDecimal.ZERO;
                 Logger.e("Number format mis parsing", e);
@@ -182,7 +189,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 getDisplayBinder().startCommand(new DisplayTenderCommand(entered, null));
             }
 
-         }
+        }
     }
 
     private DisplayService.IDisplayBinder getDisplayBinder() {
@@ -219,7 +226,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     @Override
-    protected void calculateDlgHeight(){
+    protected void calculateDlgHeight() {
         boolean expand = saleOrderModels != null && saleOrderModels.size() > 0;
 
         int height = expand ? R.dimen.pay_tender_dialog_height_3_expanded_large : R.dimen.pay_tender_dialog_height_3_large;
@@ -249,7 +256,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
         getNegativeButton().setVisibility(View.GONE);
         if (getApp().isPaxConfigured()) {
-            PaxGateway paxGateway = (PaxGateway)PaymentGateway.PAX.gateway();
+            PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX.gateway();
             if (!paxGateway.acceptPaxCreditEnabled()) {
                 btnCard.setVisibility(View.GONE);
             } else {
@@ -267,7 +274,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         keyboard.attachEditView(charge);
         setChargeView();
 
-}
+    }
 
     @Override
     public void onLoadComplete() {
@@ -276,7 +283,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     private void setSingleTenderCheckbox() {
-        boolean on =  (singleTenderEnabled == null || singleTenderEnabled.booleanValue());
+        boolean on = (singleTenderEnabled == null || singleTenderEnabled.booleanValue());
         checkboxSingle.setChecked(on);
         checkboxSingle.setVisibility(!hasCompletedTransactions() || on ? View.VISIBLE : View.GONE);
 
@@ -289,17 +296,17 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     @Click
-    protected void btnPaxDebitClicked(){
-             tryProceed(PaymentMethod.PAX_DEBIT);
+    protected void btnPaxDebitClicked() {
+        tryProceed(PaymentMethod.PAX_DEBIT);
     }
 
     @Click
-    protected void btnPaxEbtFoodstampClicked(){
+    protected void btnPaxEbtFoodstampClicked() {
         tryProceed(PaymentMethod.PAX_EBT_FOODSTAMP);
     }
 
     @Click
-    protected void btnPaxEbtCashClicked(){
+    protected void btnPaxEbtCashClicked() {
         EBTPaymentTypeChooserDialogFragment.show(getActivity(), new EBTPaymentTypeChooserDialogFragment.EBTTypeChooseListener() {
             @Override
             public void onEBTCashTypeChosen() {
@@ -316,27 +323,27 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     @Click
-    protected void btnCashClicked(){
+    protected void btnCashClicked() {
         tryProceed(PaymentMethod.CASH);
     }
 
     @Click
-    protected void btnCardClicked(){
+    protected void btnCardClicked() {
         tryProceed(PaymentMethod.CREDIT_CARD);
     }
 
     @Click
-    protected void btnCreditReceiptClicked(){
+    protected void btnCreditReceiptClicked() {
         tryProceed(PaymentMethod.CREDIT_RECEIPT);
     }
 
     @Click
-    protected void btnOfflineCreditClicked(){
+    protected void btnOfflineCreditClicked() {
         tryProceed(PaymentMethod.OFFLINE_CREDIT);
     }
 
     @Click
-    protected void btnCheckClicked(){
+    protected void btnCheckClicked() {
         tryProceed(PaymentMethod.CHECK);
     }
 
@@ -344,16 +351,17 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     @Override
     protected void updateAfterCalculated() {
         BigDecimal alreadyPayed;
-        if(orderTotal != null && completedAmount != null) {
+        if (orderTotal != null && completedAmount != null) {
             alreadyPayed = orderTotal.subtract(completedAmount);
             difference.setText(UiHelper.valueOf(alreadyPayed));
-               charge.setText( getApp().isAutoFillPaymentAmount() ? UiHelper.valueOf(alreadyPayed) : "") ;
+            charge.setText(getApp().isAutoFillPaymentAmount() ? UiHelper.valueOf(alreadyPayed) : "");
         }
         if (hasCompletedTransactions() || BigDecimal.ZERO.compareTo(orderTotal) == 0) {
             listener.onDataLoaded(completedAmount, orderTotal, saleOrderModels);
         }
         enable(true);
         getPositiveButton().setText(hasCompletedTransactions() ? R.string.btn_void : R.string.btn_cancel);
+        charge.selectAll();
     }
 
     protected void enable(final boolean on) {
