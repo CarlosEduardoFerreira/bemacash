@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
@@ -68,14 +69,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         getAdapterView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> v, View view, int pos, long id) {
-                loadByPosition(v, pos);
-            }
-        });
-        getAdapterView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id) {
-                getAdapterView().performItemClick(v, pos, id);
-                return true;
+                listItemClicked(pos);
             }
         });
         adapter = createAdapter();
@@ -86,12 +80,18 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         }
     }
 
-    private void loadByPosition(AdapterView<?> v, int pos) {
-        selectedPosition = pos;
-        if (pos == 0 && isListViewWithHeader(v)) {
-            headerItemClicked();
-        } else {
-            categoryItemClicked((Cursor) v.getItemAtPosition(pos));
+    protected void listItemClicked(int position){
+        Cursor c = (Cursor) getAdapterView().getItemAtPosition(position);
+        long id = -1;
+        String departmentId = null;
+        String categoryId = null;
+        if (c != null){
+            departmentId = c.getString(c.getColumnIndex(CategoryTable.DEPARTMENT_GUID));
+            categoryId = c.getString(c.getColumnIndex(CategoryTable.GUID));
+            id = c.getLong(c.getColumnIndex(CategoryTable.ID));
+        }
+        if (this.listener != null) {
+            this.listener.onCategoryChanged(id, departmentId, categoryId);
         }
     }
 
@@ -99,20 +99,6 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         return true;
     }
 
-    protected void headerItemClicked() {
-        if (this.listener != null) {
-            this.listener.onCategoryChanged(AdapterView.INVALID_POSITION, null, null);
-        }
-    }
-
-    protected void categoryItemClicked(Cursor c) {
-        String depGuid = c.getString(c.getColumnIndex(CategoryTable.DEPARTMENT_GUID));
-        String catGuid = c.getString(c.getColumnIndex(CategoryTable.GUID));
-        long id = c.getLong(c.getColumnIndex(CategoryTable.ID));
-        if (this.listener != null) {
-            this.listener.onCategoryChanged(id, depGuid, catGuid);
-        }
-    }
 
     public void setUseOnlyNearTheEnd(boolean useOnlyNearTheEnd) {
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
@@ -208,15 +194,10 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         if (cursor == null || this.listener == null)
             return;
 
-        int checkedPosition = selectedPosition;
-        if (checkedPosition < 0 || checkedPosition > adapter.getCount())
-            checkedPosition = 0;//isListViewWithHeader(getAdapterView()) ? selectedPosition : 0;
-
-        if (isListViewWithHeader(getAdapterView()) || cursor.getCount() > 0) {
-            getAdapterView().setItemChecked(checkedPosition, true);
-            loadByPosition(getAdapterView(), checkedPosition);
-        } else {
-            getAdapterView().setItemChecked(AdapterView.INVALID_POSITION, true);
+        if (getAdapterView().getCheckedItemPosition() == -1){
+            AbsListView list = getAdapterView();
+            ListAdapter adapter = getAdapterView().getAdapter();
+            list.performItemClick(adapter.getView(0, null, null), 0, adapter.getItemId(0));
         }
     }
 

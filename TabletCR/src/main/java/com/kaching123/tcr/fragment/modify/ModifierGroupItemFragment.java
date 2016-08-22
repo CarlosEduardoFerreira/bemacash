@@ -117,22 +117,22 @@ public class ModifierGroupItemFragment extends BaseCategoriesFragment<GroupCallb
     }
 
     @Override
-    protected void categoryItemClicked(Cursor c) {
-        String catGuid = c.getString(c.getColumnIndex(ShopSchema2.ModifierGroupView2.GroupTable.GUID));
-        String title = c.getString(c.getColumnIndex(ShopSchema2.ModifierGroupView2.GroupTable.TITLE));
-        String itemGuid = c.getString(c.getColumnIndex(ShopSchema2.ModifierGroupView2.GroupTable.ITEM_GUID));
-        ModifierGroupModel itemModel = new ModifierGroupModel();
-        itemModel.itemGuid = itemGuid;
-        itemModel.title = title;
-        itemModel.guid = catGuid;
-        if (this.listener != null) {
-            this.listener.onItemSelected(itemModel);
-        }
-    }
+    protected void listItemClicked(int position) {
+        if (listener == null)
+            return;
 
-    protected void headerItemClicked() {
-        if (this.listener != null) {
-            this.listener.onItemSelected(null);
+        Cursor c = (Cursor) getAdapterView().getItemAtPosition(position);
+        if (c == null){
+            listener.onItemSelected(null);
+        }else{
+            String catGuid = c.getString(c.getColumnIndex(ShopSchema2.ModifierGroupView2.GroupTable.GUID));
+            String title = c.getString(c.getColumnIndex(ShopSchema2.ModifierGroupView2.GroupTable.TITLE));
+            String itemGuid = c.getString(c.getColumnIndex(ShopSchema2.ModifierGroupView2.GroupTable.ITEM_GUID));
+            ModifierGroupModel itemModel = new ModifierGroupModel();
+            itemModel.itemGuid = itemGuid;
+            itemModel.title = title;
+            itemModel.guid = catGuid;
+            listener.onItemSelected(itemModel);
         }
     }
 
