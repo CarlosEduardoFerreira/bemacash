@@ -2618,6 +2618,7 @@ public abstract class ShopStore {
         String FINAL_DISCOUNT = SaleOrderItemsViewFast.TABLE_SALE_ORDER_ITEM + "_" + SaleItemTable.FINAL_DISCOUNT;
         String HAS_NOTES = SaleOrderItemsViewFast.TABLE_SALE_ORDER_ITEM + "_" + SaleItemTable.HAS_NOTES;
         String IS_DELETED = SaleOrderItemsViewFast.TABLE_SALE_ORDER_ITEM + "_" + SaleItemTable.IS_DELETED;
+        String EBT_ELIGIBLE = SaleOrderItemsViewFast.TABLE_SALE_ORDER_ITEM + "_" + SaleItemTable.EBT_ELIGIBLE;
 
         String SALE_ORDER_DISCOUNT = SaleOrderItemsViewFast.TABLE_SALE_ORDER + "_" + SaleOrderTable.DISCOUNT;
         String SALE_ORDER_DISCOUNT_TYPE = SaleOrderItemsViewFast.TABLE_SALE_ORDER + "_" + SaleOrderTable.DISCOUNT_TYPE;
@@ -2644,6 +2645,7 @@ public abstract class ShopStore {
                 + " i." + FINAL_GROSS_PRICE + ","
                 + " i." + FINAL_DISCOUNT + ","
                 + " i." + FINAL_TAX + ","
+                + " i." + EBT_ELIGIBLE + ","
                 + " i." + SALE_ORDER_TAXABLE + ","
                 + " i." + SALE_ORDER_DISCOUNT + ","
                 + " i." + SALE_ORDER_DISCOUNT_TYPE

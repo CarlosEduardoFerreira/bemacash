@@ -40,23 +40,25 @@ public final class FastOrderTotalQuery {
     private static final Uri URI_ORDER_ITEMS = ShopProvider.contentUri(SaleOrderItemsViewFast.URI_CONTENT);
     private static final Uri URI_ORDER_ITEMS_SYNCED = ShopProvider.contentUri(SaleOrderItemsViewFastSynced.URI_CONTENT);
 
-   // private static final int SaleItemTable_ORDER_GUID = 0;
-  //  private static final int SaleItemTable_SALE_ITEM_GUID = 1;
-//    private static final int SaleItemTable_ITEM_GUID = 2;
+    private static final int SaleItemTable_ORDER_GUID = 0;
+    private static final int SaleItemTable_SALE_ITEM_GUID = 1;
+    private static final int SaleItemTable_ITEM_GUID = 2;
     //ItemTable.DESCRIPTION,
-  //  private static final int SaleItemTable_QUANTITY = 3;
- //   private static final int SaleItemTable_PRICE = 4;
-  //  private static final int SaleItemTable_DISCOUNTABLE = 5;
- //   private static final int SaleItemTable_DISCOUNT = 6;
-//    private static final int SaleItemTable_DISCOUNT_TYPE = 7;
-//    private static final int SaleItemTable_TAXABLE = 8;
-//    private static final int SaleItemTable_TAX = 9;
-//    private static final int SaleItemTable_FINAL_GROSS_PRICE = 10;
- //   private static final int SaleItemTable_FINAL_DISCOUNT = 11;
-//    private static final int SaleItemTable_FINAL_TAX = 12;
-//    private static final int SaleOrderTable_TAXABLE = 13;
-//    private static final int SaleOrderTable_DISCOUNT = 14;
-//    private static final int SaleOrderTable_DISCOUNT_TYPE = 15;
+    private static final int SaleItemTable_QUANTITY = 3;
+    private static final int SaleItemTable_PRICE = 4;
+    private static final int SaleItemTable_DISCOUNTABLE = 5;
+    private static final int SaleItemTable_DISCOUNT = 6;
+    private static final int SaleItemTable_DISCOUNT_TYPE = 7;
+    private static final int SaleItemTable_TAXABLE = 8;
+    private static final int SaleItemTable_TAX = 9;
+    private static final int SaleItemTable_FINAL_GROSS_PRICE = 10;
+    private static final int SaleItemTable_FINAL_DISCOUNT = 11;
+    private static final int SaleItemTable_FINAL_TAX = 12;
+    private static final int SaleItemTable_EBT_ELIGIBLE = 13;
+    private static final int SaleOrderTable_TAXABLE = 14;
+    private static final int SaleOrderTable_DISCOUNT = 15;
+    private static final int SaleOrderTable_DISCOUNT_TYPE = 16;
+
 
     //be careful to modify it check SaleOrderItemsViewFastSynced too
     private static final String[] PROJECTION = new String[]{
@@ -189,9 +191,9 @@ public final class FastOrderTotalQuery {
                 if (result == null) {
                     result = new SaleOrderInfo(
                             null,
-                            _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),//SaleOrderTable_TAXABLE),
-                            _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),//SaleOrderTable_DISCOUNT),
-                            _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE))//SaleOrderTable_DISCOUNT_TYPE)
+                            _bool(c, /*c.getColumnIndex(SaleOrderTable.TAXABLE)),// */ SaleOrderTable_TAXABLE),
+                            _decimal(c, /*c.getColumnIndex(SaleOrderTable.DISCOUNT)),/ */SaleOrderTable_DISCOUNT),
+                            _discountType(c, /*c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE))/ */SaleOrderTable_DISCOUNT_TYPE)
                     );
                 }
                 readCursorRow(c, result);
@@ -202,20 +204,20 @@ public final class FastOrderTotalQuery {
 
     public static HashMap<String, SaleOrderInfo> parseCursorMultiple(Cursor c) {
         if (c == null || c.getCount() == 0)
-            return new HashMap<String, SaleOrderInfo>(0);
+            return new HashMap<>(0);
         //printCursor(c);
         Logger.d("Fast.parseCursorMultiple: %d", c.getCount());
-        HashMap<String, SaleOrderInfo> result = new HashMap<String, SaleOrderInfo>();
+        HashMap<String, SaleOrderInfo> result = new HashMap<>();
         if (c.moveToFirst()) {
             do {
-                String orderGuid = c.getString(c.getColumnIndex(SaleItemTable.ORDER_GUID));//SaleItemTable_ORDER_GUID);
+                String orderGuid = c.getString(/*c.getColumnIndex(SaleItemTable.ORDER_GUID));/*/SaleItemTable_ORDER_GUID);
                 SaleOrderInfo order = result.get(orderGuid);
                 if (order == null) {
                     order = new SaleOrderInfo(
                             orderGuid,
-                            _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),//SaleOrderTable_TAXABLE),
-                            _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)), //SaleOrderTable_DISCOUNT),
-                            _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)));//SaleOrderTable_DISCOUNT_TYPE));
+                            _bool(c, /*c.getColumnIndex(SaleOrderTable.TAXABLE)),/*/SaleOrderTable_TAXABLE),
+                            _decimal(c, /*c.getColumnIndex(SaleOrderTable.DISCOUNT)), /*/SaleOrderTable_DISCOUNT),
+                            _discountType(c, /*c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)));/*/SaleOrderTable_DISCOUNT_TYPE));
                     result.put(orderGuid, order);
                 }
                 readCursorRow(c, order);
@@ -239,22 +241,22 @@ public final class FastOrderTotalQuery {
 */
 
     public static void readCursorRow(Cursor c, SaleOrderInfo result) {
-        String saleItemId = c.getString(c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID));//SaleItemTable_SALE_ITEM_GUID);
+        String saleItemId = c.getString(/*c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID));/*/SaleItemTable_SALE_ITEM_GUID);
         SaleItemInfo value = new SaleItemInfo(
                 saleItemId,
-                c.getString(c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID)),//SaleItemTable_ITEM_GUID),
+                c.getString(/*c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID)),/*/SaleItemTable_ITEM_GUID),
                 //c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)),
-                _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY)),//SaleItemTable_QUANTITY),
-                _bool(c, c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),//SaleItemTable_DISCOUNTABLE),
-                _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT)),//SaleItemTable_DISCOUNT),
-                _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),//SaleItemTable_DISCOUNT_TYPE),
-                _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),//SaleItemTable_TAXABLE),
-                _decimal(c, c.getColumnIndex(SaleItemTable.TAX)), //SaleItemTable_TAX),
-                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE)),//SaleItemTable_FINAL_GROSS_PRICE),
-                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT)),//SaleItemTable_FINAL_DISCOUNT),
-                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX))//SaleItemTable_FINAL_TAX)
+                _decimalQty(c, /*c.getColumnIndex(SaleItemTable.QUANTITY)),/*/SaleItemTable_QUANTITY),
+                _bool(c, /*c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),/*/SaleItemTable_DISCOUNTABLE),
+                _decimal(c, /*c.getColumnIndex(SaleItemTable.DISCOUNT)),/*/SaleItemTable_DISCOUNT),
+                _discountType(c, /*c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),/*/SaleItemTable_DISCOUNT_TYPE),
+                _bool(c, /*c.getColumnIndex(SaleItemTable.TAXABLE)),/*/SaleItemTable_TAXABLE),
+                _decimal(c, /*c.getColumnIndex(SaleItemTable.TAX)), /*/SaleItemTable_TAX),
+                _decimal(c, /*c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE)),/*/SaleItemTable_FINAL_GROSS_PRICE),
+                _decimal(c, /*c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT)),/*/SaleItemTable_FINAL_DISCOUNT),
+                _decimal(c, /*c.getColumnIndex(SaleItemTable.FINAL_TAX))/*/SaleItemTable_FINAL_TAX)
         );
-        value.setEbtEligible(_bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE) ));
+        value.setEbtEligible(_bool(c, /*c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)*/ SaleItemTable_EBT_ELIGIBLE));
         result.items.add(value);
     }
 
@@ -271,7 +273,7 @@ public final class FastOrderTotalQuery {
             this.isTaxableOrder = isTaxableOrder;
             this.orderDiscount = orderDiscount;
             this.orderDiscountType = orderDiscountType;
-            this.items = new ArrayList<SaleItemInfo>();
+            this.items = new ArrayList<>();
         }
     }
 
@@ -377,18 +379,18 @@ public final class FastOrderTotalQuery {
             if (c.isAfterLast())
                 return null;
 
-            String orderGuid = c.getString(c.getColumnIndex(SaleItemTable.ORDER_GUID));//SaleItemTable_ORDER_GUID);
+            String orderGuid = c.getString(/*c.getColumnIndex(SaleItemTable.ORDER_GUID));/*/SaleItemTable_ORDER_GUID);
             SaleOrderInfo orderInfo = new SaleOrderInfo(
                     orderGuid,
-                    _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),//SaleOrderTable_TAXABLE),
-                    _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)), //SaleOrderTable_DISCOUNT),
-                    _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)));//SaleOrderTable_DISCOUNT_TYPE));
+                    _bool(c, /*c.getColumnIndex(SaleOrderTable.TAXABLE)),/*/SaleOrderTable_TAXABLE),
+                    _decimal(c, /*c.getColumnIndex(SaleOrderTable.DISCOUNT)), /*/SaleOrderTable_DISCOUNT),
+                    _discountType(c, /*c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)));/*/SaleOrderTable_DISCOUNT_TYPE));
 
             readCursorRow(c, orderInfo);
 
             String nextOrderGuid;
             while (c.moveToNext()) {
-                nextOrderGuid = c.getString(c.getColumnIndex(SaleItemTable.ORDER_GUID));//SaleItemTable_ORDER_GUID);
+                nextOrderGuid = c.getString(/*c.getColumnIndex(SaleItemTable.ORDER_GUID));/*/SaleItemTable_ORDER_GUID);
                 if (!nextOrderGuid.equals(orderGuid))
                     break;
 
