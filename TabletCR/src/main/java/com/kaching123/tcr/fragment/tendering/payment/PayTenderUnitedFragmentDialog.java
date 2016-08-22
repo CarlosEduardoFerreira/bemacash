@@ -103,6 +103,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         });
 
         keyboard.setEnterVisibility(View.GONE);
+       // editText.setSelectAllOnFocus(true);
 
         charge.setFilters(new InputFilter[]{new CurrencyFormatInputFilter()});
         charge.addTextChangedListener(currencyTextWatcher);
@@ -221,7 +222,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     protected void calculateDlgHeight(){
         boolean expand = saleOrderModels != null && saleOrderModels.size() > 0;
 
-        int height = expand ? R.dimen.pay_tender_dialog_height_3_expanded_large : R.dimen.pay_tender_dialog_height_3;
+        int height = expand ? R.dimen.pay_tender_dialog_height_3_expanded_large : R.dimen.pay_tender_dialog_height_3_large;
 
         getDialog().getWindow().setLayout(
                 getResources().getDimensionPixelOffset(R.dimen.pay_tender_dialog_width_large),
