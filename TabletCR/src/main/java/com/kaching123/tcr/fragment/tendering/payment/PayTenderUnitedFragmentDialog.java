@@ -104,7 +104,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         });
 
         keyboard.setEnterVisibility(View.GONE);
-        // editText.setSelectAllOnFocus(true);
 
         charge.setFilters(new InputFilter[]{new CurrencyFormatInputFilter()});
         charge.addTextChangedListener(currencyTextWatcher);
@@ -283,7 +282,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     private void setSingleTenderCheckbox() {
-        boolean on = (singleTenderEnabled == null || singleTenderEnabled.booleanValue());
+        boolean on = (singleTenderEnabled == null || singleTenderEnabled);
         checkboxSingle.setChecked(on);
         checkboxSingle.setVisibility(!hasCompletedTransactions() || on ? View.VISIBLE : View.GONE);
 
@@ -361,7 +360,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
         enable(true);
         getPositiveButton().setText(hasCompletedTransactions() ? R.string.btn_void : R.string.btn_cancel);
-        charge.selectAll();
+        charge.selectAll(); //highlight text according to     BEMA-887 Payment screen Rework
     }
 
     protected void enable(final boolean on) {
