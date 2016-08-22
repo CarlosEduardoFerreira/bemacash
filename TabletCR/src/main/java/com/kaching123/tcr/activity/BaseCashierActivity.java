@@ -44,9 +44,6 @@ import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.base.Function;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
@@ -320,11 +317,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private ArrayList<GiftCardBillingResult> giftCardResultList;
     protected String strItemCount;
     protected int saleItemCount;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -386,44 +378,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
 
         bindToDisplayService();
         bindToScaleService();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "BaseCashier Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://com.kaching123.tcr.activity/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "BaseCashier Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://com.kaching123.tcr.activity/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-
         unbindFromDisplayService();
         unbindFromScaleService();
         if (!isFinishing())
@@ -432,9 +395,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (isCreateReturnOrder && !TextUtils.isEmpty(orderGuid)) {
             RemoveSaleOrderCommand.start(BaseCashierActivity.this, BaseCashierActivity.this, BaseCashierActivity.this.orderGuid);
         }
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.disconnect();
     }
 
     private void bindToDisplayService() {
@@ -615,15 +575,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
             }
         }
-        //fake prepaid item
-//        isPrepaidItemStart = true;
-//        PrepaidSendResult result = new PrepaidSendResult();
-//        result.print();
-//        final ItemExModel model = new ItemExModel(result);
-//        tryToAddItem(model);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
