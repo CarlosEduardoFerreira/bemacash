@@ -126,11 +126,11 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 }
             }
         });
-        btnPaxEbtCash.setVisibility(View.VISIBLE);
+     /*   btnPaxEbtCash.setVisibility(View.VISIBLE);
         btnPaxEbtCash.setEnabled(true);
 
         btnCard.setVisibility(View.VISIBLE);
-        btnCard.setEnabled(true);
+        btnCard.setEnabled(true);*/
 
     }
 
@@ -142,7 +142,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     private boolean tryProceed(PaymentMethod method) {
         if (listener != null && String.valueOf(charge.getText()).length() > 0) {
-          BigDecimal total =  method.equals(PaymentMethod.PAX_EBT_FOODSTAMP)|| method.equals(PaymentMethod.PAX_EBT_CASH) ? orderEbtTotal : orderTotal;
+          BigDecimal total =  /*method.equals(PaymentMethod.PAX_EBT_FOODSTAMP)|| method.equals(PaymentMethod.PAX_EBT_CASH) ? orderEbtTotal :*/orderTotal;
             listener.onUnitedPaymentAmountSelected(method, total, getDecimalValue());
             return true;
         }

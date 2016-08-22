@@ -94,6 +94,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     protected int customAnimationResource;
 
     protected BigDecimal completedAmount = BigDecimal.ZERO;
+    protected BigDecimal completedNotEbtAmount = BigDecimal.ZERO;
     protected BigDecimal completedEbtAmount = BigDecimal.ZERO;
     protected ArrayList<PaymentTransactionModel> saleOrderModels = new ArrayList<PaymentTransactionModel>();
     protected ArrayList<PaymentTransactionModel> fakeTransactions = new ArrayList<PaymentTransactionModel>();
@@ -152,17 +153,19 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
         for (PaymentTransactionModel saleOrderModel : loaded) {
             this.saleOrderModels.add(saleOrderModel);
         }
-        completedAmount = BigDecimal.ZERO;
+        completedNotEbtAmount = BigDecimal.ZERO;
         for (PaymentTransactionModel transaction : saleOrderModels) {
             if (transaction.status.isSuccessful()
                     && BigDecimal.ZERO.compareTo(transaction.availableAmount) < 0
                     && PaymentType.SALE.equals(transaction.paymentType)) {
 
-                completedAmount = completedAmount.add(transaction.availableAmount);
+                completedNotEbtAmount = completedNotEbtAmount.add(transaction.availableAmount);
                 completedEbtAmount = completedEbtAmount.add(transaction.balance);
             }
         }
 
+        completedAmount = completedAmount.add(completedNotEbtAmount);
+        completedAmount = completedAmount.add(completedEbtAmount);
         calculateDlgHeight();
         Logger.d("-= Loading reached level 1 =-");
         onLoadComplete();
@@ -189,7 +192,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     }
 
     protected boolean hasCompletedTransactions() {
-        return BigDecimal.ZERO.compareTo(completedAmount) < 0;
+        return BigDecimal.ZERO.compareTo(completedNotEbtAmount) < 0;
     }
 
     protected void enable(final boolean on) {
