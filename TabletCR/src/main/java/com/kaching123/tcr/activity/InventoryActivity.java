@@ -140,7 +140,6 @@ public class InventoryActivity extends ScannerBaseActivity {
 
             @Override
             public void onCategoryChanged(long id, String depGuid, String catGuid) {
-                //Logger.d("[INVENTORY] onCategoryChanged %d, %s, %s", id, depGuid, catGuid);
                 if (id == AdapterView.INVALID_POSITION) {
                     itemsFragment.setCategory(ItemsFragment.LOAD_ALL_CATEGORIES);
                     selectedDeartmentGuid = null;
@@ -165,28 +164,6 @@ public class InventoryActivity extends ScannerBaseActivity {
             @Override
             public void onItemSelected(long id, ItemExModel model) {
                 BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.EDIT);
-                /*switch (model.refType) {
-                    case Simple:
-                        if (TcrApplication.isEcuadorVersion()) {
-                            EditEcuadorItemActivity.start(InventoryActivity.this, model);
-                        } else {
-                            EditItemActivity.start(InventoryActivity.this, model);
-                        }
-                        break;
-                    case Reference:
-                        if (TcrApplication.isEcuadorVersion()) {
-                            EditEcuadorReferenceItemActivity.start(InventoryActivity.this, model);
-                        } else {
-                            EditReferenceItemActivity.start(InventoryActivity.this, model);
-                        }
-                        break;
-                    default:
-                        if (TcrApplication.isEcuadorVersion()) {
-                            EditEcuadorItemActivity.start(InventoryActivity.this, model);
-                        } else {
-                            EditItemActivity.start(InventoryActivity.this, model);
-                        }
-                }*/
             }
         });
 
@@ -265,12 +242,10 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @OptionsItem
     protected void actionSortSelected() {
-        //level = sortItem.getIcon().getLevel();
         level ^= 1;
         final boolean sortByName = (level == 1);
         itemsFragment.sortByName(sortByName);
         sortItem.getIcon().setLevel(level);
-        //sortItem.setIcon(sortByName ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category);
         sort.setIcon(getResources().getDrawable(sortByName ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
     }
 
@@ -281,11 +256,6 @@ public class InventoryActivity extends ScannerBaseActivity {
         model.departmentGuid = selectedDeartmentGuid;
 
         BaseItemActivity2.start(self(), model, ItemRefType.Reference, StartMode.ADD);
-        /*if (TcrApplication.isEcuadorVersion()) {
-            AddEcuadorReferenceItemActivity.start(InventoryActivity.this, model);
-        } else {
-            AddReferenceItemActivity.start(InventoryActivity.this, model);
-        }*/
     }
 
     @OptionsItem
@@ -300,12 +270,6 @@ public class InventoryActivity extends ScannerBaseActivity {
         model.departmentGuid = selectedDeartmentGuid;
 
         BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.ADD);
-
-        /*if (TcrApplication.isEcuadorVersion()) {
-            AddEcuadorItemActivity.start(InventoryActivity.this, model);
-        } else {
-            AddItemActivity.start(InventoryActivity.this, model);
-        }*/
     }
 
     private boolean inventoryLimitReached() {

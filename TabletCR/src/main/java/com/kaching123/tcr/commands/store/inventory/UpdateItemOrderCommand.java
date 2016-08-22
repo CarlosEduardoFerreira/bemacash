@@ -12,8 +12,6 @@ import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.telly.groundy.TaskResult;
-import com.telly.groundy.annotations.OnFailure;
-import com.telly.groundy.annotations.OnSuccess;
 
 import java.util.ArrayList;
 
@@ -23,6 +21,7 @@ import java.util.ArrayList;
 public class UpdateItemOrderCommand extends AsyncCommand {
 
     private static final String ARG_GUIDS = "arg_guids";
+    private static final String ARG_OFFSET = "arg_offset";
 
     private ArrayList<ContentProviderOperation> ops;
     private BatchSqlCommand sqlCommand;
@@ -31,17 +30,19 @@ public class UpdateItemOrderCommand extends AsyncCommand {
     protected TaskResult doCommand() {
 
         String[] guids = getArgs().getStringArray(ARG_GUIDS);
+        int offset = getIntArg(ARG_OFFSET);
 
         ItemsJdbcConverter jdbcConverter = (ItemsJdbcConverter) JdbcFactory.getConverter(ItemTable.TABLE_NAME);
         sqlCommand = batchUpdate(ItemModel.class);
         ops = new ArrayList<>();
         for (int i = 0; i < guids.length; i++){
             String guid = guids[i];
+            int orderNum = i + offset + 1;
             ops.add(ContentProviderOperation.newUpdate(ShopProvider.contentUri(ItemTable.URI_CONTENT))
                     .withSelection(ItemTable.GUID + " = ?", new String[]{guid})
-                    .withValue(ItemTable.ORDER_NUM, i)
+                    .withValue(ItemTable.ORDER_NUM, orderNum)
                     .build());
-            sqlCommand.add(jdbcConverter.updateOrderSQL(guid, i, this.getAppCommandContext()));
+            sqlCommand.add(jdbcConverter.updateOrderSQL(guid, orderNum, this.getAppCommandContext()));
         }
 
         return succeeded();
@@ -57,23 +58,7 @@ public class UpdateItemOrderCommand extends AsyncCommand {
         return sqlCommand;
     }
 
-    public static void start(Context context, String[] guids, BaseUpdateItemOrderCommandCallback callback){
-        create(UpdateItemOrderCommand.class).arg(ARG_GUIDS, guids).callback(callback).queueUsing(context);
-    }
-
-    public static abstract class BaseUpdateItemOrderCommandCallback {
-
-        @OnSuccess(UpdateItemOrderCommand.class)
-        public void onSuccess(){
-            onUpdateSuccess();
-        }
-
-        @OnFailure(UpdateItemOrderCommand.class)
-        public void onFailure(){
-            onUpdateFailure();
-        }
-
-        protected abstract void onUpdateSuccess();
-        protected abstract void onUpdateFailure();
+    public static void start(Context context, String[] guids, int offset){
+        create(UpdateItemOrderCommand.class).arg(ARG_GUIDS, guids).arg(ARG_OFFSET, offset).queueUsing(context);
     }
 }

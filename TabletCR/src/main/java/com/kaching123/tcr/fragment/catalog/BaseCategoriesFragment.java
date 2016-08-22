@@ -209,7 +209,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
             return;
 
         int checkedPosition = selectedPosition;
-        if (checkedPosition < 0 || checkedPosition >= adapter.getCount())
+        if (checkedPosition < 0 || checkedPosition > adapter.getCount())
             checkedPosition = 0;//isListViewWithHeader(getAdapterView()) ? selectedPosition : 0;
 
         if (isListViewWithHeader(getAdapterView()) || cursor.getCount() > 0) {
