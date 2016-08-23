@@ -66,6 +66,7 @@ import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierModel;
+import com.kaching123.tcr.model.MultipleDiscountModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.model.RegisterModel;
@@ -82,6 +83,7 @@ import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.VariantItemModel;
 import com.kaching123.tcr.model.VariantSubItemModel;
+import com.kaching123.tcr.model.converter.MultipleDiscountJdbcConverter;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
@@ -103,6 +105,7 @@ import com.kaching123.tcr.store.ShopStore.KDSAliasTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
+import com.kaching123.tcr.store.ShopStore.MultipleDiscountTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.RegisterTable;
@@ -367,6 +370,12 @@ public class JdbcFactory {
 
         API_METHOD.put(TBPxRegisterTable.TABLE_NAME, "time_based_pricing_register");
         API_METHOD2.put(TBPxRegisterModel.class, "time_based_pricing_register");
+
+        CONVERTERS.put(MultipleDiscountTable.TABLE_NAME, c = new MultipleDiscountJdbcConverter());
+        CONVERTERS2.put(MultipleDiscountModel.class, c);
+
+        API_METHOD.put(MultipleDiscountTable.TABLE_NAME, "multiple_discount_item");
+        API_METHOD2.put(MultipleDiscountModel.class, "multiple_discount_item");
     }
 
     public static JdbcConverter getConverter(String tableName) {
