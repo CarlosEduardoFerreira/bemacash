@@ -7,17 +7,14 @@ import com.kaching123.pos.util.IXReportPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
-import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.ZReportInfo;
 import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 
 import static com.kaching123.tcr.print.processor.BasePrintProcessor.getCityStateZip;
 

@@ -10,35 +10,17 @@ import com.kaching123.tcr.jdbc.converters.JdbcConverter;
 import com.kaching123.tcr.model.IValueModel;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
-import com.kaching123.tcr.store.ShopStore.CashDrawerMovementTable;
-import com.kaching123.tcr.store.ShopStore.CategoryTable;
-import com.kaching123.tcr.store.ShopStore.CreditReceiptTable;
-import com.kaching123.tcr.store.ShopStore.CustomerTable;
-import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeCommissionsTable;
-import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
-import com.kaching123.tcr.store.ShopStore.EmployeeTable;
-import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
-import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
-import com.kaching123.tcr.store.ShopStore.ItemTable;
-import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
-import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
-import com.kaching123.tcr.store.ShopStore.RegisterTable;
 import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
-import com.kaching123.tcr.store.ShopStore.ShiftTable;
-import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
-import com.kaching123.tcr.store.SyncOpenHelper;
 import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 

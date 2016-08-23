@@ -3,8 +3,10 @@ package com.kaching123.tcr.model.converter;
 import android.database.Cursor;
 
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ChildUnitLabelTable;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ItemChildTable;
+
+import java.math.BigDecimal;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;

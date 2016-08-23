@@ -2,7 +2,6 @@ package com.kaching123.tcr.commands.device;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -19,8 +18,6 @@ import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Inet4Address;
@@ -32,7 +29,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.channels.IllegalBlockingModeException;
 import java.util.Enumeration;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class FindPaxCommand extends PublicGroundyTask {

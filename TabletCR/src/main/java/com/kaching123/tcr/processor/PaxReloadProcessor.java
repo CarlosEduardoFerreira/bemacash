@@ -6,8 +6,6 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
-import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneBaseCommand;
-import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneLastTransactionCommand;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;

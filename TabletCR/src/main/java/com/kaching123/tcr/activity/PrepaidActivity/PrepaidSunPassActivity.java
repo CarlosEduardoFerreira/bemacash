@@ -8,8 +8,6 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -51,6 +49,9 @@ import com.kaching123.tcr.websvc.api.prepaid.BalanceResponse;
 import com.kaching123.tcr.websvc.api.prepaid.DocumentInquiryResponse;
 import com.kaching123.tcr.websvc.api.prepaid.DocumentPaymentResponse;
 import com.kaching123.tcr.websvc.api.prepaid.ReplenishmentResponse;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

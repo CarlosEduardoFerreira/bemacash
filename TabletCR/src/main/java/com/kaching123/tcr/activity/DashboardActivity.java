@@ -67,7 +67,6 @@ import com.kaching123.tcr.fragment.shift.CloseDrawerFragment;
 import com.kaching123.tcr.fragment.shift.OpenAmountFragment;
 import com.kaching123.tcr.fragment.shift.PrintXReportFragment;
 import com.kaching123.tcr.fragment.shift.PutCashFragment;
-import com.kaching123.tcr.fragment.tendering.pax.PAXBatchOutFragmentDialog;
 import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginFragment.OnLoginCompleteListener;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
@@ -76,7 +75,6 @@ import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.user.TimesheetNewFragment;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.ActivationCarrierModel;
-import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.Permission;
@@ -86,7 +84,6 @@ import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.model.payment.MovementType;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
@@ -1702,7 +1699,7 @@ public class DashboardActivity extends SuperBaseActivity {
                                         c.getString(c.getColumnIndex(PaymentTransactionTable.GUID)),
                                         c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID)),
                                         c.getString(c.getColumnIndex(PaymentTransactionTable.ORDER_GUID)),
-                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.AMOUNT)),
+                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.AMOUNT), BigDecimal.ZERO),
                                         _paymentType(c, c.getColumnIndex(PaymentTransactionTable.TYPE)),
                                         _paymentStatus(c, c.getColumnIndex(PaymentTransactionTable.STATUS)),
                                         c.getString(c.getColumnIndex(PaymentTransactionTable.OPERATOR_GUID)),
@@ -1714,10 +1711,10 @@ public class DashboardActivity extends SuperBaseActivity {
                                         new Date(c.getLong(c.getColumnIndex(PaymentTransactionTable.CREATE_TIME))),
                                         c.getString(c.getColumnIndex(PaymentTransactionTable.SHIFT_GUID)),
                                         c.getString(c.getColumnIndex(PaymentTransactionTable.CARD_NAME)),
-                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CHANGE_AMOUNT)),
+                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CHANGE_AMOUNT), BigDecimal.ZERO),
                                         _bool(c, c.getColumnIndex(PaymentTransactionTable.IS_PREAUTH)),
-                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK)),
-                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE))
+                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK), BigDecimal.ZERO),
+                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO)
                                 );
 
                                 list.add(model);

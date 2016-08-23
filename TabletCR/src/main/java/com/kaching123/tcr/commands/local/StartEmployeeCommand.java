@@ -2,12 +2,9 @@ package com.kaching123.tcr.commands.local;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand.EndUncompletedTransactionsResult;
 import com.kaching123.tcr.service.UploadTask;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.SqlCommandTable;

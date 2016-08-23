@@ -5,18 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.FragmentById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment;
 import com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment.prepaidType;
 import com.kaching123.tcr.fragment.prepaid.PrepaidHomeFragment_;
-import com.kaching123.tcr.fragment.prepaid.PrepaidHomeHeadFragment;
-import com.kaching123.tcr.fragment.prepaid.PrepaidHomeHeadFragment_;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
 
 /**
  * Created by teli.yin on 10/28/2014.

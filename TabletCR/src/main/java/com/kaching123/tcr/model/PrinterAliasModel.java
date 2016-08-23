@@ -4,8 +4,6 @@ import android.content.ContentValues;
 
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 
-import java.io.Serializable;
-
 /**
  * Created by vkompaniets on 11.02.14.
  */

@@ -9,8 +9,8 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
+import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 
 import java.math.BigDecimal;
 

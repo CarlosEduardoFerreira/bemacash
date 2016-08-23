@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
@@ -27,8 +26,6 @@ import com.telly.groundy.annotations.OnSuccess;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 /**
  * Created by pkabakov on 24.12.2014.

@@ -32,7 +32,6 @@ import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.BaseIm
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.ImportType;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.WrongImportInfo;
 import com.kaching123.tcr.commands.store.inventory.UpdateDeletedItemCommand;
-import com.kaching123.tcr.ecuador.AddEcuadorReferenceItemActivity;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;

@@ -9,14 +9,14 @@ import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.util.KeyboardUtils;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
-import com.kaching123.tcr.R;
-import com.kaching123.tcr.util.KeyboardUtils;
 
 /**
  * Created by vkompaniets on 07.07.2014.

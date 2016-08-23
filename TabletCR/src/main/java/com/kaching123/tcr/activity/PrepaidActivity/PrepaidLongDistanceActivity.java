@@ -11,9 +11,6 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -71,6 +68,10 @@ import com.kaching123.tcr.websvc.api.prepaid.Category;
 import com.kaching123.tcr.websvc.api.prepaid.PIN;
 import com.kaching123.tcr.websvc.api.prepaid.PaymentOption;
 import com.kaching123.tcr.websvc.api.prepaid.ProductAccessPhone;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

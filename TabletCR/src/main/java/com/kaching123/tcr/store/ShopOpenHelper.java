@@ -12,21 +12,16 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.DashboardActivity;
 import com.kaching123.tcr.commands.support.SendLogCommand;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
-import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
 import com.kaching123.tcr.model.Unit;
-import com.kaching123.tcr.service.SyncCommand.MaxUpdateTime;
 import com.kaching123.tcr.service.SyncCommand.Table;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.ShopStore.UpdateTimeTable;
 import com.mayer.sql.update.version.IUpdateContainer;
-
 
 import java.io.File;
 import java.io.FileInputStream;

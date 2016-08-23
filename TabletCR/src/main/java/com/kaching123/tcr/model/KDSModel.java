@@ -5,10 +5,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore.KDSTable;
-
-import java.io.Serializable;
 
 /**
  * Created by long.jiao on 06.21.16.

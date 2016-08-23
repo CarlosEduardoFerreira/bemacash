@@ -1,7 +1,6 @@
 package com.kaching123.tcr.fragment.inventory;
 
 import android.content.Context;
-import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,15 +19,13 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.adapter.IObjectsAdapter;
 import com.kaching123.tcr.adapter.ObjectCursorDragAdapter;
+import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.store.inventory.UpdateItemOrderCommand;
-import com.kaching123.tcr.commands.store.inventory.UpdateItemOrderCommand.BaseUpdateItemOrderCommandCallback;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.PriceType;
-import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;

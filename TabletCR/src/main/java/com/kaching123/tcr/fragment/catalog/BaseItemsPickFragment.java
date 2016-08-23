@@ -1,5 +1,6 @@
 package com.kaching123.tcr.fragment.catalog;
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,8 +8,11 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.adapter.IObjectsAdapter;
+import com.kaching123.tcr.activity.BaseCashierActivity;
+import com.kaching123.tcr.activity.BaseCashierActivity.IPriceLevelListener;
+import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopProvider;
@@ -17,6 +21,7 @@ import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import org.androidannotations.annotations.EFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**

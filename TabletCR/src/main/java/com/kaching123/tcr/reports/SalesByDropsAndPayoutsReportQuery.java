@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
-import static com.kaching123.tcr.model.ContentValuesUtil._long;
 
 /**
  * Created by gdubina on 23.01.14.

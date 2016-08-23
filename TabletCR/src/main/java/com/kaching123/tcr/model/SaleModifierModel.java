@@ -3,10 +3,10 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;

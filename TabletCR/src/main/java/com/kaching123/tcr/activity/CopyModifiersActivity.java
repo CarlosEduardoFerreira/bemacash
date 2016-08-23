@@ -7,8 +7,8 @@ import android.widget.SearchView;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.editmodifiers.ModifiersCopyDialog;
-import com.kaching123.tcr.fragment.editmodifiers.SearchFragment.IItemListener;
 import com.kaching123.tcr.fragment.editmodifiers.SearchFragment;
+import com.kaching123.tcr.fragment.editmodifiers.SearchFragment.IItemListener;
 import com.kaching123.tcr.util.KeyboardUtils;
 
 import org.androidannotations.annotations.AfterViews;

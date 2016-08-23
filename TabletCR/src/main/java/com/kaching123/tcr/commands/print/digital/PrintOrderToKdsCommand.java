@@ -12,7 +12,6 @@ import com.getbase.android.db.provider.Query;
 import com.google.common.base.Function;
 import com.kaching123.tcr.commands.device.KDSCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderKdsPrintStatusCommand;
-import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderKitchenPrintStatusCommand;
 import com.kaching123.tcr.model.KDSModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -39,7 +38,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
-import static com.kaching123.tcr.model.ContentValuesUtil._kdsSendStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
 
 /**
@@ -357,7 +354,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                         return new ItemInfo(
                                 c.getString(0),
                                 c.getString(1),
-                                _decimalQty(c, 2),
+                                _decimalQty(c, 2, BigDecimal.ZERO),
                                 c.getString(3),
                                 c.getInt(4),
                                 c.getString(5));

@@ -2,7 +2,6 @@ package com.kaching123.tcr.util;
 
 import android.content.Context;
 
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.saleorder.OrderTreeManagementCommand;
 import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ItemMovementModelFactory;
@@ -11,7 +10,6 @@ import com.telly.groundy.PublicGroundyTask;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Hans on 5/28/2015.

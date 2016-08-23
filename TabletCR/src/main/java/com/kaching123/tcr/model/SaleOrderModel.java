@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand.KDSSendStatus;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
@@ -20,6 +21,7 @@ import java.util.Date;
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
+import static com.kaching123.tcr.model.ContentValuesUtil._kdsSendStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._kitchenPrintStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;

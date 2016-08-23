@@ -1,13 +1,9 @@
 package com.kaching123.tcr.commands.device;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.model.KDSModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.KDSTable;
 import com.telly.groundy.PublicGroundyTask;
@@ -18,7 +14,6 @@ import com.telly.groundy.annotations.Param;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  * Created by gdubina on 04.12.13.

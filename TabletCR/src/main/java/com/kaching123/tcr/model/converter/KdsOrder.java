@@ -1,9 +1,5 @@
 package com.kaching123.tcr.model.converter;
 
-import android.database.Cursor;
-
-import com.kaching123.tcr.store.ShopStore;
-
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;

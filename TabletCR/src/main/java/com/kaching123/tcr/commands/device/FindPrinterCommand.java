@@ -1,11 +1,10 @@
 package com.kaching123.tcr.commands.device;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
-import android.app.PendingIntent;
-import android.content.Intent;
-
 
 import com.kaching123.pos.USBPrinter;
 import com.kaching123.tcr.BuildConfig;
@@ -16,7 +15,6 @@ import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnCallback;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
-
 
 import java.io.IOException;
 import java.io.InterruptedIOException;

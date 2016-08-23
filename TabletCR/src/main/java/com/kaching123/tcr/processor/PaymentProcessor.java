@@ -98,7 +98,6 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActio
 
 import junit.framework.Assert;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;

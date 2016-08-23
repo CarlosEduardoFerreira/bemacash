@@ -5,7 +5,6 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PrinterTable;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;

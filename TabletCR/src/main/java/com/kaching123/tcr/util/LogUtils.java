@@ -9,6 +9,7 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.content.FileProvider;
 import android.widget.Toast;
 
+import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.ApplicationVersion;
@@ -25,7 +26,6 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import com.kaching123.tcr.BuildConfig;
 
 public class LogUtils {
 

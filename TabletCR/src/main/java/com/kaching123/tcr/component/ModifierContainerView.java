@@ -7,6 +7,12 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.jess.ui.TwoWayGridView;
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand.SelectedModifierExModel;
+import com.kaching123.tcr.model.ModifierExModel;
+import com.kaching123.tcr.model.ModifierType;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
@@ -15,13 +21,6 @@ import org.androidannotations.annotations.ViewById;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.R;
-import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
-import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand.SelectedModifierExModel;
-import com.kaching123.tcr.model.ModifierExModel;
-import com.kaching123.tcr.model.ModifierType;
 
 /**
  * Created by vkompaniets on 18.11.13.

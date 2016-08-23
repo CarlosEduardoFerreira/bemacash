@@ -3,15 +3,16 @@ package com.kaching123.tcr;
 /**
  * Created by teli on 6/4/2015.
  */
-import static android.os.Environment.MEDIA_MOUNTED;
-
-import java.io.File;
-import java.io.IOException;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.util.Log;
+
+import java.io.File;
+import java.io.IOException;
+
+import static android.os.Environment.MEDIA_MOUNTED;
 
 public final class StorageUtils {
 

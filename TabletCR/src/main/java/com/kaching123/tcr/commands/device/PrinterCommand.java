@@ -1,11 +1,11 @@
 package com.kaching123.tcr.commands.device;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
-import android.content.Context;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.PosPrinter;
@@ -17,8 +17,8 @@ import com.kaching123.pos.printer.GetMP200ErrorStatusExAction;
 import com.kaching123.pos.printer.GetMP200OffLineStatusExAction;
 import com.kaching123.pos.printer.GetMP200PaperRollSensorStatusExAction;
 import com.kaching123.pos.printer.GetMP200PrinterStatusExAction;
-import com.kaching123.pos.printer.GetPrinterStatusExAction;
 import com.kaching123.pos.printer.GetPrinterBasicStatusAction;
+import com.kaching123.pos.printer.GetPrinterStatusExAction;
 import com.kaching123.pos.printer.SelectPOSAction;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;

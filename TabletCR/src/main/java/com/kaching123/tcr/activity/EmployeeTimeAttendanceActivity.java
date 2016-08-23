@@ -3,10 +3,11 @@ package com.kaching123.tcr.activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.employee.EmployeeAttendanceFragment;
+
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 
 /**
  * Created by gdubina on 05/02/14.

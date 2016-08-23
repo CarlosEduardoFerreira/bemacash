@@ -3,11 +3,10 @@ package com.kaching123.tcr.component;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import org.androidannotations.annotations.EViewGroup;
-import org.androidannotations.annotations.ViewById;
-import com.jess.ui.TwoWayGridView;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.ModifierModel;
+
+import org.androidannotations.annotations.EViewGroup;
 
 import java.math.BigDecimal;
 import java.util.Arrays;

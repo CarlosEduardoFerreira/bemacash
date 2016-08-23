@@ -2,7 +2,6 @@ package com.kaching123.tcr.activity;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
-import android.os.Binder;
 import android.os.IBinder;
 import android.text.TextUtils;
 

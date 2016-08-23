@@ -6,8 +6,6 @@ import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.store.ShopStore.ComposerTable;
 import com.kaching123.tcr.util.ContentValuesUtilBase;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
-
 
 /**
  * Created by hans mayer

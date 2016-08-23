@@ -55,7 +55,7 @@ public class ItemExModel extends ItemModel {
         super();
     }
 
-    public ItemExModel(BigDecimal itemPrice ){
+    public ItemExModel(BigDecimal itemPrice){
         super(UUID.randomUUID().toString(),
                 null,
                 "Gift Card",
@@ -64,10 +64,15 @@ public class ItemExModel extends ItemModel {
                 "Gift Card",
                 PriceType.FIXED,
                 itemPrice,
-                BigDecimal.ONE,
-                "pcs",
                 null,
-                false, true, // temp to true
+                null,
+                null,
+                null,
+                null,
+                BigDecimal.ONE,
+                null,
+                false,
+                true, // temp to true
                 false,
                 false,
                 BigDecimal.ZERO,
@@ -100,11 +105,6 @@ public class ItemExModel extends ItemModel {
 
         this.tax = null;
         this.tax2 = null;
-        if (TextUtils.isEmpty(unitsLabelId)) {
-            this.shortCut = unitsLabel;
-        } else {
-            this.shortCut = null;
-        }
     }
 
     public ItemExModel(PrepaidSendResult result) {

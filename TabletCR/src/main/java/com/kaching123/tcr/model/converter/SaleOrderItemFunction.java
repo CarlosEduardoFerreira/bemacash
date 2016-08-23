@@ -6,6 +6,8 @@ import com.google.common.base.Function;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 
+import java.math.BigDecimal;
+
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;

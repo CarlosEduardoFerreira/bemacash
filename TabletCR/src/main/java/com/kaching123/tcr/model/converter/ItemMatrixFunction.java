@@ -5,7 +5,6 @@ import android.database.Cursor;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.model.ItemMatrixModel;
-
 import com.kaching123.tcr.store.ShopStore;
 
 

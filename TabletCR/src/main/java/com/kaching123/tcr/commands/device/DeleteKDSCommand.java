@@ -4,12 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.kaching123.tcr.commands.store.settings.AddKDSCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.KDSTable;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
-import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 
 /**

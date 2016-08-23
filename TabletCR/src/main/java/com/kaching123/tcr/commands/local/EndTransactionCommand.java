@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.view.ActionProvider;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;

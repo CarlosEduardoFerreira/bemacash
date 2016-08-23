@@ -1,10 +1,10 @@
 package com.kaching123.tcr.model;
 
+import com.kaching123.tcr.TcrApplication;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
-
-import com.kaching123.tcr.TcrApplication;
 
 /**
  * Created by azablotskiy on 03-Jun-15.

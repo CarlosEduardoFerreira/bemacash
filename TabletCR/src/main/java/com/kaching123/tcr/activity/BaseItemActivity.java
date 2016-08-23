@@ -80,7 +80,6 @@ import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.UnitUtil;
-import com.kaching123.tcr.websvc.api.prepaid.Category;
 import com.thomashaertel.widget.MultiSpinner;
 
 import org.androidannotations.annotations.Click;
@@ -93,7 +92,6 @@ import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

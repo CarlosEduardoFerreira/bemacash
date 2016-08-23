@@ -1,16 +1,12 @@
 package com.kaching123.tcr.print.processor;
 
-import com.kaching123.tcr.commands.print.ParseHtmlCommand;
-
 import android.content.Context;
 
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.print.ParseHtmlCommand;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
-
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
-import static com.kaching123.tcr.util.DateUtils.dateOnlyFormat;
 
 /**
  * Created by b1107005 on 12/7/2014.

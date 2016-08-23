@@ -1,8 +1,5 @@
 package com.kaching123.tcr.commands.rest;
 
-import android.text.TextUtils;
-
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;

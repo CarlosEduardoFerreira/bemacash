@@ -1,7 +1,5 @@
 package com.kaching123.tcr.util;
 
-import android.graphics.drawable.Drawable;
-
 import com.kaching123.tcr.R;
 
 import java.util.HashMap;

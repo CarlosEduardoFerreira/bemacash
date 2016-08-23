@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.kaching123.tcr.print.FormatterUtil.commaFormat;
-import static com.kaching123.tcr.print.FormatterUtil.commaPriceFormat;
 
 public class PosEcuadorOrderTextPrinter extends PosOrderTextPrinter {
 

@@ -8,10 +8,13 @@ import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ComposerTable;
+import com.kaching123.tcr.store.ShopSchema2.ComposerView2.HostUnitLabelTable;
+import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ItemChildTable;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ItemHostTable;
 import com.kaching123.tcr.util.ContentValuesUtilBase;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
+import static com.kaching123.tcr.util.ContentValuesUtilBase._decimal;
 
 /**
  * Created by mayer
@@ -53,16 +56,17 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 0,
                 0,
                 0,
-                0,   //printer alias
-                0,   //btnView
-                0,    //hasNotes
-                0,    //serializable
+                0,
+                0,
+                0,
+                0,
                 null,
                 null,
                 null,
                 null,
                 0,
                 null,
+                0,
                 0,
                 false, false, null, false, null, null, null, null, false);
 
@@ -115,6 +119,7 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 null,
                 0,
                 null,
+                0,
                 0,
                 false, false, null, false, null, null, null, null, false);
 

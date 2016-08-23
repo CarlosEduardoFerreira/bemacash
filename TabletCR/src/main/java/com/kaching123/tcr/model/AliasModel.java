@@ -1,9 +1,5 @@
 package com.kaching123.tcr.model;
 
-import android.content.ContentValues;
-
-import com.kaching123.tcr.store.ShopStore;
-
 import java.io.Serializable;
 
 /**

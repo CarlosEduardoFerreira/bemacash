@@ -4,30 +4,12 @@ import android.content.ContentValues;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;
-import com.kaching123.tcr.commands.rest.sync.GetResponse;
-import com.kaching123.tcr.jdbc.JdbcBuilder;
-import com.kaching123.tcr.jdbc.JdbcFactory;
-import com.kaching123.tcr.jdbc.converters.CommissionsJdbcConverter;
-import com.kaching123.tcr.jdbc.converters.JdbcConverter;
-import com.kaching123.tcr.model.IValueModel;
-import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
-import com.kaching123.tcr.store.ShopStore.EmployeeCommissionsTable;
-import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
-import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
-import com.kaching123.tcr.store.ShopStore.SaleAddonTable;
-import com.kaching123.tcr.store.ShopStore.SaleItemTable;
-import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
-import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.SyncOpenHelper;
 import com.kaching123.tcr.util.JdbcJSONArray;
-import com.kaching123.tcr.util.JdbcJSONObject;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by pkabakov on 19.01.2015.

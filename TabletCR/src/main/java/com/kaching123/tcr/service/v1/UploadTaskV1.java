@@ -2,7 +2,6 @@ package com.kaching123.tcr.service.v1;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 

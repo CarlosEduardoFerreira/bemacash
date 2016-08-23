@@ -6,13 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.RecalcCostQuery;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import static com.kaching123.tcr.util.ContentValuesUtilBase._decimal;
 import static com.kaching123.tcr.util.ContentValuesUtilBase._decimalQty;

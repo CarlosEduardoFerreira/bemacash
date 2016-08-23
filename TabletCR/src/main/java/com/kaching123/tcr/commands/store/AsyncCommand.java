@@ -16,8 +16,6 @@ import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
-import com.telly.groundy.Groundy;
-import com.telly.groundy.GroundyTask;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 

@@ -14,7 +14,6 @@ import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemLis
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.PrepaidTypeChoosingFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.PrepaidTypeChoosingFragmentDialog.PrepaidTypeChoosingFragmentDialogCallback;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.billpayment.PaymentFragmentDialog;
-import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless.PrepaidBillPaymentPrintAndFinishFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless.PrepaidPrintAndFinishFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless.PrepaidSunPassPrintAndFinishFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless.PrepaidWirelessPrintAndFinishFragmentDialog;

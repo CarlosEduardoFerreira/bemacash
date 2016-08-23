@@ -228,15 +228,15 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         saveReference();
         if (StartMode.ADD == mode){
             if (model.isReferenceItem()){
-                AddReferenceItemCommand.start(self(), model);
+                AddReferenceItemCommand.start(self(), model, null);
             }else{
-                AddItemCommand.start(self(), model);
+                AddItemCommand.start(self(), model, null);
             }
         }else{
             if (model.isReferenceItem()){
-                EditReferenceItemCommand.start(self(), model);
+                EditReferenceItemCommand.start(self(), model, null);
             }else{
-                EditItemCommand.start(self(), model);
+                EditItemCommand.start(self(), model, null);
             }
         }
         finish();

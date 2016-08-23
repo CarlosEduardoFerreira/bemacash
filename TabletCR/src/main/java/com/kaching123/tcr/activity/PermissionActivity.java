@@ -4,15 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.permissions.PermissionsFragment;
 import com.kaching123.tcr.fragment.permissions.PermissionsFragment_;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.Permission.Group;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,24 +1,12 @@
 package com.kaching123.tcr;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
 import android.provider.Settings;
 
-import com.getbase.android.db.provider.ProviderAction;
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 import com.kaching123.tcr.APKupdaterJDBCConverter.APKUpdater;
 import com.kaching123.tcr.AutoUpdateService.Task;
 import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;

@@ -7,13 +7,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.ReportsActivity.ReportType;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
-import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.R;
-import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 
 /**
  * Created by vkompaniets on 23.01.14.

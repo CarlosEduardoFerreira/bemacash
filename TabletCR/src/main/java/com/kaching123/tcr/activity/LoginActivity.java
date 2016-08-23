@@ -2,9 +2,10 @@ package com.kaching123.tcr.activity;
 
 import android.os.Bundle;
 
-import org.androidannotations.annotations.EActivity;
 import com.kaching123.tcr.R;
 import com.telly.groundy.CallbacksManager;
+
+import org.androidannotations.annotations.EActivity;
 
 /**
  * Created by gdubina on 08/11/13.

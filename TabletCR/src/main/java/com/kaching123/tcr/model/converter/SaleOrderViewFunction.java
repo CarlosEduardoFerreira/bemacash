@@ -8,13 +8,16 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.OperatorTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.TipsTable;
+import com.kaching123.tcr.store.ShopStore;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
+import static com.kaching123.tcr.model.ContentValuesUtil._kdsSendStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._kitchenPrintStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;

@@ -4,8 +4,6 @@ import android.content.ContentValues;
 
 import com.kaching123.tcr.store.ShopStore;
 
-import java.io.Serializable;
-
 /**
  * Created by long.jiao on 6.7.16.
  */
