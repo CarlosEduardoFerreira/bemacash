@@ -1971,7 +1971,7 @@
 
     <string name="ebt_type_chooser_dlg_title">Please choose:</string>
     <string name="payment_fragment_ebt_not_enabled">N/A</string>
-    <string name="bond_item_adapter_btn_value_format">%1$d\u0024</string>
+    <string name="bond_item_adapter_btn_value_format">\u0024%1$d</string>
     <string name="pay_tender_wrong_amount_error_message">You may not apply more than grand\ntotal with this tender</string>
     <string name="pay_tender_wrong_amount_title">Wrong value entered</string>
 </resources>

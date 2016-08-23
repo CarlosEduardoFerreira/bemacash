@@ -31,22 +31,22 @@
             android:gravity="center">
 
             <TextView
-
                 android:id="@+id/a2_"
                 style="@style/PaymentItem.20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/charge"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentLeft="false"
                 android:paddingTop="@dimen/payment_side_padding_charge"
-                android:text="@string/payment_charge_amount_united" />
+                android:text="@string/payment_charge_amount_united"
+                android:layout_centerHorizontal="true" />
 
             <com.kaching123.tcr.component.CustomEditBox
                 android:id="@+id/charge"
                 style="@style/CustomEditBox.PaymentInputField.34"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true" />
+                android:layout_alignParentRight="false"
+                android:layout_below="@+id/a2_" />
         </RelativeLayout>
 
         <FrameLayout
@@ -82,22 +82,25 @@
             android:background="@drawable/exact_btn_bg"
             android:text="@string/button_exact"
             android:textSize="22sp"
-            android:paddingBottom="4dp"
             android:focusable="false"
             android:clickable="false"
             android:layout_height="wrap_content"
-            android:layout_width="@dimen/payment_tender_dlg_payment_gridview_layout_width"/>
+            android:layout_width="@dimen/payment_tender_dlg_payment_gridview_layout_width"
+            android:layout_marginTop="@dimen/payment_tender_dlg_exact_btn_margin_top" />
 
     </LinearLayout>
 
     <GridLayout
         android:id="@+id/flipper"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="false"
-        android:layout_toRightOf="@+id/pay_charge"
         android:columnCount="2"
-        android:useDefaultMargins="true">
+        android:useDefaultMargins="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@+id/pay_charge"
+        android:layout_toLeftOf="@+id/h1">
 
         <Button
             android:id="@+id/btn_cash"
@@ -187,14 +190,14 @@
 
     <RelativeLayout
         android:id="@+id/h1"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/payment_tender_dlg_transaction_list_layout_width"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ebt_info"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="@dimen/payment_tender_dlg_report_layout_margin_left"
-        android:layout_toRightOf="@+id/flipper"
 
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_alignParentRight="true">
 
         <TextView
             android:id="@+id/a1"
@@ -235,7 +238,7 @@
 
         <LinearLayout
             android:id="@+id/list_view_holder"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/a2"
             android:orientation="vertical"
