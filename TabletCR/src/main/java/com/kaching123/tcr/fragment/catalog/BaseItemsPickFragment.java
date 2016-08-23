@@ -10,6 +10,7 @@ import android.support.v4.content.Loader;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.BaseCashierActivity.IPriceLevelListener;
 import com.kaching123.tcr.activity.SuperBaseActivity;
@@ -23,6 +24,8 @@ import com.kaching123.tcr.store.ShopStore.ItemExtView;
 import org.androidannotations.annotations.EFragment;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -89,8 +92,20 @@ public abstract class BaseItemsPickFragment extends Fragment implements IPriceLe
 
     @Override
     public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> list) {
+        ArrayList<ItemExModel> arrayList = new ArrayList(list);
+        if (((TcrApplication) getContext().getApplicationContext()).isEnableABCOrder())
+            if (list != null) {
+                Collections.sort(arrayList, new Comparator<ItemExModel>() {
+                    @Override
+                    public int compare(ItemExModel lhs, ItemExModel rhs) {
+                        String str1 = lhs.description.toString().toUpperCase();
+                        String str2 = rhs.description.toString().toUpperCase();
+                        return str1.compareTo(str2);
+                    }
+                });
+            }
         if (adapter != null) {
-            adapter.changeCursor(list);
+            adapter.changeCursor(arrayList);
         }
 
         if (getActivity() instanceof BaseCashierActivity){

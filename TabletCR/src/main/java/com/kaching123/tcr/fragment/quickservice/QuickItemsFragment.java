@@ -14,6 +14,7 @@ import android.widget.GridView;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
@@ -23,6 +24,9 @@ import com.viewpagerindicator.LinePageIndicator;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -61,8 +65,22 @@ public class QuickItemsFragment extends BaseItemsPickFragment {
 
     @Override
     public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> list) {
-        adapter.setList(list);
-        setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
+
+        List arrayList = new ArrayList(list);
+        if (((TcrApplication) getActivity().getApplication()).isEnableABCOrder())
+            try {
+                Collections.sort(arrayList, new Comparator<ItemExModel>() {
+                    @Override
+                    public int compare(ItemExModel p1, ItemExModel p2) {
+                        String str1 = p1.description.toString().toUpperCase();
+                        String str2 = p2.description.toString().toUpperCase();
+                        return str1.compareTo(str2);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        adapter.setList(arrayList);
     }
 
     @Override

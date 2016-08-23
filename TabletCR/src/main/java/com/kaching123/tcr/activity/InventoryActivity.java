@@ -228,10 +228,13 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @OptionsItem
     protected void actionSortSelected() {
-        boolean isABCsort = !getApp().isEnableABCOrder();
-        getApp().setEnableABCOrder(isABCsort);
+        if (getApp().isEnableABCOrder())
+            getApp().setEnableABCOrder(false);
+        else
+            getApp().setEnableABCOrder(true);
+        boolean enableABCSort = getApp().isEnableABCOrder();
         itemsFragment.sortOrderChanged();
-        sort.setIcon(getResources().getDrawable(isABCsort ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
+        sort.setIcon(getResources().getDrawable(enableABCSort ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
     }
 
     @OptionsItem
