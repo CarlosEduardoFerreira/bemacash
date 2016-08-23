@@ -29,14 +29,6 @@ public class ItemKDSJdbcConverter extends JdbcConverter<ItemKdsModel> {
     private static final String ITEM_ID = "ITEM_ID";
     private static final String KDS_ID = "KDS_ID";
 
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new ItemKdsModel(
-                rs.getString(GUID),
-                rs.getString(ITEM_ID),
-                rs.getString(KDS_ID)
-        ).toValues();
-    }
 
     @Override
     public ItemKdsModel toValues(JdbcJSONObject rs) throws JSONException {
