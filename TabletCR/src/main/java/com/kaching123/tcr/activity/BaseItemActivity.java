@@ -571,7 +571,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 ContentValues cv = new ContentValues();
                 cv.put(ShopStore.ItemKDSTable.ITEM_GUID, model.guid);
                 cv.put(ShopStore.ItemKDSTable.KDS_ALIAS_GUID, kdsAliasAdapter.getItem(i).guid);
-                cv.put(ShopStore.ItemKDSTable.TITLE, kdsAliasAdapter.getItem(i).alias);
                 ProviderAction.insert(KDS_URI)
                         .values(cv)
                         .perform(getApplicationContext());
@@ -774,7 +773,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                 if (b) counter++;
             }
         }
-        model.kdsAliasGuid = counter;
+//        model.kdsAliasGuid = counter;
 
         String price = !salableChBox.isChecked() && TextUtils.isEmpty(this.salesPrice.getText()) ?
                 BigDecimal.ZERO.toString() : this.salesPrice.getText().toString();

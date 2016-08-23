@@ -81,7 +81,6 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 null,
                 0,
                 null,
-                0, // kds alias
                 0,
                 false,
                 false, null, false, null, null, null, null, false);

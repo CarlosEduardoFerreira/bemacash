@@ -47,10 +47,10 @@ public class DeleteKDSAliasCommand extends AsyncCommand {
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 
-        operations.add(ContentProviderOperation.newUpdate(URI_ITEMS)
-                .withSelection(ItemTable.KDS_ALIAS_GUID + " = ?", new String[]{model.guid})
-                .withValue(ItemTable.KDS_ALIAS_GUID, null)
-                .build());
+//        operations.add(ContentProviderOperation.newUpdate(URI_ITEMS)
+//                .withSelection(ItemTable.KDS_ALIAS_GUID + " = ?", new String[]{model.guid})
+//                .withValue(ItemTable.KDS_ALIAS_GUID, null)
+//                .build());
 
         operations.add(ContentProviderOperation.newUpdate(URI_KDS)
                 .withSelection(PrinterTable.ALIAS_GUID + " = ?", new String[]{model.guid})

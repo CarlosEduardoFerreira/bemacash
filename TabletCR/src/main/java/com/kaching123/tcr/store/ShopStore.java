@@ -475,9 +475,6 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String PRINTER_ALIAS_GUID = "printer_alias_guid";
 
-        @Column(type = Type.INTEGER)
-        String KDS_ALIAS_GUID = "kds_alias_guid";
-
         @Column(type = Column.Type.INTEGER)
         String BUTTON_VIEW = "button_view";
 
@@ -650,10 +647,6 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.TEXT)
         String KDS_ALIAS_GUID = "kds_alias_guid";
-
-        @NotNull
-        @Column(type = Column.Type.TEXT)
-        String TITLE = "title";
 
         @NotNull
         @Column(type = Column.Type.TEXT)
@@ -3159,7 +3152,7 @@ public abstract class ShopStore {
         String TABLE_SALE_ORDER_ITEM = "sale_item_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({ItemTable.GUID,ItemTable.UPDATE_QTY_FLAG, ItemTable.STOCK_TRACKING, ItemTable.DESCRIPTION, ItemTable.PRINTER_ALIAS_GUID, ItemTable.KDS_ALIAS_GUID})
+        @Columns({ItemTable.GUID,ItemTable.UPDATE_QTY_FLAG, ItemTable.STOCK_TRACKING, ItemTable.DESCRIPTION, ItemTable.PRINTER_ALIAS_GUID})
         @Join(joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
     }

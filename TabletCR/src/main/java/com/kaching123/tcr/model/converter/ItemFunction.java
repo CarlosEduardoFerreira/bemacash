@@ -99,7 +99,6 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID)),
                 c.getInt(indexHolder.get(ItemTable.ORDER_NUM)),
                 c.getString(indexHolder.get(ItemTable.PRINTER_ALIAS_GUID)),
-                c.getInt(indexHolder.get(ItemTable.KDS_ALIAS_GUID)),
                 c.getInt(indexHolder.get(ItemTable.BUTTON_VIEW)),
                 c.getInt(indexHolder.get(ItemTable.HAS_NOTES)) == 1,
                 c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,

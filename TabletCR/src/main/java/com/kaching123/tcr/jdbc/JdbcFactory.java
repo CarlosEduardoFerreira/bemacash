@@ -12,6 +12,7 @@ import com.kaching123.tcr.jdbc.converters.DepartmentJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeeJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeeTimesheetJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ItemKDSJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemMatrixJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsModifierGroupsJdbcConverter;
@@ -47,6 +48,8 @@ import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.model.CommissionsModel;
 import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.CreditReceiptModel;
+import com.kaching123.tcr.model.ItemKdsModel;
+import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.DepartmentModel;
 import com.kaching123.tcr.model.EmployeeModel;
@@ -277,6 +280,9 @@ public class JdbcFactory {
 
         CONVERTERS.put(KDSAliasTable.TABLE_NAME, c = new KDSAliasJdbcConverter());
         CONVERTERS2.put(KDSAliasModel.class, c);
+
+        CONVERTERS.put(ShopStore.ItemKDSTable.TABLE_NAME, c = new ItemKDSJdbcConverter());
+        CONVERTERS2.put(ItemKdsModel.class, c);
 
         API_METHOD.put(KDSAliasTable.TABLE_NAME, "printer_aliases");
         API_METHOD2.put(KDSAliasModel.class, "printer_aliases");

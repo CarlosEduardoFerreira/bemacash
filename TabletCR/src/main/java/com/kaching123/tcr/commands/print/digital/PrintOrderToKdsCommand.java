@@ -336,7 +336,6 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                         ShopSchema2.SaleItemExDelView2.ItemTable.DESCRIPTION,
                         ShopSchema2.SaleItemExDelView2.SaleItemTable.QUANTITY,
                         ShopSchema2.SaleItemExDelView2.ItemTable.GUID,
-                        ShopSchema2.SaleItemExDelView2.ItemTable.KDS_ALIAS_GUID,
                         ShopSchema2.SaleItemExDelView2.SaleItemTable.NOTES
                 )
                 .where(ShopSchema2.SaleItemExDelView2.SaleItemTable.ORDER_GUID + " = ?", orderGuid);
@@ -356,8 +355,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                                 c.getString(1),
                                 _decimalQty(c, 2, BigDecimal.ZERO),
                                 c.getString(3),
-                                c.getInt(4),
-                                c.getString(5));
+                                c.getString(4));
                     }
                 }).toImmutableList();
 
@@ -429,12 +427,11 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
         public ArrayList<String> addons = new ArrayList<String>();
         public ArrayList<String> options = new ArrayList<String>();
 
-        private ItemInfo(String guid, String description, BigDecimal qty, String itemGuid, int kdsAliasGuid, String notes) {
+        private ItemInfo(String guid, String description, BigDecimal qty, String itemGuid, String notes) {
             this.guid = guid;
             this.description = description;
             this.qty = qty;
             this.itemGuid = itemGuid;
-            this.kdsAliasGuid = kdsAliasGuid;
             this.notes = notes;
         }
     }
