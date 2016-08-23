@@ -12,6 +12,7 @@ import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.BaseCashierActivity.IPriceLevelListener;
+import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
@@ -64,13 +65,14 @@ public abstract class BaseItemsPickFragment extends Fragment implements IPriceLe
     @Override
     public Loader<List<ItemExModel>> onCreateLoader(int loaderId, Bundle args) {
         Logger.d("[Loader] BaseItemsPickFragment onCreateLoader");
+        String sortOrder = ((SuperBaseActivity) getActivity()).getApp().isEnableABCOrder() ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM;
         return CursorLoaderBuilder.forUri(URI_ITEMS)
                 .where(ItemTable.SALABLE + " = ?", 1)
                 .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
                 .where(ItemTable.IS_DELETED + " = ?", 0)
                 .where(ItemTable.CATEGORY_ID + " = ? ", categoryGuid == null ? "" : categoryGuid)
                 .projection(ItemExFunction.PROJECTION)
-                .orderBy(ItemTable.ORDER_NUM)
+                .orderBy(sortOrder)
                 .wrap(new Function<Cursor, List<ItemExModel>>() {
                     @Override
                     public List<ItemExModel> apply(Cursor input) {

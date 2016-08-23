@@ -3,7 +3,6 @@ package com.kaching123.tcr.fragment.inventory;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.adapter.ObjectCursorDragAdapter;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.store.inventory.UpdateItemOrderCommand;
@@ -60,12 +60,6 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
     private boolean useOnlyNearTheEnd;
 
-    private boolean sortByName;
-
-    private boolean draggable;
-
-    private String departmentGuid;
-
     public boolean composer;
     public boolean composition;
     public boolean reference;
@@ -76,7 +70,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
     @Override
     protected ObjectsCursorAdapter<ItemExModel> createAdapter() {
-        Adapter adapter = new Adapter(getActivity(), draggable);
+        Adapter adapter = new Adapter(getActivity());
         list.setAdapter(adapter);
         return adapter;
     }
@@ -96,10 +90,6 @@ public class ItemsFragment extends BaseItemsPickFragment {
         });
     }
 
-    public void setDepartment(String departmentGuid) {
-        this.departmentGuid = departmentGuid;
-    }
-
     @Override
     public Loader<List<ItemExModel>> onCreateLoader(int loaderId, Bundle args) {
         Logger.d("ItemsListFragment onCreateLoader");
@@ -107,9 +97,9 @@ public class ItemsFragment extends BaseItemsPickFragment {
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(URI_ITEMS);
         builder.projection(ItemExFunction.PROJECTION);
 
-        //builder.orderBy(sortByName && LOAD_ALL_CATEGORIES.equals(categoryGuid)? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
-        builder.orderBy(sortByName ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
-        draggable &= !sortByName;
+        boolean isABCSort = ((SuperBaseActivity) getActivity()).getApp().isEnableABCOrder();
+        builder.orderBy(isABCSort ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
+        draggable &= !isABCSort;
 
         builder.where(ItemTable.IS_DELETED + " = ?", 0);
 
@@ -185,9 +175,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         this.useOnlyNearTheEnd = useOnlyNearTheEnd;
     }
 
-    public void sortByName(boolean sortByName) {
-        this.sortByName = sortByName;
-        Logger.d("restartLoader from sortByName");
+    public void sortOrderChanged() {
         restartItemsLoader();
     }
 
@@ -198,7 +186,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
         private boolean draggable;
 
-        public Adapter(Context context, boolean draggable) {
+        public Adapter(Context context) {
             super(context);
 
             pencilDrawable = context.getResources().getDrawable(R.drawable.pencil);
@@ -206,8 +194,6 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
             pencilTransparent = context.getResources().getDrawable(R.drawable.square_opacity);
             DrawableUtil.boundDrawable(pencilTransparent);
-
-            this.draggable = draggable;
         }
 
         public void marks(LinearLayout holder,
@@ -407,7 +393,4 @@ public class ItemsFragment extends BaseItemsPickFragment {
             ImageView drag;
         }
     }
-
-    private final static Handler HANDLER = new Handler();
-
 }

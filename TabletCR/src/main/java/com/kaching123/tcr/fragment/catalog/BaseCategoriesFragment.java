@@ -11,7 +11,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
@@ -199,10 +198,6 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
             ListAdapter adapter = getAdapterView().getAdapter();
             list.performItemClick(adapter.getView(0, null, null), 0, adapter.getItemId(0));
         }
-    }
-
-    private static boolean isListViewWithHeader(AdapterView view) {
-        return view instanceof ListView && ((ListView) view).getHeaderViewsCount() > 0;
     }
 
     public void setListener(T listener) {
