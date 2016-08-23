@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CommissionsModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -10,11 +8,7 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
-import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
 
 /**
  * Created by pkabakov on 09.07.2014.
@@ -29,18 +23,6 @@ public class CommissionsJdbcConverter extends JdbcConverter<CommissionsModel> {
     private static final String ORDER_ID = "ORDER_ID";
     private static final String CREATE_TIME = "CREATE_TIME";
     private static final String AMOUNT = "AMOUNT";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new CommissionsModel(
-                rs.getString(ID),
-                rs.getString(EMPLOYEE_ID),
-                rs.getString(SHIFT_ID),
-                rs.getString(ORDER_ID),
-                _jdbcDate(rs.getTimestamp(CREATE_TIME)),
-                rs.getBigDecimal(AMOUNT)
-        ).toValues();
-    }
 
     @Override
     public CommissionsModel toValues(JdbcJSONObject rs) throws JSONException {

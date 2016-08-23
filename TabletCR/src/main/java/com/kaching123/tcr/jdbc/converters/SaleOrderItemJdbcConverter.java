@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
@@ -14,8 +12,6 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import org.json.JSONException;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -50,36 +46,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     private static final String IS_GIFT_CARD = "IS_GIFT_CARD";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
     private static final String POINTS_FOR_DOLLAR_AMOUNT = "POINTS_FOR_DOLLAR_AMOUNT";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new SaleOrderItemModel(
-                rs.getString(SALE_ITEM_ID),
-                rs.getString(ORDER_ID),
-                rs.getString(ITEM_ID),
-                rs.getBigDecimal(QUANTITY),
-                rs.getBigDecimal(KITCHEN_PRINTED_QUANTITY),
-                _enum(PriceType.class, rs.getString(PRICE_TYPE), PriceType.FIXED),
-                rs.getBigDecimal(PRICE),
-                rs.getBoolean(DISCOUNTABLE),
-                rs.getBigDecimal(DISCOUNT),
-                _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT),
-                rs.getBoolean(TAXABLE),
-                rs.getBigDecimal(TAX),
-                rs.getBigDecimal(TAX2),
-                rs.getLong(SEQUENCE),
-                rs.getString(PARENT_ID),
-                rs.getBigDecimal(FINAL_GROSS_PRICE),
-                rs.getBigDecimal(FINAL_TAX),
-                rs.getBigDecimal(FINAL_DISCOUNT),
-                null,
-                rs.getString(NOTES),
-                rs.getBoolean(HAS_NOTES),
-                rs.getBoolean(IS_PREPAID_ITEM),
-                rs.getBoolean(IS_GIFT_CARD),
-                null,
-                false).toValues();
-    }
 
     @Override
     public SaleOrderItemModel toValues(JdbcJSONObject rs) throws JSONException {

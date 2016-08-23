@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel.PrepaidType;
@@ -11,9 +9,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -33,19 +28,6 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
     private static final String TRANSACTION_ID = "TRANSACTION_ID";
     private static final String IS_FAILED = "IS_FAILED";
     private static final String ORDER_ID = "ORDER_ID";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new BillPaymentDescriptionModel(
-                rs.getString(ID),
-                rs.getString(DESCRIPTION),
-                _enum(PrepaidType.class, rs.getString(TYPE), null),
-                rs.getLong(TRANSACTION_ID),
-                rs.getBoolean(IS_VOIDED),
-                rs.getBoolean(IS_FAILED),
-                rs.getString(ORDER_ID)
-        ).toValues();
-    }
 
     @Override
     public BillPaymentDescriptionModel toValues(JdbcJSONObject rs) throws JSONException {

@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
@@ -10,9 +8,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -28,16 +23,6 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
     private static final String ITEM_GUID = "ITEM_GUID";
     private static final String GROUP_NAME = "GROUP_NAME";
     private static final String DEFAULT_GUID = "DEFAULT_GUID";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new ModifierGroupModel(
-                rs.getString(GUID),
-                rs.getString(ITEM_GUID),
-                rs.getString(GROUP_NAME),
-                rs.getString(DEFAULT_GUID)
-        ).toValues();
-    }
 
     @Override
     public ModifierGroupModel toValues(JdbcJSONObject rs) throws JSONException {

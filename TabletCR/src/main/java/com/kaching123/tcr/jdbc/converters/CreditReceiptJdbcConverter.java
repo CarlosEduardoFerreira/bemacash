@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CreditReceiptModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -9,9 +7,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
@@ -31,20 +26,6 @@ public class CreditReceiptJdbcConverter extends JdbcConverter<CreditReceiptModel
     private static final String AMOUNT = "AMOUNT";
     private static final String PRINT_NUMBER = "PRINT_NUMBER";
     private static final String EXPIRE_TIME = "EXPIRE_TIME";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new CreditReceiptModel(
-                rs.getString(ID),
-                rs.getString(CASHIER_ID),
-                rs.getLong(REGISTER_ID),
-                rs.getString(SHIFT_ID),
-                _jdbcDate(rs.getTimestamp(CREATE_TIME)),
-                rs.getBigDecimal(AMOUNT),
-                rs.getLong(PRINT_NUMBER),
-                rs.getInt(EXPIRE_TIME)
-        ).toValues();
-    }
 
     @Override
     public CreditReceiptModel toValues(JdbcJSONObject rs) throws JSONException {

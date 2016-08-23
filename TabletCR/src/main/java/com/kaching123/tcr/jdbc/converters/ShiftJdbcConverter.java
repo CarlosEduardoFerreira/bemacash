@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ShiftModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -9,9 +7,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -34,20 +29,6 @@ public class ShiftJdbcConverter extends JdbcConverter<ShiftModel> {
     private static final String REGISTER_ID = "REGISTER_ID";
     private static final String OPEN_AMOUNT = "OPEN_AMOUNT";
     private static final String CLOSE_AMOUNT = "CLOSE_AMOUNT";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new ShiftModel(
-                rs.getString(ID),
-                _jdbcDate(rs.getTimestamp(START_TIME)),
-                _jdbcDate(rs.getTimestamp(END_TIME)),
-                rs.getString(OPEN_MANAGER_ID),
-                rs.getString(CLOSE_MANAGER_ID),
-                rs.getLong(REGISTER_ID),
-                rs.getBigDecimal(OPEN_AMOUNT),
-                rs.getBigDecimal(CLOSE_AMOUNT)
-        ).toValues();
-    }
 
     @Override
     public ShiftModel toValues(JdbcJSONObject rs) throws JSONException {

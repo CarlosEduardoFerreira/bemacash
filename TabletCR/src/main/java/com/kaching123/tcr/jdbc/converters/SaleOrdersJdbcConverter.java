@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
@@ -15,9 +13,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -47,34 +42,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     private static final String KITCHEN_PRINT_STATUS = "KITCHEN_PRINT_STATUS";
     private static final String KDS_SEND_STATUS = "KDS_SEND_STATUS";
     private static final String TRANSACTION_FEE = "TRANSACTION_FEE";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        SaleOrderModel order = new SaleOrderModel(
-                rs.getString(ID),
-                _jdbcDate(rs.getTimestamp(CREATE_TIME)),
-                rs.getString(OPERATOR_ID),
-                rs.getString(SHIFT_ID),
-                rs.getString(CUSTOMER_ID),
-                rs.getBigDecimal(DISCOUNT),
-                _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), null),
-                _enum(OrderStatus.class, rs.getString(ORDER_STATUS), OrderStatus.CANCELED),
-                rs.getString(HOLD_NAME),
-                rs.getBoolean(TAXABLE),
-                null,
-                null,
-                null,
-                rs.getInt(PRINT_SEQ_NUM),
-                rs.getLong(REGISTER_ID),
-                rs.getString(PARENT_ID),
-                _enum(OrderType.class, rs.getString(ORDER_TYPE), OrderType.SALE),
-                rs.getBoolean(IS_TIPPED),
-                _enum(KitchenPrintStatus.class, rs.getString(KITCHEN_PRINT_STATUS), KitchenPrintStatus.PRINT),
-                _enum(PrintOrderToKdsCommand.KDSSendStatus.class, rs.getString(KDS_SEND_STATUS), PrintOrderToKdsCommand.KDSSendStatus.PRINT),
-                rs.getBigDecimal(TRANSACTION_FEE)
-        );
-        return order.toValues();
-    }
 
     @Override
     public SaleOrderModel toValues(JdbcJSONObject rs) throws JSONException {

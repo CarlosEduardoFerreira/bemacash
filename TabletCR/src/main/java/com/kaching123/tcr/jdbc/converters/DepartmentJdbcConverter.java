@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.DepartmentModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -9,9 +7,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -22,11 +17,6 @@ public class DepartmentJdbcConverter extends JdbcConverter<DepartmentModel> {
 
     private static final String ID = "ID";
     private static final String TITLE = "TITLE";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new DepartmentModel(rs.getString(ID), rs.getString(TITLE)).toValues();
-    }
 
     @Override
     public DepartmentModel toValues(JdbcJSONObject rs) throws JSONException {

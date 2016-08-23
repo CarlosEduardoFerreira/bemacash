@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ComposerModel;
@@ -10,9 +8,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -27,18 +22,6 @@ public class ComposerJdbcConverter extends JdbcConverter<ComposerModel> {
     private static final String QUANTITY = "QUANTITY";
     private static final String STORE_TRACKING_ENABLED = "STORE_TRACKING_ENABLED";
     private static final String FREE_OF_CHARGE_COMPOSER = "FREE_OF_CHARGE_COMPOSER";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new ComposerModel(
-                rs.getString(ID),
-                rs.getString(ITEM_HOST_ID),
-                rs.getString(ITEM_CHILD_ID),
-                rs.getBigDecimal(QUANTITY),
-                rs.getBoolean(STORE_TRACKING_ENABLED),
-                rs.getBoolean(FREE_OF_CHARGE_COMPOSER)
-        ).toValues();
-    }
 
     @Override
     public ComposerModel toValues(JdbcJSONObject rs) throws JSONException {

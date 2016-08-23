@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -9,9 +7,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -27,16 +22,6 @@ public class UnitLabelJdbcConverter extends JdbcConverter<UnitLabelModel> {
     private static final String ID = "ID";
     private static final String DESCRIPTION = "DESCRIPTION";
     private static final String SHORTCUT = "SHORTCUT";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new UnitLabelModel(
-                rs.getString(ID),
-                rs.getString(DESCRIPTION),
-                rs.getString(SHORTCUT)
-
-        ).toValues();
-    }
 
     @Override
     public UnitLabelModel toValues(JdbcJSONObject rs) throws JSONException {

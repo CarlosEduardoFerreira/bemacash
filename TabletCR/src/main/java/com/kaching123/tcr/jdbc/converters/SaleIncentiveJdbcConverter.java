@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.LoyaltyRewardType;
@@ -12,9 +10,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
@@ -36,11 +31,6 @@ public class SaleIncentiveJdbcConverter extends JdbcConverter<SaleIncentiveModel
     private static final String REWARD_VALUE = "REWARD_VALUE";
     private static final String REWARD_VALUE_TYPE = "REWARD_VALUE_TYPE";
     private static final String SALE_ITEM_ID = "SALE_ITEM_ID";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return null;
-    }
 
     @Override
     public SaleIncentiveModel toValues(JdbcJSONObject rs) throws JSONException {

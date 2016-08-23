@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.EmployeeTimesheetModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -9,9 +7,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -28,16 +23,6 @@ public class EmployeeTimesheetJdbcConverter extends JdbcConverter<EmployeeTimesh
     private static final String EMPLOYEE_ID = "EMPLOYEE_ID";
     private static final String CLOCK_IN = "CLOCK_IN";
     private static final String CLOCK_OUT = "CLOCK_OUT";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new EmployeeTimesheetModel(
-                rs.getString(ID),
-                _jdbcDate(rs.getTimestamp(CLOCK_IN)),
-                _jdbcDate(rs.getTimestamp(CLOCK_OUT)),
-                rs.getString(EMPLOYEE_ID)
-        ).toValues();
-    }
 
     @Override
     public EmployeeTimesheetModel toValues(JdbcJSONObject rs) throws JSONException {

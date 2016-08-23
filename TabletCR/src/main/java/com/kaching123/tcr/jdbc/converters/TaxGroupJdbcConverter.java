@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -27,16 +25,6 @@ public class TaxGroupJdbcConverter extends JdbcConverter<TaxGroupModel> {
     private static final String TITLE = "TITLE";
     private static final String TAX = "TAX";
     private static final String IS_DEFAULT = "IS_DEFAULT";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new TaxGroupModel(
-                rs.getString(ID),
-                rs.getString(TITLE),
-                rs.getBigDecimal(TAX),
-                rs.getInt(IS_DEFAULT) == 1)
-                .toValues();
-    }
 
     public static boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();

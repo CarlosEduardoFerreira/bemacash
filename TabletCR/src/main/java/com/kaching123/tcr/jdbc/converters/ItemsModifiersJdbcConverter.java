@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
@@ -10,9 +8,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -36,21 +31,6 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
     private static final String ITEM_GROUP_GUID = "ITEM_GROUP_GUID";
     private static final String AUTO_APPLY = "AUTO_APPLY";
 
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new ModifierModel(
-                rs.getString(MODIFIER_GUID),
-                rs.getString(ITEM_GUID),
-                _enum(ModifierType.class, rs.getString(TYPE), ModifierType.ADDON),
-                rs.getString(TITLE),
-                rs.getBigDecimal(EXTRA_COST),
-                rs.getString(ITEM_SUB_GUID),
-                rs.getBigDecimal(ITEM_SUB_QUANTITY),
-                rs.getString(ITEM_GROUP_GUID),
-                rs.getBoolean(AUTO_APPLY)
-        ).toValues();
-    }
 
     @Override
     public ModifierModel toValues(JdbcJSONObject rs) throws JSONException {

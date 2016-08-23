@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcBuilder.InsertOrUpdateBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.EmployeePermissionModel;
@@ -10,9 +8,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insertOrUpdate;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -28,15 +23,6 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
     private static final String PERM_ID = "PERM_ID";
     private static final String ENABLED = "ENABLED";
 
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new EmployeePermissionModel(
-                rs.getString(USER_ID),
-                rs.getLong(PERM_ID),
-                rs.getBoolean(ENABLED)
-        ).toValues();
-    }
 
     @Override
     public EmployeePermissionModel toValues(JdbcJSONObject rs) throws JSONException {
