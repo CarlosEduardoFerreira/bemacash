@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CashDrawerMovementModel;
 import com.kaching123.tcr.model.payment.MovementType;
@@ -10,9 +8,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -33,18 +28,6 @@ public class CashDrawerMovementJdbcConverter extends JdbcConverter<CashDrawerMov
     private static final String AMOUNT = "AMOUNT";
     private static final String MOVEMENT_TIME = "MOVEMENT_TIME";
     private static final String COMMENT = "COMMENT";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new CashDrawerMovementModel(
-                rs.getString(ID),
-                rs.getString(SHIT_ID),
-                rs.getString(MANAGER_ID),
-                _enum(MovementType.class, rs.getString(TYPE), MovementType.DROP),
-                rs.getBigDecimal(AMOUNT),
-                _jdbcDate(rs.getTimestamp(MOVEMENT_TIME)),
-                rs.getString(COMMENT)).toValues();
-    }
 
     @Override
     public CashDrawerMovementModel toValues(JdbcJSONObject rs) throws JSONException {

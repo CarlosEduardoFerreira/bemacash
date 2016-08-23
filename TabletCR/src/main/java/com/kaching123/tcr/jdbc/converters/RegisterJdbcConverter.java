@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.RegisterModel;
@@ -12,8 +10,6 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Locale;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -32,18 +28,6 @@ public class RegisterJdbcConverter extends JdbcConverter<RegisterModel> {
     public static final String STATUS = "STATUS";
     public static final String PREPAID_TID = "PREPAID_TID";
     public static final String BLACKSTONE_PAYMENT_CID = "BLACKSTONE_PAYMENT_CID";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new RegisterModel(
-                rs.getLong(ID),
-                rs.getString(REGISTER_SERIAL),
-                rs.getString(TITLE),
-                _enum(RegisterStatus.class, rs.getString(STATUS), RegisterStatus.ACTIVE),
-                rs.getInt(PREPAID_TID),
-                rs.getInt(BLACKSTONE_PAYMENT_CID)
-        ).toValues();
-    }
 
     @Override
     public RegisterModel toValues(JdbcJSONObject rs) throws JSONException {

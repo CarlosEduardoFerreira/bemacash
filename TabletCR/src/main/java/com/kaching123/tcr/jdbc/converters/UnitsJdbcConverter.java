@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.Unit;
@@ -12,9 +10,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -36,21 +31,6 @@ public class UnitsJdbcConverter extends JdbcConverter<Unit> {
     private static final String WARRANTY_PERIOD = "WARRANTY_PERIOD";
     private static final String SALE_ORDER_ID = "SALE_ORDER_ITEM_ID";
     private static final String CHILD_ORDER_ID = "CHILD_ORDER_ITEM_ID";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new Unit(
-                rs.getString(ID),
-                rs.getString(ITEM_ID),
-                rs.getString(SALE_ITEM_ID),
-                rs.getString(SERIAL_CODE),
-                _enum(CodeType.class, rs.getString(CODE_TYPE), CodeType.SN),
-                _enum(Status.class, rs.getString(STATUS), Status.NEW),
-                rs.getInt(WARRANTY_PERIOD),
-                rs.getString(SALE_ORDER_ID),
-                rs.getString(CHILD_ORDER_ID)
-        ).toValues();
-    }
 
     @Override
     public Unit toValues(JdbcJSONObject rs) throws JSONException {

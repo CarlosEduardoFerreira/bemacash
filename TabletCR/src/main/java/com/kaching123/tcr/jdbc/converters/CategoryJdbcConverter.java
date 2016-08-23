@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CategoryModel;
@@ -10,9 +8,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -28,19 +23,6 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
     private static final String DEPARTMENT_ID = "DEPARTMENT_ID";
     private static final String ELIGIBLE_FOR_COMMISSION = "ELIGIBLE_FOR_COMMISSION";
     private static final String COMMISSION = "COMMISSION";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new CategoryModel(
-                rs.getString(ID),
-                rs.getString(DEPARTMENT_ID),
-                rs.getString(TITLE),
-                rs.getString(IMAGE),
-                rs.getInt(ORDER_NUM),
-                rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
-                rs.getBigDecimal(COMMISSION)
-        ).toValues();
-    }
 
     @Override
     public CategoryModel toValues(JdbcJSONObject rs) throws JSONException {

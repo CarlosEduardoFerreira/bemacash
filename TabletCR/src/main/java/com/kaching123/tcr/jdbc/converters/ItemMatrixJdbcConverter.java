@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -9,9 +7,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -27,16 +22,6 @@ public class ItemMatrixJdbcConverter extends JdbcConverter<ItemMatrixModel> {
     private static final String PARENT_ITEM_ID = "PARENT_ITEM_ID";
     private static final String CHILD_ITEM_ID = "CHILD_ITEM_ID";
     private static final String TITLE = "TITLE";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new ItemMatrixModel(
-                rs.getString(ID),
-                rs.getString(TITLE),
-                rs.getString(PARENT_ITEM_ID),
-                rs.getString(CHILD_ITEM_ID)
-        ).toValues();
-    }
 
     @Override
     public ItemMatrixModel toValues(JdbcJSONObject rs) throws JSONException {

@@ -1,6 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.jdbc.JdbcBuilder;
@@ -54,11 +53,6 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
     private static final String RESELLER_ID = "RESELLER_ID";
     private static final String IS_SYNC = "IS_SYNC";
     private static final String ITEMS_COUNT = "ITEMS_COUNT";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return toModel(rs).toValues();
-    }
 
     @Override
     public EmployeeModel toValues(JdbcJSONObject rs) throws JSONException {

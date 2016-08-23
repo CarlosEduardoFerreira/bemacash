@@ -1,16 +1,11 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.model.LoyaltyIncentivePlanModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Created by vkompaniets on 29.06.2016.
@@ -22,11 +17,6 @@ public class LoyaltyIncentivePlanJdbcConverter extends JdbcConverter<LoyaltyInce
     private static final String ID = "ID";
     private static final String INCENTIVE_ID = "LOYALTY_INCENTIVE_ID";
     private static final String PLAN_ID = "LOYALTY_PLAN_ID";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return null;
-    }
 
     @Override
     public LoyaltyIncentivePlanModel toValues(JdbcJSONObject rs) throws JSONException {

@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -13,9 +11,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -48,31 +43,6 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
     private static final String IS_PREAUTH = "IS_PREAUTH";
     private static final String CASH_BACK = "CASH_BACK";
     private static final String EBT_BALANCE = "EBT_BALANCE";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new PaymentTransactionModel(
-                rs.getString(ID),
-                rs.getString(PARENT_ID),
-                rs.getString(ORDER_ID),
-                rs.getBigDecimal(AMOUNT),
-                _enum(PaymentType.class, rs.getString(TYPE), PaymentType.SALE),
-                _enum(PaymentStatus.class, rs.getString(STATUS), PaymentStatus.FAILED),
-                rs.getString(OPERATOR_ID),
-                _enum(PaymentGateway.class, rs.getString(GATEWAY), null),
-                rs.getString(GT_PAYMENT_ID),
-                rs.getString(GT_PREAUTH_PAYMENT_ID),
-                rs.getString(GT_CLOSED_PERAUTH_GUID),
-                rs.getString(DECLINE_REASON),
-                _jdbcDate(rs.getTimestamp(CREATE_TIME)),
-                rs.getString(SHIFT_ID),
-                rs.getString(CARD_NAME),
-                rs.getBigDecimal(CHANGE_AMOUNT),
-                rs.getBoolean(IS_PREAUTH),
-                rs.getBigDecimal(CASH_BACK),
-                rs.getBigDecimal(EBT_BALANCE)
-        ).toValues();
-    }
 
     @Override
     public PaymentTransactionModel toValues(JdbcJSONObject rs) throws JSONException {

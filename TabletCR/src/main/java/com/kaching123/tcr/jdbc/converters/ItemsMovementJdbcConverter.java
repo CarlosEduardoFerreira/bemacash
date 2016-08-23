@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.ItemMovementModel;
@@ -10,9 +8,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
@@ -29,20 +24,6 @@ public class ItemsMovementJdbcConverter extends JdbcConverter<ItemMovementModel>
     private static final String MANUAL = "MANUAL";
     private static final String CREATE_TIME = "CREATE_TIME";
 
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        ItemMovementModel model = new ItemMovementModel(
-                rs.getString(MOVEMENT_ID),
-                rs.getString(ITEM_ID),
-                rs.getString(ITEM_UPDATE_QTY_FLAG),
-                rs.getBigDecimal(QTY),
-                rs.getBoolean(MANUAL),
-                rs.getString(OPERATOR_GUID),
-                _jdbcDate(rs.getTimestamp(CREATE_TIME))
-        );
-        return model.toValues();
-    }
 
     @Override
     public ItemMovementModel toValues(JdbcJSONObject rs) throws JSONException {

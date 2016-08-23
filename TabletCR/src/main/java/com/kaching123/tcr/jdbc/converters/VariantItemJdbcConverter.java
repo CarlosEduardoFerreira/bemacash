@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.VariantItemModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -9,9 +7,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -27,16 +22,6 @@ public class VariantItemJdbcConverter extends JdbcConverter<VariantItemModel> {
     private static final String ITEM_ID = "ITEM_ID";
     private static final String SHOP_ID = "SHOP_ID";
     private static final String TITLE = "TITLE";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new VariantItemModel(
-                rs.getString(ID),
-                rs.getString(TITLE),
-                rs.getString(ITEM_ID),
-                rs.getLong(SHOP_ID)
-        ).toValues();
-    }
 
     @Override
     public VariantItemModel toValues(JdbcJSONObject rs) throws JSONException {

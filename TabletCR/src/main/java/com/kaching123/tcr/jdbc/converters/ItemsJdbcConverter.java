@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
@@ -16,8 +14,6 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import org.json.JSONException;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -72,50 +68,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String IS_PREPAID_ITEM = "IS_PREPAID_ITEM";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
     private static final String EXCLUDE_FROM_LOYALTY_PLAN = "EXCLUDE_FROM_LOYALTY_PLAN";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        ItemModel model = new ItemModel(
-                rs.getString(ID),
-                rs.getString(CATEGORY_ID),
-                rs.getString(DESCRIPTION),
-                rs.getString(CODE),
-                rs.getString(EAN_CODE),
-                rs.getString(PRODUCT_CODE),
-                _enum(PriceType.class, rs.getString(PRICE_TYPE), PriceType.OPEN),
-                rs.getBigDecimal(SALE_PRICE),
-                rs.getBigDecimal(PRICE_1),
-                rs.getBigDecimal(PRICE_2),
-                rs.getBigDecimal(PRICE_3),
-                rs.getBigDecimal(PRICE_4),
-                rs.getBigDecimal(PRICE_5),
-                BigDecimal.ZERO,
-                rs.getString(UNITS_LABEL_ID),
-                rs.getBoolean(STOCK_TRACKING),
-                rs.getBoolean(ACTIVE_STATUS),
-                rs.getBoolean(DISCOUNTABLE),
-                rs.getBoolean(SALABLE),
-                rs.getBigDecimal(DISCOUNT),
-                _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT),
-                rs.getBoolean(TAXABLE),
-                rs.getBigDecimal(COST),
-                rs.getBigDecimal(MINIMUM_QTY),
-                rs.getBigDecimal(RECOMMENDED_QTY),
-                rs.getString(UPDATE_QTY_FLAG),
-                rs.getString(TAX_GROUP_ID),
-                rs.getString(TAX_GROUP_ID2),
-                rs.getString(DEFAULT_MODIFIER_ID),
-                rs.getInt(ORDER_NUM),
-                rs.getString(PRINTER_ID),
-                rs.getInt(KDS_ID),
-                rs.getInt(BUTTON_VIEW),
-                rs.getBoolean(HAS_NOTES),
-                rs.getBoolean(SERIALIZABLE),
-                _enum(CodeType.class, rs.getString(CODE_TYPE), CodeType.SN),
-                rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
-                rs.getBigDecimal(COMMISSION), rs.getString(REFERENCE_ITEM_ID), _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple), rs.getBigDecimal(LOYALTY_POINTS), rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN));
-        return model.toValues();
-    }
 
     @Override
     public ItemModel toValues(JdbcJSONObject rs) throws JSONException {

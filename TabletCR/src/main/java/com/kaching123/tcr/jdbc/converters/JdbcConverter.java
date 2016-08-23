@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.IValueModel;
@@ -11,14 +9,9 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 
 public abstract class JdbcConverter<T extends IValueModel> {
-
-    public abstract ContentValues toValues(ResultSet rs) throws SQLException;
 
     public abstract T toValues(JdbcJSONObject rs) throws JSONException;
 

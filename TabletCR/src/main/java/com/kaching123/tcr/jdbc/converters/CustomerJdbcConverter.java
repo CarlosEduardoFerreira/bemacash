@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -11,8 +9,6 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import org.json.JSONException;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -45,31 +41,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String CUSTOMER_IDENTIFICATION = "CUSTOMER_IDENTIFICATION";
     private static final String LOYALTY_PLAN_ID = "LOYALTY_PLAN_ID";
     private static final String LOYALTY_BARCODE = "LOYALTY_BARCODE";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new CustomerModel(
-                rs.getString(GUID),
-                rs.getString(FIRST_NAME),
-                rs.getString(LAST_NAME),
-                rs.getString(STREET),
-                rs.getString(COMPLEMENTARY),
-                rs.getString(CITY),
-                rs.getString(STATE),
-                rs.getString(COUNTRY),
-                rs.getString(ZIP),
-                rs.getString(EMAIL),
-                rs.getString(PHONE),
-                rs.getBoolean(SEX),
-                null, null,
-                _jdbcDate(rs.getTimestamp(CREATE_DATE)),
-                rs.getBoolean(CONSENT_EMAIL),
-                /*rs.getString(LOYALTY_PLAN_ID),
-                rs.getBigDecimal(TMP_LOYALTY_POINTS),
-                rs.getString(LOYALTY_BARCODE))*/
-                rs.getString(NOTES), rs.getString(CUSTOMER_IDENTIFICATION), null, null, null)
-                .toValues();
-    }
 
     @Override
     public CustomerModel toValues(JdbcJSONObject rs) throws JSONException {

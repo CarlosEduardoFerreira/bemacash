@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -9,9 +7,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
@@ -34,22 +29,6 @@ public class TipsJdbcConverter extends JdbcConverter<TipsModel> {
     private static final String AMOUNT = "AMOUNT";
     private static final String COMMENT = "COMMENT";
     private static final String PAYMENT_TYPE = "PAYMENT_TYPE";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new TipsModel(
-                rs.getString(ID),
-                rs.getString(PARENT_ID),
-                rs.getString(EMPLOYEE_ID),
-                rs.getString(SHIFT_ID),
-                rs.getString(ORDER_ID),
-                rs.getString(PAYMENT_TRANSACTION_ID),
-                _jdbcDate(rs.getTimestamp(CREATE_TIME)),
-                rs.getBigDecimal(AMOUNT),
-                rs.getString(COMMENT),
-                _enum(TipsModel.PaymentType.class, rs.getString(PAYMENT_TYPE), TipsModel.PaymentType.CASH)
-        ).toValues();
-    }
 
     @Override
     public TipsModel toValues(JdbcJSONObject rs) throws JSONException {

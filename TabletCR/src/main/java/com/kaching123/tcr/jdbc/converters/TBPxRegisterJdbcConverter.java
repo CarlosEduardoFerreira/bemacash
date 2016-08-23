@@ -1,16 +1,11 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.model.TBPxRegisterModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Created by vkompaniets on 14.08.2016.
@@ -22,11 +17,6 @@ public class TBPxRegisterJdbcConverter extends JdbcConverter<TBPxRegisterModel> 
     private static final String ID = "ID";
     private static final String TBP_ID = "TIME_BASED_PRICING_ID";
     private static final String REGISTER_ID = "REGISTER_ID";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return null;
-    }
 
     @Override
     public TBPxRegisterModel toValues(JdbcJSONObject rs) throws JSONException {

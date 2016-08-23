@@ -1,7 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.content.ContentValues;
-
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierType;
@@ -11,9 +9,6 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -30,19 +25,6 @@ public class SaleOrderItemAddonJdbcConverter extends JdbcConverter<SaleOrderItem
     private static final String ADDON_TYPE = "ADDON_TYPE";
     private static final String SALE_CHILD_ITEM_ID = "SALE_CHILD_ITEM_ID";
     private static final String SALE_CHILD_ITEM_QTY = "SALE_CHILD_ITEM_QTY";
-
-    @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new SaleOrderItemAddonModel(
-                rs.getString(ID),
-                rs.getString(ADDON_ID),
-                rs.getString(SALE_ITEM_ID),
-                rs.getBigDecimal(EXTRA_COST),
-                _enum(ModifierType.class, rs.getString(ADDON_TYPE), ModifierType.ADDON),
-                rs.getString(SALE_CHILD_ITEM_ID),
-                rs.getBigDecimal(SALE_CHILD_ITEM_QTY)
-        ).toValues();
-    }
 
     @Override
     public SaleOrderItemAddonModel toValues(JdbcJSONObject rs) throws JSONException {
