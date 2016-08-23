@@ -127,6 +127,16 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     }
 
+    private void setTenderButtonsEnable() {
+        //btnGiftCard.setEnabled(getApp().getShopInfo().giftCardPaymentButtonEnabled);
+        btnCard.setEnabled(getApp().getShopInfo().creditPaymentButtonEnabled);
+        btnPaxDebit.setEnabled(getApp().getShopInfo().debitCardPaymentButtonEnabled);
+        btnPaxEbtFoodstamp.setEnabled(getApp().getShopInfo().ebtFoodStampPaymentEnabled);
+        btnPaxEbtCash.setEnabled(getApp().getShopInfo().ebtCashPaymentButtonEnabled);
+        btnOfflineCredit.setEnabled(getApp().getShopInfo().offlineCreditPaymentButtonEnabled);
+        btnCheck.setEnabled(getApp().getShopInfo().checkPaymentButtonEnabled);
+    }
+
     @Click
     protected void btnExactClicked() {
         BigDecimal alreadyPayed = orderTotal.subtract(completedAmount);
@@ -364,6 +374,9 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     protected void enable(final boolean on) {
+        //// FIXME: 23.08.2016 alboyko do we need next settings?
+        setTenderButtonsEnable();
+
         super.enable(on);
         btnOfflineCredit.setEnabled(on);
         btnCheck.setEnabled(on);
