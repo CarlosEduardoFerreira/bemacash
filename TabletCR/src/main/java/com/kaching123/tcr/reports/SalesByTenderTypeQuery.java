@@ -41,8 +41,8 @@ public class SalesByTenderTypeQuery {
 
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
         while (c.moveToNext()) {
-            BigDecimal amount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.AMOUNT)));
-            BigDecimal tipAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionView2.EmployeeTipsTable.AMOUNT)));
+            BigDecimal amount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.AMOUNT)), BigDecimal.ZERO);
+            BigDecimal tipAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionView2.EmployeeTipsTable.AMOUNT)), BigDecimal.ZERO);
             amount = amount.subtract(tipAmount);
             PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(PaymentTransactionTable.GATEWAY));
             if(gateway.isCreditCard()){

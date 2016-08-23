@@ -36,6 +36,11 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String PRODUCT_CODE = "PRODUCT_CODE";
     private static final String PRICE_TYPE = "PRICE_TYPE";
     private static final String SALE_PRICE = "SALE_PRICE";
+    private static final String PRICE_1 = "PRICE_LEVEL_1";
+    private static final String PRICE_2 = "PRICE_LEVEL_2";
+    private static final String PRICE_3 = "PRICE_LEVEL_3";
+    private static final String PRICE_4 = "PRICE_LEVEL_4";
+    private static final String PRICE_5 = "PRICE_LEVEL_5";
     private static final String UNITS_LABEL = "UNITS_LABEL";
     private static final String UNITS_LABEL_ID = "UNIT_LABEL_ID";
     private static final String STOCK_TRACKING = "STOCK_TRACKING";
@@ -79,8 +84,12 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getString(PRODUCT_CODE),
                 _enum(PriceType.class, rs.getString(PRICE_TYPE), PriceType.OPEN),
                 rs.getBigDecimal(SALE_PRICE),
+                rs.getBigDecimal(PRICE_1),
+                rs.getBigDecimal(PRICE_2),
+                rs.getBigDecimal(PRICE_3),
+                rs.getBigDecimal(PRICE_4),
+                rs.getBigDecimal(PRICE_5),
                 BigDecimal.ZERO,
-                rs.getString(UNITS_LABEL),
                 rs.getString(UNITS_LABEL_ID),
                 rs.getBoolean(STOCK_TRACKING),
                 rs.getBoolean(ACTIVE_STATUS),
@@ -104,12 +113,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(SERIALIZABLE),
                 _enum(CodeType.class, rs.getString(CODE_TYPE), CodeType.SN),
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
-                rs.getBigDecimal(COMMISSION),
-                rs.getString(REFERENCE_ITEM_ID),
-                _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple),
-                rs.getBigDecimal(LOYALTY_POINTS),
-                rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN)
-        );
+                rs.getBigDecimal(COMMISSION), rs.getString(REFERENCE_ITEM_ID), _enum(ItemRefType.class, rs.getString(ITEM_REF_TYPE), ItemRefType.Simple), rs.getBigDecimal(LOYALTY_POINTS), rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN));
         return model.toValues();
     }
 
@@ -124,8 +128,12 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getString(PRODUCT_CODE),
                 _enum(PriceType.class, rs.getString(PRICE_TYPE), PriceType.OPEN),
                 rs.getBigDecimal(SALE_PRICE),
+                rs.getBigDecimal(PRICE_1),
+                rs.getBigDecimal(PRICE_2),
+                rs.getBigDecimal(PRICE_3),
+                rs.getBigDecimal(PRICE_4),
+                rs.getBigDecimal(PRICE_5),
                 BigDecimal.ZERO,
-                rs.getString(UNITS_LABEL),
                 rs.getString(UNITS_LABEL_ID),
                 rs.getBoolean(STOCK_TRACKING),
                 rs.getBoolean(ACTIVE_STATUS),
@@ -149,12 +157,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(SERIALIZABLE),
                 _enum(CodeType.class, rs.getString(CODE_TYPE), null),
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
-                rs.getBigDecimal(COMMISSION),
-                rs.getString(REFERENCE_ITEM_ID),
-                ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE)),
-                rs.getBigDecimal(LOYALTY_POINTS),
-                rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN)
-        );
+                rs.getBigDecimal(COMMISSION), rs.getString(REFERENCE_ITEM_ID), ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE)), rs.getBigDecimal(LOYALTY_POINTS), rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN));
     }
 
     @Override
@@ -178,7 +181,11 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(PRODUCT_CODE, item.productCode)
                 .add(PRICE_TYPE, item.priceType)
                 .add(SALE_PRICE, item.price)
-                .add(UNITS_LABEL, item.unitsLabel)
+                .add(PRICE_1, item.price1)
+                .add(PRICE_2, item.price2)
+                .add(PRICE_3, item.price3)
+                .add(PRICE_4, item.price4)
+                .add(PRICE_5, item.price5)
                 .add(UNITS_LABEL_ID, item.unitsLabelId)
                 .add(STOCK_TRACKING, item.isStockTracking)
                 .add(ACTIVE_STATUS, item.isActiveStatus)
@@ -219,7 +226,11 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(PRODUCT_CODE, item.productCode)
                 .add(PRICE_TYPE, item.priceType)
                 .add(SALE_PRICE, item.price)
-                .add(UNITS_LABEL, item.unitsLabel)
+                .add(PRICE_1, item.price1)
+                .add(PRICE_2, item.price2)
+                .add(PRICE_3, item.price3)
+                .add(PRICE_4, item.price4)
+                .add(PRICE_5, item.price5)
                 .add(UNITS_LABEL_ID, item.unitsLabelId)
                 .add(STOCK_TRACKING, item.isStockTracking)
                 .add(ACTIVE_STATUS, item.isActiveStatus)

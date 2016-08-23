@@ -8,7 +8,6 @@ import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.IObjectsAdapter;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
@@ -18,16 +17,13 @@ import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import org.androidannotations.annotations.EFragment;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
  * Created by gdubina on 25/11/13.
  */
 @EFragment
-public abstract class BaseItemsPickFragment extends Fragment implements LoaderCallbacks<List<ItemExModel>> {
+public abstract class BaseItemsPickFragment extends Fragment implements IPriceLevelListener, LoaderCallbacks<List<ItemExModel>> {
 
     protected static final Uri URI_ITEMS = ShopProvider.contentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID);
 
@@ -35,9 +31,9 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
 
     protected String categoryGuid;
 
-    protected IObjectsAdapter<ItemExModel> adapter;
+    protected ObjectsCursorAdapter<ItemExModel> adapter;
 
-    protected abstract IObjectsAdapter<ItemExModel> createAdapter();
+    protected abstract ObjectsCursorAdapter<ItemExModel> createAdapter();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -52,10 +48,8 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Logger.d("restartLoader from onResume");
-        restartItemsLoader();
+    public void onPriceLevelChanged(List<Integer> priceLevels) {
+        setPriceLevels(priceLevels);
     }
 
     protected void restartItemsLoader() {
@@ -72,26 +66,40 @@ public abstract class BaseItemsPickFragment extends Fragment implements LoaderCa
                 .where(ItemTable.CATEGORY_ID + " = ? ", categoryGuid == null ? "" : categoryGuid)
                 .projection(ItemExFunction.PROJECTION)
                 .orderBy(ItemTable.ORDER_NUM)
-                .transform(new ItemExFunction()).build(getActivity());
+                .wrap(new Function<Cursor, List<ItemExModel>>() {
+                    @Override
+                    public List<ItemExModel> apply(Cursor input) {
+                        ItemExFunction func = new ItemExFunction();
+                        ArrayList<ItemExModel> output = new ArrayList<>(input.getCount());
+                        while(input.moveToNext()){
+                            output.add(func.apply(input));
+                        }
+                        return output;
+                    }
+                })
+                .build(getActivity());
     }
 
     @Override
     public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> list) {
-        ArrayList<ItemExModel> arrayList = new ArrayList(list);
-        if (((TcrApplication) getContext().getApplicationContext()).isEnableABCOrder())
-            if (list != null) {
-                Collections.sort(arrayList, new Comparator<ItemExModel>() {
-                    @Override
-                    public int compare(ItemExModel lhs, ItemExModel rhs) {
-                        String str1 = lhs.description.toString().toUpperCase();
-                        String str2 = rhs.description.toString().toUpperCase();
-                        return str1.compareTo(str2);
-                    }
-                });
-            }
         if (adapter != null) {
-            adapter.changeCursor(arrayList);
+            adapter.changeCursor(list);
         }
+
+        if (getActivity() instanceof BaseCashierActivity){
+            setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
+        }
+    }
+
+    protected void setPriceLevels(List<Integer> priceLevels){
+        if (adapter == null)
+            return;
+
+        final int count = adapter.getCount();
+        for (int i = 0; i < count; i++) {
+            adapter.getItem(i).setCurrentPriceLevel(priceLevels);
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @Override

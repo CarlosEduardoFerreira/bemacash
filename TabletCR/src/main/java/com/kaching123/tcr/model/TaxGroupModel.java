@@ -35,7 +35,7 @@ public class TaxGroupModel implements IValueModel, Serializable {
     public TaxGroupModel(Cursor c) {
         this.guid = c.getString(c.getColumnIndex(TaxGroupTable.GUID));
         this.title = c.getString(c.getColumnIndex(TaxGroupTable.TITLE));
-        this.tax = _decimal(c, c.getColumnIndex(TaxGroupTable.TAX));
+        this.tax = _decimal(c, c.getColumnIndex(TaxGroupTable.TAX), BigDecimal.ZERO);
         this.isDefault = _bool(c, c.getColumnIndex(TaxGroupTable.IS_DEFAULT));
     }
 

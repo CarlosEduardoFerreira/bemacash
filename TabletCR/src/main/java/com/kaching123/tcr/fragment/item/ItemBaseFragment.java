@@ -12,7 +12,7 @@ import org.androidannotations.annotations.EFragment;
  * Created by vkompaniets on 21.07.2016.
  */
 @EFragment
-public abstract class ItemBaseFragment extends SuperBaseFragment {
+public abstract class ItemBaseFragment extends SuperBaseFragment implements ItemView{
 
     @Override
     public void onAttach(Context context) {
@@ -39,5 +39,4 @@ public abstract class ItemBaseFragment extends SuperBaseFragment {
 
     protected abstract void setViews();
     protected abstract void setModel();
-    protected abstract void collectData();
 }

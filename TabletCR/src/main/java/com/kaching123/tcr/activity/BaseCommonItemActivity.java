@@ -133,7 +133,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
         availableQtyPencil.setEnabled(PlanOptions.isStockTrackingAllowed());
     }
 
-    protected void recollectComposerInfo() {
+    protected void recollectComposerInfo(){
     }
 
     @Override

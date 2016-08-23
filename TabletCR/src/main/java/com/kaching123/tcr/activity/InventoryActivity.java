@@ -32,10 +32,7 @@ import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.BaseIm
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.ImportType;
 import com.kaching123.tcr.commands.store.inventory.ImportInventoryCommand.WrongImportInfo;
 import com.kaching123.tcr.commands.store.inventory.UpdateDeletedItemCommand;
-import com.kaching123.tcr.ecuador.AddEcuadorItemActivity;
 import com.kaching123.tcr.ecuador.AddEcuadorReferenceItemActivity;
-import com.kaching123.tcr.ecuador.EditEcuadorItemActivity;
-import com.kaching123.tcr.ecuador.EditEcuadorReferenceItemActivity;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
@@ -54,6 +51,7 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
+import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 
@@ -98,8 +96,6 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     private static final Uri ITEMS_URI = ShopProvider.getContentUri(ItemTable.URI_CONTENT);
 
-//    private int level = 0;
-
     @OptionsMenuItem(R.id.action_sort)
     protected MenuItem sort;
 
@@ -116,7 +112,6 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     private MenuItem sortItem;
 
-//    private boolean sortByName;
 
     private String selectedDeartmentGuid;
 
@@ -143,7 +138,6 @@ public class InventoryActivity extends ScannerBaseActivity {
 
             @Override
             public void onCategoryChanged(long id, String depGuid, String catGuid) {
-                //Logger.d("[INVENTORY] onCategoryChanged %d, %s, %s", id, depGuid, catGuid);
                 if (id == AdapterView.INVALID_POSITION) {
                     itemsFragment.setCategory(ItemsFragment.LOAD_ALL_CATEGORIES);
                     selectedDeartmentGuid = null;
@@ -167,31 +161,9 @@ public class InventoryActivity extends ScannerBaseActivity {
         itemsFragment.setListener(new BaseItemsPickFragment.IItemListener() {
             @Override
             public void onItemSelected(long id, ItemExModel model) {
-                switch (model.refType) {
-                    case Simple:
-                        if (TcrApplication.isEcuadorVersion()) {
-                            EditEcuadorItemActivity.start(InventoryActivity.this, model);
-                        } else {
-                            EditItemActivity.start(InventoryActivity.this, model);
-                        }
-                        break;
-                    case Reference:
-                        if (TcrApplication.isEcuadorVersion()) {
-                            EditEcuadorReferenceItemActivity.start(InventoryActivity.this, model);
-                        } else {
-                            EditReferenceItemActivity.start(InventoryActivity.this, model);
-                        }
-                        break;
-                    default:
-                        if (TcrApplication.isEcuadorVersion()) {
-                            EditEcuadorItemActivity.start(InventoryActivity.this, model);
-                        } else {
-                            EditItemActivity.start(InventoryActivity.this, model);
-                        }
-                }
+                BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.EDIT);
             }
         });
-
 
         getSupportLoaderManager().initLoader(INITCOUNT_LOADER_ID, Bundle.EMPTY, itemsCountLoader);
     }
@@ -300,11 +272,7 @@ public class InventoryActivity extends ScannerBaseActivity {
         model.categoryId = selectedCategoryGuid;
         model.departmentGuid = selectedDeartmentGuid;
 
-        if (TcrApplication.isEcuadorVersion()) {
-            AddEcuadorReferenceItemActivity.start(InventoryActivity.this, model);
-        } else {
-            AddReferenceItemActivity.start(InventoryActivity.this, model);
-        }
+        BaseItemActivity2.start(self(), model, ItemRefType.Reference, StartMode.ADD);
     }
 
     @OptionsItem
@@ -318,11 +286,7 @@ public class InventoryActivity extends ScannerBaseActivity {
         model.categoryId = selectedCategoryGuid;
         model.departmentGuid = selectedDeartmentGuid;
 
-        if (TcrApplication.isEcuadorVersion()) {
-            AddEcuadorItemActivity.start(InventoryActivity.this, model);
-        } else {
-            AddItemActivity.start(InventoryActivity.this, model);
-        }
+        BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.ADD);
     }
 
     private boolean inventoryLimitReached() {

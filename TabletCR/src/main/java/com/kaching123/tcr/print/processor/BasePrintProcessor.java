@@ -231,7 +231,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         }
         String loyaltyPoints = c.getString(7);
         if (loyaltyPoints != null){
-            info.customerLoyaltyPoints = _decimal(loyaltyPoints);
+            info.customerLoyaltyPoints = _decimal(loyaltyPoints, BigDecimal.ZERO);
         }
         info.customerName = concatFullname(c.getString(8), c.getString(9));
         c.close();

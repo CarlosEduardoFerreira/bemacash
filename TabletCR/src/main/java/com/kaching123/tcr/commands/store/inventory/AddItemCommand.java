@@ -47,7 +47,7 @@ public class AddItemCommand extends AsyncCommand {
 
         item = (ItemModel) getArgs().getSerializable(ARG_ITEM);
         movementModel = null;
-        item.orderNum = 0;
+        item.orderNum = ItemModel.getMaxOrderNum(getContext(), item.categoryId) + 1;
         item.updateQtyFlag = UUID.randomUUID().toString();
         if (item.isStockTracking) {
             movementModel = ItemMovementModelFactory.getNewModel(

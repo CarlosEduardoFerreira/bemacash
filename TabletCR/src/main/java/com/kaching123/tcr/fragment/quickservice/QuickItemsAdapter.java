@@ -54,7 +54,7 @@ public class QuickItemsAdapter extends ObjectsCursorAdapter<ItemExModel> {
         /*if (i.isDiscountable) {
             showPrice(holder.price, CalculationUtil.getSubTotal(BigDecimal.ONE, i.price, i.discount, i.discountType));
         } else {*/
-            showPrice(holder.price, i.price);
+            showPrice(holder.price, i.getCurrentPrice());
         //}
 
         return convertView;

@@ -11,24 +11,33 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseCashierActivity;
+import com.kaching123.tcr.activity.BaseCashierActivity.IPriceLevelListener;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.PriceType;
+import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ChildComposerTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitTable;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -36,12 +45,14 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._caseCount;
 import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
+import static com.kaching123.tcr.model.ContentValuesUtil._count;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
+import static com.kaching123.tcr.model.ContentValuesUtil._sum;
 
 @EFragment(R.layout.search_items_list_fragment)
-public class SearchItemsListFragment extends Fragment implements LoaderCallbacks<List<CategoryItemViewModel>> {
+public class SearchItemsListFragment extends Fragment implements IPriceLevelListener, LoaderCallbacks<List<CategoryItemViewModel>> {
 
     private static final Uri URI_ITEMS = ShopProvider.getContentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID);
 
@@ -79,6 +90,11 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public Loader<List<CategoryItemViewModel>> onCreateLoader(int loaderId, Bundle args) {
         Logger.d("ItemsListFragment onCreateLoader");
         return CursorLoaderBuilder.forUri(URI_ITEMS)
@@ -87,13 +103,25 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                                 + " like ?" + " OR " + ItemTable.PRODUCT_CODE + " like ? )", 1, 1,
                         "%" + searchText + "%", "%" + searchText + "%")
                 .orderBy(ItemTable.CATEGORY_ID + ", " + ItemTable.ORDER_NUM)
-                .transform(new ItemConverter()).build(getActivity());
+                .wrap(new Function<Cursor, List<CategoryItemViewModel>>() {
+                    @Override
+                    public List<CategoryItemViewModel> apply(Cursor input) {
+                        ItemConverter func = new ItemConverter();
+                        ArrayList<CategoryItemViewModel> output = new ArrayList<>(input.getCount());
+                        while (input.moveToNext()){
+                            output.add(func.apply(input));
+                        }
+                        return output;
+                    }
+                })
+                .build(getActivity());
 
     }
 
     @Override
     public void onLoadFinished(Loader<List<CategoryItemViewModel>> loader, List<CategoryItemViewModel> list) {
         adapter.changeCursor(list);
+        setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
     }
 
     @Override
@@ -105,7 +133,22 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
         this.listener = listener;
     }
 
-    public static interface IItemListener {
+    @Override
+    public void onPriceLevelChanged(List<Integer> priceLevels) {
+        setPriceLevels(priceLevels);
+    }
+
+    protected void setPriceLevels(List<Integer> priceLevels){
+        if (adapter == null)
+            return;
+
+        final int count = adapter.getCount();
+        for (int i = 0; i < count; i++) {
+            adapter.getItem(i).setCurrentPriceLevel(priceLevels);
+        }
+    }
+
+    public interface IItemListener {
         void onItemSelected(long id, ItemExModel model);
     }
 
@@ -120,8 +163,13 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 ItemTable.PRODUCT_CODE,
                 ItemTable.PRICE_TYPE,
                 ItemTable.SALE_PRICE,
+                ItemTable.PRICE_1,
+                ItemTable.PRICE_2,
+                ItemTable.PRICE_3,
+                ItemTable.PRICE_4,
+                ItemTable.PRICE_5,
                 ItemTable.TMP_AVAILABLE_QTY,
-                ItemTable.UNITS_LABEL,
+                UnitLabelTable.SHORTCUT,
                 ItemTable.UNIT_LABEL_ID,
                 ItemTable.STOCK_TRACKING,
                 ItemTable.ACTIVE_STATUS,
@@ -132,9 +180,15 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                 ItemTable.TAXABLE,
                 ItemTable.TAX_GROUP_GUID,
                 ItemTable.TAX_GROUP_GUID2,
-                _caseCount(ModifierTable.TYPE, ModifierType.MODIFIER, ItemExtView.MODIFIERS_COUNT),
-                _caseCount(ModifierTable.TYPE, ModifierType.ADDON, ItemExtView.ADDONS_COUNT),
-                _caseCount(ModifierTable.TYPE, ModifierType.OPTIONAL, ItemExtView.OPTIONAL_COUNT),
+                _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.MODIFIER.ordinal()), ItemExtView.MODIFIERS_COUNT),
+                _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.ADDON.ordinal()), ItemExtView.ADDONS_COUNT),
+                _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.OPTIONAL.ordinal()), ItemExtView.OPTIONAL_COUNT),
+                _count(UnitTable.ID, ItemExtView.UNITS_COUNT),
+                _caseCount(UnitTable.STATUS,
+                        new String[]{String.valueOf(Status.NEW.ordinal()), String.valueOf(Status.USED.ordinal()), String.valueOf(Status.BROKEN.ordinal())},
+                        ItemExtView.AVAILABLE_UNITS_COUNT),
+                _count(ChildComposerTable.ID, ItemExtView.COMPOSERS_COUNT),
+                _sum(ChildComposerTable.FREE_OF_CHARGE_COMPOSER, ItemExtView.RESTRICT_COMPOSERS_COUNT),
                 CategoryTable.DEPARTMENT_GUID,
                 CategoryTable.TITLE,
                 TaxGroupTable.TAX,
@@ -168,15 +222,20 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getString(indexHolder.get(ItemTable.EAN_CODE)),
                     c.getString(indexHolder.get(ItemTable.PRODUCT_CODE)),
                     PriceType.valueOf(c.getInt(indexHolder.get(ItemTable.PRICE_TYPE))),
-                    _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE))),
+                    _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE)), BigDecimal.ZERO),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_1)), null),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_2)), null),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_3)), null),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_4)), null),
+                    _decimal(c.getString(indexHolder.get(ItemTable.PRICE_5)), null),
                     _decimalQty(c.getString(indexHolder.get(ItemTable.TMP_AVAILABLE_QTY))),
-                    c.getString(indexHolder.get(ItemTable.UNITS_LABEL)),
                     c.getString(indexHolder.get(ItemTable.UNIT_LABEL_ID)),
+                    c.getString(indexHolder.get(UnitLabelTable.SHORTCUT)),
                     c.getInt(indexHolder.get(ItemTable.STOCK_TRACKING)) == 1,
                     c.getInt(indexHolder.get(ItemTable.ACTIVE_STATUS)) == 1,
                     c.getInt(indexHolder.get(ItemTable.DISCOUNTABLE)) == 1,
                     c.getInt(indexHolder.get(ItemTable.SALABLE)) == 1,
-                    _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT))),
+                    _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT)), BigDecimal.ZERO),
                     _discountType(c, indexHolder.get(ItemTable.DISCOUNT_TYPE)),
                     c.getInt(indexHolder.get(ItemTable.TAXABLE)) == 1,
                     c.getString(indexHolder.get(ItemTable.TAX_GROUP_GUID)),
@@ -184,10 +243,14 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getInt(indexHolder.get(ItemExtView.MODIFIERS_COUNT)),
                     c.getInt(indexHolder.get(ItemExtView.ADDONS_COUNT)),
                     c.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT)),
+                    c.getInt(indexHolder.get(ItemExtView.UNITS_COUNT)),
+                    c.getInt(indexHolder.get(ItemExtView.AVAILABLE_UNITS_COUNT)),
+                    c.getInt(indexHolder.get(ItemExtView.COMPOSERS_COUNT)),
+                    c.getInt(indexHolder.get(ItemExtView.RESTRICT_COMPOSERS_COUNT)),
                     c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
                     c.getString(indexHolder.get(CategoryTable.TITLE)),
-                    _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX))),
-                    _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX))),
+                    _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX)), BigDecimal.ZERO),
+                    _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX)), BigDecimal.ZERO),
                     c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID)),
                     c.getInt(indexHolder.get(ItemTable.ORDER_NUM)),
                     c.getString(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
@@ -197,12 +260,9 @@ public class SearchItemsListFragment extends Fragment implements LoaderCallbacks
                     c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                     _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                     _bool(c, c.getColumnIndex(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                    _decimal(c, c.getColumnIndex(ItemTable.COMMISSION)),
+                    _decimal(c, c.getColumnIndex(ItemTable.COMMISSION), BigDecimal.ZERO),
                     c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
-                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))),
-                    _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS)),
-                    _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN))
-            );
+                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))), _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS), BigDecimal.ZERO), _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
         }
     }
 }

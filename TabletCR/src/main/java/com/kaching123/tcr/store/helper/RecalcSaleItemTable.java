@@ -230,7 +230,7 @@ public class RecalcSaleItemTable extends ProviderHelper {
         BigDecimal returnedQty = BigDecimal.ZERO;
         while (c.moveToNext()) {
             String saleItemGuid = c.getString(0);
-            BigDecimal retQty = _decimalQty(c, 1);//should be negative, it's returned qty
+            BigDecimal retQty = _decimalQty(c, 1, BigDecimal.ZERO);//should be negative, it's returned qty
             returnedQty = returnedQty.add(retQty);
         }
         c.close();
@@ -247,7 +247,7 @@ public class RecalcSaleItemTable extends ProviderHelper {
         ArrayList<ContentValues> values = new ArrayList<ContentValues>(c.getCount());
         if (c.moveToNext()) {
             String saleItemGuid = c.getString(0);
-            BigDecimal qty = _decimalQty(c, 1);
+            BigDecimal qty = _decimalQty(c, 1, BigDecimal.ZERO);
 
             ContentValues v = new ContentValues(2);
             v.put(SaleItemTable.SALE_ITEM_GUID, saleItemGuid);
@@ -312,7 +312,7 @@ public class RecalcSaleItemTable extends ProviderHelper {
                 return null;
 
             String saleItemGuid = c.getString(0);
-            BigDecimal returnedQty = _decimalQty(c, 1);//should be negative, it's returned qty
+            BigDecimal returnedQty = _decimalQty(c, 1, BigDecimal.ZERO);//should be negative, it's returned qty
 
             String nextSaleItemGuid;
             while (c.moveToNext()) {
@@ -320,7 +320,7 @@ public class RecalcSaleItemTable extends ProviderHelper {
                 if (!nextSaleItemGuid.equals(saleItemGuid))
                     break;
 
-                returnedQty = returnedQty.add(_decimalQty(c, 1));
+                returnedQty = returnedQty.add(_decimalQty(c, 1, BigDecimal.ZERO));
             }
 
             return new RefundQuantity(saleItemGuid, returnedQty);

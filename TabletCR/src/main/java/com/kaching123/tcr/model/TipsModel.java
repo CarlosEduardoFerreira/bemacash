@@ -39,7 +39,7 @@ public class TipsModel implements IValueModel, Serializable {
             c.getString(c.getColumnIndex(EmployeeTipsTable.ORDER_ID)),
             c.getString(c.getColumnIndex(EmployeeTipsTable.PAYMENT_TRANSACTION_ID)),
             _nullableDate(c, c.getColumnIndex(EmployeeTipsTable.CREATE_TIME)),
-            _decimal(c, c.getColumnIndex(EmployeeTipsTable.AMOUNT)),
+            _decimal(c, c.getColumnIndex(EmployeeTipsTable.AMOUNT), BigDecimal.ZERO),
             c.getString(c.getColumnIndex(EmployeeTipsTable.COMMENT)),
             _tipsPaymentType(c, c.getColumnIndex(EmployeeTipsTable.PAYMENT_TYPE))
             );

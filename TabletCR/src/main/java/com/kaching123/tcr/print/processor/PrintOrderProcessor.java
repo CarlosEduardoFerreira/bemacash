@@ -24,6 +24,7 @@ import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -271,8 +272,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         HashMap<String, BigDecimal> list = new HashMap<>();
         if (c.moveToFirst()) {
             do {
-                String unitLabel = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.ItemTable.UNITS_LABEL));
-                itemQty = unitLabel != null && unitLabel.equalsIgnoreCase("LB") ? BigDecimal.ONE : _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.QUANTITY)));
+                String unitLabel = c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT));
+                itemQty = unitLabel != null && unitLabel.equalsIgnoreCase("LB") ? BigDecimal.ONE : _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.QUANTITY)), BigDecimal.ZERO);
                 String itemGuid = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.SALE_ITEM_GUID));
                 list.put(itemGuid, itemQty);
 //                if(!unitLabel.equalsIgnoreCase("LB"))

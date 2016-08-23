@@ -75,7 +75,6 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
             do {
                 String saleItemGuid = c.getString(c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID));
                 SaleOrderItemViewModel item = saleItemsMap.get(saleItemGuid);
-                String unitLabel = c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT));
                 if (item == null) {
                     SaleOrderItemModel itemModel = readSaleItemModel(c);
                     int descIndex = c.getColumnIndex(ItemTable.DESCRIPTION);
@@ -92,15 +91,15 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                             null,
                             c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
                             c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
-                            !TextUtils.isEmpty(unitLabel) ? unitLabel : c.getString(c.getColumnIndex(ItemTable.UNITS_LABEL)),
+                            c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT)),
                             _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
                             _bool(c, c.getColumnIndex(ItemTable.SERIALIZABLE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
                             !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
-                            c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 0 ? false : true,
-                            c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 0 ? false : true,
+                            c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
+                            c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 1,
                             taxModel1, taxModel2);
 
                     item.finalPrice = itemModel.finalGrossPrice.subtract(itemModel.finalDiscount);

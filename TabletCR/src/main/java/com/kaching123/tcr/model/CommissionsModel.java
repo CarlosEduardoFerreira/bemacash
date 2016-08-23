@@ -30,7 +30,7 @@ public class CommissionsModel implements IValueModel {
                 c.getString(c.getColumnIndex(EmployeeCommissionsTable.SHIFT_ID)),
                 c.getString(c.getColumnIndex(EmployeeCommissionsTable.ORDER_ID)),
                 _nullableDate(c, c.getColumnIndex(EmployeeCommissionsTable.CREATE_TIME)),
-                _decimal(c, c.getColumnIndex(EmployeeCommissionsTable.AMOUNT))
+                _decimal(c, c.getColumnIndex(EmployeeCommissionsTable.AMOUNT), BigDecimal.ZERO)
         );
     }
 

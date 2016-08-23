@@ -97,7 +97,7 @@ public class PrintDropPayoutProcessor {
         MovementType type = ContentValuesUtil._movementType(movementCursor, movementCursor.getColumnIndex(CashDrawerMovementTable.TYPE));
         long time = movementCursor.getLong(movementCursor.getColumnIndex(CashDrawerMovementTable.MOVEMENT_TIME));
         String employeeName = UiHelper.concatFullname(employeeCursor.getString(0), employeeCursor.getString(1));
-        BigDecimal amount = ContentValuesUtil._decimal(movementCursor, movementCursor.getColumnIndex(CashDrawerMovementTable.AMOUNT)).negate();
+        BigDecimal amount = ContentValuesUtil._decimal(movementCursor, movementCursor.getColumnIndex(CashDrawerMovementTable.AMOUNT), BigDecimal.ZERO).negate();
         String comment = movementCursor.getString(movementCursor.getColumnIndex(CashDrawerMovementTable.COMMENT));
         movementCursor.close();
         employeeCursor.close();

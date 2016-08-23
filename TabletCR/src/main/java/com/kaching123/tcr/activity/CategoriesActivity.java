@@ -33,12 +33,11 @@ import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.CategorySimpleView2;
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CategorySimpleView;
 import com.mobeta.android.dslv.DragSortListView;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -208,7 +207,7 @@ public class CategoriesActivity extends SuperBaseActivity {
                     c.getString(indexHolder.get(CategorySimpleView2.CategoryTable.IMAGE)),
                     c.getInt(indexHolder.get(CategorySimpleView2.CategoryTable.ORDER_NUM)),
                     _bool(c, c.getColumnIndex(CategorySimpleView2.CategoryTable.ELIGIBLE_FOR_COMMISSION)),
-                    _decimal(c, c.getColumnIndex(CategorySimpleView2.CategoryTable.COMMISSION))
+                    _decimal(c, c.getColumnIndex(CategorySimpleView2.CategoryTable.COMMISSION), BigDecimal.ZERO)
             );
         }
 

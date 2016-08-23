@@ -115,10 +115,10 @@ public class EmployeeModel implements IValueModel, Serializable{
                 _nullableDate(c, c.getColumnIndex(ShopStore.EmployeeTable.FIRE_DATE)),
                 _employeeStatus(c, c.getColumnIndex(ShopStore.EmployeeTable.STATUS)),
                 c.getLong(c.getColumnIndex(ShopStore.EmployeeTable.SHOP_ID)),
-                _decimal(c, c.getColumnIndex(EmployeeTable.HOURLY_RATE)),
+                _decimal(c, c.getColumnIndex(EmployeeTable.HOURLY_RATE), BigDecimal.ZERO),
                 _bool(c, c.getColumnIndex(EmployeeTable.TIPS_ELIGIBLE)),
                 _bool(c, c.getColumnIndex(EmployeeTable.ELIGIBLE_FOR_COMMISSION)),
-                _decimal(c, c.getColumnIndex(EmployeeTable.COMMISSION)),
+                _decimal(c, c.getColumnIndex(EmployeeTable.COMMISSION), BigDecimal.ZERO),
                 c.getInt(c.getColumnIndex(EmployeeTable.IS_MERCHANT)) == 1,
                 c.getInt(c.getColumnIndex(EmployeeTable.IS_SYNC)) == 1
         );

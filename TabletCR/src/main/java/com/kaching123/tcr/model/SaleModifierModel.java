@@ -52,7 +52,7 @@ public class SaleModifierModel implements IValueModel, Serializable{
                 c.getString(c.getColumnIndex(SaleAddonTable.GUID)),
                 c.getString(c.getColumnIndex(SaleAddonTable.ADDON_GUID)),
                 c.getString(c.getColumnIndex(SaleAddonTable.ITEM_GUID)),
-                _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST)),
+                _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST), BigDecimal.ZERO),
                 _modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)),
                 c.getString(c.getColumnIndex(SaleAddonTable.CHILD_ITEM_ID)),
                 _decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY))

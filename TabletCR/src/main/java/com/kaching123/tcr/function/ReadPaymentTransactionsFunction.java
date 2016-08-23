@@ -142,7 +142,7 @@ public final class ReadPaymentTransactionsFunction {
                         c.getString(c.getColumnIndex(PaymentTransactionTable.GUID)),
                         c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID)),
                         c.getString(c.getColumnIndex(PaymentTransactionTable.ORDER_GUID)),
-                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.AMOUNT)),
+                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.AMOUNT), BigDecimal.ZERO),
                         _paymentType(c, c.getColumnIndex(PaymentTransactionTable.TYPE)),
                         _paymentStatus(c, c.getColumnIndex(PaymentTransactionTable.STATUS)),
                         c.getString(c.getColumnIndex(PaymentTransactionTable.OPERATOR_GUID)),
@@ -154,12 +154,12 @@ public final class ReadPaymentTransactionsFunction {
                         new Date(c.getLong(c.getColumnIndex(PaymentTransactionTable.CREATE_TIME))),
                         c.getString(c.getColumnIndex(PaymentTransactionTable.SHIFT_GUID)),
                         c.getString(c.getColumnIndex(PaymentTransactionTable.CARD_NAME)),
-                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CHANGE_AMOUNT)),
+                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CHANGE_AMOUNT), BigDecimal.ZERO),
                         _bool(c, c.getColumnIndex(PaymentTransactionTable.IS_PREAUTH)),
-                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK)),
-                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE))
+                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK), BigDecimal.ZERO),
+                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO)
                 );
-                model.balance = _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE));
+                model.balance = _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO);
                 String parentGuid = c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID));
                 if (parentGuid != null) {
                     List<PaymentTransactionModel> list = childrenTransactions.get(parentGuid);

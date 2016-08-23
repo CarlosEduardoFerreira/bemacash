@@ -258,7 +258,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
+                    style="@style/EditItem.Table.CheckBox"
                     android:checked="true"/>
 
             </TableRow>
@@ -326,7 +326,7 @@
                     android:id="@+id/has_notes"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:button="@drawable/checkbox_mint"
+                    style="@style/EditItem.Table.CheckBox"
                     android:layout_weight="1" />
 
             </TableRow>
@@ -431,7 +431,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
+                    style="@style/EditItem.Table.CheckBox"
                     android:checked="true"/>
             </TableRow>
 
@@ -496,7 +496,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
+                    style="@style/EditItem.Table.CheckBox"
                     android:checked="true"/>
             </TableRow>
 
@@ -569,7 +569,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
+                    style="@style/EditItem.Table.CheckBox"
                     android:checked="true" />
             </TableRow>
 
@@ -617,7 +617,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
+                    style="@style/EditItem.Table.CheckBox"
                     android:checked="true"/>
             </TableRow>
 
@@ -688,7 +688,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@drawable/checkbox_mint"
+                    style="@style/EditItem.Table.CheckBox"
                     android:checked="true" />
             </TableRow>
 

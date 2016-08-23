@@ -124,7 +124,7 @@ public class RefundCommand extends AsyncCommand {
         BigDecimal result = BigDecimal.ZERO;
         while (c.moveToNext()) {
             if (_paymentGateway(c, 0).isCreditCard()) {
-                result = result.add(_decimal(c, 1));
+                result = result.add(_decimal(c, 1, BigDecimal.ZERO));
             }
         }
         c.close();

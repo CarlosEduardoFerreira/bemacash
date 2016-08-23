@@ -43,8 +43,8 @@ public class ShiftModel implements IValueModel {
                 cursor.getString(cursor.getColumnIndex(ShiftTable.OPEN_MANAGER_ID)),
                 cursor.getString(cursor.getColumnIndex(ShiftTable.CLOSE_MANAGER_ID)),
                 cursor.getLong(cursor.getColumnIndex(ShiftTable.REGISTER_ID)),
-                _decimal(cursor, cursor.getColumnIndex(ShiftTable.OPEN_AMOUNT)),
-                _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT)));
+                _decimal(cursor, cursor.getColumnIndex(ShiftTable.OPEN_AMOUNT), BigDecimal.ZERO),
+                _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO));
     }
 
     public static ShiftModel getInstance(Cursor cursor) {
@@ -54,8 +54,8 @@ public class ShiftModel implements IValueModel {
                 cursor.getString(cursor.getColumnIndex(ShiftTable.OPEN_MANAGER_ID)),
                 cursor.getString(cursor.getColumnIndex(ShiftTable.CLOSE_MANAGER_ID)),
                 cursor.getLong(cursor.getColumnIndex(ShiftTable.REGISTER_ID)),
-                _decimal(cursor, cursor.getColumnIndex(ShiftTable.OPEN_AMOUNT)),
-                _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT)));
+                _decimal(cursor, cursor.getColumnIndex(ShiftTable.OPEN_AMOUNT), BigDecimal.ZERO),
+                _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO));
     }
 
     public static ShiftModel getById(Context context, String guid) {

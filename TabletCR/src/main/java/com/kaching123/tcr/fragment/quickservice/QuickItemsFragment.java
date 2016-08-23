@@ -14,20 +14,14 @@ import android.widget.GridView;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
-
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.viewpagerindicator.LinePageIndicator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by gdubina on 22.11.13.
@@ -65,22 +59,8 @@ public class QuickItemsFragment extends BaseItemsPickFragment {
 
     @Override
     public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> list) {
-
-        List arrayList = new ArrayList(list);
-        if (((TcrApplication) getActivity().getApplication()).isEnableABCOrder())
-            try {
-                Collections.sort(arrayList, new Comparator<ItemExModel>() {
-                    @Override
-                    public int compare(ItemExModel p1, ItemExModel p2) {
-                        String str1 = p1.description.toString().toUpperCase();
-                        String str2 = p2.description.toString().toUpperCase();
-                        return str1.compareTo(str2);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        adapter.setList(arrayList);
+        adapter.setList(list);
+        setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
     }
 
     @Override
@@ -90,8 +70,18 @@ public class QuickItemsFragment extends BaseItemsPickFragment {
 
     @Override
     protected ObjectsCursorAdapter<ItemExModel> createAdapter() {
-        //throw new UnsupportedOperationException();
         return null;
+    }
+
+    @Override
+    protected void setPriceLevels(List<Integer> priceLevels) {
+        if (adapter == null || adapter.list == null)
+            return;
+
+        for (ItemExModel model : adapter.list){
+            model.setCurrentPriceLevel(priceLevels);
+        }
+        adapter.notifyDataSetChanged();
     }
 
     public class ItemsPageAdapter extends PagerAdapter {

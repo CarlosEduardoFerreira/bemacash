@@ -89,7 +89,7 @@ public class CommissionsQuery {
                         List<EmployeeCommissionsModel> models = new ArrayList<EmployeeCommissionsModel>();
                         while (cursor.moveToNext()) {
                             String guid = cursor.getString(indexHolder.get(ShopStore.EmployeeTable.GUID));
-                            BigDecimal commission = _decimal(cursor, indexHolder.get(ShopStore.EmployeeTable.COMMISSION));
+                            BigDecimal commission = _decimal(cursor, indexHolder.get(ShopStore.EmployeeTable.COMMISSION), BigDecimal.ZERO);
                             models.add(new EmployeeCommissionsModel(guid, commission));
                         }
                         return models;
@@ -146,8 +146,8 @@ public class CommissionsQuery {
 
             List<ItemCommissionsModel> itemCommissionsList = new ArrayList<ItemCommissionsModel>();
             while (cursor.moveToNext()) {
-                BigDecimal itemCommission = _decimal(cursor, indexHolder.get(ShopSchema2.SaleItemCommissionsView2.ItemTable.COMMISSION));
-                BigDecimal categoryCommission = _decimal(cursor, indexHolder.get(ShopSchema2.SaleItemCommissionsView2.CategoryTable.COMMISSION));
+                BigDecimal itemCommission = _decimal(cursor, indexHolder.get(ShopSchema2.SaleItemCommissionsView2.ItemTable.COMMISSION), BigDecimal.ZERO);
+                BigDecimal categoryCommission = _decimal(cursor, indexHolder.get(ShopSchema2.SaleItemCommissionsView2.CategoryTable.COMMISSION), BigDecimal.ZERO);
 
                 BigDecimal commission = (itemCommission == null || itemCommission.compareTo(BigDecimal.ZERO) == 0) ? categoryCommission : itemCommission;
 

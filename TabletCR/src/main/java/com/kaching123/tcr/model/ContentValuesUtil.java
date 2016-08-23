@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
@@ -21,6 +22,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -56,16 +58,16 @@ public final class ContentValuesUtil {
         }
     };
 
-    public static BigDecimal _decimal(Cursor c, int columnIndex) {
-        return _decimal(c.getString(columnIndex));
+    public static BigDecimal _decimal(Cursor c, int columnIndex, BigDecimal def) {
+        return _decimal(c.getString(columnIndex), def);
     }
 
-    public static BigDecimal _decimal(Cursor c, int columnIndex, int scale) {
-        return _decimal(c.getString(columnIndex), scale);
+    public static BigDecimal _decimal(Cursor c, int columnIndex, int scale, BigDecimal def) {
+        return _decimal(c.getString(columnIndex), scale, def);
     }
 
-    public static BigDecimal _decimalQty(Cursor c, int columnIndex) {
-        return _decimal(c.getString(columnIndex), QUANTITY_SCALE);
+    public static BigDecimal _decimalQty(Cursor c, int columnIndex, BigDecimal def) {
+        return _decimal(c.getString(columnIndex), QUANTITY_SCALE, def);
     }
 
     public static ItemRefType _itemRefType(Cursor c, int index) {
@@ -74,7 +76,7 @@ public final class ContentValuesUtil {
 
     public static String _decimal(BigDecimal decimal, int scale) {
         if (decimal == null) {
-            return "";
+            return null;
         }
 
         return scale <= DECIMAL_SCALE ? decimalFormat.get().format(decimal) : quantityFormat.get().format(decimal);
@@ -86,14 +88,14 @@ public final class ContentValuesUtil {
 
     public static String _decimal(BigDecimal decimal) {
         if (decimal == null) {
-            return "";
+            return null;
         }
         return decimalFormat.get().format(decimal);
     }
 
     public static String _decimalWithScale(BigDecimal decimal) {
         if (decimal == null) {
-            return "";
+            return null;
         }
         int scale = decimal.scale();
         return scale <= DECIMAL_SCALE ? decimalFormat.get().format(decimal) : quantityFormat.get().format(decimal);
@@ -101,7 +103,7 @@ public final class ContentValuesUtil {
 
     public static String _long(Long value) {
         if (value == null) {
-            return "";
+            return null;
         }
         return String.valueOf(value.longValue());
     }
@@ -130,7 +132,7 @@ public final class ContentValuesUtil {
 
     public static String _date(Date value) {
         if (value == null) {
-            return "";
+            return null;
         }
         return String.valueOf(value.getTime());
     }
@@ -154,15 +156,15 @@ public final class ContentValuesUtil {
         return BigDecimal.ZERO;
     }
 
-    public static BigDecimal _decimal(String decimalValue) {
+    public static BigDecimal _decimal(String decimalValue, BigDecimal def) {
         if (TextUtils.isEmpty(decimalValue))
-            return BigDecimal.ZERO;
+            return def;
         try {
             return (BigDecimal) decimalFormat.get().parse(decimalValue);
         } catch (ParseException e) {
             Logger.e("Parse number error", e);
         }
-        return BigDecimal.ZERO;
+        return def;
     }
 
     public static int getDecimalScale(String decimalValue) {
@@ -172,15 +174,15 @@ public final class ContentValuesUtil {
         return dotIndex < 0 ? 0 : decimalValue.length() - (dotIndex + 1);
     }
 
-    public static BigDecimal _decimal(String decimalValue, int scale) {
+    public static BigDecimal _decimal(String decimalValue, int scale, BigDecimal def) {
         if (TextUtils.isEmpty(decimalValue))
-            return BigDecimal.ZERO;
+            return def;
         try {
             return (BigDecimal) (scale <= DECIMAL_SCALE ? decimalFormat.get().parse(decimalValue) : quantityFormat.get().parse(decimalValue));
         } catch (ParseException e) {
             Logger.e("Parse number error", e);
         }
-        return BigDecimal.ZERO;
+        return def;
     }
 
     public static ContentValues _putItemRefType(ContentValues v, String key, ItemRefType itemRefType) {
@@ -193,7 +195,7 @@ public final class ContentValuesUtil {
     }
 
     public static BigDecimal _decimalQty(String decimalValue) {
-        return _decimal(decimalValue, QUANTITY_SCALE);
+        return _decimal(decimalValue, QUANTITY_SCALE, BigDecimal.ZERO);
     }
 
     public static DiscountType _discountType(Cursor c, int index) {
@@ -334,8 +336,26 @@ public final class ContentValuesUtil {
         return String.format(Locale.US, " count(%s) as %s", column, as);
     }
 
-    public static String _caseCount(String column, ModifierType type, String as) {
-        return String.format(Locale.US, "sum(case when %s = %d then 1 else 0 end) as %s", column, type.ordinal(), as);
+    public static String _caseCount(String column, String value, String as) {
+        return String.format(Locale.US, "sum(case when %s = %s then 1 else 0 end) as %s", column, value, as);
+    }
+
+    public static String _caseCount(String column, String[] values, String as) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < values.length; i++){
+            if (i > 0)
+                builder.append(" or ");
+            builder.append("%1$s = %" + (i + 3) + "$s");
+        }
+        String selection = "sum(case when(" + builder + ") then 1 else 0 end) as %2$s";
+        String[] selectionArgs = new String[values.length + 2];
+        selectionArgs[0] = column;
+        selectionArgs[1] = as;
+        for (int i = 0; i < values.length; i++){
+            selectionArgs[i + 2] = values[i];
+        }
+
+        return String.format(Locale.US, selection, selectionArgs);
     }
 
     public static String _castAsReal(String column){
@@ -344,6 +364,22 @@ public final class ContentValuesUtil {
 
     public static String _sum(String column){
         return String.format(Locale.US, "sum(%s)", column);
+    }
+
+    public static String _sum(String column, String as){
+        return String.format(Locale.US, "sum(%s) as %s", column, as);
+    }
+
+    public static String _max(String column){
+        return String.format(Locale.US, "max(%s)", column);
+    }
+
+    public static String _in(String column, int count){
+        return column + " IN (" + Joiner.on(",").join(Collections.nCopies(count, "?")) + ")";
+    }
+
+    public static String _notIn(String column, int count){
+        return column + " NOT IN (" + Joiner.on(",").join(count, "?") + ")";
     }
 
     private ContentValuesUtil() {

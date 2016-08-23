@@ -56,8 +56,7 @@ public class DeleteItemCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         Logger.d("DeleteItemCommand doCommand");
         itemGuid = getStringArg(ARG_ITEM_GUID);
-
-        operations = new ArrayList<>(1);
+        operations = new ArrayList<>();
         operations.add(ContentProviderOperation.newUpdate(ITEM_URI)
                 .withValues(DELETE_VALUES)
                 .withSelection(ItemTable.GUID + " = ?", new String[]{itemGuid}).build());
@@ -105,11 +104,67 @@ public class DeleteItemCommand extends AsyncCommand {
             }
         }
 
-        if (!InventoryUtils.pollItem(itemGuid, getContext(), getAppCommandContext(), operations, sql)) {
+        if (!InventoryUtils.removeComposers(itemGuid, getContext(), getAppCommandContext(), operations, sql)) {
             return failed();
-        } else {
-            return succeeded();
         }
+
+        shiftOrderNums(getCategory(getContext(), itemGuid));
+
+        return succeeded();
+    }
+
+    private static String getCategory(Context context, String itemGuid) {
+        Cursor c = ProviderAction.query(ITEM_URI)
+                .projection(ItemTable.CATEGORY_ID)
+                .where(ItemTable.GUID + " = ?", itemGuid)
+                .perform(context);
+
+        c.moveToFirst();
+        String categoryId = c.getString(0);
+        c.close();
+
+        return categoryId;
+    }
+
+    private void shiftOrderNums(String categoryId){
+        getContext().getContentResolver().update(operations.get(0).getUri(), DELETE_VALUES, ItemTable.GUID + " = ?", new String[]{itemGuid});
+        operations.remove(0);
+        InventoryUtils.shiftOrderNums(categoryId, getContext(), getAppCommandContext(), operations, sql);
+        /*ItemModel model = ProviderAction.query(ITEM_URI)
+                .projection(ItemTable.CATEGORY_ID, ItemTable.ORDER_NUM)
+                .where(ItemTable.GUID + " = ?", itemGuid)
+                .perform(getContext())
+                .toFluentIterable(new Function<Cursor, ItemModel>() {
+                    @Override
+                    public ItemModel apply(Cursor input) {
+                        ItemModel model = new ItemModel();
+                        model.categoryId = input.getString(0);
+                        model.orderNum = input.getInt(1);
+                        return model;
+                    }
+                }).first().orNull();
+
+        if (model == null)
+            return;
+
+        List<ItemModel> models = ProviderAction.query(ITEM_URI)
+                .projection(ItemTable.GUID, ItemTable.ORDER_NUM)
+                .where(ItemTable.CATEGORY_ID + " = ?", model.categoryId)
+                .where(ItemTable.ORDER_NUM + " > ?", model.orderNum)
+                .orderBy(ItemTable.ORDER_NUM)
+                .perform(getContext())
+                .toFluentIterable(new Function<Cursor, ItemModel>() {
+                    @Override
+                    public ItemModel apply(Cursor input) {
+                        ItemModel model = new ItemModel(input.getString(0));
+                        model.orderNum = input.getInt(1);
+                        return model;
+                    }
+                }).toImmutableList();
+
+        for (ItemModel m : models){
+            InventoryUtils.updateOrderNum(m.guid, m.orderNum - 1, getAppCommandContext(), operations, sql);
+        }*/
     }
 
     @Override

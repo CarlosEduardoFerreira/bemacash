@@ -23,7 +23,6 @@ import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
-import com.kaching123.tcr.util.CalculationUtil;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
@@ -248,10 +247,10 @@ public class QuickModifyFragment extends ItemModifiersFragment {
                 if(info == null){
                     info = new ItemInfo();
 
-                    info.price = _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE)));
+                    info.price = _decimal(c.getString(indexHolder.get(ItemTable.SALE_PRICE)), BigDecimal.ZERO);
                     info.title = c.getString(indexHolder.get(ItemTable.DESCRIPTION));
 
-                    info.discount = _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT)));
+                    info.discount = _decimal(c.getString(indexHolder.get(ItemTable.DISCOUNT)), BigDecimal.ZERO);
                     info.discountType = _discountType(c, indexHolder.get(ItemTable.DISCOUNT_TYPE));
 
                 }
@@ -266,8 +265,8 @@ public class QuickModifyFragment extends ItemModifiersFragment {
                 ModifierType modifierType = _modifierType(c, indexHolder.get(ModifierTable.TYPE));
 
                 BigDecimal subItemQty = _decimalQty(c.getString(indexHolder.get(ModifierTable.ITEM_SUB_QTY)));
-                BigDecimal subItemCost = _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ModifierSubItemTable.SALE_PRICE)));
-                BigDecimal modifierCost = _decimal(c.getString(indexHolder.get(ModifierTable.EXTRA_COST)));
+                BigDecimal subItemCost = _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ModifierSubItemTable.SALE_PRICE)), BigDecimal.ZERO);
+                BigDecimal modifierCost = _decimal(c.getString(indexHolder.get(ModifierTable.EXTRA_COST)), BigDecimal.ZERO);
 
                 BigDecimal extraCost = subItemQty != null && BigDecimal.ZERO.compareTo(subItemQty) != 0 ? getSubTotal(subItemQty, subItemCost) : modifierCost;
 

@@ -31,6 +31,7 @@ import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -150,7 +151,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
                                 UUID.randomUUID().toString(),
                                 c.getString(c.getColumnIndex(ModifierTable.MODIFIER_GUID)),
                                 saleItemGuid,
-                                _decimal(c, c.getColumnIndex(ModifierTable.EXTRA_COST)),
+                                _decimal(c, c.getColumnIndex(ModifierTable.EXTRA_COST), BigDecimal.ZERO),
                                 ModifierType.MODIFIER,
                                 c.getString(c.getColumnIndex(ModifierTable.ITEM_SUB_GUID)),
                                 _decimalQty(c, c.getColumnIndex(ModifierTable.ITEM_SUB_QTY)));
@@ -177,7 +178,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
                                 UUID.randomUUID().toString(),
                                 c.getString(c.getColumnIndex(ModifierTable.MODIFIER_GUID)),
                                 saleItemGuid,
-                                _decimal(c, c.getColumnIndex(ModifierTable.EXTRA_COST)),
+                                _decimal(c, c.getColumnIndex(ModifierTable.EXTRA_COST), BigDecimal.ZERO),
                                 type,
                                 c.getString(c.getColumnIndex(ModifierTable.ITEM_SUB_GUID)),
                                 _decimalQty(c, c.getColumnIndex(ModifierTable.ITEM_SUB_QTY)));

@@ -404,9 +404,20 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String SALE_PRICE = "sale_price";
 
-        @NotNull
         @Column(type = Column.Type.TEXT)
-        String UNITS_LABEL = "units_label";
+        String PRICE_1 = "price_1";
+
+        @Column(type = Column.Type.TEXT)
+        String PRICE_2 = "price_2";
+
+        @Column(type = Column.Type.TEXT)
+        String PRICE_3 = "price_3";
+
+        @Column(type = Column.Type.TEXT)
+        String PRICE_4 = "price_4";
+
+        @Column(type = Column.Type.TEXT)
+        String PRICE_5 = "price_5";
 
         @Column(type = Type.TEXT)
         String UNIT_LABEL_ID = "unit_label_id";
@@ -2243,6 +2254,99 @@ public abstract class ShopStore {
                 foreignKey(SaleIncentiveTable.SALE_ITEM_ID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID));
     }
 
+    @Table(TBPTable.TABLE_NAME)
+    public interface TBPTable  extends IBemaSyncTable{
+
+        String TABLE_NAME = "tbp";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String ID = "id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String DESCRIPTION = "description";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String PRICE_LEVEL = "price_level";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String IS_ACTIVE = "is_active";
+
+        @Column(type = Type.TEXT)
+        String MON_START = "mon_start";
+
+        @Column(type = Type.TEXT)
+        String MON_END = "mon_end";
+
+        @Column(type = Type.TEXT)
+        String TUE_START = "tue_start";
+
+        @Column(type = Type.TEXT)
+        String TUE_END = "tue_end";
+
+        @Column(type = Type.TEXT)
+        String WED_START = "wed_start";
+
+        @Column(type = Type.TEXT)
+        String WED_END = "wed_end";
+
+        @Column(type = Type.TEXT)
+        String THU_START = "thu_start";
+
+        @Column(type = Type.TEXT)
+        String THU_END = "thu_end";
+
+        @Column(type = Type.TEXT)
+        String FRI_START = "fri_start";
+
+        @Column(type = Type.TEXT)
+        String FRI_END = "fri_end";
+
+        @Column(type = Type.TEXT)
+        String SAT_START = "sat_start";
+
+        @Column(type = Type.TEXT)
+        String SAT_END = "sat_end";
+
+        @Column(type = Type.TEXT)
+        String SUN_START = "sun_start";
+
+        @Column(type = Type.TEXT)
+        String SUN_END = "sun_end";
+    }
+
+    @Table(TBPxRegisterTable.TABLE_NAME)
+    public interface TBPxRegisterTable extends IBemaSyncTable{
+
+        String TABLE_NAME = "tbp_x_register";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String TBP_ID = "tbp_id";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String REGISTER_ID = "register_id";
+    }
+    static {
+        applyForeignKeys(TBPxRegisterTable.TABLE_NAME,
+                foreignKey(TBPxRegisterTable.TBP_ID, TBPTable.TABLE_NAME, TBPTable.ID),
+                foreignKey(TBPxRegisterTable.REGISTER_ID, RegisterTable.TABLE_NAME, RegisterTable.ID));
+    }
+
 
     /**
      * views *
@@ -2775,11 +2879,13 @@ public abstract class ShopStore {
 
         String VIEW_NAME = "items_ext_view";
 
-        String MODIFIERS_COUNT = "mc";
-
-        String ADDONS_COUNT = "ac";
-
-        String OPTIONAL_COUNT = "oc";
+        String MODIFIERS_COUNT = "modifiers_count";
+        String ADDONS_COUNT = "addons_count";
+        String OPTIONAL_COUNT = "options_count";
+        String UNITS_COUNT = "units_count";
+        String AVAILABLE_UNITS_COUNT = "available_units_count";
+        String COMPOSERS_COUNT = "composers_count";
+        String RESTRICT_COMPOSERS_COUNT = "restrict_composers_count";
 
         @From(ItemTable.TABLE_NAME)
         String TABLE_ITEM = "item_table";
@@ -2824,7 +2930,7 @@ public abstract class ShopStore {
                 onColumn = ItemTable.GUID)
         String TABLE_ITEM_MATRIX = "item_matrix_table";
 
-        @Columns(ComposerTable.ID)
+        @Columns({ComposerTable.ID, ComposerTable.FREE_OF_CHARGE_COMPOSER})
         @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_HOST_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
         String TABLE_CHILD_COMPOSER = "child_composer_table";
 
@@ -2832,6 +2938,9 @@ public abstract class ShopStore {
         @Join(type = Join.Type.LEFT, joinTable = ComposerTable.TABLE_NAME, joinColumn = ComposerTable.ITEM_CHILD_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
         String TABLE_HOST_COMPOSER = "host_composer_table";
 
+        @Columns({UnitTable.ID, UnitTable.STATUS})
+        @Join(type = Join.Type.LEFT, joinTable = UnitTable.TABLE_NAME, joinColumn = UnitTable.ITEM_ID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.GUID)
+        String TABLE_UNIT = "unit_table";
     }
 
     @SimpleView(ShiftView.VIEW_NAME)
@@ -2902,7 +3011,7 @@ public abstract class ShopStore {
         String PRICE_TYPE = ItemExtView.TABLE_ITEM + "_" + ItemTable.PRICE_TYPE;
         String SALE_PRICE = ItemExtView.TABLE_ITEM + "_" + ItemTable.SALE_PRICE;
         String QUANTITY = ItemExtView.TABLE_ITEM + "_" + ItemTable.TMP_AVAILABLE_QTY;
-        String UNITS_LABEL = ItemExtView.TABLE_ITEM + "_" + ItemTable.UNITS_LABEL;
+        String UNITS_LABEL = ItemExtView.TABLE_UNIT_LABEL + "_" + UnitLabelTable.SHORTCUT;
         String STOCK_TRACKING = ItemExtView.TABLE_ITEM + "_" + ItemTable.STOCK_TRACKING;
         String ACTIVE_STATUS = ItemExtView.TABLE_ITEM + "_" + ItemTable.ACTIVE_STATUS;
         String DISCOUNTABLE = ItemExtView.TABLE_ITEM + "_" + ItemTable.DISCOUNTABLE;
@@ -3673,8 +3782,12 @@ public abstract class ShopStore {
         String TABLE_CHILD_ITEM = "item_child_table";
 
         @Columns(UnitLabelTable.SHORTCUT)
+        @Join(type = Join.Type.LEFT, joinTable = UnitLabelTable.TABLE_NAME, joinColumn = UnitLabelTable.GUID, onTableAlias = TABLE_HOST_ITEM, onColumn = ItemTable.UNIT_LABEL_ID)
+        String TABLE_HOST_UNIT_LABEL = "host_unit_label_table";
+
+        @Columns(UnitLabelTable.SHORTCUT)
         @Join(type = Join.Type.LEFT, joinTable = UnitLabelTable.TABLE_NAME, joinColumn = UnitLabelTable.GUID, onTableAlias = TABLE_CHILD_ITEM, onColumn = ItemTable.UNIT_LABEL_ID)
-        String TABLE_UNIT_LABEL = "unit_label_table";
+        String TABLE_CHILD_UNIT_LABEL = "child_unit_label_table";
     }
 
     @SimpleView(TipsReportView.VIEW_NAME)
@@ -3988,6 +4101,20 @@ public abstract class ShopStore {
 
         /*@Join(joinTable =  CustomerTable.TABLE_NAME, joinColumn = CustomerTable.LOYALTY_PLAN_ID, onTableAlias = TABLE_PLAN, onColumn = LoyaltyPlanTable.GUID)
         String TABLE_CUSTOMER = "customer_table";*/
+    }
+
+    @SimpleView(TBPRegisterView.VIEW_NAME)
+    public interface TBPRegisterView {
+        String VIEW_NAME = "register_tbp_view";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = VIEW_NAME;
+
+        @From(TBPxRegisterTable.TABLE_NAME)
+        String TABLE_TBP_X_REGISTER = "tbp_x_register_table";
+
+        @Join(joinTable = TBPTable.TABLE_NAME, joinColumn = TBPTable.ID, onTableAlias = TABLE_TBP_X_REGISTER, onColumn = TBPxRegisterTable.TBP_ID)
+        String TABLE_TBP = "tbp_table";
     }
 
     @RawQuery(RecalcQtyQuery.VIEW_NAME)

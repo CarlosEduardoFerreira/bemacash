@@ -134,9 +134,9 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             do {
                 if (result == null) {
                     result = new SaleOrderInfo(_bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
-                            _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),
+                            _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT), BigDecimal.ZERO),
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
-                            _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)));
+                            _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO));
                 }
                 readCursorRow(c, result);
             } while (c.moveToNext());
@@ -153,14 +153,14 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                     saleItemId,
                     c.getString(c.getColumnIndex(SaleItemTable.ITEM_GUID)),
                     c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)),
-                    _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.PRICE)),
+                    _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY), BigDecimal.ZERO),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.PRICE), BigDecimal.ZERO),
                     _bool(c, c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT)),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT), BigDecimal.ZERO),
                     _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                     _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)));
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX), BigDecimal.ZERO),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX2), BigDecimal.ZERO));
 
             result.map.put(saleItemId, value);
         }
@@ -173,9 +173,9 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
         if (_modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE)) == ModifierType.OPTIONAL) {
             extra = null;
         } else if (c.getString(c.getColumnIndex(SaleAddonTable.CHILD_ITEM_ID)) != null) {
-            extra = getSubTotal(_decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY)), _decimal(c, c.getColumnIndex(SaleAddonSubItemTable.SALE_PRICE)));
+            extra = getSubTotal(_decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY), BigDecimal.ZERO), _decimal(c, c.getColumnIndex(SaleAddonSubItemTable.SALE_PRICE), BigDecimal.ZERO));
         } else {
-            extra = _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST));
+            extra = _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST), BigDecimal.ZERO);
         }
 
         if (extra != null && value.totalPrice != null) {

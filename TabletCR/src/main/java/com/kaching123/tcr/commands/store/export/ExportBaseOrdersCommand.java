@@ -147,9 +147,9 @@ public abstract class ExportBaseOrdersCommand extends ExportCursorToFileCommand 
         String registerNum = c.getString(3);
         result.add(registerNum);
 
-        BigDecimal discount = _decimal(c.getString(4));
-        BigDecimal tax = _decimal(c.getString(5));
-        BigDecimal total = _decimal(c.getString(6));
+        BigDecimal discount = _decimal(c.getString(4), BigDecimal.ZERO);
+        BigDecimal tax = _decimal(c.getString(5), BigDecimal.ZERO);
+        BigDecimal total = _decimal(c.getString(6), BigDecimal.ZERO);
 
         result.add(_decimal(total.subtract(tax).add(discount)));
         result.add(_decimal(discount));

@@ -1,12 +1,10 @@
 package com.kaching123.tcr.store.composer;
 
-import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
 
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
 import com.kaching123.tcr.model.ComposerModel;
@@ -26,7 +24,7 @@ import java.util.ArrayList;
  * @author Ivan v. Rikhmayer
  *         This class is intended to
  */
-public class AddComposerCommand extends AsyncCommand {
+public class AddComposerCommand extends BaseComposerCommand {
 
     private static final Uri COMPOSER_URI = ShopProvider.contentUri(ShopStore.ComposerTable.URI_CONTENT);
 
@@ -46,7 +44,7 @@ public class AddComposerCommand extends AsyncCommand {
         JdbcConverter jdbcConverter = JdbcFactory.getConverter(ShopStore.ComposerTable.TABLE_NAME);
 
         ComposerModel composer = (ComposerModel) getArgs().getSerializable(PARAM_COMPOSER_ITEM);
-
+        hostItemId = composer.itemHostId;
 
         /*****************************************************************************************************/
         ops.add(ContentProviderOperation.newInsert(COMPOSER_URI).withValues(composer.toValues()).build());

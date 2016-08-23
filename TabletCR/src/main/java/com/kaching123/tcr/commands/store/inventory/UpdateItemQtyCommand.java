@@ -3,10 +3,8 @@ package com.kaching123.tcr.commands.store.inventory;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 
-import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.ItemsJdbcConverter;
@@ -17,7 +15,6 @@ import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
-import com.kaching123.tcr.util.MovementUtils;
 import com.telly.groundy.TaskResult;
 
 import java.math.BigDecimal;
@@ -25,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 
 /**

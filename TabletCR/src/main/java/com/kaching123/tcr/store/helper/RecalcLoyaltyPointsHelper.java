@@ -36,7 +36,7 @@ public class RecalcLoyaltyPointsHelper extends ProviderHelper {
 
         BigDecimal points = null;
         if (c.moveToFirst()){
-            points = _decimal(c, 0);
+            points = _decimal(c, 0, BigDecimal.ZERO);
         }
         c.close();
 
@@ -74,7 +74,7 @@ public class RecalcLoyaltyPointsHelper extends ProviderHelper {
 
         while (c.moveToNext()){
             String customerId = c.getString(0);
-            BigDecimal loyaltyPoints = _decimal(c, 1);
+            BigDecimal loyaltyPoints = _decimal(c, 1, BigDecimal.ZERO);
             ContentValues cv = new ContentValues(1);
             cv.put(CustomerTable.TMP_LOYALTY_POINTS, _decimal(loyaltyPoints));
 

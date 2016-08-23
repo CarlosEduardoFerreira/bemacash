@@ -5,6 +5,8 @@ import android.database.Cursor;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.store.ShopSchema2.ComposerView2.ItemHostTable;
 
+import java.math.BigDecimal;
+
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
@@ -23,7 +25,6 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
             ItemHostTable.PRICE_TYPE,
             ItemHostTable.SALE_PRICE,
             ItemHostTable.TMP_AVAILABLE_QTY,
-            ItemHostTable.UNITS_LABEL,
             ItemHostTable.UNIT_LABEL_ID,
             ItemHostTable.STOCK_TRACKING,
             ItemHostTable.ACTIVE_STATUS,
@@ -45,9 +46,13 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 c.getString(indexHolder.get(ItemHostTable.EAN_CODE)),
                 c.getString(indexHolder.get(ItemHostTable.PRODUCT_CODE)),
                 _priceType(c, indexHolder.get(ItemHostTable.PRICE_TYPE)),
-                _decimal(c.getString(indexHolder.get(ItemHostTable.SALE_PRICE))),
+                _decimal(c.getString(indexHolder.get(ItemHostTable.SALE_PRICE)), BigDecimal.ZERO),
+                null,
+                null,
+                null,
+                null,
+                null,
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.TMP_AVAILABLE_QTY))),
-                c.getString(indexHolder.get(ItemHostTable.UNITS_LABEL)),
                 c.getString(indexHolder.get(ItemHostTable.UNIT_LABEL_ID)),
                 null,
                 c.getInt(indexHolder.get(ItemHostTable.STOCK_TRACKING)) == 1,
@@ -57,12 +62,16 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 null,
                 null,
                 false,
-                _decimal(c.getString(indexHolder.get(ItemHostTable.COST))),
+                _decimal(c.getString(indexHolder.get(ItemHostTable.COST)), BigDecimal.ZERO),
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.MINIMUM_QTY))),
                 _decimalQty(c.getString(indexHolder.get(ItemHostTable.RECOMMENDED_QTY))),
                 null,
                 null,
                 null,
+                0,
+                0,
+                0,
+                0,
                 0,
                 0,
                 0,
@@ -75,15 +84,7 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 0, // kds alias
                 0,
                 false,
-                false,
-                null,
-                false,
-                null,
-                null,
-                null,
-                null,
-                false
-        );
+                false, null, false, null, null, null, null, false);
     }
 
 

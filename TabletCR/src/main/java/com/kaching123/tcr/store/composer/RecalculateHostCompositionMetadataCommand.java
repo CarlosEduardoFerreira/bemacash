@@ -122,7 +122,7 @@ public class RecalculateHostCompositionMetadataCommand extends AsyncCommand {
                         .perform(getContext());
                 try {
                     if (c.moveToFirst()) {
-                        quantity = _decimal(c, 2);
+                        quantity = _decimal(c, 2, BigDecimal.ZERO);
                     } else {
                         break;
                     }

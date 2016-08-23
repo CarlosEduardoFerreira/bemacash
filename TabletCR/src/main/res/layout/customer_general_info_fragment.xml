@@ -11,7 +11,7 @@
         android:stretchColumns="1">
 
         <TableRow
-            android:minHeight="70dp">
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_street" />
@@ -27,7 +27,8 @@
                 android:singleLine="true"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_street2" />
@@ -43,7 +44,8 @@
                 android:singleLine="true" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_city" />
@@ -59,7 +61,8 @@
                 android:singleLine="true" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_state" />
@@ -75,7 +78,8 @@
                 android:singleLine="true" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_country" />
@@ -91,7 +95,8 @@
                 android:singleLine="true" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_zip" />
@@ -116,7 +121,8 @@
         android:layout_marginLeft="@dimen/activity_column_margin"
         android:stretchColumns="1">
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_phone" />
@@ -132,7 +138,8 @@
                 android:singleLine="true" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_sex" />
@@ -143,7 +150,8 @@
                 android:layout_height="wrap_content"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_identification" />
@@ -157,7 +165,8 @@
                 android:maxLength="13"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_email_promotion" />
@@ -166,7 +175,7 @@
                 android:id="@+id/email_promotion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
+                style="@style/EditItem.Table.CheckBox"
                 android:layout_marginTop="12dp"/>
         </TableRow>
 
@@ -179,7 +188,8 @@
         android:layout_marginLeft="@dimen/activity_column_margin"
         android:stretchColumns="1">
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_bonus_point" />
@@ -195,7 +205,8 @@
                 android:maxLength="6"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_birthday" />
@@ -209,7 +220,8 @@
                 android:singleLine="true" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_loyalty_barcode" />
@@ -223,7 +235,8 @@
                 android:singleLine="true" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/customer_label_loyalty_plan" />

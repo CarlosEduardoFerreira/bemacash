@@ -138,7 +138,14 @@ public final class UiHelper {
     }
 
     public static BigDecimal getDecimalValue(TextView editText) {
-        String text = editText.getText().toString().replaceAll("\\,", "");
+        return getDecimalValue(editText.getText());
+    }
+
+    public static BigDecimal getDecimalValue(CharSequence s){
+        if (s == null)
+            return BigDecimal.ZERO;
+
+        String text = s.toString().replaceAll(",", "");
         try {
             if (text.endsWith("-")) {
                 return negativeQty(new BigDecimal(text.substring(0, text.length() - 1)));
@@ -243,7 +250,7 @@ public final class UiHelper {
         if (decimal == null) {
             textView.setText(null);
         } else if (isPcsUnit){
-            textView.setText(quantityIntegerFormat.format(decimal));
+            textView.setText(integralIntegerFormat.format(decimal));
         } else{
             textView.setText(quantityFormat.format(decimal));
         }

@@ -117,7 +117,7 @@ public final class ZReportQuery extends XReportQuery {
                 .perform(context);
 
         while (tipsCursor.moveToNext()) {
-            BigDecimal tips = _decimal(tipsCursor, 0);
+            BigDecimal tips = _decimal(tipsCursor, 0, BigDecimal.ZERO);
             if (tips.compareTo(BigDecimal.ZERO) > 0) {
                 positiveTips = positiveTips.add(tips);
             } else {
@@ -157,7 +157,7 @@ public final class ZReportQuery extends XReportQuery {
         ArrayList<BigDecimal> cashDropsPayouts = new ArrayList<BigDecimal>();
 
         while (cashDrawerCursor.moveToNext()) {
-            cashDropsPayouts.add(_decimal(cashDrawerCursor.getString(cashDrawerCursor.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+            cashDropsPayouts.add(_decimal(cashDrawerCursor.getString(cashDrawerCursor.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT)), BigDecimal.ZERO));
         }
         cashDrawerCursor.close();
 
@@ -196,10 +196,10 @@ public final class ZReportQuery extends XReportQuery {
 
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
         while (c.moveToNext()) {
-            BigDecimal transactionAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.AMOUNT)));
+            BigDecimal transactionAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.AMOUNT)), BigDecimal.ZERO);
             //BigDecimal transactionTip = _decimal(c.getString(c.getColumnIndex(EmployeeTipsTable.AMOUNT)));
             BigDecimal amount = transactionAmount;//.subtract(tips);
-            BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK)));
+            BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK)), BigDecimal.ZERO);
             cashBack = cashBackAmount;
             PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.GATEWAY));
             if (gateway.isCreditCard()) {
@@ -241,7 +241,7 @@ public final class ZReportQuery extends XReportQuery {
                 .perform(context);
 
         while (c.moveToNext()) {
-            BigDecimal amount = _decimal(c, 0);
+            BigDecimal amount = _decimal(c, 0, BigDecimal.ZERO);
             TipsModel.PaymentType type = _tipsPaymentType(c, 1);
 
 //            if (type == PaymentType.CASH) {
@@ -300,9 +300,9 @@ public final class ZReportQuery extends XReportQuery {
 
         while (cur.moveToNext()) {
             if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == MovementType.DROP.getValue())
-                safeDrops = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+                safeDrops = safeDrops.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT)), BigDecimal.ZERO));
             else if (cur.getInt(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == MovementType.PAYOUT.getValue())
-                payOuts = payOuts.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+                payOuts = payOuts.add(_decimal(cur.getString(cur.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT)), BigDecimal.ZERO));
         }
         cur.close();
 
@@ -410,7 +410,7 @@ public final class ZReportQuery extends XReportQuery {
                     .perform(context);
 
             while (tipsCursor.moveToNext()) {
-                BigDecimal tips = _decimal(tipsCursor, 0);
+                BigDecimal tips = _decimal(tipsCursor, 0, BigDecimal.ZERO);
                 if (tips.compareTo(BigDecimal.ZERO) > 0) {
                     positiveTips = positiveTips.add(tips);
                 } else {
@@ -420,10 +420,10 @@ public final class ZReportQuery extends XReportQuery {
 
             String orderGuid = "";
             while (c.moveToNext()) {
-                BigDecimal transactionAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.AMOUNT)));
-                BigDecimal transactionTip = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.EmployeeTipsTable.AMOUNT)));
+                BigDecimal transactionAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.AMOUNT)), BigDecimal.ZERO);
+                BigDecimal transactionTip = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.EmployeeTipsTable.AMOUNT)), BigDecimal.ZERO);
                 BigDecimal amount = transactionAmount;//.subtract(transactionTip);
-                BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK)));
+                BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK)), BigDecimal.ZERO);
                 cashBack = cashBackAmount;
                 PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.GATEWAY));
                 if (gateway.isCreditCard()) {
@@ -484,7 +484,7 @@ public final class ZReportQuery extends XReportQuery {
                     .perform(context);
 
             while (c.moveToNext()) {
-                BigDecimal amount = _decimal(c, 0);
+                BigDecimal amount = _decimal(c, 0, BigDecimal.ZERO);
                 TipsModel.PaymentType type = _tipsPaymentType(c, 1);
 
 //                if (type == PaymentType.CASH) {
@@ -513,7 +513,7 @@ public final class ZReportQuery extends XReportQuery {
         ArrayList<BigDecimal> cashDropsPayouts = new ArrayList<BigDecimal>();
 
         while (cashDrawerCursor.moveToNext()) {
-            cashDropsPayouts.add(_decimal(cashDrawerCursor.getString(cashDrawerCursor.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT))));
+            cashDropsPayouts.add(_decimal(cashDrawerCursor.getString(cashDrawerCursor.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT)), BigDecimal.ZERO));
         }
         cashDrawerCursor.close();
 
@@ -566,9 +566,9 @@ public final class ZReportQuery extends XReportQuery {
                 .perform(context);
 
         while (c.moveToNext()) {
-            BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY));
+            BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO);
 
-            BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY));
+            BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY), BigDecimal.ZERO);
             if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
                     ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
                     c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
@@ -591,9 +591,9 @@ public final class ZReportQuery extends XReportQuery {
                 .perform(context);
 
         while (c.moveToNext()) {
-            BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY));
+            BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO);
 
-            BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY));
+            BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY), BigDecimal.ZERO);
             if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
                     ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
                     c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {

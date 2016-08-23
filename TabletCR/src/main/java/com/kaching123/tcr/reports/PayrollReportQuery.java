@@ -52,11 +52,11 @@ public class PayrollReportQuery {
             String guid = commissionCursor.getString(0);
             BigDecimal commission = commissions.get(guid);
             if (commission == null){
-                commission = _decimal(commissionCursor, 1);
+                commission = _decimal(commissionCursor, 1, BigDecimal.ZERO);
                 commissions.put(guid, commission);
                 continue;
             }
-            commission = commission.add(_decimal(commissionCursor, 1));
+            commission = commission.add(_decimal(commissionCursor, 1, BigDecimal.ZERO));
             commissions.put(guid, commission);
         }
         commissionCursor.close();
@@ -80,7 +80,7 @@ public class PayrollReportQuery {
             EmployeePayrollInfo info = result.get(guid);
             if(info == null){
                 BigDecimal commission = commissions.get(guid);
-                info = new EmployeePayrollInfo(concatFullname(timeCursor.getString(timeCursor.getColumnIndex(EmployeeTable.FIRST_NAME)), timeCursor.getString(timeCursor.getColumnIndex(EmployeeTable.LAST_NAME))), _decimal(timeCursor, timeCursor.getColumnIndex(EmployeeTable.HOURLY_RATE)), commission);
+                info = new EmployeePayrollInfo(concatFullname(timeCursor.getString(timeCursor.getColumnIndex(EmployeeTable.FIRST_NAME)), timeCursor.getString(timeCursor.getColumnIndex(EmployeeTable.LAST_NAME))), _decimal(timeCursor, timeCursor.getColumnIndex(EmployeeTable.HOURLY_RATE), BigDecimal.ZERO), commission);
                 result.put(guid, info);
             }
             TimeInfo timeInfo = new TimeInfo(clockGuid, new Date(clockIn), clockOut == 0 ? null : new Date(clockOut));

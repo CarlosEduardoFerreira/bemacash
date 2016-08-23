@@ -53,6 +53,13 @@ public final class DateUtils {
         }
     };
 
+    private static final ThreadLocal<DateFormat> timeOnlyFullFormatThreadLocal = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("HH:mm:ss");
+        }
+    };
+
     private static final ThreadLocal<DateFormat> timeWithSecondsOnlyFormatThreadLocal = new ThreadLocal<DateFormat>() {
         @Override
         protected DateFormat initialValue() {
@@ -180,6 +187,12 @@ public final class DateUtils {
         if (date == null)
             return null;
         return timeOnlyFormatThreadLocal.get().format(date);
+    }
+
+    public static String timeOnlyFullFormat(Date date) {
+        if (date == null)
+            return null;
+        return timeOnlyFullFormatThreadLocal.get().format(date);
     }
 
     public static String timeWithSecondsOnlyFormat(Date date) {

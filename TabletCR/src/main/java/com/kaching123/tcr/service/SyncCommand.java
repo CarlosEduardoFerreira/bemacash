@@ -65,6 +65,8 @@ import com.kaching123.tcr.store.ShopStore.LoyaltyIncentivePlanTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyPlanTable;
 import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
+import com.kaching123.tcr.store.ShopStore.TBPTable;
+import com.kaching123.tcr.store.ShopStore.TBPxRegisterTable;
 import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
 import com.kaching123.tcr.store.ShopStore.BillPaymentDescriptionTable;
@@ -162,7 +164,6 @@ public class SyncCommand implements Runnable {
             LoyaltyIncentivePlanTable.URI_CONTENT,
             LoyaltyPointsMovementTable.URI_CONTENT,
             SaleIncentiveTable.URI_CONTENT,
-
             SaleOrderTable.URI_CONTENT,
             SaleItemTable.URI_CONTENT,
             SaleAddonTable.URI_CONTENT,
@@ -173,7 +174,9 @@ public class SyncCommand implements Runnable {
             EmployeeCommissionsTable.URI_CONTENT,
             VariantItemTable.URI_CONTENT,
             VariantSubItemTable.URI_CONTENT,
-            ItemMatrixTable.URI_CONTENT
+            ItemMatrixTable.URI_CONTENT,
+            TBPTable.URI_CONTENT,
+            TBPxRegisterTable.URI_CONTENT
     };
 
     private Context service;
@@ -393,6 +396,8 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, VariantItemTable.TABLE_NAME, VariantItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, VariantSubItemTable.TABLE_NAME, VariantSubItemTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ItemMatrixTable.TABLE_NAME, ItemMatrixTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, TBPTable.TABLE_NAME, TBPTable.ID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, TBPxRegisterTable.TABLE_NAME, TBPxRegisterTable.ID, employee, serverLastTimestamp);
 
                     //loyalty
                     count += syncSingleTable2(service, api2, LoyaltyIncentiveTable.TABLE_NAME, LoyaltyIncentiveTable.GUID, employee, serverLastTimestamp);
@@ -709,6 +714,10 @@ public class SyncCommand implements Runnable {
             return false;
         if (!isTableEmpty(context, SaleIncentiveTable.TABLE_NAME, SaleIncentiveTable.GUID))
             return false;
+        if (!isTableEmpty(context, TBPTable.TABLE_NAME, TBPTable.ID))
+            return false;
+        if (!isTableEmpty(context, TBPxRegisterTable.TABLE_NAME, TBPxRegisterTable.ID))
+            return false;
 
         return true;
     }
@@ -828,6 +837,8 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, ComposerTable.TABLE_NAME, ComposerTable.ID);
                 count += syncLocalSingleTable(service, ItemMovementTable.TABLE_NAME, ItemMovementTable.GUID);
                 count += syncLocalSingleTable(service, LoyaltyIncentiveItemTable.TABLE_NAME, LoyaltyIncentiveItemTable.GUID);
+                count += syncLocalSingleTable(service, TBPTable.TABLE_NAME, TBPTable.ID);
+                count += syncLocalSingleTable(service, TBPxRegisterTable.TABLE_NAME, TBPxRegisterTable.ID);
 
                 //sale
                 count += syncLocalSingleTable(service, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, SaleOrderTable.PARENT_ID, true);
@@ -1776,7 +1787,9 @@ public class SyncCommand implements Runnable {
         LOYALTY_PLAN(LoyaltyPlanTable.TABLE_NAME, true),
         LOYALTY_INCENTIVE_PLAN(LoyaltyIncentivePlanTable.TABLE_NAME, true),
         LOYALTY_POINTS_MOVEMENT(LoyaltyPointsMovementTable.TABLE_NAME, true),
-        SALE_INCENTIVE(SaleIncentiveTable.TABLE_NAME, true);
+        SALE_INCENTIVE(SaleIncentiveTable.TABLE_NAME, true),
+        TBP(TBPTable.TABLE_NAME, true),
+        TBP_X_REGISTER(TBPxRegisterTable.TABLE_NAME, true);
 
         public final String tableName;
         public final boolean isParent;

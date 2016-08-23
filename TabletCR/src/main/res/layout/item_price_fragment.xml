@@ -20,7 +20,7 @@
                 android:id="@+id/discountable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
+                style="@style/EditItem.Table.CheckBox"
                 android:checked="true"/>
         </TableRow>
 
@@ -62,7 +62,7 @@
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label.Required"
-                android:text="@string/item_activity_discount_type" />
+                android:text="@string/item_activity_price_type" />
 
             <Spinner
                 android:id="@+id/price_type"
@@ -80,7 +80,7 @@
                 android:id="@+id/taxable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
+                style="@style/EditItem.Table.CheckBox"
                 android:checked="true"/>
         </TableRow>
 
@@ -116,7 +116,7 @@
                 android:id="@+id/commission_eligible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
+                style="@style/EditItem.Table.CheckBox"
                 android:checked="true"/>
         </TableRow>
 
@@ -135,6 +135,7 @@
         </TableRow>
 
         <TableRow
+            android:id="@+id/for_sale_row"
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
@@ -144,7 +145,7 @@
                 android:id="@+id/for_sale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
+                style="@style/EditItem.Table.CheckBox"
                 android:checked="true"/>
         </TableRow>
     </TableLayout>

@@ -19,8 +19,8 @@ import com.kaching123.tcr.store.ShopSchema2.SaleReportItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleReportItemsView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.SaleReportItemsView;
-import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.Sale;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -133,9 +133,9 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
                     c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE);
                     c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE);
                     r = new SaleOrderInfo(_bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
-                            _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT)),
+                            _decimal(c, c.getColumnIndex(SaleOrderTable.DISCOUNT), BigDecimal.ZERO),
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
-                            _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)));
+                            _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO));
                     result.put(orderGuid, r);
                 }
                 readCursorRow(c, r, context);
@@ -175,15 +175,15 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
                     description == null ? c.getString(descIndex) : description,
                     c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
                     productId == null ? c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)) : productId,
-                    _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.PRICE)),
+                    _decimalQty(c, c.getColumnIndex(SaleItemTable.QUANTITY), BigDecimal.ZERO),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.PRICE), BigDecimal.ZERO),
                     _bool(c, c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT)),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT), BigDecimal.ZERO),
                     _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                     _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),
-                    _decimal(c, c.getColumnIndex(ItemTable.COST)),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX), BigDecimal.ZERO),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX2), BigDecimal.ZERO),
+                    _decimal(c, c.getColumnIndex(ItemTable.COST), BigDecimal.ZERO),
                     c.getString(c.getColumnIndex(CategoryTable.DEPARTMENT_GUID)),
                     c.getString(c.getColumnIndex(DepartmentTable.TITLE)),
                     c.getString(c.getColumnIndex(ItemTable.CATEGORY_ID)),
@@ -193,9 +193,9 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
             result.map.put(saleItemId, value);
         }
 
-        value.totalPrice = _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE));
-        value.finalDiscount = _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT));
-        value.finalTax = _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX));
+        value.totalPrice = _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE), BigDecimal.ZERO);
+        value.finalDiscount = _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT), BigDecimal.ZERO);
+        value.finalTax = _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX), BigDecimal.ZERO);
         /*BigDecimal extra = _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST));
         if (extra != null && value.totalPrice != null) {
             value.totalPrice = value.totalPrice.add(extra);

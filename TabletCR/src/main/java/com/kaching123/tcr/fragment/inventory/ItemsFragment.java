@@ -78,7 +78,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
     public boolean child;
 
     @Override
-    protected IObjectsAdapter<ItemExModel> createAdapter() {
+    protected ObjectsCursorAdapter<ItemExModel> createAdapter() {
         Adapter adapter = new Adapter(getActivity(), draggable);
         list.setAdapter(adapter);
         return adapter;
@@ -104,49 +104,57 @@ public class ItemsFragment extends BaseItemsPickFragment {
     }
 
     @Override
-    public void setCategory(String categoryGuid) {
-        draggable = !LOAD_ALL_CATEGORIES.equals(categoryGuid);
-        list.setDragEnabled(draggable);
-        ((Adapter) adapter).setDraggable(draggable);
-        super.setCategory(categoryGuid);
-    }
-
-    @Override
     public Loader<List<ItemExModel>> onCreateLoader(int loaderId, Bundle args) {
         Logger.d("ItemsListFragment onCreateLoader");
+        boolean draggable = true;
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(URI_ITEMS);
         builder.projection(ItemExFunction.PROJECTION);
 
         //builder.orderBy(sortByName && LOAD_ALL_CATEGORIES.equals(categoryGuid)? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
-        builder.orderBy(sortByName ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM + "  COLLATE NOCASE");
+        builder.orderBy(sortByName ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
+        draggable &= !sortByName;
 
         builder.where(ItemTable.IS_DELETED + " = ?", 0);
 
         if (categoryGuid != null && !LOAD_ALL_CATEGORIES.equals(categoryGuid)) {
             builder.where(ItemTable.CATEGORY_ID + " = ? ", categoryGuid);
+        }else{
+            draggable = false;
         }
 
         if (!TextUtils.isEmpty(textFilter)) {
             builder.where(ItemTable.DESCRIPTION + " like ? " + " OR " + ItemTable.EAN_CODE + " like ? ", "%" + textFilter + "%", "%" + textFilter + "%");
+            draggable = false;
         }
         if (this.useOnlyNearTheEnd) {
             builder.where(ItemTable.STOCK_TRACKING + " = ? ", "1");
             builder.where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY));
+            draggable = false;
         }
 
         if (serial) {
             builder.where(ItemTable.SERIALIZABLE + " = ? ", "1");
+            draggable = false;
         } else if (composer) {
             builder.where(ShopSchema2.ItemExtView2.HostComposerTable.ID + " IS NOT NULL");
+            draggable = false;
         } else if (composition) {
             builder.where(ShopSchema2.ItemExtView2.ChildComposerTable.ID + " IS NOT NULL");
+            draggable = false;
         } else if (reference) {
             builder.where(ItemTable.ITEM_REF_TYPE + " <> ? ", "0");
+            draggable = false;
         } else if (child) {
             builder.where(ItemTable.REFERENCE_ITEM_ID + " IS NOT NULL OR " + ShopSchema2.ItemExtView2.ItemMatrixTable.PARENT_GUID + " IS NOT NULL");
+            draggable = false;
         } else if (forSale) {
             builder.where(ItemTable.SALABLE + " = ? ", "0");
+            draggable = false;
         }
+
+        ((Adapter) adapter).setDraggable(draggable);
+        list.setDragEnabled(draggable);
+
         Loader<List<ItemExModel>> loader = builder.transform(new ItemExFunction()).build(getActivity());
         return loader;
     }
@@ -329,7 +337,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
                     showPrice(holder.totalCost, getSubTotal(item.availableQty.setScale(0, BigDecimal.ROUND_FLOOR), item.cost));
                 } else {
                     showBrandQty(holder.qty, item.availableQty);
-                    holder.units.setText(UnitLabelModel.getUnitLabelShortcut(getContext(), item));
+                    holder.units.setText(item.shortCut);
                     showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
                 }
             } else {
@@ -344,7 +352,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
                     showPrice(holder.totalCost, getSubTotal(item.availableQty.setScale(0, BigDecimal.ROUND_FLOOR), item.cost));
                 } else {
                     showBrandQty(holder.qty, item.availableQty);
-                    holder.units.setText(UnitLabelModel.getUnitLabelShortcut(getContext(), item));
+                    holder.units.setText(item.shortCut);
                     showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
                 }
             } else {
@@ -367,41 +375,23 @@ public class ItemsFragment extends BaseItemsPickFragment {
         }
 
         @Override
-        public void drop(int from, int to) {
-            try {
-                super.drop(from, to);
-                HANDLER.removeCallbacksAndMessages(null);
-                HANDLER.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            updateItemOrder();
-                        } catch (Exception bunny) {
-                        }
-                    }
-                }, 3000);
+        public void drop(final int from, final int to) {
+            super.drop(from, to);
 
-            } catch (CursorIndexOutOfBoundsException pokemon) {
-            }
+            if (from == to)
+                return;
+            updateItemOrder(from, to);
         }
 
-        private void updateItemOrder() {
-            String[] guids = new String[getCount()];
-            for (int i = 0; i < getCount(); i++) {
-                guids[i] = getItem(i).guid;
+        private void updateItemOrder(int from, int to) {
+            int start = Math.min(from, to);
+            int end = Math.max(from, to);
+            String[] guids = new String[end-start + 1];
+            for (int i = 0; i < end - start + 1; i++) {
+                guids[i] = getItem(i + start).guid;
             }
 
-            UpdateItemOrderCommand.start(getContext(), guids, new BaseUpdateItemOrderCommandCallback() {
-                @Override
-                protected void onUpdateSuccess() {
-                    Logger.d("Update item order succeeded");
-                }
-
-                @Override
-                protected void onUpdateFailure() {
-                    Logger.d("Update item order failed");
-                }
-            });
+            UpdateItemOrderCommand.start(getContext(), guids, start);
         }
 
         public void setDraggable(boolean draggable) {

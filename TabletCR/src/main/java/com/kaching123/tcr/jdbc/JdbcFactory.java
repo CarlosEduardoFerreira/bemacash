@@ -32,6 +32,8 @@ import com.kaching123.tcr.jdbc.converters.SaleOrderItemAddonJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ShiftJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.TBPJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.TBPxRegisterJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.TaxGroupJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.TipsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.UnitLabelJdbcConverter;
@@ -72,6 +74,8 @@ import com.kaching123.tcr.model.SaleModifierModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.ShiftModel;
+import com.kaching123.tcr.model.TBPModel;
+import com.kaching123.tcr.model.TBPxRegisterModel;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.Unit;
@@ -107,6 +111,8 @@ import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
+import com.kaching123.tcr.store.ShopStore.TBPTable;
+import com.kaching123.tcr.store.ShopStore.TBPxRegisterTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -349,6 +355,18 @@ public class JdbcFactory {
 
         API_METHOD.put(SaleIncentiveTable.TABLE_NAME, "sale_incentive");
         API_METHOD2.put(SaleIncentiveModel.class, "sale_incentive");
+
+        CONVERTERS.put(ShopStore.TBPTable.TABLE_NAME, c = new TBPJdbcConverter());
+        CONVERTERS2.put(TBPModel.class, c);
+
+        API_METHOD.put(TBPTable.TABLE_NAME, "time_based_pricing");
+        API_METHOD2.put(TBPModel.class, "time_based_pricing");
+
+        CONVERTERS.put(ShopStore.TBPxRegisterTable.TABLE_NAME, c = new TBPxRegisterJdbcConverter());
+        CONVERTERS2.put(TBPxRegisterModel.class, c);
+
+        API_METHOD.put(TBPxRegisterTable.TABLE_NAME, "time_based_pricing_register");
+        API_METHOD2.put(TBPxRegisterModel.class, "time_based_pricing_register");
     }
 
     public static JdbcConverter getConverter(String tableName) {

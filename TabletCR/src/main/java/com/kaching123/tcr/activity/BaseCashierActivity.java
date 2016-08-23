@@ -62,13 +62,9 @@ import com.kaching123.tcr.commands.payment.WebCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackRefundCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSaleCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackVoidCommand;
-import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorGiftCardReloadCommand;
-import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.prepaid.BillPaymentDescriptionCommand;
-import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.print.pos.BasePrintCommand;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
-import com.kaching123.tcr.commands.print.pos.ReprintRefundCommand;
 import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
@@ -85,7 +81,6 @@ import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand.BaseSuccessOrderCommandCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
-import com.kaching123.tcr.commands.store.user.BaseClockInOutCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
@@ -112,7 +107,6 @@ import com.kaching123.tcr.fragment.edit.SaleOrderDiscountEditFragment;
 import com.kaching123.tcr.fragment.edit.TaxEditFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
-import com.kaching123.tcr.fragment.saleorder.GiftCardFragmentDialog;
 import com.kaching123.tcr.fragment.saleorder.HoldFragmentDialog;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHandlerHandler;
@@ -123,9 +117,6 @@ import com.kaching123.tcr.fragment.tendering.ChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.ChooseCustomerDialog.CustomerPickListener;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment.RefundAmount;
-import com.kaching123.tcr.fragment.tendering.pax.PAXReloadFragmentDialog;
-import com.kaching123.tcr.fragment.tendering.payment.GiftCardAmountFragmentDialog;
-import com.kaching123.tcr.fragment.tendering.payment.PayCashFragmentDialog;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
@@ -135,10 +126,8 @@ import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
-import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
@@ -155,7 +144,6 @@ import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
-import com.kaching123.tcr.print.processor.GiftCardBillingResult;
 import com.kaching123.tcr.processor.LoyaltyProcessor;
 import com.kaching123.tcr.processor.LoyaltyProcessor.LoyaltyProcessorCallback;
 import com.kaching123.tcr.processor.MoneybackProcessor;
@@ -227,6 +215,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 5;
     private static final int LOADER_SEARCH_BARCODE = 10;
     private static final int LOADER_SALE_INCENTIVES = 12;
+    private static final int LOADER_TBP = 13;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
 
@@ -317,6 +306,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private ArrayList<GiftCardBillingResult> giftCardResultList;
     protected String strItemCount;
     protected int saleItemCount;
+    private List<Integer> priceLevels = Collections.EMPTY_LIST;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -381,14 +371,17 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         bindToDisplayService();
         bindToScaleService();
-
+        tbpLoadFuture = tbpLoadScheduler.scheduleWithFixedDelay(tbpLoadTask, 0, 30, TimeUnit.SECONDS);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+
         unbindFromDisplayService();
         unbindFromScaleService();
+        if (tbpLoadFuture != null)
+            tbpLoadFuture.cancel(true);
         if (!isFinishing())
             return;
 
@@ -470,13 +463,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         orderItemListFragment.setItemsListHandler(new IItemsListHandlerHandler() {
 
-/*
-            @Override
-            public void onBarcodeSearched(ItemExModel item, String barcode) {
-                tryToAddByBarcode(item, barcode);
-            }
-*/
-
             @Override
             public void onEditItemModifiers(String saleItemGuid,
                                             String itemGuid) {
@@ -548,7 +534,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         releaseResultList = new ArrayList<PrepaidReleaseResult>();
         giftCardResultList = new ArrayList<GiftCardBillingResult>();
-
     }
 
 
@@ -1584,7 +1569,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void addItemModel(final ItemExModel model, final ArrayList<String> modifierGiud, final ArrayList<String> addonsGuids,
                               final ArrayList<String> optionalGuids, final BigDecimal price, final BigDecimal quantity, final boolean checkDrawerState, Unit unit) {
-        if (model == null) {
+        if (model == null){
             notifyLoyaltyProcessorItemAddedToOrder(false);
             return;
         }
@@ -1601,7 +1586,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                          ArrayList<String> modifierGiud,
                          ArrayList<String> addonsGuids,
                          ArrayList<String> optionalGuids, BigDecimal price, BigDecimal quantity, boolean checkDrawerState, Unit unit) {
-        if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit)) {
+        if (checkDrawerState && !checkDrawerState(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, unit)){
             notifyLoyaltyProcessorItemAddedToOrder(false);
             return;
         }
@@ -1624,7 +1609,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 quantity == null ? (model.priceType == PriceType.UNIT_PRICE ? BigDecimal.ZERO : BigDecimal.ONE) : quantity,
                 BigDecimal.ZERO,
                 isCreateReturnOrder ? PriceType.OPEN : model.priceType,
-                price == null ? model.price : price,
+                price == null ? model.getCurrentPrice() : price,
                 isCreateReturnOrder || model.isDiscountable,
                 model.isDiscountable ? model.discount : null,
                 model.isDiscountable ? model.discountType : null,
@@ -1792,9 +1777,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             StartTransactionCommand.start(BaseCashierActivity.this);
             SuccessOrderCommand.start(this, orderGuid, isCreateReturnOrder, new SuccessOrderCommand4ReturnCallback());
         } else if (!isPaying) {
-            if (customer == null || customer.loyaltyPlanId == null) {
+            if (customer == null || customer.loyaltyPlanId == null){
                 doPayment();
-            } else {
+            }else {
                 loyaltyProcessor = LoyaltyProcessor.create(customer.guid, orderGuid);
                 loyaltyProcessor.setCallback(new LoyaltyProcessorCallback() {
                     @Override
@@ -1806,8 +1791,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     public void onComplete() {
                         doPayment();
                     }
-                })
-                        .init(self());
+                }).init(self());
             }
         }
     }
@@ -1866,7 +1850,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             OnGiftCardBilling();
                     }
 
-
                     @Override
                     public void onRefund(RefundAmount a) {
                         amount = a;
@@ -1898,7 +1881,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     }
 
-    private void notifyLoyaltyProcessorItemAddedToOrder(boolean success) {
+    private void notifyLoyaltyProcessorItemAddedToOrder(boolean success){
         if (loyaltyProcessor == null)
             return;
 
@@ -2394,7 +2377,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         BigDecimal itemQty = BigDecimal.ZERO;
         if (c.moveToFirst()) {
             do {
-                itemQty = _decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)));
+                itemQty = _decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)), BigDecimal.ZERO);
                 saleItemAmount = saleItemAmount.add(itemQty);
             } while (c.moveToNext());
             c.close();
@@ -3005,6 +2988,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
+    public List<Integer> getPriceLevels(){
+        return priceLevels;
+    }
+
+    public interface IPriceLevelListener {
+        void onPriceLevelChanged(List<Integer> priceLevels);
+    }
+
     private boolean isVoidNeedPermission() {
         Cursor c = ProviderAction.query(ORDER_URI)
                 .projection(
@@ -3051,59 +3042,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    //    private class ItemPrintInfoLoader implements LoaderManager.LoaderCallbacks<SaleOrderViewResult> {
-//
-//        @Override
-//        public Loader<SaleOrderViewResult> onCreateLoader(int i, Bundle bundle) {
-//            return CursorLoaderBuilder.forUri(ORDER_URI)
-//                    .where(SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-//                    .transform(new Function<Cursor, SaleOrderModel>() {
-//                        @Override
-//                        public SaleOrderModel apply(Cursor cursor) {
-//                            return new SaleOrderModel(cursor);
-//                        }
-//                    }).wrap(new Function<List<SaleOrderModel>, SaleOrderViewResult>() {
-//                        @Override
-//                        public SaleOrderViewResult apply(List<SaleOrderModel> saleOrderModels) {
-//                            if (saleOrderModels == null || saleOrderModels.isEmpty()) {
-//                                return new SaleOrderViewResult(null);
-//                            } else {
-//                                return new SaleOrderViewResult(saleOrderModels.get(0));
-//                            }
-//                        }
-//                    }).build(BaseCashierActivity.this);
-//        }
-//
-//        @Override
-//        public void onLoadFinished(Loader<SaleOrderViewResult> saleOrderModelLoader, final SaleOrderViewResult saleOrderModel) {
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (saleOrderModel.model != null)
-//                        if (saleOrderModel.model.orderStatus != OrderStatus.COMPLETED && orderGuid != null)
-//                            if ((saleOrderModel.model.kitchenPrintStatus == PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED) || getOperatorPermissions().contains(Permission.VOID_SALES))
-//                                showVoidConfirmDialog();
-//                            else {
-//                                PermissionFragment.showCancelable(BaseCashierActivity.this, new BaseTempLoginListener(BaseCashierActivity.this) {
-//                                    @Override
-//                                    public void onLoginComplete() {
-//                                        super.onLoginComplete();
-//                                        showVoidConfirmDialog();
-//                                    }
-//                                }, Permission.VOID_SALES);
-//                            }
-//                }
-//            });
-//
-//
-//        }
-//
-//        @Override
-//        public void onLoaderReset(Loader<SaleOrderViewResult> saleOrderModelLoader) {
-//            updateOrderInfo(null);
-//        }
-//    }
-
     private BroadcastReceiver syncGapReceiver = new BroadcastReceiver() {
 
         @Override
@@ -3147,6 +3085,89 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private Set<Permission> getOperatorPermissions() {
         return getApp().getOperatorPermissions();
+    }
+
+    private Future tbpLoadFuture;
+    private ScheduledExecutorService tbpLoadScheduler = Executors.newSingleThreadScheduledExecutor();
+    private Runnable tbpLoadTask = new Runnable() {
+        @Override
+        public void run() {
+            Query query = ProviderAction.query(ShopProvider.contentUri(TBPRegisterView.URI_CONTENT))
+                    .projection(TbpTable.PRICE_LEVEL)
+                    .orderBy(TbpTable.PRICE_LEVEL);
+
+
+            query.where(TbpXRegisterTable.REGISTER_ID + " = ?", getApp().getRegisterId());
+            query.where(TbpTable.IS_ACTIVE + " = ?", 1);
+
+            Calendar current = Calendar.getInstance();
+            current.setTime(new Date());
+            String currentTime = DateUtils.timeOnlyFullFormat(current.getTime());
+
+            String columnStart = null;
+            String columnEnd = null;
+            switch(calendar.get(Calendar.DAY_OF_WEEK)){
+                case Calendar.MONDAY:
+                    columnStart = TbpTable.MON_START;
+                    columnEnd = TbpTable.MON_END;
+                    break;
+                case Calendar.TUESDAY:
+                    columnStart = TbpTable.TUE_START;
+                    columnEnd = TbpTable.TUE_END;
+                    break;
+                case Calendar.WEDNESDAY:
+                    columnStart = TbpTable.WED_START;
+                    columnEnd = TbpTable.WED_END;
+                    break;
+                case Calendar.THURSDAY:
+                    columnStart = TbpTable.THU_START;
+                    columnEnd = TbpTable.THU_END;
+                    break;
+                case Calendar.FRIDAY:
+                    columnStart = TbpTable.FRI_START;
+                    columnEnd = TbpTable.FRI_END;
+                    break;
+                case Calendar.SATURDAY:
+                    columnStart = TbpTable.SAT_START;
+                    columnEnd = TbpTable.SAT_END;
+                    break;
+                case Calendar.SUNDAY:
+                    columnStart = TbpTable.SUN_START;
+                    columnEnd = TbpTable.SUN_END;
+                    break;
+            }
+
+            query.where(columnStart + " < ?", currentTime);
+            query.where(columnEnd + " > ?", currentTime);
+
+            List<Integer> priceLevels = query.perform(self()).toFluentIterable(new Function<Cursor, Integer>() {
+                @Override
+                public Integer apply(Cursor input) {
+                    return input.getInt(0);
+                }
+            }).toImmutableList();
+
+            if (!BaseCashierActivity.this.priceLevels.equals(priceLevels)){
+                BaseCashierActivity.this.priceLevels = priceLevels;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyFragmentsPriceLevelChanged();
+                    }
+                });
+            }
+
+
+        }
+    };
+
+    private void notifyFragmentsPriceLevelChanged(){
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for (Fragment fr : fragments){
+            if (fr instanceof  IPriceLevelListener){
+                ((IPriceLevelListener) fr).onPriceLevelChanged(priceLevels);
+            }
+        }
     }
 
 }

@@ -44,7 +44,7 @@ public class ComposerModel implements IValueModel, Serializable {
         this.guid                   = c.getString(c.getColumnIndex(ComposerTable.ID));
         this.itemHostId             = c.getString(c.getColumnIndex(ComposerTable.ITEM_HOST_ID));
         this.itemChildId            = c.getString(c.getColumnIndex(ComposerTable.ITEM_CHILD_ID));
-        this.qty                    = _decimalQty(c, c.getColumnIndex(ComposerTable.QUANTITY));
+        this.qty                    = _decimalQty(c, c.getColumnIndex(ComposerTable.QUANTITY), BigDecimal.ZERO);
         this.tracked = _bool(c, c.getColumnIndex(ComposerTable.STORE_TRACKING_ENABLED));
         this.restricted = _bool(c, c.getColumnIndex(ComposerTable.FREE_OF_CHARGE_COMPOSER));
     }

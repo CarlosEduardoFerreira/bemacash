@@ -52,6 +52,8 @@ public class ComposerActivity extends ScannerBaseActivity implements ComposerIte
 
     protected boolean redirectBarcodeResult;
 
+    private boolean changesDone;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +94,7 @@ public class ComposerActivity extends ScannerBaseActivity implements ComposerIte
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra(RESULT_OK, model);
+        intent.putExtra(RESULT_OK, changesDone);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
@@ -103,12 +105,14 @@ public class ComposerActivity extends ScannerBaseActivity implements ComposerIte
         ComposerEditFragment.show(this, model.guid, unit, composers, new ComposerEditFragment.ComposerCallback() {
             @Override
             public void handleSuccess(ComposerModel parent) {
+                changesDone = true;
                 hide();
                 snack();
             }
 
             @Override
             public void handleSuccess() {
+                changesDone = true;
                 hide();
                 snack();
             }
@@ -155,6 +159,7 @@ public class ComposerActivity extends ScannerBaseActivity implements ComposerIte
         RemoveComposerCommand.start(self(), units.remove(0), new RemoveComposerCommand.ComposerCallback() {
             @Override
             protected void handleSuccess() {
+                changesDone = true;
                 onDelete(units);
                 showSnack(getString(R.string.composer_remove_success));
             }

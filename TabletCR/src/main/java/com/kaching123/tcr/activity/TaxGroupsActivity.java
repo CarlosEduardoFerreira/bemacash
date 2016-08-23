@@ -227,7 +227,7 @@ public class TaxGroupsActivity extends SuperBaseActivity {
             return new TaxGroupModel(
                     c.getString(indexHolder.get(ShopStore.TaxGroupTable.GUID)),
                     c.getString(indexHolder.get(ShopStore.TaxGroupTable.TITLE)),
-                    _decimal(c, indexHolder.get(ShopStore.TaxGroupTable.TAX)),
+                    _decimal(c, indexHolder.get(ShopStore.TaxGroupTable.TAX), BigDecimal.ZERO),
                     _bool(c, indexHolder.get(ShopStore.TaxGroupTable.IS_DEFAULT))
             );
         }

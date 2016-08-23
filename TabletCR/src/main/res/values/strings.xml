@@ -467,7 +467,7 @@
     <string name="item_activity_stock_tracking">Stock tracking:</string>
     <string name="item_activity_sales_price">Sales Price:</string>
     <string name="item_activity_discountable">Discountable:</string>
-    <string name="item_activity_salable">For Sale:</string>
+    <string name="item_activity_salable">For sale:</string>
     <string name="item_activity_discount_type">Discount type:</string>
     <string name="item_activity_discount_amount">Discount:</string>
     <string name="item_activity_taxable">Taxable:</string>
@@ -486,19 +486,19 @@
     <string name="item_activity_exclude_from_loyalty_plan">Exclude from\nloyalty plan:</string>
     <string name="item_activity_hide_item_dialog_title">Delete item</string>
     <string name="item_activity_hide_item_dialog_message">Are you sure you want to delete item?</string>
-    <string name="item_activity_alert_description_msg">Name is empty!</string>
-    <string name="item_activity_alert_unit_label">Label Unit is empty!</string>
-    <string name="item_activity_alert_category_msg">Category is empty!</string>
-    <string name="item_activity_alert_ean_msg" formatted="false">Ean should be %d to %d symbols!</string>
+    <string name="item_activity_alert_description_msg">Name is empty</string>
+    <string name="item_activity_alert_unit_label">Label Unit is empty</string>
+    <string name="item_activity_alert_category_msg">Category is empty</string>
+    <string name="item_activity_alert_ean_msg" formatted="false">Ean should be %d to %d symbols</string>
     <string name="item_activity_alert_ean_error" formatted="false">EAN\\UPC Code should be numeric and can\'t be more than %d digits</string>
     <string name="item_activity_alert_product_code_error" formatted="false">Product Code can\'t be more than %d symbols</string>
-    <string name="item_activity_alert_product_code_msg" formatted="false">Product code should be %d to %d symbols!</string>
-    <string name="item_activity_alert_ean_duplicate_msg">Item with such ean is already exists!</string>
-    <string name="item_activity_alert_product_code_duplicate_msg">Item with such product code already exists!</string>
-    <string name="item_activity_alert_units_label_msg">Units label is empty!</string>
-    <string name="item_activity_alert_units_label_not_match_msg">Units label should be PCS, LB or OZ!</string>
-    <string name="item_activity_alert_price_empty_msg">Price is empty!</string>
-    <string name="item_activity_alert_price_positive_msg">Price should be positive!</string>
+    <string name="item_activity_alert_product_code_msg" formatted="false">Product code should be %d to %d symbols</string>
+    <string name="item_activity_alert_ean_duplicate_msg">Item with such ean is already exists</string>
+    <string name="item_activity_alert_product_code_duplicate_msg">Item with such product code already exists</string>
+    <string name="item_activity_alert_units_label_msg">Units label is empty</string>
+    <string name="item_activity_alert_units_label_not_match_msg">Units label should be PCS, LB or OZ</string>
+    <string name="item_activity_alert_price_empty_msg">Price is empty</string>
+    <string name="item_activity_alert_price_positive_msg">Price should be positive</string>
     <string name="item_activity_alert_discount_less_100_msg">Discount should be less then 100%</string>
     <string name="item_activity_alert_discount_less_price_msg">Discount should be less then sale price</string>
     <string name="item_activity_alert_code_type_title">Code type</string>
@@ -844,7 +844,7 @@
     <string name="employee_tips_split_success_msg">Tips splitted among %d employees</string>
     <string name="employee_tips_add_failed_msg">Failed to add tips</string>
     <string name="item_commissions_eligible_label">Commission\neligible:</string>
-    <string name="item_commissions_label">Commission:</string>
+    <string name="item_commissions_label">Commission (%):</string>
     <string name="item_loyalty_points_label">Loyalty Points:</string>
     <string name="item_exclude_from_loyalty_plan_label">Exclude From\nLoyalty Plan:</string>
     <string name="sync_wait_msg_tmpl" formatted="false">Sync %s data: %d/%d</string>
@@ -858,6 +858,8 @@
     <string name="sync_item_variant">items part#4</string>
     <string name="sync_item_sub_variant">items part#5</string>
     <string name="sync_item_matrix">items part#6</string>
+    <string name="sync_tbp">items part#7</string>
+    <string name="sync_tbp_x_register">items part#8</string>
     <string name="sync_item_composition">composition items</string>
     <string name="sync_sale_order">sale orders part#1</string>
     <string name="sync_sale_order_item">sale orders part#2</string>
@@ -1206,8 +1208,9 @@
         <item>Price</item>
         <item>Additional Information</item>
         <item>Printer/KDS</item>
-        <item>Monitoring</item>
         <item>Special Pricing</item>
+        <item>Monitoring</item>
+        <item>Variants</item>
     </string-array>
 
     <string name="report_details_menu_email">Send by email</string>

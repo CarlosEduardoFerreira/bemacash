@@ -93,10 +93,10 @@ public class SplitSaleItemCommand extends AsyncCommand {
                                 UUID.randomUUID().toString(),
                                 c.getString(0),
                                 newModel.saleItemGuid,
-                                _decimal(c.getString(1)),
+                                _decimal(c.getString(1), BigDecimal.ZERO),
                                 _modifierType(c, 2),
                                 c.getString(3),
-                                _decimal(c.getString(4))
+                                _decimal(c.getString(4), BigDecimal.ZERO)
                         );
                     }
                 });

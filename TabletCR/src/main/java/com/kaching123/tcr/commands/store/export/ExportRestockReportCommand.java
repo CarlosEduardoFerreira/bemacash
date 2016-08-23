@@ -78,16 +78,16 @@ public class ExportRestockReportCommand extends ExportInventoryCommand {
 
         columns.add(c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)));
 
-        BigDecimal cost = _decimal(c, c.getColumnIndex(ItemTable.COST));
+        BigDecimal cost = _decimal(c, c.getColumnIndex(ItemTable.COST), BigDecimal.ZERO);
         columns.add(_decimal(cost));
 
         String onHand = c.getString(c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY));
         columns.add(onHand);
 
-        BigDecimal minQty = _decimalQty(c, c.getColumnIndex(ItemTable.MINIMUM_QTY));
+        BigDecimal minQty = _decimalQty(c, c.getColumnIndex(ItemTable.MINIMUM_QTY), BigDecimal.ZERO);
         columns.add(_decimalQty(minQty));
 
-        BigDecimal recommended = _decimalQty(c, c.getColumnIndex(ItemTable.RECOMMENDED_QTY));
+        BigDecimal recommended = _decimalQty(c, c.getColumnIndex(ItemTable.RECOMMENDED_QTY), BigDecimal.ZERO);
         columns.add(_decimalQty(recommended));
 
         BigDecimal reorder = recommended.subtract(_decimalQty(onHand));

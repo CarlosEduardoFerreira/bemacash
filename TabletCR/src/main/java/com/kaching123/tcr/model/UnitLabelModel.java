@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.function.UnitLabelWrapFunction;
@@ -93,36 +92,5 @@ public class UnitLabelModel implements Serializable, IValueModel {
             cursor.close();
         }
         return unitLabel;
-    }
-
-    /**
-     * Get actual unit label shortcut for current item.
-     * @param context context
-     * @param item - item model
-     * @return actual unit label shortcut
-     * */
-    public static String getUnitLabelShortcut(Context context, ItemModel item) {
-        return getUnitLabelShortcut(context, item.unitsLabel, item.unitsLabelId);
-    }
-
-    /**
-     * Get actual unit label shortcut for current item.
-     * @param context context
-     * @param unitLabel - item model unitLabel
-     * @param unitLabelId - item model unitLabelId
-     * @return actual unit label shortcut
-     * */
-    public static String getUnitLabelShortcut(Context context, String unitLabel, String unitLabelId) {
-        String shortcut = "";
-        UnitLabelModel ulm;
-        if (!TextUtils.isEmpty(unitLabel)) {
-            shortcut = unitLabel;
-        } else if (!TextUtils.isEmpty(unitLabelId)) {
-            ulm = getById(context, unitLabelId);
-            if (ulm != null) {
-                shortcut = ulm.shortcut;
-            }
-        }
-        return shortcut;
     }
 }

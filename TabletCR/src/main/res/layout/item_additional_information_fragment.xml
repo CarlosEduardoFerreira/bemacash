@@ -11,6 +11,7 @@
         android:stretchColumns="1">
 
         <TableRow
+            android:id="@+id/ean_upc_row"
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
@@ -24,6 +25,7 @@
         </TableRow>
 
         <TableRow
+            android:id="@+id/product_code_row"
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
@@ -33,7 +35,8 @@
                 android:id="@+id/product_code"
                 style="@style/EditItem.Table.Edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:maxLength="20"/>
         </TableRow>
 
         <TableRow
@@ -85,6 +88,7 @@
         </TableRow>
 
         <TableRow
+            android:id="@+id/reference_item_row"
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
@@ -132,8 +136,7 @@
                 android:id="@+id/ebt_eligible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"
-                android:checked="true"/>
+                style="@style/EditItem.Table.CheckBox"/>
         </TableRow>
 
         <TableRow
@@ -160,7 +163,7 @@
                 android:id="@+id/exclude_from_loyalty_plan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox_mint"/>
+                style="@style/EditItem.Table.CheckBox"/>
         </TableRow>
 
     </TableLayout>

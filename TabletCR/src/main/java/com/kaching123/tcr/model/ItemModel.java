@@ -1,8 +1,13 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 
+import com.getbase.android.db.provider.ProviderAction;
+import com.google.common.base.Function;
 import com.kaching123.tcr.model.Unit.CodeType;
+import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.UnitUtil;
 
@@ -12,6 +17,7 @@ import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
+import static com.kaching123.tcr.model.ContentValuesUtil._max;
 import static com.kaching123.tcr.model.ContentValuesUtil._putDiscount;
 import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
 import static com.kaching123.tcr.model.ContentValuesUtil._putItemRefType;
@@ -29,8 +35,12 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public PriceType priceType = PriceType.FIXED;
     public CodeType codeType;
     public BigDecimal price;
+    public BigDecimal price1;
+    public BigDecimal price2;
+    public BigDecimal price3;
+    public BigDecimal price4;
+    public BigDecimal price5;
     public BigDecimal availableQty;
-    public String unitsLabel;
     public String unitsLabelId;
     public boolean isStockTracking;
     public boolean isActiveStatus;
@@ -44,6 +54,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public String updateQtyFlag;
     public String taxGroupGuid;
     public String taxGroupGuid2;
+    @Deprecated
     public boolean isPcsUnit;
     public String defaultModifierGuid;
     public int orderNum;
@@ -77,8 +88,12 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      String productCode,
                      PriceType priceType,
                      BigDecimal price,
+                     BigDecimal price1,
+                     BigDecimal price2,
+                     BigDecimal price3,
+                     BigDecimal price4,
+                     BigDecimal price5,
                      BigDecimal availableQty,
-                     String unitsLabel,
                      String unitsLabelId,
                      boolean isStockTracking,
                      boolean isActiveStatus,
@@ -116,8 +131,12 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.productCode = productCode;
         this.priceType = priceType;
         this.price = price;
+        this.price1 = price1;
+        this.price2 = price2;
+        this.price3 = price3;
+        this.price4 = price4;
+        this.price5 = price5;
         this.availableQty = availableQty;
-        this.unitsLabel = unitsLabel;
         this.unitsLabelId = unitsLabelId;
         this.isStockTracking = isStockTracking;
         this.isActiveStatus = isActiveStatus;
@@ -159,8 +178,12 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.productCode = itemModel.productCode;
         this.priceType = itemModel.priceType;
         this.price = itemModel.price;
+        this.price1 = itemModel.price1;
+        this.price2 = itemModel.price2;
+        this.price3 = itemModel.price3;
+        this.price4 = itemModel.price4;
+        this.price5 = itemModel.price5;
         this.availableQty = itemModel.availableQty;
-        this.unitsLabel = itemModel.unitsLabel;
         this.unitsLabelId = itemModel.unitsLabelId;
         this.isStockTracking = itemModel.isStockTracking;
         this.isActiveStatus = itemModel.isActiveStatus;
@@ -192,6 +215,21 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.excludeFromLoyaltyPlan = itemModel.excludeFromLoyaltyPlan;
     }
 
+    public static int getMaxOrderNum(Context context, String categoryId){
+        Integer i = ProviderAction.query(ShopProvider.contentUri(ItemTable.URI_CONTENT))
+                .projection(_max(ItemTable.ORDER_NUM))
+                .where(ItemTable.CATEGORY_ID + " = ?", categoryId)
+                .perform(context)
+                .toFluentIterable(new Function<Cursor, Integer>() {
+                    @Override
+                    public Integer apply(Cursor input) {
+                        return input.getInt(0);
+                    }
+                }).first().or(0);
+
+        return i;
+    }
+
     @Override
     public String getGuid() {
         return guid;
@@ -208,7 +246,11 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.PRODUCT_CODE, productCode);
         values.put(ItemTable.PRICE_TYPE, priceType.ordinal());
         values.put(ItemTable.SALE_PRICE, _decimal(price));
-        values.put(ItemTable.UNITS_LABEL, unitsLabel);
+        values.put(ItemTable.PRICE_1, _decimal(price1));
+        values.put(ItemTable.PRICE_2, _decimal(price2));
+        values.put(ItemTable.PRICE_3, _decimal(price3));
+        values.put(ItemTable.PRICE_4, _decimal(price4));
+        values.put(ItemTable.PRICE_5, _decimal(price5));
         values.put(ItemTable.UNIT_LABEL_ID, unitsLabelId);
         values.put(ItemTable.STOCK_TRACKING, isStockTracking);
         values.put(ItemTable.ACTIVE_STATUS, isActiveStatus);
@@ -252,5 +294,37 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.COST, _decimal(cost));
         return values;
     }
+
+    public BigDecimal getPrice(int level){
+        switch (level){
+            case 1 : return price1;
+            case 2 : return price2;
+            case 3 : return price3;
+            case 4 : return price4;
+            case 5 : return price5;
+            default: return price;
+        }
+    }
+
+    public void setPrice(BigDecimal price, int level){
+        switch (level){
+            case 1 : price1 = price; break;
+            case 2 : price2 = price; break;
+            case 3 : price3 = price; break;
+            case 4 : price4 = price; break;
+            case 5 : price5 = price; break;
+            default: this.price = price;
+        }
+    }
+
+    public boolean isPcsUnit(){
+        return UnitUtil.isPcs(this.priceType) || codeType != null;
+    }
+
+    public boolean isReferenceItem() {
+        return this.refType == ItemRefType.Reference;
+    }
+
+
 
 }

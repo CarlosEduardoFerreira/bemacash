@@ -69,8 +69,8 @@ public class ExportQuickbooksInventoryCommand extends ExportCursorToFileCommand 
 
         boolean stockTracking = _bool(c, c.getColumnIndex(ItemTable.STOCK_TRACKING));
         boolean isActive = _bool(c, c.getColumnIndex(ItemTable.ACTIVE_STATUS));
-        BigDecimal cost = _decimal(c, c.getColumnIndex(ItemTable.COST));
-        BigDecimal availableQty = _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY));
+        BigDecimal cost = _decimal(c, c.getColumnIndex(ItemTable.COST), BigDecimal.ZERO);
+        BigDecimal availableQty = _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY), BigDecimal.ZERO);
 
         columns.add(stockTracking ? TYPE_INVENTORY_PART : TYPE_NON_INVENTORY_PART);
         columns.add(c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)));

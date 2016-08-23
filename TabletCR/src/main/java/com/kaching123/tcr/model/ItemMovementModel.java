@@ -2,13 +2,11 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 
-import com.kaching123.tcr.R;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 

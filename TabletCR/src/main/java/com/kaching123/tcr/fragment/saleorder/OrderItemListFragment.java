@@ -358,7 +358,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         BigDecimal itemQty = BigDecimal.ZERO;
         if (c.moveToFirst()) {
 
-            itemQty = ContentValuesUtil._decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)));
+            itemQty = ContentValuesUtil._decimal(c.getString(c.getColumnIndex(ShopStore.SaleItemTable.QUANTITY)), BigDecimal.ZERO);
             saleItemAmount = saleItemAmount.add(itemQty);
 
             c.close();

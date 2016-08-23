@@ -40,7 +40,6 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.PrinterAliasActivity.PrinterAliasConverter;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.adapter.SpinnerAdapter;
@@ -71,7 +70,6 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.model.UnitLabelModel;
-import com.kaching123.tcr.model.UnitLabelModelFactory;
 import com.kaching123.tcr.model.converter.UnitLabelFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -765,10 +763,6 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
         long ChangedCategory = category.getSelectedItemId();
         UnitLabelModel unitLabel = (UnitLabelModel) this.unitsLabel.getSelectedItem();
         model.unitsLabelId = unitLabel.guid;
-        model.unitsLabel = unitLabel.shortcut;
-        if (TextUtils.isEmpty(model.unitsLabelId) && TextUtils.isEmpty(model.unitsLabel)) {
-            model.unitsLabel = "pcs";
-        }
 
         model.priceType = ((PriceTypeHolder) this.priceType.getSelectedItem()).type;
 
@@ -1010,7 +1004,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
             ((TextView) view.findViewById(android.R.id.text1)).setText(
                     String.format("%s (%s)",
                             c.getString(c.getColumnIndex(TaxGroupTable.TITLE)),
-                            UiHelper.percentFormat(_decimal(c, c.getColumnIndex(TaxGroupTable.TAX)))
+                            UiHelper.percentFormat(_decimal(c, c.getColumnIndex(TaxGroupTable.TAX), BigDecimal.ZERO))
                     )
             );
         }
@@ -1293,30 +1287,11 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
         @Override
         public void onLoadFinished(Loader<List<UnitLabelModel>> loader, List<UnitLabelModel> data) {
-            ArrayList<UnitLabelModel> models = new ArrayList<>(data.size() + 1);
-
-            String oldUnitLabel = model.unitsLabel;
-
-            if (!TextUtils.isEmpty(oldUnitLabel)) {
-                models.add(UnitLabelModelFactory.getSimpleModel(oldUnitLabel));
-            }
-
-            models.addAll(data);
-
-            if (models.isEmpty()) {
-                models.add(UnitLabelModelFactory.getSimpleModel(TcrApplication.get().getShopInfo().defUnitLabelShortcut));
-            }
-
-            unitsLabelAdapter.changeCursor(models);
-
-            if (!TextUtils.isEmpty(oldUnitLabel)) {
-                unitsLabel.setSelection(unitsLabelAdapter.getPositionByShortcut(oldUnitLabel));
-            } else if (!TextUtils.isEmpty(model.unitsLabelId)) {
-                unitsLabel.setSelection(unitsLabelAdapter.getPositionById(model.unitsLabelId));
-            } else {
-                // for new Items
-                unitsLabel.setSelection(unitsLabelAdapter.getPositionByShortcut(
-                        TcrApplication.get().getShopInfo().defUnitLabelShortcut));
+            unitsLabelAdapter.changeCursor(data);
+            if (model.unitsLabelId != null){
+                int position = unitsLabelAdapter.getPositionById(model.unitsLabelId);
+                if (position != AdapterView.INVALID_POSITION)
+                    unitsLabel.setSelection(position);
             }
         }
 

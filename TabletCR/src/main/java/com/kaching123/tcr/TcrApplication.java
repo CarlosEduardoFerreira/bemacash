@@ -184,7 +184,7 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.shopId().get(),
                     shopPref.shopName().get(),
                     _enum(ViewType.class, shopPref.shopViewType().get(), ViewType.RETAIL),
-                    _decimal(shopPref.shopTaxVat().getOr(null)),
+                    _decimal(shopPref.shopTaxVat().getOr(null), BigDecimal.ZERO),
                     shopPref.shopAddress1().getOr(null),
                     shopPref.shopAddress2().getOr(null),
                     shopPref.shopAddress3().getOr(null),
@@ -203,7 +203,7 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.shopUseCreditReceipt().getOr(false),
                     shopPref.shopDisplayWelcomeMsg().getOr(null),
                     shopPref.shopDisplayWelcomeMsgBottom().getOr(null),
-                    _decimal(shopPref.signaturePrintLimit().getOr(null)),
+                    _decimal(shopPref.signaturePrintLimit().getOr(null), BigDecimal.ZERO),
                     shopPref.shopOwnerEmail().getOr(null),
                     shopPref.shopCreditReceiptExpireTime().getOr(0),
                     shopPref.prepaidUrl().getOr(null),
@@ -211,9 +211,9 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.prepaidPassword().getOr(null),
                     shopPref.prepaidTransactionMode().getOr(null),
                     shopPref.tipsEnabled().get(),
-                    _decimal(shopPref.tipsSplitTreshold().getOr(null)),
+                    _decimal(shopPref.tipsSplitTreshold().getOr(null), BigDecimal.ZERO),
                     shopPref.tipsEnabled().get(),
-                    _decimal(shopPref.tipsWarnThreshold().getOr(null)),
+                    _decimal(shopPref.tipsWarnThreshold().getOr(null), BigDecimal.ZERO),
                     shopPref.zipMandatory().getOr(false),
                     shopPref.cvnMandatory().getOr(true),
 
@@ -233,7 +233,7 @@ public class TcrApplication extends MultiDexApplication {
 
                     shopPref.autoSettlementTime().getOr(null),
                     shopPref.commissionControl().getOr(false),
-                    _decimal(shopPref.defaultStoreCommission().getOr(null)),
+                    _decimal(shopPref.defaultStoreCommission().getOr(null), BigDecimal.ZERO),
                     shopPref.offlinePeriodHours().getOr(0),
 
                     shopPref.unitLabelDefaultShortcut().getOr(null),
@@ -274,12 +274,12 @@ public class TcrApplication extends MultiDexApplication {
         );
 
         prepaidTaxes = new HashMap<Broker, BigDecimal>();
-        prepaidTaxes.put(Broker.WIRELESS_RECHARGE, _decimal(shopPref.wirelessRechargeTax().getOr("0")));
-        prepaidTaxes.put(Broker.INTERNATIONAL_TOPUP, _decimal(shopPref.internationalTopupTax().getOr("0")));
-        prepaidTaxes.put(Broker.BILL_PAYMENT, _decimal(shopPref.billPaymentTax().getOr("0")));
-        prepaidTaxes.put(Broker.LONG_DISTANCE, _decimal(shopPref.longDistanceTax().getOr("0")));
-        prepaidTaxes.put(Broker.SUNPASS, _decimal(shopPref.sunpassTax().getOr("0")));
-        prepaidTaxes.put(Broker.PINLESS, _decimal(shopPref.pinlessTax().getOr("0")));
+        prepaidTaxes.put(Broker.WIRELESS_RECHARGE, _decimal(shopPref.wirelessRechargeTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.INTERNATIONAL_TOPUP, _decimal(shopPref.internationalTopupTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.BILL_PAYMENT, _decimal(shopPref.billPaymentTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.LONG_DISTANCE, _decimal(shopPref.longDistanceTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.SUNPASS, _decimal(shopPref.sunpassTax().getOr("0"), BigDecimal.ZERO));
+        prepaidTaxes.put(Broker.PINLESS, _decimal(shopPref.pinlessTax().getOr("0"), BigDecimal.ZERO));
 
         registerSerial = !Build.UNKNOWN.equals(Build.SERIAL) ? Build.SERIAL : Secure.getString(getContentResolver(), Secure.ANDROID_ID);
         registerSerial += cut4Symbols(Secure.getString(getContentResolver(), Secure.ANDROID_ID));
@@ -388,20 +388,14 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public synchronized long getShopId() {
-        if (operator == null || operator.shopId == 0L)
-            Logger.e("[CREDS] TcrApplication.getShopId(): NO SHOP ID! operator: " + operator, new RuntimeException());
         return operator == null ? 0 : operator.shopId;
     }
 
     public synchronized String getOperatorGuid() {
-        if (operator == null || TextUtils.isEmpty(operator.guid))
-            Logger.e("[CREDS] TcrApplication.getOperatorGuid(): NO OPERATOR ID! operator: " + operator, new RuntimeException());
         return operator == null ? null : operator.guid;
     }
 
     public synchronized String getOperatorLogin() {
-        if (operator == null || TextUtils.isEmpty(operator.login))
-            Logger.e("[CREDS] TcrApplication.getOperatorLogin(): NO OPERATOR LOGIN! operator: " + operator, new RuntimeException());
         return operator == null ? null : operator.login;
     }
 
@@ -442,8 +436,6 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public String getShiftGuid() {
-        if (TextUtils.isEmpty(shiftGuid))
-            Logger.e("[CREDS] TcrApplication.getShiftGuid(): NO SHIFT ID! shiftGuid: " + shiftGuid, new RuntimeException());
         return shiftGuid;
     }
 
@@ -482,14 +474,10 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public long getRegisterId() {
-        if (registerId == 0L)
-            Logger.e("[CREDS] TcrApplication.getRegisterId(): NO REGISTER ID! registerId: " + registerId, new RuntimeException());
         return registerId;
     }
 
     public String getRegisterSerial() {
-        if (TextUtils.isEmpty(registerSerial))
-            Logger.e("[CREDS] TcrApplication.getRegisterSerial(): NO REGISTER SERIAL! registerSerial: " + registerSerial, new RuntimeException());
         return registerSerial;
     }
 

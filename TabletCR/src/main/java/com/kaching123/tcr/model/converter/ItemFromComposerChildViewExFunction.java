@@ -24,7 +24,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
             ItemChildTable.PRICE_TYPE,
             ItemChildTable.SALE_PRICE,
             ItemChildTable.TMP_AVAILABLE_QTY,
-            ItemChildTable.UNITS_LABEL,
+            ChildUnitLabelTable.SHORTCUT,
             ItemChildTable.UNIT_LABEL_ID,
             ItemChildTable.STOCK_TRACKING,
             ItemChildTable.ACTIVE_STATUS,
@@ -39,7 +39,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
         super.apply(c);
         String shortCut;
         try {
-            shortCut = c.getString(indexHolder.get(ShopSchema2.ComposerView2.UnitLabelTable.SHORTCUT));
+            shortCut = c.getString(indexHolder.get(ChildUnitLabelTable.SHORTCUT));
         } catch (IllegalArgumentException noItem) {
             shortCut = null;
         }
@@ -51,9 +51,13 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 c.getString(indexHolder.get(ItemChildTable.EAN_CODE)),
                 c.getString(indexHolder.get(ItemChildTable.PRODUCT_CODE)),
                 _priceType(c, indexHolder.get(ItemChildTable.PRICE_TYPE)),
-                _decimal(c.getString(indexHolder.get(ItemChildTable.SALE_PRICE))),
+                _decimal(c.getString(indexHolder.get(ItemChildTable.SALE_PRICE)), BigDecimal.ZERO),
+                null,
+                null,
+                null,
+                null,
+                null,
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.TMP_AVAILABLE_QTY))),
-                c.getString(indexHolder.get(ItemChildTable.UNITS_LABEL)),
                 c.getString(indexHolder.get(ItemChildTable.UNIT_LABEL_ID)),
                 shortCut,
                 c.getInt(indexHolder.get(ItemChildTable.STOCK_TRACKING)) == 1,
@@ -63,12 +67,16 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 null,
                 null,
                 false,
-                _decimal(c.getString(indexHolder.get(ItemChildTable.COST))),
+                _decimal(c.getString(indexHolder.get(ItemChildTable.COST)), BigDecimal.ZERO),
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.MINIMUM_QTY))),
                 _decimalQty(c.getString(indexHolder.get(ItemChildTable.RECOMMENDED_QTY))),
                 null,
                 null,
                 null,
+                0,
+                0,
+                0,
+                0,
                 0,
                 0,
                 0,

@@ -150,6 +150,8 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(ShopStore.VariantItemTable.TABLE_NAME, R.string.sync_item_variant);
         TABLE_NAMES.put(ShopStore.VariantSubItemTable.TABLE_NAME, R.string.sync_item_sub_variant);
         TABLE_NAMES.put(ShopStore.ItemMatrixTable.TABLE_NAME, R.string.sync_item_matrix);
+        TABLE_NAMES.put(ShopStore.TBPTable.TABLE_NAME, R.string.sync_tbp);
+        TABLE_NAMES.put(ShopStore.TBPxRegisterTable.TABLE_NAME, R.string.sync_tbp_x_register);
 
         TABLE_NAMES.put(ModifierGroupTable.TABLE_NAME, R.string.sync_units);
         TABLE_NAMES.put(ComposerTable.TABLE_NAME, R.string.sync_item_composition);

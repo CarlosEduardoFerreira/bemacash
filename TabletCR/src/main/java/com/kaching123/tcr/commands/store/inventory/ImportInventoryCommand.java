@@ -500,8 +500,12 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 productCode,
                 priceType,
                 price,
+                null,
+                null,
+                null,
+                null,
+                null,
                 quantity,
-                oldUnitLabel,
                 unitLabelId,
                 (Boolean) fields.get(FIELD_STOCK_TRACKING),
                 true,
@@ -525,12 +529,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 false,
                 null,
                 true,
-                null,
-                referenceItemGuid,
-                itemRefType,
-                null,
-                false
-        );
+                null, referenceItemGuid, itemRefType, null, false);
         return item;
     }
 

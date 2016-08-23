@@ -7,9 +7,9 @@ import android.net.Uri;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.ItemMatrixTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.DepartmentTable;
+import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.ItemMatrixTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchema2.ExportItemView2.UnitLabelTable;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
-import static com.kaching123.tcr.model.ContentValuesUtil._unitLabelShortcut;
 
 /**
  * Created by gdubina on 20/01/14.
@@ -53,7 +52,6 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                         ItemTable.DESCRIPTION,
                         DepartmentTable.TITLE,
                         CategoryTable.TITLE,
-                        ItemTable.UNITS_LABEL,
                         UnitLabelTable.SHORTCUT,
                         ItemTable.EAN_CODE,
                         ItemTable.PRODUCT_CODE,
@@ -80,7 +78,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
         columns.add(c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)));
         columns.add(c.getString(c.getColumnIndex(DepartmentTable.TITLE)));
         columns.add(c.getString(c.getColumnIndex(CategoryTable.TITLE)));
-        columns.add(_unitLabelShortcut(c, c.getColumnIndex(ItemTable.UNITS_LABEL), c.getColumnIndex(UnitLabelTable.SHORTCUT)));
+        columns.add(c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.EAN_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.SALE_PRICE)));

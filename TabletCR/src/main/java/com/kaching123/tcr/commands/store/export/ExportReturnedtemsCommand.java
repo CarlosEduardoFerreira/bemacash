@@ -137,20 +137,20 @@ public class ExportReturnedtemsCommand extends ExportCursorToFileCommand {
         result.add(c.getString(7));//product code
         result.add(c.getString(8));//item guid
 
-        BigDecimal grossPrice = _decimal(c.getString(9));
+        BigDecimal grossPrice = _decimal(c.getString(9), BigDecimal.ZERO);
         BigDecimal qty = _decimalQty(c.getString(10));
 
         result.add(_decimal(grossPrice));//final gross
         result.add(_decimalQty(qty));
         result.add(_decimal(CalculationUtil.getSubTotal(qty, grossPrice)));
 
-        BigDecimal finalDiscount = _decimal(c.getString(11));
+        BigDecimal finalDiscount = _decimal(c.getString(11), BigDecimal.ZERO);
         result.add(_decimal(finalDiscount));
 
         BigDecimal total = CalculationUtil.getSubTotal(qty, grossPrice.subtract(finalDiscount));
         result.add(_decimal(total));
 
-        BigDecimal cost = _decimal(c.getString(12));
+        BigDecimal cost = _decimal(c.getString(12), BigDecimal.ZERO);
         result.add(_decimal(CalculationUtil.getSubTotal(qty, cost)));
         return result;
     }

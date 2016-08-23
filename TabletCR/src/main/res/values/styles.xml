@@ -4,26 +4,9 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme.Dark" parent="android:Theme.Holo"></style>
+    <style name="AppBaseTheme.Dark" parent="android:Theme.Holo"/>
 
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!--&lt;!&ndash; NumberPicker style&ndash;&gt;
-        <item name="android:numberPickerStyle">@android:style/Widget.Holo.NumberPicker</item>
-
-        &lt;!&ndash; TimePicker style &ndash;&gt;
-        <item name="android:timePickerStyle">@android:style/Widget.Holo.TimePicker</item>
-
-        &lt;!&ndash; CalendarView style&ndash;&gt;
-        <item name="android:calendarViewStyle">@android:style/Widget.Holo.CalendarView</item>
-
-        &lt;!&ndash; DatePicker style &ndash;&gt;
-        <item name="android:datePickerStyle">@android:style/Widget.Holo.DatePicker</item>-->
-
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
     </style>
 
     <style name="CustomEditBox.Histry">
@@ -827,6 +810,10 @@
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:textSize">28sp</item>
         <item name="android:textColor">@color/activity_gray_primary_text</item>
+    </style>
+
+    <style name="EditItem.Table.CheckBox">
+        <item name="android:button">@drawable/apptheme_btn_check_holo_light</item>
     </style>
 
     <style name="DashboardModule" />

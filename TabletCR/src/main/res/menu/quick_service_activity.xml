@@ -3,7 +3,6 @@
 
     <item
         android:id="@+id/action_item_account"
-
         android:title="@string/cashier_action_item_account"
         android:showAsAction="always"
         android:orderInCategory="@integer/menu_order_default"/>

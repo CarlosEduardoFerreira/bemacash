@@ -4,7 +4,6 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
 
-import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
 import com.kaching123.tcr.model.ComposerModel;
@@ -25,7 +24,7 @@ import java.util.ArrayList;
  * @author Ivan v. Rikhmayer
  *         This class is intended to
  */
-public class RemoveComposerCommand extends AsyncCommand {
+public class RemoveComposerCommand extends BaseComposerCommand {
 
     private static final Uri COMPOSER_URI = ShopProvider.contentUri(ShopStore.ComposerTable.URI_CONTENT);
 
@@ -66,6 +65,7 @@ public class RemoveComposerCommand extends AsyncCommand {
             if (composer == null) {
                 composer = (ComposerModel) getArgs().getSerializable(PARAM_COMPOSER_ITEM);
             }
+            hostItemId = composer.itemHostId;
             ops.add(ContentProviderOperation.newUpdate(COMPOSER_URI)
                     .withValues(ShopStore.DELETE_VALUES)
                     .withSelection(ShopStore.ComposerTable.ID + " = ?", new String[]{composer.guid})
@@ -75,6 +75,7 @@ public class RemoveComposerCommand extends AsyncCommand {
             if (composers == null) {
                 composers = (ArrayList<ComposerModel>) getArgs().getSerializable(PARAM_COMPOSER_ITEM);
             }
+            hostItemId = composers.get(0).itemHostId;
             for (ComposerModel unit : composers) {
                 ops.add(ContentProviderOperation.newUpdate(COMPOSER_URI)
                         .withValues(ShopStore.DELETE_VALUES)
