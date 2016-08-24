@@ -83,7 +83,7 @@ import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.VariantItemModel;
 import com.kaching123.tcr.model.VariantSubItemModel;
-import com.kaching123.tcr.model.converter.MultipleDiscountJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.MultipleDiscountJdbcConverter;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;

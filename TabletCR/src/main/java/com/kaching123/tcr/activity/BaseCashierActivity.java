@@ -124,10 +124,12 @@ import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
+import com.kaching123.tcr.function.MultipleDiscountWrapFunction;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CustomerModel;
+import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
@@ -169,6 +171,7 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
 import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpXRegisterTable;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.MultipleDiscountTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
@@ -228,7 +231,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 5;
     private static final int LOADER_SEARCH_BARCODE = 10;
     private static final int LOADER_SALE_INCENTIVES = 12;
-    private static final int LOADER_TBP = 13;
+    private static final int LOADER_DISCOUNT_BUNDLES = 13;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
 
@@ -320,6 +323,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected String strItemCount;
     protected int saleItemCount;
     private List<Integer> priceLevels = Collections.EMPTY_LIST;
+    private List<DiscountBundle> discountBundles = Collections.EMPTY_LIST;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -2997,6 +3001,27 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
+
+        }
+    }
+
+    private class DiscountBundleLoader implements LoaderCallbacks<List<DiscountBundle>> {
+
+        @Override
+        public Loader<List<DiscountBundle>> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(MultipleDiscountTable.URI_CONTENT))
+                    .orderBy(MultipleDiscountTable.BUNDLE_ID)
+                    .wrap(new MultipleDiscountWrapFunction())
+                    .build(self());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<DiscountBundle>> loader, List<DiscountBundle> data) {
+            discountBundles = data;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<DiscountBundle>> loader) {
 
         }
     }

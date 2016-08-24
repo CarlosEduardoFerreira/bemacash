@@ -1,4 +1,4 @@
-package com.kaching123.tcr.model.converter;
+package com.kaching123.tcr.jdbc.converters;
 
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
 import com.kaching123.tcr.model.MultipleDiscountModel;

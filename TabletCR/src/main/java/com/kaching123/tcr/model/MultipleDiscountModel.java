@@ -1,6 +1,7 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.kaching123.tcr.store.ShopStore.MultipleDiscountTable;
 
@@ -27,6 +28,16 @@ public class MultipleDiscountModel implements IValueModel, Serializable{
         this.itemId = itemId;
         this.qty = qty;
         this.discount = discount;
+    }
+
+    public MultipleDiscountModel(Cursor c){
+        this(
+            c.getString(c.getColumnIndex(MultipleDiscountTable.ID)),
+            c.getString(c.getColumnIndex(MultipleDiscountTable.BUNDLE_ID)),
+            c.getString(c.getColumnIndex(MultipleDiscountTable.ITEM_ID)),
+            _decimalQty(c, c.getColumnIndex(MultipleDiscountTable.QTY), BigDecimal.ZERO),
+            _decimal(c, c.getColumnIndex(MultipleDiscountTable.DISCOUNT), BigDecimal.ZERO)
+        );
     }
 
     @Override
