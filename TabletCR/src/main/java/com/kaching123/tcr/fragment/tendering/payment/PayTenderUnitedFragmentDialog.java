@@ -127,14 +127,14 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     }
 
-    private void setTenderButtonsEnable() {
-        //btnGiftCard.setEnabled(getApp().getShopInfo().giftCardPaymentButtonEnabled);
-        btnCard.setEnabled(getApp().getShopInfo().creditPaymentButtonEnabled);
-        btnPaxDebit.setEnabled(getApp().getShopInfo().debitCardPaymentButtonEnabled);
-        btnPaxEbtFoodstamp.setEnabled(getApp().getShopInfo().ebtFoodStampPaymentEnabled);
-        btnPaxEbtCash.setEnabled(getApp().getShopInfo().ebtCashPaymentButtonEnabled);
-        btnOfflineCredit.setEnabled(getApp().getShopInfo().offlineCreditPaymentButtonEnabled);
-        btnCheck.setEnabled(getApp().getShopInfo().checkPaymentButtonEnabled);
+    private void setTenderButtonsVisibilityWithServerSettings() {
+        //btnGiftCard.setEnabled(getApp().getShopInfo().giftCardPaymentButtonEnabled); // this button is not implemented yet
+        btnCard.setVisibility(getApp().getShopInfo().creditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnPaxDebit.setVisibility(getApp().getShopInfo().debitCardPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnPaxEbtFoodstamp.setVisibility(getApp().getShopInfo().ebtFoodStampPaymentEnabled ? View.VISIBLE : View.GONE);
+        btnPaxEbtCash.setVisibility(getApp().getShopInfo().ebtCashPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnOfflineCredit.setVisibility(getApp().getShopInfo().offlineCreditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnCheck.setVisibility(getApp().getShopInfo().checkPaymentButtonEnabled ? View.VISIBLE : View.GONE);
     }
 
     @Click
@@ -374,12 +374,10 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     protected void enable(final boolean on) {
-        //// FIXME: 23.08.2016 alboyko do we need next settings?
-        setTenderButtonsEnable();
-
         super.enable(on);
         btnOfflineCredit.setEnabled(on);
         btnCheck.setEnabled(on);
+        setTenderButtonsVisibilityWithServerSettings();
     }
 
     @Override
