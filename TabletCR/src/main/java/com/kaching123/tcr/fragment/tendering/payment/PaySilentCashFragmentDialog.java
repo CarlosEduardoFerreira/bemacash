@@ -46,6 +46,7 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
     protected int colorPaymentDisabled;
 
     protected Transaction transaction;
+    protected BigDecimal amount;
 
     protected ISaleCashListener listener;
     private TaskHandler waitCashTask;
@@ -86,7 +87,7 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
     private void textChanged() {
         BigDecimal tenderAmount = BigDecimal.ZERO;
         BigDecimal changeAmount = BigDecimal.ZERO;
-        String chargeStr = UiHelper.valueOf(transaction.getAmount().add(BigDecimal.TEN));//charge.getText().toString();
+        String chargeStr = UiHelper.valueOf(amount);//charge.getText().toString();
         try {
             tenderAmount = UiHelper.parseBrandDecimalInput(chargeStr);
             resumeNavigationButtons(tenderAmount);
@@ -101,7 +102,6 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         BigDecimal changeAmount = receivedAmount.subtract(transaction.getAmount());
         if (changeAmount.compareTo(BigDecimal.ZERO) >= 0) {
             transaction.changeValue = changeAmount;
-        } else {
         }
     }
 
@@ -156,6 +156,11 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         return this;
     }
 
+    public PaySilentCashFragmentDialog setAmount(BigDecimal amount) {
+        this.amount = amount;
+        return this;
+    }
+
     private boolean tryCancel() {
         if (listener != null) {
             listener.onCancel();
@@ -168,7 +173,7 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
     @Override
     public boolean try2GetCash(boolean searchByMac) {
         Logger.d("PaySilentCashFragmentDialog: try2GetCash()");
-        String s = UiHelper.valueOf(transaction.getAmount().add(BigDecimal.TEN));
+        String s = UiHelper.valueOf(amount);
         if (TextUtils.isEmpty(s)) {
             Toast.makeText(getActivity(), R.string.pay_toast_zero, Toast.LENGTH_LONG).show();
             return false;
@@ -228,9 +233,9 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         void onCancel();
     }
 
-    public static PaySilentCashFragmentDialog show(FragmentActivity context, Transaction transaction, ISaleCashListener listener) {
+    public static PaySilentCashFragmentDialog show(FragmentActivity context, BigDecimal amount, Transaction transaction, ISaleCashListener listener) {
         Logger.d("About to show second dialog");
-        return DialogUtil.show(context, DIALOG_NAME, PaySilentCashFragmentDialog_.builder().build()).setListener(listener).setTransaction(transaction);
+        return DialogUtil.show(context, DIALOG_NAME, PaySilentCashFragmentDialog_.builder().build()).setListener(listener).setAmount(amount).setTransaction(transaction);
     }
 
     public static void hide(FragmentActivity activity) {

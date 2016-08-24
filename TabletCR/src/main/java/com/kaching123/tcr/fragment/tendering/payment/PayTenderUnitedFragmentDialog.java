@@ -22,7 +22,7 @@ import com.kaching123.tcr.commands.payment.pax.PaxGateway;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.CustomEditBox;
-import com.kaching123.tcr.component.KeyboardView;
+import com.kaching123.tcr.component.PayTenderUnitedKeyboardView;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -81,7 +81,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     protected CustomEditBox charge;
 
     @ViewById
-    protected KeyboardView keyboard;
+    protected PayTenderUnitedKeyboardView keyboard;
 
     @ColorRes(R.color.dlg_text_green)
     protected int colorPaymentOk;
@@ -142,7 +142,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
 
         entered = getDecimalValue();
-        if (!method.equals(PaymentMethod.PAX_EBT_CASH) || !method.equals(PaymentMethod.PAX_EBT_FOODSTAMP)
+        if (!method.equals(PaymentMethod.CASH)
                 && value.length() > 0 && alreadyPayed.compareTo(entered) < 0) {
             entered = alreadyPayed;
             charge.setText(UiHelper.valueOf(entered));

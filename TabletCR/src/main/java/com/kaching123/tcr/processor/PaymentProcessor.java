@@ -765,7 +765,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         Logger.d("Price send to Processor" + amount.toString());
         switch (method) {
             case CASH: {
-                transaction = PaymentGateway.CASH.gateway().createTransaction(context, amount, orderGuid);
+                transaction = PaymentGateway.CASH.gateway().createTransaction(context, orderTotal, orderGuid);
                 transaction.cashBack = BigDecimal.ZERO;
                 transaction.setType(TransactionType.CASH);
                 proceedToCashPayment(context, amount, transaction);
@@ -984,7 +984,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
      * Follow with the cash payment
      */
     private void proceedToCashPayment(final FragmentActivity context, final BigDecimal amount, final Transaction transaction) {
-        PaySilentCashFragmentDialog.show(context, transaction, new PaySilentCashFragmentDialog.ISaleCashListener() {
+        PaySilentCashFragmentDialog.show(context, amount, transaction, new PaySilentCashFragmentDialog.ISaleCashListener() {
 
             @Override
             public void onPaymentAmountSelected(BigDecimal amount, BigDecimal changeAmount) {
