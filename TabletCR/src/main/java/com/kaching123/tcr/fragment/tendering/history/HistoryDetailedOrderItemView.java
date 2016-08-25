@@ -23,6 +23,7 @@ import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import static com.kaching123.tcr.fragment.UiHelper.showInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
@@ -131,7 +132,7 @@ public class HistoryDetailedOrderItemView extends FrameLayout implements ICheckB
 
         if (saleItemModel.isPcsUnit) {
             showInteger(this.qty, itemModel.qty);
-            showInteger(this.maxRefundQty, itemModel.isPrepaidItem || itemModel.isGiftCard ? itemModel.getFinalPrice() : availableQty);
+            showInteger(this.maxRefundQty, itemModel.isPrepaidItem || itemModel.isGiftCard ? BigDecimal.ONE : availableQty);
             showInteger(this.qtyRefund, itemModel.isPrepaidItem || itemModel.isGiftCard ? new BigDecimal(0) : historyItem.wantedQty);
 
         } else {
