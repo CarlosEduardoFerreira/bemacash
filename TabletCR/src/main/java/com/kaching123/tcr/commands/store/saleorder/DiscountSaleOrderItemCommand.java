@@ -3,6 +3,7 @@ package com.kaching123.tcr.commands.store.saleorder;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -74,6 +75,14 @@ public class DiscountSaleOrderItemCommand extends AsyncCommand {
                 .arg(ARG_DISCOUNT_TYPE, discountType)
                 .callback(callback)
                 .queueUsing(context);
+    }
+
+    public SyncResult syncDependent(Context context, String saleItemGuid, BigDecimal discount, DiscountType discountType, IAppCommandContext appCommandContext){
+        Bundle args = new Bundle();
+        args.putString(ARG_SALE_ITEM_GUID, saleItemGuid);
+        args.putSerializable(ARG_DISCOUNT, discount);
+        args.putSerializable(ARG_DISCOUNT_TYPE, discountType);
+        return syncDependent(context, args, appCommandContext);
     }
 
     public static abstract class BaseDiscountSaleOrderItemCallback {

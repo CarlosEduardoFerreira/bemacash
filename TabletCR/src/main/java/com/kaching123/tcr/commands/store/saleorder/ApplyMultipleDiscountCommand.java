@@ -8,6 +8,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.function.MultipleDiscountWrapFunction;
 import com.kaching123.tcr.model.DiscountBundle;
+import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.MultipleDiscountModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemFunction;
@@ -55,14 +56,31 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
             return failed();
 
         BigDecimal bundleCount = calcBundleCount(itemsMap, winner);
-        List<ItemInfo> itemInfos = collectItemInfos(itemsMap, winner, bundleCount);
+        List<ItemInfo> itemInfos = collectItemInfo(itemsMap, winner, bundleCount);
 
+        SplitSaleItemCommand splitCmd = new SplitSaleItemCommand();
+        DiscountSaleOrderItemCommand discountCmd = new DiscountSaleOrderItemCommand();
         for (ItemInfo itemInfo : itemInfos){
-
+            String saleItemId = itemsMap.get(itemInfo.id).saleItemGuid;
+            if (itemInfo.splitQty.compareTo(BigDecimal.ZERO) == 1){
+                SyncResult splitResult = splitCmd.sync(getContext(),  saleItemId, itemInfo.splitQty, getAppCommandContext());
+                if (splitResult == null){
+                    return failed();
+                }else{
+                    ops.addAll(splitResult.getLocalDbOperations());
+                    sql.add(splitResult.getSqlCmd());
+                }
+            }
+            SyncResult discountResult = discountCmd.syncDependent(getContext(), saleItemId, itemInfo.discount, DiscountType.PERCENT, getAppCommandContext());
+            if (discountResult == null){
+                return failed();
+            }else{
+                ops.addAll(discountResult.getLocalDbOperations());
+                sql.add(discountResult.getSqlCmd());
+            }
         }
 
-
-        return null;
+        return succeeded();
     }
 
     private static List<DiscountBundle> loadDiscountBundles(Context context) {
@@ -79,7 +97,7 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
     private static List<SaleOrderItemModel> loadItems(Context context, String orderId){
         return ProviderAction.query(ShopProvider.contentUri(SaleItemTable.URI_CONTENT))
                 .where(SaleItemTable.ORDER_GUID + " = ?", orderId)
-                .where(SaleItemTable.DISCOUNT + " IS NULL OR " + _castAsReal(SaleItemTable.DISCOUNT) + " = ?", 0)
+                .where("(" + SaleItemTable.DISCOUNT + " IS NULL OR " + _castAsReal(SaleItemTable.DISCOUNT) + " = ?)", 0)
                 .perform(context)
                 .toFluentIterable(new SaleOrderItemFunction()).toImmutableList();
     }
@@ -126,14 +144,14 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
                 continue;
 
             BigDecimal count2 = item.qty.divide(bundleItem.qty, 0, BigDecimal.ROUND_FLOOR);
-            if (count2.compareTo(count) < 0){
+            if (count2.compareTo(count) == -1){
                 count = count2;
             }
         }
         return count;
     }
 
-    private static List<ItemInfo> collectItemInfos(Map<String, SaleOrderItemModel> itemsMap, DiscountBundle bundle, BigDecimal bundleCount){
+    private static List<ItemInfo> collectItemInfo(Map<String, SaleOrderItemModel> itemsMap, DiscountBundle bundle, BigDecimal bundleCount){
         ArrayList<ItemInfo> result = new ArrayList<>();
         for (MultipleDiscountModel bundleItem : bundle.bundleItems){
             String itemId = bundleItem.itemId;
@@ -148,12 +166,12 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return null;
+        return sql;
     }
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        return null;
+        return ops;
     }
 
     private static class ItemInfo {
@@ -168,5 +186,9 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
             this.splitQty = splitQty;
             this.discount = discount;
         }
+    }
+
+    public static void start(Context context, String orderId, ArrayList<DiscountBundle> discountBundles){
+        create(ApplyMultipleDiscountCommand.class).arg(ARG_ORDER_ID, orderId).arg(ARG_DISCOUNT_BUNDLES, discountBundles).queueUsing(context);
     }
 }

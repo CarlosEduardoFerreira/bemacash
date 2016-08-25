@@ -71,6 +71,7 @@ import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand.BaseAddSaleOrderCommandCallback;
+import com.kaching123.tcr.commands.store.saleorder.ApplyMultipleDiscountCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand.BaseGetItemsForFaickVoidCallback;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand;
@@ -266,6 +267,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
     private SaleIncentivesLoader saleIncentivesLoader = new SaleIncentivesLoader();
+    private DiscountBundleLoader discountBundleLoader = new DiscountBundleLoader();
+
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -551,6 +554,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         releaseResultList = new ArrayList<PrepaidReleaseResult>();
         giftCardResultList = new ArrayList<GiftCardBillingResult>();
+
+        getSupportLoaderManager().restartLoader(LOADER_DISCOUNT_BUNDLES, null, discountBundleLoader);
     }
 
 
@@ -2758,6 +2763,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 if (scaleServiceBound) {
                     onScaleItemAdded(item);
                 }
+            }
+            if (discountBundles != null && !discountBundles.isEmpty()){
+                ApplyMultipleDiscountCommand.start(self(), orderGuid, new ArrayList<>(discountBundles));
             }
         }
 

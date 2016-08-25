@@ -27,7 +27,6 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public BigDecimal kitchenPrintedQty;
     public BigDecimal price;
     public PriceType priceType;
-
     public BigDecimal discount;
     public DiscountType discountType;
     public boolean isTaxable;
