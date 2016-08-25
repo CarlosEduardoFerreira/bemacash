@@ -132,7 +132,7 @@ public class HistoryDetailedOrderItemView extends FrameLayout implements ICheckB
 
         if (saleItemModel.isPcsUnit) {
             showInteger(this.qty, itemModel.qty);
-            showInteger(this.maxRefundQty, itemModel.isPrepaidItem || itemModel.isGiftCard ? BigDecimal.ONE : availableQty);
+            showInteger(this.maxRefundQty, itemModel.isPrepaidItem || itemModel.isGiftCard ? BigDecimal.ZERO : availableQty);
             showInteger(this.qtyRefund, itemModel.isPrepaidItem || itemModel.isGiftCard ? new BigDecimal(0) : historyItem.wantedQty);
 
         } else {
