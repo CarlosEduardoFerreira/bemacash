@@ -138,10 +138,11 @@
                 android:background="@drawable/hold_btn"/>
 
             <Button
+                style="@style/LocalizableButton.Blue"
                 android:id="@+id/btn_customer"
-                android:text="Customer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:background="@drawable/customer_btn"/>
 
         </LinearLayout>
 
@@ -163,6 +164,7 @@
                 android:id="@+id/customer_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
                 android:textColor="@color/text_lightgrey"
                 android:textSize="16sp"/>
         </LinearLayout>

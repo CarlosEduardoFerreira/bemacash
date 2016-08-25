@@ -37,7 +37,7 @@
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="320dp">
+                        android:layout_height="380dp">
 
                         <fragment
                             android:id="@+id/total_cost_fragment"
