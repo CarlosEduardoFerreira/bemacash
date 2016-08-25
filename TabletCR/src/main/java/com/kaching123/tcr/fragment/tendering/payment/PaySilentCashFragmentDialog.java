@@ -102,6 +102,8 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         BigDecimal changeAmount = receivedAmount.subtract(transaction.getAmount());
         if (changeAmount.compareTo(BigDecimal.ZERO) >= 0) {
             transaction.changeValue = changeAmount;
+        } else {
+            transaction.amount = receivedAmount;
         }
     }
 

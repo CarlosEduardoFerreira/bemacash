@@ -80,10 +80,10 @@
 
     <ImageButton
         style="@style/keyboard"
+        android:layout_width="84dp"
         android:id="@+id/num_clear"
         android:layout_marginTop="1px"
-        android:layout_marginLeft="1px"
-        android:background="@drawable/numminus" />
+        android:layout_marginLeft="1px" />
 
     <ImageButton
         style="@style/keyboard"
