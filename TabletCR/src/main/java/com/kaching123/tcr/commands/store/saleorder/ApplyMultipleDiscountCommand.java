@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
-
 /**
  * Created by vkompaniets on 24.08.2016.
  */
@@ -71,7 +69,7 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
                     sql.add(splitResult.getSqlCmd());
                 }
             }
-            SyncResult discountResult = discountCmd.syncDependent(getContext(), saleItemId, itemInfo.discount, DiscountType.PERCENT, getAppCommandContext());
+            SyncResult discountResult = discountCmd.syncDependent(getContext(), saleItemId, itemInfo.discount, DiscountType.PERCENT, true, getAppCommandContext());
             if (discountResult == null){
                 return failed();
             }else{
@@ -97,7 +95,7 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
     private static List<SaleOrderItemModel> loadItems(Context context, String orderId){
         return ProviderAction.query(ShopProvider.contentUri(SaleItemTable.URI_CONTENT))
                 .where(SaleItemTable.ORDER_GUID + " = ?", orderId)
-                .where("(" + SaleItemTable.DISCOUNT + " IS NULL OR " + _castAsReal(SaleItemTable.DISCOUNT) + " = ?)", 0)
+                .where(SaleItemTable.IS_MULTIPLE_DISCOUNT + " = ?", 0)
                 .perform(context)
                 .toFluentIterable(new SaleOrderItemFunction()).toImmutableList();
     }

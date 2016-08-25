@@ -2602,6 +2602,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         protected void onSuccess(String saleItemGuid) {
             if (displayBinder != null)
                 displayBinder.startCommand(new DisplaySaleItemCommand(saleItemGuid));
+            ApplyMultipleDiscountCommand.start(self(), orderGuid, new ArrayList<>(discountBundles));
         }
     };
 
