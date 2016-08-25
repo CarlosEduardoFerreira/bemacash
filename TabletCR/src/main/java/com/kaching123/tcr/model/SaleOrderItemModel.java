@@ -29,6 +29,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public PriceType priceType;
     public BigDecimal discount;
     public DiscountType discountType;
+    public boolean isMultipleDiscount;
     public boolean isTaxable;
     public BigDecimal tax;
     public BigDecimal tax2;
@@ -55,7 +56,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
 
     public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, BigDecimal qty, BigDecimal kitchenPrintedQty,
                               PriceType priceType, BigDecimal price, boolean discountable, BigDecimal discount, DiscountType discountType,
-                              boolean isTaxable, BigDecimal tax, BigDecimal tax2, long sequence, String parentGuid,
+                              boolean isMultipleDiscount, boolean isTaxable, BigDecimal tax, BigDecimal tax2, long sequence, String parentGuid,
                               BigDecimal finalGrossPrice,
                               BigDecimal finalTax,
                               BigDecimal finalDiscount,
@@ -74,6 +75,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.priceType = priceType;
         this.discount = discount;
         this.discountType = discountType;
+        this.isMultipleDiscount = isMultipleDiscount;
         this.isTaxable = isTaxable;
         this.discountable = discountable;
         this.sequence = sequence;
@@ -96,7 +98,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description,
                               BigDecimal qty, BigDecimal kitchenPrintedQty, PriceType priceType,
                               BigDecimal price, boolean discountable, BigDecimal discount, DiscountType discountType,
-                              boolean isTaxable, BigDecimal tax, BigDecimal tax2, long sequence, String parentGuid,
+                              boolean isMultipleDiscount, boolean isTaxable, BigDecimal tax, BigDecimal tax2, long sequence, String parentGuid,
                               BigDecimal finalGrossPrice,
                               BigDecimal finalTax,
                               BigDecimal finalDiscount,
@@ -116,6 +118,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.priceType = priceType;
         this.discount = discount;
         this.discountType = discountType;
+        this.isMultipleDiscount = isMultipleDiscount;
         this.isTaxable = isTaxable;
         this.discountable = discountable;
         this.sequence = sequence;

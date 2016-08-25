@@ -835,6 +835,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String DISCOUNT_TYPE = "discount_type";
 
+        @Column(type = Column.Type.INTEGER, defVal = "0")
+        String IS_MULTIPLE_DISCOUNT = "is_multiple_discount";
+
         @Column(type = Column.Type.INTEGER)
         String TAXABLE = "taxable";
 

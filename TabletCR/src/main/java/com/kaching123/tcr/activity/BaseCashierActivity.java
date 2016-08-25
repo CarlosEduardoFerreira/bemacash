@@ -1635,21 +1635,21 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 isCreateReturnOrder || model.isDiscountable,
                 model.isDiscountable ? model.discount : null,
                 model.isDiscountable ? model.discountType : null,
+                false,
                 model.isTaxable,
                 isPrepaidItemStart ? model.tax : TextUtils.isEmpty(model.taxGroupGuid) ? getApp().getTaxVat() : model.tax,
                 TextUtils.isEmpty(model.taxGroupGuid2) ? null : model.tax2,
                 0,
                 null,
+                BigDecimal.ZERO, //final tax
                 BigDecimal.ZERO,
-                BigDecimal.ZERO,//final tax
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
                 null,
                 !isCreateReturnOrder && model.hasNotes,
                 isPrepaidItemStart,
                 isGiftCardReload,
-                model.isIncentive || model.excludeFromLoyaltyPlan ? BigDecimal.ZERO : model.loyaltyPoints,
-                model.isIncentive || model.excludeFromLoyaltyPlan ? false : getApp().getShopInfo().loyaltyPointsForDollarAmount);
+                model.isIncentive || model.excludeFromLoyaltyPlan ? BigDecimal.ZERO : model.loyaltyPoints, model.isIncentive || model.excludeFromLoyaltyPlan ? false : getApp().getShopInfo().loyaltyPointsForDollarAmount);
 
         if (unit != null && orderGuid != null) {
             unit.orderId = orderGuid;

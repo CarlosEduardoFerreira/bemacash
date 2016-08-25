@@ -198,6 +198,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 _bool(c, c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT)),
                 _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
+                _bool(c, c.getColumnIndex(SaleItemTable.IS_MULTIPLE_DISCOUNT)),
                 _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),
@@ -211,8 +212,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 c.getInt(c.getColumnIndex(SaleItemTable.HAS_NOTES)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 1,
-                _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
-                _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)));
+                _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)), _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)));
     }
 
     private AddonInfo readModifier(Cursor c) {

@@ -31,6 +31,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     private static final String DISCOUNTABLE = "DISCOUNTABLE";
     private static final String DISCOUNT = "DISCOUNT";
     private static final String DISCOUNT_TYPE = "DISCOUNT_TYPE";
+    private static final String IS_MULTIPLE_DISCOUNT = "IS_MULTIPLE_DISCOUNT";
     private static final String TAXABLE = "TAXABLE";
     private static final String SEQUENCE = "SEQUENCE";
     private static final String TAX = "TAX";
@@ -60,6 +61,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(DISCOUNTABLE),
                 rs.getBigDecimal(DISCOUNT),
                 _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT),
+                rs.getBoolean(IS_MULTIPLE_DISCOUNT),
                 rs.getBoolean(TAXABLE),
                 rs.getBigDecimal(TAX),
                 rs.getBigDecimal(TAX2),
@@ -73,8 +75,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(HAS_NOTES),
                 rs.getBoolean(IS_PREPAID_ITEM),
                 rs.getBoolean(IS_GIFT_CARD),
-                rs.getBigDecimal(LOYALTY_POINTS),
-                rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT));
+                rs.getBigDecimal(LOYALTY_POINTS), rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT));
     }
 
     @Override
@@ -105,12 +106,12 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(DISCOUNTABLE, model.discountable)
                 .add(DISCOUNT, model.discount)
                 .add(DISCOUNT_TYPE, model.discountType)
+                .add(DISCOUNT_TYPE, model.isMultipleDiscount)
                 .add(TAXABLE, model.isTaxable)
                 .add(TAX, model.tax)
                 .add(TAX2, model.tax2)
                 .add(SEQUENCE, model.sequence)
                 .add(PARENT_ID, model.parentGuid)
-
                 .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
                 .add(FINAL_TAX, model.finalTax)
                 .add(FINAL_DISCOUNT, model.finalDiscount)
@@ -175,6 +176,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
         return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
                 .add(DISCOUNT, model.discount)
                 .add(DISCOUNT_TYPE, model.discountType)
+                .add(IS_MULTIPLE_DISCOUNT, model.isMultipleDiscount)
 
                 .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
                 .add(FINAL_TAX, model.finalTax)
