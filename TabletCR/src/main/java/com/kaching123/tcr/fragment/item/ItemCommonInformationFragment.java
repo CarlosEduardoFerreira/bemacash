@@ -120,6 +120,10 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     }
 
     public void setAdapter(List<KDSAliasModel> kdsAliasModels) {
+        if (kdsAliasModels == null) {
+            kdsAliasAdapter.changeCursor(null);
+            return;
+        }
         ArrayList<KDSAliasModel> models = new ArrayList<>(kdsAliasModels.size());
 //            models.add(new KDSAliasModel(null, "None"));
         models.addAll(kdsAliasModels);
