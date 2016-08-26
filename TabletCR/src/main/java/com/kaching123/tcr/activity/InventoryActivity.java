@@ -187,10 +187,15 @@ public class InventoryActivity extends ScannerBaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean b = super.onCreateOptionsMenu(menu);
         searchItem = menu.findItem(R.id.action_search);
-        sort.setIcon(getResources().getDrawable(getApp().isEnableABCOrder() ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
         assert searchItem != null;
         initSearchView();
         return b;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        sort.setIcon(getResources().getDrawable(getApp().isEnableABCOrder() ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @OptionsItem
