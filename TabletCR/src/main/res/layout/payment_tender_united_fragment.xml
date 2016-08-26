@@ -76,18 +76,6 @@
             android:numColumns="3"
             android:stretchMode="columnWidth"
             android:verticalSpacing="@dimen/payment_tender_dlg_payment_gridview_vertical_spacing" />
-        <Button
-            style="@style/LocalizableButton.LightGrey"
-            android:id="@+id/btn_exact"
-            android:background="@drawable/exact_btn_bg"
-            android:text="@string/button_exact"
-            android:textSize="22sp"
-            android:focusable="false"
-            android:clickable="false"
-            android:layout_height="wrap_content"
-            android:layout_width="@dimen/payment_tender_dlg_payment_gridview_layout_width"
-            android:layout_marginTop="@dimen/payment_tender_dlg_exact_btn_margin_top" />
-
     </LinearLayout>
 
     <GridLayout
@@ -173,7 +161,7 @@
             android:background="@drawable/simple_tender_btn"
             android:text="@string/button_debit"
             android:visibility="gone" />
-
+<!--
         <Button
             android:id="@+id/btn_pax_ebt_foodstamp"
             style="@style/LocalizableButton.Gold.20"
@@ -183,7 +171,7 @@
             android:layout_row="3"
             android:background="@drawable/simple_tender_btn"
             android:text="@string/button_ebt_foodstamp_dlg"
-            android:visibility="gone" />
+            android:visibility="gone" /> -->
 
     </GridLayout>
 

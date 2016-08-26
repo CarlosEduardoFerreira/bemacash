@@ -110,7 +110,6 @@ public class PayTenderFragmentDialog extends TenderFragmentDialogBase<PayTenderF
             }
             if (paxGateway.acceptPaxEbtEnabled()) {
                 btnPaxEbtCash.setVisibility(View.VISIBLE);
-                btnPaxEbtFoodstamp.setVisibility(View.VISIBLE);
             }
         }
     }

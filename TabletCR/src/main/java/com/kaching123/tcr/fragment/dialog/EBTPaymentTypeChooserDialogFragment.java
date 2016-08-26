@@ -2,11 +2,13 @@ package com.kaching123.tcr.fragment.dialog;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
@@ -35,6 +37,11 @@ public class EBTPaymentTypeChooserDialogFragment extends StyledDialogFragment {
     @ViewById
     protected Button btnPaxEbtCash;
 
+    @AfterViews
+    protected void init() {
+        btnPaxEbtFoodstamp.setVisibility(getApp().getShopInfo().ebtFoodStampPaymentEnabled ? View.VISIBLE : View.GONE);
+        btnPaxEbtCash.setVisibility(getApp().getShopInfo().ebtCashPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+    }
 
     @Click
     protected void btnPaxEbtFoodstampClicked(){
