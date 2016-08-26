@@ -128,6 +128,14 @@ public interface ShopPref {
 
     boolean autoFillPaymentAmountEnabled();
 
+    boolean giftCardPaymentButtonEnabled();
+    boolean creditPaymentButtonEnabled();
+    boolean debitCardPaymentButtonEnabled();
+    boolean ebtFoodStampPaymentEnabled();
+    boolean ebtCashPaymentButtonEnabled();
+    boolean offlineCreditPaymentButtonEnabled();
+    boolean checkPaymentButtonEnabled();
+
     /**
      * user **
      */

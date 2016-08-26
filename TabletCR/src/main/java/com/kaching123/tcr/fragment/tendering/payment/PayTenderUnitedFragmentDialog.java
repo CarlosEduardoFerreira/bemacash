@@ -127,6 +127,16 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     }
 
+    private void setTenderButtonsVisibilityWithServerSettings() {
+        //btnGiftCard.setEnabled(getApp().getShopInfo().giftCardPaymentButtonEnabled); // this button is not implemented yet
+        btnCard.setVisibility(getApp().getShopInfo().creditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnPaxDebit.setVisibility(getApp().getShopInfo().debitCardPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnPaxEbtFoodstamp.setVisibility(getApp().getShopInfo().ebtFoodStampPaymentEnabled ? View.VISIBLE : View.GONE);
+        btnPaxEbtCash.setVisibility(getApp().getShopInfo().ebtCashPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnOfflineCredit.setVisibility(getApp().getShopInfo().offlineCreditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnCheck.setVisibility(getApp().getShopInfo().checkPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+    }
+
     @Click
     protected void btnExactClicked() {
         BigDecimal alreadyPayed = orderTotal.subtract(completedAmount);
@@ -367,6 +377,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         super.enable(on);
         btnOfflineCredit.setEnabled(on);
         btnCheck.setEnabled(on);
+        setTenderButtonsVisibilityWithServerSettings();
     }
 
     @Override

@@ -256,7 +256,14 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.blackStonePRepaidSolution().get(),
                     shopPref.defaultLoyaltyPlanId().get(),
                     shopPref.pricePointsEnabled().getOr(false),
-                    shopPref.autoFillPaymentAmountEnabled().getOr(false)
+                    shopPref.autoFillPaymentAmountEnabled().getOr(false),
+                    shopPref.giftCardPaymentButtonEnabled().getOr(false),
+                    shopPref.creditPaymentButtonEnabled().getOr(false),
+                    shopPref.debitCardPaymentButtonEnabled().getOr(false),
+                    shopPref.ebtFoodStampPaymentEnabled().getOr(false),
+                    shopPref.ebtCashPaymentButtonEnabled().getOr(false),
+                    shopPref.offlineCreditPaymentButtonEnabled().getOr(false),
+                    shopPref.checkPaymentButtonEnabled().getOr(false)
                     );
         }
         barcodePrefixes = new BarcodePrefixes(
@@ -605,6 +612,13 @@ public class TcrApplication extends MultiDexApplication {
                 .defaultLoyaltyPlanId().put(info.defaultLoyaltyPlanId)
                 .pricePointsEnabled().put(info.loyaltyPointsForDollarAmount)
                 .autoFillPaymentAmountEnabled().put(info.autoFillPaymentAmount)
+                .giftCardPaymentButtonEnabled().put(info.giftCardPaymentButtonEnabled)
+                .creditPaymentButtonEnabled().put(info.creditPaymentButtonEnabled)
+                .debitCardPaymentButtonEnabled().put(info.debitCardPaymentButtonEnabled)
+                .ebtFoodStampPaymentEnabled().put(info.ebtFoodStampPaymentEnabled)
+                .ebtCashPaymentButtonEnabled().put(info.ebtCashPaymentButtonEnabled)
+                .offlineCreditPaymentButtonEnabled().put(info.offlineCreditPaymentButtonEnabled)
+                .checkPaymentButtonEnabled().put(info.checkPaymentButtonEnabled)
                 .apply();
 
         setUsers();
