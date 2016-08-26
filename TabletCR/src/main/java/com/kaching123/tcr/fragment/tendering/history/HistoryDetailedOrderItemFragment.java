@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,14 +17,8 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
-import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
@@ -49,14 +44,23 @@ import com.kaching123.tcr.store.ShopSchema2.PrepaidOrderView2.BillPaymentDescrip
 import com.kaching123.tcr.store.ShopSchema2.PrepaidOrderView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleItemExDelView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleItemExDelView2.SaleItemTable;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.CustomerTable;
 import com.kaching123.tcr.store.ShopStore.PrepaidOrderView;
 import com.kaching123.tcr.store.ShopStore.SaleItemExDelView;
+import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 import com.kaching123.tcr.util.DateUtils;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 
@@ -75,6 +79,7 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
     private static final int PREPAID_ORDER_LOADER_ID = 2;
     private static final int PREAUTH_TRANSACTIONS_LOADER_ID = 3;
     private static final int TIPS_LOADER_ID = 4;
+    private static final int CUSTOMER_EMAIL_LOADER_ID = 5;
 
     @ViewById
     protected TextView num;
@@ -110,6 +115,9 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
     protected Button btnClose;
 
     @ViewById
+    protected Button btnEmail;
+
+    @ViewById
     protected TextView refundAmount;
 
     private MenuItem actionRefundTips;
@@ -123,6 +131,7 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
     private PrepaidType prepaidType;
     private boolean isPrepaidFailed;
     private boolean isOrderTipped;
+    private String customerEmail;
 
     private boolean isTipsEnabled;
 
@@ -224,6 +233,9 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
             getLoaderManager().restartLoader(TIPS_LOADER_ID, null, tipsLoader);
         }
         this.isOrderTipped = isTipped;
+
+        this.customerEmail = null;
+        getLoaderManager().restartLoader(CUSTOMER_EMAIL_LOADER_ID, null, customerEmailLoader);
     }
 
     public void onHide() {
@@ -504,6 +516,32 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
 
         @Override
         public void onLoaderReset(Loader<BigDecimal> loader) {
+
+        }
+    };
+
+    private LoaderCallbacks<List<String>> customerEmailLoader = new LoaderCallbacks<List<String>>() {
+        @Override
+        public Loader<List<String>> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(SaleOrderView.URI_CONTENT))
+                    .projection(CustomerTable.EMAIL)
+                    .where(SaleOrderView2.SaleOrderTable.GUID + " = ?", orderGuid)
+                    .transform(new Function<Cursor, String>() {
+                        @Override
+                        public String apply(Cursor input) {
+                            return input.getString(0);
+                        }
+                    }).build(getActivity());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<String>> loader, List<String> data) {
+            customerEmail = data.isEmpty() ? null : data.get(0);
+            btnEmail.setEnabled(!TextUtils.isEmpty(customerEmail));
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<String>> loader) {
 
         }
     };
