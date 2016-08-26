@@ -26,7 +26,7 @@
         dslv:float_background_color="@color/categories_float_item_bg"
         dslv:drag_enabled="true"
         dslv:drag_handle_id="@+id/drag"
-        dslv:drag_start_mode="onMove"/>
+        dslv:drag_start_mode="onLongPress"/>
 
     <include layout="@layout/inventory_items_vertical_dividers"/>
 
