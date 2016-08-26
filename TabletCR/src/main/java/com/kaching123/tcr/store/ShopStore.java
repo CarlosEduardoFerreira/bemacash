@@ -651,8 +651,6 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.TEXT)
         String ITEM_GUID = "item_guid";
-
-
     }
 
     static {

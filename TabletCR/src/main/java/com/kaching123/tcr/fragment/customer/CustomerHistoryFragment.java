@@ -30,6 +30,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
@@ -40,7 +41,9 @@ import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 @EFragment(R.layout.customer_history_fragment)
 public class CustomerHistoryFragment extends CustomerBaseFragment {
 
-    private static final Uri URI_ORDERS = ShopProvider.getContentWithLimitUri(SaleOrderTipsQuery.URI_CONTENT, 20);
+    private static final int LIMIT = 20;
+
+    private static final Uri URI_ORDERS = ShopProvider.contentUriWithLimit(SaleOrderTipsQuery.URI_CONTENT, LIMIT);
 
     @ViewById protected ListView list;
 
@@ -85,7 +88,15 @@ public class CustomerHistoryFragment extends CustomerBaseFragment {
 
         @Override
         public void onLoadFinished(Loader<List<SaleOrderTipsViewModel>> loader, List<SaleOrderTipsViewModel> data) {
-            adapter.changeCursor(data);
+            if (data.size() > LIMIT){
+                ArrayList<SaleOrderTipsViewModel> data2 = new ArrayList<>(LIMIT);
+                for (int i = 0; i < LIMIT; i++) {
+                    data2.add(data.get(i));
+                    adapter.changeCursor(data2);
+                }
+            }else{
+                adapter.changeCursor(data);
+            }
         }
 
         @Override
@@ -119,10 +130,10 @@ public class CustomerHistoryFragment extends CustomerBaseFragment {
 
             holder.date.setText(DateUtils.formatFull(item.createTime));
             holder.orderNumber.setText(String.format("%s-%s", item.registerTitle, item.printSeqNum));
-            showPrice(holder.price, total);
+            showPrice(holder.price, price);
             showPrice(holder.discount, discount);
             showPrice(holder.tax, tax);
-            showPrice(holder.total, total.add(tax).subtract(discount));
+            showPrice(holder.total, total);
 
             return convertView;
         }
