@@ -32,7 +32,7 @@ import java.util.List;
 public class ItemPrintFragment extends ItemBaseFragment {
 
     @ViewById protected Spinner kitchen;
-    @ViewById protected Spinner kds;
+//    @ViewById protected Spinner kds;
 
     private PrinterAliasAdapter kitchenAdapter;
 

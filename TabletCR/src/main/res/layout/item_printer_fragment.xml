@@ -24,26 +24,6 @@
 
     </TableLayout>
 
-    <TableLayout
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_marginLeft="@dimen/table_margin"
-        android:layout_height="match_parent"
-        android:stretchColumns="1">
-
-        <TableRow
-            android:minHeight="@dimen/table_row_height">
-            <TextView
-                style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_kds" />
-
-            <Spinner
-                android:id="@+id/kds"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </TableRow>
-    </TableLayout>
-
     <View
         android:layout_width="0dp"
         android:layout_height="match_parent"

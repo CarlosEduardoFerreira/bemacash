@@ -1208,7 +1208,7 @@
     <string-array name="item_tabs">
         <item>Price</item>
         <item>Additional Information</item>
-        <item>Printer/KDS</item>
+        <item>Printer</item>
         <item>Special Pricing</item>
         <item>Monitoring</item>
         <item>Variants</item>
