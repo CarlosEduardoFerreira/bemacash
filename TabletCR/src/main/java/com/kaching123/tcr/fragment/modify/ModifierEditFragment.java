@@ -50,6 +50,7 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.StringUtils;
 
@@ -552,7 +553,8 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                     .forUri(URI_GROUP)
                     .projection(ShopStore.ModifierGroupTable.GUID,
                             ShopStore.ModifierGroupTable.ITEM_GUID,
-                            ShopStore.ModifierGroupTable.TITLE)
+                            ShopStore.ModifierGroupTable.TITLE,
+                            ModifierGroupTable.ORDER_NUM)
                     .where(ShopStore.ModifierGroupTable.ITEM_GUID + " = ?", itemGuid)
                     .orderBy(ShopStore.ModifierGroupTable.TITLE)
                     .transform(new Function<Cursor, ModifierGroupModel>() {
@@ -562,14 +564,15 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                             return new ModifierGroupModel(
                                     c.getString(0),
                                     c.getString(1),
-                                    c.getString(2)
+                                    c.getString(2),
+                                    c.getInt(3)
                             );
                         }
                     }).wrap(new Function<List<ModifierGroupModel>, List<ModifierGroupModel>>() {
                         @Override
                         public List<ModifierGroupModel> apply(List<ModifierGroupModel> result) {
                             ArrayList<ModifierGroupModel> arrayList = new ArrayList<ModifierGroupModel>(result.size() + 1);
-                            arrayList.add(new ModifierGroupModel(null, null, getString(R.string.groups_label)));
+                            arrayList.add(new ModifierGroupModel(null, null, getString(R.string.groups_label), -1));
                             arrayList.addAll(result);
                             return arrayList;
                         }

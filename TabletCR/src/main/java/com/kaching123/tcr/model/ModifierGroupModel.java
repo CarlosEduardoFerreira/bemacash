@@ -13,11 +13,13 @@ public class ModifierGroupModel implements IValueModel, Serializable {
     public String guid;
     public String itemGuid;
     public String title;
+    public int orderNum;
 
-    public ModifierGroupModel(String guid, String itemGuid, String title) {
+    public ModifierGroupModel(String guid, String itemGuid, String title, int orderNum) {
         this.guid = guid;
         this.itemGuid = itemGuid;
         this.title = title;
+        this.orderNum = orderNum;
     }
 
     public ModifierGroupModel() {
@@ -34,6 +36,7 @@ public class ModifierGroupModel implements IValueModel, Serializable {
         values.put(ModifierGroupTable.GUID, guid);
         values.put(ModifierGroupTable.ITEM_GUID, itemGuid);
         values.put(ModifierGroupTable.TITLE, title);
+        values.put(ModifierGroupTable.ORDER_NUM, orderNum);
 
         return values;
     }

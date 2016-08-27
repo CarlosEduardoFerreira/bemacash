@@ -28,8 +28,8 @@ public class ModifierFunction extends ListConverterFunction<ModifierModel>{
                 c.getString(indexHolder.get(ModifierTable.ITEM_SUB_GUID)),
                 _decimalQty(c.getString(indexHolder.get(ModifierTable.ITEM_SUB_QTY))),
                 c.getString(indexHolder.get(ModifierTable.ITEM_GROUP_GUID)),
-                c.getInt(indexHolder.get(ModifierTable.AUTO_APPLY))==1
-
+                c.getInt(indexHolder.get(ModifierTable.AUTO_APPLY))==1,
+                c.getInt(indexHolder.get(ModifierTable.ORDER_NUM))
         );
     }
 }

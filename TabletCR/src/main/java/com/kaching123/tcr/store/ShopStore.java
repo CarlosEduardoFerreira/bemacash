@@ -616,6 +616,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER, defVal = "0")
         String AUTO_APPLY ="auto_apply";
+
+        @Column(type = Column.Type.INTEGER)
+        String ORDER_NUM ="order_num";
     }
 
     static {
@@ -3978,6 +3981,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String ITEM_GUID = "item_guid";
+
+        @Column(type = Type.INTEGER)
+        String ORDER_NUM = "order_num";
     }
 
     static {

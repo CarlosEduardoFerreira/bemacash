@@ -28,8 +28,9 @@ public class ModifierExModel extends ModifierModel {
                            String modifierGroupGuid,
                            ModifierGroupModel group,
                            ItemExModel childItem,
-                           boolean autoApply) {
-        super(modifierGuid, itemGuid, type, title, cost, childItemGuid, childItemQty, modifierGroupGuid, autoApply);
+                           boolean autoApply,
+                           int orderNum) {
+        super(modifierGuid, itemGuid, type, title, cost, childItemGuid, childItemQty, modifierGroupGuid, autoApply, orderNum);
         this.group = group;
         this.childItem = childItem;
     }

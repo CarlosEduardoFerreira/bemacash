@@ -30,6 +30,7 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
     private static final String ITEM_SUB_QUANTITY = "ITEM_SUB_QUANTITY";
     private static final String ITEM_GROUP_GUID = "ITEM_GROUP_GUID";
     private static final String AUTO_APPLY = "AUTO_APPLY";
+    private static final String ORDER_NUM = "ORDER_NUM";
 
 
     @Override
@@ -43,7 +44,8 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 rs.getString(ITEM_SUB_GUID),
                 rs.getBigDecimal(ITEM_SUB_QUANTITY),
                 rs.getString(ITEM_GROUP_GUID),
-                rs.getBoolean(AUTO_APPLY)
+                rs.getBoolean(AUTO_APPLY),
+                rs.getInt(ORDER_NUM)
         );
     }
 
@@ -69,6 +71,7 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 .add(ITEM_SUB_QUANTITY, model.childItemQty)
                 .add(ITEM_GROUP_GUID, model.modifierGroupGuid)
                 .add(AUTO_APPLY, model.autoApply)
+                .add(ORDER_NUM, model.orderNum)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -81,6 +84,7 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 .add(ITEM_SUB_QUANTITY, model.childItemQty)
                 .add(ITEM_GROUP_GUID, model.modifierGroupGuid)
                 .add(AUTO_APPLY, model.autoApply)
+                .add(ORDER_NUM, model.orderNum)
                 .where(MODIFIER_GUID, model.modifierGuid)
                 .build(JdbcFactory.getApiMethod(model));
     }

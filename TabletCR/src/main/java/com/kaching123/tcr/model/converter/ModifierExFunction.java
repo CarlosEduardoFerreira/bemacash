@@ -8,7 +8,9 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ItemGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ItemTable;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ModifierTable;
 
 import java.math.BigDecimal;
 
@@ -100,7 +102,8 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
             group = new ModifierGroupModel(
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.GUID)),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.ITEM_GUID)),
-                    c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.TITLE))
+                    c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.TITLE)),
+                    c.getInt(c.getColumnIndex(ItemGroupTable.ORDER_NUM))
             );
         }
 
@@ -115,6 +118,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                 itemGroupGuid,
                 group,
                 child,
-                c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.AUTO_APPLY)) == 1);
+                c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.AUTO_APPLY)) == 1,
+                c.getInt(c.getColumnIndex(ModifierTable.ORDER_NUM)));
     }
 }

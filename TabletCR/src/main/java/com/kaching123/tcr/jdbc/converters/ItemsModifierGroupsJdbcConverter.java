@@ -21,13 +21,15 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
     private static final String GUID = "GUID";
     private static final String ITEM_GUID = "ITEM_GUID";
     private static final String GROUP_NAME = "GROUP_NAME";
+    private static final String ORDER_NUM = "ORDER_NUM";
 
     @Override
     public ModifierGroupModel toValues(JdbcJSONObject rs) throws JSONException {
         return new ModifierGroupModel(
                 rs.getString(GUID),
                 rs.getString(ITEM_GUID),
-                rs.getString(GROUP_NAME)
+                rs.getString(GROUP_NAME),
+                rs.getInt(ORDER_NUM)
         );
     }
 
@@ -47,7 +49,7 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
                 .add(GUID, model.guid)
                 .add(ITEM_GUID, model.itemGuid)
                 .add(GROUP_NAME, model.title)
-
+                .add(ORDER_NUM, model.orderNum)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -56,6 +58,7 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
         return _update(TABLE_NAME, appCommandContext)
                 .add(ITEM_GUID, model.itemGuid)
                 .add(GROUP_NAME, model.title)
+                .add(ORDER_NUM, model.orderNum)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }
