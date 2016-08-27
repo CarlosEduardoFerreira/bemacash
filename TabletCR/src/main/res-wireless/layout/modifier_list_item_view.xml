@@ -107,4 +107,17 @@
         android:singleLine="true"
         android:textColor="@drawable/wireless_text_selector" />
 
+    <FrameLayout
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="0.1">
+
+        <ImageView
+            android:id="@+id/drag"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/drag_n_drop_item_enabled"/>
+    </FrameLayout>
+
 </LinearLayout>

@@ -1,13 +1,14 @@
 package com.kaching123.tcr.fragment.modify;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
@@ -40,12 +41,11 @@ public class ModifierItemView extends FrameLayout {
     @ViewById
     protected TextView unitQtyLabel;
 
+    @ViewById
+    protected ImageView drag;
+
     public ModifierItemView(Context context) {
         super(context);
-    }
-
-    @AfterViews
-    protected void init() {
     }
 
     public void bind(boolean track,
@@ -54,7 +54,8 @@ public class ModifierItemView extends FrameLayout {
                      String qty,
                      String pricePerItem,
                      String label,
-                     String totalCost) {
+                     String totalCost,
+                     boolean draggable) {
         this.unitTrack.setChecked(track);
         this.unitName.setText(status);
         this.unitQty.setText(qty);
@@ -62,5 +63,6 @@ public class ModifierItemView extends FrameLayout {
         this.costItem.setText(pricePerItem);
         this.unitQtyLabel.setText(label);
         this.cost.setText(totalCost);
+        this.drag.setVisibility(draggable ? View.VISIBLE : View.INVISIBLE);
     }
 }

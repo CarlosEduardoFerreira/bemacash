@@ -1,7 +1,13 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 
+import com.getbase.android.db.provider.ProviderAction;
+import com.getbase.android.db.provider.Query;
+import com.google.common.base.Function;
+import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 
 import java.io.Serializable;
@@ -10,6 +16,7 @@ import java.math.BigDecimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
+import static com.kaching123.tcr.model.ContentValuesUtil._max;
 
 /**
  * Created by gdubina on 06/11/13.
@@ -79,5 +86,25 @@ public class ModifierModel implements IValueModel, Serializable {
         ContentValues values = new ContentValues();
         values.put(ModifierTable.ITEM_GROUP_GUID, (String)null);
         return values;
+    }
+
+    public static int getMaxOrderNum(Context context, ModifierType type, String itemGuid, String modifierGroupGuid){
+        Query query = ProviderAction.query(ShopProvider.contentUri(ModifierTable.URI_CONTENT))
+                .projection(_max(ModifierTable.ORDER_NUM));
+
+        query.where(ModifierTable.ITEM_GUID + " = ?", itemGuid);
+        query.where(ModifierTable.TYPE + " = ?", type.ordinal());
+        if (modifierGroupGuid != null)
+            query.where(ModifierTable.ITEM_GROUP_GUID + " = ?", modifierGroupGuid);
+
+        Integer i = query.perform(context)
+                .toFluentIterable(new Function<Cursor, Integer>() {
+                    @Override
+                    public Integer apply(Cursor input) {
+                        return input.getInt(0);
+                    }
+                }).first().or(0);
+
+        return i;
     }
 }

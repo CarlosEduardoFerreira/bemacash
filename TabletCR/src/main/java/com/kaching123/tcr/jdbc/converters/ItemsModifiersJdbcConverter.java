@@ -96,6 +96,10 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> {
                 .build(JdbcFactory.getApiMethod(new ModifierModel()));
     }
 
-
-
+    public SingleSqlCommand updateOrderNum(String guid, int orderNum, IAppCommandContext appCommandContext){
+        return _update(TABLE_NAME, appCommandContext)
+                .add(ORDER_NUM, orderNum)
+                .where(MODIFIER_GUID, guid)
+                .build(JdbcFactory.getApiMethod(new ModifierModel()));
+    }
 }

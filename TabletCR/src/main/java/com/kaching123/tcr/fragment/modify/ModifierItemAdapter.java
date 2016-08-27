@@ -4,8 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.adapter.ObjectCursorDragAdapter;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemModel;
@@ -15,9 +16,10 @@ import com.kaching123.tcr.util.UnitUtil;
 /**
  * Created by alboyko on 01.12.2015.
  */
-public class ModifierItemAdapter extends ObjectsCursorAdapter<ModifierExModel> {
+public class ModifierItemAdapter extends ObjectCursorDragAdapter<ModifierExModel> {
 
     private ItemModel hostItem;
+    private boolean draggable;
 
     public ModifierItemAdapter(Context context) {
         super(context);
@@ -73,8 +75,19 @@ public class ModifierItemAdapter extends ObjectsCursorAdapter<ModifierExModel> {
                 qty,
                 price,
                 priceLabel,
-                totalPrice
+                totalPrice,
+                draggable
         );
         return convertView;
+    }
+
+    public void setDraggable(boolean draggable) {
+        this.draggable = draggable;
+    }
+
+    @Override
+    public void drop(int from, int to) {
+        super.drop(from, to);
+        Logger.d("[modifier]drop");
     }
 }

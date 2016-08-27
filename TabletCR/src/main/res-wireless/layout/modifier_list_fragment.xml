@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:dslv="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,14 +15,19 @@
             android:id="@+id/header"
             layout="@layout/modifier_items_list_header" />
 
-        <ListView
+        <com.mobeta.android.dslv.DragSortListView
             android:layout_below="@id/header"
             android:layout_above="@+id/footer"
             android:id="@android:id/list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:divider="@drawable/list_divider"
-            android:choiceMode="multipleChoiceModal" />
+            android:choiceMode="multipleChoiceModal"
+            android:cacheColorHint="@android:color/transparent"
+            dslv:float_background_color="@color/categories_float_item_bg"
+            dslv:drag_enabled="true"
+            dslv:drag_handle_id="@+id/drag"
+            dslv:drag_start_mode="onLongPress"/>
 
         <include layout="@layout/modifier_vertical_div" />
 
