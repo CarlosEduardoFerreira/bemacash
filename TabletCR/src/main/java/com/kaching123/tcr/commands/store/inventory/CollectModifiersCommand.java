@@ -84,18 +84,7 @@ public class CollectModifiersCommand extends PublicGroundyTask {
         ArrayList<SelectedModifierExModel> wrappedAutoApplyModifiers = new ArrayList<>(modifierModels.size());
         boolean hasAutoApply = false;
         if (TextUtils.isEmpty(saleItemGuid)) {
-            c = ProviderAction.query(ITEM_URI)
-                    .projection(ItemTable.DEFAULT_MODIFIER_GUID)
-                    .where(ItemTable.GUID + " = ?", itemGuid)
-                    .perform(getContext());
-
             ItemModel item = null;
-            if (c.moveToFirst()) {
-                item = new ItemModel(itemGuid);
-                item.defaultModifierGuid = c.getString(0);
-            }
-
-
             for (ModifierExModel modifier : modifierModels) {
                 if (modifier.autoApply) {
                     wrappedAutoApplyModifiers.add(new SelectedModifierExModel(modifier, modifier.isDefaultWithinGroupOrItem(item)));

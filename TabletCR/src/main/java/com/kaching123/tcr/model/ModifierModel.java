@@ -2,7 +2,6 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 
 import java.io.Serializable;
@@ -77,10 +76,4 @@ public class ModifierModel implements IValueModel, Serializable {
         values.put(ModifierTable.ITEM_GROUP_GUID, (String)null);
         return values;
     }
-    public ContentValues toDefaultValues() {
-        ContentValues values = new ContentValues();
-        values.put(ShopStore.ModifierGroupTable.DEFAULT_GUID, modifierGuid);
-        return values;
-    }
-
 }

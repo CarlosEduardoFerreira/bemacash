@@ -68,12 +68,6 @@ public class ModificationItemListFragment extends ModifierItemListFragment {
         }
     }
 
-    @Override
-    protected void onMenuPrepared(Menu menu, boolean shouldShowEdit, boolean shouldShowDelete, boolean shouldShowMarkDefault) {
-        super.onMenuPrepared(menu, shouldShowEdit, shouldShowDelete, shouldShowMarkDefault);
-        menu.findItem(R.id.action_default).setVisible(shouldShowMarkDefault);
-    }
-
     private Fragment getGroupFragment() {
         List<Fragment> fragmentsList = getFragmentManager().getFragments();
         List<Fragment> childFragment = getChildFragmentManager().getFragments();

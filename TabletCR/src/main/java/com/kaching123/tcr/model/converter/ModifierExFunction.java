@@ -33,15 +33,10 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
         String itemGuid = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.ITEM_SUB_GUID));
         String itemGroupGuid = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.ITEM_GROUP_GUID));
 
-        String defaultGuid = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemHostTable.DEFAULT_MODIFIER_GUID));
-
-
         ItemExModel child;
         ModifierGroupModel group;
-        boolean isDefault;
         if (TextUtils.isEmpty(itemGuid)) {
             child = null;
-            isDefault = false;
         } else {
             String id = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.GUID));
             child = new ItemExModel(
@@ -84,7 +79,6 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     null,
                     null,
                     null,
-                    null,
                     0,
                     null,
                     0,
@@ -102,16 +96,13 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
         String id = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.MODIFIER_GUID));
         if (TextUtils.isEmpty(itemGroupGuid)) {
             group = null;
-            isDefault = false;
         } else {
             group = new ModifierGroupModel(
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.GUID)),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.ITEM_GUID)),
-                    c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.TITLE)),
-                    c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.DEFAULT_GUID)));
-            isDefault = !TextUtils.isEmpty(group.guid) && !TextUtils.isEmpty(group.defaultGuid) && id.equals(group.defaultGuid);
+                    c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.TITLE))
+            );
         }
-        isDefault |= !TextUtils.isEmpty(defaultGuid) && defaultGuid.equals(id);
 
         return new ModifierExModel(
                 id,
@@ -124,6 +115,6 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                 itemGroupGuid,
                 group,
                 child,
-                c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.AUTO_APPLY)) == 1).setDefaultItem(isDefault);
+                c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.AUTO_APPLY)) == 1);
     }
 }

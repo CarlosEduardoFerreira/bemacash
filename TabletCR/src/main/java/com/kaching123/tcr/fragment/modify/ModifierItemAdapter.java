@@ -73,8 +73,8 @@ public class ModifierItemAdapter extends ObjectsCursorAdapter<ModifierExModel> {
                 qty,
                 price,
                 priceLabel,
-                totalPrice,
-                item.isDefaultItem());
+                totalPrice
+        );
         return convertView;
     }
 }

@@ -12,7 +12,6 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -430,11 +429,11 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                 Logger.d("OnDialogClickListener: onClick "+model.autoApply);
                 Logger.d("OnDialogClickListener: onClick "+dataModel.autoApply);
                 if (mode == MODE.EDIT) {
-                    EditModifiersCommand.start(getActivity(), model, false, false);
+                    EditModifiersCommand.start(getActivity(), model);
                     callback.handleSuccess();
                 } else if (mode == MODE.ADD) {
                     callback.handleSuccess();
-                    AddModifierCommand.start(getActivity(), model, false, false);
+                    AddModifierCommand.start(getActivity(), model);
                 }
                 return false;
             }
@@ -553,8 +552,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                     .forUri(URI_GROUP)
                     .projection(ShopStore.ModifierGroupTable.GUID,
                             ShopStore.ModifierGroupTable.ITEM_GUID,
-                            ShopStore.ModifierGroupTable.TITLE,
-                            ShopStore.ModifierGroupTable.DEFAULT_GUID)
+                            ShopStore.ModifierGroupTable.TITLE)
                     .where(ShopStore.ModifierGroupTable.ITEM_GUID + " = ?", itemGuid)
                     .orderBy(ShopStore.ModifierGroupTable.TITLE)
                     .transform(new Function<Cursor, ModifierGroupModel>() {
@@ -564,14 +562,14 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                             return new ModifierGroupModel(
                                     c.getString(0),
                                     c.getString(1),
-                                    c.getString(2),
-                                    c.getString(3));
+                                    c.getString(2)
+                            );
                         }
                     }).wrap(new Function<List<ModifierGroupModel>, List<ModifierGroupModel>>() {
                         @Override
                         public List<ModifierGroupModel> apply(List<ModifierGroupModel> result) {
                             ArrayList<ModifierGroupModel> arrayList = new ArrayList<ModifierGroupModel>(result.size() + 1);
-                            arrayList.add(new ModifierGroupModel(null, null, getString(R.string.groups_label), null));
+                            arrayList.add(new ModifierGroupModel(null, null, getString(R.string.groups_label)));
                             arrayList.addAll(result);
                             return arrayList;
                         }

@@ -54,8 +54,7 @@ public class ModifierItemView extends FrameLayout {
                      String qty,
                      String pricePerItem,
                      String label,
-                     String totalCost,
-                     boolean isDefault) {
+                     String totalCost) {
         this.unitTrack.setChecked(track);
         this.unitName.setText(status);
         this.unitQty.setText(qty);
@@ -63,10 +62,5 @@ public class ModifierItemView extends FrameLayout {
         this.costItem.setText(pricePerItem);
         this.unitQtyLabel.setText(label);
         this.cost.setText(totalCost);
-        if (isDefault) {
-            setBackgroundResource(R.drawable.default_modifier_item_bg);
-        } else {
-            setBackgroundResource(R.drawable.modifier_item_bg);
-        }
     }
 }

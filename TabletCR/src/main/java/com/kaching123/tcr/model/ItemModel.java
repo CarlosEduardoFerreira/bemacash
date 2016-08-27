@@ -56,7 +56,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public String taxGroupGuid2;
     @Deprecated
     public boolean isPcsUnit;
-    public String defaultModifierGuid;
     public int orderNum;
     public String printerAliasGuid;
     public int btnView;
@@ -107,7 +106,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      String updateQtyFlag,
                      String taxGroupGuid,
                      String taxGroupGuid2,
-                     String defaultModifierGuid,
                      int orderNum,
                      String printerAliasGuid,
                      int btnView,
@@ -151,7 +149,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.taxGroupGuid = taxGroupGuid;
         this.taxGroupGuid2 = taxGroupGuid2;
         this.orderNum = orderNum;
-        this.defaultModifierGuid = defaultModifierGuid;
         this.printerAliasGuid = printerAliasGuid;
         this.btnView = btnView;
         this.hasNotes = hasNotes;
@@ -197,7 +194,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.taxGroupGuid = itemModel.taxGroupGuid;
         this.taxGroupGuid2 = itemModel.taxGroupGuid2;
         this.orderNum = itemModel.orderNum;
-        this.defaultModifierGuid = itemModel.defaultModifierGuid;
         this.printerAliasGuid = itemModel.printerAliasGuid;
         this.btnView = itemModel.btnView;
         this.hasNotes = itemModel.hasNotes;
@@ -261,7 +257,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.UPDATE_QTY_FLAG, updateQtyFlag);
         values.put(ItemTable.TAX_GROUP_GUID, taxGroupGuid);
         values.put(ItemTable.TAX_GROUP_GUID2, taxGroupGuid2);
-        values.put(ItemTable.DEFAULT_MODIFIER_GUID, defaultModifierGuid);
         values.put(ItemTable.ORDER_NUM, orderNum);
         values.put(ItemTable.PRINTER_ALIAS_GUID, printerAliasGuid);
         values.put(ItemTable.BUTTON_VIEW, btnView);

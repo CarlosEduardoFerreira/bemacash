@@ -635,9 +635,7 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
                     @Override
                     public void onDefaultModifierChanged(String modifierId, boolean useAsDefault, boolean resetDefaultModifier) {
                         if (useAsDefault) {
-                            model.defaultModifierGuid = modifierId;
                         } else if (resetDefaultModifier) {
-                            model.defaultModifierGuid = null;
                         }
                     }
                 });

@@ -13,7 +13,6 @@ public class ModifierExModel extends ModifierModel {
 
     protected ItemExModel childItem;
     protected ModifierGroupModel group;
-    protected boolean defaultItem;
 
     public ModifierExModel() {
         super();
@@ -47,15 +46,6 @@ public class ModifierExModel extends ModifierModel {
         return group;
     }
 
-    public boolean isDefaultItem() {
-        return defaultItem;
-    }
-
-    public ModifierExModel setDefaultItem(boolean defaultItem) {
-        this.defaultItem = defaultItem;
-        return this;
-    }
-
     public BigDecimal getCost(){
         if (type == ModifierType.OPTIONAL)
             return BigDecimal.ZERO;
@@ -78,14 +68,6 @@ public class ModifierExModel extends ModifierModel {
    }
 
    public boolean isDefaultWithinGroupOrItem(ItemModel hostItem) {
-       if (type != ModifierType.MODIFIER) {
-           return false; // can't be default
-       } else if (group == null && hostItem != null && !TextUtils.isEmpty(hostItem.defaultModifierGuid)) {
-           return hostItem.defaultModifierGuid.equals(getGuid());
-       } else if (group != null && !TextUtils.isEmpty(group.defaultGuid)) { // a little acceptable overhead
-           return group.defaultGuid.equals(getGuid());
-       } else {
-           return false; // leads to it
-       }
+       return false;
    }
 }
