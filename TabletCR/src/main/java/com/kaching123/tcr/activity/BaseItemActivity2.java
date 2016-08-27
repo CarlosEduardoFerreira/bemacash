@@ -231,6 +231,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         tabs.setDistributeEvenly(false);
         tabs.setViewPager(viewPager);
 
+        commonInformationFragment.setViews();
+        commonInformationFragment.setModel();
+
         if (!isCreate()) {
             if (model.codeType == null){
                 loadComposersInfo();

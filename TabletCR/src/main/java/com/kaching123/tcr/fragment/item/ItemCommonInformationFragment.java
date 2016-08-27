@@ -180,7 +180,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     }
 
     @Override
-    protected void setViews() {
+    public void setViews() {
         departmentAdapter = new DepartmentSpinnerAdapter(getActivity());
         department.setAdapter(departmentAdapter);
 
@@ -201,7 +201,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     }
 
     @Override
-    protected void setModel() {
+    public void setModel() {
         final ItemModel model = getModel();
         description.setText(model.description);
         showPrice(salesPrice, model.price);
