@@ -681,7 +681,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
 
-        if (isShiftOpened && openedTrnsactionsCount == 0) {
+        if (isShiftOpened && openedTrnsactionsCount > 0) {
             AlertDialogFragment.show(DashboardActivity.this,
                     AlertDialogFragment.DialogType.ALERT3,
                     false,

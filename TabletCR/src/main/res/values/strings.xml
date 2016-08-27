@@ -324,6 +324,7 @@
     <string name="dlg_void_msg">Are you sure you want to void order?</string>
     <string name="dlg_void_forbidden_msg">This order had been Kichen-Printed, cannot be avoided. Need to ask Manager for Permission</string>
     <string name="dlg_import_is_deleted_items_title">Are you sure you want to</string>
+    <string name="dlg_close_batch_title">Are you sure you want to Batch out</string>
     <string name="dlg_prepaid_app_missing">Please goes http://urun.me/prepaid website to download the Prepaid Mini app first. Thanks.</string>
 
     <string name="btn_item_remove">Remove</string>
