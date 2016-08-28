@@ -1690,12 +1690,12 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_search">Search</string>
     <string name="button_cash">Cash</string>
-    <string name="button_check">Check\n</string>
+    <string name="button_check">Check</string>
     <string name="button_credit">Credit</string>
     <string name="button_debit">Debit Card</string>
     <string name="button_ebt_cash">EBT Cash</string>
     <string name="button_ebt_cash_dlg">EBT\n Cash</string>
-    <string name="button_ebt_united_tender">\nEBT</string>
+    <string name="button_ebt_united_tender">EBT</string>
 
     <string name="button_ebt_foodstamp">EBT Food Stamp</string>
     <string name="button_ebt_foodstamp_dlg">EBT\n Food Stamp</string>
@@ -1704,7 +1704,7 @@
 
     <string name="button_receipt">Receipt</string>
     <string name="button_store_credit">Store Credit</string>
-    <string name="button_store_credit_united">Store\n Credit</string>
+    <string name="button_store_credit_united">Store\nCredit</string>
     <string name="button_clockin">CLOCK IN</string>
     <string name="button_clockout">CLOCK OUT</string>
     <string name="button_close_shift">CLOSE SHIFT</string>

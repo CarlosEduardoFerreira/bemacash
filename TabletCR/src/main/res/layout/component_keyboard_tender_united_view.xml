@@ -83,7 +83,8 @@
         android:layout_width="84dp"
         android:id="@+id/num_clear"
         android:layout_marginTop="1px"
-        android:layout_marginLeft="1px" />
+        android:layout_marginLeft="1px"
+        android:background="@drawable/numclear"/>
 
     <ImageButton
         style="@style/keyboard"
