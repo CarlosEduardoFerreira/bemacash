@@ -42,7 +42,7 @@
 
             <com.kaching123.tcr.component.CustomEditBox
                 android:id="@+id/charge"
-                style="@style/CustomEditBox.PaymentInputField.34"
+                style="@style/CustomEditBox.PaymentInputField.50"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="false"

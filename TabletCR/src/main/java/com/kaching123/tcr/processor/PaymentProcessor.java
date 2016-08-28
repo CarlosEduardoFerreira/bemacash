@@ -984,7 +984,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
      * Follow with the cash payment
      */
     private void proceedToCashPayment(final FragmentActivity context, final BigDecimal amount, final Transaction transaction) {
-        PaySilentCashFragmentDialog.show(context, amount, transaction, new PaySilentCashFragmentDialog.ISaleCashListener() {
+        PaySilentCashFragmentDialog.show(context, orderPayed, amount, transaction, new PaySilentCashFragmentDialog.ISaleCashListener() {
 
             @Override
             public void onPaymentAmountSelected(BigDecimal amount, BigDecimal changeAmount) {

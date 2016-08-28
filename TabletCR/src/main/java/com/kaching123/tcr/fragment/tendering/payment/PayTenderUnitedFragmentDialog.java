@@ -147,6 +147,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         entered = getDecimalValue();
         if(entered.equals(BigDecimal.ZERO)) {
             AlertDialogFragment.showAlert(getActivity(), R.string.pay_tender_wrong_amount_title, getString(R.string.pay_tender_zero_amount_error_message));
+            charge.selectAll();
             return false;
         }
         if (!method.equals(PaymentMethod.CASH)
@@ -154,11 +155,12 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             entered = alreadyPayed;
             charge.setText(UiHelper.valueOf(entered));
             AlertDialogFragment.showAlert(getActivity(), R.string.pay_tender_wrong_amount_title, getString(R.string.pay_tender_wrong_amount_error_message));
+            charge.selectAll();
             return false;
         }
 
         if (listener != null && String.valueOf(charge.getText()).length() > 0) {
-            listener.onUnitedPaymentAmountSelected(method, alreadyPayed, getDecimalValue());
+            listener.onUnitedPaymentAmountSelected(method, orderTotal, getDecimalValue());
             return true;
         }
         Toast.makeText(getActivity(), R.string.pay_toast_zero, Toast.LENGTH_LONG).show();

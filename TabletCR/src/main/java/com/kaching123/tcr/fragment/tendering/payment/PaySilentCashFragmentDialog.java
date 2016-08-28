@@ -50,6 +50,7 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
 
     protected ISaleCashListener listener;
     private TaskHandler waitCashTask;
+    private BigDecimal orderPayed = BigDecimal.ZERO;
 
     @Override
     public void onStop() {
@@ -92,6 +93,7 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
             tenderAmount = UiHelper.parseBrandDecimalInput(chargeStr);
             resumeNavigationButtons(tenderAmount);
         } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
         if (getDisplayBinder() != null) {
             getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
@@ -99,7 +101,11 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
     }
 
     private void resumeNavigationButtons(final BigDecimal receivedAmount) {
-        BigDecimal changeAmount = receivedAmount.subtract(transaction.getAmount());
+        BigDecimal transactionAmount = transaction.getAmount();
+        if(orderPayed!=null) {
+            transactionAmount = transactionAmount.subtract(orderPayed);
+        }
+        BigDecimal changeAmount = receivedAmount.subtract(transactionAmount);
         if (changeAmount.compareTo(BigDecimal.ZERO) >= 0) {
             transaction.changeValue = changeAmount;
         } else {
@@ -160,6 +166,11 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
 
     public PaySilentCashFragmentDialog setAmount(BigDecimal amount) {
         this.amount = amount;
+        return this;
+    }
+
+    public PaySilentCashFragmentDialog setOrderPayed(BigDecimal orderPayed) {
+        this.orderPayed = orderPayed;
         return this;
     }
 
@@ -235,9 +246,10 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         void onCancel();
     }
 
-    public static PaySilentCashFragmentDialog show(FragmentActivity context, BigDecimal amount, Transaction transaction, ISaleCashListener listener) {
+    public static PaySilentCashFragmentDialog show(FragmentActivity context, BigDecimal orderPayed, BigDecimal amount, Transaction transaction, ISaleCashListener listener) {
         Logger.d("About to show second dialog");
-        return DialogUtil.show(context, DIALOG_NAME, PaySilentCashFragmentDialog_.builder().build()).setListener(listener).setAmount(amount).setTransaction(transaction);
+        return DialogUtil.show(context, DIALOG_NAME, PaySilentCashFragmentDialog_.builder().build()).setListener(listener)
+                .setOrderPayed(orderPayed).setAmount(amount).setTransaction(transaction);
     }
 
     public static void hide(FragmentActivity activity) {
