@@ -1560,6 +1560,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         orderItemListFragment.setNeed2ScrollList(true);
         String saleOrderItemGuid = UUID.randomUUID().toString();
+
+        //---------------------------
+        model.setEbtParams(true);
+        if(!model.description.contains("ebt")){
+            model.setEbtParams(false);
+        }
+        //----------------------------
         SaleOrderItemModel itemModel = new SaleOrderItemModel(
                 saleOrderItemGuid,
                 this.orderGuid,
@@ -1585,7 +1592,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 !isCreateReturnOrder && model.hasNotes,
                 isPrepaidItemStart,
                 model.isIncentive || model.excludeFromLoyaltyPlan ? BigDecimal.ZERO : model.loyaltyPoints,
-                model.isIncentive || model.excludeFromLoyaltyPlan ? false : getApp().getShopInfo().loyaltyPointsForDollarAmount);
+                !(model.isIncentive || model.excludeFromLoyaltyPlan) && getApp().getShopInfo().loyaltyPointsForDollarAmount,
+                model.isEbtEligible);
 
         if (unit != null && orderGuid != null) {
             unit.orderId = orderGuid;

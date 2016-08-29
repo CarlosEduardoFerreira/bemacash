@@ -239,7 +239,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         v.put(PaymentTransactionTable.IS_PREAUTH, isPreauth);
         v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
         v.put(PaymentTransactionTable.CASH_BACK, _decimal(cashBack));
-        v.put(PaymentTransactionTable.BALANCE, _decimal(cashBack));
+        v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
         return v;
     }
 

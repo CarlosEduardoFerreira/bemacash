@@ -49,6 +49,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     private static final String IS_PREPAID_ITEM = "IS_PREPAID_ITEM";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
     private static final String POINTS_FOR_DOLLAR_AMOUNT = "POINTS_FOR_DOLLAR_AMOUNT";
+    private static final String EBT_ELIGIBLE = "EBT_ELIGIBLE";
 
     @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
@@ -76,7 +77,8 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(HAS_NOTES),
                 rs.getBoolean(IS_PREPAID_ITEM),
                 null,
-                false).toValues();
+                false,
+                rs.getBoolean(EBT_ELIGIBLE)).toValues();
     }
 
     @Override
@@ -105,7 +107,8 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(HAS_NOTES),
                 rs.getBoolean(IS_PREPAID_ITEM),
                 rs.getBigDecimal(LOYALTY_POINTS),
-                rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT));
+                rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT),
+                rs.getBoolean(EBT_ELIGIBLE));
     }
 
     @Override
@@ -150,6 +153,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(IS_PREPAID_ITEM, model.isPrepaidItem)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
                 .add(POINTS_FOR_DOLLAR_AMOUNT, model.pointsForDollarAmount)
+                .add(EBT_ELIGIBLE, model.isEbtEligible)
                 .build(JdbcFactory.getApiMethod(model));
     }
 

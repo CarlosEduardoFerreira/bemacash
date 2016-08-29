@@ -47,6 +47,8 @@ public class ItemExModel extends ItemModel {
     public boolean isAComposer;
     public boolean isIncentive;
 
+    public boolean isEbtEligible;
+
     public ItemExModel() {
         super();
         this.modifiersCount = 0;
@@ -214,6 +216,11 @@ public class ItemExModel extends ItemModel {
 
     public ItemExModel setIsAComposer(boolean isAComposer) {
         this.isAComposer = isAComposer;
+        return this;
+    }
+
+    public ItemExModel setEbtParams(boolean isEbtEligible) {
+        this.isEbtEligible = isEbtEligible;
         return this;
     }
 
