@@ -32,7 +32,10 @@ import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.converter.ModifierExFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ItemGroupTable;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ModifierTable;
 import com.kaching123.tcr.store.ShopStore;
+import com.mobeta.android.dslv.DragSortListView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -84,8 +87,6 @@ public class ModifierItemListFragment extends ListFragment
 
     public ModifierItemListFragment setModel(ItemExModel model) {
         this.model = model;
-        adapter.setHostItem(model);
-        getLoaderManager().restartLoader(0, null, this);
         return this;
     }
 
@@ -101,6 +102,11 @@ public class ModifierItemListFragment extends ListFragment
 
     protected ModifierItemListFragment self() {
         return this;
+    }
+
+    @Override
+    public DragSortListView getListView() {
+        return (DragSortListView) super.getListView();
     }
 
     @AfterViews
@@ -188,6 +194,7 @@ public class ModifierItemListFragment extends ListFragment
         });
         setModel(((ItemDataProvider) getActivity()).getItem());
         setCallback((IModifierCallback) getActivity());
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -224,11 +231,15 @@ public class ModifierItemListFragment extends ListFragment
 
     @Override
     public Loader<List<ModifierExModel>> onCreateLoader(int id, Bundle args) {
+        adapter.setDraggable(true);
+        getListView().setDragEnabled(true);
+
         CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_UNITS);
         loader.where(ShopSchema2.ModifierView2.ModifierTable.ITEM_GUID + " = ?", model.guid);
         if (modType != null) {
             loader.where(ShopSchema2.ModifierView2.ModifierTable.TYPE + " = ?", modType.ordinal());
         }
+        loader.orderBy(ItemGroupTable.ORDER_NUM + "," + ModifierTable.ORDER_NUM);
         return loader.transform(new ModifierExFunction()).build(getActivity());
     }
 

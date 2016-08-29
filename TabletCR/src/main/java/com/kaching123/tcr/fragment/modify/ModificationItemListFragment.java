@@ -19,6 +19,8 @@ import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.converter.ModifierExFunction;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ItemGroupTable;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ModifierTable;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
@@ -161,9 +163,16 @@ public class ModificationItemListFragment extends ModifierItemListFragment {
         if (modType != null) {
             loader.where(ShopSchema2.ModifierView2.ModifierTable.TYPE + " = ?", modType.ordinal());
         }
+        boolean draggable = false;
         if (args != null && args.containsKey(KEY)) {
             loader.where(ShopSchema2.ModifierView2.ModifierTable.ITEM_GROUP_GUID + " = ?", args.getString(KEY));
+            draggable = true;
         }
+        loader.orderBy(ItemGroupTable.ORDER_NUM + "," + ModifierTable.ORDER_NUM);
+
+        adapter.setDraggable(draggable);
+        getListView().setDragEnabled(draggable);
+
         return loader.transform(new ModifierExFunction()).build(getActivity());
     }
 }

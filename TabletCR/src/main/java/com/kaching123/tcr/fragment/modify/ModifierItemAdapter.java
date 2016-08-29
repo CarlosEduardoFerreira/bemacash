@@ -1,15 +1,18 @@
 package com.kaching123.tcr.fragment.modify;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectCursorDragAdapter;
+import com.kaching123.tcr.commands.store.inventory.BatchUpdateModifierOrderCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.util.UnitUtil;
 
@@ -18,25 +21,24 @@ import com.kaching123.tcr.util.UnitUtil;
  */
 public class ModifierItemAdapter extends ObjectCursorDragAdapter<ModifierExModel> {
 
-    private ItemModel hostItem;
     private boolean draggable;
 
     public ModifierItemAdapter(Context context) {
         super(context);
     }
 
-    public void setHostItem(ItemModel hostItem) {
-        this.hostItem = hostItem;
-    }
 
     @Override
     protected View newView(int position, ViewGroup parent) {
-        return ModifierItemView_.build(getContext());
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.modifier_list_item_view, parent, false);
+        ViewHolder holder = new ViewHolder(view);
+        view.setTag(holder);
+        return view;
     }
 
     @Override
     protected View bindView(View convertView, int position, final ModifierExModel item) {
-        ModifierItemView itemView = (ModifierItemView_) convertView;
+        ViewHolder holder = (ViewHolder) convertView.getTag();
         ItemExModel itemModel = item.getItem();
         String title;
         String price;
@@ -69,7 +71,7 @@ public class ModifierItemAdapter extends ObjectCursorDragAdapter<ModifierExModel
             priceLabel = itemModel.shortCut;
         }
 
-        itemView.bind(fromInventory,
+        holder.bind(fromInventory,
                 title,
                 productCode,
                 qty,
@@ -87,7 +89,65 @@ public class ModifierItemAdapter extends ObjectCursorDragAdapter<ModifierExModel
 
     @Override
     public void drop(int from, int to) {
+        if (from == to)
+            return;
+
+        int min = Math.min(from, to);
+        int max = Math.max(from, to);
+        int n = max - min + 1;
+
+        ModifierExModel[] oldOrder = new ModifierExModel[n];
+        for (int i = min; i <= max; i++) {
+            oldOrder[i - min] = getItem(i);
+        }
+
         super.drop(from, to);
-        Logger.d("[modifier]drop");
+
+        ModifierExModel[] newOrder = new ModifierExModel[n];
+        for (int i = min; i <= max; i++) {
+            newOrder[i - min] = getItem(i);
+        }
+
+        BatchUpdateModifierOrderCommand.start(getContext(), oldOrder, newOrder);
+    }
+
+    private class ViewHolder {
+        protected CheckBox unitTrack;
+        protected TextView unitName;
+        protected TextView unitQty;
+        protected TextView unitQtyLabel;
+        protected TextView code;
+        protected TextView cost;
+        protected TextView costItem;
+        protected ImageView drag;
+
+        public ViewHolder(View v) {
+            unitTrack = (CheckBox) v.findViewById(R.id.unit_track);
+            unitName = (TextView) v.findViewById(R.id.unit_name);
+            unitQty = (TextView) v.findViewById(R.id.unit_qty);
+            unitQtyLabel = (TextView) v.findViewById(R.id.unit_qty_label);
+            code = (TextView) v.findViewById(R.id.code);
+            cost = (TextView) v.findViewById(R.id.cost);
+            costItem = (TextView) v.findViewById(R.id.cost_item);
+            drag = (ImageView) v.findViewById(R.id.drag);
+        }
+
+        public void bind(boolean track,
+                         String status,
+                         String code,
+                         String qty,
+                         String pricePerItem,
+                         String label,
+                         String totalCost,
+                         boolean draggable) {
+            this.unitTrack.setChecked(track);
+            this.unitName.setText(status);
+            this.unitQty.setText(qty);
+            this.code.setText(code);
+            this.costItem.setText(pricePerItem);
+            this.unitQtyLabel.setText(label);
+            this.cost.setText(totalCost);
+            this.drag.setVisibility(draggable ? View.VISIBLE : View.INVISIBLE);
+        }
     }
 }

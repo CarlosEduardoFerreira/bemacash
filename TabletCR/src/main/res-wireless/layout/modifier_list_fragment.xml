@@ -17,7 +17,6 @@
 
         <com.mobeta.android.dslv.DragSortListView
             android:layout_below="@id/header"
-            android:layout_above="@+id/footer"
             android:id="@android:id/list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

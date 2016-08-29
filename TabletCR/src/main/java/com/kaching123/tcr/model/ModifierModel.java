@@ -21,7 +21,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._max;
 /**
  * Created by gdubina on 06/11/13.
  */
-public class ModifierModel implements IValueModel, Serializable {
+public class ModifierModel implements IValueModel, IOrderedModel, Serializable {
 
     public String modifierGuid;
     public String itemGuid;
@@ -64,6 +64,11 @@ public class ModifierModel implements IValueModel, Serializable {
     @Override
     public String getGuid() {
         return modifierGuid;
+    }
+
+    @Override
+    public int getOrderNum() {
+        return orderNum;
     }
 
     @Override
