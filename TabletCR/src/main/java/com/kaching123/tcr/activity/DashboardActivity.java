@@ -681,7 +681,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
 
-        if (isShiftOpened && openedTrnsactionsCount > 0) {
+        if (isShiftOpened && openedTrnsactionsCount == 0) {
             AlertDialogFragment.show(DashboardActivity.this,
                     AlertDialogFragment.DialogType.ALERT3,
                     false,
@@ -694,7 +694,7 @@ public class DashboardActivity extends SuperBaseActivity {
                         @Override
                         public boolean onClick() {
                             WaitDialogFragment.show(DashboardActivity.this, getString(R.string.batch_close_dialog_waiting_msg));
-                            AlertDialogFragment.show(DashboardActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm, new StyledDialogFragment.OnDialogClickListener() {
+                            AlertDialogFragment.show(DashboardActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_yes, new StyledDialogFragment.OnDialogClickListener() {
                                 @Override
                                 public boolean onClick() {
                                     ClosePreauthBatchCommand.start(DashboardActivity.this, openedTrnsactions, getApp().getOperatorGuid(), new ClosePreauthBatchCommand.ClosePreauthCommandCallback() {
@@ -715,7 +715,7 @@ public class DashboardActivity extends SuperBaseActivity {
                             }, new StyledDialogFragment.OnDialogClickListener() {
                                 @Override
                                 public boolean onClick() {
-
+                                    WaitDialogFragment.hide(DashboardActivity.this);
                                     return true;
                                 }
                             }, null);
@@ -724,7 +724,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     }, new OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-
+                            WaitDialogFragment.hide(DashboardActivity.this);
                             return true;
                         }
                     },
@@ -732,6 +732,7 @@ public class DashboardActivity extends SuperBaseActivity {
                         @Override
                         public boolean onClick() {
 //                            startShiftAction();
+                            WaitDialogFragment.hide(DashboardActivity.this);
                             HistoryActivity.start(DashboardActivity.this, true);
                             return true;
                         }
