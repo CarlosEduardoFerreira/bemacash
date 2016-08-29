@@ -104,7 +104,7 @@ public abstract class BaseItemsPickFragment extends Fragment implements IPriceLe
                     }
                 });
             }
-        if (adapter != null) {
+            if (adapter != null) {
             adapter.changeCursor(arrayList);
         }
 

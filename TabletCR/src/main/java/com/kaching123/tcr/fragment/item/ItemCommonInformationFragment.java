@@ -10,9 +10,7 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -22,7 +20,6 @@ import android.widget.Toast;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.adapter.SpinnerAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
@@ -30,23 +27,19 @@ import com.kaching123.tcr.ecuador.TaxHelper;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.taxgroup.ChooseTaxGroupsDialog;
 import com.kaching123.tcr.model.ItemModel;
-import com.kaching123.tcr.model.KDSAliasModel;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
-import com.thomashaertel.widget.MultiSpinner;
 
 import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemSelect;
 import org.androidannotations.annotations.ViewById;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,28 +53,17 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
  * Created by vkompaniets on 21.07.2016.
  */
 @EFragment(R.layout.item_common_information_fragment)
-public class ItemCommonInformationFragment extends ItemBaseFragment implements LoaderCallbacks<Cursor> {
+public class ItemCommonInformationFragment extends ItemBaseFragment implements LoaderCallbacks<Cursor>{
 
-    @ViewById
-    protected EditText description;
-    @ViewById
-    protected EditText salesPrice;
-    @ViewById
-    protected Spinner department;
-    @ViewById
-    protected Spinner category;
-    @ViewById(R.id.tax_group)
-    protected Spinner taxGroup;
-    @ViewById
-    protected TextView ecuadorTaxGroup;
-    @ViewById
-    protected View taxGroupRow;
-    @ViewById
-    protected View ecuadorTaxGroupRow;
-    @ViewById
-    protected CheckBox activeStatus;
-    @ViewById
-    protected MultiSpinner kdsAlias;
+    @ViewById protected EditText description;
+    @ViewById protected EditText salesPrice;
+    @ViewById protected Spinner department;
+    @ViewById protected Spinner category;
+    @ViewById(R.id.tax_group) protected Spinner taxGroup;
+    @ViewById protected TextView ecuadorTaxGroup;
+    @ViewById protected View taxGroupRow;
+    @ViewById protected View ecuadorTaxGroupRow;
+    @ViewById protected CheckBox activeStatus;
 
     private static final int DEPARTMENT_LOADER_ID = 0;
     private static final int CATEGORY_LOADER_ID = 1;
@@ -91,105 +73,17 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     protected CategorySpinnerAdapter categoryAdapter;
     protected TaxGroupSpinnerAdapter taxGroupAdapter;
 
-    protected KDSAliasAdapter kdsAliasAdapter;
-
-    protected boolean[] selectedKds;
-
-    protected IntemCommonCallback callback;
-
-    public interface IntemCommonCallback {
-        void selectedKds(boolean[] selected, ArrayList<String> list);
-    }
-
-    public void setCallback(IntemCommonCallback callback) {
-        this.callback = callback;
-    }
-
-    @AfterViews
-    protected void init() {
-        kdsAliasAdapter = new KDSAliasAdapter(getActivity());
-        final ArrayList<String> list = getGuidList();
-        kdsAlias.setAdapter(kdsAliasAdapter, false, new MultiSpinner.MultiSpinnerListener() {
-            @Override
-            public void onItemsSelected(boolean[] selected) {
-                selectedKds = selected;
-                if (selectedKds != null && selectedKds.length != 0 && list != null)
-                    callback.selectedKds(selectedKds, list);
-            }
-        });
-    }
-
-    public void setAdapter(List<KDSAliasModel> kdsAliasModels) {
-        if (kdsAliasModels == null) {
-            kdsAliasAdapter.changeCursor(null);
-            return;
-        }
-        ArrayList<KDSAliasModel> models = new ArrayList<>(kdsAliasModels.size());
-//            models.add(new KDSAliasModel(null, "None"));
-        models.addAll(kdsAliasModels);
-        kdsAliasAdapter.changeCursor(models);
-    }
-
-    public void setSelectedKDS(boolean[] selected) {
-        this.selectedKds = selected;
-    }
-
-    protected ArrayList<String> getGuidList() {
-        ArrayList<String> list = new ArrayList<>();
-        if (selectedKds != null)
-            for (int i = 0; i < selectedKds.length; i++) {
-                list.add(kdsAliasAdapter.getItem(i).guid);
-            }
-        return list;
-    }
-
-    private class KDSAliasAdapter extends ObjectsCursorAdapter<KDSAliasModel> {
-
-        public KDSAliasAdapter(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected View newView(int position, ViewGroup parent) {
-            return LayoutInflater.from(getContext()).inflate(R.layout.spinner_item_light, parent, false);
-        }
-
-        @Override
-        protected View bindView(View convertView, int position, KDSAliasModel item) {
-            ((TextView) convertView).setText(item.alias);
-            return convertView;
-        }
-
-        @Override
-        protected View newDropDownView(int position, ViewGroup parent) {
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.spinner_dropdown_item, parent, false);
-            return view;
-        }
-
-        public int getPosition(String guid) {
-            if (guid == null)
-                return 0;
-
-            for (int i = 0; i < getCount(); i++) {
-                if (guid.equals(getItem(i).guid))
-                    return i;
-            }
-            return 0;
-        }
-
-    }
-
     @Override
-    public void setViews() {
+    protected void setViews() {
         departmentAdapter = new DepartmentSpinnerAdapter(getActivity());
         department.setAdapter(departmentAdapter);
 
         categoryAdapter = new CategorySpinnerAdapter(getActivity());
         category.setAdapter(categoryAdapter);
 
-        if (TcrApplication.isEcuadorVersion()) {
+        if (TcrApplication.isEcuadorVersion()){
 
-        } else {
+        }else{
             taxGroupAdapter = new TaxGroupSpinnerAdapter(getActivity());
             taxGroup.setAdapter(taxGroupAdapter);
         }
@@ -201,7 +95,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     }
 
     @Override
-    public void setModel() {
+    protected void setModel() {
         final ItemModel model = getModel();
         description.setText(model.description);
         showPrice(salesPrice, model.price);
@@ -216,7 +110,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         model.price = getDecimalValue(salesPrice);
         model.categoryId = categoryAdapter.getGuid(category.getSelectedItemPosition());
         model.isActiveStatus = activeStatus.isChecked();
-        if (!getModel().isSalable) {
+        if (!getModel().isSalable){
             model.taxGroupGuid = null;
             model.taxGroupGuid2 = null;
         }
@@ -245,14 +139,14 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         getLoaderManager().initLoader(TAX_GROUP_LOADER_ID, null, this);
     }
 
-    private void setFilters() {
+    private void setFilters(){
         InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
         salesPrice.setFilters(currencyFilter);
         salesPrice.addTextChangedListener(new CurrencyTextWatcher(salesPrice));
     }
 
     @Click
-    protected void ecuadorTaxGroupClicked() {
+    protected void ecuadorTaxGroupClicked(){
         boolean hasStoreTaxOnly = getModel().taxGroupGuid == null && getModel().taxGroupGuid2 == null;
         ChooseTaxGroupsDialog.show(getActivity(), getModel().taxGroupGuid,
                 getModel().taxGroupGuid2, hasStoreTaxOnly, new ChooseTaxGroupsDialog.ChooseTaxCallback() {
@@ -262,13 +156,13 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
                         if (model1 != null) {
                             getModel().taxGroupGuid = model1.guid;
                             itemTaxes.add(model1);
-                        } else {
+                        }else{
                             getModel().taxGroupGuid = null;
                         }
                         if (model2 != null) {
                             getModel().taxGroupGuid2 = model2.guid;
                             itemTaxes.add(model2);
-                        } else {
+                        }else{
                             getModel().taxGroupGuid2 = null;
                         }
                         ecuadorTaxGroup.setText(TaxHelper.getTaxDisplayText(itemTaxes));
@@ -277,18 +171,18 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     }
 
     @ItemSelect
-    protected void departmentItemSelected(boolean selected, int position) {
+    protected void departmentItemSelected(boolean selected, int position){
         getModel().departmentGuid = departmentAdapter.getGuid(position);
         getLoaderManager().restartLoader(CATEGORY_LOADER_ID, null, this);
     }
 
     @ItemSelect(R.id.tax_group)
-    protected void taxGroupItemSelected(boolean selected, int position) {
+    protected void taxGroupItemSelected(boolean selected, int position){
         getModel().taxGroupGuid = taxGroupAdapter.getGuid(position);
     }
 
     @AfterTextChange
-    protected void salesPriceAfterTextChanged(Editable s) {
+    protected void salesPriceAfterTextChanged(Editable s){
         getModel().price = parseBigDecimal(s.toString(), BigDecimal.ZERO);
     }
 
@@ -315,7 +209,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch (loader.getId()) {
+        switch (loader.getId()){
             case DEPARTMENT_LOADER_ID:
                 departmentAdapter.changeCursor(data);
                 if (getModel().departmentGuid != null)
@@ -346,10 +240,10 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         }
     }
 
-    private void onTaxGroupLoaded(Cursor cursor) {
-        if (TcrApplication.isEcuadorVersion()) {
+    private void onTaxGroupLoaded(Cursor cursor){
+        if (TcrApplication.isEcuadorVersion()){
             handleEcuadorTaxes(cursor);
-        } else {
+        }else{
             taxGroupAdapter.changeCursor(cursor);
             if (getModel().taxGroupGuid != null)
                 taxGroup.setSelection(taxGroupAdapter.getPosition4Id(getModel().taxGroupGuid));
@@ -358,32 +252,32 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
 
     private void handleEcuadorTaxes(Cursor cursor) {
         ArrayList<TaxGroupModel> storeTaxes = new ArrayList<>(cursor.getCount());
-        while (cursor.moveToNext()) {
+        while (cursor.moveToNext()){
             storeTaxes.add(new TaxGroupModel(cursor));
         }
 
         ArrayList<TaxGroupModel> itemTaxes = new ArrayList<>();
         final TaxGroupModel virtualStoreTax = new TaxGroupModel(null, getString(R.string.item_tax_group_default), getApp().getShopInfo().taxVat);
-        if (getItemProvider().isCreate()) {
+        if (getItemProvider().isCreate()){
             List<TaxGroupModel> defaultTaxes = TaxHelper.getDefaultTaxes(storeTaxes);
-            if (defaultTaxes.isEmpty()) {
+            if (defaultTaxes.isEmpty()){
                 defaultTaxes.add(virtualStoreTax);
             }
             itemTaxes.addAll(defaultTaxes);
-        } else {
+        }else{
             TaxGroupModel tax1 = TaxHelper.getTaxById(storeTaxes, getModel().taxGroupGuid);
             TaxGroupModel tax2 = TaxHelper.getTaxById(storeTaxes, getModel().taxGroupGuid2);
-            if (tax1 != null) {
+            if (tax1 != null){
                 itemTaxes.add(tax1);
-            } else {
+            }else{
                 itemTaxes.add(virtualStoreTax);
             }
-            if (tax2 != null) {
+            if (tax2 != null){
                 itemTaxes.add(tax2);
             }
         }
 
-        for (int i = 0; i < itemTaxes.size(); i++) {
+        for (int i = 0; i < itemTaxes.size(); i++){
             if (i == 0)
                 getModel().taxGroupGuid = itemTaxes.get(i).guid;
             if (i == 1)
@@ -393,6 +287,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         ecuadorTaxGroup.setText(TaxHelper.getTaxDisplayText(itemTaxes));
         taxGroupRow.invalidate();
     }
+
 
 
     private static class CategorySpinnerAdapter extends SpinnerAdapter {

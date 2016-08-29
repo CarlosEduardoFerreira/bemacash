@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/common_information_label"
@@ -55,28 +55,6 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"/>
             </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical">
-
-                <FrameLayout style="@style/EditItem.Table.LabelLayout.CommonInformation">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/item_activity_kds" />
-                </FrameLayout>
-
-
-                <com.thomashaertel.widget.MultiSpinner
-                    android:id="@+id/kds_alias"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-            </TableRow>
-
         </TableLayout>
 
         <TableLayout

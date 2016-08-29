@@ -1,18 +1,12 @@
 package com.kaching123.tcr.activity;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,8 +15,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ItemPagerAdapter;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
@@ -52,14 +44,11 @@ import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemRefType;
-import com.kaching123.tcr.model.KDSAliasModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.Status;
-import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.composer.CollectComposersCommand;
 import com.kaching123.tcr.store.composer.CollectComposersCommand.ComposerCallback;
 
@@ -77,7 +66,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -90,8 +78,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     public static final int TAG_RESULT_SERIAL = 1;
     public static final int TAG_RESULT_COMPOSER = 2;
     public static final int TAG_RESULT_MODIFIER = 3;
-    protected static final int KDS_ALIAS_LOADER_ID = 9;
-    protected static final Uri KDS_ALIAS_URI = ShopProvider.contentUri(ShopStore.KDSAliasTable.URI_CONTENT);
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
     static {
@@ -132,94 +118,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private ItemExModel parentItem;
     private ItemMatrixModel parentItemMatrix;
 
-    private class KDSAliasLoader implements LoaderManager.LoaderCallbacks<List<KDSAliasModel>> {
-
-        @Override
-        public Loader<List<KDSAliasModel>> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder.forUri(KDS_ALIAS_URI)
-                    .transform(new KDSAliasActivity.KDSAliasConverter())
-                    .build(BaseItemActivity2.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<KDSAliasModel>> listLoader, List<KDSAliasModel> kdsAliasModels) {
-            ArrayList<KDSAliasModel> models = new ArrayList<>(kdsAliasModels.size());
-//            models.add(new KDSAliasModel(null, "None"));
-            models.addAll(kdsAliasModels);
-
-            commonInformationFragment.setAdapter(models);
-
-            final String itemGuid = model.guid;
-            Cursor c = ProviderAction.query(KDS_URI)
-                    .projection(ShopStore.ItemKDSTable.KDS_ALIAS_GUID)
-                    .where(ShopStore.ItemKDSTable.ITEM_GUID + " = ?", itemGuid)
-                    .perform(BaseItemActivity2.this);
-            Set<String> kdsAliasGuids = new HashSet<>();
-            if (c.moveToFirst()) {
-                do {
-                    kdsAliasGuids.add(c.getString(0));
-                } while (c.moveToNext());
-            }
-            c.close();
-            boolean[] selected = new boolean[models.size()];
-//            Arrays.fill(selected, true);
-//            selected[0] = false;
-            for (int i = 0; i < models.size(); i++) {
-                if (kdsAliasGuids.contains(models.get(i).getGuid()))
-                    selected[i] = true;
-            }
-            if (!kdsAliasGuids.isEmpty()) {
-                commonInformationFragment.setSelectedKDS(selected);
-            }
-
-//            printerAlias.setOnItemSelectedListener(new SpinnerChangeListener(aliasGuid != null ? printerAliasAdapter.getPosition(model.printerAliasGuid) : 0));
-
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<KDSAliasModel>> listLoader) {
-            commonInformationFragment.setAdapter(null);
-        }
-
-    }
-
-    public ItemCommonInformationFragment.IntemCommonCallback ItemKDSCallback = new ItemCommonInformationFragment.IntemCommonCallback() {
-        @Override
-        public void selectedKds(boolean[] selected, ArrayList<String> list) {
-            saveItemKdsAlias(selected, list);
-        }
-    };
-
-    private static final Uri KDS_URI = ShopProvider.getContentUri(ShopStore.ItemKDSTable.URI_CONTENT);
-
-    protected void saveItemKdsAlias(boolean[] selected, ArrayList<String> list) {
-        if (selected == null) return;
-        for (int i = 0; i < list.size(); i++) {
-            if (selected[i]) {
-                // check if it already exist before saving
-                Cursor c = ProviderAction.query(KDS_URI)
-                        .where(ShopStore.ItemKDSTable.ITEM_GUID + " = ?", model.guid)
-                        .where(ShopStore.ItemKDSTable.KDS_ALIAS_GUID + " = ?", list.get(i))
-                        .perform(getApplicationContext());
-                if (c.moveToFirst()) {
-                    c.close();
-                    continue;
-                }
-                ContentValues cv = new ContentValues();
-                cv.put(ShopStore.ItemKDSTable.ITEM_GUID, model.guid);
-                cv.put(ShopStore.ItemKDSTable.KDS_ALIAS_GUID, list.get(i));
-                ProviderAction.insert(KDS_URI)
-                        .values(cv)
-                        .perform(getApplicationContext());
-            } else {
-                ProviderAction.delete(KDS_URI)
-                        .where(ShopStore.ItemKDSTable.ITEM_GUID + " = ?", model.guid)
-                        .where(ShopStore.ItemKDSTable.KDS_ALIAS_GUID + " = ?", list.get(i))
-                        .perform(getApplicationContext());
-            }
-        }
-    }
-
     @AfterViews
     protected void init(){
         qtyInfo = new ItemQtyInfo();
@@ -231,9 +129,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         tabs.setDistributeEvenly(false);
         tabs.setViewPager(viewPager);
 
-        commonInformationFragment.setViews();
-        commonInformationFragment.setModel();
-
         if (!isCreate()) {
             if (model.codeType == null){
                 loadComposersInfo();
@@ -241,8 +136,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
                 loadUnitsInfo();
             }
         }
-        getSupportLoaderManager().initLoader(KDS_ALIAS_LOADER_ID, null, new KDSAliasLoader());
-
     }
 
     private FragmentPagerAdapter createAdapter(){
