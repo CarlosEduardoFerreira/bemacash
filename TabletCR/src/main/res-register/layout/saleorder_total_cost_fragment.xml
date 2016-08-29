@@ -104,13 +104,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:text="$ 70.84" />
-        <TextView
-            android:id="@+id/total_cost_ebt_total"
-            style="@style/TotalCostTable.Total.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="$ 70.84"/>
+
     </LinearLayout>
 
 

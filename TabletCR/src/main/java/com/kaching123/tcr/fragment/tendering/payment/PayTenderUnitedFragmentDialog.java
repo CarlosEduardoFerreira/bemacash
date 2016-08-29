@@ -136,9 +136,10 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         //btnGiftCard.setEnabled(getApp().getShopInfo().giftCardPaymentButtonEnabled); // this button is not implemented yet
         btnCard.setVisibility(getApp().getShopInfo().creditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
         btnPaxDebit.setVisibility(getApp().getShopInfo().debitCardPaymentButtonEnabled ? View.VISIBLE : View.GONE);
-        btnPaxEbtCash.setVisibility(getApp().getShopInfo().ebtCashPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnPaxEbtCash.setVisibility(orderEbtTotal!=null && !orderEbtTotal.equals(BigDecimal.ZERO) && getApp().getShopInfo().ebtCashPaymentButtonEnabled ? View.VISIBLE : View.GONE);
         btnOfflineCredit.setVisibility(getApp().getShopInfo().offlineCreditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
         btnCheck.setVisibility(getApp().getShopInfo().checkPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+
     }
 
     private boolean tryProceed(PaymentMethod method) {
@@ -160,6 +161,16 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             entered = alreadyPayed;
             charge.setText(UiHelper.valueOf(entered));
             AlertDialogFragment.showAlert(getActivity(), R.string.pay_tender_wrong_amount_title, getString(R.string.pay_tender_wrong_amount_error_message));
+            charge.selectAll();
+            return false;
+        }
+
+        BigDecimal remainingEbtAmonut = orderEbtTotal.subtract(completedEbtAmount);
+        if (method.equals(PaymentMethod.PAX_EBT_FOODSTAMP) || method.equals(PaymentMethod.PAX_EBT_CASH)
+                && value.length() > 0 && remainingEbtAmonut.compareTo(entered) < 0) {
+            entered = alreadyPayed;
+            charge.setText(UiHelper.valueOf(entered));
+            AlertDialogFragment.showAlert(getActivity(), R.string.pay_tender_wrong_amount_title, getString(R.string.pay_tender_wrong_ebt_amount_error_message));
             charge.selectAll();
             return false;
         }

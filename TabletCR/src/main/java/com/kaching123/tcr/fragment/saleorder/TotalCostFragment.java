@@ -36,9 +36,6 @@ public class TotalCostFragment extends Fragment {
     @ViewById(R.id.total_cost_tax)
     protected TextView tax;
 
-    @ViewById(R.id.total_cost_ebt_total)
-    protected TextView orderEbtTotal;
-
     @ViewById(R.id.total_cost_total)
     protected TextView orderTotal;
 
@@ -191,7 +188,6 @@ public class TotalCostFragment extends Fragment {
 
         this.orderTotalVal = totalOrderPrice;
         showPrice(this.orderTotal, totalOrderPrice);
-        showPrice(this.orderEbtTotal, totalOrderEbtPrice);
         if (BigDecimal.ZERO.compareTo(totalItemTotal) != 0 && BigDecimal.ZERO.compareTo(totalOrderPrice) != -1) {
             this.orderTotal.setTextColor(taxColorEmpty);
             this.btnPay.setEnabled(false);
@@ -220,17 +216,12 @@ public class TotalCostFragment extends Fragment {
     public String getOrderAmountTotal() {
         return this.orderTotal.getText().toString();
     }
-    public String getOrderEbtAmountTotal() {
-        return this.orderEbtTotal.getText().toString();
-    }
 
     private void setZero() {
         this.orderTotalVal = BigDecimal.ZERO;
         showPrice(this.discount, BigDecimal.ZERO);
         showPrice(this.subTotal, BigDecimal.ZERO);
         showPrice(this.orderTotal, BigDecimal.ZERO);
-        showPrice(this.orderEbtTotal, BigDecimal.ZERO);
-
         showPrice(this.tax, BigDecimal.ZERO);
         if (this.tax != null) this.tax.setTextColor(taxColorNormal);
     }

@@ -156,8 +156,12 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
                     && BigDecimal.ZERO.compareTo(transaction.availableAmount) < 0
                     && PaymentType.SALE.equals(transaction.paymentType)) {
 
-                completedNotEbtAmount = completedNotEbtAmount.add(transaction.availableAmount);
-                completedEbtAmount = completedEbtAmount.add(transaction.balance);
+
+                if(transaction.cardName.contains("EBT")) {
+                    completedEbtAmount = completedEbtAmount.add(transaction.availableAmount);
+                } else {
+                    completedNotEbtAmount = completedNotEbtAmount.add(transaction.availableAmount);
+                }
             }
         }
 
