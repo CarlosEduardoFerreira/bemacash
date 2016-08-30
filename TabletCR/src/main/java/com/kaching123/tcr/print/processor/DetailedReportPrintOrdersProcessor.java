@@ -132,10 +132,10 @@ public class DetailedReportPrintOrdersProcessor extends PrintOrderProcessor {
 
     private void drawSubtitle(ITextPrinter printer, Context context) {
         printer.footer(context.getString(R.string.report_type_detailed_report));
-        printer.addWithTab2(context.getString(R.string.zreport_print_time), dateFormat.format(new Date()), false, false);
+        printer.addWithTab2(context.getString(R.string.zreport_print_time), dateFormat.format(new Date()), true, false);
         printer.footer(context.getString(R.string.detailed_report_filter));
-        printer.addWithTab2(context.getString(R.string.detailed_report_filter_from), dateFormat.format(new Date(from)), false, false);
-        printer.addWithTab2(context.getString(R.string.detailed_report_filter_to), dateFormat.format(new Date(to)), false, false);
+        printer.addWithTab2(context.getString(R.string.detailed_report_filter_from), dateFormat.format(new Date(from)), true, false);
+        printer.addWithTab2(context.getString(R.string.detailed_report_filter_to), dateFormat.format(new Date(to)), true, false);
     }
 
     @Override
