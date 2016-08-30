@@ -6,6 +6,7 @@ import com.kaching123.pos.util.IPrinter;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnCallback;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
@@ -73,6 +74,11 @@ public abstract class BasePrintCommand<T extends IPrinter> extends PrinterComman
             onPrintSuccess();
         }
 
+        @OnCallback(value = PrinterCommand.class, name = EXTRA_PRINTER_INFO)
+        public void handleSuccessWithInfo(@Param(EXTRA_PRINTER_INFO) String msg) {
+            onPrintSuccessWithInfo(msg);
+        }
+
         @OnFailure(PrinterCommand.class)
         public void handleFailure(
                 @Param(EXTRA_ERROR_PRINTER)
@@ -103,6 +109,7 @@ public abstract class BasePrintCommand<T extends IPrinter> extends PrinterComman
         protected abstract void onPrinterIPnotFound();
         protected abstract void onPrinterNotConfigured();
         protected abstract void onPrinterPaperNearTheEnd();
+        protected void onPrintSuccessWithInfo(String msg){};
     }
 
     public static interface IPrintCallback {

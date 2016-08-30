@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:paddingTop="8dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
+
+    <TextView
+        android:id="@+id/register_spinner_label"
+        style="@style/Reports.Label"
+        android:text="Register"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:minWidth="58dp" />
+
+    <Spinner
+        android:id="@+id/register_spinner"
+        android:layout_height="wrap_content"
+        android:layout_width="130dp" />
+
+    <TextView
+        android:id="@+id/from_label"
+        style="@style/Reports.Label"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:text="@string/reports_from_label" />
+
+    <EditText
+        android:id="@+id/from_edit"
+        style="@style/Reports.DateEdit"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/from_label"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="4dp" />
+
+    <TextView
+        android:id="@+id/to_label"
+        style="@style/Reports.Label"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@id/from_edit"
+        android:paddingLeft="11dp"
+        android:text="@string/reports_to_label" />
+
+    <EditText
+        android:id="@+id/to_edit"
+        style="@style/Reports.DateEdit"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/to_label"
+        android:layout_alignLeft="@id/to_label" />
+
+</LinearLayout>

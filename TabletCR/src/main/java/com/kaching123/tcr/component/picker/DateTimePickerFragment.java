@@ -1,18 +1,18 @@
 package com.kaching123.tcr.component.picker;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -108,6 +108,20 @@ public class DateTimePickerFragment extends StyledDialogFragment {
         };
     }
 
+    @Override
+    protected OnDialogClickListener getNegativeButtonListener() {
+        return new OnDialogClickListener() {
+            @Override
+            public boolean onClick() {
+                if(listener != null && listener instanceof OnDateTimeActionsListener){
+                    return ((OnDateTimeActionsListener)listener).onCancel();
+                }
+                return true;
+            }
+        };
+    }
+
+
     public void setListener(OnDateTimeSetListener listener) {
         this.listener = listener;
     }
@@ -120,7 +134,11 @@ public class DateTimePickerFragment extends StyledDialogFragment {
         DialogUtil.show(activity, DIALOG_NAME, DateTimePickerFragment_.builder().dateTime(dateTime).minDate(minDate).build()).setListener(listener);
     }
 
-    public static interface OnDateTimeSetListener{
+    public interface OnDateTimeSetListener{
         boolean onDateTimeSet(Date datetime);
+    }
+
+    public interface OnDateTimeActionsListener extends OnDateTimeSetListener{
+        boolean onCancel();
     }
 }

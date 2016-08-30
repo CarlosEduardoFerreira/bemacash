@@ -13,8 +13,8 @@ public abstract class RestCommand extends PublicGroundyTask {
 
     public static class Response {
 
-        private static final String STATUS_ERROR = "error";
-        private static final String STATUS_SUCCESS = "success";
+        public static final String STATUS_ERROR = "error";
+        public static final String STATUS_SUCCESS = "success";
 
         private static final String STATUS_ERROR_SYNC_LOCKED = "700";
 

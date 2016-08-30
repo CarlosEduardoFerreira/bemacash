@@ -68,7 +68,8 @@ public class ReportsListFragment extends SuperBaseFragment {
                 ReportType.SALES_BY_CUSTOMERS,
 //                ReportType.PREPAID_SALES_BY_ITEMS,
 //                ReportType.PREPAID_SALES_TOP_10_REVENUES,
-                ReportType.DROPS_AND_PAYOUTS
+                ReportType.DROPS_AND_PAYOUTS,
+                ReportType.DETAILED_SALES
         }));
 
         inventoryList.setAdapter(new ReportsAdapter(getActivity(), new ReportType[]{

@@ -35,7 +35,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
  */
 public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 
-    private static final Uri URI_ORDER = ShopProvider.getContentUri(SaleOrderView.URI_CONTENT);
+    protected static final Uri URI_ORDER = ShopProvider.getContentUri(SaleOrderView.URI_CONTENT);
 
     protected String orderGuid;
     protected boolean hasCreditCardPayment;

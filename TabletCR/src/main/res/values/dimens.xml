@@ -209,4 +209,6 @@
     <dimen name="activity_padding_horizontal">80dp</dimen>
     <dimen name="activity_padding_vertical">25dp</dimen>
 
+    <dimen name="detailed_filter_dialog_width">690dp</dimen>
+
 </resources>

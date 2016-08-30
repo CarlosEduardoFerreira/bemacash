@@ -46,6 +46,7 @@ public abstract class PrinterCommand extends PublicGroundyTask {
     public static final String ARG_NEED_SYNC = "ARG_NEED_SYNC";
 
     public static final String EXTRA_ERROR_PRINTER = "EXTRA_ERROR_PRINTER";
+    public static final String EXTRA_PRINTER_INFO = "EXTRA_PRINTER_INFO";
     public static final String ACTION_USB_PERMISSION = "com.test.action.USB_PERMISSION";
 
     public static final String EXTRA_NEED_SYNC = "EXTRA_NEED_SYNC";

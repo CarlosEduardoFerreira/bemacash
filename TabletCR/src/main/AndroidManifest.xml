@@ -238,6 +238,11 @@
         <activity
             android:name=".activity.ZReportActivity_"
             android:label="@string/xreport_activity_label" />
+
+        <activity
+            android:name=".activity.DetailedReportActivity_"
+            android:label="@string/detailed_report_activity_label" />
+
         <activity
             android:name=".activity.PrinterAliasActivity_"
             android:label="@string/printer_alias_label"
