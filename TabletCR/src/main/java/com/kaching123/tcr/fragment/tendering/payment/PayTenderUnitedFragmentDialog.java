@@ -134,10 +134,17 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     private void setTenderButtonsVisibilityWithServerSettings() {
         //btnGiftCard.setEnabled(getApp().getShopInfo().giftCardPaymentButtonEnabled); // this button is not implemented yet
-        btnCard.setVisibility(getApp().getShopInfo().creditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
-        btnPaxDebit.setVisibility(getApp().getShopInfo().debitCardPaymentButtonEnabled ? View.VISIBLE : View.GONE);
-        btnPaxEbtCash.setVisibility(orderEbtTotal!=null && !orderEbtTotal.equals(BigDecimal.ZERO) && getApp().getShopInfo().ebtCashPaymentButtonEnabled ? View.VISIBLE : View.GONE);
-        btnOfflineCredit.setVisibility(getApp().getShopInfo().offlineCreditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnCard.setVisibility(getApp().isPaxConfigured() &&
+                getApp().getShopInfo().creditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnPaxDebit.setVisibility(getApp().isPaxConfigured() &&
+                getApp().getShopInfo().debitCardPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnPaxEbtCash.setVisibility(orderEbtTotal!=null
+                && !orderEbtTotal.equals(BigDecimal.ZERO)
+                && getApp().isPaxConfigured()
+                && getApp().getShopInfo().ebtCashPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+
+        btnOfflineCredit.setVisibility(getApp().isPaxConfigured() &&
+                getApp().getShopInfo().offlineCreditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
         btnCheck.setVisibility(getApp().getShopInfo().checkPaymentButtonEnabled ? View.VISIBLE : View.GONE);
 
     }
@@ -286,7 +293,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 btnCard.setVisibility(View.GONE);
             } else {
                 btnCard.setVisibility(View.VISIBLE);
-                btnCard.setEnabled(true);
             }
             if (paxGateway.acceptPaxDebitEnabled()) {
                 btnPaxDebit.setVisibility(View.VISIBLE);

@@ -197,9 +197,6 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     }
 
     protected void enable(final boolean on) {
-        btnCash.setEnabled(on);
-        btnCard.setEnabled(getApp().isPaymentUserValid() || getApp().isPaxConfigured() && on);
-        btnCreditReceipt.setEnabled(on);
         enablePositiveButtons(on);
         Logger.d("Buttons have been enabled " + on);
     }

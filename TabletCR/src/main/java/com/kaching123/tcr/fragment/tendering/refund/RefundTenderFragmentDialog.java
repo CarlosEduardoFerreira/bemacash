@@ -142,7 +142,7 @@ public class RefundTenderFragmentDialog extends TenderFragmentDialogBase<RefundT
             btnPaxDebit.setVisibility(displayDebitBtn ? View.VISIBLE : View.GONE);
 //            btnPaxEbtFoodstamp.setVisibility(displayEbtBtn ? View.VISIBLE : View.GONE);
         } else {
-            btnCard.setEnabled(displayCCBtn);
+            //btnCard.setEnabled(displayCCBtn);
         }
 //        btnCash.setEnabled(displayCashBtn);
         btnCash.setEnabled(true); // TODO this may vary in next sprint - when this flow melts because of paychecks and prepaid stuff
