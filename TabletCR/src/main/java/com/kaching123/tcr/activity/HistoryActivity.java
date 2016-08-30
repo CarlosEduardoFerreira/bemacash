@@ -82,6 +82,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
 
+    private static final int LOADER_OPENED_TRANSACTIONS_ID = 3;
+
     static {
         permissions.add(Permission.SALES_RETURN);
     }
@@ -166,6 +168,11 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         return (!TextUtils.isEmpty(getApp().getShopPref().usbMSRName().get()));
     }
 
+    @Override
+    protected boolean isInSettingPage()
+    {
+        return true;
+    }
     @AfterViews
     protected void init() {
         orderListFragment.addListener(historyFragment);
@@ -184,6 +191,9 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
         AnimationUtils.applyFlippingEffect(this, flipper);
         AnimationUtils.applyFlippingEffect(this, listFlipper);
+
+        getSupportLoaderManager().restartLoader(LOADER_OPENED_TRANSACTIONS_ID, null, openedTransactionsLoader);
+
     }
 
 

@@ -5,10 +5,13 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.ActionProvider;
@@ -20,14 +23,18 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.google.common.base.Function;
 import com.kaching123.tcr.AutoUpdateService;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.ApkDownloadCommand;
+import com.kaching123.tcr.commands.payment.ClosePreauthBatchCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
 import com.kaching123.tcr.fragment.tendering.pax.PAXBatchOutFragmentDialog;
 import com.kaching123.tcr.fragment.user.LoginFragment;
@@ -35,8 +42,11 @@ import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.PaxModel;
+import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.service.SerialPortScannerService;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.ReceiverWrapper;
 
 import org.androidannotations.annotations.App;
@@ -45,9 +55,19 @@ import org.androidannotations.annotations.Fullscreen;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
+
+import static com.kaching123.tcr.model.ContentValuesUtil._bool;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
+import static com.kaching123.tcr.model.ContentValuesUtil._paymentStatus;
+import static com.kaching123.tcr.model.ContentValuesUtil._paymentType;
 
 /**
  * Created by gdubina on 04.12.13.
@@ -77,6 +97,10 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
     }
 
     private static final IntentFilter intentFilter = new IntentFilter();
+
+    private static final Uri OPENED_TRANSACTIONS_URI = ShopProvider.getContentUri(ShopStore.PaymentTransactionTable.URI_CONTENT);
+
+    public int openedTrnsactionsCount;
 
     static {
         intentFilter.addAction(SerialPortScannerService.ACTION_SERIAL_PORT_SCANNER);
@@ -141,6 +165,70 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                 }
 
             }
+        }
+
+    };
+
+    public LoaderManager.LoaderCallbacks<List<PaymentTransactionModel>> openedTransactionsLoader = new LoaderManager.LoaderCallbacks<List<PaymentTransactionModel>>() {
+
+        @Override
+        public Loader<List<PaymentTransactionModel>> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder
+                    .forUri(OPENED_TRANSACTIONS_URI)
+//                    .projection("count(" + PaymentTransactionTable.GUID + ")")
+                    .where(ShopStore.PaymentTransactionTable.STATUS + " = ?", PaymentTransactionModel.PaymentStatus.PRE_AUTHORIZED.ordinal())
+                    .wrap(new Function<Cursor, List<PaymentTransactionModel>>() {
+                        @Override
+                        public List<PaymentTransactionModel> apply(Cursor c) {
+                            List<PaymentTransactionModel> list = new ArrayList<PaymentTransactionModel>();
+                            while (c.moveToNext()) {
+                                PaymentTransactionModel model = new PaymentTransactionModel(
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.GUID)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.PARENT_GUID)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.ORDER_GUID)),
+                                        _decimal(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.AMOUNT), BigDecimal.ZERO),
+                                        _paymentType(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.TYPE)),
+                                        _paymentStatus(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.STATUS)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.OPERATOR_GUID)),
+                                        _paymentGateway(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.GATEWAY)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.GATEWAY_PAYMENT_ID)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.GATEWAY_PREAUTH_PAYMENT_ID)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.GATEWAY_CLOSED_PERAUTH_GUID)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.DECLINE_REASON)),
+                                        new Date(c.getLong(c.getColumnIndex(ShopStore.PaymentTransactionTable.CREATE_TIME))),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.SHIFT_GUID)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.CARD_NAME)),
+                                        _decimal(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.CHANGE_AMOUNT), BigDecimal.ZERO),
+                                        _bool(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.IS_PREAUTH)),
+                                        _decimal(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.CASH_BACK), BigDecimal.ZERO),
+                                        _decimal(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.BALANCE), BigDecimal.ZERO)
+                                );
+
+                                list.add(model);
+                            }
+                            return list;
+                        }
+                    }).build(SuperBaseActivity.this);
+//                    .wrap(new Function<Cursor, Integer>() {
+//                        @Override
+//                        public Integer apply(Cursor c) {
+//                            if (c.moveToFirst()) {
+//                                return c.getInt(0);
+//                            }
+//                            return 0;
+//                        }
+//                    }).build(DashboardActivity.this);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<PaymentTransactionModel>> loader, List<PaymentTransactionModel> data) {
+            SuperBaseActivity.this.openedTrnsactionsCount = data == null ? 0 : data.size();
+            SuperBaseActivity.this.openedTrnsactions = (ArrayList<PaymentTransactionModel>) data;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<PaymentTransactionModel>> loader) {
+
         }
 
     };
@@ -325,6 +413,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         checkPermissions();
         invalidateOptionsMenu();
     }
+    public ArrayList<PaymentTransactionModel> openedTrnsactions;
 
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem lockItem = menu.add(Menu.CATEGORY_ALTERNATIVE, Menu.NONE, getResources().getInteger(R.integer.menu_order_last), R.string.action_lock_label);
@@ -338,42 +427,66 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         });
 
         MenuItem batchOutItem = menu.add(Menu.CATEGORY_ALTERNATIVE, Menu.NONE, getResources().getInteger(R.integer.menu_order_default), R.string.action_batchout_label);
+        batchOutItem.setVisible(isInSettingPage());
 
         batchOutItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm,  new StyledDialogFragment.OnDialogClickListener() {
+                AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.dashboard_activity_opened_transactions_warning_message), R.string.btn_yes, new StyledDialogFragment.OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        PAXBatchOutFragmentDialog.show(SuperBaseActivity.this, new PAXBatchOutFragmentDialog.IPaxBatchOutListener() {
+                        ClosePreauthBatchCommand.start(SuperBaseActivity.this, openedTrnsactions, getApp().getOperatorGuid(), new ClosePreauthBatchCommand.ClosePreauthCommandCallback() {
+
                             @Override
-                            public void onComplete(String msg) {
-                                hide();
+                            public void onCloseSuccess() {
+                                AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm,  new StyledDialogFragment.OnDialogClickListener() {
+                                    @Override
+                                    public boolean onClick() {
+                                        PAXBatchOutFragmentDialog.show(SuperBaseActivity.this, new PAXBatchOutFragmentDialog.IPaxBatchOutListener() {
+                                            @Override
+                                            public void onComplete(String msg) {
+                                                hide();
+                                            }
+
+                                            @Override
+                                            public void onCancel() {
+                                                hide();
+                                            }
+
+                                            @Override
+                                            public void onRetry() {
+
+                                            }
+                                            private void hide() {
+                                                PAXBatchOutFragmentDialog.hide(SuperBaseActivity.this);
+                                            }
+                                        }, PaxModel.get());
+                                        return true;
+                                    }
+                                }, new StyledDialogFragment.OnDialogClickListener() {
+                                    @Override
+                                    public boolean onClick() {
+
+                                        return true;
+                                    }
+                                }, null );
                             }
 
                             @Override
-                            public void onCancel() {
-                                hide();
+                            public void onCloseFailure() {
+//                                WaitDialogFragment.hide(SuperBaseActivity.this);
                             }
-
-                            @Override
-                            public void onRetry() {
-
-                            }
-                            private void hide() {
-                                PAXBatchOutFragmentDialog.hide(SuperBaseActivity.this);
-                            }
-                        }, PaxModel.get());
+                        });
                         return true;
                     }
                 }, new StyledDialogFragment.OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-
+//                        WaitDialogFragment.hide(SuperBaseActivity.this);
                         return true;
                     }
-                }, null );
+                }, null);
 
                 return true;
             }
@@ -386,6 +499,10 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    protected boolean isInSettingPage()
+    {
+        return false;
+    }
     private void checkPermissions() {
         if (!validatePermissions()) {
             PermissionFragment.showRedirecting(this, getOnTempLoginCompleteListener(), getPermissionsArray());

@@ -238,8 +238,6 @@ public class DashboardActivity extends SuperBaseActivity {
 //    private MenuItem activationMenuItem;
 
     private List<ActivationCarrierModel> activationCarriers;
-    private int openedTrnsactionsCount;
-    private ArrayList<PaymentTransactionModel> openedTrnsactions;
 
     private boolean goToSaleOrder;
     private boolean isSqlCommandLoaderFinished = true;
@@ -681,7 +679,7 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
 
-        if (isShiftOpened && openedTrnsactionsCount == 0) {
+        if (isShiftOpened && openedTrnsactionsCount > 0) {
             AlertDialogFragment.show(DashboardActivity.this,
                     AlertDialogFragment.DialogType.ALERT3,
                     false,
@@ -1683,69 +1681,6 @@ public class DashboardActivity extends SuperBaseActivity {
         }
     };
 
-    private LoaderCallbacks<List<PaymentTransactionModel>> openedTransactionsLoader = new LoaderCallbacks<List<PaymentTransactionModel>>() {
-
-        @Override
-        public Loader<List<PaymentTransactionModel>> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder
-                    .forUri(OPENED_TRANSACTIONS_URI)
-//                    .projection("count(" + PaymentTransactionTable.GUID + ")")
-                    .where(PaymentTransactionTable.STATUS + " = ?", PaymentStatus.PRE_AUTHORIZED.ordinal())
-                    .wrap(new Function<Cursor, List<PaymentTransactionModel>>() {
-                        @Override
-                        public List<PaymentTransactionModel> apply(Cursor c) {
-                            List<PaymentTransactionModel> list = new ArrayList<PaymentTransactionModel>();
-                            while (c.moveToNext()) {
-                                PaymentTransactionModel model = new PaymentTransactionModel(
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.GUID)),
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID)),
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.ORDER_GUID)),
-                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.AMOUNT), BigDecimal.ZERO),
-                                        _paymentType(c, c.getColumnIndex(PaymentTransactionTable.TYPE)),
-                                        _paymentStatus(c, c.getColumnIndex(PaymentTransactionTable.STATUS)),
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.OPERATOR_GUID)),
-                                        _paymentGateway(c, c.getColumnIndex(PaymentTransactionTable.GATEWAY)),
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.GATEWAY_PAYMENT_ID)),
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.GATEWAY_PREAUTH_PAYMENT_ID)),
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.GATEWAY_CLOSED_PERAUTH_GUID)),
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.DECLINE_REASON)),
-                                        new Date(c.getLong(c.getColumnIndex(PaymentTransactionTable.CREATE_TIME))),
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.SHIFT_GUID)),
-                                        c.getString(c.getColumnIndex(PaymentTransactionTable.CARD_NAME)),
-                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CHANGE_AMOUNT), BigDecimal.ZERO),
-                                        _bool(c, c.getColumnIndex(PaymentTransactionTable.IS_PREAUTH)),
-                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK), BigDecimal.ZERO),
-                                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO)
-                                );
-
-                                list.add(model);
-                            }
-                            return list;
-                        }
-                    }).build(DashboardActivity.this);
-//                    .wrap(new Function<Cursor, Integer>() {
-//                        @Override
-//                        public Integer apply(Cursor c) {
-//                            if (c.moveToFirst()) {
-//                                return c.getInt(0);
-//                            }
-//                            return 0;
-//                        }
-//                    }).build(DashboardActivity.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<PaymentTransactionModel>> loader, List<PaymentTransactionModel> data) {
-            DashboardActivity.this.openedTrnsactionsCount = data == null ? 0 : data.size();
-            DashboardActivity.this.openedTrnsactions = (ArrayList<PaymentTransactionModel>) data;
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<PaymentTransactionModel>> loader) {
-
-        }
-
-    };
 
     private LoaderCallbacks<Boolean> timesheetLoader = new LoaderCallbacks<Boolean>() {
         @Override
