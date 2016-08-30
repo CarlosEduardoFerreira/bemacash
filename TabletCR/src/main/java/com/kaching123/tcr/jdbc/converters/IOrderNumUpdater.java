@@ -6,7 +6,6 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 /**
  * Created by Vladimir on 29.08.2016.
  */
-public interface OrderNumJdbcConverter {
-
-    SingleSqlCommand updateOrderNumSql(String id, int orderNum, IAppCommandContext appCommandContext);
+public interface IOrderNumUpdater {
+    SingleSqlCommand updateOrderNum(String id, int orderNum, IAppCommandContext appCommandContext);
 }

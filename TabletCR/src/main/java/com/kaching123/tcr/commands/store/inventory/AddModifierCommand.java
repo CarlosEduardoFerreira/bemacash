@@ -31,7 +31,7 @@ public class AddModifierCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         Logger.d("AddModifierCommand doCommand");
         modifier = (ModifierModel) getArgs().getSerializable(ARG_MODIFIER);
-        modifier.orderNum = ModifierModel.getMaxOrderNum(getContext(), modifier.type, modifier.itemGuid, modifier.modifierGroupGuid);
+        modifier.orderNum = ModifierModel.getMaxOrderNum(getContext(), modifier.type, modifier.itemGuid, modifier.modifierGroupGuid) + 1;
         return succeeded();
     }
 

@@ -5,7 +5,7 @@ import android.net.Uri;
 
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.ItemsModifiersJdbcConverter;
-import com.kaching123.tcr.jdbc.converters.OrderNumJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.IOrderNumUpdater;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -32,7 +32,7 @@ public class BatchUpdateModifierOrderCommand extends BaseBatchUpdateOrderCommand
     }
 
     @Override
-    protected OrderNumJdbcConverter createConverter() {
+    protected IOrderNumUpdater createConverter() {
         return (ItemsModifiersJdbcConverter) JdbcFactory.getConverter(ModifierTable.TABLE_NAME);
     }
 

@@ -16,7 +16,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 /**
  * Created by gdubina on 06/11/13.
  */
-public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> implements OrderNumJdbcConverter {
+public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> implements IOrderNumUpdater {
 
     private static final String TABLE_NAME = "ITEM_MODIFIER";
 
@@ -96,15 +96,8 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> im
                 .build(JdbcFactory.getApiMethod(new ModifierModel()));
     }
 
-    public SingleSqlCommand updateOrderNum(String guid, int orderNum, IAppCommandContext appCommandContext){
-        return _update(TABLE_NAME, appCommandContext)
-                .add(ORDER_NUM, orderNum)
-                .where(MODIFIER_GUID, guid)
-                .build(JdbcFactory.getApiMethod(new ModifierModel()));
-    }
-
     @Override
-    public SingleSqlCommand updateOrderNumSql(String id, int orderNum, IAppCommandContext appCommandContext) {
+    public SingleSqlCommand updateOrderNum(String id, int orderNum, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
                 .add(ORDER_NUM, orderNum)
                 .where(MODIFIER_GUID, id)

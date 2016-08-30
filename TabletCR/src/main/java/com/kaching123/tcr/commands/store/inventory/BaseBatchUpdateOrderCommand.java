@@ -4,7 +4,7 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 
 import com.kaching123.tcr.commands.store.AsyncCommand;
-import com.kaching123.tcr.jdbc.converters.OrderNumJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.IOrderNumUpdater;
 import com.kaching123.tcr.model.IOrderedModel;
 import com.kaching123.tcr.model.IValueModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
@@ -27,22 +27,24 @@ public abstract class BaseBatchUpdateOrderCommand<T extends IValueModel & IOrder
 
     @Override
     protected TaskResult doCommand() {
-        T[] oldOrder = (T[]) getArgs().getSerializable(ARG_OLD_ORDER);
-        T[] newOrder = (T[]) getArgs().getSerializable(ARG_NEW_ORDER);
+        Object[] oldOrder = (Object[]) getArgs().get(ARG_OLD_ORDER);
+        Object[] newOrder = (Object[]) getArgs().get(ARG_NEW_ORDER);
+        if (oldOrder == null || newOrder == null || oldOrder.length != newOrder.length)
+            return failed();
 
         int n = oldOrder.length;
         ops = new ArrayList<>(n);
         sql = createBatch();
-        OrderNumJdbcConverter converter = createConverter();
+        IOrderNumUpdater converter = createConverter();
 
         for (int i = 0; i < n; i++) {
-            String guid = newOrder[i].getGuid();
-            int orderNum = oldOrder[i].getOrderNum();
+            String guid = ((T) newOrder[i]).getGuid();
+            int orderNum = ((T) oldOrder[i]).getOrderNum();
             ops.add(ContentProviderOperation.newUpdate(getUri())
                     .withSelection(getIdColumn() + " = ?", new String[]{guid})
                     .withValue(getOrderNumColumn(), orderNum)
                     .build());
-            sql.add(converter.updateOrderNumSql(guid, orderNum, this.getAppCommandContext()));
+            sql.add(converter.updateOrderNum(guid, orderNum, this.getAppCommandContext()));
         }
 
         return succeeded();
@@ -61,6 +63,6 @@ public abstract class BaseBatchUpdateOrderCommand<T extends IValueModel & IOrder
     protected abstract Uri getUri();
     protected abstract String getIdColumn();
     protected abstract String getOrderNumColumn();
-    protected abstract OrderNumJdbcConverter createConverter();
+    protected abstract IOrderNumUpdater createConverter();
     protected abstract BatchSqlCommand createBatch();
 }
