@@ -35,6 +35,11 @@ public class PrintGiftCardProcessor extends BasePrintProcessor<ITextPrinter> {
     }
 
     @Override
+    protected boolean isGiftCard() {
+        return true;
+    }
+
+    @Override
     public void printHeader(Context context, TcrApplication app, ITextPrinter printerWrapper) {
         printerWrapper.subTitle(context.getString(R.string.print_gift_card_balance_header));
         ShopInfoViewJdbcConverter.ShopInfo shopInfo = app.getShopInfo();

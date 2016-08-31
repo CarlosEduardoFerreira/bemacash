@@ -62,11 +62,16 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     }
 
     public void print(final Context context, final TcrApplication app, final T printerWrapper) {
-        orderInfo = loadOrderInfo(context);
+        if (!isGiftCard())
+            orderInfo = loadOrderInfo(context);
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
         printFooter(app, printerWrapper);
+    }
+
+    protected boolean isGiftCard() {
+        return false;
     }
 
     protected abstract void printBody(final Context context, final TcrApplication app, final T printerWrapper);
@@ -194,7 +199,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 
     protected abstract void printMidTid(T printer, String label, String value, boolean bold);
 
-    private PrintOrderInfo loadOrderInfo(Context context){
+    private PrintOrderInfo loadOrderInfo(Context context) {
         Cursor c = ProviderAction.query(URI_ORDER)
                 .projection(
                         RegisterTable.TITLE,
@@ -229,7 +234,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
             info.customerIdentification = TcrApplication.isEcuadorVersion() ? "9999999999999" : "";
         }
         String loyaltyPoints = c.getString(7);
-        if (loyaltyPoints != null){
+        if (loyaltyPoints != null) {
             info.customerLoyaltyPoints = _decimal(loyaltyPoints, BigDecimal.ZERO);
         }
         info.customerName = concatFullname(c.getString(8), c.getString(9));
