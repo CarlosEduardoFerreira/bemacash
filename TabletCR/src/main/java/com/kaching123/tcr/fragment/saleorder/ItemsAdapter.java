@@ -101,7 +101,7 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
     @Override
     protected View bindView(View convertView, int position, SaleOrderItemViewModel item) {
         ItemView itemView = (ItemView) convertView;
-        item.productCode = (item.productCode.length() > 1 ? item.productCode : "");
+        item.productCode = (item.productCode == null || item.productCode.length() > 1 ? item.productCode : "");
         itemView.bind(
                 position,
                 pencilDrawable,
