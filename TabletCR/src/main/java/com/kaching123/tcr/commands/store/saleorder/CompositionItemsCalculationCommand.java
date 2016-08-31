@@ -23,8 +23,12 @@ import com.telly.groundy.annotations.Param;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 
 /**
  * Created by mboychenko on 31.08.2016.
@@ -65,11 +69,7 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
             }
         }
 
-        Cursor composerCursor = ProviderAction.query(COMPOSER_URI)                                          //get compositions from saleOrderItems
-                .projection(ShopStore.ComposerTable.STORE_TRACKING_ENABLED,
-                            ShopStore.ComposerTable.ITEM_HOST_ID,
-                            ShopStore.ComposerTable.ITEM_CHILD_ID,
-                            ShopStore.ComposerTable.QUANTITY)
+        Cursor composerCursor = ProviderAction.query(COMPOSER_URI)
                 .whereIn(ShopStore.ComposerTable.ITEM_HOST_ID, guids)
                 .perform(getContext());
 
@@ -91,21 +91,23 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
             }
 
             if(!composers.isEmpty()) {
-                List<String> childItemsGuids = new ArrayList<>();
+                Set<String> childItemsGuids = new HashSet<>();
                 for (ComposerModel composerToCheck : composers) {
                     childItemsGuids.add(composerToCheck.itemChildId);
                 }
 
                 Cursor itemCursor = ProviderAction.query(ITEM_URI)                                          //get childItems from item table
-                .whereIn(ShopStore.ItemTable.GUID, childItemsGuids)
-                .perform(getContext());
+                        .projection(ShopStore.ItemTable.GUID, ShopStore.ItemTable.TMP_AVAILABLE_QTY, ShopStore.ItemTable.STOCK_TRACKING)
+                        .whereIn(ShopStore.ItemTable.GUID, childItemsGuids)
+                        .perform(getContext());
 
                 if(itemCursor != null && itemCursor.moveToFirst()) {
-                    ItemFunction itemFunction = new ItemFunction();
                     do {
-                        ItemModel model = itemFunction.apply(itemCursor);
-                        if(model != null && model.isStockTracking){
-                            composersItemForProcess.put(model.getGuid(), model.availableQty);
+                        boolean isStockTracking = itemCursor.getInt(itemCursor.getColumnIndex(ShopStore.ItemTable.STOCK_TRACKING)) == 1;
+                        if(isStockTracking){
+                            String guid = itemCursor.getString(itemCursor.getColumnIndex(ShopStore.ItemTable.GUID));
+                            BigDecimal qty = _decimalQty(itemCursor.getString(itemCursor.getColumnIndex(ShopStore.ItemTable.TMP_AVAILABLE_QTY)));
+                            composersItemForProcess.put(guid, qty);
                         }
                     } while(itemCursor.moveToNext());
                     itemCursor.close();
@@ -117,10 +119,27 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
         }
 
         if(!composersItemForProcess.isEmpty()){
+                //composers vs composersItemForProcess //check if composer can be in few parent items
+            HashMap<String, BigDecimal> totalNeededComposItems = new HashMap<>();
 
-        }
-
+            for (ComposerModel composer : composers) {
+                if(composersItemForProcess.containsKey(composer.itemChildId)){
+                    for (SaleOrderItemModel saleOrderItem : saleOrderItems) {
+                        if(saleOrderItem.itemGuid.equals(composer.itemHostId)){
+                            BigDecimal compsoreQtyForItem = saleOrderItem.qty.multiply(composer.qty);
+                            if(totalNeededComposItems.containsKey(composer.itemChildId)){
+                                totalNeededComposItems.put(composer.itemChildId, totalNeededComposItems.get(composer.itemChildId).add(compsoreQtyForItem));
+                            } else {
+                                totalNeededComposItems.put(composer.itemChildId, compsoreQtyForItem);
+                            }
+                        }
+                    }
+//                    if(composer.qty.compareTo(composersItemForProcess.get(composer.itemChildId)) > 0){
 //
+//                    }
+                }
+            }
+        }
 
         return succeeded().add(PARAM_SALE_ITEM_GUID, "");
     }
