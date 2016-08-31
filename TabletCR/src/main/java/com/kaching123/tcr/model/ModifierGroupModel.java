@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.google.common.base.Function;
+import com.kaching123.tcr.model.converter.IntegerFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 
@@ -86,11 +86,7 @@ public class ModifierGroupModel implements IValueModel, IOrderedModel, Serializa
                 .projection(_max(ModifierGroupTable.ORDER_NUM))
                 .where(ModifierGroupTable.ITEM_GUID + " = ?", itemId)
                 .perform(context)
-                .toFluentIterable(new Function<Cursor, Integer>() {
-                    @Override
-                    public Integer apply(Cursor input) {
-                        return input.getInt(0);
-                    }
-                }).first().or(0);
+                .toFluentIterable(new IntegerFunction())
+                .first().or(0);
     }
 }

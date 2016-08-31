@@ -2,14 +2,13 @@ package com.kaching123.tcr.commands.store.inventory;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.google.common.base.Function;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierModel;
+import com.kaching123.tcr.model.converter.StringFunction;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -79,12 +78,8 @@ public class DeleteModifierGroupCommand extends AsyncCommand {
                 .projection(ModifierTable.MODIFIER_GUID)
                 .where(ModifierTable.ITEM_GROUP_GUID + " = ?", groupId)
                 .perform(context)
-                .toFluentIterable(new Function<Cursor, String>() {
-                    @Override
-                    public String apply(Cursor input) {
-                        return input.getString(0);
-                    }
-                }).toImmutableList();
+                .toFluentIterable(new StringFunction())
+                .toImmutableList();
 
     }
 

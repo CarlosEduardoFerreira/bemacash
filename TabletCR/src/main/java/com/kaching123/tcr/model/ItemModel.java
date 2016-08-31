@@ -2,11 +2,10 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.google.common.base.Function;
 import com.kaching123.tcr.model.Unit.CodeType;
+import com.kaching123.tcr.model.converter.IntegerFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.UnitUtil;
@@ -212,12 +211,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                 .projection(_max(ItemTable.ORDER_NUM))
                 .where(ItemTable.CATEGORY_ID + " = ?", categoryId)
                 .perform(context)
-                .toFluentIterable(new Function<Cursor, Integer>() {
-                    @Override
-                    public Integer apply(Cursor input) {
-                        return input.getInt(0);
-                    }
-                }).first().or(0);
+                .toFluentIterable(new IntegerFunction())
+                .first().or(0);
 
         return i;
     }

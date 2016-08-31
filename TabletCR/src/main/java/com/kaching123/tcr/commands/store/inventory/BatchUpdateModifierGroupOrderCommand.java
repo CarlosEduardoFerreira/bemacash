@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.google.common.base.Function;
+import com.kaching123.tcr.model.converter.StringFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 
@@ -29,12 +29,8 @@ public class BatchUpdateModifierGroupOrderCommand extends BaseBatchUpdateOrderCo
                 .projection(ModifierGroupTable.ITEM_GUID)
                 .where(ModifierGroupTable.GUID + " = ?", guid)
                 .perform(getContext())
-                .toFluentIterable(new Function<Cursor, String>() {
-                    @Override
-                    public String apply(@Nullable Cursor input) {
-                        return input.getString(0);
-                    }
-                }).first().orNull();
+                .toFluentIterable(new StringFunction())
+                .first().orNull();
 
         if (itemId == null)
             return null;

@@ -55,6 +55,14 @@ public class EditModifiersCommand extends AsyncCommand {
         return batch;
     }
 
+    private static String getCurrentGroupId(Context context, String modifierId){
+        return null;
+        /*return ProviderAction.query(URI_MODIFIERS)
+                .projection(ModifierTable.ITEM_GROUP_GUID)
+                .perform(context)
+                .toFluentIterable(new StringFunction());*/
+    }
+
     public static void start(Context context, ModifierModel modifier){
         create(EditModifiersCommand.class)
                 .arg(ARG_MODIFIER, modifier)

@@ -144,6 +144,7 @@ import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.converter.IntegerFunction;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
@@ -3153,12 +3154,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             query.where(columnStart + " < ?", currentTime);
             query.where(columnEnd + " > ?", currentTime);
 
-            List<Integer> priceLevels = query.perform(self()).toFluentIterable(new Function<Cursor, Integer>() {
-                @Override
-                public Integer apply(Cursor input) {
-                    return input.getInt(0);
-                }
-            }).toImmutableList();
+            List<Integer> priceLevels = query.perform(self()).toFluentIterable(new IntegerFunction()).toImmutableList();
 
             if (!BaseCashierActivity.this.priceLevels.equals(priceLevels)){
                 BaseCashierActivity.this.priceLevels = priceLevels;

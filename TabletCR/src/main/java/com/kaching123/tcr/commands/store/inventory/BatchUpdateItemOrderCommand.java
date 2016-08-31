@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.google.common.base.Function;
+import com.kaching123.tcr.model.converter.StringFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 
@@ -26,14 +26,11 @@ public class BatchUpdateItemOrderCommand extends BaseBatchUpdateOrderCommand {
     protected Map<String, Integer> getCurrentOrder(String guid) {
         Uri uri = ShopProvider.contentUri(ItemTable.URI_CONTENT);
         String categoryId = ProviderAction.query(uri)
+                .projection(ItemTable.CATEGORY_ID)
                 .where(ItemTable.GUID + " = ?", guid)
                 .perform(getContext())
-                .toFluentIterable(new Function<Cursor, String>() {
-                    @Override
-                    public String apply(Cursor input) {
-                        return input.getString(0);
-                    }
-                }).first().orNull();
+                .toFluentIterable(new StringFunction())
+                .first().orNull();
         if (categoryId == null)
             return null;
 

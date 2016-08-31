@@ -37,6 +37,7 @@ import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.ShiftModel;
+import com.kaching123.tcr.model.converter.StringFunction;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.PrepaidOrderView2;
@@ -526,12 +527,8 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
             return CursorLoaderBuilder.forUri(ShopProvider.contentUri(SaleOrderView.URI_CONTENT))
                     .projection(CustomerTable.EMAIL)
                     .where(SaleOrderView2.SaleOrderTable.GUID + " = ?", orderGuid)
-                    .transform(new Function<Cursor, String>() {
-                        @Override
-                        public String apply(Cursor input) {
-                            return input.getString(0);
-                        }
-                    }).build(getActivity());
+                    .transform(new StringFunction())
+                    .build(getActivity());
         }
 
         @Override
