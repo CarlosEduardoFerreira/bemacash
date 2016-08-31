@@ -148,7 +148,7 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
     protected void btnReload()
     {
         PaxGateway paxGateway = (PaxGateway) PaymentGateway.PAX.gateway();
-        listener.Reload();
+        listener.onReload();
         this.dismiss();
 //        paxGateway.reload(getActivity(), reloadGiftCardCallBack(),  null, null, transaction, reloadResponse);
     }
@@ -169,7 +169,7 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
                 {
                     @Override
                     public void onConfirmed() {
-
+                        listener.onSuccess();
                     }
                 },amount);
             }
@@ -202,13 +202,13 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
 
             @Override
             protected void handleSuccess(BigDecimal result, String last4, String errorReason) {
-                listener.Balance(result, last4, errorReason);
+                listener.onBalance(result, last4, errorReason);
 
             }
 
             @Override
             protected void handleError() {
-                listener.Balance(BigDecimal.ZERO, "", "Error");
+                listener.onBalance(BigDecimal.ZERO, "", "Error");
             }
         };
     }
@@ -272,8 +272,9 @@ public class GiftCardFragmentDialog extends StyledDialogFragment {
     }
 
     public static interface IGiftCardListener {
-        void Reload();
-        void Balance(BigDecimal result, String last4, String errorReason);
+        void onReload();
+        void onBalance(BigDecimal result, String last4, String errorReason);
+        void onSuccess();
     }
 
     public static void show(FragmentActivity context, IGiftCardListener listener) {

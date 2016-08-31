@@ -1051,7 +1051,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 } else {
                     GiftCardFragmentDialog.show(BaseCashierActivity.this, new GiftCardFragmentDialog.IGiftCardListener() {
                         @Override
-                        public void Reload() {
+                        public void onReload() {
 
                             GiftCardAmountFragmentDialog.show(BaseCashierActivity.this, new GiftCardAmountFragmentDialog.IGiftCardListener() {
                                 @Override
@@ -1070,8 +1070,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         }
 
                         @Override
-                        public void Balance(BigDecimal result, String last4, String errorReason) {
+                        public void onBalance(BigDecimal result, String last4, String errorReason) {
 
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            GiftCardFragmentDialog.hide(BaseCashierActivity.this);
                         }
                     });
                 }
