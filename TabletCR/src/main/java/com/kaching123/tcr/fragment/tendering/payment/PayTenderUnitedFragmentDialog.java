@@ -133,7 +133,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     private void setTenderButtonsVisibilityWithServerSettings() {
-        //btnGiftCard.setEnabled(getApp().getShopInfo().giftCardPaymentButtonEnabled); // this button is not implemented yet
+        btnGiftCard.setVisibility(getApp().getShopInfo().giftCardSolutionEnabled? View.VISIBLE : View.GONE);
         btnCard.setVisibility(getApp().isPaxConfigured() &&
                 getApp().getShopInfo().creditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
         btnPaxDebit.setVisibility(getApp().isPaxConfigured() &&
@@ -328,6 +328,11 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     @Click
     protected void btnPaxDebitClicked() {
         tryProceed(PaymentMethod.PAX_DEBIT);
+    }
+
+    @Click
+    protected void btnGiftCardClicked() {
+        Toast.makeText(getActivity(),"Not implemented yet", Toast.LENGTH_SHORT).show();
     }
 
     @Click

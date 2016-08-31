@@ -62,6 +62,9 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     @ViewById
     protected Button btnOfflineCredit;
 
+    @ViewById
+    protected Button btnGiftCard;
+
     @ViewById(R.id.allowed_ebt_value_tw)
     protected TextView totalEbt;
 

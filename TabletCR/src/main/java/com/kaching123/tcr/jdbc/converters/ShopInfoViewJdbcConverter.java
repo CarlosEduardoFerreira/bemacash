@@ -124,7 +124,7 @@ public class ShopInfoViewJdbcConverter {
     private static final String LOYALTY_POINTS_FOR_DOLLAR_AMOUNT = "PRICE_POINTS_ENABLED";
     private static final String AUTOFILL_PAYMENT_AMOUNT_ENABLED = "AUTOFILL_PAYMENT_AMOUNT";
 
-    private static final String GIFT_CARD_PAYMENT_BUTTON = "GIFT_CARD_PAYMENT_BUTTON";
+    private static final String GIFT_CARD = "GIFT_CARD";
     private static final String CREDIT_PAYMENT_BUTTON = "CREDIT_PAYMENT_BUTTON";
     private static final String DEBIT_CARD_PAYMENT_BUTTON = "DEBIT_CARD_PAYMENT_BUTTON";
     private static final String EBT_FOOD_STAMP_PAYMENT_BUTTON = "EBT_FOOD_STAMP_PAYMENT_BUTTON";
@@ -208,7 +208,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getString(DEFAULT_LOYALTY_PLAN_ID),
                 rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT),
                 rs.getBoolean(AUTOFILL_PAYMENT_AMOUNT_ENABLED),
-                rs.getBoolean(GIFT_CARD_PAYMENT_BUTTON),
+                rs.getBoolean(GIFT_CARD),
                 rs.getBoolean(CREDIT_PAYMENT_BUTTON),
                 rs.getBoolean(DEBIT_CARD_PAYMENT_BUTTON),
                 rs.getBoolean(EBT_FOOD_STAMP_PAYMENT_BUTTON),
@@ -293,7 +293,7 @@ public class ShopInfoViewJdbcConverter {
                 rs.getString(DEFAULT_LOYALTY_PLAN_ID),
                 rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT),
                 rs.getBoolean(AUTOFILL_PAYMENT_AMOUNT_ENABLED),
-                rs.getBoolean(GIFT_CARD_PAYMENT_BUTTON),
+                rs.getBoolean(GIFT_CARD),
                 rs.getBoolean(CREDIT_PAYMENT_BUTTON),
                 rs.getBoolean(DEBIT_CARD_PAYMENT_BUTTON),
                 rs.getBoolean(EBT_FOOD_STAMP_PAYMENT_BUTTON),
@@ -397,7 +397,7 @@ public class ShopInfoViewJdbcConverter {
         public final boolean loyaltyPointsForDollarAmount;
         public final boolean autoFillPaymentAmount;
 
-        public final boolean giftCardPaymentButtonEnabled;
+        public final boolean giftCardSolutionEnabled;
         public final boolean creditPaymentButtonEnabled;
         public final boolean debitCardPaymentButtonEnabled;
         public final boolean ebtFoodStampPaymentEnabled;
@@ -474,7 +474,7 @@ public class ShopInfoViewJdbcConverter {
                         boolean blackStonePRepaidSolution, String defaultLoyaltyPlanId,
                         boolean loyaltyPointsForDollarAmount,
                         boolean autoFillPaymentAmount,
-                        boolean  giftCardPaymentButtonEnabled,
+                        boolean  giftCardSolutionEnabled,
                         boolean creditPaymentButtonEnabled,
                         boolean debitCardPaymentButtonEnabled,
                         boolean ebtFoodStampPaymentEnabled,
@@ -576,7 +576,7 @@ public class ShopInfoViewJdbcConverter {
             this.loyaltyPointsForDollarAmount = loyaltyPointsForDollarAmount;
             this.autoFillPaymentAmount = autoFillPaymentAmount;
 
-            this.giftCardPaymentButtonEnabled = giftCardPaymentButtonEnabled;
+            this.giftCardSolutionEnabled = giftCardSolutionEnabled;
             this.creditPaymentButtonEnabled = creditPaymentButtonEnabled;
             this.debitCardPaymentButtonEnabled = debitCardPaymentButtonEnabled;
             this.ebtFoodStampPaymentEnabled = ebtFoodStampPaymentEnabled;

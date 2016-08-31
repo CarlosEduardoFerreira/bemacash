@@ -128,7 +128,8 @@ public interface ShopPref {
 
     boolean autoFillPaymentAmountEnabled();
 
-    boolean giftCardPaymentButtonEnabled();
+    boolean giftCardSolutionEnabled();
+
     boolean creditPaymentButtonEnabled();
     boolean debitCardPaymentButtonEnabled();
     boolean ebtFoodStampPaymentEnabled();

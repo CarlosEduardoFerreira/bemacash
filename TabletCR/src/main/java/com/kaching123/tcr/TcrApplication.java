@@ -257,7 +257,7 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.defaultLoyaltyPlanId().get(),
                     shopPref.pricePointsEnabled().getOr(false),
                     shopPref.autoFillPaymentAmountEnabled().getOr(false),
-                    shopPref.giftCardPaymentButtonEnabled().getOr(false),
+                    shopPref.giftCardSolutionEnabled().getOr(false),
                     shopPref.creditPaymentButtonEnabled().getOr(false),
                     shopPref.debitCardPaymentButtonEnabled().getOr(false),
                     shopPref.ebtFoodStampPaymentEnabled().getOr(false),
@@ -612,7 +612,7 @@ public class TcrApplication extends MultiDexApplication {
                 .defaultLoyaltyPlanId().put(info.defaultLoyaltyPlanId)
                 .pricePointsEnabled().put(info.loyaltyPointsForDollarAmount)
                 .autoFillPaymentAmountEnabled().put(info.autoFillPaymentAmount)
-                .giftCardPaymentButtonEnabled().put(info.giftCardPaymentButtonEnabled)
+                .giftCardSolutionEnabled().put(info.giftCardSolutionEnabled)
                 .creditPaymentButtonEnabled().put(info.creditPaymentButtonEnabled)
                 .debitCardPaymentButtonEnabled().put(info.debitCardPaymentButtonEnabled)
                 .ebtFoodStampPaymentEnabled().put(info.ebtFoodStampPaymentEnabled)
