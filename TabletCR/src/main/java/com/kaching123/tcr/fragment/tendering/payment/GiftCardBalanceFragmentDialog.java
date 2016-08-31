@@ -99,7 +99,7 @@ public class GiftCardBalanceFragmentDialog extends PrintAndFinishFragmentDialogB
 
 
         change.setVisibility(View.VISIBLE);
-        change.setText(getString(R.string.blackstone_pay_charge_finish,changeAmount == null ? BigDecimal.ZERO : UiHelper.priceFormat(changeAmount)));
+        change.setText(getString(R.string.blackstone_gift_card_charge_finish,changeAmount == null ? BigDecimal.ZERO : UiHelper.priceFormat(changeAmount)));
 
     }
 
