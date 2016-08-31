@@ -231,9 +231,10 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
             Logger.d("wrong transaction PaymentStatus, ignoring");
             voidNextPAXTransaction();
             return false;
-        } else if (!PaymentGateway.PAX.equals(transaction.gateway)
+        } else if (   !PaymentGateway.PAX.equals(transaction.gateway)
                    && !PaymentGateway.PAX_EBT_CASH.equals(transaction.gateway)
                    && !PaymentGateway.PAX_EBT_FOODSTAMP.equals(transaction.gateway)
+                   && !PaymentGateway.PAX_DEBIT.equals(transaction.gateway)
                 ) {
             Logger.d("wrong transaction TransactionType, ignoring");
             voidNextPAXTransaction();
