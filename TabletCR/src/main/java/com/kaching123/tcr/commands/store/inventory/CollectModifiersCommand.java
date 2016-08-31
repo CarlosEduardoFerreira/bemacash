@@ -63,7 +63,7 @@ public class CollectModifiersCommand extends PublicGroundyTask {
 
         Cursor c = ProviderAction.query(MODIFIER_URI)
                 .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
-                .orderBy(ModifierTable.TITLE)
+                .orderBy(ModifierTable.ORDER_NUM)
                 .perform(getContext());
 
         if (c.getCount() == 0) {

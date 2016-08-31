@@ -61,6 +61,10 @@ public class ModifierModel implements IValueModel, IOrderedModel, Serializable {
 
     }
 
+    public ModifierModel(String guid){
+        this.modifierGuid = guid;
+    }
+
     @Override
     public String getGuid() {
         return modifierGuid;

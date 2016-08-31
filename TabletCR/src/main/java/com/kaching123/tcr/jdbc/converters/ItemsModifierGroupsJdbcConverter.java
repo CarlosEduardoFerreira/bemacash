@@ -14,7 +14,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 /**
  * Created by gdubina on 06/11/13.
  */
-public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGroupModel> {
+public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGroupModel> implements IOrderNumUpdater{
 
     private static final String TABLE_NAME = "ITEM_MODIFIER_GROUP";
 
@@ -61,5 +61,13 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
                 .add(ORDER_NUM, model.orderNum)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
+    }
+
+    @Override
+    public SingleSqlCommand updateOrderNum(String id, int orderNum, IAppCommandContext appCommandContext) {
+        return _update(TABLE_NAME, appCommandContext)
+                .add(ORDER_NUM, orderNum)
+                .where(GUID, id)
+                .build(JdbcFactory.getApiMethod(ModifierGroupModel.class));
     }
 }

@@ -89,26 +89,17 @@ public class ModifierItemAdapter extends ObjectCursorDragAdapter<ModifierExModel
 
     @Override
     public void drop(int from, int to) {
-        if (from == to)
-            return;
-
-        int min = Math.min(from, to);
-        int max = Math.max(from, to);
-        int n = max - min + 1;
-
-        ModifierExModel[] oldOrder = new ModifierExModel[n];
-        for (int i = min; i <= max; i++) {
-            oldOrder[i - min] = getItem(i);
-        }
-
         super.drop(from, to);
-
-        ModifierExModel[] newOrder = new ModifierExModel[n];
-        for (int i = min; i <= max; i++) {
-            newOrder[i - min] = getItem(i);
+        if (from == to) {
+            return;
         }
 
-        BatchUpdateModifierOrderCommand.start(getContext(), oldOrder, newOrder);
+        int count = getCount();
+        String[] guids = new String[count];
+        for (int i = 0; i < count; i++) {
+            guids[i] = getItem(i).getGuid();
+        }
+        BatchUpdateModifierOrderCommand.start(getContext(), guids);
     }
 
     private class ViewHolder {

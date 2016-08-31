@@ -17,6 +17,7 @@ import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.fragment.catalog.BaseCategoriesFragment;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ModifierGroupView2.GroupTable;
 import com.kaching123.tcr.store.ShopStore.ModifierGroupView;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 
@@ -104,7 +105,7 @@ public class ModifierGroupItemFragment extends BaseCategoriesFragment<GroupCallb
 
     @Override
     protected String getOrderBy() {
-        return ShopSchema2.ModifierGroupView2.GroupTable.TITLE;
+        return GroupTable.ORDER_NUM;
     }
 
     @Override

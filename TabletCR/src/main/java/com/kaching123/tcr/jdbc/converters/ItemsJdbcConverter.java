@@ -20,7 +20,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
-public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
+public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrderNumUpdater{
 
     private static final String ITEM_TABLE_NAME = "ITEM";
 
@@ -285,6 +285,14 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(STOCK_TRACKING, isStockTracking)
                 .where(ID, guid)
+                .build(JdbcFactory.getApiMethod(ItemModel.class));
+    }
+
+    @Override
+    public SingleSqlCommand updateOrderNum(String id, int orderNum, IAppCommandContext appCommandContext) {
+        return _update(ITEM_TABLE_NAME, appCommandContext)
+                .add(ORDER_NUM, orderNum)
+                .where(ID, id)
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 }

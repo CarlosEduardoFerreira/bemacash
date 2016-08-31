@@ -21,7 +21,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.adapter.ObjectCursorDragAdapter;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
-import com.kaching123.tcr.commands.store.inventory.UpdateItemOrderCommand;
+import com.kaching123.tcr.commands.store.inventory.BatchUpdateItemOrderCommand;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
@@ -359,22 +359,16 @@ public class ItemsFragment extends BaseItemsPickFragment {
 
         @Override
         public void drop(final int from, final int to) {
-            super.drop(from, to);
-
             if (from == to)
                 return;
-            updateItemOrder(from, to);
-        }
+            super.drop(from, to);
 
-        private void updateItemOrder(int from, int to) {
-            int start = Math.min(from, to);
-            int end = Math.max(from, to);
-            String[] guids = new String[end-start + 1];
-            for (int i = 0; i < end - start + 1; i++) {
-                guids[i] = getItem(i + start).guid;
+            int count = getCount();
+            String[] guids = new String[count];
+            for (int i = 0; i < count; i++) {
+                guids[i] = getItem(i).getGuid();
             }
-
-            UpdateItemOrderCommand.start(getContext(), guids, start);
+            BatchUpdateItemOrderCommand.start(getContext(), guids);
         }
 
         public void setDraggable(boolean draggable) {

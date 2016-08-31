@@ -208,7 +208,7 @@ public class ItemModifiersFragment extends Fragment{
                 if(dif != 0) return dif;
                 if(m1.getGroup() == null || m2.getGroup() == null)
                     return 0;
-                return m1.getGroup().title.compareTo(m2.getGroup().title);
+                return m1.getGroup().orderNum - m2.getGroup().orderNum;
             }
         });
 

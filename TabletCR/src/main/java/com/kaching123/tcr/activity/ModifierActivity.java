@@ -123,6 +123,11 @@ public class ModifierActivity extends ScannerBaseActivity implements ModifierIte
         CopyModifiersActivity.start(self(), model.guid, model.description);
     }
 
+    @OptionsItem
+    protected void actionManageGroupsSelected(){
+        ModifierGroupsActivity.start(self(), model.guid, model.description);
+    }
+
     @Override
     public void onBarcodeReceived(String barcode) {
         if (redirectBarcodeResult) {

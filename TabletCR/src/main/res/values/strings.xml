@@ -605,6 +605,7 @@
     <string name="swipe_card_error_not_config_msg">Usb Card Reader is not set yet.\nPlease config in the setting page!</string>
     <string name="swipe_card_error_msg">Can\'t read data from card.\nPlease try again!</string>
     <string name="modifiers_action_copy">Copy from existing item</string>
+    <string name="modifiers_action_manage_groups">Manage Groups</string>
     <string name="modifiers_action_create_new">Create new</string>
     <string name="dashboard_activity_cash_in_drawer_label">CASH IN DRAWER</string>
     <string name="dashboard_activity_opening_amount">OPENING AMOUNT</string>
