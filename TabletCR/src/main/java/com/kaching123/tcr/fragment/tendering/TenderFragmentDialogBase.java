@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.tendering.history.TransactionHistoryMiniFragment.ITransactionHistoryMiniFragmentLoader;
 import com.kaching123.tcr.fragment.tendering.history.TransactionHistoryMiniFragment_;
@@ -96,6 +97,9 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     protected ArrayList<PaymentTransactionModel> saleOrderModels = new ArrayList<PaymentTransactionModel>();
     protected ArrayList<PaymentTransactionModel> fakeTransactions = new ArrayList<PaymentTransactionModel>();
 
+    private boolean isCashTheFirstTransaction;
+
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -164,6 +168,8 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
                 }
             }
         }
+        isCashTheFirstTransaction = saleOrderModels!=null && saleOrderModels.size()>0
+                && saleOrderModels.get(0).gateway.equals(PaymentGateway.CASH);
 
         completedAmount = completedAmount.add(completedNotEbtAmount);
         completedAmount = completedAmount.add(completedEbtAmount);
@@ -301,4 +307,12 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     }
 
     protected abstract void updateAfterCalculated();
+
+    protected boolean isCashTheFirstTransaction() {
+        return isCashTheFirstTransaction;
+    }
+
+    protected int transactionsAmount() {
+        return saleOrderModels.size();
+    }
 }

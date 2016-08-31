@@ -288,6 +288,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             }
         });
 
+        boolean isEbtPaymentExists = false;
+        BigDecimal ebtBalance = BigDecimal.ZERO;
 
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
@@ -299,7 +301,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
             }
             //rafael: add isEBTCash
             if (p.balance != null && p.gateway.isEbt()) {
-                printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
+                isEbtPaymentExists = true;
+                ebtBalance = p.balance;
             }
 
             BigDecimal counts = getSaleItemAmount(orderGuid, context);
@@ -308,6 +311,9 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 //            }
         }
 
+        if (isEbtPaymentExists) {
+            printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(ebtBalance)), true);
+        }
 
         if (prepaidReleaseResults != null)
             for (PrepaidReleaseResult result : prepaidReleaseResults) {

@@ -143,8 +143,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 && getApp().isPaxConfigured()
                 && getApp().getShopInfo().ebtCashPaymentButtonEnabled ? View.VISIBLE : View.GONE);
 
-        btnOfflineCredit.setVisibility(getApp().isPaxConfigured() &&
-                getApp().getShopInfo().offlineCreditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnOfflineCredit.setVisibility(getApp().getShopInfo().offlineCreditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
         btnCheck.setVisibility(getApp().getShopInfo().checkPaymentButtonEnabled ? View.VISIBLE : View.GONE);
 
     }
@@ -173,7 +172,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
 
         BigDecimal remainingEbtAmonut = orderEbtTotal.subtract(completedEbtAmount);
-        if (method.equals(PaymentMethod.PAX_EBT_FOODSTAMP) || method.equals(PaymentMethod.PAX_EBT_CASH)
+        if ((method.equals(PaymentMethod.PAX_EBT_FOODSTAMP) || method.equals(PaymentMethod.PAX_EBT_CASH))
                 && value.length() > 0 && remainingEbtAmonut.compareTo(entered) < 0) {
             entered = alreadyPayed;
             charge.setText(UiHelper.valueOf(entered));
@@ -392,7 +391,9 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             listener.onDataLoaded(completedAmount, orderTotal, saleOrderModels);
         }
         enable(true);
-        getPositiveButton().setText(hasCompletedTransactions() ? R.string.btn_void : R.string.btn_cancel);
+        getPositiveButton().setText(hasCompletedTransactions()
+                    && !(transactionsAmount() == 1 && isCashTheFirstTransaction()) ? R.string.btn_void : R.string.btn_cancel);
+
         charge.selectAll(); //highlight text according to     BEMA-887 Payment screen Rework
     }
 
@@ -426,7 +427,8 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             @Override
             public boolean onClick() {
                 if (listener != null) {
-                    if (hasCompletedTransactions()) {
+                    if (hasCompletedTransactions()
+                        && !(transactionsAmount() == 1 && isCashTheFirstTransaction())) {// special case for cash
                         boolean voidSalesPermitted = getApp().hasPermission(Permission.VOID_SALES);
                         if (!voidSalesPermitted) {
                             PermissionFragment.showCancelable(getActivity(), new SuperBaseActivity.BaseTempLoginListener(getActivity()), Permission.VOID_SALES);

@@ -194,6 +194,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
         });
 
+        boolean isEbtPaymentExists = false;
+        BigDecimal ebtBalance = BigDecimal.ZERO;
 
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
@@ -203,8 +205,13 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.change(changeText, p.changeAmount);
             }
             if (p.balance != null && p.gateway.isEbt()) {
-                printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
+                isEbtPaymentExists = true;
+                ebtBalance = p.balance;
             }
+        }
+
+        if (isEbtPaymentExists) {
+            printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(ebtBalance)), true);
         }
 
         BigDecimal counts = getSaleItemAmount(orderGuid, context);
