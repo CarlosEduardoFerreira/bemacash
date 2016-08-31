@@ -53,10 +53,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -111,6 +113,7 @@ public class TcrApplication extends MultiDexApplication {
     private HashSet<String> salesmanGuids = new HashSet<String>();
     private BarcodePrefixes barcodePrefixes;
     private HashMap<Broker, BigDecimal> prepaidTaxes;
+    private ArrayList<String> ignoringCompositionItems = new ArrayList<>();
 
     private RestAdapter restAdapter;
     private RestAdapter restAdapterJsonOrg;
@@ -397,6 +400,18 @@ public class TcrApplication extends MultiDexApplication {
 
     public synchronized String getOperatorLogin() {
         return operator == null ? null : operator.login;
+    }
+
+    public synchronized ArrayList<String> getIgnorComposerList(){
+        return ignoringCompositionItems;
+    }
+
+    public synchronized void addIgnorComposerItem(String itemGuid){
+        ignoringCompositionItems.add(itemGuid);
+    }
+
+    public synchronized void clearIgnorComposerItems(){
+        ignoringCompositionItems.clear();
     }
 
     public synchronized String getOperatorFullName() {

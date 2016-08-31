@@ -26,6 +26,7 @@ import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
+import com.kaching123.tcr.commands.store.saleorder.CompositionItemsCalculationCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand.BaseDiscountSaleOrderItemCallback;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
@@ -160,14 +161,14 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             }
 
             @Override
-            public void onQtyClicked(final View v, final int pos) {
+            public void onQtyClicked(final View v, final int pos) { //todo check
                 final SaleOrderItemViewModel model = adapter.getItem(pos);
                 if (model.isPrepaidItem || model.isGiftCard)
                     return;
                 if (!model.isSerializable) {
                     final String saleItemGuid = adapter.getSaleItemGuid(pos);
                     if (model.itemModel.priceType == PriceType.UNIT_PRICE) {
-                        if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) {
+                        if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) { //todo save old value
                             QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
                                 @Override
                                 public void onConfirm(BigDecimal value) {
@@ -441,6 +442,13 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, List<SaleOrderItemViewModel> list) {
+        CompositionItemsCalculationCommand.start(getContext(), orderGuid, new CompositionItemsCalculationCommand.CompositionItemsCalculationCommandCallback() {
+            @Override
+            protected void onSuccess(String saleItemGuid) {
+
+            }
+        });
+
         itemsListHandler.onTotolQtyUpdated(getCount(list), false, null);
         Collections.sort(list, SaleOrderItemViewModel.filterOrderItem);
         adapter.changeCursor(list);
