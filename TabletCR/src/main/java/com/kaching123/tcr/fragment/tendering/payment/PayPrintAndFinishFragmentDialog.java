@@ -136,8 +136,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             printItemsToKitchen(null, false, false, false);
         }
 
-        printBox.setVisibility(getApp().getPrintReceiptDefault() ? View.VISIBLE : View.INVISIBLE);
-        emailBox.setVisibility(getApp().getEmailReceiptDefault() ? View.VISIBLE : View.INVISIBLE);
+        printBox.setChecked(getApp().getPrintReceiptDefault() );
+        emailBox.setChecked(getApp().getEmailReceiptDefault());
     }
 
     @Override
