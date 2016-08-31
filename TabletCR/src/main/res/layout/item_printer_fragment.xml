@@ -29,6 +29,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/table_margin"
         android:layout_weight="1"
+        android:visibility="gone"
         android:stretchColumns="1">
 
         <TableRow android:minHeight="@dimen/table_row_height">

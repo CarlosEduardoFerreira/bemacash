@@ -125,7 +125,7 @@ public class SettingsActivity extends ScannerBaseActivity implements SyncSetting
                 new NavigationItem(getString(R.string.pref_scanner_header_title), getString(R.string.pref_scanner_header_summary)),
                 new NavigationItem(getString(R.string.pref_msr_header_title), getString(R.string.pref_msr_header_summary)),
                 new NavigationItem(getString(R.string.pref_scale_header_title), getString(R.string.pref_scale_header_summary)),
-                new NavigationItem(getString(R.string.pref_kds_header_title), getString(R.string.pref_kds_header_summary)),
+//                new NavigationItem(getString(R.string.pref_kds_header_title), getString(R.string.pref_kds_header_summary)),
                 new NavigationItem(getString(R.string.pref_devices_diagnose_title), getString(R.string.pref_devices_diagnose_summary))
         )));
 
