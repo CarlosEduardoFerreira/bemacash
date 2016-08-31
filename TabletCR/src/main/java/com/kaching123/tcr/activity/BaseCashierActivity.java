@@ -1039,7 +1039,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         });
 
         giftcardItem = menu.findItem(R.id.action_card);
-        giftcardItem.setVisible(!getApp().getEnableGiftCard());
+        giftcardItem.setVisible(getApp().getEnableGiftCard());
         giftcardItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
             @Override
