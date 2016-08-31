@@ -403,4 +403,8 @@ public interface ShopPref {
 
     boolean enableABCOrder();
 
+    boolean printReceiptDefault();
+
+    boolean emailReceiptDefault();
+
 }

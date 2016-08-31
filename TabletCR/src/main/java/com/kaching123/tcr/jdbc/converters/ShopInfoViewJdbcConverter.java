@@ -124,6 +124,8 @@ public class ShopInfoViewJdbcConverter {
     private static final String LOYALTY_POINTS_FOR_DOLLAR_AMOUNT = "PRICE_POINTS_ENABLED";
 
     public static final String GIFT_CARD  = "GIFT_CARD";
+    public static final String PRINT_RECEIPT_DEFAULT  = "PRINT_RECEIPT_DEFAULT";
+    public static final String EMAIL_RECEIPT_DEFAULT  = "EMAIL_RECEIPT_DEFAULT";
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
@@ -198,7 +200,9 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION),
                 rs.getBoolean(GIFT_CARD),
                 rs.getString(DEFAULT_LOYALTY_PLAN_ID),
-                rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT));
+                rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT),
+                rs.getBoolean(PRINT_RECEIPT_DEFAULT),
+                rs.getBoolean(EMAIL_RECEIPT_DEFAULT));
     }
 
     public static ShopInfo read(JdbcJSONObject rs) throws JSONException {
@@ -274,7 +278,10 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(BLACKSTONE_PREPAID_SOLUTION ),
                 rs.getBoolean(GIFT_CARD ),
                 rs.getString(DEFAULT_LOYALTY_PLAN_ID),
-                rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT));
+                rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT),
+                rs.getBoolean(PRINT_RECEIPT_DEFAULT),
+                rs.getBoolean(EMAIL_RECEIPT_DEFAULT)
+                );
     }
 
     public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException {
@@ -369,9 +376,9 @@ public class ShopInfoViewJdbcConverter {
         public final boolean blackStonePRepaidSolution;
         public final String defaultLoyaltyPlanId;
         public final boolean loyaltyPointsForDollarAmount;
-
-
         public final boolean giftCard;
+        public final boolean printReceiptDefault;
+        public final boolean emailReceiptDefault;
 
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
@@ -440,7 +447,9 @@ public class ShopInfoViewJdbcConverter {
                         boolean blackStonePRepaidSolution,
                         boolean giftCard,
                         String defaultLoyaltyPlanId,
-                        boolean loyaltyPointsForDollarAmount) {
+                        boolean loyaltyPointsForDollarAmount,
+                        boolean printReceiptDefault,
+                        boolean emailReceiptDefault) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -534,6 +543,9 @@ public class ShopInfoViewJdbcConverter {
             
             this.defaultLoyaltyPlanId = defaultLoyaltyPlanId;
             this.loyaltyPointsForDollarAmount = loyaltyPointsForDollarAmount;
+
+            this.printReceiptDefault = printReceiptDefault;
+            this.emailReceiptDefault = emailReceiptDefault;
         }
 
     }
