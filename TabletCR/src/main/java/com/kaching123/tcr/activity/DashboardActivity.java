@@ -692,7 +692,7 @@ public class DashboardActivity extends SuperBaseActivity {
                         @Override
                         public boolean onClick() {
                             WaitDialogFragment.show(DashboardActivity.this, getString(R.string.batch_close_dialog_waiting_msg));
-                            AlertDialogFragment.show(DashboardActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_yes, new StyledDialogFragment.OnDialogClickListener() {
+                            AlertDialogFragment.show(DashboardActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.open_credit_and_transactions_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_yes, new StyledDialogFragment.OnDialogClickListener() {
                                 @Override
                                 public boolean onClick() {
                                     ClosePreauthBatchCommand.start(DashboardActivity.this, openedTrnsactions, getApp().getOperatorGuid(), new ClosePreauthBatchCommand.ClosePreauthCommandCallback() {

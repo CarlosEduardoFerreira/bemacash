@@ -628,7 +628,7 @@
     <string name="dashboard_activity_drops_and_payouts_button_label_short">Drops/Payouts</string>
     <string name="dashboard_activity_xreport_button_label">X Report</string>
     <string name="dashboard_activity_opened_transactions_warning_title">Open credit card transactions</string>
-    <string name="dashboard_activity_opened_transactions_warning_message">“There are open credit card transactions awaiting tip authorization.  Do you want to close them?</string>
+    <string name="dashboard_activity_opened_transactions_warning_message">There are open credit card transactions awaiting tip authorization.  Do you want to close them?</string>
     <string name="dashboard_action_activation">Activation Center</string>
     <string name="dashboard_action_options">Settings</string>
     <string name="dashboard_action_logout">Logout</string>
@@ -1373,6 +1373,7 @@
     <string name="batch_close_dialog_msg">All open credit card transaction tip amounts will be set to $0.00.  Are you sure you want to continue?</string>
     <string name="batch_close_dialog_waiting_msg">Waiting for Batch close</string>
     <string name="batch_close_dialog_title">Batch Close</string>
+    <string name="open_credit_and_transactions_dialog_title">Open credit card transactions</string>
     <string name="action_batchout_label">Batch Close</string>
     <string name="pax_delete_dialog_msg">Are you sure you want to delete Pax pinpad?</string>
     <string name="kds_delete_dialog_title">Delete KDS Station</string>
