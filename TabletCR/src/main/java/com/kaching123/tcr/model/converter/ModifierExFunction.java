@@ -96,6 +96,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     null,
                     null,
                     null,
+                    false,
                     false
             );
         }

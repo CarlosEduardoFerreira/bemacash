@@ -410,8 +410,6 @@ public interface ShopPref {
 
     boolean blackStonePRepaidSolution();
 
-    boolean enableGiftCard();
-
     boolean enableABCOrder();
 
     boolean printReceiptDefault();

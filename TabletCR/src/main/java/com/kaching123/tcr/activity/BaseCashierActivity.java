@@ -1014,7 +1014,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         boolean b = super.onCreateOptionsMenu(menu);
         searchItem = menu.findItem(R.id.action_search);
         prepaidItem = menu.findItem(R.id.action_prepaid);
-        prepaidItem.setVisible(getApp().getBlackStonePrepaidSulution());
+        prepaidItem.setVisible(getApp().getBlackStonePrepaidSolution());
         assert searchItem != null;
         assert prepaidItem != null;
 
@@ -1039,7 +1039,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         });
 
         giftcardItem = menu.findItem(R.id.action_card);
-        giftcardItem.setVisible(getApp().getEnableGiftCard());
+        giftcardItem.setVisible(getApp().isGiftCardEnabled());
         giftcardItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
             @Override
@@ -1620,12 +1620,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         orderItemListFragment.setNeed2ScrollList(true);
         String saleOrderItemGuid = UUID.randomUUID().toString();
 
-        //---------------------------
-        model.setEbtParams(true);
-        if(!model.description.contains("ebt")){
-            model.setEbtParams(false);
-        }
-        //----------------------------
         SaleOrderItemModel itemModel = new SaleOrderItemModel(
                 saleOrderItemGuid,
                 this.orderGuid,

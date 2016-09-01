@@ -260,7 +260,10 @@ public class SearchItemsListFragment extends Fragment implements IPriceLevelList
                     _bool(c, c.getColumnIndex(ItemTable.ELIGIBLE_FOR_COMMISSION)),
                     _decimal(c, c.getColumnIndex(ItemTable.COMMISSION), BigDecimal.ZERO),
                     c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
-                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))), _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS), BigDecimal.ZERO), _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
+                    ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))),
+                    _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS), BigDecimal.ZERO),
+                    _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)),
+                    _bool(c, c.getColumnIndex(ItemTable.EBT_ELIGIBLE)));
         }
     }
 }

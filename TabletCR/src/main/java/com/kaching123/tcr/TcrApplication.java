@@ -256,11 +256,10 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.customerPopupScreenEnabled().get(),
                     shopPref.customerPopupScreenMessage().get(),
                     shopPref.blackStonePRepaidSolution().get(),
-                    shopPref.enableGiftCard().get(),
                     shopPref.defaultLoyaltyPlanId().get(),
                     shopPref.pricePointsEnabled().getOr(false),
                     shopPref.printReceiptDefault().getOr(false),
-                    shopPref.emailReceiptDefault().getOr(false));
+                    shopPref.emailReceiptDefault().getOr(false),
                     shopPref.autoFillPaymentAmountEnabled().getOr(false),
                     shopPref.giftCardSolutionEnabled().getOr(false),
                     shopPref.creditPaymentButtonEnabled().getOr(false),
@@ -602,7 +601,6 @@ public class TcrApplication extends MultiDexApplication {
                 .customerPopupScreenEnabled().put(info.customerPopupScreenEnabled)
                 .customerPopupScreenMessage().put(info.customerPopupScreenMessage)
                 .blackStonePRepaidSolution().put(info.blackStonePRepaidSolution)
-                .enableGiftCard().put(info.giftCard)
                 .defaultLoyaltyPlanId().put(info.defaultLoyaltyPlanId)
                 .pricePointsEnabled().put(info.loyaltyPointsForDollarAmount)
                 .printReceiptDefault().put(info.printReceiptDefault)
@@ -715,13 +713,35 @@ public class TcrApplication extends MultiDexApplication {
         return shopInfo.printerTwoCopiesReceipt;
     }
 
-    public synchronized boolean getBlackStonePrepaidSulution() {
+    public synchronized boolean getBlackStonePrepaidSolution() {
         return shopInfo.blackStonePRepaidSolution;
     }
 
-    public synchronized boolean getEnableGiftCard() {
-        return shopInfo.giftCard;
+    public synchronized boolean isGiftCardEnabled() {
+        return shopInfo.giftCardSolutionEnabled;
     }
+
+    public synchronized boolean isCreditCardEnabled() {
+        return shopInfo.creditPaymentButtonEnabled;
+    }
+
+
+    public synchronized boolean isDebitCardEnabled() {
+        return shopInfo.debitCardPaymentButtonEnabled;
+    }
+
+    public synchronized boolean isEbtEnabled() {
+        return shopInfo.ebtCashPaymentButtonEnabled;
+    }
+
+    public synchronized boolean isOfflineCreditEnabled() {
+        return shopInfo.offlineCreditPaymentButtonEnabled;
+    }
+
+    public synchronized boolean isCheckEnabled() {
+        return shopInfo.checkPaymentButtonEnabled;
+    }
+
 
     public synchronized boolean getPrintReceiptDefault() {
         return shopInfo.printReceiptDefault;

@@ -62,8 +62,9 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     @ViewById
     protected Button btnOfflineCredit;
 
-    @ViewById
+ /*   @ViewById
     protected Button btnPaxGiftCard;
+*/
     @ViewById
     protected Button btnGiftCard;
 
@@ -99,8 +100,8 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     protected BigDecimal completedAmount = BigDecimal.ZERO;
     protected BigDecimal completedNotEbtAmount = BigDecimal.ZERO;
     protected BigDecimal completedEbtAmount = BigDecimal.ZERO;
-    protected ArrayList<PaymentTransactionModel> saleOrderModels = new ArrayList<PaymentTransactionModel>();
-    protected ArrayList<PaymentTransactionModel> fakeTransactions = new ArrayList<PaymentTransactionModel>();
+    protected ArrayList<PaymentTransactionModel> saleOrderModels = new ArrayList<>();
+    protected ArrayList<PaymentTransactionModel> fakeTransactions = new ArrayList<>();
 
     private boolean isCashTheFirstTransaction;
 

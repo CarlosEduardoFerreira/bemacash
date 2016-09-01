@@ -51,8 +51,6 @@ public class ItemExModel extends ItemModel {
     public boolean isAComposer;
     public boolean isIncentive;
 
-    public boolean isEbtEligible;
-
     public ItemExModel() {
         super();
     }
@@ -98,6 +96,7 @@ public class ItemExModel extends ItemModel {
                 null,
                 ItemRefType.Simple,
                 null,
+                false,
                 false);
         this.modifiersCount = 0;
         this.addonsCount = 0;
@@ -144,7 +143,8 @@ public class ItemExModel extends ItemModel {
                 false,
                 false,
                 null,
-                true, null, null, ItemRefType.Simple, null, false);
+                true, null, null, ItemRefType.Simple, null, false,
+                false);
         this.departmentGuid = null;
         if (result.taxAmount != null && result.itemTaxable)
             this.tax = result.taxAmount;
@@ -204,7 +204,8 @@ public class ItemExModel extends ItemModel {
                        String referenceItemGuid,
                        ItemRefType itemRefType,
                        BigDecimal loyaltyPoints,
-                       boolean excludeFromLoyaltyPlan) {
+                       boolean excludeFromLoyaltyPlan,
+                       boolean isEbtEligible) {
         super(guid,
                 categoryId,
                 description,
@@ -241,7 +242,8 @@ public class ItemExModel extends ItemModel {
                 serializable,
                 codeType,
                 commissionEligible,
-                commission, referenceItemGuid, itemRefType, loyaltyPoints, excludeFromLoyaltyPlan);
+                commission, referenceItemGuid, itemRefType, loyaltyPoints, excludeFromLoyaltyPlan,
+                isEbtEligible);
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;
         this.optionalCount = optionalCount;
@@ -266,11 +268,6 @@ public class ItemExModel extends ItemModel {
 
     public ItemExModel setIsAComposer(boolean isAComposer) {
         this.isAComposer = isAComposer;
-        return this;
-    }
-
-    public ItemExModel setEbtParams(boolean isEbtEligible) {
-        this.isEbtEligible = isEbtEligible;
         return this;
     }
 

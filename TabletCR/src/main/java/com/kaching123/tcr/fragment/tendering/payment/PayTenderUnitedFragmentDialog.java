@@ -133,18 +133,18 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     private void setTenderButtonsVisibilityWithServerSettings() {
-        btnGiftCard.setVisibility(getApp().getShopInfo().giftCardSolutionEnabled? View.VISIBLE : View.GONE);
+        btnGiftCard.setVisibility(getApp().isGiftCardEnabled() ? View.VISIBLE : View.GONE);
         btnCard.setVisibility(getApp().isPaxConfigured() &&
-                getApp().getShopInfo().creditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+                getApp().isCreditCardEnabled() ? View.VISIBLE : View.GONE);
         btnPaxDebit.setVisibility(getApp().isPaxConfigured() &&
-                getApp().getShopInfo().debitCardPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+                getApp().isDebitCardEnabled() ? View.VISIBLE : View.GONE);
         btnPaxEbtCash.setVisibility(orderEbtTotal!=null
                 && !orderEbtTotal.equals(BigDecimal.ZERO)
                 && getApp().isPaxConfigured()
-                && getApp().getShopInfo().ebtCashPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+                && getApp().isEbtEnabled() ? View.VISIBLE : View.GONE);
 
-        btnOfflineCredit.setVisibility(getApp().getShopInfo().offlineCreditPaymentButtonEnabled ? View.VISIBLE : View.GONE);
-        btnCheck.setVisibility(getApp().getShopInfo().checkPaymentButtonEnabled ? View.VISIBLE : View.GONE);
+        btnOfflineCredit.setVisibility(getApp().isOfflineCreditEnabled() ? View.VISIBLE : View.GONE);
+        btnCheck.setVisibility(getApp().isCheckEnabled() ? View.VISIBLE : View.GONE);
 
     }
 
@@ -332,7 +332,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     @Click
     protected void btnGiftCardClicked() {
-        Toast.makeText(getActivity(),"Not implemented yet", Toast.LENGTH_SHORT).show();
+        tryProceed(PaymentMethod.GIFT_CARD);
     }
 
     @Click

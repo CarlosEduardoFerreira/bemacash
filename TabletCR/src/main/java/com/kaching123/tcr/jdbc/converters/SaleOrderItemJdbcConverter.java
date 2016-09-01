@@ -48,7 +48,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     private static final String POINTS_FOR_DOLLAR_AMOUNT = "POINTS_FOR_DOLLAR_AMOUNT";
     private static final String EBT_ELIGIBLE = "EBT_ELIGIBLE";
 
-    @Override
+  /*  @Override
     public ContentValues toValues(ResultSet rs) throws SQLException {
         return new SaleOrderItemModel(
                 rs.getString(SALE_ITEM_ID),
@@ -75,8 +75,9 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(IS_PREPAID_ITEM),
                 null,
                 false,
-                rs.getBoolean(EBT_ELIGIBLE)).toValues();
-    }
+                rs.getBoolean(EBT_ELIGIBLE)).toValues()
+        );
+    }*/
 
     @Override
     public SaleOrderItemModel toValues(JdbcJSONObject rs) throws JSONException {

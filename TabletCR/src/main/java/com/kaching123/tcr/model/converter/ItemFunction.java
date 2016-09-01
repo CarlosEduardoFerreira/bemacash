@@ -104,7 +104,13 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 c.getInt(indexHolder.get(ItemTable.SERIALIZABLE)) == 1,
                 _codeType(c, indexHolder.get(ItemTable.CODE_TYPE)),
                 _bool(c, indexHolder.get(ItemTable.ELIGIBLE_FOR_COMMISSION)),
-                _decimal(c, indexHolder.get(ItemTable.COMMISSION), BigDecimal.ZERO), c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)), _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)), _decimal(c.getString(indexHolder.get(ItemTable.LOYALTY_POINTS)), BigDecimal.ZERO), _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)));
+                _decimal(c, indexHolder.get(ItemTable.COMMISSION), BigDecimal.ZERO),
+                c.getString(indexHolder.get(ItemTable.REFERENCE_ITEM_ID)),
+                _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
+                _decimal(c.getString(indexHolder.get(ItemTable.LOYALTY_POINTS)), BigDecimal.ZERO),
+                _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)),
+                _bool(c, indexHolder.get(ItemTable.EBT_ELIGIBLE))
+                );
     }
 
 }

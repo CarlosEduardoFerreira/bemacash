@@ -109,7 +109,7 @@ public class PayTenderFragmentDialog extends TenderFragmentDialogBase<PayTenderF
             }
             if (paxGateway.acceptPaxEbtEnabled()) {
                 btnPaxEbtCash.setVisibility(View.VISIBLE);
-                btnPaxGiftCard.setVisibility(View.VISIBLE);
+             //   btnPaxGiftCard.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -194,13 +194,13 @@ public class PayTenderFragmentDialog extends TenderFragmentDialogBase<PayTenderF
                 checkboxSingle.isChecked());
     }
 
-    @Click
+ /*   @Click
     protected void btnPaxGiftCard() {
         listener.onPaymentMethodSelected(PaymentMethod.GIFT_CARD,
                 orderTotal,
                 orderTotal.subtract(completedAmount),
                 checkboxSingle.isChecked());
-    }
+    }*/
 
 
     @Override

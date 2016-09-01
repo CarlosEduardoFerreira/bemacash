@@ -68,6 +68,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String IS_PREPAID_ITEM = "IS_PREPAID_ITEM";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
     private static final String EXCLUDE_FROM_LOYALTY_PLAN = "EXCLUDE_FROM_LOYALTY_PLAN";
+    private static final String EBT_ELIGIBLE = "EBT_ELIGIBLE";
 
     @Override
     public ItemModel toValues(JdbcJSONObject rs) throws JSONException {
@@ -108,7 +109,13 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getBoolean(SERIALIZABLE),
                 _enum(CodeType.class, rs.getString(CODE_TYPE), null),
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
-                rs.getBigDecimal(COMMISSION), rs.getString(REFERENCE_ITEM_ID), ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE)), rs.getBigDecimal(LOYALTY_POINTS), rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN));
+                rs.getBigDecimal(COMMISSION),
+                rs.getString(REFERENCE_ITEM_ID),
+                ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE)),
+                rs.getBigDecimal(LOYALTY_POINTS),
+                rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN),
+                rs.getBoolean(EBT_ELIGIBLE)
+                );
     }
 
     @Override
@@ -163,6 +170,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
                 .add(LOYALTY_POINTS, _decimal(item.loyaltyPoints))
                 .add(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
+                .add(EBT_ELIGIBLE, item.isEbtEligible)
                 .build(JdbcFactory.getApiMethod(item));
     }
 
@@ -208,6 +216,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
                 .add(LOYALTY_POINTS, _decimal(item.loyaltyPoints))
                 .add(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
+                .add(EBT_ELIGIBLE, item.isEbtEligible)
                 .where(ID, item.guid)
                 .build(JdbcFactory.getApiMethod(item));
     }

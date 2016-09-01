@@ -70,6 +70,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public boolean ignoreMovementupdate;
     public BigDecimal loyaltyPoints;
     public boolean excludeFromLoyaltyPlan;
+    public boolean isEbtEligible;
 
     public ItemModel() {
         this.guid = UUID.randomUUID().toString();
@@ -119,7 +120,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      String referenceItemGuid,
                      ItemRefType refType,
                      BigDecimal loyaltyPoints,
-                     boolean excludeFromLoyaltyPlan) {
+                     boolean excludeFromLoyaltyPlan,
+                     boolean isEbtEligible) {
         super();
         this.guid = guid;
         this.categoryId = categoryId;
@@ -163,6 +165,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.refType = refType;
         this.loyaltyPoints = loyaltyPoints;
         this.excludeFromLoyaltyPlan = excludeFromLoyaltyPlan;
+        this.isEbtEligible = isEbtEligible;
     }
 
     public ItemModel(ItemModel itemModel) {
@@ -209,6 +212,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.referenceItemGuid = itemModel.referenceItemGuid;
         this.loyaltyPoints = itemModel.loyaltyPoints;
         this.excludeFromLoyaltyPlan = itemModel.excludeFromLoyaltyPlan;
+        this.isEbtEligible = itemModel.isEbtEligible;
     }
 
     public static int getMaxOrderNum(Context context, String categoryId){
@@ -274,7 +278,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.REFERENCE_ITEM_ID, referenceItemGuid);
         values.put(ItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
         values.put(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN, excludeFromLoyaltyPlan);
-
+        values.put(ItemTable.EBT_ELIGIBLE, isEbtEligible);
         return values;
     }
 

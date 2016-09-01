@@ -129,6 +129,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         buttonView.getBackground().setLevel(model.btnView);
         showIntegralInteger(bonusPoints, model.loyaltyPoints);
         excludeFromLoyaltyPlan.setChecked(model.excludeFromLoyaltyPlan);
+        ebtEligible.setChecked(model.isEbtEligible);
     }
 
     @Override
@@ -142,6 +143,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
         model.btnView = buttonView.getBackground().getLevel();
         model.loyaltyPoints = getDecimalValue(bonusPoints);
         model.excludeFromLoyaltyPlan = excludeFromLoyaltyPlan.isChecked();
+        model.isEbtEligible = ebtEligible.isChecked();
     }
 
     @Override
