@@ -3,6 +3,7 @@ package com.kaching123.tcr.reports;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.telecom.GatewayInfo;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
@@ -426,7 +427,7 @@ public final class ZReportQuery extends XReportQuery {
                 BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK)), BigDecimal.ZERO);
                 cashBack = cashBackAmount;
                 PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.GATEWAY));
-                if (gateway.isCreditCard()) {
+                if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
                     creditCard = creditCard.add(amount);
                 } else if (gateway == PaymentGateway.CASH) {
                     cash = cash.add(amount);
@@ -444,7 +445,7 @@ public final class ZReportQuery extends XReportQuery {
                     debit = debit.add(amount);
                 }
 
-                if (gateway.isCreditCard()) {
+                if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
                     String card = c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CARD_NAME));
                     if (card == null)
                         card = gateway.name();
