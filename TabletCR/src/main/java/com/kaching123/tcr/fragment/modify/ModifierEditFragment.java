@@ -62,7 +62,6 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.ColorRes;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -350,6 +349,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
         } else {
             enabled &= !TextUtils.isEmpty(description.getText().toString());
         }
+        enabled &= modType != ModifierType.MODIFIER || groupAdapter.getCount() > 0;
         enablePositiveButton(enabled, greenBtnColor);
     }
 
@@ -560,7 +560,6 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                     .transform(new Function<Cursor, ModifierGroupModel>() {
                         @Override
                         public ModifierGroupModel apply(Cursor c) {
-
                             return new ModifierGroupModel(
                                     c.getString(0),
                                     c.getString(1),
@@ -568,16 +567,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                                     c.getInt(3)
                             );
                         }
-                    }).wrap(new Function<List<ModifierGroupModel>, List<ModifierGroupModel>>() {
-                        @Override
-                        public List<ModifierGroupModel> apply(List<ModifierGroupModel> result) {
-                            ArrayList<ModifierGroupModel> arrayList = new ArrayList<ModifierGroupModel>(result.size() + 1);
-                            arrayList.add(new ModifierGroupModel(null, null, getString(R.string.groups_label), -1));
-                            arrayList.addAll(result);
-                            return arrayList;
-                        }
-                    })
-                    .build(getActivity());
+                    }).build(getActivity());
         }
 
         @Override
@@ -593,6 +583,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                     position++;
                 }
             }
+            refreshEnabled();
         }
 
         @Override
