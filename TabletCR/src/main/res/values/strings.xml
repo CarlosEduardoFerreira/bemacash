@@ -1714,6 +1714,7 @@
     <string name="button_exact">Exact</string>
     <string name="button_add_to_order">Add to Order</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_override">Override</string>
     <string name="button_search">Search</string>
     <string name="button_cash">Cash</string>
     <string name="button_check">Check</string>
@@ -2005,4 +2006,6 @@
     <string name="detailed_report_filter_from">From:</string>
     <string name="detailed_report_filter_to">To:</string>
 
+
+    <string name="sale_composer_without_composition">Sale composer without composition</string>
 </resources>

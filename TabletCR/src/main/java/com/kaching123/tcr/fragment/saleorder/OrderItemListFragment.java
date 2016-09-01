@@ -36,6 +36,7 @@ import com.kaching123.tcr.commands.store.saleorder.UpdatePriceSaleOrderItemComma
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand.BaseUpdateQtySaleOrderItemCallback;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
+import com.kaching123.tcr.fragment.dialog.ComposerOverrideQtyDialog;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.edit.NotesEditFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment;
@@ -66,6 +67,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -441,12 +443,14 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     }
 
     @Override
-    public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, List<SaleOrderItemViewModel> list) {
-
+    public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, final List<SaleOrderItemViewModel> list) {
         CompositionItemsCalculationCommand.start(getContext(), orderGuid, new CompositionItemsCalculationCommand.CompositionItemsCalculationCommandCallback() {
             @Override
-            protected void onSuccess(String saleItemGuid) {
-
+            protected void onSuccess(HashMap<String, List<CompositionItemsCalculationCommand.CantSaleComposerModel>> itemsCantBeSold) {
+                if(!itemsCantBeSold.isEmpty()){
+                    ComposerOverrideQtyDialog.showCancelable(getActivity(), dialogNegativeButtonListener, itemsCantBeSold, list);
+                    //show popup work with app.addIgnorComposerItem and app.clearIgnorComposerItems
+                }
             }
         });
 
@@ -469,6 +473,13 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 itemsListHandler.onOrderLoaded(getLastItem());
         }
     }
+
+    ComposerOverrideQtyDialog.NegativeButtonListener dialogNegativeButtonListener = new ComposerOverrideQtyDialog.NegativeButtonListener() {
+        @Override
+        public void onNegativeButtonPress() {
+
+        }
+    };
 
     private String getCount(List<SaleOrderItemViewModel> list) {
         BigDecimal count = BigDecimal.ZERO;

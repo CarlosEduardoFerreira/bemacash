@@ -9,9 +9,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.ComposerModel;
-import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
-import com.kaching123.tcr.model.converter.ItemFunction;
 import com.kaching123.tcr.model.converter.SaleOrderItemFunction;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -20,6 +18,7 @@ import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,7 +49,6 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
 
         HashMap<String, BigDecimal> composersItemForProcess = new HashMap<>();                              //item guid, item available qty
 
-
         List<SaleOrderItemModel> saleOrderItems = ProviderAction.query(URI_SALE_ITEMS)                      //get all saleOrderItems
                 .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .perform(getContext())
@@ -80,9 +78,11 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
                 composers.add(new ComposerModel(composerCursor));
             } while (composerCursor.moveToNext());
             composerCursor.close();
+        } else {
+            return succeeded();
         }
 
-
+        Cursor itemCursor = null;
         if(!composers.isEmpty()){                                                                            //first check if this item should be processed
             for (Iterator<ComposerModel> iterator = composers.iterator(); iterator.hasNext(); ) {
                 if(!iterator.next().tracked){
@@ -96,52 +96,78 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
                     childItemsGuids.add(composerToCheck.itemChildId);
                 }
 
-                Cursor itemCursor = ProviderAction.query(ITEM_URI)                                          //get childItems from item table
-                        .projection(ShopStore.ItemTable.GUID, ShopStore.ItemTable.TMP_AVAILABLE_QTY, ShopStore.ItemTable.STOCK_TRACKING)
+                itemCursor = ProviderAction.query(ITEM_URI)                                                                          //get childItems from item table
+                        .projection(ShopStore.ItemTable.GUID, ShopStore.ItemTable.TMP_AVAILABLE_QTY, ShopStore.ItemTable.STOCK_TRACKING, ShopStore.ItemTable.DESCRIPTION)
                         .whereIn(ShopStore.ItemTable.GUID, childItemsGuids)
                         .perform(getContext());
 
                 if(itemCursor != null && itemCursor.moveToFirst()) {
                     do {
                         boolean isStockTracking = itemCursor.getInt(itemCursor.getColumnIndex(ShopStore.ItemTable.STOCK_TRACKING)) == 1;
-                        if(isStockTracking){
+                        if(isStockTracking){                                                                                                //second check if this item should be processed
                             String guid = itemCursor.getString(itemCursor.getColumnIndex(ShopStore.ItemTable.GUID));
                             BigDecimal qty = _decimalQty(itemCursor.getString(itemCursor.getColumnIndex(ShopStore.ItemTable.TMP_AVAILABLE_QTY)));
-                            composersItemForProcess.put(guid, qty);
+                            composersItemForProcess.put(guid, qty);                                                                         //final items that should be processed
                         }
                     } while(itemCursor.moveToNext());
-                    itemCursor.close();
                 } else {
                     return succeeded();
                 }
-
             }
+        } else {
+            return succeeded();
         }
 
+        HashMap<String, List<CantSaleComposerModel>> itemCantBeSoldInfoList = new HashMap<>();
+
         if(!composersItemForProcess.isEmpty()){
-                //composers vs composersItemForProcess //check if composer can be in few parent items
-            HashMap<String, BigDecimal> totalNeededComposItems = new HashMap<>();
+
+            for (SaleOrderItemModel saleOrderItemModel : saleOrderItems) {                                                  //if composersItemForProcess also exist as standalone item in sale order
+                if(composersItemForProcess.containsKey(saleOrderItemModel.itemGuid)){
+                    composersItemForProcess.put(saleOrderItemModel.itemGuid, composersItemForProcess.get(saleOrderItemModel.itemGuid).subtract(saleOrderItemModel.qty));
+                }
+            }
 
             for (ComposerModel composer : composers) {
                 if(composersItemForProcess.containsKey(composer.itemChildId)){
                     for (SaleOrderItemModel saleOrderItem : saleOrderItems) {
                         if(saleOrderItem.itemGuid.equals(composer.itemHostId)){
                             BigDecimal compsoreQtyForItem = saleOrderItem.qty.multiply(composer.qty);
-                            if(totalNeededComposItems.containsKey(composer.itemChildId)){
-                                totalNeededComposItems.put(composer.itemChildId, totalNeededComposItems.get(composer.itemChildId).add(compsoreQtyForItem));
+                            if(compsoreQtyForItem.compareTo(composersItemForProcess.get(composer.itemChildId)) > 0){
+
+                                CantSaleComposerModel cantSaleComposerModel = new CantSaleComposerModel(composer);
+                                if(itemCursor != null && itemCursor.moveToFirst()){
+                                    do{
+                                        if(itemCursor.getString(itemCursor.getColumnIndex(ShopStore.ItemTable.GUID)).equals(composer.itemChildId)){
+                                            cantSaleComposerModel.composerChildName = itemCursor.getString(itemCursor.getColumnIndex(ShopStore.ItemTable.DESCRIPTION));
+                                            cantSaleComposerModel.totalNeededQty = compsoreQtyForItem;
+                                            cantSaleComposerModel.availableSourceItemQty = composersItemForProcess.get(composer.itemChildId);
+                                        }
+                                    }while (itemCursor.moveToNext());
+                                }
+
+                                if(itemCantBeSoldInfoList.containsKey(composer.itemHostId)){
+                                    List<CantSaleComposerModel> composerModels = itemCantBeSoldInfoList.get(composer.itemHostId);
+                                    composerModels.add(cantSaleComposerModel);
+                                    itemCantBeSoldInfoList.put(composer.itemHostId, composerModels);
+                                } else {
+                                    ArrayList<CantSaleComposerModel> composerModels = new ArrayList<>();
+                                    composerModels.add(cantSaleComposerModel);
+                                    itemCantBeSoldInfoList.put(composer.itemHostId, composerModels);
+                                }
                             } else {
-                                totalNeededComposItems.put(composer.itemChildId, compsoreQtyForItem);
+                                composersItemForProcess.put(composer.itemChildId, composersItemForProcess.get(composer.itemChildId).subtract(compsoreQtyForItem));
                             }
                         }
                     }
-//                    if(composer.qty.compareTo(composersItemForProcess.get(composer.itemChildId)) > 0){
-//
-//                    }
                 }
             }
         }
 
-        return succeeded().add(PARAM_SALE_ITEM_GUID, "");
+        if(itemCursor != null)
+        itemCursor.close();
+
+        return succeeded().add(PARAM_SALE_ITEM_GUID, itemCantBeSoldInfoList);
     }
 
 
@@ -165,12 +191,28 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
 
     public static abstract class CompositionItemsCalculationCommandCallback {
 
-        @OnSuccess(UpdateQtySaleOrderItemCommand.class)
-        public void handleSuccess(@Param(PARAM_SALE_ITEM_GUID) String saleItemGuid) {
-            onSuccess(saleItemGuid);
+        @OnSuccess(CompositionItemsCalculationCommand.class)
+        public void handleSuccess(@Param(PARAM_SALE_ITEM_GUID) HashMap<String, List<CantSaleComposerModel>> itemCantBeSoldInfoList) {
+            onSuccess(itemCantBeSoldInfoList);
         }
 
-        protected abstract void onSuccess(String saleItemGuid);
+        protected abstract void onSuccess(HashMap<String, List<CantSaleComposerModel>> itemCantBeSoldInfoList);
 
+    }
+
+    public class CantSaleComposerModel extends ComposerModel implements Serializable{
+        public BigDecimal totalNeededQty;
+        public BigDecimal availableSourceItemQty;
+        public String composerHostName;
+        public String composerChildName;
+
+        public CantSaleComposerModel(ComposerModel composer){
+            this.guid = composer.guid;
+            this.itemHostId = composer.itemHostId;
+            this.itemChildId = composer.itemChildId;
+            this.qty = composer.qty;
+            this.tracked = composer.tracked;
+            this.restricted = composer.restricted;
+        }
     }
 }
