@@ -4,10 +4,12 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierModel;
+import com.kaching123.tcr.model.converter.StringFunction;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -33,6 +35,14 @@ public class EditModifiersCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         Logger.d("EditModifierCommand doCommand");
         modifier = (ModifierModel) getArgs().getSerializable(ARG_MODIFIER);
+
+        if (modifier.modifierGroupGuid != null){
+            String currentGroupId = getCurrentGroupId(getContext(), modifier.modifierGuid);
+            if (!modifier.modifierGroupGuid.equals(currentGroupId)){
+                modifier.orderNum = ModifierModel.getMaxOrderNum(getContext(), modifier.type, modifier.itemGuid, modifier.modifierGroupGuid) + 1;
+            }
+        }
+
         return succeeded();
     }
 
@@ -56,11 +66,12 @@ public class EditModifiersCommand extends AsyncCommand {
     }
 
     private static String getCurrentGroupId(Context context, String modifierId){
-        return null;
-        /*return ProviderAction.query(URI_MODIFIERS)
+        return ProviderAction.query(URI_MODIFIERS)
+                .where(ModifierTable.MODIFIER_GUID + " = ?", modifierId)
                 .projection(ModifierTable.ITEM_GROUP_GUID)
                 .perform(context)
-                .toFluentIterable(new StringFunction());*/
+                .toFluentIterable(new StringFunction())
+                .first().orNull();
     }
 
     public static void start(Context context, ModifierModel modifier){
