@@ -125,6 +125,7 @@
     <string name="modifier_header_item">Title</string>
     <string name="modifier_group_edit">Edit Selected Group</string>
     <string name="modifier_group_delete">Remove Selected Group</string>
+    <string name="modifier_group_dialog_label">Select the number of modifiers</string>
 
     <string name="modifier_add_success">Modifier item created</string>
     <string name="modifier_cancel_success">Modifier action cancelled</string>

@@ -2,6 +2,7 @@ package com.kaching123.tcr.jdbc.converters;
 
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierGroupModel;
+import com.kaching123.tcr.model.payment.ModifierGroupCondition;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -22,6 +23,8 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
     private static final String ITEM_GUID = "ITEM_GUID";
     private static final String GROUP_NAME = "GROUP_NAME";
     private static final String ORDER_NUM = "ORDER_NUM";
+    private static final String CONDITION = "PARAMETER_AMOUNT_SELECTED";
+    private static final String CONDITION_VALUE = "AMOUNT_SELECTED";
 
     @Override
     public ModifierGroupModel toValues(JdbcJSONObject rs) throws JSONException {
@@ -29,8 +32,9 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
                 rs.getString(GUID),
                 rs.getString(ITEM_GUID),
                 rs.getString(GROUP_NAME),
-                rs.getInt(ORDER_NUM)
-        );
+                rs.getInt(ORDER_NUM),
+                ModifierGroupCondition.valueOf(rs.getInt(CONDITION)),
+                rs.getInt(CONDITION_VALUE));
     }
 
     @Override
@@ -50,6 +54,8 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
                 .add(ITEM_GUID, model.itemGuid)
                 .add(GROUP_NAME, model.title)
                 .add(ORDER_NUM, model.orderNum)
+                .add(CONDITION, model.condition.ordinal())
+                .add(CONDITION_VALUE, model.conditionValue)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -59,6 +65,8 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
                 .add(ITEM_GUID, model.itemGuid)
                 .add(GROUP_NAME, model.title)
                 .add(ORDER_NUM, model.orderNum)
+                .add(CONDITION, model.condition.ordinal())
+                .add(CONDITION_VALUE, model.conditionValue)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

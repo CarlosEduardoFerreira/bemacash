@@ -7,6 +7,7 @@ import com.google.common.base.Function;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
+import com.kaching123.tcr.model.payment.ModifierGroupCondition;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ItemGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ItemTable;
@@ -103,8 +104,9 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.GUID)),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.ITEM_GUID)),
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.TITLE)),
-                    c.getInt(c.getColumnIndex(ItemGroupTable.ORDER_NUM))
-            );
+                    c.getInt(c.getColumnIndex(ItemGroupTable.ORDER_NUM)),
+                    ModifierGroupCondition.valueOf(c.getInt(c.getColumnIndex(ItemGroupTable.CONDITION))),
+                    c.getInt(c.getColumnIndex(ItemGroupTable.CONDITION_VALUE)));
         }
 
         return new ModifierExModel(

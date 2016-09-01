@@ -551,21 +551,12 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
             String itemGuid = bundle.getString(ITEM_KEY);
             return CursorLoaderBuilder
                     .forUri(URI_GROUP)
-                    .projection(ShopStore.ModifierGroupTable.GUID,
-                            ShopStore.ModifierGroupTable.ITEM_GUID,
-                            ShopStore.ModifierGroupTable.TITLE,
-                            ModifierGroupTable.ORDER_NUM)
                     .where(ShopStore.ModifierGroupTable.ITEM_GUID + " = ?", itemGuid)
-                    .orderBy(ShopStore.ModifierGroupTable.TITLE)
+                    .orderBy(ModifierGroupTable.ORDER_NUM)
                     .transform(new Function<Cursor, ModifierGroupModel>() {
                         @Override
                         public ModifierGroupModel apply(Cursor c) {
-                            return new ModifierGroupModel(
-                                    c.getString(0),
-                                    c.getString(1),
-                                    c.getString(2),
-                                    c.getInt(3)
-                            );
+                            return new ModifierGroupModel(c);
                         }
                     }).build(getActivity());
         }

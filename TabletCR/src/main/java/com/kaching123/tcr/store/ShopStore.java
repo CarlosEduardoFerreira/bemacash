@@ -3984,6 +3984,12 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String ORDER_NUM = "order_num";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String CONDITION = "condition";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String CONDITION_VALUE = "condition_value";
     }
 
     static {
