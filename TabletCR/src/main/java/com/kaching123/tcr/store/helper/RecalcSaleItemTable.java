@@ -146,7 +146,6 @@ public class RecalcSaleItemTable extends ProviderHelper {
             v.put(SaleOrderTable.TML_TOTAL_PRICE, _decimal(info.totalPrice));
             v.put(SaleOrderTable.TML_TOTAL_TAX, _decimal(info.totalTax));
             v.put(SaleOrderTable.TML_TOTAL_DISCOUNT, _decimal(info.totalDiscount));
-            v.put(SaleOrderTable.EBT_TOTAL_PRICE, _decimal(info.totalEbtPrice));
 
             ContentResolver cr = getContext().getContentResolver();
             cr.update(SALE_ORDER_URI, v, SaleOrderTable.GUID + " = ?", new String[]{orderGuid});

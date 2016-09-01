@@ -155,7 +155,6 @@ public final class FastOrderTotalQuery {
             return null;
         Logger.d("[FAST_CALC] === start ===");
         BigDecimal totalPrice = BigDecimal.ZERO;
-        BigDecimal totalEbtPrice = BigDecimal.ZERO;
         BigDecimal totalDiscount = BigDecimal.ZERO;
         BigDecimal totalTax = BigDecimal.ZERO;
 
@@ -164,9 +163,6 @@ public final class FastOrderTotalQuery {
             BigDecimal total = i.finalGrossPrice.subtract(i.finalDiscount).add(i.finalTax);
             BigDecimal sub = getSubTotal(i.qty, total);
             totalPrice = totalPrice.add(sub);
-            if(i.isEligible) {
-                totalEbtPrice = totalEbtPrice.add(i.finalGrossPrice);
-            }
 
             totalDiscount = totalDiscount.add(getSubTotal(i.qty, i.finalDiscount));
             totalTax = totalTax.add(getSubTotal(i.qty, i.finalTax));
@@ -175,7 +171,7 @@ public final class FastOrderTotalQuery {
             index++;
         }
         Logger.d("[FAST_CALC] === end ===");
-        return new SaleOrderCostInfo(orderInfo.guid, totalPrice, totalEbtPrice, totalDiscount, totalTax);
+        return new SaleOrderCostInfo(orderInfo.guid, totalPrice, totalDiscount, totalTax);
     }
 
     public static SaleOrderInfo parseCursorSimple(Cursor c) {
@@ -330,16 +326,14 @@ public final class FastOrderTotalQuery {
 
         public String guid;
         public BigDecimal totalPrice;
-        public BigDecimal totalEbtPrice;
         public BigDecimal totalDiscount;
         public BigDecimal totalTax;
 
-        public SaleOrderCostInfo(String guid, BigDecimal totalPrice, BigDecimal totalEbtPrice, BigDecimal totalDiscount, BigDecimal totalTax) {
+        public SaleOrderCostInfo(String guid, BigDecimal totalPrice, BigDecimal totalDiscount, BigDecimal totalTax) {
             this.guid = guid;
             this.totalPrice = totalPrice;
             this.totalDiscount = totalDiscount;
             this.totalTax = totalTax;
-            this.totalEbtPrice = totalEbtPrice;
         }
 
         @Override

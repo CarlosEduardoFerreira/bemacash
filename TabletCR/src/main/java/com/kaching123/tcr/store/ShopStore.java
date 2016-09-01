@@ -729,10 +729,6 @@ public abstract class ShopStore {
         String ORDER_TYPE = "order_type";
 
         @Column(type = Column.Type.TEXT)
-        String EBT_TOTAL_PRICE = "ebt_total_price";
-
-
-        @Column(type = Column.Type.TEXT)
         String TML_TOTAL_PRICE = "tml_total_price";
 
         @Column(type = Column.Type.TEXT)
