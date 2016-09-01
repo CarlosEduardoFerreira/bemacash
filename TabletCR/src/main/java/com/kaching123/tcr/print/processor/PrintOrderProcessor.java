@@ -110,7 +110,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
     protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
-        final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ? transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
+        final List<PaymentTransactionModel> payments =  ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
 
             @Override
@@ -204,6 +204,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
         });
 
+        boolean isEbtPaymentExists = false;
+        BigDecimal ebtBalance = BigDecimal.ZERO;
 
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
@@ -213,8 +215,13 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.change(changeText, p.changeAmount);
             }
             if (p.balance != null && p.gateway.isEbt()) {
-                printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(p.balance)), true);
+                isEbtPaymentExists = true;
+                ebtBalance = p.balance;
             }
+        }
+
+        if (isEbtPaymentExists) {
+            printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(ebtBalance)), true);
         }
 
         BigDecimal counts = getSaleItemAmount(orderGuid, context);

@@ -47,6 +47,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             ItemTable.DESCRIPTION,
             SaleItemTable.QUANTITY,
             SaleItemTable.PRICE,
+            SaleItemTable.EBT_ELIGIBLE,
             SaleItemTable.DISCOUNTABLE,
             SaleItemTable.DISCOUNT,
             SaleItemTable.DISCOUNT_TYPE,
@@ -101,7 +102,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             BigDecimal orderDiscount, DiscountType orderDiscountType, BigDecimal orderDiscountVal,
             BigDecimal totalItemTotal,
             BigDecimal totalTaxVatValue,
-            BigDecimal totalItemDiscount, BigDecimal totalOrderPrice,
+            BigDecimal totalItemDiscount, BigDecimal totalOrderPrice,BigDecimal totalOrderEbtPrice,
             BigDecimal availableDiscount,
             BigDecimal transactionFee);
 
@@ -121,7 +122,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                 result.subTotalItemTotal,
                 result.totalTaxVatValue,
                 result.totalItemDiscount,
-                result.totalOrderPrice.setScale(2, RoundingMode.HALF_UP), result.totalDiscountableItemTotal, info.transactionFee);
+                result.totalOrderPrice.setScale(2, RoundingMode.HALF_UP), result.totalOrderEbtPrice, result.totalDiscountableItemTotal, info.transactionFee);
     }
 
     public static SaleOrderInfo readCursor(Cursor c) {
@@ -159,8 +160,9 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                     _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT), BigDecimal.ZERO),
                     _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
                     _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX), BigDecimal.ZERO),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX2), BigDecimal.ZERO));
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),
+                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)));
 
             result.map.put(saleItemId, value);
         }

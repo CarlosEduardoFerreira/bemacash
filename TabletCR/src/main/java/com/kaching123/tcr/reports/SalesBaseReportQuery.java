@@ -187,7 +187,8 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
                     c.getString(c.getColumnIndex(CategoryTable.DEPARTMENT_GUID)),
                     c.getString(c.getColumnIndex(DepartmentTable.TITLE)),
                     c.getString(c.getColumnIndex(ItemTable.CATEGORY_ID)),
-                    c.getString(c.getColumnIndex(CategoryTable.TITLE))
+                    c.getString(c.getColumnIndex(CategoryTable.TITLE)),
+                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE))
             );
 
             result.map.put(saleItemId, value);

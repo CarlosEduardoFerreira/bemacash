@@ -24,12 +24,6 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
@@ -50,6 +44,13 @@ import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
 import com.kaching123.tcr.util.CalculationUtil;
+
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.ColorRes;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -157,7 +158,8 @@ public class ApplyTipsFragmentDialog extends KeyboardDialogFragment {
             }
 
             @Override
-            public void onCalcTotal(boolean isTaxableOrder, BigDecimal orderDiscount, DiscountType orderDiscountType, BigDecimal orderDiscountVal, BigDecimal totalItemTotal, BigDecimal totalTaxVatValue, BigDecimal totalItemDiscount, BigDecimal totalOrderPrice, BigDecimal availableDiscount, BigDecimal transactionFee) {
+            public void onCalcTotal(boolean isTaxableOrder, BigDecimal orderDiscount, DiscountType orderDiscountType, BigDecimal orderDiscountVal, BigDecimal totalItemTotal,
+                                    BigDecimal totalTaxVatValue, BigDecimal totalItemDiscount, BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal availableDiscount, BigDecimal transactionFee) {
                 setOrderPrice(totalOrderPrice, totalTaxVatValue);
             }
         };

@@ -103,14 +103,12 @@ public class PayTenderFragmentDialog extends TenderFragmentDialogBase<PayTenderF
                 btnCard.setVisibility(View.GONE);
             } else {
                 btnCard.setVisibility(View.VISIBLE);
-                btnCard.setEnabled(true);
             }
             if (paxGateway.acceptPaxDebitEnabled()) {
                 btnPaxDebit.setVisibility(View.VISIBLE);
             }
             if (paxGateway.acceptPaxEbtEnabled()) {
                 btnPaxEbtCash.setVisibility(View.VISIBLE);
-                btnPaxEbtFoodstamp.setVisibility(View.VISIBLE);
                 btnPaxGiftCard.setVisibility(View.VISIBLE);
             }
         }

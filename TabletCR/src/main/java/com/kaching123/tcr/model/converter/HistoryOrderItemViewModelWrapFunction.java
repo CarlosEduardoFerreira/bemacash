@@ -153,7 +153,8 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 1,
                 _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS), BigDecimal.ZERO),
-                _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)));
+                _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)),
+                _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)));
     }
 
     private AddonInfo readModifier(Cursor c) {

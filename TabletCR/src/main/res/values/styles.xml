@@ -414,6 +414,11 @@
         <item name="android:minWidth">86dp</item>
     </style>
 
+    <style name="CustomEditBox.PaymentInputField.50">
+        <item name="android:textSize">50sp</item>
+        <item name="android:minWidth">86dp</item>
+    </style>
+
     <style name="CustomEditBox.Barcode" parent="CustomEditBox.Decimal">
         <item name="android:minWidth">256dp</item>
     </style>

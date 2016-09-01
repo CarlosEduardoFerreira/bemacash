@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/ebt_chooser_dlg_main_layout_padding_top"
+    android:paddingLeft="@dimen/ebt_chooser_dlg_main_layout_padding_left"
+    android:paddingRight="@dimen/ebt_chooser_dlg_main_layout_padding_right"
+    android:gravity="center_horizontal">
+
+    <Button
+        android:text="@string/button_ebt_foodstamp_dlg"
+        android:id="@+id/btn_pax_ebt_foodstamp"
+        android:layout_height="wrap_content"
+        android:layout_width="@dimen/ebt_chooser_dlg_button_width"
+        style="@style/LocalizableButton.Gold.20"
+        android:background="@drawable/simple_tender_btn"
+        android:layout_margin="@dimen/ebt_chooser_dlg_btn_padding_right" />
+    <!---->
+
+    <Button
+        android:text="@string/button_ebt_cash_dlg"
+        android:id="@+id/btn_pax_ebt_cash"
+        android:layout_height="wrap_content"
+        android:layout_width="@dimen/ebt_chooser_dlg_button_width"
+        android:background="@drawable/simple_tender_btn"
+        style="@style/LocalizableButton.Gold.20"
+        android:layout_margin="@dimen/ebt_chooser_dlg_btn_padding_right" />
+    <!---->
+</LinearLayout>

@@ -106,7 +106,7 @@ public class CustomEditBox extends EditText {
         this.editListener = editListener;
     }
 
-    public static interface IKeyboardSupport {
+    public interface IKeyboardSupport {
         void attachMe2Keyboard(CustomEditBox v);
 
         void detachMe4Keyboard(CustomEditBox v);

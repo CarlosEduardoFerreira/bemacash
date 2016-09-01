@@ -5,13 +5,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.EViewGroup;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.ResourseUtils;
-import com.kaching123.tcr.util.StringUtils;
+
+import org.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.ViewById;
 
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 
@@ -40,9 +40,12 @@ public class TransactionHistoryMiniItemView extends FrameLayout {
                      PaymentTransactionModel transaction) {
         this.transaction = transaction;
         showPrice(this.total, CalculationUtil.value(transaction.availableAmount));
-        this.message.setText(getContext().getString(R.string.blackstone_pay_transaction_constructor, String.valueOf(position + 1)
-                .concat(StringUtils.getNumericPostfix(position + 1)).concat(" ")));
+        /*this.message.setText(getContext().getString(R.string.blackstone_pay_transaction_constructor, String.valueOf(position + 1)
+                .concat(StringUtils.getNumericPostfix(position + 1)).concat(" ").concat(transaction.cardName).concat(" ")));
+        */
+        this.message.setText(transaction.cardName);
         this.icon.setImageResource(ResourseUtils.getMiniIconForTransactionType(transaction.gateway));
+        this.icon.setVisibility(GONE);
         int imgResource = ResourseUtils.getMiniIconForTransactionType(transaction.paymentType);
         if (imgResource == 0) {
             this.status.setVisibility(GONE);

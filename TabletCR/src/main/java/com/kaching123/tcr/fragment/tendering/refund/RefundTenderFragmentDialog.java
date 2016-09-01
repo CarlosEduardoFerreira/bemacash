@@ -6,9 +6,6 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
@@ -18,6 +15,10 @@ import com.kaching123.tcr.fragment.tendering.payment.IPaymentDialogListener.IRef
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.payment.PaymentMethod;
+
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.res.ColorRes;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -141,7 +142,7 @@ public class RefundTenderFragmentDialog extends TenderFragmentDialogBase<RefundT
             btnPaxDebit.setVisibility(displayDebitBtn ? View.VISIBLE : View.GONE);
 //            btnPaxEbtFoodstamp.setVisibility(displayEbtBtn ? View.VISIBLE : View.GONE);
         } else {
-            btnCard.setEnabled(displayCCBtn);
+            //btnCard.setEnabled(displayCCBtn);
         }
 //        btnCash.setEnabled(displayCashBtn);
         btnCash.setEnabled(true); // TODO this may vary in next sprint - when this flow melts because of paychecks and prepaid stuff
@@ -216,7 +217,7 @@ public class RefundTenderFragmentDialog extends TenderFragmentDialogBase<RefundT
     }
 
     @Override
-    protected void calcTotal(BigDecimal totalOrderPrice) {
+    protected void calcTotal(BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice) {
 
         showPrice(this.total, orderTotal);
         showPrice(this.difference, amountToRefund);

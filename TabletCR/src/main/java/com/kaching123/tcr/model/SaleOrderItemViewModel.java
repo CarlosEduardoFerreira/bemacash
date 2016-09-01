@@ -44,6 +44,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
     public boolean isPcsUnit;
     public Spannable subTitle;
     public BigDecimal finalPrice;
+  //  public BigDecimal finalEbtPrice;
 
     public boolean isKitchenPrintable;
     public boolean isPrepaidItem;
@@ -176,6 +177,11 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
     @Override
     public boolean isTaxableOrder() {
         return this.isTaxableOrder;
+    }
+
+    @Override
+    public boolean isEbtEligible() {
+        return this.itemModel.isEbtEligible;
     }
 
     @Override

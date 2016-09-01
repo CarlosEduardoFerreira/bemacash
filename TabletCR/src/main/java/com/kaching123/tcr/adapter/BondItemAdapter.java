@@ -34,8 +34,10 @@ public class BondItemAdapter extends ArrayAdapter<Integer> {
         } else {
             view = (Button)convertView;
         }
-        view.setText(list.get(position).toString());
-        view.setTag(list.get(position));
+        int value = list.get(position);
+        String  name = context.getString(R.string.bond_item_adapter_btn_value_format, value);
+        view.setText(name);
+        view.setTag(value);
         return view;
     }
 

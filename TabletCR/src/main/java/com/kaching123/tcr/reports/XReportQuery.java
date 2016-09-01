@@ -629,6 +629,7 @@ public class XReportQuery {
             totalTax = totalTax.add(getSubTotal(i2.qty, i2.finalTax));
 
             BigDecimal itemFinalPrice = i2.totalPrice.add(i2.finalTax).subtract(i2.finalDiscount);
+            BigDecimal ebtFinalPrice = i2.totalPrice;
             if (handler2 != null) {
                 handler2.handleItem(i, itemFinalPrice, i2.finalDiscount, i2.finalTax);
             }
@@ -700,7 +701,8 @@ public class XReportQuery {
                     null,
                     null,
                     null,
-                    null
+                    null,
+                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE))
             );
 
             result.map.put(saleItemId, value);
@@ -734,9 +736,9 @@ public class XReportQuery {
                              boolean discountable, BigDecimal discount, DiscountType discountType,
                              boolean isTaxable, BigDecimal tax, BigDecimal tax2, BigDecimal itemCost,
                              String departmentGuid, String departmentTitle,
-                             String categoryGuid, String categoryTitle) {
+                             String categoryGuid, String categoryTitle, boolean isEbtEligible) {
             super(saleItemGiud, itemGiud, description, qty, totalPrice, discountable, discount,
-                    discountType, isTaxable, tax, tax2);
+                    discountType, isTaxable, tax, tax2, isEbtEligible);
             this.itemCost = itemCost;
             this.departmentGuid = departmentGuid;
             this.departmentTitle = departmentTitle;

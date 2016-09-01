@@ -393,6 +393,7 @@
     <string name="blackstone_pay_failure_body_3nd">There was a non-banking related issue: </string>
     <string name="blackstone_pay_progress_body">Generating payment...</string>
     <string name="blackstone_pay_total">Total:</string>
+    <string name="blackstone_pay_remaining_balance">Remaining Balance</string>
     <string name="blackstone_pay_pending_amount">Pending amount:</string>
     <string name="blackstone_pay_charge">Change:</string>
     <string name="blackstone_change_charge_finish">Change: %s</string>
@@ -1434,6 +1435,8 @@
     <string name="display_change_title">Change:</string>
     <string name="display_pending_title">Pending:</string>
     <string name="payment_charge_amount">Charge amount:</string>
+    <string name="payment_charge_amount_united">Type tender amount:</string>
+
     <string name="credit_receipt_num">Receipt #:</string>
     <string name="credit_receipt_date">Date:</string>
     <string name="credit_receipt_expire">Valid through:</string>
@@ -1725,10 +1728,16 @@
     <string name="button_debit">Debit Card</string>
     <string name="button_ebt_cash">EBT Cash</string>
     <string name="button_ebt_gift_card">Gift Card</string>
+    <string name="button_ebt_cash_dlg">EBT\n Cash</string>
+    <string name="button_ebt_united_tender">EBT</string>
     <string name="button_ebt_foodstamp">EBT Food Stamp</string>
+    <string name="button_ebt_foodstamp_dlg">EBT\n Food Stamp</string>
     <string name="button_offline_credit">Offline Credit</string>
+    <string name="button_offline_credit_united">Offline\nCredit</string>
+
     <string name="button_receipt">Receipt</string>
     <string name="button_store_credit">Store Credit</string>
+    <string name="button_store_credit_united">Store\nCredit</string>
     <string name="button_clockin">CLOCK IN</string>
     <string name="button_clockout">CLOCK OUT</string>
     <string name="button_close_shift">CLOSE SHIFT</string>
@@ -2007,4 +2016,14 @@
     <string name="detailed_report_filter_from">From:</string>
     <string name="detailed_report_filter_to">To:</string>
 
+
+
+    <string name="ebt_type_chooser_dlg_title">Please choose:</string>
+    <string name="payment_fragment_ebt_not_enabled">0.00</string>
+    <string name="bond_item_adapter_btn_value_format">\u0024%1$d</string>
+    <string name="pay_tender_wrong_amount_error_message">You may not apply more than grand\ntotal with this tender</string>
+    <string name="pay_tender_wrong_ebt_amount_error_message">You may not apply more than Allowed Food Stamps\ntotal with this tender</string>
+    <string name="pay_tender_wrong_amount_title">Wrong value entered</string>
+    <string name="pay_tender_zero_amount_error_message">Please enter an amount\nbefore selecting the payment type</string>
+    <string name="button_gift">Gift Card</string>
 </resources>

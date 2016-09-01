@@ -59,6 +59,11 @@ public class KeyboardView extends FrameLayout {
     private void appendChar(char ch) {
         if (currentTextView == null)
             return;
+        int startSelection=currentTextView.getSelectionStart();
+        int endSelection=currentTextView.getSelectionEnd();
+        if(endSelection > startSelection) {
+            currentTextView.clear();
+        }
         currentTextView.append(String.valueOf(ch));
     }
 
@@ -77,7 +82,12 @@ public class KeyboardView extends FrameLayout {
     public void setEnterEnabled(boolean enabled) {
         numEnter.setEnabled(enabled);
     }
-    public void setNumMinusEnabled(boolean enabled) {
+
+    public void setEnterVisibility(int visible) {
+        numEnter.setVisibility(visible);
+    }
+
+     public void setNumMinusEnabled(boolean enabled) {
         numMinus.setEnabled(enabled);
     }
 
@@ -145,7 +155,7 @@ public class KeyboardView extends FrameLayout {
         return 0;
     }
 
-    private View.OnClickListener listener = new View.OnClickListener() {
+    protected View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             switch (view.getId()) {

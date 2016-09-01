@@ -35,8 +35,10 @@ public class TotalCostFragment extends Fragment {
     protected TextView discount;
     @ViewById(R.id.total_cost_tax)
     protected TextView tax;
+
     @ViewById(R.id.total_cost_total)
     protected TextView orderTotal;
+
     @ViewById
     protected View btnHold;
     @ViewById
@@ -122,6 +124,7 @@ public class TotalCostFragment extends Fragment {
                     BigDecimal totalTaxVatValue,
                     BigDecimal totalItemDiscount,
                     BigDecimal totalOrderPrice,
+                    BigDecimal totalOrderEbtPrice,
                     BigDecimal availableDiscount,
                     BigDecimal transactionFee) {
                 calcTotal(taxable,
@@ -130,6 +133,7 @@ public class TotalCostFragment extends Fragment {
                         totalTaxVatValue,
                         totalItemDiscount,
                         totalOrderPrice,
+                        totalOrderEbtPrice,
                         availableDiscount
                 );
             }
@@ -163,6 +167,7 @@ public class TotalCostFragment extends Fragment {
             BigDecimal totalTaxVatValue,
             BigDecimal totalItemDiscount,
             BigDecimal totalOrderPrice,
+            BigDecimal totalOrderEbtPrice,
             BigDecimal availableDiscount) {
         if (orderDiscountVal == null || BigDecimal.ZERO.compareTo(orderDiscountVal) == 0) {
             showPrice(this.discount, totalItemDiscount);
@@ -212,13 +217,11 @@ public class TotalCostFragment extends Fragment {
         return this.orderTotal.getText().toString();
     }
 
-
     private void setZero() {
         this.orderTotalVal = BigDecimal.ZERO;
         showPrice(this.discount, BigDecimal.ZERO);
         showPrice(this.subTotal, BigDecimal.ZERO);
         showPrice(this.orderTotal, BigDecimal.ZERO);
-
         showPrice(this.tax, BigDecimal.ZERO);
         if (this.tax != null) this.tax.setTextColor(taxColorNormal);
     }

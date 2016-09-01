@@ -73,7 +73,7 @@
     </RelativeLayout>
 
     <EditText
-        android:text="228"
+        android:text="111"
         android:id="@+id/login"
         android:singleLine="true"
         android:background="@drawable/edit_text_holo_dark"

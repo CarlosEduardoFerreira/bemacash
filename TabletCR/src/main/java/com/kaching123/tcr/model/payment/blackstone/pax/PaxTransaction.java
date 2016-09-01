@@ -1,6 +1,7 @@
 package com.kaching123.tcr.model.payment.blackstone.pax;
 
 import android.os.Parcel;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.kaching123.tcr.commands.payment.PaymentGateway;
@@ -13,7 +14,6 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.LastTrasn
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -63,7 +63,15 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
     }
 
     public void updateWith(com.pax.poslink.PaymentResponse response) {
-        cardName = response.CardType;
+        cardName = TextUtils.isEmpty(response.CardType) ? cardName : response.CardType;
+
+        //fixme
+        // hack for temporary detecting ebt card
+        if(getGateway().equals(PaymentGateway.PAX_EBT_CASH) || getGateway().equals(PaymentGateway.PAX_EBT_FOODSTAMP)) {
+            cardName = "EBT CARD";
+        }
+        //end of hack, needs to be replaced by real detection
+
         amount = new BigDecimal(response.ApprovedAmount).divide(CalculationUtil.ONE_HUNDRED);
         serviceTransactionNumber = response.RefNum;
         authorizationNumber = response.AuthCode;

@@ -51,9 +51,7 @@ import com.kaching123.tcr.fragment.tendering.payment.CloseTransPendingFragmentDi
 import com.kaching123.tcr.fragment.tendering.payment.CloseTransactionsFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.CloseTransactionsFragmentDialog.CloseTransactionsListener;
 import com.kaching123.tcr.fragment.tendering.payment.INotificationConfirmListener;
-import com.kaching123.tcr.fragment.tendering.payment.IPaymentDialogListener.IPayTenderListener;
-import com.kaching123.tcr.fragment.tendering.payment.PayCashFragmentDialog;
-import com.kaching123.tcr.fragment.tendering.payment.PayCashFragmentDialog.ISaleCashListener;
+import com.kaching123.tcr.fragment.tendering.payment.IPaymentDialogListener;
 import com.kaching123.tcr.fragment.tendering.payment.PayChargeFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayChargeFragmentDialog.ISaleChargeListener;
 import com.kaching123.tcr.fragment.tendering.payment.PayCreditReceiptFragmentDialog;
@@ -61,9 +59,10 @@ import com.kaching123.tcr.fragment.tendering.payment.PayCreditReceiptFragmentDia
 import com.kaching123.tcr.fragment.tendering.payment.PayNotificationFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayOtherFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayPrintAndFinishFragmentDialog;
+import com.kaching123.tcr.fragment.tendering.payment.PaySilentCashFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PaySwipePendingFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PaySwipePendingFragmentDialog.ISaleSwipeListener;
-import com.kaching123.tcr.fragment.tendering.payment.PayTenderFragmentDialog;
+import com.kaching123.tcr.fragment.tendering.payment.PayTenderUnitedFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.PayTransPendingFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.SettlementNotificationFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.SettlementTransPendingFragmentDialog;
@@ -654,7 +653,23 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         if (getDisplayBinder(context) != null)
             getDisplayBinder(context).startCommand(new DisplayOrderCommand(orderGuid));
 
-        PayTenderFragmentDialog.show(context, orderGuid, orderType, new IPayTenderListener() {
+        PayTenderUnitedFragmentDialog.show(context, orderGuid, orderType, new IPaymentDialogListener.IPayTenderUnitedListener() {
+
+            @Override
+            public void onUnitedPaymentAmountSelected(PaymentMethod method, BigDecimal orderTotal, BigDecimal amount) {
+                Logger.d("We have finished step 2 : %s credits!", amount);
+                hide();
+                PaymentProcessor.this.orderTotal = orderTotal;
+                PaymentProcessor.this.onPaymentAmountSelected(context, method, amount);
+            }
+
+            @Override
+            public void onUnitedCancel() {
+                Logger.d("We have cancelled step 2. This may happen only on first cycle, so we dont care much");
+                hide();
+                proceedToTender(context, 0);
+            }
+
 
             @Override
             public void onPaymentMethodSelected(PaymentMethod method, BigDecimal orderTotal, BigDecimal pendingAmount, boolean singleTender) {
@@ -715,7 +730,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             }
 
             private void hide() {
-                PayTenderFragmentDialog.hide(context);
+                PayTenderUnitedFragmentDialog.hide(context);
             }
 
         }, animation, singleTenderEnabled);
@@ -755,7 +770,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         Logger.d("Price send to Processor" + amount.toString());
         switch (method) {
             case CASH: {
-                transaction = PaymentGateway.CASH.gateway().createTransaction(context, amount, orderGuid);
+                transaction = PaymentGateway.CASH.gateway().createTransaction(context, orderTotal, orderGuid);
                 transaction.cashBack = BigDecimal.ZERO;
                 transaction.setType(TransactionType.CASH);
                 proceedToCashPayment(context, amount, transaction);
@@ -971,7 +986,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
      * Follow with the cash payment
      */
     private void proceedToCashPayment(final FragmentActivity context, final BigDecimal amount, final Transaction transaction) {
-        PayCashFragmentDialog.show(context, transaction, new ISaleCashListener() {
+        PaySilentCashFragmentDialog.show(context, orderPayed, amount, transaction, new PaySilentCashFragmentDialog.ISaleCashListener() {
 
             @Override
             public void onPaymentAmountSelected(BigDecimal amount, BigDecimal changeAmount) {
@@ -994,7 +1009,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             }
 
             private void hide() {
-                PayCashFragmentDialog.hide(context);
+                PaySilentCashFragmentDialog.hide(context);
             }
 
         });
@@ -1343,7 +1358,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
 
             @Override
-            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
+            public void handleItem(String saleItemGuid, String description, BigDecimal qty, BigDecimal itemPriceWithAddons, BigDecimal itemSubTotal, BigDecimal itemTotal, BigDecimal itemEbtTotal, BigDecimal itemFinalPrice, BigDecimal itemFinalDiscount, BigDecimal itemFinalTax) {
 
             }
 

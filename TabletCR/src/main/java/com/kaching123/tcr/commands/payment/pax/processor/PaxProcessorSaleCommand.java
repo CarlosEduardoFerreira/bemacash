@@ -108,7 +108,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
     @Override
     protected TaskResult doCommand() {
         PaymentTransactionJdbcConverter jdbcConverter = (PaymentTransactionJdbcConverter) JdbcFactory.getConverter(PaymentTransactionTable.TABLE_NAME);
-        operations = new ArrayList<ContentProviderOperation>();
+        operations = new ArrayList<>();
         sqlCommand = batchInsert(PaymentTransactionModel.class);
 
 
@@ -122,6 +122,9 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
         int transactionId = getIntArg(ARG_PURPOSE);
         transaction = getArgs().getParcelable(ARG_AMOUNT);
 
+        if(transaction == null) {
+           return failed();
+        }
         BigDecimal cents = transaction.getAmount();
         String sAmount = String.valueOf((cents.multiply(CalculationUtil.ONE_HUNDRED)).intValue());
         Logger.d("PaxProcessorSaleCommand %d - %s", transactionId, sAmount);

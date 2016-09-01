@@ -54,9 +54,11 @@ public final class FastOrderTotalQuery {
     private static final int SaleItemTable_FINAL_GROSS_PRICE = 10;
     private static final int SaleItemTable_FINAL_DISCOUNT = 11;
     private static final int SaleItemTable_FINAL_TAX = 12;
-    private static final int SaleOrderTable_TAXABLE = 13;
-    private static final int SaleOrderTable_DISCOUNT = 14;
-    private static final int SaleOrderTable_DISCOUNT_TYPE = 15;
+    private static final int SaleItemTable_EBT_ELIGIBLE = 13;
+    private static final int SaleOrderTable_TAXABLE = 14;
+    private static final int SaleOrderTable_DISCOUNT = 15;
+    private static final int SaleOrderTable_DISCOUNT_TYPE = 16;
+
 
     //be careful to modify it check SaleOrderItemsViewFastSynced too
     private static final String[] PROJECTION = new String[]{
@@ -74,6 +76,7 @@ public final class FastOrderTotalQuery {
             SaleItemTable.FINAL_GROSS_PRICE,
             SaleItemTable.FINAL_DISCOUNT,
             SaleItemTable.FINAL_TAX,
+            SaleItemTable.EBT_ELIGIBLE,
             SaleOrderTable.TAXABLE,
             SaleOrderTable.DISCOUNT,
             SaleOrderTable.DISCOUNT_TYPE};
@@ -154,6 +157,7 @@ public final class FastOrderTotalQuery {
             return null;
         Logger.d("[FAST_CALC] === start ===");
         BigDecimal totalPrice = BigDecimal.ZERO;
+        BigDecimal totalEbtPrice = BigDecimal.ZERO;
         BigDecimal totalDiscount = BigDecimal.ZERO;
         BigDecimal totalTax = BigDecimal.ZERO;
 
@@ -162,6 +166,10 @@ public final class FastOrderTotalQuery {
             BigDecimal total = i.finalGrossPrice.subtract(i.finalDiscount).add(i.finalTax);
             BigDecimal sub = getSubTotal(i.qty, total);
             totalPrice = totalPrice.add(sub);
+            if(i.isEligible) {
+                totalEbtPrice = totalEbtPrice.add(i.finalGrossPrice);
+            }
+
             totalDiscount = totalDiscount.add(getSubTotal(i.qty, i.finalDiscount));
             totalTax = totalTax.add(getSubTotal(i.qty, i.finalTax));
 
@@ -169,7 +177,7 @@ public final class FastOrderTotalQuery {
             index++;
         }
         Logger.d("[FAST_CALC] === end ===");
-        return new SaleOrderCostInfo(orderInfo.guid, totalPrice, totalDiscount, totalTax);
+        return new SaleOrderCostInfo(orderInfo.guid, totalPrice, totalEbtPrice, totalDiscount, totalTax);
     }
 
     public static SaleOrderInfo parseCursorSimple(Cursor c) {
@@ -196,13 +204,13 @@ public final class FastOrderTotalQuery {
 
     public static HashMap<String, SaleOrderInfo> parseCursorMultiple(Cursor c) {
         if (c == null || c.getCount() == 0)
-            return new HashMap<String, SaleOrderInfo>(0);
+            return new HashMap<>(0);
         //printCursor(c);
         Logger.d("Fast.parseCursorMultiple: %d", c.getCount());
-        HashMap<String, SaleOrderInfo> result = new HashMap<String, SaleOrderInfo>();
+        HashMap<String, SaleOrderInfo> result = new HashMap<>();
         if (c.moveToFirst()) {
             do {
-                String orderGuid = c.getString(SaleItemTable_ORDER_GUID);
+                String orderGuid = c.getString(/*c.getColumnIndex(SaleItemTable.ORDER_GUID));/*/SaleItemTable_ORDER_GUID);
                 SaleOrderInfo order = result.get(orderGuid);
                 if (order == null) {
                     order = new SaleOrderInfo(
@@ -233,10 +241,10 @@ public final class FastOrderTotalQuery {
 */
 
     public static void readCursorRow(Cursor c, SaleOrderInfo result) {
-        String saleItemId = c.getString(SaleItemTable_SALE_ITEM_GUID);
+        String saleItemId = c.getString(/*c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID));/*/SaleItemTable_SALE_ITEM_GUID);
         SaleItemInfo value = new SaleItemInfo(
                 saleItemId,
-                c.getString(SaleItemTable_ITEM_GUID),
+                c.getString(/*c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID)),/*/SaleItemTable_ITEM_GUID),
                 //c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)),
                 _decimalQty(c, SaleItemTable_QUANTITY, BigDecimal.ZERO),
                 _bool(c, SaleItemTable_DISCOUNTABLE),
@@ -248,6 +256,7 @@ public final class FastOrderTotalQuery {
                 _decimal(c, SaleItemTable_FINAL_DISCOUNT, BigDecimal.ZERO),
                 _decimal(c, SaleItemTable_FINAL_TAX, BigDecimal.ZERO)
         );
+        value.setEbtEligible(_bool(c, /*c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)*/ SaleItemTable_EBT_ELIGIBLE));
         result.items.add(value);
     }
 
@@ -264,7 +273,7 @@ public final class FastOrderTotalQuery {
             this.isTaxableOrder = isTaxableOrder;
             this.orderDiscount = orderDiscount;
             this.orderDiscountType = orderDiscountType;
-            this.items = new ArrayList<SaleItemInfo>();
+            this.items = new ArrayList<>();
         }
     }
 
@@ -280,6 +289,7 @@ public final class FastOrderTotalQuery {
         public final DiscountType discountType;
 
         public final boolean isTaxable;
+        public boolean isEligible;
         public final BigDecimal tax;
 
         public BigDecimal finalGrossPrice;
@@ -314,20 +324,26 @@ public final class FastOrderTotalQuery {
             this.finalDiscount = finalDiscount;
             this.finalTax = finalTax;
         }
+
+        public void setEbtEligible(boolean isEligible) {
+            this.isEligible = isEligible;
+        }
     }
 
     public static class SaleOrderCostInfo {
 
         public String guid;
         public BigDecimal totalPrice;
+        public BigDecimal totalEbtPrice;
         public BigDecimal totalDiscount;
         public BigDecimal totalTax;
 
-        public SaleOrderCostInfo(String guid, BigDecimal totalPrice, BigDecimal totalDiscount, BigDecimal totalTax) {
+        public SaleOrderCostInfo(String guid, BigDecimal totalPrice, BigDecimal totalEbtPrice, BigDecimal totalDiscount, BigDecimal totalTax) {
             this.guid = guid;
             this.totalPrice = totalPrice;
             this.totalDiscount = totalDiscount;
             this.totalTax = totalTax;
+            this.totalEbtPrice = totalEbtPrice;
         }
 
         @Override
@@ -363,7 +379,7 @@ public final class FastOrderTotalQuery {
             if (c.isAfterLast())
                 return null;
 
-            String orderGuid = c.getString(SaleItemTable_ORDER_GUID);
+            String orderGuid = c.getString(/*c.getColumnIndex(SaleItemTable.ORDER_GUID));/*/SaleItemTable_ORDER_GUID);
             SaleOrderInfo orderInfo = new SaleOrderInfo(
                     orderGuid,
                     _bool(c, SaleOrderTable_TAXABLE),
@@ -374,7 +390,7 @@ public final class FastOrderTotalQuery {
 
             String nextOrderGuid;
             while (c.moveToNext()) {
-                nextOrderGuid = c.getString(SaleItemTable_ORDER_GUID);
+                nextOrderGuid = c.getString(/*c.getColumnIndex(SaleItemTable.ORDER_GUID));/*/SaleItemTable_ORDER_GUID);
                 if (!nextOrderGuid.equals(orderGuid))
                     break;
 

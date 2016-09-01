@@ -261,6 +261,15 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.pricePointsEnabled().getOr(false),
                     shopPref.printReceiptDefault().getOr(false),
                     shopPref.emailReceiptDefault().getOr(false));
+                    shopPref.autoFillPaymentAmountEnabled().getOr(false),
+                    shopPref.giftCardSolutionEnabled().getOr(false),
+                    shopPref.creditPaymentButtonEnabled().getOr(false),
+                    shopPref.debitCardPaymentButtonEnabled().getOr(false),
+                    shopPref.ebtFoodStampPaymentEnabled().getOr(false),
+                    shopPref.ebtCashPaymentButtonEnabled().getOr(false),
+                    shopPref.offlineCreditPaymentButtonEnabled().getOr(false),
+                    shopPref.checkPaymentButtonEnabled().getOr(false)
+                    );
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -598,6 +607,14 @@ public class TcrApplication extends MultiDexApplication {
                 .pricePointsEnabled().put(info.loyaltyPointsForDollarAmount)
                 .printReceiptDefault().put(info.printReceiptDefault)
                 .emailReceiptDefault().put(info.emailReceiptDefault)
+                .autoFillPaymentAmountEnabled().put(info.autoFillPaymentAmount)
+                .giftCardSolutionEnabled().put(info.giftCardSolutionEnabled)
+                .creditPaymentButtonEnabled().put(info.creditPaymentButtonEnabled)
+                .debitCardPaymentButtonEnabled().put(info.debitCardPaymentButtonEnabled)
+                .ebtFoodStampPaymentEnabled().put(info.ebtFoodStampPaymentEnabled)
+                .ebtCashPaymentButtonEnabled().put(info.ebtCashPaymentButtonEnabled)
+                .offlineCreditPaymentButtonEnabled().put(info.offlineCreditPaymentButtonEnabled)
+                .checkPaymentButtonEnabled().put(info.checkPaymentButtonEnabled)
                 .apply();
 
         setUsers();
@@ -670,11 +687,16 @@ public class TcrApplication extends MultiDexApplication {
         return isFreemium;
     }
 
+    public boolean isAutoFillPaymentAmount() {
+        return shopPref.autoFillPaymentAmountEnabled().get();
+    }
+
+
     public boolean hasPermission(Permission permissions) {
         if (permissions == null)
             return true;
         Set<Permission> operatorPermissions = getOperatorPermissions();
-        return operatorPermissions == null ? false : operatorPermissions.contains(permissions);
+        return operatorPermissions != null && operatorPermissions.contains(permissions);
     }
 
     public synchronized boolean isTipsEnabled() {

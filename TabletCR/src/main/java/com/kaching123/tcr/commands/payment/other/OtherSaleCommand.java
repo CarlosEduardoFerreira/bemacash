@@ -36,7 +36,7 @@ public class OtherSaleCommand extends AsyncCommand {
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
         operations.add(ContentProviderOperation.newInsert(URI_PAYMENT)
                 .withValues(transactionModel.toValues())

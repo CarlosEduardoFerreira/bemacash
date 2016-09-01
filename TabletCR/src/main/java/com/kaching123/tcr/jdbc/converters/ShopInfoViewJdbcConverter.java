@@ -122,10 +122,19 @@ public class ShopInfoViewJdbcConverter {
     
     private static final String DEFAULT_LOYALTY_PLAN_ID = "DEFAULT_LOYALTY_PLAN";
     private static final String LOYALTY_POINTS_FOR_DOLLAR_AMOUNT = "PRICE_POINTS_ENABLED";
+    private static final String AUTOFILL_PAYMENT_AMOUNT_ENABLED = "AUTOFILL_PAYMENT_AMOUNT";
 
     public static final String GIFT_CARD  = "GIFT_CARD";
     public static final String PRINT_RECEIPT_DEFAULT  = "PRINT_RECEIPT_DEFAULT";
     public static final String EMAIL_RECEIPT_DEFAULT  = "EMAIL_RECEIPT_DEFAULT";
+    private static final String CREDIT_PAYMENT_BUTTON = "CREDIT_PAYMENT_BUTTON";
+    private static final String DEBIT_CARD_PAYMENT_BUTTON = "DEBIT_CARD_PAYMENT_BUTTON";
+    private static final String EBT_FOOD_STAMP_PAYMENT_BUTTON = "EBT_FOOD_STAMP_PAYMENT_BUTTON";
+    private static final String EBT_CASH_PAYMENT_BUTTON = "EBT_CASH_PAYMENT_BUTTON";
+    private static final String OFFLINE_CREDIT_PAYMENT_BUTTON = "OFFLINE_CREDIT_PAYMENT_BUTTON";
+    private static final String CHECK_PAYMENT_BUTTON = "CHECK_PAYMENT_BUTTON";
+
+
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
@@ -203,6 +212,16 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT),
                 rs.getBoolean(PRINT_RECEIPT_DEFAULT),
                 rs.getBoolean(EMAIL_RECEIPT_DEFAULT));
+                rs.getBoolean(AUTOFILL_PAYMENT_AMOUNT_ENABLED),
+                rs.getBoolean(GIFT_CARD),
+                rs.getBoolean(CREDIT_PAYMENT_BUTTON),
+                rs.getBoolean(DEBIT_CARD_PAYMENT_BUTTON),
+                rs.getBoolean(EBT_FOOD_STAMP_PAYMENT_BUTTON),
+                rs.getBoolean(EBT_CASH_PAYMENT_BUTTON),
+                rs.getBoolean(OFFLINE_CREDIT_PAYMENT_BUTTON),
+                rs.getBoolean(CHECK_PAYMENT_BUTTON)
+
+        );
     }
 
     public static ShopInfo read(JdbcJSONObject rs) throws JSONException {
@@ -281,7 +300,15 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(LOYALTY_POINTS_FOR_DOLLAR_AMOUNT),
                 rs.getBoolean(PRINT_RECEIPT_DEFAULT),
                 rs.getBoolean(EMAIL_RECEIPT_DEFAULT)
-                );
+                rs.getBoolean(AUTOFILL_PAYMENT_AMOUNT_ENABLED),
+                rs.getBoolean(GIFT_CARD),
+                rs.getBoolean(CREDIT_PAYMENT_BUTTON),
+                rs.getBoolean(DEBIT_CARD_PAYMENT_BUTTON),
+                rs.getBoolean(EBT_FOOD_STAMP_PAYMENT_BUTTON),
+                rs.getBoolean(EBT_CASH_PAYMENT_BUTTON),
+                rs.getBoolean(OFFLINE_CREDIT_PAYMENT_BUTTON),
+                rs.getBoolean(CHECK_PAYMENT_BUTTON)
+        );
     }
 
     public static Integer getSalesHistoryLimit(JdbcJSONObject rs) throws JSONException {
@@ -376,9 +403,20 @@ public class ShopInfoViewJdbcConverter {
         public final boolean blackStonePRepaidSolution;
         public final String defaultLoyaltyPlanId;
         public final boolean loyaltyPointsForDollarAmount;
+        public final boolean autoFillPaymentAmount;
         public final boolean giftCard;
         public final boolean printReceiptDefault;
         public final boolean emailReceiptDefault;
+
+        public final boolean giftCardSolutionEnabled;
+        public final boolean creditPaymentButtonEnabled;
+        public final boolean debitCardPaymentButtonEnabled;
+        public final boolean ebtFoodStampPaymentEnabled;
+        public final boolean ebtCashPaymentButtonEnabled;
+        public final boolean offlineCreditPaymentButtonEnabled;
+        public final boolean checkPaymentButtonEnabled;
+
+
 
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
@@ -447,6 +485,15 @@ public class ShopInfoViewJdbcConverter {
                         boolean blackStonePRepaidSolution,
                         boolean giftCard,
                         String defaultLoyaltyPlanId,
+                        boolean loyaltyPointsForDollarAmount,
+                        boolean autoFillPaymentAmount,
+                        boolean  giftCardSolutionEnabled,
+                        boolean creditPaymentButtonEnabled,
+                        boolean debitCardPaymentButtonEnabled,
+                        boolean ebtFoodStampPaymentEnabled,
+                        boolean ebtCashPaymentButtonEnabled,
+                        boolean offlineCreditPaymentButtonEnabled,
+                        boolean checkPaymentButtonEnabled
                         boolean loyaltyPointsForDollarAmount,
                         boolean printReceiptDefault,
                         boolean emailReceiptDefault) {
@@ -543,9 +590,16 @@ public class ShopInfoViewJdbcConverter {
             
             this.defaultLoyaltyPlanId = defaultLoyaltyPlanId;
             this.loyaltyPointsForDollarAmount = loyaltyPointsForDollarAmount;
-
+            this.autoFillPaymentAmount = autoFillPaymentAmount;
             this.printReceiptDefault = printReceiptDefault;
             this.emailReceiptDefault = emailReceiptDefault;
+            this.giftCardSolutionEnabled = giftCardSolutionEnabled;
+            this.creditPaymentButtonEnabled = creditPaymentButtonEnabled;
+            this.debitCardPaymentButtonEnabled = debitCardPaymentButtonEnabled;
+            this.ebtFoodStampPaymentEnabled = ebtFoodStampPaymentEnabled;
+            this.ebtCashPaymentButtonEnabled = ebtCashPaymentButtonEnabled;
+            this.offlineCreditPaymentButtonEnabled = offlineCreditPaymentButtonEnabled;
+            this.checkPaymentButtonEnabled = checkPaymentButtonEnabled;
         }
 
     }

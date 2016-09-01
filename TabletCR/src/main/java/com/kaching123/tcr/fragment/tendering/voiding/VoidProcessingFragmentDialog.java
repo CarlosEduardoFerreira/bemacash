@@ -10,10 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -27,11 +23,7 @@ import com.kaching123.tcr.commands.payment.cash.CashVoidCommand;
 import com.kaching123.tcr.commands.payment.other.CheckVoidCommand;
 import com.kaching123.tcr.commands.payment.other.OfflineCreditVoidCommand;
 import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneRefundCommand;
-import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorRefundCommand;
-
-
-import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -52,6 +44,11 @@ import com.telly.groundy.TaskHandler;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.ColorRes;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -234,7 +231,11 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
             Logger.d("wrong transaction PaymentStatus, ignoring");
             voidNextPAXTransaction();
             return false;
-        } else if (!PaymentGateway.PAX.equals(transaction.gateway)) {
+        } else if (   !PaymentGateway.PAX.equals(transaction.gateway)
+                   && !PaymentGateway.PAX_EBT_CASH.equals(transaction.gateway)
+                   && !PaymentGateway.PAX_EBT_FOODSTAMP.equals(transaction.gateway)
+                   && !PaymentGateway.PAX_DEBIT.equals(transaction.gateway)
+                ) {
             Logger.d("wrong transaction TransactionType, ignoring");
             voidNextPAXTransaction();
             return false;
@@ -566,7 +567,8 @@ public class VoidProcessingFragmentDialog extends StyledDialogFragment implement
                 offlineCreditTransactions.add(transaction);
             } else if(PaymentGateway.CHECK == transaction.gateway){
                 checkTransactions.add(transaction);
-            } else if(PaymentGateway.PAX == transaction.gateway || PaymentGateway.PAX_DEBIT == transaction.gateway || PaymentGateway.PAX_EBT_FOODSTAMP == transaction.gateway){
+            } else if(PaymentGateway.PAX == transaction.gateway || PaymentGateway.PAX_DEBIT == transaction.gateway
+                    || PaymentGateway.PAX_EBT_CASH == transaction.gateway || PaymentGateway.PAX_EBT_FOODSTAMP == transaction.gateway){
                 paxTransactions.add(transaction);
             }
         }
