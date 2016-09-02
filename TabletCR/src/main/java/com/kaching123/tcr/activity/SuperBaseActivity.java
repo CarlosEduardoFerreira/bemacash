@@ -143,21 +143,20 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                                     return true;
                                 }
                             },
-                            new  StyledDialogFragment.OnDialogClickListener() {
+                            new StyledDialogFragment.OnDialogClickListener() {
                                 @Override
                                 public boolean onClick() {
                                     ReleaseNoteActivity.start(SuperBaseActivity.this, getString(R.string.release_note_link));
                                     return true;
                                 }
                             },
-                            new  StyledDialogFragment.OnDialogClickListener() {
+                            new StyledDialogFragment.OnDialogClickListener() {
                                 @Override
                                 public boolean onClick() {
                                     ReleaseNoteActivity.start(SuperBaseActivity.this, getString(R.string.release_note_link));
                                     return true;
                                 }
                             }
-
 
 
                     );
@@ -330,7 +329,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
     }
 
     protected void startCheckUpdateService(boolean force) {
-        Logger.d("SuperBaseActivity startCheckUpdateService: " +getUpdateCheckTimer());
+        Logger.d("SuperBaseActivity startCheckUpdateService: " + getUpdateCheckTimer());
         Intent intent = new Intent(SuperBaseActivity.this, AutoUpdateService.class);
         intent.putExtra(AutoUpdateService.ARG_TIMER, getUpdateCheckTimer());
         intent.putExtra(AutoUpdateService.ARG_MANUAL_CHECK, force);
@@ -413,6 +412,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         checkPermissions();
         invalidateOptionsMenu();
     }
+
     public ArrayList<PaymentTransactionModel> openedTrnsactions;
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -433,64 +433,70 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.dashboard_activity_opened_transactions_warning_message), R.string.btn_yes, new StyledDialogFragment.OnDialogClickListener() {
-                    @Override
-                    public boolean onClick() {
-                        ClosePreauthBatchCommand.start(SuperBaseActivity.this, openedTrnsactions, getApp().getOperatorGuid(), new ClosePreauthBatchCommand.ClosePreauthCommandCallback() {
+                if (openedTrnsactionsCount > 0) {
+                    AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.dashboard_activity_opened_transactions_warning_message), R.string.btn_yes, new StyledDialogFragment.OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
+                            ClosePreauthBatchCommand.start(SuperBaseActivity.this, openedTrnsactions, getApp().getOperatorGuid(), new ClosePreauthBatchCommand.ClosePreauthCommandCallback() {
 
-                            @Override
-                            public void onCloseSuccess() {
-                                AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm,  new StyledDialogFragment.OnDialogClickListener() {
-                                    @Override
-                                    public boolean onClick() {
-                                        PAXBatchOutFragmentDialog.show(SuperBaseActivity.this, new PAXBatchOutFragmentDialog.IPaxBatchOutListener() {
-                                            @Override
-                                            public void onComplete(String msg) {
-                                                hide();
-                                            }
+                                @Override
+                                public void onCloseSuccess() {
+                                    AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm, new StyledDialogFragment.OnDialogClickListener() {
+                                        @Override
+                                        public boolean onClick() {
+                                            PAXBatchOutFragmentDialog.show(SuperBaseActivity.this, new PAXBatchOutFragmentDialog.IPaxBatchOutListener() {
+                                                @Override
+                                                public void onComplete(String msg) {
+                                                    hide();
+                                                }
 
-                                            @Override
-                                            public void onCancel() {
-                                                hide();
-                                            }
+                                                @Override
+                                                public void onCancel() {
+                                                    hide();
+                                                }
 
-                                            @Override
-                                            public void onRetry() {
+                                                @Override
+                                                public void onRetry() {
 
-                                            }
-                                            private void hide() {
-                                                PAXBatchOutFragmentDialog.hide(SuperBaseActivity.this);
-                                            }
-                                        }, PaxModel.get());
-                                        return true;
-                                    }
-                                }, new StyledDialogFragment.OnDialogClickListener() {
-                                    @Override
-                                    public boolean onClick() {
+                                                }
 
-                                        return true;
-                                    }
-                                }, null );
-                            }
+                                                private void hide() {
+                                                    PAXBatchOutFragmentDialog.hide(SuperBaseActivity.this);
+                                                }
+                                            }, PaxModel.get());
+                                            return true;
+                                        }
+                                    }, new StyledDialogFragment.OnDialogClickListener() {
+                                        @Override
+                                        public boolean onClick() {
 
-                            @Override
-                            public void onCloseFailure() {
+                                            return true;
+                                        }
+                                    }, null);
+                                }
+
+                                @Override
+                                public void onCloseFailure() {
 //                                WaitDialogFragment.hide(SuperBaseActivity.this);
-                            }
-                        });
-                        return true;
-                    }
-                }, new StyledDialogFragment.OnDialogClickListener() {
-                    @Override
-                    public boolean onClick() {
+                                }
+                            });
+                            return true;
+                        }
+                    }, new StyledDialogFragment.OnDialogClickListener() {
+                        @Override
+                        public boolean onClick() {
 //                        WaitDialogFragment.hide(SuperBaseActivity.this);
-                        return true;
-                    }
-                }, null);
+                            return true;
+                        }
+                    }, null);
+                } else {
+                    AlertDialogFragment.showAlert(SuperBaseActivity.this, R.string.batch_close_title, getString(R.string.batch_close_msg));
+                }
 
                 return true;
             }
         });
+
         if (getApp().hasPrevOperator()) {
             MenuItem tempLoginItem = menu.add(Menu.NONE, Menu.NONE, getResources().getInteger(R.integer.menu_order_first), null);
             tempLoginItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -499,10 +505,10 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    protected boolean isInSettingPage()
-    {
+    protected boolean isInSettingPage() {
         return false;
     }
+
     private void checkPermissions() {
         if (!validatePermissions()) {
             PermissionFragment.showRedirecting(this, getOnTempLoginCompleteListener(), getPermissionsArray());
@@ -601,6 +607,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
             return false;
         }
     }
+
     protected SuperBaseActivity self() {
         return this;
     }
