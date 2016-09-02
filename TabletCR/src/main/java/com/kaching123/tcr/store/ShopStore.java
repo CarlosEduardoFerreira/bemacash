@@ -2384,6 +2384,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String DISCOUNT = "discount";
+
+        @Column(type = Type.INTEGER)
+        String IS_ACTIVE = "is_active";
     }
     static {
         applyForeignKeys(MultipleDiscountTable.TABLE_NAME,

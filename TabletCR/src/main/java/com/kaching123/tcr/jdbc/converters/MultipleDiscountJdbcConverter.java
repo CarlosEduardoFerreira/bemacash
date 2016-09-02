@@ -19,6 +19,7 @@ public class MultipleDiscountJdbcConverter extends JdbcConverter<MultipleDiscoun
     private static final String ITEM_ID = "ITEM_ID";
     private static final String QTY = "QTY";
     private static final String DISCOUNT = "DISCOUNT";
+    private static final String STATUS = "STATUS";
 
     @Override
     public MultipleDiscountModel toValues(JdbcJSONObject rs) throws JSONException {
@@ -27,7 +28,8 @@ public class MultipleDiscountJdbcConverter extends JdbcConverter<MultipleDiscoun
                 rs.getString(BUNDLE_ID),
                 rs.getString(ITEM_ID),
                 rs.getBigDecimal(QTY, 3),
-                rs.getBigDecimal(DISCOUNT)
+                rs.getBigDecimal(DISCOUNT),
+                "ACTIVE".equals(rs.getString(STATUS))
         );
     }
 

@@ -83,6 +83,7 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
 
     private static List<DiscountBundle> loadDiscountBundles(Context context) {
         Cursor c = ProviderAction.query(ShopProvider.contentUri(MultipleDiscountTable.URI_CONTENT))
+                .where(MultipleDiscountTable.IS_ACTIVE + " = ?", 1)
                 .orderBy(MultipleDiscountTable.BUNDLE_ID)
                 .perform(context);
 
