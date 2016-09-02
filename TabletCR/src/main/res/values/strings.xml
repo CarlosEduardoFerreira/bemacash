@@ -396,8 +396,7 @@
     <string name="blackstone_pay_remaining_balance">Remaining Balance</string>
     <string name="blackstone_pay_pending_amount">Pending amount:</string>
     <string name="blackstone_pay_charge">Change:</string>
-    <string name="blackstone_change_charge_finish">Change: %s</string>
-    <string name="blackstone_gift_card_charge_finish">Gift Card Balance: %s</string>
+    <string name="blackstone_pay_charge_finish">Gift Card Balance: %s</string>
     <string name="blackstone_pay_required_amount">Required amount:</string>
     <string name="blackstone_pay_received_cash">Received cash:</string>
     <string name="blackstone_pay_transaction_constructor" formatted="false">%s payment</string>
@@ -630,7 +629,7 @@
     <string name="dashboard_activity_drops_and_payouts_button_label_short">Drops/Payouts</string>
     <string name="dashboard_activity_xreport_button_label">X Report</string>
     <string name="dashboard_activity_opened_transactions_warning_title">Open credit card transactions</string>
-    <string name="dashboard_activity_opened_transactions_warning_message">There are open credit card transactions awaiting tip authorization.  Do you want to close them?</string>
+    <string name="dashboard_activity_opened_transactions_warning_message">All open credit card transaction tip amounts will be set to $0.00.</string>
     <string name="dashboard_action_activation">Activation Center</string>
     <string name="dashboard_action_options">Settings</string>
     <string name="dashboard_action_logout">Logout</string>
@@ -1210,7 +1209,7 @@
     <string-array name="item_tabs">
         <item>Price</item>
         <item>Additional Information</item>
-        <item>Printer</item>
+        <item>Printer/KDS</item>
         <item>Special Pricing</item>
         <item>Monitoring</item>
         <item>Variants</item>
@@ -1372,7 +1371,7 @@
     <string name="printer_delete_dialog_title">Delete printer</string>
     <string name="printer_delete_dialog_msg">Are you sure you want to delete printer?</string>
     <string name="pax_delete_dialog_title">Delete Pax pinpad</string>
-    <string name="batch_close_dialog_msg">All open credit card transaction tip amounts will be set to $0.00.  Are you sure you want to continue?</string>
+    <string name="batch_close_dialog_msg">Are you sure you want to continue?</string>
     <string name="batch_close_dialog_waiting_msg">Waiting for Batch close</string>
     <string name="batch_close_dialog_title">Batch Close</string>
     <string name="open_credit_and_transactions_dialog_title">Open credit card transactions</string>
@@ -2015,6 +2014,11 @@
     <string name="detailed_report_filter">Report Filter</string>
     <string name="detailed_report_filter_from">From:</string>
     <string name="detailed_report_filter_to">To:</string>
+
+
+    <string name="sale_composer_without_composition">Sale items without composition</string>
+    <string name="sale_composer_without_composition_desc">Following items have no enough composition qty.</string>
+    <string name="sale_composer_without_composition_row" formatted="false">%s, Need: %s, Available: %s\n</string>
 
 
 
