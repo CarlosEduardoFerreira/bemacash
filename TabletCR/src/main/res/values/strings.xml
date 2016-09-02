@@ -2026,4 +2026,7 @@
     <string name="pay_tender_wrong_amount_title">Wrong value entered</string>
     <string name="pay_tender_zero_amount_error_message">Please enter an amount\nbefore selecting the payment type</string>
     <string name="button_gift">Gift Card</string>
+
+    <string name="batch_close_title">Batch Close</string>
+    <string name="batch_close_msg">There is no transaction need to be batch closed</string>
 </resources>
