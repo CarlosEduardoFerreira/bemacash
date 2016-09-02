@@ -109,7 +109,9 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
                 false,
                 true,
                 false,
-                null, false);
+                null,
+                false,
+                null);
 
         return succeeded().add(EXTRA_ORDER_GUID, orderModel.guid).add(EXTRA_PREPAID_ORDER_ID, prepaidOrderId);
     }

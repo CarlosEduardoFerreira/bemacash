@@ -147,7 +147,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 final SaleOrderItemViewModel model = adapter.getItem(pos);
                 if (model.isPrepaidItem || model.isGiftCard)
                     return;
-                if (model.itemModel.isMultipleDiscount){
+                if (model.itemModel.discountBundleId != null){
                     Toast.makeText(getActivity(), R.string.cashier_msg_error_changing_qty_multiple_discount, Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -227,7 +227,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                     return;
                 }
 
-                if (adapter.getItem(pos).itemModel.isMultipleDiscount){
+                if (adapter.getItem(pos).itemModel.discountBundleId != null){
                     Toast.makeText(getActivity(), R.string.cashier_msg_error_changing_discount_multiple_discount, Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -240,7 +240,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                         public void onConfirm(BigDecimal value, DiscountType type) {
                             highlightedColumn(saleItemGuid, Type.DISCOUNT);
 
-                            DiscountSaleOrderItemCommand.start(getActivity(), saleItemGuid, value, type, false, discountSaleOrderItemCallback);
+                            DiscountSaleOrderItemCommand.start(getActivity(), saleItemGuid, value, type, null, discountSaleOrderItemCallback);
                         }
                     });
                 } else {

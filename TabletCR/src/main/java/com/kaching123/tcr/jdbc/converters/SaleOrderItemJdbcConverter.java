@@ -47,6 +47,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     private static final String IS_GIFT_CARD = "IS_GIFT_CARD";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
     private static final String POINTS_FOR_DOLLAR_AMOUNT = "POINTS_FOR_DOLLAR_AMOUNT";
+    private static final String DISCOUNT_BUNDLE_ID = "MULTIPLE_DISCOUNT_ID";
 
     @Override
     public SaleOrderItemModel toValues(JdbcJSONObject rs) throws JSONException {
@@ -75,7 +76,8 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(HAS_NOTES),
                 rs.getBoolean(IS_PREPAID_ITEM),
                 rs.getBoolean(IS_GIFT_CARD),
-                rs.getBigDecimal(LOYALTY_POINTS), rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT));
+                rs.getBigDecimal(LOYALTY_POINTS), rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT),
+                rs.getString(DISCOUNT_BUNDLE_ID));
     }
 
     @Override
@@ -121,6 +123,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(IS_GIFT_CARD, model.isGiftCard)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
                 .add(POINTS_FOR_DOLLAR_AMOUNT, model.pointsForDollarAmount)
+                .add(DISCOUNT_BUNDLE_ID, model.discountBundleId)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -176,7 +179,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
         return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
                 .add(DISCOUNT, model.discount)
                 .add(DISCOUNT_TYPE, model.discountType)
-                .add(IS_MULTIPLE_DISCOUNT, model.isMultipleDiscount)
+                .add(DISCOUNT_BUNDLE_ID, model.discountBundleId)
 
                 .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
                 .add(FINAL_TAX, model.finalTax)

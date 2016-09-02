@@ -69,7 +69,7 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
                     sql.add(splitResult.getSqlCmd());
                 }
             }
-            SyncResult discountResult = discountCmd.syncDependent(getContext(), saleItemId, itemInfo.discount, DiscountType.PERCENT, true, getAppCommandContext());
+            SyncResult discountResult = discountCmd.syncDependent(getContext(), saleItemId, itemInfo.discount, DiscountType.PERCENT, winner.id, getAppCommandContext());
             if (discountResult == null){
                 return failed();
             }else{
@@ -95,7 +95,7 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
     private static List<SaleOrderItemModel> loadItems(Context context, String orderId){
         return ProviderAction.query(ShopProvider.contentUri(SaleItemTable.URI_CONTENT))
                 .where(SaleItemTable.ORDER_GUID + " = ?", orderId)
-                .where(SaleItemTable.IS_MULTIPLE_DISCOUNT + " = ?", 0)
+                .where(SaleItemTable.DISCOUNT_BUNDLE_ID + " IS NULL")
                 .perform(context)
                 .toFluentIterable(new SaleOrderItemFunction()).toImmutableList();
     }

@@ -1,6 +1,5 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import com.kaching123.tcr.jdbc.converters.JdbcConverter;
 import com.kaching123.tcr.model.MultipleDiscountModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -13,7 +12,7 @@ import org.json.JSONException;
  */
 public class MultipleDiscountJdbcConverter extends JdbcConverter<MultipleDiscountModel> {
 
-    private static final String TABLE_NAME = "MULTIPLE_DISCOUNT_ITEM";
+    private static final String TABLE_NAME = "MULTIPLE_DISCOUNT_ITEM_VIEW";
 
     private static final String ID = "ID";
     private static final String BUNDLE_ID = "MULTIPLE_DISCOUNT_ID";

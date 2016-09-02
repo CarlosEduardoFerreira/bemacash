@@ -884,6 +884,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String POINTS_FOR_DOLLAR_AMOUNT = "points_for_dollar_amount";
+
+        @Column(type = Column.Type.TEXT)
+        String DISCOUNT_BUNDLE_ID = "discount_bundle_id";
     }
 
     static {
