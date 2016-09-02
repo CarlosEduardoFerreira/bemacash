@@ -124,13 +124,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 tryProceed(PaymentMethod.CASH);
             }
         });
-     /*   btnPaxEbtCash.setVisibility(View.VISIBLE);
-        btnPaxEbtCash.setEnabled(true);
-
-        btnCard.setVisibility(View.VISIBLE);
-        btnCard.setEnabled(true);*/
-
-    }
+ }
 
     private void setTenderButtonsVisibilityWithServerSettings() {
         btnGiftCard.setVisibility(getApp().isGiftCardEnabled() ? View.VISIBLE : View.GONE);
@@ -182,7 +176,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
 
         if (listener != null && String.valueOf(charge.getText()).length() > 0) {
-          BigDecimal total =  /*method.equals(PaymentMethod.PAX_EBT_FOODSTAMP)|| method.equals(PaymentMethod.PAX_EBT_CASH) ? orderEbtTotal :*/orderTotal;
+          BigDecimal total = orderTotal;
             listener.onUnitedPaymentAmountSelected(method, total, getDecimalValue());
             return true;
         }
@@ -254,6 +248,10 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setCancelable(false);
+        getDialog().getWindow().setLayout(
+                getResources().getDimensionPixelOffset(R.dimen.pay_tender_dialog_width_large),
+                getResources().getDimensionPixelOffset(R.dimen.pay_tender_dialog_height_3_large)
+        );
     }
 
     @Override
@@ -404,8 +402,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     protected void enable(final boolean on) {
         super.enable(on);
-        btnOfflineCredit.setEnabled(on);
-        btnCheck.setEnabled(on);
         setTenderButtonsVisibilityWithServerSettings();
     }
 
@@ -464,12 +460,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     public static void hide(FragmentActivity activity) {
         DialogUtil.hide(activity, DIALOG_NAME);
-    }
-
-    private void addValue(Integer value) {
-        BigDecimal bigDecimal = new BigDecimal(value);
-        BigDecimal current = getDecimalValue();
-        setValue(current == null ? bigDecimal : current.add(bigDecimal));
     }
 
     private void setValue(BigDecimal value) {

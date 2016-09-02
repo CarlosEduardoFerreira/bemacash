@@ -28,7 +28,6 @@
         style="@style/keyboard"
         android:id="@+id/num_dot"
         android:layout_marginTop="1px"
-        android:layout_marginLeft="1px"
         android:background="@drawable/numdot" />
 
     <ImageButton
@@ -55,6 +54,7 @@
         style="@style/keyboard"
         android:id="@+id/num0"
         android:layout_marginTop="1px"
+        android:layout_marginLeft="1px"
         android:background="@drawable/num0" />
 
     <ImageButton
