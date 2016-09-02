@@ -396,6 +396,8 @@
     <string name="blackstone_pay_remaining_balance">Remaining Balance</string>
     <string name="blackstone_pay_pending_amount">Pending amount:</string>
     <string name="blackstone_pay_charge">Change:</string>
+    <string name="blackstone_change_charge_finish">Change: %s</string>
+    <string name="blackstone_gift_card_charge_finish">Gift Card Balance: %s</string>
     <string name="blackstone_pay_charge_finish">Gift Card Balance: %s</string>
     <string name="blackstone_pay_required_amount">Required amount:</string>
     <string name="blackstone_pay_received_cash">Received cash:</string>
@@ -2019,6 +2021,7 @@
     <string name="sale_composer_without_composition">Sale items without composition</string>
     <string name="sale_composer_without_composition_desc">Following items have no enough composition qty.</string>
     <string name="sale_composer_without_composition_row" formatted="false">%s, Need: %s, Available: %s\n</string>
+    <string name="button_override">Override</string>
 
 
 
@@ -2033,4 +2036,5 @@
 
     <string name="batch_close_title">Batch Close</string>
     <string name="batch_close_msg">There is no transaction need to be batch closed</string>
+
 </resources>
