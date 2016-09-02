@@ -346,6 +346,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     }
 
     public void cleanAll(){
+        TcrApplication.get().clearIgnorComposerItems();
         qtyBefore.clear();
         qtyChanged = false;
         ignorReculc = false;
