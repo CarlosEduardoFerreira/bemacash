@@ -131,6 +131,9 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
             showQuantity(minimumQty, model.minimumQty, model.isPcsUnit());
             showQuantity(recommendedQty, model.recommendedQty, model.isPcsUnit());
         }else{
+            getModel().availableQty = BigDecimal.ZERO;
+            getModel().minimumQty = BigDecimal.ZERO;
+            getModel().recommendedQty = BigDecimal.ZERO;
             availableQty.setText(null);
             minimumQty.setText(null);
             recommendedQty.setText(null);
