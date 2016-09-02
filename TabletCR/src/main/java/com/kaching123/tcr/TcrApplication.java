@@ -113,7 +113,7 @@ public class TcrApplication extends MultiDexApplication {
     private HashSet<String> salesmanGuids = new HashSet<String>();
     private BarcodePrefixes barcodePrefixes;
     private HashMap<Broker, BigDecimal> prepaidTaxes;
-    private ArrayList<String> ignoringCompositionItems = new ArrayList<>();
+    private Set<String> ignoringCompositionItems = new HashSet<>();
 
     private RestAdapter restAdapter;
     private RestAdapter restAdapterJsonOrg;
@@ -402,12 +402,12 @@ public class TcrApplication extends MultiDexApplication {
         return operator == null ? null : operator.login;
     }
 
-    public synchronized ArrayList<String> getIgnorComposerList(){
+    public synchronized Set<String> getIgnorComposerList(){
         return ignoringCompositionItems;
     }
 
-    public synchronized void addIgnorComposerItem(String itemGuid){
-        ignoringCompositionItems.add(itemGuid);
+    public synchronized void addIgnorComposerItem(Set<String> itemsGuid){
+        ignoringCompositionItems.addAll(itemsGuid);
     }
 
     public synchronized void clearIgnorComposerItems(){

@@ -2156,6 +2156,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
+                        orderItemListFragment.cleanAll();
                         PrintOrderToKdsCommand.start(BaseCashierActivity.this, orderGuid, true, null);
                         RemoveSaleOrderCommand.start(BaseCashierActivity.this, BaseCashierActivity.this, BaseCashierActivity.this.orderGuid);
                         return true;
@@ -2180,7 +2181,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected void completeOrder() {
         if (TextUtils.isEmpty(this.orderGuid))
             return;
-
+        orderItemListFragment.cleanAll();
         setCountZero();
         updateItemCountMsg();
         setupNewOrder();
@@ -2791,6 +2792,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             if (isFinishing() || isDestroyed())
                 return;
             startCommand(new DisplayWelcomeMessageCommand());
+            orderItemListFragment.cleanAll();
         }
     };
 

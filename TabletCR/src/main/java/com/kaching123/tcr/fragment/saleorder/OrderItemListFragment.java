@@ -26,6 +26,7 @@ import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
+import com.kaching123.tcr.commands.store.saleorder.CheckIsItemComposerCommand;
 import com.kaching123.tcr.commands.store.saleorder.CompositionItemsCalculationCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand.BaseDiscountSaleOrderItemCallback;
@@ -66,8 +67,10 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -85,6 +88,11 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     private boolean firstLoad;
 
     private boolean isCreateReturnOrder;
+
+    private HashMap<String, BigDecimal> qtyBefore = new HashMap<>();
+    private boolean qtyChanged;
+    private boolean ignorReculc;
+    private int tmpListSize;
 
     @ViewById
     protected EditText usbScannerInput;
@@ -163,14 +171,14 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             }
 
             @Override
-            public void onQtyClicked(final View v, final int pos) { //todo check
+            public void onQtyClicked(final View v, final int pos) {
                 final SaleOrderItemViewModel model = adapter.getItem(pos);
                 if (model.isPrepaidItem || model.isGiftCard)
                     return;
                 if (!model.isSerializable) {
                     final String saleItemGuid = adapter.getSaleItemGuid(pos);
                     if (model.itemModel.priceType == PriceType.UNIT_PRICE) {
-                        if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) { //todo save old value
+                        if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) {
                             QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
                                 @Override
                                 public void onConfirm(BigDecimal value) {
@@ -337,6 +345,13 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         );
     }
 
+    public void cleanAll(){
+        qtyBefore.clear();
+        qtyChanged = false;
+        ignorReculc = false;
+        tmpListSize = 0;
+    }
+
     private void doRemoceClickLine() {
         getListView().closeOpenedItems();
         itemsListHandler.onTotolQtyUpdated(getRemoveQty(adapter.getSaleItemGuid(position)), true, null);
@@ -372,7 +387,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     public void doRemoceClickLine(String guid) {
         getListView().closeOpenedItems();
-
         if (adapter.getCount() == 1) {
             if (itemsListHandler != null) {
                 itemsListHandler.onRemoveLastItem();
@@ -437,6 +451,89 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         return (SwipeListView) super.getListView();
     }
 
+    private void checkAddedItemsOnComposerEnoughQty(final List<SaleOrderItemViewModel> list){
+        CompositionItemsCalculationCommand.start(getContext(), orderGuid, new CompositionItemsCalculationCommand.CompositionItemsCalculationCommandCallback() {
+            @Override
+            protected void onSuccess(HashMap<String, List<CompositionItemsCalculationCommand.CantSaleComposerModel>> itemsCantBeSold) {
+                if (!itemsCantBeSold.isEmpty()) {
+                    ComposerOverrideQtyDialog.show(getActivity(), itemsCantBeSold, list, new ComposerOverrideQtyDialog.DialogButtonListener() {
+                        @Override
+                        public void onCancelButtonPress(Set<String> listItems) {
+
+                            HashSet<String> saleOrderItemViewGuids = new HashSet<>();
+                            for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+                                if (listItems.contains(saleOrderItemViewModel.itemModel.itemGuid)) {
+                                    saleOrderItemViewGuids.add(saleOrderItemViewModel.getSaleItemGuid());
+                                }
+                            }
+
+                            if (!saleOrderItemViewGuids.isEmpty()) {
+                                for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+                                    if (saleOrderItemViewGuids.contains(saleOrderItemViewModel.getSaleItemGuid())) {
+                                        if (qtyChanged) {
+                                            BigDecimal qty = qtyBefore.get(saleOrderItemViewModel.getSaleItemGuid());
+                                            UpdateQtySaleOrderItemCommand.start(getActivity(), saleOrderItemViewModel.getSaleItemGuid(), qty != null ? qty : BigDecimal.ONE, updateQtySaleOrderItemCallback);
+                                        } else {
+                                            doRemoceClickLine(saleOrderItemViewModel.getSaleItemGuid());
+                                            qtyBefore.remove(saleOrderItemViewModel.getSaleItemGuid());
+                                        }
+                                    }
+                                }
+                            }
+                            qtyChanged = false;
+                            ignorReculc = true;
+                        }
+
+                        @Override
+                        public void onOverrideButtonPress(Set<String> listItems) {
+                            TcrApplication.get().addIgnorComposerItem(listItems);
+                            refreshOldQty(list);
+                            qtyChanged = false;
+                        }
+                    });
+                } else {
+                    refreshOldQty(list);
+                }
+            }
+        });
+    }
+    private void checkIsNewItemComposer(final List<SaleOrderItemViewModel> list, boolean changedQty){ // if changedPrice == true check which price changed
+        String guidToCheck = null;
+        if(changedQty){
+            for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+                if(saleOrderItemViewModel.itemModel.qty.compareTo(qtyBefore.get(saleOrderItemViewModel.getSaleItemGuid())) != 0){
+                    guidToCheck = saleOrderItemViewModel.itemModel.itemGuid;
+                    break;
+                }
+            }
+        } else {
+            long maxSequence = 0;
+            for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+                if(saleOrderItemViewModel.itemModel.sequence > maxSequence){
+                    maxSequence = saleOrderItemViewModel.itemModel.sequence;
+                    guidToCheck = saleOrderItemViewModel.itemModel.itemGuid;
+                }
+            }
+        }
+        CheckIsItemComposerCommand.start(getContext(), guidToCheck, new CheckIsItemComposerCommand.IsItemComposerCommandCallback() {
+            @Override
+            protected void onSuccess(boolean isItemComposer) {
+                if (isItemComposer) {
+                    checkAddedItemsOnComposerEnoughQty(list);
+                } else {
+                    refreshOldQty(list);
+                }
+            }
+        });
+    }
+
+    private void refreshOldQty(final List<SaleOrderItemViewModel> list){
+        qtyBefore.clear();
+        for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+            qtyBefore.put(saleOrderItemViewModel.getSaleItemGuid(), saleOrderItemViewModel.itemModel.qty);
+        }
+    }
+
     @Override
     public Loader<List<SaleOrderItemViewModel>> onCreateLoader(int loaderId, Bundle args) {
         return SaleOrderItemViewModelWrapFunction.createLoader(getActivity(), orderGuid);
@@ -444,15 +541,22 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, final List<SaleOrderItemViewModel> list) {
-        CompositionItemsCalculationCommand.start(getContext(), orderGuid, new CompositionItemsCalculationCommand.CompositionItemsCalculationCommandCallback() {
-            @Override
-            protected void onSuccess(HashMap<String, List<CompositionItemsCalculationCommand.CantSaleComposerModel>> itemsCantBeSold) {
-                if(!itemsCantBeSold.isEmpty()){
-                    ComposerOverrideQtyDialog.showCancelable(getActivity(), dialogNegativeButtonListener, itemsCantBeSold, list);
-                    //show popup work with app.addIgnorComposerItem and app.clearIgnorComposerItems
+        qtyChanged = false;
+        if(!ignorReculc) {
+            if ((list.size() - tmpListSize) == 1) {
+                checkIsNewItemComposer(list, qtyChanged);
+            } else if (!list.isEmpty() && list.size() == tmpListSize) {
+                qtyChanged = true;
+                checkIsNewItemComposer(list, qtyChanged);
+            } else {
+                if (!list.isEmpty()) {
+                    checkAddedItemsOnComposerEnoughQty(list);
                 }
             }
-        });
+        } else {
+            ignorReculc = false;
+        }
+        tmpListSize = list.size();
 
         itemsListHandler.onTotolQtyUpdated(getCount(list), false, null);
         Collections.sort(list, SaleOrderItemViewModel.filterOrderItem);
@@ -473,13 +577,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 itemsListHandler.onOrderLoaded(getLastItem());
         }
     }
-
-    ComposerOverrideQtyDialog.NegativeButtonListener dialogNegativeButtonListener = new ComposerOverrideQtyDialog.NegativeButtonListener() {
-        @Override
-        public void onNegativeButtonPress() {
-
-        }
-    };
 
     private String getCount(List<SaleOrderItemViewModel> list) {
         BigDecimal count = BigDecimal.ZERO;

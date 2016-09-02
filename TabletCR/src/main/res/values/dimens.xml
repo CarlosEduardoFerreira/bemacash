@@ -211,4 +211,6 @@
 
     <dimen name="detailed_filter_dialog_width">690dp</dimen>
 
+    <dimen name="compos_override_qty_dialog_width">400dp</dimen>
+
 </resources>

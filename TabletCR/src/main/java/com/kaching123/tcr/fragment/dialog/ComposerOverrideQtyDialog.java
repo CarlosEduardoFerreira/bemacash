@@ -1,10 +1,19 @@
 package com.kaching123.tcr.fragment.dialog;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CursorAdapter;
+import android.widget.ProgressBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
@@ -18,6 +27,7 @@ import org.androidannotations.annotations.ViewById;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by mboychenko on 01.09.2016.
@@ -29,30 +39,35 @@ public class ComposerOverrideQtyDialog extends StyledDialogFragment implements L
 
     private HashMap<String, List<CantSaleComposerModel>> cantSaleCompositions;
     private List<SaleOrderItemViewModel> saleOrderItemViewModelList;
-    private NegativeButtonListener listener;
+    private DialogButtonListener listener;
 
     @ViewById
-    TextView textContent;
+    TableLayout tableLayoutId;
+    @ViewById
+    ProgressBar progress;
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getDialog().getWindow()
+                .setLayout(getResources().getDimensionPixelOffset(R.dimen.compos_override_qty_dialog_width),
+                        getDialog().getWindow().getAttributes().height);
+    }
+
+    @AfterViews
+    protected void init(){
+        progress.setVisibility(View.VISIBLE);
+        tableLayoutId.removeAllViews();
+        getPositiveButton().setEnabled(false);
+        getNegativeButton().setEnabled(false);
+        getLoaderManager().initLoader(0, null, this).forceLoad();
+    }
+
 
     @Override
     protected int getDialogContentLayout() {
         return R.layout.composer_override_qty_fragment;
-    }
-
-    @AfterViews
-    protected void initView(){
-        for (Map.Entry<String, List<CantSaleComposerModel>> cantSaleComposition : cantSaleCompositions.entrySet()) {
-            for (SaleOrderItemViewModel viewItem : saleOrderItemViewModelList) {
-                if(viewItem.itemModel.itemGuid.equals(cantSaleComposition.getKey())){
-                    for (CantSaleComposerModel composer : cantSaleComposition.getValue()) {
-                        composer.composerHostName = viewItem.description;
-                    }
-                }
-            }
-        }
-
-        textContent.setText("Following items have no enough composition qty. \n " +
-                            "Sale this items without composition? \n");
     }
 
     @Override
@@ -72,7 +87,13 @@ public class ComposerOverrideQtyDialog extends StyledDialogFragment implements L
 
     @Override
     protected OnDialogClickListener getPositiveButtonListener() {
-        return null;
+        return new OnDialogClickListener() {
+            @Override
+            public boolean onClick() {
+                listener.onOverrideButtonPress(cantSaleCompositions.keySet());
+                return true;
+            }
+        };
     }
 
     @Override
@@ -80,28 +101,39 @@ public class ComposerOverrideQtyDialog extends StyledDialogFragment implements L
         return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
-                listener.onNegativeButtonPress();
+                listener.onCancelButtonPress(cantSaleCompositions.keySet());
                 return true;
             }
         };
     }
 
-    public static void showCancelable(FragmentActivity activity, NegativeButtonListener onNegativeButtonPressListener, HashMap<String, List<CantSaleComposerModel>> itemsCantBeSold, List<SaleOrderItemViewModel> list) {
+    public static void show(FragmentActivity activity, HashMap<String, List<CantSaleComposerModel>> itemsCantBeSold,
+                                       List<SaleOrderItemViewModel> list, DialogButtonListener onNegativeButtonPressListener) {
         ComposerOverrideQtyDialog fragment = ComposerOverrideQtyDialog_.builder().build();
+        fragment.setCancelable(false);
         fragment.cantSaleCompositions = itemsCantBeSold;
         fragment.saleOrderItemViewModelList = list;
         DialogUtil.show(activity, DIALOG_NAME, fragment).setListener(onNegativeButtonPressListener);
     }
 
-    public void setListener(NegativeButtonListener listener){
+    public void setListener(DialogButtonListener listener){
         this.listener = listener;
     }
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        return new AsyncTaskLoader(getContext()) {
+        return new AsyncTaskLoader(getActivity()) {
             @Override
             public Object loadInBackground() {
+                for (Map.Entry<String, List<CantSaleComposerModel>> cantSaleComposition : cantSaleCompositions.entrySet()) {
+                    for (SaleOrderItemViewModel viewItem : saleOrderItemViewModelList) {
+                        if(viewItem.itemModel.itemGuid.equals(cantSaleComposition.getKey())){
+                            for (CantSaleComposerModel composer : cantSaleComposition.getValue()) {
+                                composer.composerHostName = viewItem.description;
+                            }
+                        }
+                    }
+                }
                 return null;
             }
         };
@@ -109,15 +141,29 @@ public class ComposerOverrideQtyDialog extends StyledDialogFragment implements L
 
     @Override
     public void onLoadFinished(Loader loader, Object data) {
-
+        progress.setVisibility(View.GONE);
+        getPositiveButton().setEnabled(true);
+        getNegativeButton().setEnabled(true);
+        for (List<CantSaleComposerModel> cantSaleComposerModels : cantSaleCompositions.values()) {
+            StringBuilder builder = new StringBuilder();
+            if(!cantSaleComposerModels.isEmpty()) {
+                TableRow view = (TableRow)layoutInflater.inflate(R.layout.composer_cant_sale_table_row, tableLayoutId, false);
+                ((TextView)view.findViewById(R.id.parent_column_id)).setText(cantSaleComposerModels.get(0).composerHostName + ":");
+                for (CantSaleComposerModel cantSaleComposerModel : cantSaleComposerModels) {
+                    builder.append(getString(R.string.sale_composer_without_composition_row, cantSaleComposerModel.composerChildName, cantSaleComposerModel.totalNeededQty, cantSaleComposerModel.availableSourceItemQty));
+                }
+                ((TextView)view.findViewById(R.id.childs_column_id)).setText(builder.toString());
+                tableLayoutId.addView(view);
+            }
+        }
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
-
     }
 
-    public interface NegativeButtonListener{
-        void onNegativeButtonPress();
+    public interface DialogButtonListener{
+        void onCancelButtonPress(Set<String> listItems);
+        void onOverrideButtonPress(Set<String> listItems);
     }
 }

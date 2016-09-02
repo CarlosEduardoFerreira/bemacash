@@ -2007,5 +2007,8 @@
     <string name="detailed_report_filter_to">To:</string>
 
 
-    <string name="sale_composer_without_composition">Sale composer without composition</string>
+    <string name="sale_composer_without_composition">Sale items without composition</string>
+    <string name="sale_composer_without_composition_desc">Following items have no enough composition qty.</string>
+    <string name="sale_composer_without_composition_row" formatted="false">%s, Need: %s, Available: %s\n</string>
+
 </resources>

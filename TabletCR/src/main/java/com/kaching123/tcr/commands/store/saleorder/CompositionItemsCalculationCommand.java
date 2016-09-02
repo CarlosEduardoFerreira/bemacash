@@ -60,7 +60,7 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
             guids.add(item.itemGuid);
         }
 
-        ArrayList<String> ignoringItems = TcrApplication.get().getIgnorComposerList();                      //check if this item can be sold without child composition
+        Set<String> ignoringItems = TcrApplication.get().getIgnorComposerList();                      //check if this item can be sold without child composition
         for (Iterator<String> iterator = guids.iterator(); iterator.hasNext(); ) {
             if(ignoringItems.contains(iterator.next())){
                 iterator.remove();
@@ -165,7 +165,7 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
         }
 
         if(itemCursor != null)
-        itemCursor.close();
+            itemCursor.close();
 
         return succeeded().add(PARAM_SALE_ITEM_GUID, itemCantBeSoldInfoList);
     }
