@@ -2019,7 +2019,7 @@
 
 
     <string name="sale_composer_without_composition">Sale items without composition</string>
-    <string name="sale_composer_without_composition_desc">Following items have no enough composition qty.</string>
+    <string name="sale_composer_without_composition_desc">Following items have not enough composition quantity.</string>
     <string name="sale_composer_without_composition_row" formatted="false">%s, Need: %s, Available: %s\n</string>
     <string name="button_override">Override</string>
 
