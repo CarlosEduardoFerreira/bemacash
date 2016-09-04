@@ -1268,6 +1268,7 @@
     <string name="report_returned_items_header_total">Total</string>
     <string name="reports_sold_order_header_date">Sale Date</string>
     <string name="reports_sold_order_header_register">Register Number</string>
+    <string name="reports_sold_order_header_employee">Cashier</string>
     <string name="reports_sold_order_header_price">Total Price</string>
     <string name="reports_sold_order_header_discount">Discount</string>
     <string name="reports_sold_order_header_tax">Tax</string>

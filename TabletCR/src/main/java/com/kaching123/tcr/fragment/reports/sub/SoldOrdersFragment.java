@@ -143,6 +143,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
             v.setTag(new UiHolder(
                     (TextView) v.findViewById(R.id.date),
                     (TextView) v.findViewById(R.id.register_id),
+                    (TextView) v.findViewById(R.id.cashier),
                     (TextView) v.findViewById(R.id.total_price),
                     (TextView) v.findViewById(R.id.discount),
                     (TextView) v.findViewById(R.id.tax),
@@ -156,6 +157,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
             UiHolder holder = (UiHolder) view.getTag();
             holder.date.setText(DateUtils.formatFull(item.createTime));
             holder.registerId.setText(item.registerTitle);
+            holder.cashier.setText(item.operatorName);
 
             showPrice(holder.totalPrice, item.tmpTotalPrice.add(item.tmpTotalDiscount).subtract(item.tmpTotalTax));
             showPrice(holder.tax, item.tmpTotalTax);
@@ -168,14 +170,16 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
     private static class UiHolder {
         private TextView date;
         private TextView registerId;
+        private TextView cashier;
         private TextView totalPrice;
         private TextView discount;
         private TextView tax;
         private TextView total;
 
-        private UiHolder(TextView date, TextView registerId, TextView totalPrice, TextView discount, TextView tax, TextView total) {
+        private UiHolder(TextView date, TextView registerId, TextView cashier, TextView totalPrice, TextView discount, TextView tax, TextView total) {
             this.date = date;
             this.registerId = registerId;
+            this.cashier = cashier;
             this.totalPrice = totalPrice;
             this.discount = discount;
             this.tax = tax;
