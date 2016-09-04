@@ -26,8 +26,6 @@ import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
-import com.kaching123.tcr.commands.store.saleorder.CheckIsItemComposerCommand;
-import com.kaching123.tcr.commands.store.saleorder.CompositionItemsCalculationCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand.BaseDiscountSaleOrderItemCallback;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
@@ -37,7 +35,6 @@ import com.kaching123.tcr.commands.store.saleorder.UpdatePriceSaleOrderItemComma
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand.BaseUpdateQtySaleOrderItemCallback;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
-import com.kaching123.tcr.fragment.dialog.ComposerOverrideQtyDialog;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.edit.NotesEditFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment;
@@ -67,10 +64,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -98,8 +92,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     protected EditText usbScannerInput;
 
     private static final Uri ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
-    //    private ItemPrintInfoLoader checkItemPrintStatusLoader = new ItemPrintInfoLoader();
-    private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 0;
     private int position;
 
     @AfterTextChange
@@ -108,7 +100,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         boolean hasNewline = s.toString().contains(newline);
         if (hasNewline) {
             Logger.d("OrderItemListFragment usbScannerInputAfterTextChanged hasNewline: " + s.toString());
-//            Toast.makeText(getActivity(), s.toString(), Toast.LENGTH_LONG).show();
             String result = s.toString().replace("\n", "").replace("\r", "");
             itemsListHandler.onBarcodeReceivedFromUSB(result);
             s.clear();
@@ -139,18 +130,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         return inflater.inflate(R.layout.saleorder_items_list_fragment, container, false);
     }
 
-    private static class SaleOrderModelResult {
-
-        private final SaleOrderModel model;
-
-        private SaleOrderModelResult(SaleOrderModel model) {
-            this.model = model;
-        }
-    }
-
-    private static final Handler handler = new Handler();
-
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -161,7 +140,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             @Override
             public void onRemoveClicked(View v, final int pos) {
                 position = pos;
-//                getActivity().getSupportLoaderManager().restartLoader(LOADER_CHECK_ITEM_PRINT_STATUS, null, checkItemPrintStatusLoader);
                 isVoidNeedPermission();
             }
 
@@ -175,6 +153,10 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 final SaleOrderItemViewModel model = adapter.getItem(pos);
                 if (model.isPrepaidItem || model.isGiftCard)
                     return;
+                if (model.itemModel.discountBundleId != null){
+                    Toast.makeText(getActivity(), R.string.cashier_msg_error_changing_qty_multiple_discount, Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (!model.isSerializable) {
                     final String saleItemGuid = adapter.getSaleItemGuid(pos);
                     if (model.itemModel.priceType == PriceType.UNIT_PRICE) {
@@ -251,6 +233,11 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                     return;
                 }
 
+                if (adapter.getItem(pos).itemModel.discountBundleId != null){
+                    Toast.makeText(getActivity(), R.string.cashier_msg_error_changing_discount_multiple_discount, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 final String saleItemGuid = adapter.getSaleItemGuid(pos);
                 final boolean isOrderDiscounted = ((BaseCashierActivity) getActivity()).isOrderDiscounted();
                 if (!isOrderDiscounted) {
@@ -259,7 +246,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                         public void onConfirm(BigDecimal value, DiscountType type) {
                             highlightedColumn(saleItemGuid, Type.DISCOUNT);
 
-                            DiscountSaleOrderItemCommand.start(getActivity(), saleItemGuid, value, type, discountSaleOrderItemCallback);
+                            DiscountSaleOrderItemCommand.start(getActivity(), saleItemGuid, value, type, null, discountSaleOrderItemCallback);
                         }
                     });
                 } else {
@@ -621,6 +608,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         protected void onSuccess(String saleItemGuid) {
             if (getDisplayBinder() != null)
                 getDisplayBinder().startCommand(new DisplaySaleItemCommand(saleItemGuid));
+            ApplyMultipleDiscountCommand.start(getActivity(), orderGuid, null);
         }
     };
 

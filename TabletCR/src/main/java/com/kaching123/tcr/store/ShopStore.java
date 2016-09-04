@@ -878,6 +878,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String POINTS_FOR_DOLLAR_AMOUNT = "points_for_dollar_amount";
+
+        @Column(type = Column.Type.TEXT)
+        String DISCOUNT_BUNDLE_ID = "discount_bundle_id";
     }
 
     static {
@@ -2344,6 +2347,45 @@ public abstract class ShopStore {
                 foreignKey(TBPxRegisterTable.REGISTER_ID, RegisterTable.TABLE_NAME, RegisterTable.ID));
     }
 
+    @Indexes({
+            @Index(name = "item", columns = MultipleDiscountTable.ITEM_ID),
+            @Index(name = "bundle", columns = MultipleDiscountTable.BUNDLE_ID)
+    })
+    @Table(MultipleDiscountTable.TABLE_NAME)
+    public interface MultipleDiscountTable extends IBemaSyncTable {
+
+        String TABLE_NAME = "multiple_discount";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String ID = "id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String BUNDLE_ID = "bundle_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ITEM_ID = "item_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String QTY = "qty";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String DISCOUNT = "discount";
+
+        @Column(type = Type.INTEGER)
+        String IS_ACTIVE = "is_active";
+    }
+    static {
+        applyForeignKeys(MultipleDiscountTable.TABLE_NAME,
+                foreignKey(MultipleDiscountTable.ITEM_ID, ItemTable.TABLE_NAME, ItemTable.GUID));
+    }
 
     /**
      * views *
