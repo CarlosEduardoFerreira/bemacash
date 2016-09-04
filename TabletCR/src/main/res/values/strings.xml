@@ -2040,4 +2040,6 @@
     <string name="batch_close_title">Batch Close</string>
     <string name="batch_close_msg">There is no transaction need to be batch closed</string>
 
+    <string name="composer_processing_msg">Composer process…</string>
+
 </resources>

@@ -512,7 +512,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 }
             });
         } else {
-            Toast.makeText(getContext(), "Composer process...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.composer_processing_msg), Toast.LENGTH_SHORT).show();
         }
     }
 
