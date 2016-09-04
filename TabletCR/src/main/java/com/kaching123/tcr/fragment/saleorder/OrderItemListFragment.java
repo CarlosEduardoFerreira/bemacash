@@ -88,10 +88,13 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     private boolean isCreateReturnOrder;
 
     private HashMap<String, BigDecimal> qtyBefore = new HashMap<>();
+    private boolean checkIsNewItemComposerInProcess;
     private boolean qtyChanged;
+    private boolean newItem;
+    private SaleOrderItemViewModel qtyChangedItem;
+    private SaleOrderItemViewModel newItemInOrder;
     private boolean ignorReculc;
-    private int tmpListSize;
-
+    private TcrApplication app;
     @ViewById
     protected EditText usbScannerInput;
 
@@ -137,7 +140,12 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        app = TcrApplication.get();
+        if(app.getQtyBefore() == null || app.getQtyBefore().isEmpty()){
+            app.setQtyBefore(qtyBefore);
+        } else {
+            qtyBefore = app.getQtyBefore();
+        }
         adapter = !isCreateReturnOrder ? new ItemsAdapter(getActivity()) : new ReturnItemsAdapter(getActivity());
 
         adapter.setItemRemoveListener(new ItemView.OnItemRemoveClick() {
@@ -337,11 +345,16 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     }
 
     public void cleanAll(){
-        TcrApplication.get().clearIgnorComposerItems();
-        qtyBefore.clear();
         qtyChanged = false;
+        newItem = false;
+        qtyChangedItem = null;
+        newItemInOrder = null;
         ignorReculc = false;
-        tmpListSize = 0;
+        checkIsNewItemComposerInProcess= false;
+        qtyBefore.clear();
+        app.clearIgnorComposerItems();
+        app.setSalesOnScreenTmpSize(0);
+        app.clearQtyBefore();
     }
 
     private void doRemoceClickLine() {
@@ -380,6 +393,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     public void doRemoceClickLine(String guid) {
         getListView().closeOpenedItems();
         if (adapter.getCount() == 1) {
+            cleanAll();
             if (itemsListHandler != null) {
                 itemsListHandler.onRemoveLastItem();
             }
@@ -447,82 +461,117 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         CompositionItemsCalculationCommand.start(getContext(), orderGuid, new CompositionItemsCalculationCommand.CompositionItemsCalculationCommandCallback() {
             @Override
             protected void onSuccess(HashMap<String, List<CompositionItemsCalculationCommand.CantSaleComposerModel>> itemsCantBeSold) {
-                if (!itemsCantBeSold.isEmpty()) {
-                    ComposerOverrideQtyDialog.show(getActivity(), itemsCantBeSold, list, new ComposerOverrideQtyDialog.DialogButtonListener() {
-                        @Override
-                        public void onCancelButtonPress(Set<String> listItems) {
-
-                            HashSet<String> saleOrderItemViewGuids = new HashSet<>();
-                            for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
-                                if (listItems.contains(saleOrderItemViewModel.itemModel.itemGuid)) {
-                                    saleOrderItemViewGuids.add(saleOrderItemViewModel.getSaleItemGuid());
-                                }
-                            }
-
-                            if (!saleOrderItemViewGuids.isEmpty()) {
-                                for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
-                                    if (saleOrderItemViewGuids.contains(saleOrderItemViewModel.getSaleItemGuid())) {
-                                        if (qtyChanged) {
-                                            BigDecimal qty = qtyBefore.get(saleOrderItemViewModel.getSaleItemGuid());
-                                            UpdateQtySaleOrderItemCommand.start(getActivity(), saleOrderItemViewModel.getSaleItemGuid(), qty != null ? qty : BigDecimal.ONE, updateQtySaleOrderItemCallback);
-                                        } else {
-                                            doRemoceClickLine(saleOrderItemViewModel.getSaleItemGuid());
-                                            qtyBefore.remove(saleOrderItemViewModel.getSaleItemGuid());
-                                        }
-                                    }
-                                }
-                            }
-                            qtyChanged = false;
-                            ignorReculc = true;
-                        }
-
-                        @Override
-                        public void onOverrideButtonPress(Set<String> listItems) {
-                            TcrApplication.get().addIgnorComposerItem(listItems);
-                            refreshOldQty(list);
-                            qtyChanged = false;
-                        }
-                    });
+                if (itemsCantBeSold != null && !itemsCantBeSold.isEmpty()) {
+                    ComposerOverrideQtyDialog.show(getActivity(), itemsCantBeSold, list, getCompositionDialogButtonListener(list));
                 } else {
                     refreshOldQty(list);
+                    checkIsNewItemComposerInProcess = false;
                 }
             }
         });
     }
-    private void checkIsNewItemComposer(final List<SaleOrderItemViewModel> list, boolean changedQty){ // if changedPrice == true check which price changed
+    private void checkIsNewItemComposer(final List<SaleOrderItemViewModel> list, boolean checkQty){
         String guidToCheck = null;
-        if(changedQty){
-            for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
-                if(saleOrderItemViewModel.itemModel.qty.compareTo(qtyBefore.get(saleOrderItemViewModel.getSaleItemGuid())) != 0){
-                    guidToCheck = saleOrderItemViewModel.itemModel.itemGuid;
-                    break;
+        if(!checkIsNewItemComposerInProcess) {
+            checkIsNewItemComposerInProcess = true;
+            if (checkQty) {
+                newItem = false;
+                for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+                    BigDecimal qty = qtyBefore.get(saleOrderItemViewModel.getSaleItemGuid());
+                    if (qty != null && saleOrderItemViewModel.itemModel.qty.compareTo(qty) != 0) {
+                        guidToCheck = saleOrderItemViewModel.itemModel.itemGuid;
+                        qtyChangedItem = saleOrderItemViewModel;
+                        qtyChanged = true;
+                        break;
+                    }
+                }
+                if(guidToCheck == null){                                                            // if return on screen or discount
+                    checkIsNewItemComposerInProcess = false;
+                    return;
+                }
+            } else {
+                newItem = true;
+                long maxSequence = 0;
+                for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+                    if (saleOrderItemViewModel.itemModel.sequence > maxSequence) {
+                        maxSequence = saleOrderItemViewModel.itemModel.sequence;
+                        guidToCheck = saleOrderItemViewModel.itemModel.itemGuid;
+                        newItemInOrder = saleOrderItemViewModel;
+                    }
                 }
             }
+            CheckIsItemComposerCommand.start(getContext(), guidToCheck, new CheckIsItemComposerCommand.IsItemComposerCommandCallback() {
+                @Override
+                protected void onSuccess(boolean isItemComposer) {
+                    if (isItemComposer) {
+                        checkAddedItemsOnComposerEnoughQty(list);
+                    } else {
+                        refreshOldQty(list);
+                        checkIsNewItemComposerInProcess = false;
+                    }
+                }
+            });
         } else {
-            long maxSequence = 0;
-            for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
-                if(saleOrderItemViewModel.itemModel.sequence > maxSequence){
-                    maxSequence = saleOrderItemViewModel.itemModel.sequence;
-                    guidToCheck = saleOrderItemViewModel.itemModel.itemGuid;
-                }
-            }
+            Toast.makeText(getContext(), getString(R.string.composer_processing_msg), Toast.LENGTH_SHORT).show();
         }
-        CheckIsItemComposerCommand.start(getContext(), guidToCheck, new CheckIsItemComposerCommand.IsItemComposerCommandCallback() {
+    }
+
+    private ComposerOverrideQtyDialog.DialogButtonListener getCompositionDialogButtonListener(final List<SaleOrderItemViewModel> list){
+        return new ComposerOverrideQtyDialog.DialogButtonListener() {
             @Override
-            protected void onSuccess(boolean isItemComposer) {
-                if (isItemComposer) {
-                    checkAddedItemsOnComposerEnoughQty(list);
+            public void onCancelButtonPress(Set<String> listItems) {
+                HashSet<String> saleOrderItemViewGuids = new HashSet<>();
+
+                if(newItem){
+                    saleOrderItemViewGuids.add(newItemInOrder.getSaleItemGuid());
+                } else if(qtyChanged) {
+                    saleOrderItemViewGuids.add(qtyChangedItem.getSaleItemGuid());
                 } else {
-                    refreshOldQty(list);
+                    for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+                        if (listItems.contains(saleOrderItemViewModel.itemModel.itemGuid)) {
+                            saleOrderItemViewGuids.add(saleOrderItemViewModel.getSaleItemGuid());
+                        }
+                    }
                 }
+
+                if (!saleOrderItemViewGuids.isEmpty()) {
+                    for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+                        if (saleOrderItemViewGuids.contains(saleOrderItemViewModel.getSaleItemGuid())) {
+                            BigDecimal qty = qtyBefore.get(saleOrderItemViewModel.getSaleItemGuid());
+                            if (qtyChanged) {
+                                UpdateQtySaleOrderItemCommand.start(getActivity(),
+                                        saleOrderItemViewModel.getSaleItemGuid(), qty != null ? qty : BigDecimal.ONE, updateQtySaleOrderItemCallback);
+                            } else if(qty != null && qty.compareTo(saleOrderItemViewModel.itemModel.qty) == -1){
+                                UpdateQtySaleOrderItemCommand.start(getActivity(),
+                                        saleOrderItemViewModel.getSaleItemGuid(), qty, updateQtySaleOrderItemCallback);
+                            } else {
+                                doRemoceClickLine(saleOrderItemViewModel.getSaleItemGuid());
+                                qtyBefore.remove(saleOrderItemViewModel.getSaleItemGuid());
+                            }
+                        }
+                    }
+                }
+                qtyChanged = false;
+                ignorReculc = true;
+                checkIsNewItemComposerInProcess = false;
             }
-        });
+
+            @Override
+            public void onOverrideButtonPress(Set<String> listItems) {
+                TcrApplication.get().addIgnorComposerItem(listItems);
+                refreshOldQty(list);
+                qtyChanged = false;
+                checkIsNewItemComposerInProcess = false;
+            }
+        };
     }
 
     private void refreshOldQty(final List<SaleOrderItemViewModel> list){
-        qtyBefore.clear();
-        for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
-            qtyBefore.put(saleOrderItemViewModel.getSaleItemGuid(), saleOrderItemViewModel.itemModel.qty);
+        if(!list.isEmpty()) {
+            qtyBefore.clear();
+            for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
+                qtyBefore.put(saleOrderItemViewModel.getSaleItemGuid(), saleOrderItemViewModel.itemModel.qty);
+            }
         }
     }
 
@@ -535,20 +584,18 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, final List<SaleOrderItemViewModel> list) {
         qtyChanged = false;
         if(!ignorReculc) {
-            if ((list.size() - tmpListSize) == 1) {
-                checkIsNewItemComposer(list, qtyChanged);
-            } else if (!list.isEmpty() && list.size() == tmpListSize) {
-                qtyChanged = true;
-                checkIsNewItemComposer(list, qtyChanged);
-            } else {
-                if (!list.isEmpty()) {
+            if ((list.size() - app.getSalesOnScreenTmpSize()) == 1) {
+                checkIsNewItemComposer(list, false);
+            } else if (!list.isEmpty() && list.size() == app.getSalesOnScreenTmpSize()) {           //chg qty or discount or come back
+                checkIsNewItemComposer(list, true);
+            } else if (!list.isEmpty()) {                                                           //new order, hold on
+                    newItem = false;
                     checkAddedItemsOnComposerEnoughQty(list);
-                }
             }
         } else {
             ignorReculc = false;
         }
-        tmpListSize = list.size();
+        app.setSalesOnScreenTmpSize(list.size());
 
         itemsListHandler.onTotolQtyUpdated(getCount(list), false, null);
         Collections.sort(list, SaleOrderItemViewModel.filterOrderItem);

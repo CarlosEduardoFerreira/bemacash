@@ -27,9 +27,8 @@ public class CheckIsItemComposerCommand extends AsyncCommand {
 
     private static final Uri COMPOSER_URI = ShopProvider.contentUri(ShopStore.ComposerTable.URI_CONTENT);
 
-
     private static final String ARG_GUID = "ARG_GUID";
-    private static final String PARAM_SALE_ITEM_GUID = "PARAM_ANSWER_GUIDS";
+    private static final String PARAM_ANSWER = "PARAM_ANSWER";
 
 
     @Override
@@ -40,18 +39,15 @@ public class CheckIsItemComposerCommand extends AsyncCommand {
                 .where(ShopStore.ComposerTable.ITEM_HOST_ID + " =?", itemGuid)
                 .perform(getContext());
 
-        if(composerCursor != null) {
-            if (composerCursor.moveToFirst()) {
-                composerCursor.close();
-                return succeeded().add(PARAM_SALE_ITEM_GUID, true);
+        if (composerCursor.moveToFirst()) {
+            composerCursor.close();
+            return succeeded().add(PARAM_ANSWER, true);
 
-            } else {
-                composerCursor.close();
-                return succeeded().add(PARAM_SALE_ITEM_GUID, false);
-            }
         } else {
-            return succeeded().add(PARAM_SALE_ITEM_GUID, false);
+            composerCursor.close();
+            return succeeded().add(PARAM_ANSWER, false);
         }
+
     }
 
 
@@ -76,7 +72,7 @@ public class CheckIsItemComposerCommand extends AsyncCommand {
     public static abstract class IsItemComposerCommandCallback {
 
         @OnSuccess(CheckIsItemComposerCommand.class)
-        public void handleSuccess(@Param(PARAM_SALE_ITEM_GUID) boolean isItemComposer) {
+        public void handleSuccess(@Param(PARAM_ANSWER) boolean isItemComposer) {
             onSuccess(isItemComposer);
         }
 
