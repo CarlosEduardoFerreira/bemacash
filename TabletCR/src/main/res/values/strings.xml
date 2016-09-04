@@ -256,7 +256,9 @@
     <string name="cashier_action_serial_disabled">This item is not serial.</string>
     <string name="cashier_msg_error_changing_price">Discount per item has already applied, to change open price you need to reset discount per item</string>
     <string name="cashier_msg_error_changing_discount">Order discount was already applied, to apply discount per item you need to reset order discount firstly</string>
+    <string name="cashier_msg_error_changing_discount_multiple_discount">This item is a part of Multiple Discount Bundle. You can not change it\'s discount manually</string>
     <string name="cashier_msg_error_changing_qty">This item is serializable, to add new items please use the scanner or choose it manually</string>
+    <string name="cashier_msg_error_changing_qty_multiple_discount">This item is a part of Multiple Discount Bundle. You can not change it\'s quantity manually</string>
     <string name="login_wait">Sign in to the system</string>
     <string name="pax_instructions">Please follow the instructions on the PAX pinpad device. Should you want to abort press \"Cancel\" button."</string>
     <string name="pax_balance_instructions">Only EBT cards are eligible for balance review. Please follow the instructions on the PAX pinpad device. Should you want to abort press \"Cancel\" button."</string>
@@ -864,6 +866,7 @@
     <string name="sync_item_matrix">items part#6</string>
     <string name="sync_tbp">items part#7</string>
     <string name="sync_tbp_x_register">items part#8</string>
+    <string name="sync_multiple_discount">items part#9</string>
     <string name="sync_item_composition">composition items</string>
     <string name="sync_sale_order">sale orders part#1</string>
     <string name="sync_sale_order_item">sale orders part#2</string>

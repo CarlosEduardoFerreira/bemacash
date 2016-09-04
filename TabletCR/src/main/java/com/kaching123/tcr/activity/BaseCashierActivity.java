@@ -71,6 +71,7 @@ import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand.BaseAddSaleOrderCommandCallback;
+import com.kaching123.tcr.commands.store.saleorder.ApplyMultipleDiscountCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand.BaseGetItemsForFaickVoidCallback;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand;
@@ -124,10 +125,12 @@ import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
+import com.kaching123.tcr.function.MultipleDiscountWrapFunction;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CustomerModel;
+import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
@@ -169,6 +172,7 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
 import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpXRegisterTable;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.MultipleDiscountTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
@@ -228,7 +232,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 5;
     private static final int LOADER_SEARCH_BARCODE = 10;
     private static final int LOADER_SALE_INCENTIVES = 12;
-    private static final int LOADER_TBP = 13;
+    private static final int LOADER_DISCOUNT_BUNDLES = 13;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
 
@@ -263,6 +267,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
     private SaleIncentivesLoader saleIncentivesLoader = new SaleIncentivesLoader();
+    private DiscountBundleLoader discountBundleLoader = new DiscountBundleLoader();
+
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -320,6 +326,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected String strItemCount;
     protected int saleItemCount;
     private List<Integer> priceLevels = Collections.EMPTY_LIST;
+    private List<DiscountBundle> discountBundles = Collections.EMPTY_LIST;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -547,6 +554,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         releaseResultList = new ArrayList<PrepaidReleaseResult>();
         giftCardResultList = new ArrayList<GiftCardBillingResult>();
+
+        getSupportLoaderManager().restartLoader(LOADER_DISCOUNT_BUNDLES, null, discountBundleLoader);
     }
 
 
@@ -1646,7 +1655,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 isPrepaidItemStart,
                 isGiftCardReload,
                 model.isIncentive || model.excludeFromLoyaltyPlan ? BigDecimal.ZERO : model.loyaltyPoints,
-                !(model.isIncentive || model.excludeFromLoyaltyPlan) && getApp().getShopInfo().loyaltyPointsForDollarAmount,
+                model.isIncentive || model.excludeFromLoyaltyPlan ? false : getApp().getShopInfo().loyaltyPointsForDollarAmount,
+                null,
                 model.isEbtEligible);
 
         if (unit != null && orderGuid != null) {
@@ -2601,6 +2611,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         protected void onSuccess(String saleItemGuid) {
             if (displayBinder != null)
                 displayBinder.startCommand(new DisplaySaleItemCommand(saleItemGuid));
+            ApplyMultipleDiscountCommand.start(self(), orderGuid, new ArrayList<>(discountBundles));
         }
     };
 
@@ -2762,6 +2773,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 if (scaleServiceBound) {
                     onScaleItemAdded(item);
                 }
+            }
+            if (discountBundles != null && !discountBundles.isEmpty()){
+                ApplyMultipleDiscountCommand.start(self(), orderGuid, new ArrayList<>(discountBundles));
             }
         }
 
@@ -3006,6 +3020,28 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
+
+        }
+    }
+
+    private class DiscountBundleLoader implements LoaderCallbacks<List<DiscountBundle>> {
+
+        @Override
+        public Loader<List<DiscountBundle>> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(MultipleDiscountTable.URI_CONTENT))
+                    .where(MultipleDiscountTable.IS_ACTIVE + " = ?", 1)
+                    .orderBy(MultipleDiscountTable.BUNDLE_ID)
+                    .wrap(new MultipleDiscountWrapFunction())
+                    .build(self());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<DiscountBundle>> loader, List<DiscountBundle> data) {
+            discountBundles = data;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<DiscountBundle>> loader) {
 
         }
     }
