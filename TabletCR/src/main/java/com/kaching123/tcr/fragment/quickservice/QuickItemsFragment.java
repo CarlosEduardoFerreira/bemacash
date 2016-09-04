@@ -81,6 +81,10 @@ public class QuickItemsFragment extends BaseItemsPickFragment {
                 e.printStackTrace();
             }
         adapter.setList(arrayList);
+
+        if (getActivity() instanceof BaseCashierActivity){
+            setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
+        }
     }
 
     @Override
