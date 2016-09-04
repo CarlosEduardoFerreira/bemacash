@@ -3021,6 +3021,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         @Override
         public Loader<List<DiscountBundle>> onCreateLoader(int id, Bundle args) {
             return CursorLoaderBuilder.forUri(ShopProvider.contentUri(MultipleDiscountTable.URI_CONTENT))
+                    .where(MultipleDiscountTable.IS_ACTIVE + " = ?", 1)
                     .orderBy(MultipleDiscountTable.BUNDLE_ID)
                     .wrap(new MultipleDiscountWrapFunction())
                     .build(self());
