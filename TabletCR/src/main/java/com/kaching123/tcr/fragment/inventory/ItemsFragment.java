@@ -43,6 +43,7 @@ import static com.kaching123.tcr.fragment.UiHelper.showBrandQty;
 import static com.kaching123.tcr.fragment.UiHelper.showBrandQtyInteger;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
+import static com.kaching123.tcr.model.ContentValuesUtil._lower;
 import static com.kaching123.tcr.util.CalculationUtil.getSubTotal;
 
 /**
@@ -98,7 +99,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         builder.projection(ItemExFunction.PROJECTION);
 
         boolean isABCSort = ((SuperBaseActivity) getActivity()).getApp().isEnableABCOrder();
-        builder.orderBy(isABCSort ? ItemTable.DESCRIPTION : ItemTable.ORDER_NUM);
+        builder.orderBy(isABCSort ? _lower(ItemTable.DESCRIPTION) : ItemTable.ORDER_NUM);
         draggable &= !isABCSort;
 
         builder.where(ItemTable.IS_DELETED + " = ?", 0);

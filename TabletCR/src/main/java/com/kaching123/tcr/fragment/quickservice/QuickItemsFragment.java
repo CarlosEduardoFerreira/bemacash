@@ -1,7 +1,6 @@
 package com.kaching123.tcr.fragment.quickservice;
 
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
@@ -14,8 +13,6 @@ import android.widget.GridView;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
 import com.kaching123.tcr.model.ItemExModel;
@@ -24,9 +21,6 @@ import com.viewpagerindicator.LinePageIndicator;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -64,32 +58,9 @@ public class QuickItemsFragment extends BaseItemsPickFragment {
     }
 
     @Override
-    public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> list) {
-
-        List arrayList = new ArrayList(list);
-        if (((TcrApplication) getActivity().getApplication()).isEnableABCOrder())
-            try {
-                Collections.sort(arrayList, new Comparator<ItemExModel>() {
-                    @Override
-                    public int compare(ItemExModel p1, ItemExModel p2) {
-                        String str1 = p1.description.toString().toUpperCase();
-                        String str2 = p2.description.toString().toUpperCase();
-                        return str1.compareTo(str2);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        adapter.setList(arrayList);
-
-        if (getActivity() instanceof BaseCashierActivity){
-            setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<ItemExModel>> loader) {
-
+    protected void changeCursor(List<ItemExModel> list) {
+        if (adapter != null)
+            adapter.setList(list);
     }
 
     @Override
