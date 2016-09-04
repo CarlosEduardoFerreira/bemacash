@@ -114,6 +114,8 @@ public class TcrApplication extends MultiDexApplication {
     private BarcodePrefixes barcodePrefixes;
     private HashMap<Broker, BigDecimal> prepaidTaxes;
     private Set<String> ignoringCompositionItems = new HashSet<>();
+    private HashMap<String, BigDecimal> qtyBefore = new HashMap<>();
+    private int salesOnScreenTmpSize;
 
     private RestAdapter restAdapter;
     private RestAdapter restAdapterJsonOrg;
@@ -418,6 +420,26 @@ public class TcrApplication extends MultiDexApplication {
 
     public synchronized void addIgnorComposerItem(Set<String> itemsGuid){
         ignoringCompositionItems.addAll(itemsGuid);
+    }
+
+    public int getSalesOnScreenTmpSize() {
+        return salesOnScreenTmpSize;
+    }
+
+    public void setSalesOnScreenTmpSize(int salesOnScreenTmpSize) {
+        this.salesOnScreenTmpSize = salesOnScreenTmpSize;
+    }
+
+    public HashMap<String, BigDecimal> getQtyBefore() {
+        return qtyBefore;
+    }
+
+    public void setQtyBefore(HashMap<String, BigDecimal> qtyBefore) {
+        this.qtyBefore = qtyBefore;
+    }
+
+    public void clearQtyBefore() {
+        qtyBefore.clear();
     }
 
     public synchronized void clearIgnorComposerItems(){
