@@ -198,7 +198,6 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 _bool(c, c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT)),
                 _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
-                _bool(c, c.getColumnIndex(SaleItemTable.IS_MULTIPLE_DISCOUNT)),
                 _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.TAX)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.TAX2)),

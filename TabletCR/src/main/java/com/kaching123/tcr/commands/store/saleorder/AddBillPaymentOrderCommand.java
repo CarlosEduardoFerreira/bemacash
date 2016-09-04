@@ -95,7 +95,6 @@ public class AddBillPaymentOrderCommand extends AsyncCommand {
                 false,
                 null,
                 null,
-                false,
                 true,
                 getApp().getPrepaidTax(broker),
                 null,

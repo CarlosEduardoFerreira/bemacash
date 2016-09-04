@@ -1635,7 +1635,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 isCreateReturnOrder || model.isDiscountable,
                 model.isDiscountable ? model.discount : null,
                 model.isDiscountable ? model.discountType : null,
-                false,
                 model.isTaxable,
                 isPrepaidItemStart ? model.tax : TextUtils.isEmpty(model.taxGroupGuid) ? getApp().getTaxVat() : model.tax,
                 TextUtils.isEmpty(model.taxGroupGuid2) ? null : model.tax2,

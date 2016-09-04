@@ -44,7 +44,6 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                 _bool(c, c.getColumnIndex(SaleItemTable.DISCOUNTABLE)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.DISCOUNT), BigDecimal.ZERO),
                 _discountType(c, c.getColumnIndex(SaleItemTable.DISCOUNT_TYPE)),
-                _bool(c, c.getColumnIndex(SaleItemTable.IS_MULTIPLE_DISCOUNT)),
                 _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                 _decimal(c, c.getColumnIndex(SaleItemTable.TAX), BigDecimal.ZERO),
                 _decimal(c, c.getColumnIndex(SaleItemTable.TAX2), BigDecimal.ZERO),

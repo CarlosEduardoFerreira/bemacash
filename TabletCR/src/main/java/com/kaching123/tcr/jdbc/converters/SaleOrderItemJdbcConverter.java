@@ -62,7 +62,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(DISCOUNTABLE),
                 rs.getBigDecimal(DISCOUNT),
                 _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT),
-                rs.getBoolean(IS_MULTIPLE_DISCOUNT),
                 rs.getBoolean(TAXABLE),
                 rs.getBigDecimal(TAX),
                 rs.getBigDecimal(TAX2),
@@ -108,7 +107,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(DISCOUNTABLE, model.discountable)
                 .add(DISCOUNT, model.discount)
                 .add(DISCOUNT_TYPE, model.discountType)
-                .add(DISCOUNT_TYPE, model.isMultipleDiscount)
                 .add(TAXABLE, model.isTaxable)
                 .add(TAX, model.tax)
                 .add(TAX2, model.tax2)
