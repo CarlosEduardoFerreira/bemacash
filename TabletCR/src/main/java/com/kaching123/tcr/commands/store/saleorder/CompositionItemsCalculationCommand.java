@@ -53,7 +53,7 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
                 .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .perform(getContext())
                 .toFluentIterable(new SaleOrderItemFunction())
-                .toImmutableList();
+                .toList();
 
         List<String> guids = new ArrayList<>();
         for (SaleOrderItemModel item : saleOrderItems) {

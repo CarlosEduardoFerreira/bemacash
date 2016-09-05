@@ -79,6 +79,8 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
     @ViewById
     protected CheckBox stockTrackingFlag;
     @ViewById
+    protected CheckBox limitQtyFlag;
+    @ViewById
     protected View referenceItemRow;
     @ViewById
     protected EditText referenceItem;
@@ -131,6 +133,18 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
 
         stockTrackingFlag.setEnabled(PlanOptions.isStockTrackingAllowed());
         availableQtyPencil.setEnabled(PlanOptions.isStockTrackingAllowed());
+
+        limitQtyFlagInit();
+    }
+
+    private void limitQtyFlagInit(){
+        if(!model.isStockTracking){
+            limitQtyFlag.setChecked(false);
+            limitQtyFlag.setEnabled(false);
+        } else {
+            limitQtyFlag.setEnabled(true);
+            limitQtyFlag.setChecked(model.limitQty);
+        }
     }
 
     protected void recollectComposerInfo(){
@@ -388,7 +402,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
 
     protected void updateStockTrackingBlock(boolean isChecked) {
 
-        View[] views = {availableQty, recommendedQty, minimumQty, availableQty, availableQtyPencil};
+        View[] views = {availableQty, recommendedQty, minimumQty, limitQtyFlag, availableQty, availableQtyPencil};
         for (View view : views) {
             view.setEnabled(isChecked && PlanOptions.isStockTrackingAllowed());
         }
@@ -401,6 +415,7 @@ public abstract class BaseCommonItemActivity extends BaseItemActivity implements
             recommendedQty.setText(null);
             availableQty.setText(null);
             minimumQty.setText(null);
+            limitQtyFlag.setChecked(isChecked);
         } else {
             if (count > 0) {
                 recollectComposerInfo();

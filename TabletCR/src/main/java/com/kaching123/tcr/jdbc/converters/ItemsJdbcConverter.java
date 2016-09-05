@@ -40,6 +40,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String UNITS_LABEL = "UNITS_LABEL";
     private static final String UNITS_LABEL_ID = "UNIT_LABEL_ID";
     private static final String STOCK_TRACKING = "STOCK_TRACKING";
+    private static final String LIMIT_QTY = "LIMIT_QTY";
     private static final String ACTIVE_STATUS = "ACTIVE_STATUS";
     private static final String DISCOUNTABLE = "DISCOUNTABLE";
     private static final String SALABLE = "SALABLE";
@@ -89,6 +90,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 BigDecimal.ZERO,
                 rs.getString(UNITS_LABEL_ID),
                 rs.getBoolean(STOCK_TRACKING),
+                rs.getBoolean(LIMIT_QTY),
                 rs.getBoolean(ACTIVE_STATUS),
                 rs.getBoolean(DISCOUNTABLE),
                 rs.getBoolean(SALABLE),
@@ -146,6 +148,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(PRICE_5, item.price5)
                 .add(UNITS_LABEL_ID, item.unitsLabelId)
                 .add(STOCK_TRACKING, item.isStockTracking)
+                .add(LIMIT_QTY, item.limitQty)
                 .add(ACTIVE_STATUS, item.isActiveStatus)
                 .add(DISCOUNTABLE, item.isDiscountable)
                 .add(SALABLE, item.isSalable)
@@ -191,6 +194,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(PRICE_5, item.price5)
                 .add(UNITS_LABEL_ID, item.unitsLabelId)
                 .add(STOCK_TRACKING, item.isStockTracking)
+                .add(LIMIT_QTY, item.limitQty)
                 .add(ACTIVE_STATUS, item.isActiveStatus)
                 .add(DISCOUNTABLE, item.isDiscountable)
                 .add(SALABLE, item.isSalable)

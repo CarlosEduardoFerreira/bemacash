@@ -425,6 +425,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String STOCK_TRACKING = "stock_tracking";
 
+        @Column(type = Column.Type.INTEGER, defVal = "0")
+        String LIMIT_QTY = "limit_qty";
+
         @Column(type = Column.Type.INTEGER)
         String ACTIVE_STATUS = "active_status";
 
@@ -4568,5 +4571,17 @@ public abstract class ShopStore {
                         + JOIN + "(" + SELECT + ItemTable.GUID + coma + ItemTable.UPDATE_QTY_FLAG + AS + FLAG + coma + ItemTable.STOCK_TRACKING + AS + STOCK_TRACKING + FROM + ItemTable.TABLE_NAME + ")" + TTT2
                         + ON + TTT2 + dot + ItemTable.GUID + equals + ITEM_GUID
                         + GROUP_BY + ITEM_GUID;
+    }
+
+    @RawQuery(ItemRawQuery.QUERY_NAME)
+    public interface ItemRawQuery {
+
+        String QUERY_NAME = "item_raw";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "item_raw";
+
+        @SqlQuery
+        String QUERY = "SELECT * FROM " + ItemTable.TABLE_NAME;
     }
 }

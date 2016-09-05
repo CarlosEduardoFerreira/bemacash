@@ -232,7 +232,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                                 c.getString(4),
                                 c.getString(5));
                     }
-                }).toImmutableList();
+                }).toList();
 
         /** load modifiers **/
         Cursor c = null;

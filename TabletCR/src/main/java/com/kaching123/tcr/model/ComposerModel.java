@@ -1,20 +1,30 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
+import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ComposerTable;
+import com.kaching123.tcr.util.ContentValuesUtilBase;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
+
 
 /**
  * Created by mayer
  */
 public class ComposerModel implements IValueModel, Serializable {
+
+    private static final Uri URI_ITEM = ShopProvider.contentUri(ShopStore.ComposerTable.URI_CONTENT);
 
     public String guid;
     public String itemHostId;
@@ -73,5 +83,18 @@ public class ComposerModel implements IValueModel, Serializable {
         v.put(ComposerTable.STORE_TRACKING_ENABLED, tracked);
         v.put(ComposerTable.FREE_OF_CHARGE_COMPOSER, restricted);
         return v;
+    }
+
+    public static HashMap<String, BigDecimal> getChildsByHostId(final Context context, final String itemGuid) {
+        final Cursor c = ProviderAction.query(URI_ITEM)
+                .where(ComposerTable.ITEM_HOST_ID + " = ?", itemGuid)
+                .perform(context);
+        HashMap<String, BigDecimal> childs = new HashMap<>();
+        if (c != null) {
+            while (c.moveToNext()){
+                childs.put(c.getString(c.getColumnIndex(ComposerTable.ITEM_CHILD_ID)), ContentValuesUtilBase._decimalQty(c, c.getColumnIndex(ComposerTable.QUANTITY)));
+            }
+        }
+        return childs;
     }
 }

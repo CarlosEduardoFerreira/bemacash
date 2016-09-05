@@ -132,6 +132,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getString(c.getColumnIndex(ItemTable.UNIT_LABEL_ID)),
                 shortCut,
                 c.getInt(indexHolder.get(ItemTable.STOCK_TRACKING)) == 1,
+                c.getInt(indexHolder.get(ItemTable.LIMIT_QTY)) == 1,
                 c.getInt(indexHolder.get(ItemTable.ACTIVE_STATUS)) == 1,
                 c.getInt(indexHolder.get(ItemTable.DISCOUNTABLE)) == 1,
                 c.getInt(indexHolder.get(ItemTable.SALABLE)) == 1,

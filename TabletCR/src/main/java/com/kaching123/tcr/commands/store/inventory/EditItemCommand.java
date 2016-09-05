@@ -164,7 +164,7 @@ public class EditItemCommand extends AsyncCommand {
                         model.orderNum = input.getInt(1);
                         return model;
                     }
-                }).toImmutableList();
+                }).toList();
 
         for (ItemModel m : models){
             InventoryUtils.updateOrderNum(m.guid, m.orderNum - 1, getAppCommandContext(), operations, sql);

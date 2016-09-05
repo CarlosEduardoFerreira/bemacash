@@ -357,7 +357,7 @@ public class PrintOrderToKdsCommand extends PublicGroundyTask {
                                 c.getString(3),
                                 c.getString(4));
                     }
-                }).toImmutableList();
+                }).toList();
 
         /** load modifiers **/
         Cursor c = null;

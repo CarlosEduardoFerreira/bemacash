@@ -63,6 +63,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 c.getString(indexHolder.get(ItemChildTable.UNIT_LABEL_ID)),
                 shortCut,
                 c.getInt(indexHolder.get(ItemChildTable.STOCK_TRACKING)) == 1,
+                c.getInt(indexHolder.get(ItemChildTable.LIMIT_QTY)) == 1,
                 c.getInt(indexHolder.get(ItemChildTable.ACTIVE_STATUS)) == 1,
                 false,
                 c.getInt(indexHolder.get(ItemChildTable.SALABLE)) == 1,
