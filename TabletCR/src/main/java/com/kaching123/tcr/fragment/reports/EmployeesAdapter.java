@@ -15,8 +15,15 @@ import com.kaching123.tcr.model.EmployeeForReportsModel;
  */
 public class EmployeesAdapter extends ObjectsCursorAdapter<EmployeeForReportsModel> {
 
+    private boolean showName;
+
     public EmployeesAdapter(Context context) {
         super(context);
+    }
+
+    public EmployeesAdapter(Context context, boolean showName) {
+        super(context);
+        this.showName = showName;
     }
 
     protected View newDropDownView(int position, ViewGroup parent) {
@@ -32,7 +39,7 @@ public class EmployeesAdapter extends ObjectsCursorAdapter<EmployeeForReportsMod
 
     @Override
     protected View bindView(View view, int position, EmployeeForReportsModel item) {
-        ((TextView) view).setText(item.login);
+        ((TextView) view).setText(showName ? item.fullName() : item.login);
         return view;
     }
 

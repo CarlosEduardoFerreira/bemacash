@@ -33,10 +33,10 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
     protected static final int MAX_PERIODS_COUNT = 31;
 
     @ViewById
-    protected TextView modeEntitiesLabel, cashDrawerTypeLabel;
+    protected TextView modeEntitiesLabel, cashDrawerTypeLabel, cashierSpinnerLabel;
 
     @ViewById
-    protected Spinner modeEntitiesSpinner, typeSpinner;
+    protected Spinner modeEntitiesSpinner, typeSpinner, cashierSpinner;
 
     @FragmentArg
     protected ReportType type;
@@ -47,6 +47,19 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
         modeEntitiesLabel.setText(getSpinnerLabel());
         modeEntitiesSpinner.setAdapter(getRegistersAdapter());
         modeEntitiesSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                loadData();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        cashierSpinner.setAdapter(new EmployeesAdapter(getActivity(), true));
+        cashierSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 loadData();
@@ -95,6 +108,15 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
     protected void hideSpinner() {
         modeEntitiesSpinner.setVisibility(View.GONE);
         modeEntitiesLabel.setVisibility(View.GONE);
+    }
+
+    public void showCashierSpinner() {
+        cashierSpinnerLabel.setVisibility(View.VISIBLE);
+        cashierSpinner.setVisibility(View.VISIBLE);
+    }
+    public void hideCashierSpinner() {
+        cashierSpinnerLabel.setVisibility(View.GONE);
+        cashierSpinner.setVisibility(View.GONE);
     }
 
     protected void showCashDrawReport() {

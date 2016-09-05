@@ -11,17 +11,18 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
-
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.UiHelper;
+import com.kaching123.tcr.fragment.reports.RegisterReportsDetailsFragment;
 import com.kaching123.tcr.fragment.reports.RegisterReportsDetailsFragment.IDetailsFragment;
 import com.kaching123.tcr.model.SaleOrderViewModel;
 import com.kaching123.tcr.reports.SoldOrdersReportQuery;
 import com.kaching123.tcr.util.DateUtils;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -61,6 +62,9 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
     @FragmentArg
     protected boolean isSold;
 
+    @FragmentArg
+    protected String managerGuid;
+
     private ItemsAdapter adapter;
 
     protected BigDecimal totalValue = BigDecimal.ZERO;
@@ -72,7 +76,14 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         listView.setAdapter(adapter = new ItemsAdapter(getActivity()));
-        getLoaderManager().initLoader(0, null, this).forceLoad();
+        ((RegisterReportsDetailsFragment)getParentFragment()).showCashierSpinner();
+        getLoaderManager().initLoader(2, null, this).forceLoad();
+    }
+
+    @Override
+    public void onDetach() {
+        ((RegisterReportsDetailsFragment)getParentFragment()).hideCashierSpinner();
+        super.onDetach();
     }
 
     @Override
@@ -80,7 +91,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
         return new AsyncTaskLoader<List<SaleOrderViewModel>>(getActivity()) {
             @Override
             public List<SaleOrderViewModel> loadInBackground() {
-                List<SaleOrderViewModel> result = SoldOrdersReportQuery.getItemsWithoutTipRefunds(getActivity(), isSold, startTime, endTime, resisterId);
+                List<SaleOrderViewModel> result = SoldOrdersReportQuery.getItemsWithoutTipRefunds(getActivity(), isSold, startTime, endTime, resisterId, managerGuid);
                 totalValues = calcTotalValues(result);
                 return result;
             }
@@ -122,13 +133,18 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
         this.startTime = startTime;
         this.endTime = endTime;
         this.resisterId = resisterId;
+        this.managerGuid = managerGuid;
         if (getActivity() != null) {
-            getLoaderManager().restartLoader(0, null, this).forceLoad();
+            getLoaderManager().restartLoader(2, null, this).forceLoad();
         }
     }
 
     public static SoldOrdersFragment instance(boolean isSold, long startTime, long endTime, long resisterId) {
-        return SoldOrdersFragment_.builder().isSold(isSold).startTime(startTime).endTime(endTime).resisterId(resisterId).build();
+        return SoldOrdersFragment.instance(isSold, startTime, endTime, resisterId, null);
+    }
+
+    public static SoldOrdersFragment instance(boolean isSold, long startTime, long endTime, long resisterId, String managerGuid) {
+        return SoldOrdersFragment_.builder().isSold(isSold).startTime(startTime).endTime(endTime).resisterId(resisterId).managerGuid(managerGuid).build();
     }
 
     private class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderViewModel> {
