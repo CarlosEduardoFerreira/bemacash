@@ -1993,4 +1993,7 @@
 
     <string name="loyalty_wait_message">Searching for Incentives</string>
     <string name="loyalty_applied_msg">%s incentive applied</string>
+
+    <string name="modifiers_limit_exceed_msg">Group limit of modifiers (%d) is exceeded</string>
+    <string name="modifiers_count_insufficient_msg" formatted = "false">You must select the required amount\nof modifiers for modifier group\n\'%s\'\nThe required amount is (%d)</string>
 </resources>

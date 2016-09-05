@@ -16,7 +16,9 @@ import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand.Selec
 import com.kaching123.tcr.component.ModifierContainerView;
 import com.kaching123.tcr.component.ModifierContainerView_;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.payment.ModifierGroupCondition;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
@@ -92,6 +94,18 @@ public class ItemModifiersFragment extends Fragment{
         for (int i = 0; i < n; i++){
             ModifierContainerView view = (ModifierContainerView) holder.getChildAt(i);
             Set<String> selectedItems = view.getSelectedItems();
+            ModifierGroupModel group = view.getGroup();
+            if (group != null && group.conditionValue > 0){
+                if (ModifierGroupCondition.EQUAL == group.condition && selectedItems.size() != group.conditionValue){
+                    onAddonsChangedListener.onModifiersCountInsufficient(group);
+                    return;
+                }
+                if (ModifierGroupCondition.LESS_EQUAL == group.condition && selectedItems.size() > group.conditionValue){
+                    onAddonsChangedListener.onModifiersCountInsufficient(group);
+                    return;
+                }
+            }
+
             switch (view.getModifierType()){
                 case MODIFIER:
                     modifierGuids.addAll(selectedItems);
@@ -237,6 +251,9 @@ public class ItemModifiersFragment extends Fragment{
             child.setLayoutParams(layoutParams);
 
             child.setList(itemList);
+            if (!itemList.isEmpty()){
+                child.setGroup(itemList.get(0).getGroup());
+            }
 
             holder.addView(child);
         }
@@ -280,5 +297,7 @@ public class ItemModifiersFragment extends Fragment{
         void onAddonsChanged(ArrayList<String> modifierGuid,
                              ArrayList<String> addonsGuid,
                              ArrayList<String> optionalsGuid);
+
+        void onModifiersCountInsufficient(ModifierGroupModel group);
     }
 }

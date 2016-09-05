@@ -129,6 +129,7 @@ import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
@@ -640,6 +641,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             tryToAddCheckPriceType(model, modifierGuid,
                                     addonsGuid, optionalsGuid, price, quantity, unit);
                         }
+
+                        @Override
+                        public void onModifiersCountInsufficient(ModifierGroupModel group) {
+                            showModifiersInsufficientCountDialog(group);
+                        }
                     }
             );
         }
@@ -651,6 +657,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             list.add(item.modifierGuid);
         }
         return list;
+    }
+
+    protected void showModifiersInsufficientCountDialog(ModifierGroupModel group){
+        AlertDialogFragment.showNotification(self(), R.string.warning_dialog_title, getString(R.string.modifiers_count_insufficient_msg, group.title, group.conditionValue));
     }
 
     protected void tryToAddCheckPriceType(final ItemExModel model,

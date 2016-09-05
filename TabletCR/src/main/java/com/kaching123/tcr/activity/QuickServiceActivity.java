@@ -23,6 +23,7 @@ import com.kaching123.tcr.fragment.quickservice.QuickItemsFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment.OnCancelListener;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.service.UploadTask;
@@ -144,6 +145,11 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
                         optionalsGuid,
                         updateSaleItemAddonsCallback);
             }
+
+            @Override
+            public void onModifiersCountInsufficient(ModifierGroupModel group) {
+                showModifiersInsufficientCountDialog(group);
+            }
         });
         showModifiersFragment();
     }
@@ -233,6 +239,11 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
                 public void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
                     hideModifiersFragment();
                     tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
+                }
+
+                @Override
+                public void onModifiersCountInsufficient(ModifierGroupModel group) {
+                    showModifiersInsufficientCountDialog(group);
                 }
             });
             showModifiersFragment();
