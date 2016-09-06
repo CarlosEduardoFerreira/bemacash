@@ -194,19 +194,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                             QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
                                 @Override
                                 public void onConfirm(final BigDecimal value) {
-                                    ItemsNegativeStockTrackingCommand.start(getActivity(), model.itemModel.itemGuid, model.itemModel.qty,
-                                            value, model.modifiers, ItemsNegativeStockTrackingCommand.ItemType.CHANGE_QTY,
-                                            new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
-                                                @Override
-                                                protected void handleSuccess(boolean result) {
-                                                    if(!result){
-                                                        Toast.makeText(getActivity(), R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
-                                                        return;
-                                                    }
-                                                    highlightedColumn(saleItemGuid, Type.QTY);
-                                                    UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
-                                                }
-                                            });
+                                    checkAvailableQty(model, value, saleItemGuid);
                                 }
                             });
                         } else {
@@ -216,10 +204,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                                     super.onLoginComplete();
                                     QtyEditFragment.show((FragmentActivity) getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
                                         @Override
-                                        public void onConfirm(BigDecimal value) {
-                                            highlightedColumn(saleItemGuid, Type.QTY);
-
-                                            UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
+                                        public void onConfirm(final BigDecimal value) {
+                                            checkAvailableQty(model, value, saleItemGuid);
                                         }
                                     });
                                 }
@@ -228,10 +214,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                     } else {
                         QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
                             @Override
-                            public void onConfirm(BigDecimal value) {
-                                highlightedColumn(saleItemGuid, Type.QTY);
-
-                                UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
+                            public void onConfirm(final BigDecimal value) {
+                                checkAvailableQty(model, value, saleItemGuid);
                             }
                         });
                     }
@@ -239,6 +223,22 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 } else {
                     Toast.makeText(getActivity(), R.string.cashier_msg_error_changing_qty, Toast.LENGTH_LONG).show();
                 }
+            }
+
+            private void checkAvailableQty(SaleOrderItemViewModel model, final BigDecimal value, final String saleItemGuid){
+                ItemsNegativeStockTrackingCommand.start(getActivity(), model.itemModel.itemGuid, model.itemModel.qty,
+                        value, model.modifiers, ItemsNegativeStockTrackingCommand.ItemType.CHANGE_QTY,
+                        new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                            @Override
+                            protected void handleSuccess(boolean result) {
+                                if(!result){
+                                    Toast.makeText(getActivity(), R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                highlightedColumn(saleItemGuid, Type.QTY);
+                                UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
+                            }
+                        });
             }
 
             @Override

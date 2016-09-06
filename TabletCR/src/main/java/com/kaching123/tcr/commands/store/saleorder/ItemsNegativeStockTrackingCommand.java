@@ -155,7 +155,7 @@ public class ItemsNegativeStockTrackingCommand extends AsyncCommand {
         if (itemGuid != null && newQty != null && oldQty != null) {
             ItemModel model = ItemModel.getById(getContext(), itemGuid, true);
             if (model != null) {
-                if (!model.isLimitQtySelected()) {             //todo remove "!" ?
+                if (model.isLimitQtySelected()) {
                     BigDecimal newValue = newQty;
                     if (currentOrderItemQty.containsKey(model.guid)) {
                         newValue = (currentOrderItemQty.get(model.guid).subtract(oldQty)).add(newQty);
