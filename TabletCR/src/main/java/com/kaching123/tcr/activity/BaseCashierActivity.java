@@ -86,7 +86,6 @@ import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusComma
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
-import com.kaching123.tcr.ecuador.EditEcuadorItemActivity;
 import com.kaching123.tcr.fragment.PrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.barcode.SearchBarcodeFragment;
@@ -752,20 +751,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                     @Override
                                     public void onLoginComplete() {
                                         super.onLoginComplete();
-                                        if (TcrApplication.isEcuadorVersion()) {
-                                            EditEcuadorItemActivity.start(BaseCashierActivity.this, item);
-                                        } else {
-                                            EditItemActivity.start(BaseCashierActivity.this, item);
-                                        }
+                                        BaseItemActivity2.start(self(), item, ItemRefType.Simple, StartMode.EDIT);
                                     }
                                 }, Permission.INVENTORY_MODULE);
                                 return true;
                             }
-                            if (TcrApplication.isEcuadorVersion()) {
-                                EditEcuadorItemActivity.start(BaseCashierActivity.this, item);
-                            } else {
-                                EditItemActivity.start(BaseCashierActivity.this, item);
-                            }
+                            BaseItemActivity2.start(self(), item, ItemRefType.Simple, StartMode.EDIT);
                             return true;
                         }
                     },
