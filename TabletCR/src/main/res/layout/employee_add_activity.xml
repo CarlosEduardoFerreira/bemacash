@@ -76,7 +76,7 @@
                     style="@style/EditItem.Table.LabelLayout.Employee">
 
                     <TextView
-                        style="@style/EditItem.Table.Label"
+                        style="@style/EditItem.Table.Label.Required"
                         android:text="@string/employee_last_name_label"/>
                 </FrameLayout>
 
