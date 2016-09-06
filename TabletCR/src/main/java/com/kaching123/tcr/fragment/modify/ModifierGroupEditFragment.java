@@ -5,7 +5,13 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.AddModifierGroupCommand;
@@ -14,6 +20,7 @@ import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.model.ModifierGroupModel;
+import com.kaching123.tcr.model.payment.ModifierGroupCondition;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -22,7 +29,10 @@ import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.ColorRes;
 
+import java.math.BigDecimal;
 import java.util.UUID;
+
+import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
 
 
 /**
@@ -35,6 +45,12 @@ public class ModifierGroupEditFragment extends StyledDialogFragment implements B
 
     @ViewById
     protected EditText description;
+
+    @ViewById
+    protected Spinner condition;
+
+    @ViewById
+    protected EditText conditionValue;
 
     @ColorRes(R.color.light_gray) protected int normalTextColor;
     @ColorRes(R.color.gray_dark) protected int badTextColor;
@@ -64,39 +80,52 @@ public class ModifierGroupEditFragment extends StyledDialogFragment implements B
 
     @AfterViews
     protected void attachViews() {
+        ArrayAdapter<ModifierGroupCondition> conditionAdapter = new ArrayAdapter<ModifierGroupCondition>(getActivity(), R.layout.spinner_item_dark, ModifierGroupCondition.values()){
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                ((TextView) v).setGravity(Gravity.CENTER);
+                return v;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView,ViewGroup parent) {
+                View v = super.getDropDownView(position, convertView,parent);
+                ((TextView) v).setGravity(Gravity.CENTER);
+                return v;
+            }
+
+        };
+        conditionAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        condition.setAdapter(conditionAdapter);
+
+        conditionValue.addTextChangedListener(watcher);
+        description.addTextChangedListener(watcher);
+
         if (model != null) {
             mode = MODE.EDIT;
             description.setText(model.title);
+            condition.setSelection(model.condition.ordinal());
+            conditionValue.setText(String.valueOf(model.conditionValue));
         } else {
             mode = MODE.ADD;
             model = new ModifierGroupModel();
             model.guid = UUID.randomUUID().toString();
             model.itemGuid = itemGuid;
-            refreshEnabled();
         }
-        description.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                refreshEnabled();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+        refreshEnabled();
     }
 
     protected void refreshEnabled() {
-        boolean enabled = !TextUtils.isEmpty(description.getText().toString());
+        boolean enabled = !TextUtils.isEmpty(description.getText().toString()) && parseBigDecimal(conditionValue, BigDecimal.ZERO).compareTo(BigDecimal.ZERO) > 0;
         enablePositiveButton(enabled, greenBtnColor);
     }
 
     protected ModifierGroupModel collectData() {
         model.title = description.getText().toString();
+        model.condition = ModifierGroupCondition.valueOf(condition.getSelectedItemPosition());
+        model.conditionValue = parseBigDecimal(conditionValue, BigDecimal.ZERO).intValue();
         return model;
     }
 
@@ -151,6 +180,23 @@ public class ModifierGroupEditFragment extends StyledDialogFragment implements B
             }
         };
     }
+
+    private TextWatcher watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            refreshEnabled();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
     public static void show(FragmentActivity activity,
                             String itemGuid,

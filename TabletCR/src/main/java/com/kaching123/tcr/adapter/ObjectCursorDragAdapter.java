@@ -160,4 +160,11 @@ import java.util.List;
             }
         }
 
+        public List<T> getItems(int from, int to){
+            ArrayList<T> items = new ArrayList<>(to - from + 1);
+            for (int i = from; i <= to; i++) {
+                items.add(getItem(i));
+            }
+            return items;
+        }
     }

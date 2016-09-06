@@ -13,7 +13,6 @@ public class ModifierExModel extends ModifierModel {
 
     protected ItemExModel childItem;
     protected ModifierGroupModel group;
-    protected boolean defaultItem;
 
     public ModifierExModel() {
         super();
@@ -29,8 +28,9 @@ public class ModifierExModel extends ModifierModel {
                            String modifierGroupGuid,
                            ModifierGroupModel group,
                            ItemExModel childItem,
-                           boolean autoApply) {
-        super(modifierGuid, itemGuid, type, title, cost, childItemGuid, childItemQty, modifierGroupGuid, autoApply);
+                           boolean autoApply,
+                           int orderNum) {
+        super(modifierGuid, itemGuid, type, title, cost, childItemGuid, childItemQty, modifierGroupGuid, autoApply, orderNum);
         this.group = group;
         this.childItem = childItem;
     }
@@ -45,15 +45,6 @@ public class ModifierExModel extends ModifierModel {
 
     public ModifierGroupModel getGroup() {
         return group;
-    }
-
-    public boolean isDefaultItem() {
-        return defaultItem;
-    }
-
-    public ModifierExModel setDefaultItem(boolean defaultItem) {
-        this.defaultItem = defaultItem;
-        return this;
     }
 
     public BigDecimal getCost(){
@@ -78,14 +69,6 @@ public class ModifierExModel extends ModifierModel {
    }
 
    public boolean isDefaultWithinGroupOrItem(ItemModel hostItem) {
-       if (type != ModifierType.MODIFIER) {
-           return false; // can't be default
-       } else if (group == null && hostItem != null && !TextUtils.isEmpty(hostItem.defaultModifierGuid)) {
-           return hostItem.defaultModifierGuid.equals(getGuid());
-       } else if (group != null && !TextUtils.isEmpty(group.defaultGuid)) { // a little acceptable overhead
-           return group.defaultGuid.equals(getGuid());
-       } else {
-           return false; // leads to it
-       }
+       return false;
    }
 }

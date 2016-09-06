@@ -3,14 +3,11 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.tcr.model.Unit.CodeType;
-import com.kaching123.tcr.model.converter.ItemFunction;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.UnitUtil;
 
@@ -63,7 +60,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public String taxGroupGuid2;
     @Deprecated
     public boolean isPcsUnit;
-    public String defaultModifierGuid;
     public int orderNum;
     public String printerAliasGuid;
     public int btnView;
@@ -116,7 +112,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      String updateQtyFlag,
                      String taxGroupGuid,
                      String taxGroupGuid2,
-                     String defaultModifierGuid,
                      int orderNum,
                      String printerAliasGuid,
                      int btnView,
@@ -162,7 +157,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.taxGroupGuid = taxGroupGuid;
         this.taxGroupGuid2 = taxGroupGuid2;
         this.orderNum = orderNum;
-        this.defaultModifierGuid = defaultModifierGuid;
         this.printerAliasGuid = printerAliasGuid;
         this.btnView = btnView;
         this.hasNotes = hasNotes;
@@ -210,7 +204,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.taxGroupGuid = itemModel.taxGroupGuid;
         this.taxGroupGuid2 = itemModel.taxGroupGuid2;
         this.orderNum = itemModel.orderNum;
-        this.defaultModifierGuid = itemModel.defaultModifierGuid;
         this.printerAliasGuid = itemModel.printerAliasGuid;
         this.btnView = itemModel.btnView;
         this.hasNotes = itemModel.hasNotes;
@@ -230,12 +223,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                 .projection(_max(ItemTable.ORDER_NUM))
                 .where(ItemTable.CATEGORY_ID + " = ?", categoryId)
                 .perform(context)
-                .toFluentIterable(new Function<Cursor, Integer>() {
-                    @Override
-                    public Integer apply(Cursor input) {
-                        return input.getInt(0);
-                    }
-                }).first().or(0);
+                .toFluentIterable(new IntegerFunction())
+                .first().or(0);
 
         return i;
     }
@@ -280,7 +269,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.UPDATE_QTY_FLAG, updateQtyFlag);
         values.put(ItemTable.TAX_GROUP_GUID, taxGroupGuid);
         values.put(ItemTable.TAX_GROUP_GUID2, taxGroupGuid2);
-        values.put(ItemTable.DEFAULT_MODIFIER_GUID, defaultModifierGuid);
         values.put(ItemTable.ORDER_NUM, orderNum);
         values.put(ItemTable.PRINTER_ALIAS_GUID, printerAliasGuid);
         values.put(ItemTable.BUTTON_VIEW, btnView);

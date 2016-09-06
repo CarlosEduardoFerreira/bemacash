@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
-import com.google.common.base.Function;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderCostInfo;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.SaleOrderInfo;
@@ -19,6 +18,7 @@ import com.kaching123.tcr.model.LoyaltyViewModel;
 import com.kaching123.tcr.model.LoyaltyViewModel.IncentiveExModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.LoyaltyViewWrapFunction;
+import com.kaching123.tcr.model.converter.StringFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentivePlanTable;
 import com.kaching123.tcr.store.ShopSchema2.LoyaltyView2.LoyaltyIncentiveTable;
@@ -116,12 +116,8 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
                 .projection(SaleIncentiveTable.INCENTIVE_ID)
                 .where(SaleIncentiveTable.ORDER_ID + " = ?", orderId)
                 .perform(context)
-                .toFluentIterable(new Function<Cursor, String>() {
-                    @Override
-                    public String apply(Cursor input) {
-                        return input.getString(0);
-                    }
-                }).toSet();
+                .toFluentIterable(new StringFunction())
+                .toImmutableSet();
 
         if (usedIncentives.isEmpty())
             return;

@@ -63,7 +63,7 @@ public class CollectModifiersCommand extends PublicGroundyTask {
 
         Cursor c = ProviderAction.query(MODIFIER_URI)
                 .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
-                .orderBy(ModifierTable.TITLE)
+                .orderBy(ModifierTable.ORDER_NUM)
                 .perform(getContext());
 
         if (c.getCount() == 0) {
@@ -84,18 +84,7 @@ public class CollectModifiersCommand extends PublicGroundyTask {
         ArrayList<SelectedModifierExModel> wrappedAutoApplyModifiers = new ArrayList<>(modifierModels.size());
         boolean hasAutoApply = false;
         if (TextUtils.isEmpty(saleItemGuid)) {
-            c = ProviderAction.query(ITEM_URI)
-                    .projection(ItemTable.DEFAULT_MODIFIER_GUID)
-                    .where(ItemTable.GUID + " = ?", itemGuid)
-                    .perform(getContext());
-
             ItemModel item = null;
-            if (c.moveToFirst()) {
-                item = new ItemModel(itemGuid);
-                item.defaultModifierGuid = c.getString(0);
-            }
-
-
             for (ModifierExModel modifier : modifierModels) {
                 if (modifier.autoApply) {
                     wrappedAutoApplyModifiers.add(new SelectedModifierExModel(modifier, modifier.isDefaultWithinGroupOrItem(item)));
@@ -136,7 +125,7 @@ public class CollectModifiersCommand extends PublicGroundyTask {
         public boolean isSelected;
 
         public SelectedModifierExModel(ModifierExModel model, boolean isSelected) {
-            super(model.getGuid(), model.itemGuid, model.type, model.title, model.cost, model.childItemGuid, model.childItemQty, model.modifierGroupGuid, model.getGroup(), model.getItem(), model.autoApply);
+            super(model.getGuid(), model.itemGuid, model.type, model.title, model.cost, model.childItemGuid, model.childItemQty, model.modifierGroupGuid, model.getGroup(), model.getItem(), model.autoApply, model.orderNum);
             this.isSelected = isSelected;
         }
     }

@@ -71,12 +71,10 @@ import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand.BaseAddSaleOrderCommandCallback;
-import com.kaching123.tcr.commands.store.saleorder.ApplyMultipleDiscountCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand.BaseGetItemsForFaickVoidCallback;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand.BaseHoldOrderCallback;
-import com.kaching123.tcr.commands.store.saleorder.ItemsNegativeStockTrackingCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
@@ -87,6 +85,8 @@ import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusComma
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
+import com.kaching123.tcr.ecuador.AddEcuadorItemActivity;
+import com.kaching123.tcr.ecuador.EditEcuadorItemActivity;
 import com.kaching123.tcr.fragment.PrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.barcode.SearchBarcodeFragment;
@@ -124,14 +124,11 @@ import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
-import com.kaching123.tcr.function.MultipleDiscountWrapFunction;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CustomerModel;
-import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
@@ -146,7 +143,6 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
-import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
@@ -173,7 +169,6 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
 import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpXRegisterTable;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.MultipleDiscountTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
@@ -198,7 +193,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -703,6 +697,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                         }
                                     });
                         }
+
+                        @Override
+                        public void onModifiersCountInsufficient(ModifierGroupModel group) {
+                            showModifiersInsufficientCountDialog(group);
+                        }
                     }
             );
         }
@@ -714,6 +713,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             list.add(item.modifierGuid);
         }
         return list;
+    }
+
+    protected void showModifiersInsufficientCountDialog(ModifierGroupModel group){
+        AlertDialogFragment.showNotification(self(), R.string.warning_dialog_title, getString(R.string.modifiers_count_insufficient_msg, group.title, group.conditionValue));
     }
 
     protected void tryToAddCheckPriceType(final ItemExModel model,
@@ -3253,12 +3256,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             query.where(columnStart + " < ?", currentTime);
             query.where(columnEnd + " > ?", currentTime);
 
-            List<Integer> priceLevels = query.perform(self()).toFluentIterable(new Function<Cursor, Integer>() {
-                @Override
-                public Integer apply(Cursor input) {
-                    return input.getInt(0);
-                }
-            }).toList();
+            List<Integer> priceLevels = query.perform(self()).toFluentIterable(new IntegerFunction()).toImmutableList();
 
             if (!BaseCashierActivity.this.priceLevels.equals(priceLevels)){
                 BaseCashierActivity.this.priceLevels = priceLevels;

@@ -91,6 +91,9 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
     @ViewById(R.id.spinner)
     protected Spinner itemGroupSpinner;
 
+    @ViewById(R.id.spinner2)
+    protected Spinner itemGroupSpinner2;
+
     @ViewById
     protected TextView qtyTextview;
 
@@ -167,6 +170,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
     protected void attachViews() {
         if (modType != ModifierType.MODIFIER) {
             itemGroupSpinner.setVisibility(View.GONE);
+            itemGroupSpinner2.setVisibility(View.GONE);
         }
         llAutoApply.setVisibility(modType == ModifierType.MODIFIER ? View.VISIBLE : View.INVISIBLE);
         autoApplySelected.setChecked(model == null ? false : model.autoApply);
@@ -220,6 +224,8 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!isChecked) {
+                    itemGroupSpinner.setEnabled(true);
+                    itemGroupSpinner2.setEnabled(false);
                     itemChooser.setEnabled(false);
                     childSelected.setEnabled(false);
                     qtyEditbox.setEnabled(false);
@@ -233,9 +239,10 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                     model.setItem(null);
                     model.childItemGuid = null;
                 } else {
-                    itemChooser.setEnabled(false);
+                    itemGroupSpinner.setEnabled(false);
+                    itemGroupSpinner2.setEnabled(true);
+                    itemChooser.setEnabled(true);
                     childSelected.setEnabled(true);
-//                    qtyEditbox.setEnabled(true);
                     priceEditbox.setEnabled(false);
                     qtyTextview.setTextColor(normalTextColor);
                     type.setTextColor(normalTextColor);
@@ -290,7 +297,12 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                 qtyEditbox.setEnabled(true);
             }
         });
+
         itemGroupSpinner.setAdapter(groupAdapter);
+        itemGroupSpinner.setEnabled(!free.isChecked());
+        itemGroupSpinner2.setAdapter(groupAdapter);
+        itemGroupSpinner2.setEnabled(free.isChecked());
+
         Bundle b = new Bundle();
         b.putString(ITEM_KEY, itemGuid);
 
@@ -359,6 +371,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
         } else {
             enabled &= !TextUtils.isEmpty(description.getText().toString());
         }
+        enabled &= modType != ModifierType.MODIFIER || groupAdapter.getCount() > 0;
         enablePositiveButton(enabled, greenBtnColor);
     }
 
@@ -373,16 +386,17 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
         }
         model.autoApply = autoApplySelected.isChecked();
         model.cost = parseBigDecimal(priceEditbox.getText().toString());
-//        else {
-//            model.cost = parseBigDecimal(priceEditbox.getText().toString());
-//        }
         if (TextUtils.isEmpty(description.getText().toString())) {
             model.title = "";
         } else {
             model.title = description.getText().toString();
         }
         if (modType == ModifierType.MODIFIER) {
-            model.modifierGroupGuid = ((ModifierGroupModel)itemGroupSpinner.getSelectedItem()).getGuid();
+            if (!free.isChecked()){
+                model.modifierGroupGuid = ((ModifierGroupModel)itemGroupSpinner.getSelectedItem()).getGuid();
+            }else{
+                model.modifierGroupGuid = ((ModifierGroupModel)itemGroupSpinner2.getSelectedItem()).getGuid();
+            }
         }
         return model;
     }
@@ -439,11 +453,11 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                 Logger.d("OnDialogClickListener: onClick "+model.autoApply);
                 Logger.d("OnDialogClickListener: onClick "+dataModel.autoApply);
                 if (mode == MODE.EDIT) {
-                    EditModifiersCommand.start(getActivity(), model, false, false);
+                    EditModifiersCommand.start(getActivity(), model);
                     callback.handleSuccess();
                 } else if (mode == MODE.ADD) {
                     callback.handleSuccess();
-                    AddModifierCommand.start(getActivity(), model, false, false);
+                    AddModifierCommand.start(getActivity(), model);
                 }
                 return false;
             }
@@ -560,32 +574,14 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
             String itemGuid = bundle.getString(ITEM_KEY);
             return CursorLoaderBuilder
                     .forUri(URI_GROUP)
-                    .projection(ShopStore.ModifierGroupTable.GUID,
-                            ShopStore.ModifierGroupTable.ITEM_GUID,
-                            ShopStore.ModifierGroupTable.TITLE,
-                            ShopStore.ModifierGroupTable.DEFAULT_GUID)
                     .where(ShopStore.ModifierGroupTable.ITEM_GUID + " = ?", itemGuid)
-                    .orderBy(ShopStore.ModifierGroupTable.TITLE)
+                    .orderBy(ModifierGroupTable.ORDER_NUM)
                     .transform(new Function<Cursor, ModifierGroupModel>() {
                         @Override
                         public ModifierGroupModel apply(Cursor c) {
-
-                            return new ModifierGroupModel(
-                                    c.getString(0),
-                                    c.getString(1),
-                                    c.getString(2),
-                                    c.getString(3));
+                            return new ModifierGroupModel(c);
                         }
-                    }).wrap(new Function<List<ModifierGroupModel>, List<ModifierGroupModel>>() {
-                        @Override
-                        public List<ModifierGroupModel> apply(List<ModifierGroupModel> result) {
-                            ArrayList<ModifierGroupModel> arrayList = new ArrayList<ModifierGroupModel>(result.size() + 1);
-                            arrayList.add(new ModifierGroupModel(null, null, getString(R.string.groups_label), null));
-                            arrayList.addAll(result);
-                            return arrayList;
-                        }
-                    })
-                    .build(getActivity());
+                    }).build(getActivity());
         }
 
         @Override
@@ -596,11 +592,13 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                 for (ModifierGroupModel model : groups) {
                     if (model.guid != null && model.guid.equals(self().model.modifierGroupGuid)) {
                         itemGroupSpinner.setSelection(position);
+                        itemGroupSpinner2.setSelection(position);
                         break;
                     }
                     position++;
                 }
             }
+            refreshEnabled();
         }
 
         @Override

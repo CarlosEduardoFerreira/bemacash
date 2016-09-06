@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:myapp ="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/action_copy"
-        android:title="@string/modifiers_action_copy"
+        android:id="@+id/action_manage_groups"
+        android:title="@string/modifiers_action_manage_groups"
         android:showAsAction="never"
         myapp:showAsAction="never"
-        android:actionViewClass="android.widget.SearchView"
         android:orderInCategory="@integer/menu_order_default"/>
 </menu>

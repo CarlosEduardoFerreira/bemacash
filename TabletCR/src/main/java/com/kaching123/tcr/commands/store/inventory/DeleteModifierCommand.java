@@ -7,6 +7,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -30,13 +31,14 @@ public class DeleteModifierCommand extends AsyncCommand {
         if (modifier == null) {
             modifier = (ModifierModel) getArgs().getSerializable(ARG_MODIFIER);
         }
-
         return succeeded();
     }
 
+
+
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<>(1);
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         operations.add(ContentProviderOperation.newUpdate(ShopProvider.contentUri(ModifierTable.URI_CONTENT))
                 .withValues(ShopStore.DELETE_VALUES)
                 .withSelection(ModifierTable.MODIFIER_GUID + " = ?", new String[]{modifier.modifierGuid})
@@ -46,7 +48,9 @@ public class DeleteModifierCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.delete(modifier, getAppCommandContext());
+        BatchSqlCommand sql = batchDelete(modifier);
+        sql.add(JdbcFactory.delete(modifier, getAppCommandContext()));
+        return sql;
     }
 
     public static void start(Context context, ModifierModel modifier){

@@ -246,10 +246,10 @@ public class EditDialog extends StyledDialogFragment {
             collectDataToModel();
             switch (action) {
                 case CREATE:
-                    AddModifierCommand.start(getActivity(), model, useAsDefault, resetDefaultModifier);
+                    AddModifierCommand.start(getActivity(), model);
                     break;
                 case EDIT:
-                    EditModifiersCommand.start(getActivity(), model, useAsDefault, resetDefaultModifier);
+                    EditModifiersCommand.start(getActivity(), model);
                     break;
             }
             if(editListener != null){

@@ -41,4 +41,10 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.25" />
+
+    <View
+        style="@style/ItemList.HeaderSpace"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1" />
 </LinearLayout>

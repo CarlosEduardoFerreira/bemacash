@@ -125,6 +125,7 @@
     <string name="modifier_header_item">Title</string>
     <string name="modifier_group_edit">Edit Selected Group</string>
     <string name="modifier_group_delete">Remove Selected Group</string>
+    <string name="modifier_group_dialog_label">Select the number of modifiers</string>
 
     <string name="modifier_add_success">Modifier item created</string>
     <string name="modifier_cancel_success">Modifier action cancelled</string>
@@ -611,6 +612,7 @@
     <string name="swipe_card_error_not_config_msg">Usb Card Reader is not set yet.\nPlease config in the setting page!</string>
     <string name="swipe_card_error_msg">Can\'t read data from card.\nPlease try again!</string>
     <string name="modifiers_action_copy">Copy from existing item</string>
+    <string name="modifiers_action_manage_groups">Manage Groups</string>
     <string name="modifiers_action_create_new">Create new</string>
     <string name="dashboard_activity_cash_in_drawer_label">CASH IN DRAWER</string>
     <string name="dashboard_activity_opening_amount">OPENING AMOUNT</string>
@@ -2046,4 +2048,7 @@
     <string name="item_qty_lower_zero">Item available quantity is not enough to sale it!</string>
     <string name="item_limit_qty">Limit Qty</string>
 
+
+    <string name="modifiers_limit_exceed_msg">Group limit of modifiers (%d) is exceeded</string>
+    <string name="modifiers_count_insufficient_msg" formatted = "false">You must select the required amount\nof modifiers for modifier group\n\'%s\'\nThe required amount is (%d)</string>
 </resources>

@@ -20,7 +20,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
-public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
+public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrderNumUpdater{
 
     private static final String ITEM_TABLE_NAME = "ITEM";
 
@@ -56,7 +56,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
     private static final String CODE_TYPE = "CODE_TYPE";
     private static final String SERIALIZABLE = "SERIALIZABLE";
     private static final String ORDER_NUM = "ORDER_NUM";
-    private static final String DEFAULT_MODIFIER_ID = "DEFAULT_MODIFIER_ID";
     private static final String PRINTER_ID = "PRINTER_ID";
     private static final String KDS_ID = "KDS_ID";
     private static final String BUTTON_VIEW = "BUTTON_VIEW";
@@ -103,7 +102,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 rs.getString(UPDATE_QTY_FLAG),
                 rs.getString(TAX_GROUP_ID),
                 rs.getString(TAX_GROUP_ID2),
-                rs.getString(DEFAULT_MODIFIER_ID),
                 rs.getInt(ORDER_NUM),
                 rs.getString(PRINTER_ID),
                 rs.getInt(BUTTON_VIEW),
@@ -161,7 +159,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(UPDATE_QTY_FLAG, item.updateQtyFlag)
                 .add(TAX_GROUP_ID, item.taxGroupGuid)
                 .add(TAX_GROUP_ID2, item.taxGroupGuid2)
-                .add(DEFAULT_MODIFIER_ID, item.defaultModifierGuid)
                 .add(ORDER_NUM, item.orderNum)
                 .add(PRINTER_ID, item.printerAliasGuid)
                 .add(HAS_NOTES, item.hasNotes)
@@ -207,7 +204,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
                 .add(UPDATE_QTY_FLAG, item.updateQtyFlag)
                 .add(TAX_GROUP_ID, item.taxGroupGuid)
                 .add(TAX_GROUP_ID2, item.taxGroupGuid2)
-                .add(DEFAULT_MODIFIER_ID, item.defaultModifierGuid)
                 .add(ORDER_NUM, item.orderNum)
                 .add(PRINTER_ID, item.printerAliasGuid)
                 .add(BUTTON_VIEW, item.btnView)
@@ -234,7 +230,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
 
     public SingleSqlCommand updateDefaultModifierGuid(String itemGuid, String modifierGuid, IAppCommandContext appCommandContext) {
         return _update(ITEM_TABLE_NAME, appCommandContext)
-                .add(DEFAULT_MODIFIER_ID, modifierGuid)
                 .where(ID, itemGuid)
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
@@ -303,6 +298,14 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> {
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(STOCK_TRACKING, isStockTracking)
                 .where(ID, guid)
+                .build(JdbcFactory.getApiMethod(ItemModel.class));
+    }
+
+    @Override
+    public SingleSqlCommand updateOrderNum(String id, int orderNum, IAppCommandContext appCommandContext) {
+        return _update(ITEM_TABLE_NAME, appCommandContext)
+                .add(ORDER_NUM, orderNum)
+                .where(ID, id)
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 }

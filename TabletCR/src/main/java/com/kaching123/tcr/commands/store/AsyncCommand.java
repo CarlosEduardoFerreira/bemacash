@@ -186,15 +186,7 @@ public abstract class AsyncCommand extends PublicGroundyTask {
      */
     protected abstract ArrayList<ContentProviderOperation> createDbOperations();
 
-   /* */
 
-    /**
-     * @param method
-     * @return object to store a list of ISqlCommand
-     *//*
-    protected BatchSqlCommand batch(String method) {
-        return new BatchSqlCommand(method);
-    }*/
     protected BatchSqlCommand batchDelete(String table) {
         return new BatchSqlCommand(JdbcFactory.METHOD_DELETE + JdbcFactory.getApiMethod(table));
     }

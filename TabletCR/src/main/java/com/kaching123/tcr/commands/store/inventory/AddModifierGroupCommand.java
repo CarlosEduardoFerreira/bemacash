@@ -5,10 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.kaching123.tcr.Logger;
-import com.telly.groundy.TaskResult;
-
-import java.util.ArrayList;
-
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierGroupModel;
@@ -17,6 +13,8 @@ import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskResult;
+
+import java.util.ArrayList;
 
 /**
  * Created by Mayer
@@ -33,6 +31,7 @@ public class AddModifierGroupCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         Logger.d("AddModifierCommand doCommand");
         modifier = (ModifierGroupModel) getArgs().getSerializable(ARG_MODIFIER);
+        modifier.orderNum = ModifierGroupModel.getMaxOrderNum(getContext(), modifier.itemGuid) + 1;
         return succeeded();
     }
 

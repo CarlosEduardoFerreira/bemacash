@@ -205,7 +205,6 @@ public class ImportInventoryCommand extends PublicGroundyTask {
         item.updateQtyFlag = oldModel.updateQtyFlag;
         item.isActiveStatus = oldModel.isActiveStatus;
         item.taxGroupGuid = oldModel.taxGroupGuid;
-        item.defaultModifierGuid = oldModel.defaultModifierGuid;
         item.orderNum = oldModel.orderNum;
         item.printerAliasGuid = oldModel.printerAliasGuid;
     }
@@ -518,7 +517,6 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 (BigDecimal) fields.get(FIELD_COST),
                 (BigDecimal) fields.get(FIELD_ORDER_TRIGGER),
                 (BigDecimal) fields.get(FIELD_RECOMMENDED),
-                null,
                 null,
                 null,
                 null,
