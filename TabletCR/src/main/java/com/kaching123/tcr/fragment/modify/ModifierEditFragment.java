@@ -233,7 +233,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                     model.setItem(null);
                     model.childItemGuid = null;
                 } else {
-                    itemChooser.setEnabled(true);
+                    itemChooser.setEnabled(false);
                     childSelected.setEnabled(true);
 //                    qtyEditbox.setEnabled(true);
                     priceEditbox.setEnabled(false);
@@ -306,6 +306,15 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                 break;
             default: throw new IllegalStateException("no mod type");
         }
+        childSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                    itemChooser.setEnabled(true);
+                else
+                    itemChooser.setEnabled(false);
+            }
+        });
     }
 
     private void setQtyBox(ItemExModel model) {
