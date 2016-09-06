@@ -43,7 +43,7 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
     @ViewById protected EditText recommendedQty;
 
     private EditText[] qtyViews;
-    private boolean limitQtyIgnoreListener;
+    private OnCheckedChangeListener limitQtyListener;
 
     @Override
     protected void setViews() {
@@ -58,16 +58,14 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
             }
         });
 
-        limitQty.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        limitQtyListener = new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(limitQtyIgnoreListener) {
-                    limitQtyIgnoreListener = false;
-                    return;
-                }
                 getModel().limitQty= isChecked;
             }
-        });
+        };
+
+        limitQty.setOnCheckedChangeListener(limitQtyListener);
 
         minimumQty.addTextChangedListener(new BrandTextWatcher(minimumQty, true) {
             @Override
@@ -134,12 +132,13 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
 
     public void showQuantities(){
         final ItemModel model = getModel();
-        limitQtyIgnoreListener = true;
 
         limitQty.setEnabled(model.isStockTracking);
         availableQty.setEnabled(model.isStockTracking);
         minimumQty.setEnabled(model.isStockTracking);
         recommendedQty.setEnabled(model.isStockTracking);
+
+        limitQty.setOnCheckedChangeListener(null);
 
         if (model.isStockTracking){
             limitQty.setChecked(model.limitQty);
@@ -155,6 +154,8 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
             minimumQty.setText(null);
             recommendedQty.setText(null);
         }
+
+        limitQty.setOnCheckedChangeListener(limitQtyListener);
 
         //set onClickListener
         if (getItemProvider().isCreate()){

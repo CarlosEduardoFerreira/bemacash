@@ -154,6 +154,23 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             public void onRemoveClicked(View v, final int pos) {
                 position = pos;
                 isVoidNeedPermission();
+
+                SaleOrderItemViewModel orderItemForRemove = adapter.getItem(pos);
+
+                BigDecimal subValue = app.getOrderItemsQty().get(orderItemForRemove.itemModel.itemGuid);
+                subValue = subValue != null ? subValue.subtract(orderItemForRemove.getQty()) : subValue;
+
+                if(subValue!=null) {
+                    if (subValue.compareTo(BigDecimal.ZERO) == 0) {
+                        app.getOrderItemsQty().remove(orderItemForRemove.itemModel.itemGuid);
+                    } else {
+                        app.getOrderItemsQty().put(orderItemForRemove.itemModel.itemGuid, subValue);
+                    }
+                }
+
+                if(orderItemForRemove.hasModifiers()){
+                    ItemsNegativeStockTrackingCommand.start(getActivity(),orderItemForRemove.itemModel.itemGuid, orderItemForRemove.getQty(), orderItemForRemove.modifiers, ItemsNegativeStockTrackingCommand.ItemType.REMOVE);
+                }
             }
 
             @Override
