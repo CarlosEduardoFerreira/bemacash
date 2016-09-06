@@ -623,7 +623,8 @@ public abstract class ShopStore {
 
     static {
         applyForeignKeys(ModifierTable.TABLE_NAME,
-                foreignKey(ModifierTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
+                foreignKey(ModifierTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID),
+                foreignKey(ModifierTable.ITEM_SUB_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
     }
 
 
