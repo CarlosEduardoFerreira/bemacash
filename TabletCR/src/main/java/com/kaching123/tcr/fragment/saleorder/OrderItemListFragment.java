@@ -30,6 +30,7 @@ import com.kaching123.tcr.commands.store.saleorder.CheckIsItemComposerCommand;
 import com.kaching123.tcr.commands.store.saleorder.CompositionItemsCalculationCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.DiscountSaleOrderItemCommand.BaseDiscountSaleOrderItemCallback;
+import com.kaching123.tcr.commands.store.saleorder.ItemsNegativeStockTrackingCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdatePriceSaleOrderItemCommand;
@@ -153,6 +154,23 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             public void onRemoveClicked(View v, final int pos) {
                 position = pos;
                 isVoidNeedPermission();
+
+                SaleOrderItemViewModel orderItemForRemove = adapter.getItem(pos);
+
+                BigDecimal subValue = app.getOrderItemsQty().get(orderItemForRemove.itemModel.itemGuid);
+                subValue = subValue != null ? subValue.subtract(orderItemForRemove.getQty()) : subValue;
+
+                if(subValue!=null) {
+                    if (subValue.compareTo(BigDecimal.ZERO) == 0) {
+                        app.getOrderItemsQty().remove(orderItemForRemove.itemModel.itemGuid);
+                    } else {
+                        app.getOrderItemsQty().put(orderItemForRemove.itemModel.itemGuid, subValue);
+                    }
+                }
+
+                if(orderItemForRemove.hasModifiers()){
+                    ItemsNegativeStockTrackingCommand.start(getActivity(),orderItemForRemove.itemModel.itemGuid, orderItemForRemove.getQty(), orderItemForRemove.modifiers, ItemsNegativeStockTrackingCommand.ItemType.REMOVE);
+                }
             }
 
             @Override
@@ -175,10 +193,20 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                         if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) {
                             QtyEditFragment.show(getActivity(), saleItemGuid, adapter.getItemQty(pos), adapter.isPcsUnit(pos), new OnEditQtyListener() {
                                 @Override
-                                public void onConfirm(BigDecimal value) {
-                                    highlightedColumn(saleItemGuid, Type.QTY);
-
-                                    UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
+                                public void onConfirm(final BigDecimal value) {
+                                    ItemsNegativeStockTrackingCommand.start(getActivity(), model.itemModel.itemGuid, model.itemModel.qty,
+                                            value, model.modifiers, ItemsNegativeStockTrackingCommand.ItemType.CHANGE_QTY,
+                                            new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                                                @Override
+                                                protected void handleSuccess(boolean result) {
+                                                    if(!result){
+                                                        Toast.makeText(getActivity(), R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
+                                                    highlightedColumn(saleItemGuid, Type.QTY);
+                                                    UpdateQtySaleOrderItemCommand.start(getActivity(), saleItemGuid, value, updateQtySaleOrderItemCallback);
+                                                }
+                                            });
                                 }
                             });
                         } else {

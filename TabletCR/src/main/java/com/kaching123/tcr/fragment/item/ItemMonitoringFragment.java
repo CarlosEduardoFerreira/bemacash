@@ -37,11 +37,13 @@ import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
 public class ItemMonitoringFragment extends ItemBaseFragment {
 
     @ViewById protected CheckBox monitoring;
+    @ViewById protected CheckBox limitQty;
     @ViewById protected EditText availableQty;
     @ViewById protected EditText minimumQty;
     @ViewById protected EditText recommendedQty;
 
     private EditText[] qtyViews;
+    private OnCheckedChangeListener limitQtyListener;
 
     @Override
     protected void setViews() {
@@ -55,6 +57,15 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
                 showQuantities();
             }
         });
+
+        limitQtyListener = new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                getModel().limitQty= isChecked;
+            }
+        };
+
+        limitQty.setOnCheckedChangeListener(limitQtyListener);
 
         minimumQty.addTextChangedListener(new BrandTextWatcher(minimumQty, true) {
             @Override
@@ -122,11 +133,15 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
     public void showQuantities(){
         final ItemModel model = getModel();
 
+        limitQty.setEnabled(model.isStockTracking);
         availableQty.setEnabled(model.isStockTracking);
         minimumQty.setEnabled(model.isStockTracking);
         recommendedQty.setEnabled(model.isStockTracking);
 
+        limitQty.setOnCheckedChangeListener(null);
+
         if (model.isStockTracking){
+            limitQty.setChecked(model.limitQty);
             showQuantity(availableQty, getItemProvider().getQtyInfo().availableQty, model.isPcsUnit());
             showQuantity(minimumQty, model.minimumQty, model.isPcsUnit());
             showQuantity(recommendedQty, model.recommendedQty, model.isPcsUnit());
@@ -134,10 +149,13 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
             getModel().availableQty = BigDecimal.ZERO;
             getModel().minimumQty = BigDecimal.ZERO;
             getModel().recommendedQty = BigDecimal.ZERO;
+            limitQty.setChecked(false);
             availableQty.setText(null);
             minimumQty.setText(null);
             recommendedQty.setText(null);
         }
+
+        limitQty.setOnCheckedChangeListener(limitQtyListener);
 
         //set onClickListener
         if (getItemProvider().isCreate()){

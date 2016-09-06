@@ -1268,6 +1268,7 @@
     <string name="report_returned_items_header_total">Total</string>
     <string name="reports_sold_order_header_date">Sale Date</string>
     <string name="reports_sold_order_header_register">Register Number</string>
+    <string name="reports_sold_order_header_employee">Cashier</string>
     <string name="reports_sold_order_header_price">Total Price</string>
     <string name="reports_sold_order_header_discount">Discount</string>
     <string name="reports_sold_order_header_tax">Tax</string>
@@ -2041,5 +2042,8 @@
     <string name="batch_close_msg">There is no transaction need to be batch closed</string>
 
     <string name="composer_processing_msg">Composer process…</string>
+
+    <string name="item_qty_lower_zero">Item available quantity is not enough to sale it!</string>
+    <string name="item_limit_qty">Limit Qty</string>
 
 </resources>

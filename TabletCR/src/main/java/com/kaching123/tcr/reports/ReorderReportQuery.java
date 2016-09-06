@@ -57,7 +57,7 @@ public class ReorderReportQuery {
                 .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY))
                 .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " < "  + _castAsReal(ItemTable.RECOMMENDED_QTY))
                 .perform(context)
-                .toFluentIterable(new ConvertFunction()).toImmutableList();
+                .toFluentIterable(new ConvertFunction()).toList();
     }
 
     public static class ItemQtyInfo {

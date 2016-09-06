@@ -62,6 +62,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.UNIT_LABEL_ID)),
                     shortCut,
                     c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.STOCK_TRACKING)) == 1,
+                    c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.LIMIT_QTY)) == 1,
                     c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.ACTIVE_STATUS)) == 1,
                     false,
                     c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.SALABLE)) == 1,

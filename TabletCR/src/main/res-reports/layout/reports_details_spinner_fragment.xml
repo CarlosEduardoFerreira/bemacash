@@ -29,6 +29,23 @@
             android:layout_width="@dimen/report_spinner_def_width" />
 
         <TextView
+            android:id="@+id/cashier_spinner_label"
+            style="@style/Reports.Label"
+            android:text="@string/reports_sold_order_header_employee"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:visibility="gone"
+            android:minWidth="58dp" />
+
+        <Spinner
+            android:id="@+id/cashier_spinner"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/report_spinner_def_width"
+            android:visibility="gone"
+            />
+
+        <TextView
             android:id="@+id/cash_drawer_type_label"
             style="@style/Reports.Label"
             android:text="@string/report_sales_by_drops_and_payments_header_type"

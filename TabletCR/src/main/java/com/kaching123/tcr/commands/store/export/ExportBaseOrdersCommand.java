@@ -47,6 +47,17 @@ public abstract class ExportBaseOrdersCommand extends ExportCursorToFileCommand 
     private long endTime;
     private long registerId;
 
+    private String[] baseProjection = new String[]{SaleOrderTable.GUID,
+            SaleOrderTable.CREATE_TIME,
+            SaleOrderTable.CUSTOMER_GUID,//null
+            RegisterTable.TITLE,
+
+            SaleOrderTable.TML_TOTAL_DISCOUNT,
+            SaleOrderTable.TML_TOTAL_TAX,
+            SaleOrderTable.TML_TOTAL_PRICE,
+            SaleOrderTable.PRINT_SEQ_NUM,
+            SaleOrderTable.STATUS};
+
     @Override
     protected TaskResult doInBackground() {
         startTime = getLongArg(ARG_START_TIME);
@@ -63,6 +74,7 @@ public abstract class ExportBaseOrdersCommand extends ExportCursorToFileCommand 
             return new CellProcessor[]{
                     null,
                     new FmtDate("MM/dd/yyyy HH:mm"),
+                    null,
                     null,
                     null,
 
@@ -103,18 +115,7 @@ public abstract class ExportBaseOrdersCommand extends ExportCursorToFileCommand 
     protected Cursor query() {
         Query query = ProviderAction
                 .query(SALE_ORDER_URI)
-                .projection(
-                        SaleOrderTable.GUID,
-                        SaleOrderTable.CREATE_TIME,
-                        SaleOrderTable.CUSTOMER_GUID,//null
-                        RegisterTable.TITLE,
-
-                        SaleOrderTable.TML_TOTAL_DISCOUNT,
-                        SaleOrderTable.TML_TOTAL_TAX,
-                        SaleOrderTable.TML_TOTAL_PRICE,
-                        SaleOrderTable.PRINT_SEQ_NUM,
-                        SaleOrderTable.STATUS
-                )
+                .projection(getProjection())
                 .where(SaleOrderTable.CREATE_TIME + " >= ? and " + SaleOrderTable.CREATE_TIME + " <= ?", startTime, endTime);
         where(query)/*
                 .where(SaleOrderTable.STATUS + " = ?", getOrderType().ordinal())*/
@@ -128,9 +129,14 @@ public abstract class ExportBaseOrdersCommand extends ExportCursorToFileCommand 
 
     protected abstract Query where(Query query);
 
+    protected String[] getProjection(){
+        return baseProjection;
+    }
+
     @Override
     protected List<Object> readRow(Cursor c) {
         String orderGuid = c.getString(0);
+        boolean needChange = needChange();
 
         /*ReturnInfo returnInfo;
         if(getOrderType() != OrderStatus.RETURN){
@@ -147,6 +153,11 @@ public abstract class ExportBaseOrdersCommand extends ExportCursorToFileCommand 
         String registerNum = c.getString(3);
         result.add(registerNum);
 
+        if(needChange){
+            String operatorFullName = String.format("%s %s", c.getString(9), c.getString(10));
+            result.add(operatorFullName);
+        }
+
         BigDecimal discount = _decimal(c.getString(4), BigDecimal.ZERO);
         BigDecimal tax = _decimal(c.getString(5), BigDecimal.ZERO);
         BigDecimal total = _decimal(c.getString(6), BigDecimal.ZERO);
@@ -156,7 +167,6 @@ public abstract class ExportBaseOrdersCommand extends ExportCursorToFileCommand 
         result.add(_decimal(tax));
         result.add(_decimal(total));
 
-        boolean needChange = needChange();
         OrderPaymentInfo paymentInfo = getPayments(orderGuid, _orderStatus(c, 8));
         if (paymentInfo.firstPayment == null) {
             result.add("");
@@ -215,7 +225,7 @@ public abstract class ExportBaseOrdersCommand extends ExportCursorToFileCommand 
         return result;
     }
 
-    private void addCardInformation(ArrayList<Object> result, PaymentTransactionModel payment) {
+    protected void addCardInformation(ArrayList<Object> result, PaymentTransactionModel payment) {
         if (payment != null && payment.gateway.isCreditCard()) {
             result.add(payment.cardName);
         } else {

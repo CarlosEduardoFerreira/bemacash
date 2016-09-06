@@ -78,7 +78,7 @@ public class UpdateSaleOrderItemRefundQtyCommand extends AsyncCommand {
                 .whereIn(SaleItemTable.SALE_ITEM_GUID, info.keySet())
                 .perform(getContext())
                 .toFluentIterable(new SaleOrderItemFunction())
-                .toImmutableList();
+                .toList();
 
 
         for (SaleOrderItemModel i : returnItems) {

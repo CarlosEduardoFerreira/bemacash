@@ -163,7 +163,7 @@ dependencies {
     }
 
     compile 'com.squareup.picasso:picasso:2.1.1'
-    compile 'com.google.guava:guava:13.0.1'
+    compile 'com.google.guava:guava:18.0'
     apt "com.github.hamsterksu:android-annotatedsql-processor:${asVersion}"
     compile "com.github.hamsterksu:android-annotatedsql-api:${asVersion}"
     compile "com.telly:groundy:${groundyVersion}"

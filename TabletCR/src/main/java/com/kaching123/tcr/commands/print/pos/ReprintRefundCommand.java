@@ -53,7 +53,7 @@ public class ReprintRefundCommand extends PublicGroundyTask {
                         public RefundSaleItemInfo apply(Cursor input) {
                             return new RefundSaleItemInfo(input.getString(0), CalculationUtil.negative(_decimal(input, 1, BigDecimal.ZERO)));
                         }
-                    }).toImmutableList();
+                    }).toList();
 
             TaskResult result = PrintRefundCommand.sync(getContext(), skipPaperWarning, searchByMac, true, orderGuid, childOrderGuid, saleItemInfos, getAppCommandContext());
             if (isFailed(result)){

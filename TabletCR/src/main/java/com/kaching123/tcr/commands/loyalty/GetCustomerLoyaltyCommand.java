@@ -121,7 +121,7 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
                     public String apply(Cursor input) {
                         return input.getString(0);
                     }
-                }).toImmutableSet();
+                }).toSet();
 
         if (usedIncentives.isEmpty())
             return;

@@ -100,8 +100,8 @@
                 style="@style/CheckBox.Light"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="false"
-                android:enabled="false"
+                android:clickable="true"
+                android:enabled="true"
                 android:gravity="center_vertical" />
 
             <com.kaching123.tcr.component.ItemAutocompleteTextView

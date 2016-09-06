@@ -3,11 +3,14 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.tcr.model.Unit.CodeType;
+import com.kaching123.tcr.model.converter.ItemFunction;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.UnitUtil;
 
@@ -23,6 +26,9 @@ import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
 import static com.kaching123.tcr.model.ContentValuesUtil._putItemRefType;
 
 public class ItemModel extends BaseItemModel implements Serializable, IValueModel {
+
+    private static final Uri URI_ITEM = ShopProvider.contentUri(ShopStore.ItemTable.URI_CONTENT);
+    private static final Uri ITEM_RAW_QUERY = ShopProvider.contentUri(ShopStore.ItemRawQuery.URI_CONTENT);
 
     private static final long serialVersionUID = 1L;
 
@@ -43,6 +49,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public BigDecimal availableQty;
     public String unitsLabelId;
     public boolean isStockTracking;
+    public boolean limitQty;
     public boolean isActiveStatus;
     public boolean isDiscountable;
     public BigDecimal discount;
@@ -96,6 +103,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      BigDecimal availableQty,
                      String unitsLabelId,
                      boolean isStockTracking,
+                     boolean limitQty,
                      boolean isActiveStatus,
                      boolean isDiscountable,
                      boolean isSalable,
@@ -139,6 +147,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.availableQty = availableQty;
         this.unitsLabelId = unitsLabelId;
         this.isStockTracking = isStockTracking;
+        this.limitQty = limitQty;
         this.isActiveStatus = isActiveStatus;
         this.isDiscountable = isDiscountable;
         this.isSalable = isSalable;
@@ -186,6 +195,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.availableQty = itemModel.availableQty;
         this.unitsLabelId = itemModel.unitsLabelId;
         this.isStockTracking = itemModel.isStockTracking;
+        this.limitQty = itemModel.limitQty;
         this.isActiveStatus = itemModel.isActiveStatus;
         this.isDiscountable = itemModel.isDiscountable;
         this.isSalable = itemModel.isSalable;
@@ -235,6 +245,10 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         return guid;
     }
 
+    public boolean isLimitQtySelected() {
+        return isStockTracking && limitQty;
+    }
+
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
@@ -253,6 +267,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         values.put(ItemTable.PRICE_5, _decimal(price5));
         values.put(ItemTable.UNIT_LABEL_ID, unitsLabelId);
         values.put(ItemTable.STOCK_TRACKING, isStockTracking);
+        values.put(ItemTable.LIMIT_QTY, limitQty);
         values.put(ItemTable.ACTIVE_STATUS, isActiveStatus);
         values.put(ItemTable.DISCOUNTABLE, isDiscountable);
         values.put(ItemTable.SALABLE, isSalable);
@@ -324,6 +339,16 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         return this.refType == ItemRefType.Reference;
     }
 
-
+    public static ItemModel getById(final Context context, final String itemGuid, boolean ignoreIsDeleted) {
+        final Cursor cursor = ProviderAction.query(ignoreIsDeleted ? ITEM_RAW_QUERY : URI_ITEM)
+                .where(ShopStore.ItemTable.GUID + " = ?", itemGuid)
+                .perform(context);
+        ItemModel item = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            item = new ItemFunction().apply(cursor);
+            cursor.close();
+        }
+        return item;
+    }
 
 }

@@ -53,7 +53,7 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
                 .where(ShopStore.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .perform(getContext())
                 .toFluentIterable(new SaleOrderItemFunction())
-                .toImmutableList();
+                .toList();
 
         List<String> guids = new ArrayList<>();
         for (SaleOrderItemModel item : saleOrderItems) {
@@ -85,7 +85,7 @@ public class CompositionItemsCalculationCommand extends AsyncCommand {
         Cursor itemCursor = null;
         if(!composers.isEmpty()){                                                                            //first check if this item should be processed
             for (Iterator<ComposerModel> iterator = composers.iterator(); iterator.hasNext(); ) {
-                if(!iterator.next().tracked){
+                if(!iterator.next().restricted){
                     iterator.remove();
                 }
             }

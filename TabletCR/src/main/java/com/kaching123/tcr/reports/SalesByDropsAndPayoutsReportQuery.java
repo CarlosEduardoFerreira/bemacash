@@ -33,7 +33,7 @@ public class SalesByDropsAndPayoutsReportQuery {
             query.where(ShopStore.CashDrawerMovementTable.MANAGER_GUID + " = ?", managerGuid);
 
         List list = query.perform(context)
-                .toFluentIterable(new ConvertFunction()).toImmutableList();
+                .toFluentIterable(new ConvertFunction()).toList();
 
         return list;
     }
