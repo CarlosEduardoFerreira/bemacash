@@ -98,7 +98,7 @@ public class ApplyMultipleDiscountCommand extends AsyncCommand {
                 .where(SaleItemTable.ORDER_GUID + " = ?", orderId)
                 .where(SaleItemTable.DISCOUNT_BUNDLE_ID + " IS NULL")
                 .perform(context)
-                .toFluentIterable(new SaleOrderItemFunction()).toImmutableList();
+                .toFluentIterable(new SaleOrderItemFunction()).toList();
     }
 
 

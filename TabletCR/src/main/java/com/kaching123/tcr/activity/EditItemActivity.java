@@ -271,6 +271,7 @@ public class EditItemActivity extends BaseCommonItemActivity {
         showPrice(commissions, model.commission);
 
         stockTrackingFlag.setChecked(model.isStockTracking);
+        limitQtyFlag.setChecked(model.limitQty);
         updateStockTrackingBlock(model.isStockTracking);
 
         if (model.discountType != null) {

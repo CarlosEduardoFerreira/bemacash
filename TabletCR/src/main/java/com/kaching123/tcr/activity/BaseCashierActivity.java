@@ -76,6 +76,7 @@ import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand.BaseGetItemsForFaickVoidCallback;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand.BaseHoldOrderCallback;
+import com.kaching123.tcr.commands.store.saleorder.ItemsNegativeStockTrackingCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
@@ -197,6 +198,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -605,6 +607,34 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected abstract void showEditItemModifiers(final String saleItemGuid,
                                                   final String itemGuid);
 
+    protected boolean checkTracked(ItemExModel model){
+        if(model.isLimitQtySelected()) {
+            HashMap<String, BigDecimal> map = new HashMap<>();
+            map.putAll(app.getOrderItemsQty());
+
+            if (!map.isEmpty()) {
+                BigDecimal count = map.containsKey(model.getGuid()) ? map.get(model.getGuid()) : BigDecimal.ZERO;
+
+                if (model.availableQty.subtract(BigDecimal.ONE.add(count)).compareTo(BigDecimal.ZERO) < 0) {
+                    Toast.makeText(this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+                map.put(model.getGuid(), count.add(BigDecimal.ONE));
+                app.addCurrentOrderItemsQty(map);
+            } else {
+                if (model.availableQty.subtract(BigDecimal.ONE).compareTo(BigDecimal.ZERO) < 0) {
+                    Toast.makeText(this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                HashMap<String, BigDecimal> newOrderItem = new HashMap<>(1);
+                newOrderItem.put(model.getGuid(), BigDecimal.ONE);
+                app.addCurrentOrderItemsQty(newOrderItem);
+            }
+        }
+        return true;
+    }
+
     protected void tryToAddItem(final ItemExModel model) {
         if (!TcrApplication.isEcuadorVersion())
             tryToAddItem(model, null, null, null);
@@ -619,7 +649,23 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
 
-        CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+        if(!model.hasModificators() && !checkTracked(model)){
+            return;
+        } else if (model.isAComposisiton) {
+            ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, model.getGuid(), ItemsNegativeStockTrackingCommand.ItemType.COMPOSITION, new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                @Override
+                protected void handleSuccess(boolean result) {
+                    if(!result){
+                        Toast.makeText(BaseCashierActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    CollectModifiersCommand.start(BaseCashierActivity.this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+                }
+            });
+        } else {
+            CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+        }
+
 
     }
 
@@ -642,11 +688,20 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     model.guid,
                     new ItemModifiersFragment.OnAddonsChangedListener() {
                         @Override
-                        public void onAddonsChanged(ArrayList<String> modifierGuid,
-                                                    ArrayList<String> addonsGuid,
-                                                    ArrayList<String> optionalsGuid) {
-                            tryToAddCheckPriceType(model, modifierGuid,
-                                    addonsGuid, optionalsGuid, price, quantity, unit);
+                        public void onAddonsChanged(final ArrayList<String> modifierGuid,
+                                                    final ArrayList<String> addonsGuid,
+                                                    final ArrayList<String> optionalsGuid) {
+                            ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, ItemsNegativeStockTrackingCommand.ItemType.MODIFIER, model.getGuid(), modifierGuid, addonsGuid, optionalsGuid,
+                                    new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                                        @Override
+                                        protected void handleSuccess(boolean result) {
+                                            if (!result) {
+                                                Toast.makeText(BaseCashierActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                            tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
+                                        }
+                                    });
                         }
                     }
             );
@@ -3203,7 +3258,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 public Integer apply(Cursor input) {
                     return input.getInt(0);
                 }
-            }).toImmutableList();
+            }).toList();
 
             if (!BaseCashierActivity.this.priceLevels.equals(priceLevels)){
                 BaseCashierActivity.this.priceLevels = priceLevels;

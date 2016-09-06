@@ -508,6 +508,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 quantity,
                 unitLabelId,
                 (Boolean) fields.get(FIELD_STOCK_TRACKING),
+                (Boolean) fields.get(FIELD_LIMIT_QTY),
                 true,
                 (Boolean) fields.get(FIELD_DISCOUNTABLE),
                 (Boolean) fields.get(FIELD_SALABLE),
@@ -648,12 +649,13 @@ public class ImportInventoryCommand extends PublicGroundyTask {
     private static final int FIELD_SALABLE = 10;
     private static final int FIELD_TAXABLE = 11;
     private static final int FIELD_STOCK_TRACKING = 12;
-    private static final int FIELD_COST = 13;
-    private static final int FIELD_QTY = 14;
-    private static final int FIELD_ORDER_TRIGGER = 15;
-    private static final int FIELD_RECOMMENDED = 16;
-    private static final int FIELD_IS_REFERENCE = 17;
-    //private static final int FIELD_LAST_SOLD_DATE = 18;
+    private static final int FIELD_LIMIT_QTY = 13;
+    private static final int FIELD_COST = 14;
+    private static final int FIELD_QTY = 15;
+    private static final int FIELD_ORDER_TRIGGER = 16;
+    private static final int FIELD_RECOMMENDED = 17;
+    private static final int FIELD_IS_REFERENCE = 18;
+    //private static final int FIELD_LAST_SOLD_DATE = 19;
 
     private static CellProcessor[] getProcessors(ImportType type) {
         if (type == ImportType.DELETE) {
@@ -677,6 +679,7 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                     new Optional(new ParseBool()),//salable
                     new Optional(new ParseBool()),//taxable
                     new Optional(new ParseBool()),//stock track
+                    new Optional(new ParseBool()),//limit qty
                     new Optional(new ParseBigDecimal()),//cost
                     new Optional(new ParseBigDecimal()),//qty on hand
                     new Optional(new ParseBigDecimal()),//order trigger

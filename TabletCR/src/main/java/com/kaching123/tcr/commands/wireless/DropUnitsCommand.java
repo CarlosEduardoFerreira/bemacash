@@ -107,7 +107,7 @@ public class DropUnitsCommand extends AsyncCommand  {
                 .where(UnitTable.ITEM_ID + " = ?", itemId)
                 .perform(getContext())
                 .toFluentIterable(new UnitFunction())
-                .toImmutableList();
+                .toList();
     }
 
     @Override

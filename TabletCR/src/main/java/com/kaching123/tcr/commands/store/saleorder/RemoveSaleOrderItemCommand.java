@@ -105,7 +105,7 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
                     public String apply(Cursor input) {
                         return input.getString(0);
                     }
-                }).toImmutableList();
+                }).toList();
     }
 
     @Override

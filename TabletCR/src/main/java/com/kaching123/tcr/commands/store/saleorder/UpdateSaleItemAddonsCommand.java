@@ -94,17 +94,17 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
 
         if (modifierGuid != null && !modifierGuid.isEmpty()) {
             newAddonsBuilder.addAll(modifierGuid);
-            modifierGuid = FluentIterable.from(modifierGuid).filter(filter).toImmutableList();
+            modifierGuid = FluentIterable.from(modifierGuid).filter(filter).toList();
         }
 
         if (addonsGuid != null && !addonsGuid.isEmpty()) {
             newAddonsBuilder.addAll(addonsGuid);
-            addonsGuid = FluentIterable.from(addonsGuid).filter(filter).toImmutableList();
+            addonsGuid = FluentIterable.from(addonsGuid).filter(filter).toList();
         }
 
         if (optionalsGuid != null && !optionalsGuid.isEmpty()) {
             newAddonsBuilder.addAll(optionalsGuid);
-            optionalsGuid = FluentIterable.from(optionalsGuid).filter(filter).toImmutableList();
+            optionalsGuid = FluentIterable.from(optionalsGuid).filter(filter).toList();
         }
 
         needToDelete = Sets.difference(oldAddons, newAddonsBuilder.build()).immutableCopy();
@@ -125,7 +125,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
                     }
                 }
                 );
-        return it.toImmutableSet();
+        return it.toSet();
     }
 
     private void initVariables(List<String> modifierGuid, List<String> addonsGuid, List<String> optionalsGuid) {
@@ -185,7 +185,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
                     }
                 }
                 );
-        return it.toImmutableList();
+        return it.toList();
     }
 
     @Override

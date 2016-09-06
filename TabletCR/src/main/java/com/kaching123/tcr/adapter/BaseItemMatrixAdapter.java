@@ -78,7 +78,7 @@ public abstract class BaseItemMatrixAdapter extends ObjectsArrayAdapter<ItemMatr
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 if (results != null && results.count > 0) {
                     FluentIterable<ItemMatrixModel> it = (FluentIterable<ItemMatrixModel>) results.values;
-                    changeCursor(it.toImmutableList());
+                    changeCursor(it.toList());
                     BaseItemMatrixAdapter.this.publishResults(it);
                 } else {
                     BaseItemMatrixAdapter.this.publishResults(null);
