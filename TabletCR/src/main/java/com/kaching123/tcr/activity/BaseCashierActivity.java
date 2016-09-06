@@ -86,7 +86,6 @@ import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusComma
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
-import com.kaching123.tcr.ecuador.AddEcuadorItemActivity;
 import com.kaching123.tcr.ecuador.EditEcuadorItemActivity;
 import com.kaching123.tcr.fragment.PrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2;
@@ -132,6 +131,7 @@ import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
@@ -146,6 +146,7 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
@@ -705,20 +706,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                     @Override
                                     public void onLoginComplete() {
                                         super.onLoginComplete();
-                                        if (TcrApplication.isEcuadorVersion()) {
-                                            AddEcuadorItemActivity.start(BaseCashierActivity.this, barcode);
-                                        } else {
-                                            AddItemActivity.start(BaseCashierActivity.this, barcode);
-                                        }
+                                        ItemExModel model = new ItemExModel();
+                                        model.tmpBarcode = barcode;
+                                        BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.ADD);
                                     }
                                 }, Permission.INVENTORY_MODULE);
                                 return true;
                             }
-                            if (TcrApplication.isEcuadorVersion()) {
-                                AddEcuadorItemActivity.start(BaseCashierActivity.this, barcode);
-                            } else {
-                                AddItemActivity.start(BaseCashierActivity.this, barcode);
-                            }
+                            ItemExModel model = new ItemExModel();
+                            model.tmpBarcode = barcode;
+                            BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.ADD);
                             return true;
                         }
                     },

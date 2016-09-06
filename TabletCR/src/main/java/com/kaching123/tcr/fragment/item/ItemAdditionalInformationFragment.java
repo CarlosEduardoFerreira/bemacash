@@ -28,7 +28,9 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment.IButtonViewDialogListener;
 import com.kaching123.tcr.fragment.inventory.ChooseParentItemDialogFragment;
+import com.kaching123.tcr.fragment.inventory.ItemCodeChooserAlertDialogFragment.ItemCodeTypeChooseListener;
 import com.kaching123.tcr.function.NextProductCodeQuery;
+import com.kaching123.tcr.model.ItemCodeType;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemModel;
@@ -40,6 +42,7 @@ import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemMatrixByParentView;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
+import com.kaching123.tcr.util.Validator;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Click;
@@ -57,7 +60,7 @@ import static com.kaching123.tcr.fragment.UiHelper.showIntegralInteger;
  * Created by vkompaniets on 21.07.2016.
  */
 @EFragment(R.layout.item_additional_information_fragment)
-public class ItemAdditionalInformationFragment extends ItemBaseFragment {
+public class ItemAdditionalInformationFragment extends ItemBaseFragment implements ItemCodeTypeChooseListener {
 
     @ViewById protected EditText eanUpc;
     @ViewById protected EditText productCode;
@@ -114,6 +117,10 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
            eanUpcRow.setVisibility(View.GONE);
            productCodeRow.setVisibility(View.GONE);
            referenceItemRow.setVisibility(View.GONE);
+        }
+
+        if (getModel().tmpBarcode != null){
+
         }
 
         getLoaderManager().initLoader(UNIT_LABEL_LOADER_ID, null, new UnitsLabelLoader());
@@ -251,6 +258,27 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment {
             getLoaderManager().restartLoader(PRODUCT_CODE_LOADER_ID, null, new ProductCodeLoader());
         }else{
             duplicateProductCode = false;
+        }
+    }
+
+    @Override
+    public void onItemCodeTypeChosen(ItemCodeType codeType, String code) {
+        if (ItemCodeType.EAN_UPC == codeType) {
+            try {
+                if (Validator.isEanValid(code)) {
+                    eanUpc.setText(code);
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.item_activity_alert_ean_error), Toast.LENGTH_SHORT).show();
+                }
+            } catch (NumberFormatException badEan) {
+                Toast.makeText(getActivity(), getString(R.string.item_activity_alert_ean_bad_error), Toast.LENGTH_SHORT).show();
+            }
+        } else if (ItemCodeType.PRODUCT_CODE == codeType) {
+            if (Validator.isProductCodeValid(code)) {
+                productCode.setText(code);
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.item_activity_alert_product_code_error, TcrApplication.PRODUCT_CODE_MAX_LEN), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
