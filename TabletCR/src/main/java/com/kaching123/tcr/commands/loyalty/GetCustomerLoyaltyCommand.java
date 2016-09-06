@@ -117,7 +117,7 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
                 .where(SaleIncentiveTable.ORDER_ID + " = ?", orderId)
                 .perform(context)
                 .toFluentIterable(new StringFunction())
-                .toImmutableSet();
+                .toSet();
 
         if (usedIncentives.isEmpty())
             return;

@@ -3,11 +3,14 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.google.common.base.Function;
 import com.kaching123.tcr.model.Unit.CodeType;
+import com.kaching123.tcr.model.converter.IntegerFunction;
+import com.kaching123.tcr.model.converter.ItemFunction;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.util.UnitUtil;
 

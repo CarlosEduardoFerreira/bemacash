@@ -79,7 +79,7 @@ public class DeleteModifierGroupCommand extends AsyncCommand {
                 .where(ModifierTable.ITEM_GROUP_GUID + " = ?", groupId)
                 .perform(context)
                 .toFluentIterable(new StringFunction())
-                .toImmutableList();
+                .toList();
 
     }
 
