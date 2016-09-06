@@ -28,7 +28,9 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment;
 import com.kaching123.tcr.fragment.inventory.ButtonViewSelectDialogFragment.IButtonViewDialogListener;
 import com.kaching123.tcr.fragment.inventory.ChooseParentItemDialogFragment;
+import com.kaching123.tcr.fragment.inventory.ItemCodeChooserAlertDialogFragment;
 import com.kaching123.tcr.fragment.inventory.ItemCodeChooserAlertDialogFragment.ItemCodeTypeChooseListener;
+import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.function.NextProductCodeQuery;
 import com.kaching123.tcr.model.ItemCodeType;
 import com.kaching123.tcr.model.ItemExModel;
@@ -60,7 +62,7 @@ import static com.kaching123.tcr.fragment.UiHelper.showIntegralInteger;
  * Created by vkompaniets on 21.07.2016.
  */
 @EFragment(R.layout.item_additional_information_fragment)
-public class ItemAdditionalInformationFragment extends ItemBaseFragment implements ItemCodeTypeChooseListener {
+public class ItemAdditionalInformationFragment extends ItemBaseFragment implements ItemCodeTypeChooseListener, BarcodeReceiver {
 
     @ViewById protected EditText eanUpc;
     @ViewById protected EditText productCode;
@@ -120,7 +122,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         }
 
         if (getModel().tmpBarcode != null){
-
+            ItemCodeChooserAlertDialogFragment.show(getActivity(), filterBarcode(getModel().tmpBarcode), this);
         }
 
         getLoaderManager().initLoader(UNIT_LABEL_LOADER_ID, null, new UnitsLabelLoader());
@@ -282,6 +284,11 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         }
     }
 
+    @Override
+    public void onBarcodeReceived(String barcode) {
+        ItemCodeChooserAlertDialogFragment.show(getActivity(), filterBarcode(barcode), this);
+    }
+
     private class UnitsLabelLoader implements LoaderCallbacks<List<UnitLabelModel>> {
 
         @Override
@@ -307,6 +314,10 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         public void onLoaderReset(Loader<List<UnitLabelModel>> loader) {
             unitsLabelAdapter.changeCursor(null);
         }
+    }
+
+    private static String filterBarcode(String barcode) {
+        return barcode.replace("-","").replace("#","");
     }
 
     private static class SerializationTypeHolder {

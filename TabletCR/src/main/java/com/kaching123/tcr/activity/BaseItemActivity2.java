@@ -40,6 +40,7 @@ import com.kaching123.tcr.fragment.item.ItemPrintFragment_;
 import com.kaching123.tcr.fragment.item.ItemProvider;
 import com.kaching123.tcr.fragment.item.ItemSpecialPricingFragment_;
 import com.kaching123.tcr.fragment.item.ItemVariantsFragment_;
+import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
@@ -203,7 +204,17 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
     @Override
     protected void onBarcodeReceived(String barcode) {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof BarcodeReceiver) {
+                BarcodeReceiver orderListFragment = (BarcodeReceiver) fragment;
+                orderListFragment.onBarcodeReceived(barcode);
+            }
+        }
+    }
 
+    @Override
+    public void barcodeReceivedFromSerialPort(String barcode) {
+        onBarcodeReceived(barcode);
     }
 
     @Override

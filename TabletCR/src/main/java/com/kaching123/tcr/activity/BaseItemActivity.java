@@ -895,14 +895,14 @@ public abstract class BaseItemActivity extends ScannerBaseActivity implements Lo
 
     @Override
     protected void onBarcodeReceived(String barcode) {
-        ItemCodeChooserAlertDialogFragment.show(BaseItemActivity.this, barcode);
+        ItemCodeChooserAlertDialogFragment.show(BaseItemActivity.this, barcode, null);
     }
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
         Logger.d("BaseItemActivity onReceive:" + barcode);
 
-        ItemCodeChooserAlertDialogFragment.show(BaseItemActivity.this, barcode);
+        ItemCodeChooserAlertDialogFragment.show(BaseItemActivity.this, barcode, null);
     }
 
     private static class PriceTypeHolder {
