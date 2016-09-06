@@ -380,6 +380,10 @@ public class TcrApplication extends MultiDexApplication {
         orderItemsQty.putAll(value);
     }
 
+    public void clearCurrentOrderItemsQty(){
+        orderItemsQty.clear();
+    }
+
     public void setSalesmanGuids(HashSet<String> salesmanGuids) {
         this.salesmanGuids = salesmanGuids;
     }

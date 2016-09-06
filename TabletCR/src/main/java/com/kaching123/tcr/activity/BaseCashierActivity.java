@@ -2262,6 +2262,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     protected void completeOrder() {
+        getApp().clearCurrentOrderItemsQty();
         if (TextUtils.isEmpty(this.orderGuid))
             return;
         orderItemListFragment.cleanAll();
@@ -2324,6 +2325,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @OnSuccess(RemoveSaleOrderCommand.class)
     public void onVoidApplied() {
         setupNewOrder();
+        getApp().clearCurrentOrderItemsQty();
     }
 
     private void setupNewOrder() {
@@ -2876,6 +2878,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         protected void onSuccess() {
+            getApp().clearCurrentOrderItemsQty();
             if (isFinishing() || isDestroyed())
                 return;
             startCommand(new DisplayWelcomeMessageCommand());

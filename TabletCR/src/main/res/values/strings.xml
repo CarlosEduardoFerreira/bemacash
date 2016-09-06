@@ -112,7 +112,7 @@
     <string name="composer_remove_success">Composer item(s) removed</string>
 
     <string name="composer_dialog_track">Item track-able</string>
-    <string name="composer_dialog_free">Restricked host qty</string>
+    <string name="composer_dialog_free">Limit qty</string>
     <string name="composer_dialog_qty" formatted="false">Quantity (%s): </string>
     <string name="composer_dialog_price_type">Price type :</string>
     <string name="composer_dialog_auto_apply">Auto Apply</string>
@@ -1915,7 +1915,7 @@
     <string name="composer_dialog_add_title">Add a composer</string>
     <string name="composer_dialog_edit_title">Modify composer</string>
     <string name="composer_header_track">Track item inventory</string>
-    <string name="composer_header_free">Restrict host quantity</string>
+    <string name="composer_header_free">Limit quantity</string>
     <string name="composer_header_cost">Item cost</string>
     <string name="composer_header_cost_total">Total item cost</string>
     <string name="composer_footer_cost_total" formatted="false">Total: %s</string>
