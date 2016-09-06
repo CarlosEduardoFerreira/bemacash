@@ -2043,5 +2043,6 @@
     <string name="composer_processing_msg">Composer process…</string>
 
     <string name="item_qty_lower_zero">Item available quantity is not enough to sale it!</string>
+    <string name="item_limit_qty">Limit Qty</string>
 
 </resources>

@@ -37,11 +37,13 @@ import static com.kaching123.tcr.fragment.UiHelper.showQuantity;
 public class ItemMonitoringFragment extends ItemBaseFragment {
 
     @ViewById protected CheckBox monitoring;
+    @ViewById protected CheckBox limitQty;
     @ViewById protected EditText availableQty;
     @ViewById protected EditText minimumQty;
     @ViewById protected EditText recommendedQty;
 
     private EditText[] qtyViews;
+    private boolean limitQtyIgnoreListener;
 
     @Override
     protected void setViews() {
@@ -53,6 +55,17 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 getModel().isStockTracking= isChecked;
                 showQuantities();
+            }
+        });
+
+        limitQty.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(limitQtyIgnoreListener) {
+                    limitQtyIgnoreListener = false;
+                    return;
+                }
+                getModel().limitQty= isChecked;
             }
         });
 
@@ -121,12 +134,15 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
 
     public void showQuantities(){
         final ItemModel model = getModel();
+        limitQtyIgnoreListener = true;
 
+        limitQty.setEnabled(model.isStockTracking);
         availableQty.setEnabled(model.isStockTracking);
         minimumQty.setEnabled(model.isStockTracking);
         recommendedQty.setEnabled(model.isStockTracking);
 
         if (model.isStockTracking){
+            limitQty.setChecked(model.limitQty);
             showQuantity(availableQty, getItemProvider().getQtyInfo().availableQty, model.isPcsUnit());
             showQuantity(minimumQty, model.minimumQty, model.isPcsUnit());
             showQuantity(recommendedQty, model.recommendedQty, model.isPcsUnit());
@@ -134,6 +150,7 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
             getModel().availableQty = BigDecimal.ZERO;
             getModel().minimumQty = BigDecimal.ZERO;
             getModel().recommendedQty = BigDecimal.ZERO;
+            limitQty.setChecked(false);
             availableQty.setText(null);
             minimumQty.setText(null);
             recommendedQty.setText(null);

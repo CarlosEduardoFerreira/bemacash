@@ -608,7 +608,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                                   final String itemGuid);
 
     protected boolean checkTracked(ItemExModel model){
-        if(model.isLimitQtySelected()) {   //todo remove "!" ?
+        if(model.isLimitQtySelected()) {
             HashMap<String, BigDecimal> map = new HashMap<>();
             map.putAll(app.getOrderItemsQty());
 
