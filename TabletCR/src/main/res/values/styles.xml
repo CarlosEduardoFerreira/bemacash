@@ -951,11 +951,11 @@
         <item name="android:textStyle">bold</item>
         <item name="android:singleLine">true</item>
         <item name="android:gravity">left</item>
-        <item name="android:background">@drawable/edit_text_holo_dark</item>
+        <item name="android:background">@drawable/apptheme_edit_text_holo_dark</item>
         <item name="android:textColor">@color/prepaid_dialog_white</item>
         <item name="android:textSize">@dimen/dlg_edit_text_font_size</item>
         <item name="android:minWidth">148dp</item>
-        <item name="android:textCursorDrawable">@drawable/apptheme_edit_text_holo_dark</item>
+        <item name="android:textCursorDrawable">@drawable/text_cursor_holo_dark</item>
     </style>
 
     <style name="StyledDialog.Content.EditText.Custom">
