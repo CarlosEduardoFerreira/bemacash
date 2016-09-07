@@ -11,7 +11,6 @@ import com.kaching123.tcr.commands.device.WaitForCashInDrawerCommand;
 import com.kaching123.tcr.commands.display.DisplayTenderCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.cash.CashSaleCommand;
-import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -24,7 +23,6 @@ import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.res.ColorRes;
 
 import java.math.BigDecimal;
 
@@ -32,25 +30,24 @@ import java.math.BigDecimal;
  * Created by alboyko on 17.08.2016.
  */
 @EFragment
-public class PaySilentCashFragmentDialog  extends StyledDialogFragment implements CustomEditBox.IKeyboardSupport, OpenDrawerListener.IDrawerFriend {
+public class PaySilentCashFragmentDialog  extends StyledDialogFragment implements /*CustomEditBox.IKeyboardSupport,*/ OpenDrawerListener.IDrawerFriend {
 
     private static final String DIALOG_NAME = "PaySilentCashFragmentDialog";
 
-    @ColorRes(R.color.dlg_text_green)
+   /* @ColorRes(R.color.dlg_text_green)
     protected int colorPaymentOk;
 
     @ColorRes(R.color.dlg_text_red)
     protected int colorPaymentPending;
 
     @ColorRes(R.color.dlg_btn_text_disabled)
-    protected int colorPaymentDisabled;
+    protected int colorPaymentDisabled;*/
 
     protected Transaction transaction;
-    protected BigDecimal amount;
 
     protected ISaleCashListener listener;
     private TaskHandler waitCashTask;
-    private BigDecimal orderPayed = BigDecimal.ZERO;
+    private BigDecimal pending = BigDecimal.ZERO;
 
     @Override
     public void onStop() {
@@ -64,7 +61,7 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
             waitCashTask = null;
         }
     }
-
+/*
     @Override
     public void attachMe2Keyboard(CustomEditBox v) {
     }
@@ -72,26 +69,26 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
     @Override
     public void detachMe4Keyboard(CustomEditBox v) {
     }
-
+*/
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getDialog().getWindow().setLayout(
                 getResources().getDimensionPixelOffset(R.dimen.pay_cash_dialog_width),
                 getResources().getDimensionPixelOffset(R.dimen.pay_cash_dialog_height));
-        textChanged();
+        init();
         try2GetCash(false);
         setCancelable(false);
     }
 
 
-    private void textChanged() {
+    private void init() {
         BigDecimal tenderAmount = BigDecimal.ZERO;
         BigDecimal changeAmount = BigDecimal.ZERO;
-        String chargeStr = UiHelper.valueOf(amount);//charge.getText().toString();
+        String chargeStr = UiHelper.valueOf(transaction.amount);
         try {
             tenderAmount = UiHelper.parseBrandDecimalInput(chargeStr);
-            resumeNavigationButtons(tenderAmount);
+            calculateChange(tenderAmount);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -100,12 +97,8 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         }
     }
 
-    private void resumeNavigationButtons(final BigDecimal receivedAmount) {
-        BigDecimal transactionAmount = transaction.getAmount();
-        if(orderPayed!=null) {
-            transactionAmount = transactionAmount.subtract(orderPayed);
-        }
-        BigDecimal changeAmount = receivedAmount.subtract(transactionAmount);
+    private void calculateChange(final BigDecimal receivedAmount) {
+        BigDecimal changeAmount = receivedAmount.subtract(pending);
         if (changeAmount.compareTo(BigDecimal.ZERO) >= 0) {
             transaction.changeValue = changeAmount;
         } else {
@@ -164,13 +157,8 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         return this;
     }
 
-    public PaySilentCashFragmentDialog setAmount(BigDecimal amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    public PaySilentCashFragmentDialog setOrderPayed(BigDecimal orderPayed) {
-        this.orderPayed = orderPayed;
+    public PaySilentCashFragmentDialog setOrderPending(BigDecimal amount) {
+        this.pending = amount;
         return this;
     }
 
@@ -186,7 +174,7 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
     @Override
     public boolean try2GetCash(boolean searchByMac) {
         Logger.d("PaySilentCashFragmentDialog: try2GetCash()");
-        String s = UiHelper.valueOf(amount);
+        String s = UiHelper.valueOf(transaction.amount);
         if (TextUtils.isEmpty(s)) {
             Toast.makeText(getActivity(), R.string.pay_toast_zero, Toast.LENGTH_LONG).show();
             return false;
@@ -246,10 +234,11 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         void onCancel();
     }
 
-    public static PaySilentCashFragmentDialog show(FragmentActivity context, BigDecimal orderPayed, BigDecimal amount, Transaction transaction, ISaleCashListener listener) {
+    public static PaySilentCashFragmentDialog show(FragmentActivity context, BigDecimal pending, Transaction transaction, ISaleCashListener listener) {
         Logger.d("About to show second dialog");
         return DialogUtil.show(context, DIALOG_NAME, PaySilentCashFragmentDialog_.builder().build()).setListener(listener)
-                .setOrderPayed(orderPayed).setAmount(amount).setTransaction(transaction);
+                .setOrderPending(pending)
+                                .setTransaction(transaction);
     }
 
     public static void hide(FragmentActivity activity) {
