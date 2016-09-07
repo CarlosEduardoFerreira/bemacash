@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.google.common.base.Function;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -22,6 +23,7 @@ import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.telly.groundy.TaskResult;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
@@ -36,8 +38,10 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
     private String orderGuid;
     private String itemGuid;
+    private String discountBundleId;
 
     private SyncResult updateOrderResult;
+    private List<SyncResult> removeDiscountResults;
 
     @Override
     protected TaskResult doCommand() {
@@ -54,12 +58,27 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
         if (updateOrderResult == null)
             return failed();
 
+        if (discountBundleId != null){
+            List<String> bundleItems = loadDiscountBundleItems(getContext(), discountBundleId);
+            if (bundleItems.size() > 1){
+                DiscountSaleOrderItemCommand cmd = new DiscountSaleOrderItemCommand();
+                removeDiscountResults = new ArrayList<>(bundleItems.size());
+                for (String id : bundleItems){
+                    SyncResult result = cmd.syncDependent(getContext(), id, null, null, null, getAppCommandContext());
+                    if (result == null)
+                        return failed();
+                    removeDiscountResults.add(result);
+                }
+            }
+
+        }
+
         return succeeded();
     }
 
     private boolean loadData() {
         Cursor c = ProviderAction.query(URI_ITEMS)
-                .projection(SaleItemTable.ORDER_GUID, SaleItemTable.ITEM_GUID)
+                .projection(SaleItemTable.ORDER_GUID, SaleItemTable.ITEM_GUID, SaleItemTable.DISCOUNT_BUNDLE_ID)
                 .where(SaleItemTable.SALE_ITEM_GUID + " = ?", saleItemId)
                 .perform(getContext());
 
@@ -70,9 +89,23 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
         orderGuid = c.getString(0);
         itemGuid = c.getString(1);
+        discountBundleId = c.getString(2);
 
         c.close();
         return true;
+    }
+
+    private static List<String> loadDiscountBundleItems(Context context, String discountBundleId) {
+        return ProviderAction.query(URI_ITEMS)
+                .projection(SaleItemTable.SALE_ITEM_GUID)
+                .where(SaleItemTable.DISCOUNT_BUNDLE_ID + " = ?", discountBundleId)
+                .perform(context)
+                .toFluentIterable(new Function<Cursor, String>() {
+                    @Override
+                    public String apply(Cursor input) {
+                        return input.getString(0);
+                    }
+                }).toList();
     }
 
     @Override
@@ -101,6 +134,12 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
         if (updateOrderResult != null && updateOrderResult.getLocalDbOperations() != null)
             operations.addAll(updateOrderResult.getLocalDbOperations());
 
+        if (removeDiscountResults != null){
+            for (SyncResult result : removeDiscountResults){
+                operations.addAll(result.getLocalDbOperations());
+            }
+        }
+
         return operations;
     }
 
@@ -119,6 +158,12 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
         if (updateOrderResult != null)
             batch.add(updateOrderResult.getSqlCmd());
+
+        if (removeDiscountResults != null){
+            for (SyncResult result : removeDiscountResults){
+                batch.add(result.getSqlCmd());
+            }
+        }
 
         return batch;
     }

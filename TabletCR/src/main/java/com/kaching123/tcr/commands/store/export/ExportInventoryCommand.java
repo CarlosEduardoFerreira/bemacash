@@ -61,6 +61,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                         ItemTable.SALABLE,
                         ItemTable.TAXABLE,
                         ItemTable.STOCK_TRACKING,
+                        ItemTable.LIMIT_QTY,
                         ItemTable.COST,
                         ItemTable.TMP_AVAILABLE_QTY,
                         ItemTable.MINIMUM_QTY,
@@ -90,6 +91,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
         columns.add(_bool(c, c.getColumnIndex(ItemTable.SALABLE)));
         columns.add(_bool(c, c.getColumnIndex(ItemTable.TAXABLE)));
         columns.add(_bool(c, c.getColumnIndex(ItemTable.STOCK_TRACKING)));
+        columns.add(_bool(c, c.getColumnIndex(ItemTable.LIMIT_QTY)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.COST)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY)));
         columns.add(c.getString(c.getColumnIndex(ItemTable.MINIMUM_QTY)));
@@ -115,6 +117,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                 "Salable",
                 "Taxable",
                 "STOCK_TRACK",
+                "Limit Qty",
                 "Cost",
                 "Quantity on Hand",
                 "Order Trigger",
@@ -140,6 +143,7 @@ public class ExportInventoryCommand extends ExportCursorToFileCommand {
                 null, //"Salable",
                 null, //"Taxable",
                 null, //"STOCK_TRACK",
+                null, //"Limit qty",
                 null, //"Cost",
                 null, //"Quantity on Hand",
                 null, //"Order Trigger",

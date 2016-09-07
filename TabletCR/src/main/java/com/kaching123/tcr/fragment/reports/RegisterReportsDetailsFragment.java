@@ -60,6 +60,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
 
     private static final int LOADER_EMPLOYEE_ID = 1;
 
+
     private RegistersAdapter registersAdapter;
 
     private EmployeesAdapter employeesAdapter;
@@ -74,10 +75,13 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        if (type != ReportType.DROPS_AND_PAYOUTS)
+        if (type != ReportType.DROPS_AND_PAYOUTS) {
             getLoaderManager().restartLoader(LOADER_REGISTERS_ID, null, registersLoader);
-        else
+            if(type == ReportType.SOLD_ORDERS)
+                getLoaderManager().restartLoader(LOADER_EMPLOYEE_ID, null, employeesLoader);
+        } else {
             getLoaderManager().restartLoader(LOADER_EMPLOYEE_ID, null, employeesLoader);
+        }
     }
 
     @Override
@@ -138,7 +142,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
                 break;
             }
             case SOLD_ORDERS: {
-                SoldOrdersFragment f = SoldOrdersFragment.instance(true, fromDate.getTime(), toDate.getTime(), 0L);
+                SoldOrdersFragment f = SoldOrdersFragment.instance(true, fromDate.getTime(), toDate.getTime(), 0L, getSelectedManagerGuid());
                 fragmentInterface = f;
                 fragment = f;
                 break;
@@ -243,7 +247,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     protected void print(boolean ignorePaperEnd, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_dialog_title));
         int selectedMoveType = typeSpinner.getSelectedItemPosition();
-        if (type != ReportType.DROPS_AND_PAYOUTS)
+        if (type == ReportType.SOLD_ORDERS || type != ReportType.DROPS_AND_PAYOUTS)
             PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedRegisterId(), new PrintCallback());
         else
             PrintReportsCommand.start(getActivity(), ignorePaperEnd, searchByMac, type, fromDate.getTime(), toDate.getTime(), getSelectedManagerGuid(), selectedMoveType, getSelectedEmployeeName(), new PrintCallback());
@@ -312,14 +316,21 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
     }
 
     private String getSelectedManagerGuid() {
-        if (type != ReportType.DROPS_AND_PAYOUTS)
-            return null;
-        int selectedManagerPos = modeEntitiesSpinner.getSelectedItemPosition();
         String managerGuid = null;
-        if (selectedManagerPos != -1) {
-            managerGuid = employeesAdapter.getItem(selectedManagerPos).guid;
+        if (type == ReportType.SOLD_ORDERS) {
+            int selectedManagerPos =   cashierSpinner.getSelectedItemPosition();
+            if (selectedManagerPos != -1) {
+                managerGuid = ((EmployeesAdapter)cashierSpinner.getAdapter()).getItem(selectedManagerPos).guid;
+            }
+            return managerGuid;
+        } else if (type == ReportType.DROPS_AND_PAYOUTS) {
+            int selectedManagerPos = modeEntitiesSpinner.getSelectedItemPosition();
+            if (selectedManagerPos != -1) {
+                managerGuid = employeesAdapter.getItem(selectedManagerPos).guid;
+            }
+            return managerGuid;
         }
-        return managerGuid;
+        return null;
     }
 
     private String getSelectedEmployeeName() {
@@ -364,17 +375,22 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         @Override
         public void onLoadFinished(Loader<List<EmployeeForReportsModel>> loader, List<EmployeeForReportsModel> data) {
             ArrayList<EmployeeForReportsModel> arrayList = new ArrayList<EmployeeForReportsModel>(data.size() + 1);
-            arrayList.add(new EmployeeForReportsModel(null, null, null, getString(R.string.register_label_all)));
+            arrayList.add(new EmployeeForReportsModel(null, null, getString(R.string.register_label_all), getString(R.string.register_label_all)));
             for (EmployeeForReportsModel model : data) {
                 if (isEmployeeLogin(model.login))
                     arrayList.add(model);
             }
-            employeesAdapter.changeCursor((List) arrayList);
+            if(employeesAdapter != null)
+                employeesAdapter.changeCursor((List) arrayList);
+            if(type == ReportType.SOLD_ORDERS)
+                ((EmployeesAdapter)cashierSpinner.getAdapter()).changeCursor(arrayList);
         }
 
         @Override
         public void onLoaderReset(Loader<List<EmployeeForReportsModel>> loader) {
-            employeesAdapter.changeCursor(null);
+            if(employeesAdapter != null)
+                employeesAdapter.changeCursor(null);
+            ((EmployeesAdapter)cashierSpinner.getAdapter()).changeCursor(null);
         }
 
         @Override

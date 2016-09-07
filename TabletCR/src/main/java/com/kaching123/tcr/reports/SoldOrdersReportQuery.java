@@ -26,7 +26,7 @@ public class SoldOrdersReportQuery {
 
     private static final Uri SALE_ORDER_URI = ShopProvider.getContentUri(SaleOrderView.URI_CONTENT);
 
-    public static List<SaleOrderViewModel> getItems(final Context context, final boolean isSold, long startTime, long endTime, long registerId) {
+    public static List<SaleOrderViewModel> getItems(final Context context, final boolean isSold, long startTime, long endTime, long registerId, String managerGuid) {
         Query query = ProviderAction.query(SALE_ORDER_URI)
                 .where(SaleOrderTable.CREATE_TIME + " >= ? and " + SaleOrderTable.CREATE_TIME + " <= ?", startTime, endTime);
         if (isSold) {
@@ -36,6 +36,9 @@ public class SoldOrdersReportQuery {
         }
         if (registerId > 0) {
             query.where(SaleOrderTable.REGISTER_ID + " = ?", registerId);
+        }
+        if(managerGuid != null){
+            query.where(SaleOrderTable.OPERATOR_GUID + " = ?", managerGuid);
         }
 
 //        query.where(SaleOrderTable.TML_TOTAL_PRICE + " IS NOT NULL");
@@ -53,8 +56,8 @@ public class SoldOrdersReportQuery {
         return items;
     }
 
-    public static List<SaleOrderViewModel> getItemsWithoutTipRefunds(final Context context, final boolean isSold, long startTime, long endTime, long registerId) {
-        List<SaleOrderViewModel> result = getItems(context, isSold, startTime, endTime, registerId);
+    public static List<SaleOrderViewModel> getItemsWithoutTipRefunds(final Context context, final boolean isSold, long startTime, long endTime, long registerId, String managerGuid) {
+        List<SaleOrderViewModel> result = getItems(context, isSold, startTime, endTime, registerId, managerGuid);
         return filter(result, new Predicate<SaleOrderViewModel>() {
             @Override
             public boolean apply(SaleOrderViewModel m) {

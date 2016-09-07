@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
+import com.kaching123.tcr.commands.store.saleorder.ItemsNegativeStockTrackingCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand.BaseUpdateSaleItemAddonsCallback;
 import com.kaching123.tcr.component.CustomEditBox;
@@ -23,6 +24,7 @@ import com.kaching123.tcr.fragment.quickservice.QuickItemsFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment.OnCancelListener;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.service.UploadTask;
@@ -144,6 +146,11 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
                         optionalsGuid,
                         updateSaleItemAddonsCallback);
             }
+
+            @Override
+            public void onModifiersCountInsufficient(ModifierGroupModel group) {
+                showModifiersInsufficientCountDialog(group);
+            }
         });
         showModifiersFragment();
     }
@@ -208,7 +215,23 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
     @Override
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
 
-        CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+        if(!model.hasModificators() && !checkTracked(model)){
+            return;
+        } else if (model.isAComposisiton) {
+            ItemsNegativeStockTrackingCommand.start(QuickServiceActivity.this, model.getGuid(), ItemsNegativeStockTrackingCommand.ItemType.COMPOSITION, new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                @Override
+                protected void handleSuccess(boolean result) {
+                    if(!result){
+                        Toast.makeText(QuickServiceActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    CollectModifiersCommand.start(QuickServiceActivity.this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+                }
+            });
+        } else {
+            CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+        }
+
 
     }
 
@@ -230,9 +253,24 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
             modifyFragment.setupParams(model.guid, new ItemModifiersFragment.OnAddonsChangedListener() {
 
                 @Override
-                public void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
+                public void onAddonsChanged(final ArrayList<String> modifierGuid, final ArrayList<String> addonsGuid, final ArrayList<String> optionalsGuid) {
                     hideModifiersFragment();
-                    tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
+                    ItemsNegativeStockTrackingCommand.start(QuickServiceActivity.this, ItemsNegativeStockTrackingCommand.ItemType.MODIFIER, model.getGuid(), modifierGuid, addonsGuid, optionalsGuid,
+                            new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                                @Override
+                                protected void handleSuccess(boolean result) {
+                                    if (!result) {
+                                        Toast.makeText(QuickServiceActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
+                                }
+                            });
+                }
+
+                @Override
+                public void onModifiersCountInsufficient(ModifierGroupModel group) {
+                    showModifiersInsufficientCountDialog(group);
                 }
             });
             showModifiersFragment();

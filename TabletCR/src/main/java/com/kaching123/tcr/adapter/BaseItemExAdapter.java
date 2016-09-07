@@ -103,7 +103,7 @@ public abstract class BaseItemExAdapter extends ObjectsArrayAdapter<ItemExModel>
                     FluentIterable<ItemExModel> it = (FluentIterable<ItemExModel>) results.values;
 
                     self().publishResults(it);
-                    changeCursor(it.toImmutableList());
+                    changeCursor(it.toList());
                 } else {
                     self().publishResults(null);
                 }

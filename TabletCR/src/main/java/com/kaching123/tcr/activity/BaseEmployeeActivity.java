@@ -228,6 +228,11 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
             return false;
         }
 
+        if (TextUtils.isEmpty(lastName.getText())) {
+            Toast.makeText(this, R.string.employee_edit_last_name_error, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
     /*    if(isPhoneNumberExists(phone.getText().toString())){
             Toast.makeText(this, R.string.employee_edit_phone_confirm_error, Toast.LENGTH_SHORT).show();
             return false;

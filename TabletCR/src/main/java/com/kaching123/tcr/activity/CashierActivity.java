@@ -29,6 +29,7 @@ import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.service.UploadTask;
 import com.kaching123.tcr.service.v2.UploadTaskV2;
 import com.kaching123.tcr.util.ReceiverWrapper;
@@ -237,6 +238,11 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
 
                         UpdateSaleItemAddonsCommand.start(CashierActivity.this,
                                 saleItemGuid, itemGuid, modifierGuid, addonsGuid, optionalsGuid, updateSaleItemAddonsCallback);
+                    }
+
+                    @Override
+                    public void onModifiersCountInsufficient(ModifierGroupModel group) {
+                        showModifiersInsufficientCountDialog(group);
                     }
                 }
         );

@@ -152,11 +152,10 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                                        BigDecimal itemFinalPrice,
                                        BigDecimal itemFinalDiscount,
                                        BigDecimal itemFinalTax) {
-                 /*   SaleOrderItemViewModel item = saleItemsMap.get(saleItemGuid);
+                    SaleOrderItemViewModel item = saleItemsMap.get(saleItemGuid);
                     if (item != null) {
                         item.finalPrice = itemFinalPrice;
-                        item.finalEbtPrice = itemEbtTotal;
-                    }*/
+                    }
                 }
 
                 @Override
@@ -215,6 +214,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 1,
                 _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
                 _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)),
+                c.getString(c.getColumnIndex(SaleItemTable.DISCOUNT_BUNDLE_ID)),
                 _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)));
     }
 

@@ -71,10 +71,12 @@ import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand.BaseAddSaleOrderCommandCallback;
+import com.kaching123.tcr.commands.store.saleorder.ApplyMultipleDiscountCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand.BaseGetItemsForFaickVoidCallback;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand.BaseHoldOrderCallback;
+import com.kaching123.tcr.commands.store.saleorder.ItemsNegativeStockTrackingCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
@@ -85,8 +87,6 @@ import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusComma
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
-import com.kaching123.tcr.ecuador.AddEcuadorItemActivity;
-import com.kaching123.tcr.ecuador.EditEcuadorItemActivity;
 import com.kaching123.tcr.fragment.PrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.barcode.SearchBarcodeFragment;
@@ -124,11 +124,15 @@ import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
+import com.kaching123.tcr.function.MultipleDiscountWrapFunction;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.BarcodeListenerHolder;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CustomerModel;
+import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemRefType;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
@@ -143,7 +147,9 @@ import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.converter.IntegerFunction;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
@@ -169,6 +175,7 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
 import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpXRegisterTable;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.MultipleDiscountTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
@@ -193,6 +200,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -228,7 +236,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_CHECK_ITEM_PRINT_STATUS = 5;
     private static final int LOADER_SEARCH_BARCODE = 10;
     private static final int LOADER_SALE_INCENTIVES = 12;
-    private static final int LOADER_TBP = 13;
+    private static final int LOADER_DISCOUNT_BUNDLES = 13;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
 
@@ -263,6 +271,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private PrinterStatusCallback printerStatusCallback = new PrinterStatusCallback();
     private CheckOrderPaymentsLoader checkOrderPaymentsLoader = new CheckOrderPaymentsLoader();
     private SaleIncentivesLoader saleIncentivesLoader = new SaleIncentivesLoader();
+    private DiscountBundleLoader discountBundleLoader = new DiscountBundleLoader();
+
 
     private String orderGuid;
     private SaleOrderModel saleOrderModel;
@@ -320,6 +330,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected String strItemCount;
     protected int saleItemCount;
     private List<Integer> priceLevels = Collections.EMPTY_LIST;
+    private List<DiscountBundle> discountBundles = Collections.EMPTY_LIST;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -547,6 +558,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         releaseResultList = new ArrayList<PrepaidReleaseResult>();
         giftCardResultList = new ArrayList<GiftCardBillingResult>();
+
+        getSupportLoaderManager().restartLoader(LOADER_DISCOUNT_BUNDLES, null, discountBundleLoader);
     }
 
 
@@ -596,6 +609,34 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected abstract void showEditItemModifiers(final String saleItemGuid,
                                                   final String itemGuid);
 
+    protected boolean checkTracked(ItemExModel model){
+        if(model.isLimitQtySelected()) {
+            HashMap<String, BigDecimal> map = new HashMap<>();
+            map.putAll(app.getOrderItemsQty());
+
+            if (!map.isEmpty()) {
+                BigDecimal count = map.containsKey(model.getGuid()) ? map.get(model.getGuid()) : BigDecimal.ZERO;
+
+                if (model.availableQty.subtract(BigDecimal.ONE.add(count)).compareTo(BigDecimal.ZERO) < 0) {
+                    Toast.makeText(this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+                map.put(model.getGuid(), count.add(BigDecimal.ONE));
+                app.addCurrentOrderItemsQty(map);
+            } else {
+                if (model.availableQty.subtract(BigDecimal.ONE).compareTo(BigDecimal.ZERO) < 0) {
+                    Toast.makeText(this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                HashMap<String, BigDecimal> newOrderItem = new HashMap<>(1);
+                newOrderItem.put(model.getGuid(), BigDecimal.ONE);
+                app.addCurrentOrderItemsQty(newOrderItem);
+            }
+        }
+        return true;
+    }
+
     protected void tryToAddItem(final ItemExModel model) {
         if (!TcrApplication.isEcuadorVersion())
             tryToAddItem(model, null, null, null);
@@ -610,7 +651,23 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
 
-        CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+        if(!model.hasModificators() && !checkTracked(model)){
+            return;
+        } else if (model.isAComposisiton) {
+            ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, model.getGuid(), ItemsNegativeStockTrackingCommand.ItemType.COMPOSITION, new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                @Override
+                protected void handleSuccess(boolean result) {
+                    if(!result){
+                        Toast.makeText(BaseCashierActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    CollectModifiersCommand.start(BaseCashierActivity.this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+                }
+            });
+        } else {
+            CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
+        }
+
 
     }
 
@@ -633,11 +690,25 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     model.guid,
                     new ItemModifiersFragment.OnAddonsChangedListener() {
                         @Override
-                        public void onAddonsChanged(ArrayList<String> modifierGuid,
-                                                    ArrayList<String> addonsGuid,
-                                                    ArrayList<String> optionalsGuid) {
-                            tryToAddCheckPriceType(model, modifierGuid,
-                                    addonsGuid, optionalsGuid, price, quantity, unit);
+                        public void onAddonsChanged(final ArrayList<String> modifierGuid,
+                                                    final ArrayList<String> addonsGuid,
+                                                    final ArrayList<String> optionalsGuid) {
+                            ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, ItemsNegativeStockTrackingCommand.ItemType.MODIFIER, model.getGuid(), modifierGuid, addonsGuid, optionalsGuid,
+                                    new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                                        @Override
+                                        protected void handleSuccess(boolean result) {
+                                            if (!result) {
+                                                Toast.makeText(BaseCashierActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                            tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
+                                        }
+                                    });
+                        }
+
+                        @Override
+                        public void onModifiersCountInsufficient(ModifierGroupModel group) {
+                            showModifiersInsufficientCountDialog(group);
                         }
                     }
             );
@@ -650,6 +721,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             list.add(item.modifierGuid);
         }
         return list;
+    }
+
+    protected void showModifiersInsufficientCountDialog(ModifierGroupModel group){
+        AlertDialogFragment.showNotification(self(), R.string.warning_dialog_title, getString(R.string.modifiers_count_insufficient_msg, group.title, group.conditionValue));
     }
 
     protected void tryToAddCheckPriceType(final ItemExModel model,
@@ -696,20 +771,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                     @Override
                                     public void onLoginComplete() {
                                         super.onLoginComplete();
-                                        if (TcrApplication.isEcuadorVersion()) {
-                                            AddEcuadorItemActivity.start(BaseCashierActivity.this, barcode);
-                                        } else {
-                                            AddItemActivity.start(BaseCashierActivity.this, barcode);
-                                        }
+                                        ItemExModel model = new ItemExModel();
+                                        model.tmpBarcode = barcode;
+                                        BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.ADD);
                                     }
                                 }, Permission.INVENTORY_MODULE);
                                 return true;
                             }
-                            if (TcrApplication.isEcuadorVersion()) {
-                                AddEcuadorItemActivity.start(BaseCashierActivity.this, barcode);
-                            } else {
-                                AddItemActivity.start(BaseCashierActivity.this, barcode);
-                            }
+                            ItemExModel model = new ItemExModel();
+                            model.tmpBarcode = barcode;
+                            BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.ADD);
                             return true;
                         }
                     },
@@ -746,20 +817,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                     @Override
                                     public void onLoginComplete() {
                                         super.onLoginComplete();
-                                        if (TcrApplication.isEcuadorVersion()) {
-                                            EditEcuadorItemActivity.start(BaseCashierActivity.this, item);
-                                        } else {
-                                            EditItemActivity.start(BaseCashierActivity.this, item);
-                                        }
+                                        BaseItemActivity2.start(self(), item, ItemRefType.Simple, StartMode.EDIT);
                                     }
                                 }, Permission.INVENTORY_MODULE);
                                 return true;
                             }
-                            if (TcrApplication.isEcuadorVersion()) {
-                                EditEcuadorItemActivity.start(BaseCashierActivity.this, item);
-                            } else {
-                                EditItemActivity.start(BaseCashierActivity.this, item);
-                            }
+                            BaseItemActivity2.start(self(), item, ItemRefType.Simple, StartMode.EDIT);
                             return true;
                         }
                     },
@@ -1279,8 +1342,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         actionBarItemClicked();
         HoldFragmentDialog.show(this, null, null, false, new HoldFragmentDialog.IHoldListener() {
             @Override
-            public void onSwap2Order(String holdName, String nextOrderGuid) {
-                setOrderGuid(nextOrderGuid, true);
+            public void onSwap2Order(String holdName, final String nextOrderGuid) {
+                ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, nextOrderGuid, ItemsNegativeStockTrackingCommand.ItemType.HOLD_ON,
+                        new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                            @Override
+                            protected void handleSuccess(boolean result) {
+                                if(!result){
+                                    Toast.makeText(BaseCashierActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                setOrderGuid(nextOrderGuid, true);
+                            }
+                        });
             }
         });
     }
@@ -1550,6 +1623,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
                     @Override
                     public void handleError(String message) {
+                        ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, ItemsNegativeStockTrackingCommand.ItemType.REMOVE, model.getGuid(), modifierGiud, addonsGuids, optionalGuids, null);
                         disconnectScanner();
                         AlertDialogWithCancelFragment.show(BaseCashierActivity.this,
                                 R.string.wireless_already_item_title,
@@ -1575,6 +1649,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
                     @Override
                     public void handleCancelling() {
+                        ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, ItemsNegativeStockTrackingCommand.ItemType.REMOVE, model.getGuid(), modifierGiud, addonsGuids, optionalGuids, null);
                         notifyLoyaltyProcessorItemAddedToOrder(false);
                     }
 
@@ -1646,7 +1721,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 isPrepaidItemStart,
                 isGiftCardReload,
                 model.isIncentive || model.excludeFromLoyaltyPlan ? BigDecimal.ZERO : model.loyaltyPoints,
-                !(model.isIncentive || model.excludeFromLoyaltyPlan) && getApp().getShopInfo().loyaltyPointsForDollarAmount,
+                model.isIncentive || model.excludeFromLoyaltyPlan ? false : getApp().getShopInfo().loyaltyPointsForDollarAmount,
+                null,
                 model.isEbtEligible);
 
         if (unit != null && orderGuid != null) {
@@ -2163,6 +2239,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
+                        orderItemListFragment.cleanAll();
                         PrintOrderToKdsCommand.start(BaseCashierActivity.this, orderGuid, true, null);
                         RemoveSaleOrderCommand.start(BaseCashierActivity.this, BaseCashierActivity.this, BaseCashierActivity.this.orderGuid);
                         return true;
@@ -2185,9 +2262,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     protected void completeOrder() {
+        getApp().clearCurrentOrderItemsQty();
         if (TextUtils.isEmpty(this.orderGuid))
             return;
-
+        orderItemListFragment.cleanAll();
         setCountZero();
         updateItemCountMsg();
         setupNewOrder();
@@ -2247,6 +2325,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @OnSuccess(RemoveSaleOrderCommand.class)
     public void onVoidApplied() {
         setupNewOrder();
+        getApp().clearCurrentOrderItemsQty();
     }
 
     private void setupNewOrder() {
@@ -2600,6 +2679,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         protected void onSuccess(String saleItemGuid) {
             if (displayBinder != null)
                 displayBinder.startCommand(new DisplaySaleItemCommand(saleItemGuid));
+            ApplyMultipleDiscountCommand.start(self(), orderGuid, new ArrayList<>(discountBundles));
         }
     };
 
@@ -2762,6 +2842,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     onScaleItemAdded(item);
                 }
             }
+            if (discountBundles != null && !discountBundles.isEmpty()){
+                ApplyMultipleDiscountCommand.start(self(), orderGuid, new ArrayList<>(discountBundles));
+            }
         }
 
         @Override
@@ -2795,9 +2878,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         protected void onSuccess() {
+            getApp().clearCurrentOrderItemsQty();
             if (isFinishing() || isDestroyed())
                 return;
             startCommand(new DisplayWelcomeMessageCommand());
+            orderItemListFragment.cleanAll();
         }
     };
 
@@ -3008,6 +3093,28 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
+    private class DiscountBundleLoader implements LoaderCallbacks<List<DiscountBundle>> {
+
+        @Override
+        public Loader<List<DiscountBundle>> onCreateLoader(int id, Bundle args) {
+            return CursorLoaderBuilder.forUri(ShopProvider.contentUri(MultipleDiscountTable.URI_CONTENT))
+                    .where(MultipleDiscountTable.IS_ACTIVE + " = ?", 1)
+                    .orderBy(MultipleDiscountTable.BUNDLE_ID)
+                    .wrap(new MultipleDiscountWrapFunction())
+                    .build(self());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<DiscountBundle>> loader, List<DiscountBundle> data) {
+            discountBundles = data;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<DiscountBundle>> loader) {
+
+        }
+    }
+
     public List<Integer> getPriceLevels(){
         return priceLevels;
     }
@@ -3160,12 +3267,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             query.where(columnStart + " < ?", currentTime);
             query.where(columnEnd + " > ?", currentTime);
 
-            List<Integer> priceLevels = query.perform(self()).toFluentIterable(new Function<Cursor, Integer>() {
-                @Override
-                public Integer apply(Cursor input) {
-                    return input.getInt(0);
-                }
-            }).toImmutableList();
+            List<Integer> priceLevels = query.perform(self()).toFluentIterable(new IntegerFunction()).toList();
 
             if (!BaseCashierActivity.this.priceLevels.equals(priceLevels)){
                 BaseCashierActivity.this.priceLevels = priceLevels;

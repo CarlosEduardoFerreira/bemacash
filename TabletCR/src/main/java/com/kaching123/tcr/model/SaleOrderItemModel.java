@@ -27,7 +27,6 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public BigDecimal kitchenPrintedQty;
     public BigDecimal price;
     public PriceType priceType;
-
     public BigDecimal discount;
     public DiscountType discountType;
     public boolean isTaxable;
@@ -49,6 +48,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public boolean isGiftCard;
     public BigDecimal loyaltyPoints;
     public boolean pointsForDollarAmount;
+    public String discountBundleId;
 
     public boolean isEbtEligible;
 
@@ -69,6 +69,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               boolean isGiftCard,
                               BigDecimal loyaltyPoints,
                               boolean pointsForDollarAmount,
+                              String discountBundleId,
                               boolean isEbtEligible) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
@@ -95,6 +96,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.isGiftCard = isGiftCard;
         this.loyaltyPoints = loyaltyPoints;
         this.pointsForDollarAmount = pointsForDollarAmount;
+        this.discountBundleId = discountBundleId;
         this.isEbtEligible = isEbtEligible;
     }
 
@@ -112,6 +114,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               boolean isGiftCard,
                               BigDecimal loyaltyPoints,
                               boolean pointsForDollarAmount,
+                              String discountBundleId,
                               boolean isEbtEligible) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
@@ -139,7 +142,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.isGiftCard = isGiftCard;
         this.loyaltyPoints = loyaltyPoints;
         this.pointsForDollarAmount = pointsForDollarAmount;
-
+        this.discountBundleId = discountBundleId;
         this.isEbtEligible = isEbtEligible;
     }
 
@@ -178,7 +181,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         values.put(SaleItemTable.IS_GIFT_CARD, isGiftCard);
         values.put(SaleItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
         values.put(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT, pointsForDollarAmount);
-
+        values.put(SaleItemTable.DISCOUNT_BUNDLE_ID, discountBundleId);
         values.put(SaleItemTable.EBT_ELIGIBLE,isEbtEligible);
         return values;
     }

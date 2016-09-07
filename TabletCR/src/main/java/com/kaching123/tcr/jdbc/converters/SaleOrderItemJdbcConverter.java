@@ -46,38 +46,8 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     private static final String IS_GIFT_CARD = "IS_GIFT_CARD";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
     private static final String POINTS_FOR_DOLLAR_AMOUNT = "POINTS_FOR_DOLLAR_AMOUNT";
+    private static final String DISCOUNT_BUNDLE_ID = "MULTIPLE_DISCOUNT_ID";
     private static final String EBT_ELIGIBLE = "EBT_ELIGIBLE";
-
-  /*  @Override
-    public ContentValues toValues(ResultSet rs) throws SQLException {
-        return new SaleOrderItemModel(
-                rs.getString(SALE_ITEM_ID),
-                rs.getString(ORDER_ID),
-                rs.getString(ITEM_ID),
-                rs.getBigDecimal(QUANTITY),
-                rs.getBigDecimal(KITCHEN_PRINTED_QUANTITY),
-                _enum(PriceType.class, rs.getString(PRICE_TYPE), PriceType.FIXED),
-                rs.getBigDecimal(PRICE),
-                rs.getBoolean(DISCOUNTABLE),
-                rs.getBigDecimal(DISCOUNT),
-                _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT),
-                rs.getBoolean(TAXABLE),
-                rs.getBigDecimal(TAX),
-                rs.getBigDecimal(TAX2),
-                rs.getLong(SEQUENCE),
-                rs.getString(PARENT_ID),
-                rs.getBigDecimal(FINAL_GROSS_PRICE),
-                rs.getBigDecimal(FINAL_TAX),
-                rs.getBigDecimal(FINAL_DISCOUNT),
-                null,
-                rs.getString(NOTES),
-                rs.getBoolean(HAS_NOTES),
-                rs.getBoolean(IS_PREPAID_ITEM),
-                null,
-                false,
-                rs.getBoolean(EBT_ELIGIBLE)).toValues()
-        );
-    }*/
 
     @Override
     public SaleOrderItemModel toValues(JdbcJSONObject rs) throws JSONException {
@@ -107,6 +77,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(IS_GIFT_CARD),
                 rs.getBigDecimal(LOYALTY_POINTS),
                 rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT),
+                rs.getString(DISCOUNT_BUNDLE_ID),
                 rs.getBoolean(EBT_ELIGIBLE));
     }
 
@@ -143,7 +114,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(TAX2, model.tax2)
                 .add(SEQUENCE, model.sequence)
                 .add(PARENT_ID, model.parentGuid)
-
                 .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
                 .add(FINAL_TAX, model.finalTax)
                 .add(FINAL_DISCOUNT, model.finalDiscount)
@@ -153,6 +123,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(IS_GIFT_CARD, model.isGiftCard)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
                 .add(POINTS_FOR_DOLLAR_AMOUNT, model.pointsForDollarAmount)
+                .add(DISCOUNT_BUNDLE_ID, model.discountBundleId)
                 .add(EBT_ELIGIBLE, model.isEbtEligible)
                 .build(JdbcFactory.getApiMethod(model));
     }
@@ -209,6 +180,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
         return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
                 .add(DISCOUNT, model.discount)
                 .add(DISCOUNT_TYPE, model.discountType)
+                .add(DISCOUNT_BUNDLE_ID, model.discountBundleId)
 
                 .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
                 .add(FINAL_TAX, model.finalTax)

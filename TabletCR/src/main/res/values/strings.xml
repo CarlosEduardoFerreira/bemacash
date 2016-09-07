@@ -112,7 +112,7 @@
     <string name="composer_remove_success">Composer item(s) removed</string>
 
     <string name="composer_dialog_track">Item track-able</string>
-    <string name="composer_dialog_free">Restricked host qty</string>
+    <string name="composer_dialog_free">Limit qty</string>
     <string name="composer_dialog_qty" formatted="false">Quantity (%s): </string>
     <string name="composer_dialog_price_type">Price type :</string>
     <string name="composer_dialog_auto_apply">Auto Apply</string>
@@ -125,6 +125,7 @@
     <string name="modifier_header_item">Title</string>
     <string name="modifier_group_edit">Edit Selected Group</string>
     <string name="modifier_group_delete">Remove Selected Group</string>
+    <string name="modifier_group_dialog_label">Select the number of modifiers</string>
 
     <string name="modifier_add_success">Modifier item created</string>
     <string name="modifier_cancel_success">Modifier action cancelled</string>
@@ -256,7 +257,9 @@
     <string name="cashier_action_serial_disabled">This item is not serial.</string>
     <string name="cashier_msg_error_changing_price">Discount per item has already applied, to change open price you need to reset discount per item</string>
     <string name="cashier_msg_error_changing_discount">Order discount was already applied, to apply discount per item you need to reset order discount firstly</string>
+    <string name="cashier_msg_error_changing_discount_multiple_discount">This item is a part of Multiple Discount Bundle. You can not change it\'s discount manually</string>
     <string name="cashier_msg_error_changing_qty">This item is serializable, to add new items please use the scanner or choose it manually</string>
+    <string name="cashier_msg_error_changing_qty_multiple_discount">This item is a part of Multiple Discount Bundle. You can not change it\'s quantity manually</string>
     <string name="login_wait">Sign in to the system</string>
     <string name="pax_instructions">Please follow the instructions on the PAX pinpad device. Should you want to abort press \"Cancel\" button."</string>
     <string name="pax_balance_instructions">Only EBT cards are eligible for balance review. Please follow the instructions on the PAX pinpad device. Should you want to abort press \"Cancel\" button."</string>
@@ -398,6 +401,7 @@
     <string name="blackstone_pay_charge">Change:</string>
     <string name="blackstone_change_charge_finish">Change: %s</string>
     <string name="blackstone_gift_card_charge_finish">Gift Card Balance: %s</string>
+    <string name="blackstone_pay_charge_finish">Gift Card Balance: %s</string>
     <string name="blackstone_pay_required_amount">Required amount:</string>
     <string name="blackstone_pay_received_cash">Received cash:</string>
     <string name="blackstone_pay_transaction_constructor" formatted="false">%s payment</string>
@@ -608,6 +612,7 @@
     <string name="swipe_card_error_not_config_msg">Usb Card Reader is not set yet.\nPlease config in the setting page!</string>
     <string name="swipe_card_error_msg">Can\'t read data from card.\nPlease try again!</string>
     <string name="modifiers_action_copy">Copy from existing item</string>
+    <string name="modifiers_action_manage_groups">Manage Groups</string>
     <string name="modifiers_action_create_new">Create new</string>
     <string name="dashboard_activity_cash_in_drawer_label">CASH IN DRAWER</string>
     <string name="dashboard_activity_opening_amount">OPENING AMOUNT</string>
@@ -630,7 +635,7 @@
     <string name="dashboard_activity_drops_and_payouts_button_label_short">Drops/Payouts</string>
     <string name="dashboard_activity_xreport_button_label">X Report</string>
     <string name="dashboard_activity_opened_transactions_warning_title">Open credit card transactions</string>
-    <string name="dashboard_activity_opened_transactions_warning_message">There are open credit card transactions awaiting tip authorization.  Do you want to close them?</string>
+    <string name="dashboard_activity_opened_transactions_warning_message">All open credit card transaction tip amounts will be set to $0.00.</string>
     <string name="dashboard_action_activation">Activation Center</string>
     <string name="dashboard_action_options">Settings</string>
     <string name="dashboard_action_logout">Logout</string>
@@ -863,6 +868,7 @@
     <string name="sync_item_matrix">items part#6</string>
     <string name="sync_tbp">items part#7</string>
     <string name="sync_tbp_x_register">items part#8</string>
+    <string name="sync_multiple_discount">items part#9</string>
     <string name="sync_item_composition">composition items</string>
     <string name="sync_sale_order">sale orders part#1</string>
     <string name="sync_sale_order_item">sale orders part#2</string>
@@ -1210,7 +1216,7 @@
     <string-array name="item_tabs">
         <item>Price</item>
         <item>Additional Information</item>
-        <item>Printer</item>
+        <item>Printer/KDS</item>
         <item>Special Pricing</item>
         <item>Monitoring</item>
         <item>Variants</item>
@@ -1264,6 +1270,7 @@
     <string name="report_returned_items_header_total">Total</string>
     <string name="reports_sold_order_header_date">Sale Date</string>
     <string name="reports_sold_order_header_register">Register Number</string>
+    <string name="reports_sold_order_header_employee">Cashier</string>
     <string name="reports_sold_order_header_price">Total Price</string>
     <string name="reports_sold_order_header_discount">Discount</string>
     <string name="reports_sold_order_header_tax">Tax</string>
@@ -1372,7 +1379,7 @@
     <string name="printer_delete_dialog_title">Delete printer</string>
     <string name="printer_delete_dialog_msg">Are you sure you want to delete printer?</string>
     <string name="pax_delete_dialog_title">Delete Pax pinpad</string>
-    <string name="batch_close_dialog_msg">All open credit card transaction tip amounts will be set to $0.00.  Are you sure you want to continue?</string>
+    <string name="batch_close_dialog_msg">Are you sure you want to continue?</string>
     <string name="batch_close_dialog_waiting_msg">Waiting for Batch close</string>
     <string name="batch_close_dialog_title">Batch Close</string>
     <string name="open_credit_and_transactions_dialog_title">Open credit card transactions</string>
@@ -1908,7 +1915,7 @@
     <string name="composer_dialog_add_title">Add a composer</string>
     <string name="composer_dialog_edit_title">Modify composer</string>
     <string name="composer_header_track">Track item inventory</string>
-    <string name="composer_header_free">Restrict host quantity</string>
+    <string name="composer_header_free">Limit quantity</string>
     <string name="composer_header_cost">Item cost</string>
     <string name="composer_header_cost_total">Total item cost</string>
     <string name="composer_footer_cost_total" formatted="false">Total: %s</string>
@@ -2017,6 +2024,12 @@
     <string name="detailed_report_filter_to">To:</string>
 
 
+    <string name="sale_composer_without_composition">Sale items without composition</string>
+    <string name="sale_composer_without_composition_desc">Following items have not enough composition quantity.</string>
+    <string name="sale_composer_without_composition_row" formatted="false">%s, Need: %s, Available: %s\n</string>
+    <string name="button_override">Override</string>
+
+
 
     <string name="ebt_type_chooser_dlg_title">Please choose:</string>
     <string name="payment_fragment_ebt_not_enabled">0.00</string>
@@ -2029,4 +2042,13 @@
 
     <string name="batch_close_title">Batch Close</string>
     <string name="batch_close_msg">There is no transaction need to be batch closed</string>
+
+    <string name="composer_processing_msg">Composer process…</string>
+
+    <string name="item_qty_lower_zero">Item available quantity is not enough to sale it!</string>
+    <string name="item_limit_qty">Limit Qty</string>
+
+
+    <string name="modifiers_limit_exceed_msg">Group limit of modifiers (%d) is exceeded</string>
+    <string name="modifiers_count_insufficient_msg" formatted = "false">You must select the required amount\nof modifiers for modifier group\n\'%s\'\nThe required amount is (%d)</string>
 </resources>

@@ -119,8 +119,8 @@ public class ModifierActivity extends ScannerBaseActivity implements ModifierIte
     }
 
     @OptionsItem
-    protected void actionCopySelected(){
-        CopyModifiersActivity.start(self(), model.guid, model.description);
+    protected void actionManageGroupsSelected(){
+        ModifierGroupsActivity.start(self(), model.guid, model.description);
     }
 
     @Override

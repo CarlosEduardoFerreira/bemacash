@@ -108,9 +108,13 @@ public class TcrApplication extends MultiDexApplication {
     private boolean isShiftOpened;
     private boolean isOperatorClockedIn;
     private String currentOrderGuid;
+    private HashMap<String, BigDecimal> orderItemsQty = new HashMap<>();
     private HashSet<String> salesmanGuids = new HashSet<String>();
     private BarcodePrefixes barcodePrefixes;
     private HashMap<Broker, BigDecimal> prepaidTaxes;
+    private Set<String> ignoringCompositionItems = new HashSet<>();
+    private HashMap<String, BigDecimal> qtyBefore = new HashMap<>();
+    private int salesOnScreenTmpSize;
 
     private RestAdapter restAdapter;
     private RestAdapter restAdapterJsonOrg;
@@ -368,6 +372,18 @@ public class TcrApplication extends MultiDexApplication {
         return currentOrderGuid;
     }
 
+    public HashMap<String, BigDecimal> getOrderItemsQty() {
+        return orderItemsQty;
+    }
+
+    public void addCurrentOrderItemsQty(HashMap<String, BigDecimal> value) {
+        orderItemsQty.putAll(value);
+    }
+
+    public void clearCurrentOrderItemsQty(){
+        orderItemsQty.clear();
+    }
+
     public void setSalesmanGuids(HashSet<String> salesmanGuids) {
         this.salesmanGuids = salesmanGuids;
     }
@@ -407,6 +423,38 @@ public class TcrApplication extends MultiDexApplication {
 
     public synchronized String getOperatorLogin() {
         return operator == null ? null : operator.login;
+    }
+
+    public synchronized Set<String> getIgnorComposerList(){
+        return ignoringCompositionItems;
+    }
+
+    public synchronized void addIgnorComposerItem(Set<String> itemsGuid){
+        ignoringCompositionItems.addAll(itemsGuid);
+    }
+
+    public int getSalesOnScreenTmpSize() {
+        return salesOnScreenTmpSize;
+    }
+
+    public void setSalesOnScreenTmpSize(int salesOnScreenTmpSize) {
+        this.salesOnScreenTmpSize = salesOnScreenTmpSize;
+    }
+
+    public HashMap<String, BigDecimal> getQtyBefore() {
+        return qtyBefore;
+    }
+
+    public void setQtyBefore(HashMap<String, BigDecimal> qtyBefore) {
+        this.qtyBefore = qtyBefore;
+    }
+
+    public void clearQtyBefore() {
+        qtyBefore.clear();
+    }
+
+    public synchronized void clearIgnorComposerItems(){
+        ignoringCompositionItems.clear();
     }
 
     public synchronized String getOperatorFullName() {

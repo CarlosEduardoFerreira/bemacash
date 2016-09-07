@@ -382,6 +382,10 @@ public final class ContentValuesUtil {
         return column + " NOT IN (" + Joiner.on(",").join(count, "?") + ")";
     }
 
+    public static String _lower(String column){
+        return String.format(Locale.US, "lower(%s)", column);
+    }
+
     private ContentValuesUtil() {
     }
 }

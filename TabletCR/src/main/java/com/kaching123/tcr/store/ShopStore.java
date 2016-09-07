@@ -425,6 +425,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String STOCK_TRACKING = "stock_tracking";
 
+        @Column(type = Column.Type.INTEGER, defVal = "0")
+        String LIMIT_QTY = "limit_qty";
+
         @Column(type = Column.Type.INTEGER)
         String ACTIVE_STATUS = "active_status";
 
@@ -471,9 +474,6 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.INTEGER)
         String ORDER_NUM = "order_num";
-
-        @Column(type = Type.TEXT)
-        String DEFAULT_MODIFIER_GUID = "default_modifier_guid";
 
         @Column(type = Column.Type.TEXT)
         String PRINTER_ALIAS_GUID = "printer_alias_guid";
@@ -620,16 +620,17 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String ITEM_GROUP_GUID = "item_group_guid";
 
-        @Column(type = Type.INTEGER)
-        String DEFAULT = "is_default";
-
         @Column(type = Column.Type.INTEGER, defVal = "0")
         String AUTO_APPLY ="auto_apply";
+
+        @Column(type = Column.Type.INTEGER)
+        String ORDER_NUM ="order_num";
     }
 
     static {
         applyForeignKeys(ModifierTable.TABLE_NAME,
-                foreignKey(ModifierTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
+                foreignKey(ModifierTable.ITEM_GUID, ItemTable.TABLE_NAME, ItemTable.GUID),
+                foreignKey(ModifierTable.ITEM_SUB_GUID, ItemTable.TABLE_NAME, ItemTable.GUID));
     }
 
 
@@ -878,6 +879,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String POINTS_FOR_DOLLAR_AMOUNT = "points_for_dollar_amount";
+
+        @Column(type = Column.Type.TEXT)
+        String DISCOUNT_BUNDLE_ID = "discount_bundle_id";
     }
 
     static {
@@ -2344,6 +2348,45 @@ public abstract class ShopStore {
                 foreignKey(TBPxRegisterTable.REGISTER_ID, RegisterTable.TABLE_NAME, RegisterTable.ID));
     }
 
+    @Indexes({
+            @Index(name = "item", columns = MultipleDiscountTable.ITEM_ID),
+            @Index(name = "bundle", columns = MultipleDiscountTable.BUNDLE_ID)
+    })
+    @Table(MultipleDiscountTable.TABLE_NAME)
+    public interface MultipleDiscountTable extends IBemaSyncTable {
+
+        String TABLE_NAME = "multiple_discount";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String ID = "id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String BUNDLE_ID = "bundle_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ITEM_ID = "item_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String QTY = "qty";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String DISCOUNT = "discount";
+
+        @Column(type = Type.INTEGER)
+        String IS_ACTIVE = "is_active";
+    }
+    static {
+        applyForeignKeys(MultipleDiscountTable.TABLE_NAME,
+                foreignKey(MultipleDiscountTable.ITEM_ID, ItemTable.TABLE_NAME, ItemTable.GUID));
+    }
 
     /**
      * views *
@@ -3000,7 +3043,6 @@ public abstract class ShopStore {
 
         String QUERY_NAME = "search_item_with_modifier_view";
 
-        //String ID = ItemTable.ID;
         String GUID = ItemExtView.TABLE_ITEM + "_" + ItemTable.GUID;
         String CATEGORY_ID = ItemExtView.TABLE_ITEM + "_" + ItemTable.CATEGORY_ID;
         String DESCRIPTION = ItemExtView.TABLE_ITEM + "_" + ItemTable.DESCRIPTION;
@@ -3020,7 +3062,6 @@ public abstract class ShopStore {
         String TAXABLE = ItemExtView.TABLE_ITEM + "_" + ItemTable.TAXABLE;
         String TAX_GROUP_GUID = ItemExtView.TABLE_ITEM + "_" + ItemTable.TAX_GROUP_GUID;
         String ORDER_NUM = ItemExtView.TABLE_ITEM + "_" + ItemTable.ORDER_NUM;
-        String DEFAULT_MODIFIER_GUID = ItemExtView.TABLE_ITEM + "_" + ItemTable.DEFAULT_MODIFIER_GUID;
         String PRINTER_ALIAS_GUID = ItemExtView.TABLE_ITEM + "_" + ItemTable.PRINTER_ALIAS_GUID;
         String BUTTON_VIEW = ItemExtView.TABLE_ITEM + "_" + ItemTable.BUTTON_VIEW;
         String HASNOTES = ItemExtView.TABLE_ITEM + "_" + ItemTable.HAS_NOTES;
@@ -3032,11 +3073,10 @@ public abstract class ShopStore {
         String DEPARTMENT_ID = ItemExtView.TABLE_CATEGORY + "_" + CategoryTable.DEPARTMENT_GUID;
         String CATEGORY_TITLE = ItemExtView.TABLE_CATEGORY + "_" + CategoryTable.TITLE;
         String MODIFIER_TYPE = ItemExtView.TABLE_MODIFIER + "_" + ModifierTable.TYPE;
-        //String MODIFIER_IS_DELETED = ItemExtView.TABLE_MODIFIER + "_" + ModifierTable.IS_DELETED;
 
-        String MODIFIERS_COUNT = "sum(case when " + MODIFIER_TYPE + " = 0 then 1 else 0 end) as " + ItemExtView.MODIFIERS_COUNT;//+ " and " + MODIFIER_IS_DELETED + " = 0
-        String ADDONS_COUNT = "sum(case when " + MODIFIER_TYPE + " = 1 then 1 else 0 end) as " + ItemExtView.ADDONS_COUNT;//" + " and " + MODIFIER_IS_DELETED + " = 0
-        String OPTIONAL_COUNT = "sum(case when " + MODIFIER_TYPE + " = 2 then 1 else 0 end) as " + ItemExtView.OPTIONAL_COUNT;//" + " and " + MODIFIER_IS_DELETED + " = 0
+        String MODIFIERS_COUNT = "sum(case when " + MODIFIER_TYPE + " = 0 then 1 else 0 end) as " + ItemExtView.MODIFIERS_COUNT;
+        String ADDONS_COUNT = "sum(case when " + MODIFIER_TYPE + " = 1 then 1 else 0 end) as " + ItemExtView.ADDONS_COUNT;
+        String OPTIONAL_COUNT = "sum(case when " + MODIFIER_TYPE + " = 2 then 1 else 0 end) as " + ItemExtView.OPTIONAL_COUNT;
 
         String TAX = ItemExtView.TABLE_TAX_GROUP + "_" + TaxGroupTable.TAX;
 
@@ -3066,8 +3106,6 @@ public abstract class ShopStore {
                 CATEGORY_TITLE + "," +
                 TAX + "," +
                 ORDER_NUM + "," +
-                //MODIFIER_IS_DELETED + "," +
-                DEFAULT_MODIFIER_GUID + "," +
                 PRINTER_ALIAS_GUID + "," +
                 BUTTON_VIEW + "," +
                 HASNOTES + "," +
@@ -3076,7 +3114,7 @@ public abstract class ShopStore {
                 ELIGIBLE_FOR_COMMISSION + "," +
                 COMMISSION +
                 " from " + ItemExtView.VIEW_NAME +
-                " where " + ACTIVE_STATUS + " = 1 and " + DESCRIPTION + " like ? " + //and " + MODIFIER_IS_DELETED + " = 0
+                " where " + ACTIVE_STATUS + " = 1 and " + DESCRIPTION + " like ? " +
                 " group by " + GUID +
                 " having " + ItemExtView.MODIFIERS_COUNT + " > 0 or " + ItemExtView.ADDONS_COUNT + " > 0 or " + ItemExtView.OPTIONAL_COUNT + " > 0 " +
                 " order by " + CATEGORY_TITLE + ", " + ORDER_NUM;
@@ -3990,9 +4028,6 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String GUID = "guid";
 
-        @Column(type = Type.TEXT)
-        String DEFAULT_GUID = "default_guid";
-
         @NotNull
         @Column(type = Type.TEXT)
         String TITLE = "title";
@@ -4000,6 +4035,15 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String ITEM_GUID = "item_guid";
+
+        @Column(type = Type.INTEGER)
+        String ORDER_NUM = "order_num";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String CONDITION = "condition";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String CONDITION_VALUE = "condition_value";
     }
 
     static {
@@ -4028,11 +4072,6 @@ public abstract class ShopStore {
         @Columns(UnitLabelTable.SHORTCUT)
         @Join(type = Join.Type.LEFT, joinTable = UnitLabelTable.TABLE_NAME, joinColumn = UnitLabelTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.UNIT_LABEL_ID)
         String TABLE_UNIT_LABEL = "unit_label_table";
-
-        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns(ItemTable.DEFAULT_MODIFIER_GUID)
-        @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_MODIFIER_ITEM, onColumn = ModifierTable.ITEM_GUID)
-        String TABLE_HOST_ITEM = "item_host_table";
     }
 
     @Table(UnitLabelTable.TABLE_NAME)
@@ -4526,5 +4565,17 @@ public abstract class ShopStore {
                         + JOIN + "(" + SELECT + ItemTable.GUID + coma + ItemTable.UPDATE_QTY_FLAG + AS + FLAG + coma + ItemTable.STOCK_TRACKING + AS + STOCK_TRACKING + FROM + ItemTable.TABLE_NAME + ")" + TTT2
                         + ON + TTT2 + dot + ItemTable.GUID + equals + ITEM_GUID
                         + GROUP_BY + ITEM_GUID;
+    }
+
+    @RawQuery(ItemRawQuery.QUERY_NAME)
+    public interface ItemRawQuery {
+
+        String QUERY_NAME = "item_raw";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "item_raw";
+
+        @SqlQuery
+        String QUERY = "SELECT * FROM " + ItemTable.TABLE_NAME;
     }
 }

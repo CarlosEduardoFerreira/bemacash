@@ -120,6 +120,10 @@
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".activity.ModifierGroupsActivity_"
+            android:label="@string/inventory_activity_label"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".activity.AddReferenceItemActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"

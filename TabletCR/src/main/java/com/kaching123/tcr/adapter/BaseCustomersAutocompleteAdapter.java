@@ -81,7 +81,7 @@ public abstract class BaseCustomersAutocompleteAdapter extends ObjectsArrayAdapt
 
                 BaseCustomersAutocompleteAdapter.this.publishResults(it);
 
-                changeCursor(it.toImmutableList());
+                changeCursor(it.toList());
             }
         };
     }

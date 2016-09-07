@@ -82,6 +82,7 @@ import com.kaching123.tcr.store.ShopStore.LoyaltyPlanTable;
 import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
 import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
+import com.kaching123.tcr.store.ShopStore.MultipleDiscountTable;
 import com.kaching123.tcr.store.ShopStore.OldActiveUnitOrdersQuery;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
@@ -176,7 +177,8 @@ public class SyncCommand implements Runnable {
             VariantSubItemTable.URI_CONTENT,
             ItemMatrixTable.URI_CONTENT,
             TBPTable.URI_CONTENT,
-            TBPxRegisterTable.URI_CONTENT
+            TBPxRegisterTable.URI_CONTENT,
+            MultipleDiscountTable.URI_CONTENT
     };
 
     private Context service;
@@ -398,6 +400,7 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, ItemMatrixTable.TABLE_NAME, ItemMatrixTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, TBPTable.TABLE_NAME, TBPTable.ID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, TBPxRegisterTable.TABLE_NAME, TBPxRegisterTable.ID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, MultipleDiscountTable.TABLE_NAME, MultipleDiscountTable.ID, employee, serverLastTimestamp);
 
                     //loyalty
                     count += syncSingleTable2(service, api2, LoyaltyIncentiveTable.TABLE_NAME, LoyaltyIncentiveTable.GUID, employee, serverLastTimestamp);
@@ -718,6 +721,8 @@ public class SyncCommand implements Runnable {
             return false;
         if (!isTableEmpty(context, TBPxRegisterTable.TABLE_NAME, TBPxRegisterTable.ID))
             return false;
+        if (!isTableEmpty(context, MultipleDiscountTable.TABLE_NAME, MultipleDiscountTable.ID))
+            return false;
 
         return true;
     }
@@ -839,6 +844,7 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, LoyaltyIncentiveItemTable.TABLE_NAME, LoyaltyIncentiveItemTable.GUID);
                 count += syncLocalSingleTable(service, TBPTable.TABLE_NAME, TBPTable.ID);
                 count += syncLocalSingleTable(service, TBPxRegisterTable.TABLE_NAME, TBPxRegisterTable.ID);
+                count += syncLocalSingleTable(service, MultipleDiscountTable.TABLE_NAME, MultipleDiscountTable.ID);
 
                 //sale
                 count += syncLocalSingleTable(service, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, SaleOrderTable.PARENT_ID, true);
@@ -1789,7 +1795,8 @@ public class SyncCommand implements Runnable {
         LOYALTY_POINTS_MOVEMENT(LoyaltyPointsMovementTable.TABLE_NAME, true),
         SALE_INCENTIVE(SaleIncentiveTable.TABLE_NAME, true),
         TBP(TBPTable.TABLE_NAME, true),
-        TBP_X_REGISTER(TBPxRegisterTable.TABLE_NAME, true);
+        TBP_X_REGISTER(TBPxRegisterTable.TABLE_NAME, true),
+        MULTIPLE_DISCOUNT(MultipleDiscountTable.TABLE_NAME, true);
 
         public final String tableName;
         public final boolean isParent;

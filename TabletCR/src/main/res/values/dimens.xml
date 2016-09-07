@@ -214,6 +214,8 @@
 
     <dimen name="detailed_filter_dialog_width">690dp</dimen>
 
+    <dimen name="compos_override_qty_dialog_width">400dp</dimen>
+
     <dimen name="ebt_chooser_dlg_main_layout_padding_top">10dp</dimen>
     <dimen name="ebt_chooser_dlg_main_layout_padding_left">20dp</dimen>
     <dimen name="ebt_chooser_dlg_main_layout_padding_right">20dp</dimen>

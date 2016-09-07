@@ -1,6 +1,5 @@
 package com.kaching123.tcr.fragment.inventory;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -8,13 +7,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.ItemCodeType;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 /**
  * Created by idyuzheva on 30.06.2014.
@@ -43,6 +43,10 @@ public class ItemCodeChooserAlertDialogFragment extends StyledDialogFragment {
 
     @ViewById(R.id.chooser_second_radio_button)
     RadioButton productCodeRadioButton;
+
+    private void setCallback(ItemCodeTypeChooseListener callback){
+        this.codeTypeChooseListener = callback;
+    }
 
     @Override
     protected int getDialogContentLayout() {
@@ -85,17 +89,6 @@ public class ItemCodeChooserAlertDialogFragment extends StyledDialogFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            codeTypeChooseListener = ((ItemCodeTypeChooseListener) activity);
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " or parent fragments must implement UnitCodeTypeChooseListener");
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         eanRadioButton.setText(R.string.item_activity_alert_code_type_ean);
@@ -110,8 +103,8 @@ public class ItemCodeChooserAlertDialogFragment extends StyledDialogFragment {
         setCancelable(false);
     }
 
-    public static void show(FragmentActivity activity, String code) {
-        DialogUtil.show(activity, DIALOG_NAME, ItemCodeChooserAlertDialogFragment_.builder().code(code).build());
+    public static void show(FragmentActivity activity, String code, ItemCodeTypeChooseListener callback) {
+        DialogUtil.show(activity, DIALOG_NAME, ItemCodeChooserAlertDialogFragment_.builder().code(code).build()).setCallback(callback);
     }
 
 }

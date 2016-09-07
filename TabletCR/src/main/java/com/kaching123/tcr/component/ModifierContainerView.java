@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jess.ui.TwoWayGridView;
 import com.kaching123.tcr.Logger;
@@ -12,6 +13,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand.SelectedModifierExModel;
 import com.kaching123.tcr.model.ModifierExModel;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierType;
 
 import org.androidannotations.annotations.AfterViews;
@@ -36,6 +38,8 @@ public class ModifierContainerView extends FrameLayout {
 
     private ButtonsAdapter adapter;
 
+    private ModifierGroupModel modifierGroup;
+
     public ModifierContainerView(Context context) {
         super(context);
     }
@@ -47,11 +51,18 @@ public class ModifierContainerView extends FrameLayout {
         buttonGrid.setAdapter(adapter);
     }
 
+    public void setGroup(ModifierGroupModel group){
+        this.modifierGroup = group;
+    }
+
+    public ModifierGroupModel getGroup() {
+        return modifierGroup;
+    }
+
     public void setList(List<SelectedModifierExModel> modifiers) {
         cleanSelection();
         ModifierExModel firstItem = modifiers.get(0);
         setContainerTitle(firstItem);
-        adapter.singleMode = firstItem.type == ModifierType.MODIFIER;
         for (SelectedModifierExModel modifier : modifiers){
             if (modifier.isSelected){
                 adapter.selectedItems.add(modifier.getGuid());
@@ -101,8 +112,6 @@ public class ModifierContainerView extends FrameLayout {
 
         private HashSet<String> selectedItems = new HashSet<>();
 
-        private boolean singleMode;
-
         public ButtonsAdapter(Context context) {
             super(context);
         }
@@ -110,9 +119,6 @@ public class ModifierContainerView extends FrameLayout {
         @Override
         public void changeCursor(List<SelectedModifierExModel> list) {
             super.changeCursor(list);
-            if (singleMode && list != null && !list.isEmpty() && selectedItems.isEmpty()) {
-                selectedItems.add(list.get(0).getGuid());
-            }
             onChangeSelections();
         }
 
@@ -149,24 +155,19 @@ public class ModifierContainerView extends FrameLayout {
             public void onClick(View view) {
                 ModifyButton v = (ModifyButton) view;
                 String guid = v.getGuid();
-                if (singleMode) {
-                    handleSingleMode(guid);
-                } else {
-                    handleMultipleMode(guid);
-                }
+                handleMultipleMode(guid);
                 notifyDataSetChanged();
                 onChangeSelections();
             }
 
             private void handleMultipleMode(String guid) {
                 if (!selectedItems.remove(guid)) {
-                    selectedItems.add(guid);
+                    if (modifierGroup != null && modifierGroup.conditionValue != 0 && selectedItems.size() >= modifierGroup.conditionValue){
+                        Toast.makeText(getContext(), getContext().getString(R.string.modifiers_limit_exceed_msg, modifierGroup.conditionValue), Toast.LENGTH_SHORT).show();
+                    }else{
+                        selectedItems.add(guid);
+                    }
                 }
-            }
-
-            private void handleSingleMode(String guid) {
-                selectedItems.clear();
-                selectedItems.add(guid);
             }
         };
     }

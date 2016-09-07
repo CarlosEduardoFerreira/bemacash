@@ -14,9 +14,11 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.itempick.CategoryItemView_;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.payment.ModifierGroupCondition;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.fragment.catalog.BaseCategoriesFragment;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ModifierGroupView2.GroupTable;
 import com.kaching123.tcr.store.ShopStore.ModifierGroupView;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 
@@ -82,6 +84,8 @@ public class ModifierGroupItemFragment extends BaseCategoriesFragment<GroupCallb
                 ShopSchema2.ModifierGroupView2.GroupTable.GUID,
                 ShopSchema2.ModifierGroupView2.GroupTable.TITLE,
                 ShopSchema2.ModifierGroupView2.GroupTable.ITEM_GUID,
+                GroupTable.CONDITION,
+                GroupTable.CONDITION_VALUE,
                 _count(ShopSchema2.ModifierGroupView2.ItemTable.MODIFIER_GUID, ModifierGroupView.ITEM_COUNT));
         builder.where(ShopSchema2.ModifierGroupView2.GroupTable.ITEM_GUID + " = ? ", bundle.getString(KEY));
         builder.orderBy(getOrderBy());
@@ -104,7 +108,7 @@ public class ModifierGroupItemFragment extends BaseCategoriesFragment<GroupCallb
 
     @Override
     protected String getOrderBy() {
-        return ShopSchema2.ModifierGroupView2.GroupTable.TITLE;
+        return GroupTable.ORDER_NUM;
     }
 
     @Override
@@ -132,6 +136,8 @@ public class ModifierGroupItemFragment extends BaseCategoriesFragment<GroupCallb
             itemModel.itemGuid = itemGuid;
             itemModel.title = title;
             itemModel.guid = catGuid;
+            itemModel.condition = ModifierGroupCondition.valueOf(c.getInt(c.getColumnIndex(GroupTable.CONDITION)));
+            itemModel.conditionValue = c.getInt(c.getColumnIndex(GroupTable.CONDITION_VALUE));
             listener.onItemSelected(itemModel);
         }
     }

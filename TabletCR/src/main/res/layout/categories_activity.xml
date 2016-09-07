@@ -16,6 +16,6 @@
         dslv:remove_mode="flingRemove"
         dslv:drag_enabled="true"
         dslv:drag_handle_id="@+id/drag"
-        dslv:drag_start_mode="onMove"/>
+        dslv:drag_start_mode="onLongPress"/>
 
 </FrameLayout>

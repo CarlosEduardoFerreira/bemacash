@@ -63,12 +63,11 @@ public class EditItemCommand extends AsyncCommand {
         BigDecimal currentAvailableQty = BigDecimal.ZERO;
         String oldCategoryId = "";
         Cursor c = ProviderAction.query(ITEM_URI)
-                .projection(ItemTable.TMP_AVAILABLE_QTY, ItemTable.DEFAULT_MODIFIER_GUID, ItemTable.CATEGORY_ID)
+                .projection(ItemTable.TMP_AVAILABLE_QTY, ItemTable.CATEGORY_ID)
                 .where(ItemTable.GUID + " = ?", item.guid)
                 .perform(getContext());
         if (c.moveToFirst()) {
             currentAvailableQty = _decimalQty(c, c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY), BigDecimal.ZERO);
-            item.defaultModifierGuid = c.getString(c.getColumnIndex(ItemTable.DEFAULT_MODIFIER_GUID));
             oldCategoryId = c.getString(c.getColumnIndex(ItemTable.CATEGORY_ID));
         }
         c.close();
@@ -164,7 +163,7 @@ public class EditItemCommand extends AsyncCommand {
                         model.orderNum = input.getInt(1);
                         return model;
                     }
-                }).toImmutableList();
+                }).toList();
 
         for (ItemModel m : models){
             InventoryUtils.updateOrderNum(m.guid, m.orderNum - 1, getAppCommandContext(), operations, sql);

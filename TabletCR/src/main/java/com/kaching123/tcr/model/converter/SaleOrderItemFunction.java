@@ -47,6 +47,7 @@ public class SaleOrderItemFunction implements Function<Cursor, SaleOrderItemMode
                 c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 1,
                 _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS), BigDecimal.ZERO),
                 _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)),
+                c.getString(c.getColumnIndex(SaleItemTable.DISCOUNT_BUNDLE_ID)),
                 _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)));
     }
 }

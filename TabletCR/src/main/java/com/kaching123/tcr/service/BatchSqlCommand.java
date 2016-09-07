@@ -17,6 +17,10 @@ public class BatchSqlCommand implements ISqlCommand {
 
     private final String method;
 
+    public BatchSqlCommand(){
+        this.method = "batch";
+    }
+
     public BatchSqlCommand(SingleSqlCommand c) {
         this.method = c.getMethod();
         sql.add(c);

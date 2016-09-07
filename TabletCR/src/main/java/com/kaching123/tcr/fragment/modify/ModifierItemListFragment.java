@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -23,18 +22,20 @@ import android.widget.RelativeLayout;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.store.inventory.MarkModifierDefaultCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelListener;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.model.ItemExModel;
-import com.kaching123.tcr.model.converter.ModifierExFunction;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.converter.ModifierExFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ItemGroupTable;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ModifierTable;
 import com.kaching123.tcr.store.ShopStore;
+import com.mobeta.android.dslv.DragSortListView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -86,8 +87,6 @@ public class ModifierItemListFragment extends ListFragment
 
     public ModifierItemListFragment setModel(ItemExModel model) {
         this.model = model;
-        adapter.setHostItem(model);
-        getLoaderManager().restartLoader(0, null, this);
         return this;
     }
 
@@ -96,7 +95,7 @@ public class ModifierItemListFragment extends ListFragment
         return inflater.inflate(R.layout.modifier_list_fragment, container, false);
     }
 
-    protected void onMenuPrepared(Menu menu, boolean shouldShowEdit, boolean shouldShowDelete, boolean shouldShowMarkDefault) {
+    protected void onMenuPrepared(Menu menu, boolean shouldShowEdit, boolean shouldShowDelete) {
         menu.findItem(R.id.action_edit).setVisible(shouldShowEdit);
         menu.findItem(R.id.action_delete).setVisible(shouldShowDelete);
     }
@@ -105,18 +104,22 @@ public class ModifierItemListFragment extends ListFragment
         return this;
     }
 
+    @Override
+    public DragSortListView getListView() {
+        return (DragSortListView) super.getListView();
+    }
+
     @AfterViews
     protected void attachViews() {
         setListAdapter(adapter = new ModifierItemAdapter(getActivity()));
         getListView().setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
             private boolean shouldShowEdit = true;
-            private boolean shouldShowMarkDefault = true;
             private boolean shouldShowDelete = true;
 
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                onMenuPrepared(menu, shouldShowEdit, shouldShowDelete, shouldShowMarkDefault);
+                onMenuPrepared(menu, shouldShowEdit, shouldShowDelete);
                 return false;
             }
 
@@ -160,17 +163,6 @@ public class ModifierItemListFragment extends ListFragment
                                 callback.onEdit(modifiers.get(0));
                             }
                             break;
-                        case R.id.action_default:
-                            if (modifiers != null && !modifiers.isEmpty()) {
-                                ModifierExModel modifierModel = modifiers.get(0);
-                                if (TextUtils.isEmpty(modifierModel.modifierGroupGuid)) {
-                                    model.defaultModifierGuid = modifierModel.getGuid(); // UI
-                                    adapter.setHostItem(model);
-                                }
-                                MarkModifierDefaultCommand.start(getActivity(), modifierModel);
-                                callback.onDefault(modifierModel);
-                            }
-                            break;
                     }
                 } while (false);
                 getListView().clearChoices();
@@ -185,7 +177,6 @@ public class ModifierItemListFragment extends ListFragment
                 int count = units.size();
                 shouldShowDelete = count >= 1;
                 shouldShowEdit = count == 1;
-                shouldShowMarkDefault = shouldShowEdit && !units.get(0).isDefaultWithinGroupOrItem(model);
                 int titleId = getTitleId();
                 mode.setTitle(getString(titleId, count));
                 mode.invalidate();
@@ -203,6 +194,7 @@ public class ModifierItemListFragment extends ListFragment
         });
         setModel(((ItemDataProvider) getActivity()).getItem());
         setCallback((IModifierCallback) getActivity());
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -239,11 +231,15 @@ public class ModifierItemListFragment extends ListFragment
 
     @Override
     public Loader<List<ModifierExModel>> onCreateLoader(int id, Bundle args) {
+        adapter.setDraggable(true);
+        getListView().setDragEnabled(true);
+
         CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_UNITS);
         loader.where(ShopSchema2.ModifierView2.ModifierTable.ITEM_GUID + " = ?", model.guid);
         if (modType != null) {
             loader.where(ShopSchema2.ModifierView2.ModifierTable.TYPE + " = ?", modType.ordinal());
         }
+        loader.orderBy(ItemGroupTable.ORDER_NUM + "," + ModifierTable.ORDER_NUM);
         return loader.transform(new ModifierExFunction()).build(getActivity());
     }
 
