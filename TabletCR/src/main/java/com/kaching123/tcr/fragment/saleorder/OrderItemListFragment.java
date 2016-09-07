@@ -610,17 +610,19 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, final List<SaleOrderItemViewModel> list) {
-        if(!ignorReculc) {
-            if ((list.size() - app.getSalesOnScreenTmpSize()) == 1) {
-                checkIsNewItemComposer(list, false);
-            } else if (!list.isEmpty() && list.size() == app.getSalesOnScreenTmpSize()) {           //chg qty or discount or come back
-                checkIsNewItemComposer(list, true);
-            } else if (!list.isEmpty()) {                                                           //new order, hold on
+        if(!list.isEmpty()) {
+            if (!ignorReculc) {
+                if ((list.size() - app.getSalesOnScreenTmpSize()) == 1) {
+                    checkIsNewItemComposer(list, false);
+                } else if (list.size() == app.getSalesOnScreenTmpSize()) {           //chg qty or discount or come back
+                    checkIsNewItemComposer(list, true);
+                } else {                                                           //new order, hold on
                     newItem = false;
                     checkAddedItemsOnComposerEnoughQty(list);
+                }
+            } else {
+                ignorReculc = false;
             }
-        } else {
-            ignorReculc = false;
         }
         app.setSalesOnScreenTmpSize(list.size());
 
