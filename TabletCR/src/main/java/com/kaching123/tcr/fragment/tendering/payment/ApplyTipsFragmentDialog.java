@@ -159,7 +159,7 @@ public class ApplyTipsFragmentDialog extends KeyboardDialogFragment {
 
             @Override
             public void onCalcTotal(boolean isTaxableOrder, BigDecimal orderDiscount, DiscountType orderDiscountType, BigDecimal orderDiscountVal, BigDecimal totalItemTotal,
-                                    BigDecimal totalTaxVatValue, BigDecimal totalItemDiscount, BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal availableDiscount, BigDecimal transactionFee) {
+                                    BigDecimal totalTaxVatValue, BigDecimal totalEbtTaxVatValue, BigDecimal totalItemDiscount, BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal availableDiscount, BigDecimal transactionFee) {
                 setOrderPrice(totalOrderPrice, totalTaxVatValue);
             }
         };
@@ -377,8 +377,7 @@ public class ApplyTipsFragmentDialog extends KeyboardDialogFragment {
 
         @Override
         protected View newDropDownView(int position, ViewGroup parent) {
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.spinner_dropdown_item, parent, false);
-            return view;
+            return LayoutInflater.from(getContext()).inflate(R.layout.spinner_dropdown_item, parent, false);
         }
 
         @Override

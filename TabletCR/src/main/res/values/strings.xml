@@ -377,12 +377,12 @@
     <string name="btn_gift_card_cancel">Cancel</string>
     <string name="order_footer_total">TOTAL</string>
     <string name="modify_dialog_title">Modification</string>
-    <string name="blackstone_pay">Achieving goals...</string>
+    <string name="blackstone_pay">Achieving goals…</string>
     <string name="blackstone_pay_title">Payment result</string>
     <string name="blackstone_pay_failed">Unfortunately your payment request has failed. %sWould you like to try again?</string>
     <string name="blackstone_pay_succeded">Congratulations! Your payment request was successful! Would you like to proceed to the next?</string>
     <string name="blackstone_pay_tender_title">Please choose:</string>
-    <string name="blackstone_pay_charge_title">Enter the charge amount</string>
+    <string name="blackstone_pay_charge_title">Getting the charge amount</string>
     <string name="blackstone_pay_swipe_title">Swipe the card</string>
     <string name="blackstone_pay_wait_title">Please wait</string>
     <string name="blackstone_pay_confirm_title">Transaction complete</string>
@@ -394,7 +394,7 @@
     <string name="blackstone_pay_failure_body_2nd">The server has replied: </string>
     <string name="blackstone_pay_failure_body_constructor" formatted="false">%s %s %s</string>
     <string name="blackstone_pay_failure_body_3nd">There was a non-banking related issue: </string>
-    <string name="blackstone_pay_progress_body">Generating payment...</string>
+    <string name="blackstone_pay_progress_body">Generating payment…</string>
     <string name="blackstone_pay_total">Total:</string>
     <string name="blackstone_pay_remaining_balance">Remaining Balance</string>
     <string name="blackstone_pay_pending_amount">Pending amount:</string>

@@ -166,6 +166,9 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
 
         BigDecimal remainingEbtAmonut = orderEbtTotal.subtract(completedEbtAmount);
+        BigDecimal remainingEbtAmonutWithTax = remainingEbtAmonut.multiply(BigDecimal.ONE.add(ebtPartialTax));
+        Logger.d("ebtWithTax =" +remainingEbtAmonutWithTax);
+
         if ((method.equals(PaymentMethod.PAX_EBT_FOODSTAMP) || method.equals(PaymentMethod.PAX_EBT_CASH))
                 && value.length() > 0 && remainingEbtAmonut.compareTo(entered) < 0) {
             entered = alreadyPayed;
@@ -176,8 +179,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
 
         if (listener != null && String.valueOf(charge.getText()).length() > 0) {
-          BigDecimal total = orderTotal;
-            listener.onUnitedPaymentAmountSelected(method, total, getDecimalValue());
+            listener.onUnitedPaymentAmountSelected(method, orderTotal, entered);
             return true;
         }
         Toast.makeText(getActivity(), R.string.pay_toast_zero, Toast.LENGTH_LONG).show();
@@ -382,7 +384,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         BigDecimal alreadyEbtPayed;
         if(orderTotal != null && completedEbtAmount != null) {
             alreadyEbtPayed = orderEbtTotal.subtract(completedEbtAmount);
-            remainingEbt.setText(UiHelper.valueOf(alreadyEbtPayed));
+                remainingEbt.setText(UiHelper.valueOf(alreadyEbtPayed));
         }
 
         if(orderTotal != null && completedAmount != null) {
@@ -461,10 +463,5 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     public static void hide(FragmentActivity activity) {
         DialogUtil.hide(activity, DIALOG_NAME);
     }
-
-    private void setValue(BigDecimal value) {
-        charge.setText(UiHelper.valueOf(value));
-    }
-
 
 }
