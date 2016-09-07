@@ -2049,6 +2049,6 @@
     <string name="item_limit_qty">Limit Qty</string>
 
 
-    <string name="modifiers_limit_exceed_msg">Group limit of modifiers (%d) is exceeded</string>
+    <string name="modifiers_limit_exceed_msg">Group limit can not exceed (%d) modifier(s)</string>
     <string name="modifiers_count_insufficient_msg" formatted = "false">You must select the required amount\nof modifiers for modifier group\n\'%s\'\nThe required amount is (%d)</string>
 </resources>
