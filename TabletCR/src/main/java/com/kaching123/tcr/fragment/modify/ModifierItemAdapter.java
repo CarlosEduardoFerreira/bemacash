@@ -57,7 +57,7 @@ public class ModifierItemAdapter extends ObjectCursorDragAdapter<ModifierExModel
             price = NA;
             priceLabel = NA;
         } else {
-            title = item.title + " [" + itemModel.description + "]";
+            title = itemModel.description;
             price = UiHelper.valueOf(itemModel.price);
 
             if (UnitUtil.isNotUnitPriceType(itemModel.priceType)) {

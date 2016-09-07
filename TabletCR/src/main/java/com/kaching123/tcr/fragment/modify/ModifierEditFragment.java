@@ -223,6 +223,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!isChecked) {
+                    description.setEnabled(true);
                     itemGroupSpinner.setEnabled(true);
                     itemGroupSpinner2.setEnabled(false);
                     itemChooser.setEnabled(false);
@@ -238,6 +239,8 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                     model.setItem(null);
                     model.childItemGuid = null;
                 } else {
+                    description.setEnabled(false);
+                    description.setText(null);
                     itemGroupSpinner.setEnabled(false);
                     itemGroupSpinner2.setEnabled(true);
                     itemChooser.setEnabled(true);
