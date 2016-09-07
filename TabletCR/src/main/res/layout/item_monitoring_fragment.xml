@@ -22,8 +22,7 @@
                 android:id="@+id/monitoring"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/EditItem.Table.CheckBox"
-                android:checked="true"/>
+                style="@style/EditItem.Table.CheckBox"/>
         </TableRow>
 
         <TableRow

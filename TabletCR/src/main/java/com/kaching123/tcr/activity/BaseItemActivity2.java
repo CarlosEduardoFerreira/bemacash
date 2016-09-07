@@ -477,7 +477,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         if (StartMode.ADD == mode){
             model.isSalable = isCommonItem;
             model.isActiveStatus = true;
-            model.isStockTracking = isCommonItem;
             model.isDiscountable = true;
             model.refType = refType;
         }

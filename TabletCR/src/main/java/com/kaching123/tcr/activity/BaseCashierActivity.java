@@ -2263,9 +2263,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void completeOrder() {
         getApp().clearCurrentOrderItemsQty();
-        if (TextUtils.isEmpty(this.orderGuid))
-            return;
         orderItemListFragment.cleanAll();
+        if (TextUtils.isEmpty(this.orderGuid)) {
+            return;
+        }
         setCountZero();
         updateItemCountMsg();
         setupNewOrder();
