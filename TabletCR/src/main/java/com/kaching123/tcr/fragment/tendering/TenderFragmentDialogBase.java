@@ -101,6 +101,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     protected BigDecimal completedNotEbtAmount = BigDecimal.ZERO;
     protected BigDecimal completedEbtAmount = BigDecimal.ZERO;
     protected BigDecimal ebtWithTax;
+    protected BigDecimal ebtPartialTax = BigDecimal.ONE;
 
     protected ArrayList<PaymentTransactionModel> saleOrderModels = new ArrayList<>();
     protected ArrayList<PaymentTransactionModel> fakeTransactions = new ArrayList<>();
@@ -309,8 +310,6 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     private void setZero() {
         showPrice(this.total, BigDecimal.ZERO);
     }
-
-    protected BigDecimal ebtPartialTax;
 
     protected void calcTotalWithEbt(BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal totalItemTotal, BigDecimal totalTaxVatValue,
                                     BigDecimal totalEbtTaxVatValue, BigDecimal transactionFee) {
