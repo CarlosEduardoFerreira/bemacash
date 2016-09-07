@@ -389,6 +389,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         getListView().closeOpenedItems();
         itemsListHandler.onTotolQtyUpdated(getRemoveQty(adapter.getSaleItemGuid(position)), true, null);
         if (adapter.getCount() == 1) {
+            cleanAll();
             if (itemsListHandler != null) {
                 itemsListHandler.onRemoveLastItem();
             }
