@@ -2046,6 +2046,7 @@
     <string name="composer_processing_msg">Composer process…</string>
 
     <string name="item_qty_lower_zero">There is not enough available quantity to sell this item</string>
+    <string name="item_qty_lower_zero_holdon">There is not enough available quantity to sell this order. Hold On order has been removed.</string>
     <string name="item_limit_qty">Limit Quantity</string>
 
 
