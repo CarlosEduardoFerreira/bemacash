@@ -437,13 +437,14 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                     AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.dashboard_activity_opened_transactions_warning_message), R.string.btn_yes, new StyledDialogFragment.OnDialogClickListener() {
                         @Override
                         public boolean onClick() {
-                            ClosePreauthBatchCommand.start(SuperBaseActivity.this, openedTrnsactions, getApp().getOperatorGuid(), new ClosePreauthBatchCommand.ClosePreauthCommandCallback() {
 
+                            AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm, new StyledDialogFragment.OnDialogClickListener() {
                                 @Override
-                                public void onCloseSuccess() {
-                                    AlertDialogFragment.show(SuperBaseActivity.this, AlertDialogFragment.DialogType.ALERT2, R.string.batch_close_dialog_title, getString(R.string.batch_close_dialog_msg), R.string.btn_confirm, new StyledDialogFragment.OnDialogClickListener() {
+                                public boolean onClick() {
+                                    ClosePreauthBatchCommand.start(SuperBaseActivity.this, openedTrnsactions, getApp().getOperatorGuid(), new ClosePreauthBatchCommand.ClosePreauthCommandCallback() {
+
                                         @Override
-                                        public boolean onClick() {
+                                        public void onCloseSuccess() {
                                             PAXBatchOutFragmentDialog.show(SuperBaseActivity.this, new PAXBatchOutFragmentDialog.IPaxBatchOutListener() {
                                                 @Override
                                                 public void onComplete(String msg) {
@@ -464,22 +465,25 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                                                     PAXBatchOutFragmentDialog.hide(SuperBaseActivity.this);
                                                 }
                                             }, PaxModel.get());
-                                            return true;
+
                                         }
-                                    }, new StyledDialogFragment.OnDialogClickListener() {
+
                                         @Override
-                                        public boolean onClick() {
-
-                                            return true;
-                                        }
-                                    }, null);
-                                }
-
-                                @Override
-                                public void onCloseFailure() {
+                                        public void onCloseFailure() {
 //                                WaitDialogFragment.hide(SuperBaseActivity.this);
+                                        }
+                                    });
+
+                                    return true;
                                 }
-                            });
+                            }, new StyledDialogFragment.OnDialogClickListener() {
+                                @Override
+                                public boolean onClick() {
+
+                                    return true;
+                                }
+                            }, null);
+
                             return true;
                         }
                     }, new StyledDialogFragment.OnDialogClickListener() {
@@ -490,7 +494,27 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                         }
                     }, null);
                 } else {
-                    AlertDialogFragment.showAlert(SuperBaseActivity.this, R.string.batch_close_title, getString(R.string.batch_close_msg));
+//                    AlertDialogFragment.showAlert(SuperBaseActivity.this, R.string.batch_close_title, getString(R.string.batch_close_msg));
+                    PAXBatchOutFragmentDialog.show(SuperBaseActivity.this, new PAXBatchOutFragmentDialog.IPaxBatchOutListener() {
+                        @Override
+                        public void onComplete(String msg) {
+                            hide();
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            hide();
+                        }
+
+                        @Override
+                        public void onRetry() {
+
+                        }
+
+                        private void hide() {
+                            PAXBatchOutFragmentDialog.hide(SuperBaseActivity.this);
+                        }
+                    }, PaxModel.get());
                 }
 
                 return true;
