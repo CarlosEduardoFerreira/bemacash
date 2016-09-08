@@ -58,18 +58,20 @@ public abstract class ReportsDetailsWithSpinnerFragment extends DateRangeFragmen
             }
         });
 
-        cashierSpinner.setAdapter(new EmployeesAdapter(getActivity(), true));
-        cashierSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadData();
-            }
+        if(cashierSpinner != null) {
+            cashierSpinner.setAdapter(new EmployeesAdapter(getActivity(), true));
+            cashierSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    loadData();
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
+                }
+            });
+        }
 
         if (getTypesAdapter() != null) {
             typeSpinner.setAdapter(getTypesAdapter());
