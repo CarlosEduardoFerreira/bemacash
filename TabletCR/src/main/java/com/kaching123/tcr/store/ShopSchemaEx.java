@@ -193,6 +193,34 @@ public class ShopSchemaEx {
         }
     }
 
+    public static List<String> getViewDropStatements(final SQLiteDatabase db) {
+        List<String> dropViewStatements = new ArrayList<String>();
+        Cursor c = db.rawQuery(SELECT_VIEW_NAMES_STATEMENT, null);
+        while (c.moveToNext()) {
+            String viewName = c.getString(0);
+            dropViewStatements.add(getDropViewStatement(viewName));
+        }
+        c.close();
+        return dropViewStatements;
+    }
+
+    public static List<String> getViewCreateStatement(final SQLiteDatabase db) {
+        List<String> createViewStatements = new ArrayList<>();
+
+        Field[] declaredFields = ShopSchema.class.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if (!isCreateStatementField(field)) {
+                continue;
+            }
+
+            String sqlCreateStatement = getCreateStatement(field);
+            if (sqlCreateStatement.startsWith(CREATE_VIEW_STATEMENT_PREFIX)) {
+                createViewStatements.add(sqlCreateStatement);
+            }
+        }
+        return createViewStatements;
+    }
+
     private static boolean isSystemTable(String tableName) {
         return tableName.startsWith(SQLITE_SYSTEM_TABLES_PREFIX) || tableName.equals(ANDROID_METADATA_TABLE_NAME);
     }

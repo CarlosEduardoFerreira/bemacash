@@ -14,8 +14,8 @@ import android.widget.Toast;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.mayer.sql.update.SqlUpdateVersionMatcher;
-import com.mayer.sql.update.version.IUpdateContainer;
+import com.kaching123.tcr.store.migration.SqlUpdateVersionMatcher;
+import com.kaching123.tcr.store.migration.IUpdateContainer;
 
 /**
  * Created by pkabakov on 03.07.2014.

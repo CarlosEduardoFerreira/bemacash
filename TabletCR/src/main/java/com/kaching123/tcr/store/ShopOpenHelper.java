@@ -21,7 +21,7 @@ import com.kaching123.tcr.service.SyncCommand.Table;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.ShopStore.UpdateTimeTable;
-import com.mayer.sql.update.version.IUpdateContainer;
+import com.kaching123.tcr.store.migration.IUpdateContainer;
 
 import java.io.File;
 import java.io.FileInputStream;
