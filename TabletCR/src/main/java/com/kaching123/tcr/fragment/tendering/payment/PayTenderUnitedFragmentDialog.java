@@ -19,6 +19,7 @@ import com.kaching123.tcr.adapter.BondItemAdapter;
 import com.kaching123.tcr.commands.display.DisplayTenderCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.CustomEditBox;
@@ -337,6 +338,9 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     @Click
     protected void btnPaxEbtCashClicked() {
+
+        listener.onEbtClicked(true);
+
         EBTPaymentTypeChooserDialogFragment.show(getActivity(), new EBTPaymentTypeChooserDialogFragment.EBTTypeChooseListener() {
             @Override
             public void onEBTCashTypeChosen() {
@@ -348,6 +352,12 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             public void onEBTFoodStampTypeChosen() {
                 tryProceed(PaymentMethod.PAX_EBT_FOODSTAMP);
                 EBTPaymentTypeChooserDialogFragment.hide(getActivity());
+            }
+
+            @Override
+            public void onCancal() {
+                listener.onEbtClicked(false);
+
             }
         });
     }

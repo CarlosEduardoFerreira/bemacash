@@ -1917,6 +1917,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
                     @Override
                     public void onCancel() {
+                        UpdateSaleOrderTaxStatusCommand.start(BaseCashierActivity.this, orderGuid, true,
+                                new UpdateSaleOrderTaxStatusCommand.TaxCallback() {
+                                    @Override
+                                    protected void onSuccess(String orderGuid) {
+                                        Logger.d("[SaleOrder] onTaxUpdate");
+                                        totalCostFragment.setOrderGuid(orderGuid);
+                                    }
+                                });
+
                         EndTransactionCommand.start(BaseCashierActivity.this);
                         isPaying = false;
                         SaleOrderItemViewModel lastItem = orderItemListFragment == null ? null : orderItemListFragment.getLastItem();
@@ -1975,6 +1984,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                 updateItemCountMsg();
                             }
                         });
+                    }
+
+                    @Override
+                    public void onEbtPayment(boolean isTaxSwitch) {
+                        UpdateSaleOrderTaxStatusCommand.start(BaseCashierActivity.this, orderGuid, !isTaxSwitch,
+                                new UpdateSaleOrderTaxStatusCommand.TaxCallback() {
+                                    @Override
+                                    protected void onSuccess(String orderGuid) {
+                                        Logger.d("[SaleOrder] onTaxUpdate");
+                                        totalCostFragment.setOrderGuid(orderGuid);
+                                    }
+                                });
                     }
                 }).setCustomer(customer);
         setCallback(processor);

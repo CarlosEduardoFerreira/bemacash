@@ -292,6 +292,11 @@ public class PrepaidSunPassActivity extends PrepaidBaseFragmentActivity {
 
                     }
 
+                    @Override
+                    public void onEbtPayment(boolean isTaxSwitch) {
+
+                    }
+
 
                 }).setPrepaidMode().init(context);
 

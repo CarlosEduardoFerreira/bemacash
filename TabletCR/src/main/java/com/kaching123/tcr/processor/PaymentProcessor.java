@@ -712,6 +712,11 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             }
 
             @Override
+            public void onEbtClicked(boolean isClicked) {
+                callback.onEbtPayment(isClicked);
+            }
+
+            @Override
             public void onSingleTenderCheck(boolean singleTenderEnabled) {
                 PaymentProcessor.this.singleTenderEnabled = singleTenderEnabled;
             }
@@ -723,8 +728,9 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
             @Override
             public void onCancel() {
-                if (callback != null)
+                if (callback != null) {
                     callback.onCancel();
+                }
 
                 hide();
             }
@@ -1631,6 +1637,8 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         public void onUpdateOrderList();
 
         public void onPrintComplete();
+
+        public void onEbtPayment(boolean isTaxSwitch);
     }
 
 
