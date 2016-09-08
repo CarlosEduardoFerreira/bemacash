@@ -386,6 +386,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     }
 
     private void doRemoceClickLine() {
+        ignorReculc = true;
         getListView().closeOpenedItems();
         itemsListHandler.onTotolQtyUpdated(getRemoveQty(adapter.getSaleItemGuid(position)), true, null);
         if (adapter.getCount() == 1) {
@@ -420,6 +421,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
 
     public void doRemoceClickLine(String guid) {
+        ignorReculc = true;
         getListView().closeOpenedItems();
         if (adapter.getCount() == 1) {
             cleanAll();
@@ -479,6 +481,10 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     public void setItemsListHandler(IItemsListHandlerHandler itemsListHandler) {
         this.itemsListHandler = itemsListHandler;
+    }
+
+    public void setIgnorRecalc(boolean ignorRecaulc){
+        this.ignorReculc = ignorReculc;
     }
 
     @Override
@@ -553,6 +559,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
                 if(newItem){
                     saleOrderItemViewGuids.add(newItemInOrder.getSaleItemGuid());
+                    qtyChanged = false;
                 } else if(qtyChanged) {
                     saleOrderItemViewGuids.add(qtyChangedItem.getSaleItemGuid());
                 } else {
@@ -562,6 +569,9 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                         }
                     }
                 }
+
+                ignorReculc = true;
+                checkIsNewItemComposerInProcess = false;
 
                 if (!saleOrderItemViewGuids.isEmpty()) {
                     for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
@@ -574,6 +584,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                             } else if(qty != null && qty.compareTo(saleOrderItemViewModel.itemModel.qty) == -1){
                                 UpdateQtySaleOrderItemCommand.start(getActivity(),
                                         saleOrderItemViewModel.getSaleItemGuid(), qty, updateQtySaleOrderItemCallback);
+                                qtyChanged = false;
                             } else {
                                 doRemoceClickLine(saleOrderItemViewModel.getSaleItemGuid());
                                 qtyBefore.remove(saleOrderItemViewModel.getSaleItemGuid());
@@ -581,8 +592,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                         }
                     }
                 }
-                ignorReculc = true;
-                checkIsNewItemComposerInProcess = false;
             }
 
             @Override

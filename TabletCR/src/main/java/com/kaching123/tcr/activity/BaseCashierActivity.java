@@ -1871,6 +1871,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             try2ClockIn();
             return;
         }
+        orderItemListFragment.setIgnorRecalc(true);
 
         if (saleOrderModel == null || TextUtils.isEmpty(orderGuid)) {
             Toast.makeText(this, "Please select an order to continue", Toast.LENGTH_LONG).show();
@@ -2210,7 +2211,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     public void onVoid() {
         if (TextUtils.isEmpty(this.orderGuid))
             return;
-
+        orderItemListFragment.setIgnorRecalc(true);
         setCountZero();
         checkOrderPayments();
     }
