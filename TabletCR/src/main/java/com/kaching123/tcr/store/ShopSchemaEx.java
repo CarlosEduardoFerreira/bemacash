@@ -180,7 +180,8 @@ public class ShopSchemaEx {
             db.execSQL(sqlDropTriggerStatement);
         }
 
-        sortCreateTables(dropTables);
+        if (!db.getPath().contains("sync_"))
+            sortCreateTables(dropTables);
 
         int count = dropTables.size();
         for (int i = count - 1; i >= 0; i--) {

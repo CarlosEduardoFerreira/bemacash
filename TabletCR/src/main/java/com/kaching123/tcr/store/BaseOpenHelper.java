@@ -25,6 +25,7 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
     private static Handler handler = new Handler(Looper.getMainLooper());
 
     private static final String PRAGMA_ENABLE_FOREIGN_KEYS = "PRAGMA foreign_keys = ON;";
+    private static final String PRAGMA_DISABLE_FOREIGN_KEYS = "PRAGMA foreign_keys = OFF;";
 
     protected static String getDbName() {
         return ShopSchema.DB_NAME;
@@ -87,18 +88,9 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (isForeignKeysEnabled() && Build.VERSION.SDK_INT == VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            boolean wasInTransaction = false;
-            if (db.inTransaction()) {
-                db.endTransaction();
-                db.setForeignKeyConstraintsEnabled(true);
-                wasInTransaction = true;
-            }
-            db.execSQL(PRAGMA_ENABLE_FOREIGN_KEYS);
-            if (wasInTransaction)
-                db.beginTransaction();
+        if (isForeignKeysEnabled()) {
+            enableForeignKeys(db, false);
         }
-
 
         IUpdateContainer updater = SqlUpdateVersionMatcher.get().getUpdater(oldVersion, newVersion);
 
@@ -111,6 +103,9 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
         Logger.d("BaseOpenHelper.onUpgrade(): database is going to be updated");
         try {
             updater.onUpdate(db);
+            if (isForeignKeysEnabled()) {
+                enableForeignKeys(db, true);
+            }
             if (oldVersion == IUpdateContainer.VERSION5 && newVersion == IUpdateContainer.VERSION5_1) {
                 TcrApplication.get().getShopPref().prepaidVersionId().put(null);
             } else if (oldVersion < IUpdateContainer.VERSION5_3 && newVersion >= IUpdateContainer.VERSION5_3) {
@@ -153,6 +148,18 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
         } catch (SQLiteConstraintException e) {
             Logger.e("BaseOpenHelper.onUpgrade(): failed, constraints violated", e);
             onUpgradeConstraintError(db);
+        }
+    }
+
+    private static void enableForeignKeys(SQLiteDatabase db, boolean on){
+        String statement = on ? PRAGMA_ENABLE_FOREIGN_KEYS : PRAGMA_DISABLE_FOREIGN_KEYS;
+        if (db.inTransaction()){
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.execSQL(statement);
+            db.beginTransaction();
+        }else{
+            db.execSQL(statement);
         }
     }
 
