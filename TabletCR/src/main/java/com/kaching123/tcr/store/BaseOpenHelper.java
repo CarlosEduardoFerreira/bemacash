@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +23,8 @@ import com.kaching123.tcr.store.migration.SqlUpdateVersionMatcher;
 public abstract class BaseOpenHelper extends SQLiteOpenHelper {
 
     private static Handler handler = new Handler(Looper.getMainLooper());
+
+    private static final String PRAGMA_ENABLE_FOREIGN_KEYS = "PRAGMA foreign_keys = ON;";
 
     protected static String getDbName() {
         return ShopSchema.DB_NAME;
@@ -50,7 +53,7 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
         if (!isForeignKeysEnabled())
             return;
         if (!db.isReadOnly()) {
-            db.setForeignKeyConstraintsEnabled(true);
+            db.execSQL(PRAGMA_ENABLE_FOREIGN_KEYS);
         }
     }
 
@@ -61,8 +64,11 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
             db.enableWriteAheadLogging();
         if (!isForeignKeysEnabled())
             return;
+        if (Build.VERSION.SDK_INT != VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            return;
+        }
         if (!db.isReadOnly()) {
-            db.setForeignKeyConstraintsEnabled(true);
+            db.execSQL(PRAGMA_ENABLE_FOREIGN_KEYS);
         }
     }
 
@@ -81,20 +87,20 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        IUpdateContainer updater = SqlUpdateVersionMatcher.get().getUpdater(oldVersion, newVersion);
-        if (isForeignKeysEnabled()) {
+        if (isForeignKeysEnabled() && Build.VERSION.SDK_INT == VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             boolean wasInTransaction = false;
             if (db.inTransaction()) {
                 db.endTransaction();
+                db.setForeignKeyConstraintsEnabled(true);
                 wasInTransaction = true;
             }
-            if (wasInTransaction) {
-                if (updater != null) {
-                    db.setForeignKeyConstraintsEnabled(false);
-                }
+            db.execSQL(PRAGMA_ENABLE_FOREIGN_KEYS);
+            if (wasInTransaction)
                 db.beginTransaction();
-            }
         }
+
+
+        IUpdateContainer updater = SqlUpdateVersionMatcher.get().getUpdater(oldVersion, newVersion);
 
         if (updater == null) {
             Logger.e("BaseOpenHelper.onUpgrade(): database is going to be recreated!");
@@ -105,16 +111,6 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
         Logger.d("BaseOpenHelper.onUpgrade(): database is going to be updated");
         try {
             updater.onUpdate(db);
-            if (db.inTransaction()) {
-                try {
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-                db.setForeignKeyConstraintsEnabled(true);
-                /*db.beginTransaction();*/
-            }
-            Logger.d("BaseOpenHelper.onUpgrade(): database was successfully updated");
             if (oldVersion == IUpdateContainer.VERSION5 && newVersion == IUpdateContainer.VERSION5_1) {
                 TcrApplication.get().getShopPref().prepaidVersionId().put(null);
             } else if (oldVersion < IUpdateContainer.VERSION5_3 && newVersion >= IUpdateContainer.VERSION5_3) {
