@@ -56,6 +56,8 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     private static final List<Integer> BONDS_LIST = new ArrayList<>();
 
+    protected boolean pressEBTBtn;
+
     static {
         BONDS_LIST.add(1);
         BONDS_LIST.add(5);
@@ -340,6 +342,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     protected void btnPaxEbtCashClicked() {
 
         listener.onEbtClicked(true);
+        pressEBTBtn = true;
 
         EBTPaymentTypeChooserDialogFragment.show(getActivity(), new EBTPaymentTypeChooserDialogFragment.EBTTypeChooseListener() {
             @Override
@@ -356,6 +359,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
             @Override
             public void onCancal() {
+                pressEBTBtn = false;
                 listener.onEbtClicked(false);
 
             }
@@ -390,6 +394,8 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     @Override
     protected void updateAfterCalculated() {
+        if(pressEBTBtn)
+            return;
         BigDecimal alreadyPayed;
         BigDecimal alreadyEbtPayed;
         if(orderTotal != null && completedEbtAmount != null) {

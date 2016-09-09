@@ -646,6 +646,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
      * Ask the user for the payment method
      */
     private void proceedToTender(final FragmentActivity context, int animation) {
+        callback.onEbtPayment(false);
         proceedToTender(context, animation, singleTenderEnabled);
     }
 
