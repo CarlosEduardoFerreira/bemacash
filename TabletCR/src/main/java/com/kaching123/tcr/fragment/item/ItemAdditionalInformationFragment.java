@@ -351,7 +351,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
         @Override
         protected String doInBackground(Void... params) {
-            return NextProductCodeQuery.getCode(getActivity());
+            return getApp().getAutogenerateProductCode() ? NextProductCodeQuery.getCode(getActivity()) : "";
         }
 
         @Override

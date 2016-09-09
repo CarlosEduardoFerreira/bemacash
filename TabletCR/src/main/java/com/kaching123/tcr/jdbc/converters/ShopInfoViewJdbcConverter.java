@@ -133,6 +133,7 @@ public class ShopInfoViewJdbcConverter {
     private static final String EBT_CASH_PAYMENT_BUTTON = "EBT_CASH_PAYMENT_BUTTON";
     private static final String OFFLINE_CREDIT_PAYMENT_BUTTON = "OFFLINE_CREDIT_PAYMENT_BUTTON";
     private static final String CHECK_PAYMENT_BUTTON = "CHECK_PAYMENT_BUTTON";
+    private static final String AUTOGENERATE_PRODUCT_CODE = "AUTOGENERATE_PRODUCT_CODE";
 
 
 
@@ -218,7 +219,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(OFFLINE_CREDIT_PAYMENT_BUTTON),
                 rs.getBoolean(CHECK_PAYMENT_BUTTON),
                 rs.getBoolean(PRINT_RECEIPT_DEFAULT),
-                rs.getBoolean(EMAIL_RECEIPT_DEFAULT)
+                rs.getBoolean(EMAIL_RECEIPT_DEFAULT),
+                rs.getBoolean(AUTOGENERATE_PRODUCT_CODE)
 
         );
     }
@@ -305,7 +307,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(OFFLINE_CREDIT_PAYMENT_BUTTON),
                 rs.getBoolean(CHECK_PAYMENT_BUTTON),
                 rs.getBoolean(PRINT_RECEIPT_DEFAULT),
-                rs.getBoolean(EMAIL_RECEIPT_DEFAULT)
+                rs.getBoolean(EMAIL_RECEIPT_DEFAULT),
+                rs.getBoolean(AUTOGENERATE_PRODUCT_CODE)
         );
     }
 
@@ -412,6 +415,7 @@ public class ShopInfoViewJdbcConverter {
         public final boolean checkPaymentButtonEnabled;
         public final boolean printReceiptDefault;
         public final boolean emailReceiptDefault;
+        public final boolean autogenerateProductCode;
 
 
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
@@ -490,7 +494,8 @@ public class ShopInfoViewJdbcConverter {
                         boolean offlineCreditPaymentButtonEnabled,
                         boolean checkPaymentButtonEnabled,
                         boolean printReceiptDefault,
-                        boolean emailReceiptDefault) {
+                        boolean emailReceiptDefault,
+                        boolean autogenerateProductCode) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -592,6 +597,7 @@ public class ShopInfoViewJdbcConverter {
             this.checkPaymentButtonEnabled = checkPaymentButtonEnabled;
             this.printReceiptDefault = printReceiptDefault;
             this.emailReceiptDefault = emailReceiptDefault;
+            this.autogenerateProductCode = autogenerateProductCode;
         }
 
     }
