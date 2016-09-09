@@ -85,21 +85,23 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
         ShopSchemaEx.onCreate(db);
     }
 
+    @TargetApi(VERSION_CODES.JELLY_BEAN)
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (isForeignKeysEnabled() && Build.VERSION.SDK_INT == VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+        IUpdateContainer updater = SqlUpdateVersionMatcher.get().getUpdater(oldVersion, newVersion);
+        if (isForeignKeysEnabled()) {
             boolean wasInTransaction = false;
             if (db.inTransaction()) {
                 db.endTransaction();
                 wasInTransaction = true;
             }
-            db.execSQL(PRAGMA_ENABLE_FOREIGN_KEYS);
-            if (wasInTransaction)
+            if (wasInTransaction) {
+                if (updater != null) {
+                    db.setForeignKeyConstraintsEnabled(false);
+                }
                 db.beginTransaction();
+            }
         }
-
-
-        IUpdateContainer updater = SqlUpdateVersionMatcher.get().getUpdater(oldVersion, newVersion);
 
         if (updater == null) {
             Logger.e("BaseOpenHelper.onUpgrade(): database is going to be recreated!");
@@ -110,6 +112,16 @@ public abstract class BaseOpenHelper extends SQLiteOpenHelper {
         Logger.d("BaseOpenHelper.onUpgrade(): database is going to be updated");
         try {
             updater.onUpdate(db);
+            if (db.inTransaction()) {
+                try {
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                db.setForeignKeyConstraintsEnabled(true);
+                db.beginTransaction();
+            }
+            Logger.d("BaseOpenHelper.onUpgrade(): database was successfully updated");
             if (oldVersion == IUpdateContainer.VERSION5 && newVersion == IUpdateContainer.VERSION5_1) {
                 TcrApplication.get().getShopPref().prepaidVersionId().put(null);
             } else if (oldVersion < IUpdateContainer.VERSION5_3 && newVersion >= IUpdateContainer.VERSION5_3) {

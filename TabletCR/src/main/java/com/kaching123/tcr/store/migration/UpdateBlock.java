@@ -264,27 +264,17 @@ public class UpdateBlock {
     public static void update6_7to7(SQLiteDatabase db){
 
         //ItemTable
-        db.execSQL("ALTER TABLE item DROP COLUMN units_label");
-        db.execSQL("ALTER TABLE item DROP COLUMN default_modifier_guid");
-        db.execSQL("ALTER TABLE item ADD COLUMN price_1 TEXT");
-        db.execSQL("ALTER TABLE item ADD COLUMN price_2 TEXT");
-        db.execSQL("ALTER TABLE item ADD COLUMN price_3 TEXT");
-        db.execSQL("ALTER TABLE item ADD COLUMN price_4 TEXT");
-        db.execSQL("ALTER TABLE item ADD COLUMN price_5 TEXT");
-        db.execSQL("ALTER TABLE item ADD COLUMN limit_qty INTEGER NOT NULL DEFAULT (0)");
-        db.execSQL("ALTER TABLE item ADD COLUMN ebt_eligible INTEGER");
-        db.execSQL("ALTER TABLE item ADD COLUMN loyalty_points TEXT");
-        db.execSQL("ALTER TABLE item ADD COLUMN exclude_from_loyalty_plan INTEGER");
+        db.execSQL("ALTER TABLE item RENAME TO item_tmp");
+        db.execSQL("CREATE TABLE item( guid TEXT PRIMARY KEY NOT NULL, category_id TEXT NOT NULL, description TEXT, code TEXT, ean_code TEXT, product_code TEXT, price_type INTEGER, serializable INTEGER NOT NULL DEFAULT (0), sale_price TEXT, price_1 TEXT, price_2 TEXT, price_3 TEXT, price_4 TEXT, price_5 TEXT, unit_label_id TEXT, stock_tracking INTEGER, limit_qty INTEGER DEFAULT (0), active_status INTEGER, discountable INTEGER, salable INTEGER DEFAULT (1), discount TEXT, discount_type INTEGER, taxable INTEGER, ebt_eligible INTEGER, cost TEXT, minimum_qty TEXT, recommended_qty TEXT, UPDATE_QTY_FLAG TEXT NOT NULL, tax_group_guid TEXT, tax_group_guid2 TEXT, tmp_available_qty TEXT, order_num INTEGER NOT NULL, printer_alias_guid TEXT, button_view INTEGER, has_notes INTEGER, code_type INTEGER, eligible_for_commission INTEGER NOT NULL DEFAULT (1), commission TEXT, item_ref_type INTEGER NOT NULL DEFAULT (0), reference_item_id TEXT, loyalty_points TEXT, exclude_from_loyalty_plan INTEGER, is_deleted INTEGER DEFAULT (0), update_time INTEGER, is_draft INTEGER DEFAULT (0),FOREIGN KEY(category_id) REFERENCES category(guid),FOREIGN KEY(tax_group_guid) REFERENCES tax_group(guid),FOREIGN KEY(printer_alias_guid) REFERENCES printer_alias_table(guid))");
+        db.execSQL("INSERT INTO item (guid, category_id, description, code, ean_code, product_code, price_type, serializable, sale_price, unit_label_id, stock_tracking, active_status, discountable, salable, discount, discount_type, taxable, cost, minimum_qty, recommended_qty, UPDATE_QTY_FLAG, tax_group_guid, tax_group_guid2, tmp_available_qty, order_num, printer_alias_guid, button_view, has_notes, code_type, eligible_for_commission, commission, item_ref_type, reference_item_id) SELECT guid, category_id, description, code, ean_code, product_code, price_type, serializable, sale_price, unit_label_id, stock_tracking, active_status, discountable, salable, discount, discount_type, taxable, cost, minimum_qty, recommended_qty, UPDATE_QTY_FLAG, tax_group_guid, tax_group_guid2, tmp_available_qty, order_num, printer_alias_guid, button_view, has_notes, code_type, eligible_for_commission, commission, item_ref_type, reference_item_id FROM item_tmp");
+        db.execSQL("DROP TABLE item_tmp");
 
         //ModifierTable
-        db.execSQL("ALTER TABLE items_modifier DROP COLUMN is_default");
-        db.execSQL("ALTER TABLE items_modifier ADD COLUMN order_num INTEGER");
         db.execSQL("UPDATE items_modifier SET item_sub_guid = NULL WHERE item_sub_guid = ''");
         db.execSQL("ALTER TABLE items_modifier RENAME TO items_modifier_tmp");
         db.execSQL("CREATE TABLE items_modifier( modifier_guid TEXT PRIMARY KEY NOT NULL, title TEXT NOT NULL, unitsLabel INTEGER NOT NULL, item_guid TEXT NOT NULL, extra_cost TEXT NOT NULL, item_sub_guid TEXT, item_sub_qty TEXT, item_group_guid TEXT, auto_apply INTEGER DEFAULT (0), order_num INTEGER, is_deleted INTEGER DEFAULT (0), update_time INTEGER, is_draft INTEGER DEFAULT (0),FOREIGN KEY(item_guid) REFERENCES item(guid),FOREIGN KEY(item_sub_guid) REFERENCES item(guid))");
-        db.execSQL("INSERT INTO items_modifier SELECT * FROM items_modifier_tmp");
+        db.execSQL("INSERT INTO items_modifier (modifier_guid, title, unitsLabel, item_guid, extra_cost, item_sub_guid, item_sub_qty, item_group_guid, auto_apply) SELECT modifier_guid, title, unitsLabel, item_guid, extra_cost, item_sub_guid, item_sub_qty, item_group_guid, auto_apply from items_modifier_tmp");
         db.execSQL("DROP TABLE items_modifier");
-        db.execSQL("ALTER TABLE items_modifier_tmp RENAME TO items_modifier");
 
         //KDS
         db.execSQL("CREATE TABLE kds_table( guid TEXT PRIMARY KEY NOT NULL, station_id INTEGER NOT NULL, alias_guid TEXT)");
