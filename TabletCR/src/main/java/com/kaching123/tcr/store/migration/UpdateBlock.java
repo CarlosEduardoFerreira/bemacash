@@ -274,7 +274,13 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE items_modifier RENAME TO items_modifier_tmp");
         db.execSQL("CREATE TABLE items_modifier( modifier_guid TEXT PRIMARY KEY NOT NULL, title TEXT NOT NULL, unitsLabel INTEGER NOT NULL, item_guid TEXT NOT NULL, extra_cost TEXT NOT NULL, item_sub_guid TEXT, item_sub_qty TEXT, item_group_guid TEXT, auto_apply INTEGER DEFAULT (0), order_num INTEGER, is_deleted INTEGER DEFAULT (0), update_time INTEGER, is_draft INTEGER DEFAULT (0),FOREIGN KEY(item_guid) REFERENCES item(guid),FOREIGN KEY(item_sub_guid) REFERENCES item(guid))");
         db.execSQL("INSERT INTO items_modifier (modifier_guid, title, unitsLabel, item_guid, extra_cost, item_sub_guid, item_sub_qty, item_group_guid, auto_apply) SELECT modifier_guid, title, unitsLabel, item_guid, extra_cost, item_sub_guid, item_sub_qty, item_group_guid, auto_apply from items_modifier_tmp");
-        db.execSQL("DROP TABLE items_modifier");
+        db.execSQL("DROP TABLE items_modifier_tmp");
+
+        //ModifierGroupTable
+        db.execSQL("ALTER TABLE items_modifier_group RENAME TO items_modifier_group_tmp");
+        db.execSQL("CREATE TABLE items_modifier_group( _id INTEGER PRIMARY KEY AUTOINCREMENT, guid TEXT NOT NULL UNIQUE ON CONFLICT REPLACE, title TEXT NOT NULL, item_guid TEXT NOT NULL, order_num INTEGER, condition INTEGER DEFAULT (0), condition_value INTEGER DEFAULT (0), is_deleted INTEGER DEFAULT (0), update_time INTEGER, is_draft INTEGER DEFAULT (0),FOREIGN KEY(item_guid) REFERENCES item(guid))");
+        db.execSQL("INSERT INTO items_modifier_group (_id, guid, title, item_guid) SELECT _id, guid, title, item_guid FROM items_modifier_group_tmp");
+        db.execSQL("DROP TABLE items_modifier_group_tmp");
 
         //KDS
         db.execSQL("CREATE TABLE kds_table( guid TEXT PRIMARY KEY NOT NULL, station_id INTEGER NOT NULL, alias_guid TEXT)");
