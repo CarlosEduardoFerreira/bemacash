@@ -123,7 +123,7 @@
                 style="@style/LocalizableButton.Red"
                 android:id="@+id/btn_void"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/saleorder_total_cost_frg_btns_h"
                 android:text="@string/button_void"
                 android:textSize="18sp"
                 android:paddingLeft="12dp"
@@ -135,7 +135,7 @@
                 android:id="@+id/btn_hold"
                 android:layout_marginTop="3dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/saleorder_total_cost_frg_btns_h"
                 android:textSize="18sp"
                 android:paddingLeft="12dp"
                 android:background="@drawable/hold_btn"/>
@@ -144,7 +144,7 @@
                 style="@style/LocalizableButton.Blue"
                 android:id="@+id/btn_customer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/saleorder_total_cost_frg_btn_customer_h"
                 android:background="@drawable/customer_btn"/>
 
         </LinearLayout>

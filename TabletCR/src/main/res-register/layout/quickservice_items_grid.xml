@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:listSelector="@android:color/transparent"
-    android:numColumns="@integer/quick_grid_columns"
+    android:numColumns="@integer/quick_grid_items_grid_columns"
     android:paddingLeft="@dimen/quick_items_grid_spacing"
     android:paddingRight="@dimen/quick_items_grid_spacing"
     android:stretchMode="spacingWidth"

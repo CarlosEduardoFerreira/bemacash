@@ -29,4 +29,34 @@
     <dimen name="bar_chart_bar_width">42dp</dimen>
     <dimen name="horizontal_bar_chart_bar_height">57dp</dimen>
     <dimen name="bar_chart_spacing">8dp</dimen>
+
+    <dimen name="cashier_activity_background_width">280dp</dimen>
+    <dimen name="dashboard_total_sales_container_width">260dp</dimen>
+    <dimen name="main_buttons_container_width">1000dp</dimen>
+    <dimen name="dashboard_module_width">244dp</dimen>
+    <dimen name="dashboard_module_height">214dp</dimen>
+    <dimen name="dashboard_module_margin">56dp</dimen>
+    <dimen name="dashboard_register_img_size">125dp</dimen>
+    <dimen name="dashboard_inventory_img_size">120dp</dimen>
+    <dimen name="dashboard_nosale_img_size">110dp</dimen>
+    <dimen name="dashboard_customers_img_h">130dp</dimen>
+    <dimen name="dashboard_customers_img_w">140dp</dimen>
+    <dimen name="qa_items_list_fragment_w">960dp</dimen>
+    <dimen name="qa_modify_fragment_h">960dp</dimen>
+    <dimen name="saleorder_cashier_total_cost_fragment_h">380dp</dimen>
+    <dimen name="saleorder_total_cost_frg_btns_h">60dp</dimen>
+    <dimen name="saleorder_total_cost_frg_btn_customer_h">65dp</dimen>
+
+    <dimen name="history_views_width">960dp</dimen>
+    <dimen name="creditreceipt_views_width">960dp</dimen>
+
+    <dimen name="reports_fragment_grid_elem_reg">172dp</dimen>
+    <dimen name="reports_fragment_grid_elem_from_to">168dp</dimen>
+
+    <dimen name="edit_employee_activity_style_padding_left">80dp</dimen>
+    <dimen name="edit_employee_activity_style_padding_right">80dp</dimen>
+    <dimen name="edit_employee_activity_style_padding_top">40dp</dimen>
+
+    <dimen name="edit_item_table_margin_left">72dp</dimen>
+
 </resources>

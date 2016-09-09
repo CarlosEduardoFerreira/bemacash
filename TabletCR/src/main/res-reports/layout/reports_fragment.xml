@@ -22,12 +22,12 @@
             style="@style/Reports.Label"
             android:layout_height="wrap_content"
             android:text="@string/reports_mode_entity_register"
-            android:layout_width="172dp"/>
+            android:layout_width="@dimen/reports_fragment_grid_elem_reg"/>
 
         <Spinner
             android:id="@+id/mode_entities_spinner"
             android:layout_height="wrap_content"
-            android:layout_width="@dimen/report_spinner_def_width"/>
+            android:layout_width="@dimen/reports_fragment_grid_elem_reg"/>
 
         <TextView
             android:layout_marginLeft="8dp"
@@ -35,7 +35,7 @@
             style="@style/Reports.Label"
             android:paddingLeft="12dp"
             android:layout_height="wrap_content"
-            android:layout_width="168dp"
+            android:layout_width="@dimen/reports_fragment_grid_elem_from_to"
             android:text="@string/reports_from_label"/>
 
         <EditText
@@ -43,7 +43,7 @@
             android:id="@+id/from_edit"
             style="@style/Reports.DateEdit"
             android:layout_height="wrap_content"
-            android:layout_width="168dp"/>
+            android:layout_width="@dimen/reports_fragment_grid_elem_from_to"/>
 
         <TextView
             android:layout_marginLeft="8dp"
@@ -51,7 +51,7 @@
             style="@style/Reports.Label"
             android:paddingLeft="12dp"
             android:layout_height="wrap_content"
-            android:layout_width="168dp"
+            android:layout_width="@dimen/reports_fragment_grid_elem_from_to"
             android:text="@string/reports_to_label"/>
 
         <EditText
@@ -59,7 +59,7 @@
             android:id="@+id/to_edit"
             style="@style/Reports.DateEdit"
             android:layout_height="wrap_content"
-            android:layout_width="168dp"/>
+            android:layout_width="@dimen/reports_fragment_grid_elem_from_to"/>
 
         <TextView
             android:layout_marginLeft="40dp"

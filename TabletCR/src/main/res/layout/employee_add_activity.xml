@@ -215,12 +215,18 @@
 
         </RelativeLayout>
 
-        <TableLayout
-            android:id="@+id/salary_info_table"
+        <ScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/salary_label_container"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/edit_item_row_margin_top">
+            android:layout_marginTop="@dimen/edit_item_row_margin_top"
+            android:layout_marginBottom="@dimen/edit_item_row_margin_top"
+            android:fillViewport="true">
+
+            <TableLayout
+            android:id="@+id/salary_info_table"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
 
             <TableRow
                 android:layout_width="fill_parent"
@@ -306,11 +312,13 @@
 
         </TableLayout>
 
+        </ScrollView>
+
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_marginLeft="@dimen/edit_item_table_margin"
+        android:layout_marginLeft="@dimen/edit_item_table_margin_left"
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1">
@@ -552,7 +560,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_marginLeft="@dimen/edit_item_table_margin"
+        android:layout_marginLeft="@dimen/edit_item_table_margin_left"
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1">
