@@ -271,7 +271,8 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.ebtFoodStampPaymentEnabled().getOr(false),
                     shopPref.ebtCashPaymentButtonEnabled().getOr(false),
                     shopPref.offlineCreditPaymentButtonEnabled().getOr(false),
-                    shopPref.checkPaymentButtonEnabled().getOr(false)
+                    shopPref.checkPaymentButtonEnabled().getOr(false),
+                    shopPref.autogenerateProductCode().getOr(false)
                     );
         }
         barcodePrefixes = new BarcodePrefixes(
@@ -661,6 +662,7 @@ public class TcrApplication extends MultiDexApplication {
                 .ebtCashPaymentButtonEnabled().put(info.ebtCashPaymentButtonEnabled)
                 .offlineCreditPaymentButtonEnabled().put(info.offlineCreditPaymentButtonEnabled)
                 .checkPaymentButtonEnabled().put(info.checkPaymentButtonEnabled)
+                .autogenerateProductCode().put(info.autogenerateProductCode)
                 .apply();
 
         setUsers();
@@ -797,6 +799,10 @@ public class TcrApplication extends MultiDexApplication {
 
     public synchronized boolean getEmailReceiptDefault() {
         return shopInfo.emailReceiptDefault;
+    }
+
+    public synchronized boolean getAutogenerateProductCode() {
+        return shopInfo.autogenerateProductCode;
     }
 
     public void setSunpassActivated(boolean activated) {

@@ -695,17 +695,11 @@
     </style>
 
     <style name="EditActivity">
-        <item name="android:paddingLeft">80dp</item>
-        <item name="android:paddingRight">80dp</item>
-        <item name="android:paddingTop">40dp</item>
+        <item name="android:paddingLeft">@dimen/edit_employee_activity_style_padding_left</item>
+        <item name="android:paddingRight">@dimen/edit_employee_activity_style_padding_right</item>
+        <item name="android:paddingTop">@dimen/edit_employee_activity_style_padding_top</item>
         <item name="android:paddingBottom">40dp</item>
         <item name="android:background">@color/bg_grey_color</item>
-    </style>
-
-    <style name="EditActivity.1024_768">
-        <item name="android:paddingLeft">40dp</item>
-        <item name="android:paddingRight">40dp</item>
-        <item name="android:paddingTop">20dp</item>
     </style>
 
     <style name="EditItem" />

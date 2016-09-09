@@ -373,12 +373,12 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     }
 
     public void cleanAll(){
+        checkIsNewItemComposerInProcess= false;
         qtyChanged = false;
         newItem = false;
+        ignorReculc = false;
         qtyChangedItem = null;
         newItemInOrder = null;
-        ignorReculc = false;
-        checkIsNewItemComposerInProcess= false;
         qtyBefore.clear();
         app.clearIgnorComposerItems();
         app.setSalesOnScreenTmpSize(0);
@@ -386,9 +386,11 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     }
 
     private void doRemoceClickLine() {
+        ignorReculc = true;
         getListView().closeOpenedItems();
         itemsListHandler.onTotolQtyUpdated(getRemoveQty(adapter.getSaleItemGuid(position)), true, null);
         if (adapter.getCount() == 1) {
+            cleanAll();
             if (itemsListHandler != null) {
                 itemsListHandler.onRemoveLastItem();
             }
@@ -419,6 +421,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
 
     public void doRemoceClickLine(String guid) {
+        ignorReculc = true;
         getListView().closeOpenedItems();
         if (adapter.getCount() == 1) {
             cleanAll();
@@ -478,6 +481,10 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     public void setItemsListHandler(IItemsListHandlerHandler itemsListHandler) {
         this.itemsListHandler = itemsListHandler;
+    }
+
+    public void setIgnorRecalc(boolean ignorRecaulc){
+        this.ignorReculc = ignorReculc;
     }
 
     @Override
@@ -552,6 +559,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
                 if(newItem){
                     saleOrderItemViewGuids.add(newItemInOrder.getSaleItemGuid());
+                    qtyChanged = false;
                 } else if(qtyChanged) {
                     saleOrderItemViewGuids.add(qtyChangedItem.getSaleItemGuid());
                 } else {
@@ -562,6 +570,9 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                     }
                 }
 
+                ignorReculc = true;
+                checkIsNewItemComposerInProcess = false;
+
                 if (!saleOrderItemViewGuids.isEmpty()) {
                     for (SaleOrderItemViewModel saleOrderItemViewModel : list) {
                         if (saleOrderItemViewGuids.contains(saleOrderItemViewModel.getSaleItemGuid())) {
@@ -569,9 +580,11 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                             if (qtyChanged) {
                                 UpdateQtySaleOrderItemCommand.start(getActivity(),
                                         saleOrderItemViewModel.getSaleItemGuid(), qty != null ? qty : BigDecimal.ONE, updateQtySaleOrderItemCallback);
+                                qtyChanged = false;
                             } else if(qty != null && qty.compareTo(saleOrderItemViewModel.itemModel.qty) == -1){
                                 UpdateQtySaleOrderItemCommand.start(getActivity(),
                                         saleOrderItemViewModel.getSaleItemGuid(), qty, updateQtySaleOrderItemCallback);
+                                qtyChanged = false;
                             } else {
                                 doRemoceClickLine(saleOrderItemViewModel.getSaleItemGuid());
                                 qtyBefore.remove(saleOrderItemViewModel.getSaleItemGuid());
@@ -579,9 +592,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                         }
                     }
                 }
-                qtyChanged = false;
-                ignorReculc = true;
-                checkIsNewItemComposerInProcess = false;
             }
 
             @Override
@@ -610,18 +620,19 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, final List<SaleOrderItemViewModel> list) {
-        qtyChanged = false;
-        if(!ignorReculc) {
-            if ((list.size() - app.getSalesOnScreenTmpSize()) == 1) {
-                checkIsNewItemComposer(list, false);
-            } else if (!list.isEmpty() && list.size() == app.getSalesOnScreenTmpSize()) {           //chg qty or discount or come back
-                checkIsNewItemComposer(list, true);
-            } else if (!list.isEmpty()) {                                                           //new order, hold on
+        if(!list.isEmpty()) {
+            if (!ignorReculc) {
+                if ((list.size() - app.getSalesOnScreenTmpSize()) == 1) {
+                    checkIsNewItemComposer(list, false);
+                } else if (list.size() == app.getSalesOnScreenTmpSize()) {           //chg qty or discount or come back
+                    checkIsNewItemComposer(list, true);
+                } else {                                                           //new order, hold on
                     newItem = false;
                     checkAddedItemsOnComposerEnoughQty(list);
+                }
+            } else {
+                ignorReculc = false;
             }
-        } else {
-            ignorReculc = false;
         }
         app.setSalesOnScreenTmpSize(list.size());
 

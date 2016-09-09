@@ -1342,13 +1342,20 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         actionBarItemClicked();
         HoldFragmentDialog.show(this, null, null, false, new HoldFragmentDialog.IHoldListener() {
             @Override
-            public void onSwap2Order(String holdName, final String nextOrderGuid) {
+            public void onSwap2Order(final String holdName, final String nextOrderGuid) {
                 ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, nextOrderGuid, ItemsNegativeStockTrackingCommand.ItemType.HOLD_ON,
                         new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
                             @Override
                             protected void handleSuccess(boolean result) {
                                 if(!result){
-                                    Toast.makeText(BaseCashierActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(BaseCashierActivity.this, R.string.item_qty_lower_zero_holdon, Toast.LENGTH_SHORT).show();
+                                    HoldOrderCommand.start(BaseCashierActivity.this, new BaseHoldOrderCallback() {
+                                        @Override
+                                        protected void onSuccess() {
+                                            updateHoldButton();
+                                            supportInvalidateOptionsMenu();
+                                        }
+                                    }, nextOrderGuid, holdName, HoldOrderCommand.HoldOnAction.REMOVE);
                                     return;
                                 }
                                 setOrderGuid(nextOrderGuid, true);
@@ -1864,6 +1871,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             try2ClockIn();
             return;
         }
+        orderItemListFragment.setIgnorRecalc(true);
 
         if (saleOrderModel == null || TextUtils.isEmpty(orderGuid)) {
             Toast.makeText(this, "Please select an order to continue", Toast.LENGTH_LONG).show();
@@ -1909,6 +1917,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
                     @Override
                     public void onCancel() {
+                        UpdateSaleOrderTaxStatusCommand.start(BaseCashierActivity.this, orderGuid, true,
+                                new UpdateSaleOrderTaxStatusCommand.TaxCallback() {
+                                    @Override
+                                    protected void onSuccess(String orderGuid) {
+                                        Logger.d("[SaleOrder] onTaxUpdate");
+                                        totalCostFragment.setOrderGuid(orderGuid);
+                                    }
+                                });
+
                         EndTransactionCommand.start(BaseCashierActivity.this);
                         isPaying = false;
                         SaleOrderItemViewModel lastItem = orderItemListFragment == null ? null : orderItemListFragment.getLastItem();
@@ -1967,6 +1984,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                 updateItemCountMsg();
                             }
                         });
+                    }
+
+                    @Override
+                    public void onEbtPayment(boolean isTaxSwitch) {
+                        UpdateSaleOrderTaxStatusCommand.start(BaseCashierActivity.this, orderGuid, !isTaxSwitch,
+                                new UpdateSaleOrderTaxStatusCommand.TaxCallback() {
+                                    @Override
+                                    protected void onSuccess(String orderGuid) {
+                                        Logger.d("[SaleOrder] onTaxUpdate");
+                                        totalCostFragment.setOrderGuid(orderGuid);
+                                    }
+                                });
                     }
                 }).setCustomer(customer);
         setCallback(processor);
@@ -2192,7 +2221,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             @Override
             public void onSwap2Order(String holdName, String nextOrderGuid) {
                 if (!TextUtils.isEmpty(BaseCashierActivity.this.orderGuid)) {
-                    HoldOrderCommand.start(BaseCashierActivity.this, holdOrderCallback, BaseCashierActivity.this.orderGuid, holdName);
+                    HoldOrderCommand.start(BaseCashierActivity.this, holdOrderCallback, BaseCashierActivity.this.orderGuid, holdName, HoldOrderCommand.HoldOnAction.ADD);
                 }
                 setOrderGuid(nextOrderGuid, true);
             }
@@ -2203,7 +2232,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     public void onVoid() {
         if (TextUtils.isEmpty(this.orderGuid))
             return;
-
+        orderItemListFragment.setIgnorRecalc(true);
         setCountZero();
         checkOrderPayments();
     }
@@ -2263,9 +2292,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void completeOrder() {
         getApp().clearCurrentOrderItemsQty();
-        if (TextUtils.isEmpty(this.orderGuid))
-            return;
         orderItemListFragment.cleanAll();
+        if (TextUtils.isEmpty(this.orderGuid)) {
+            return;
+        }
         setCountZero();
         updateItemCountMsg();
         setupNewOrder();

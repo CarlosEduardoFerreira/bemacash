@@ -21,12 +21,21 @@ import java.util.ArrayList;
 public class HoldOrderCommand extends UpdateSaleOrderCommand {
 
     private static final String ARG_ORDER_GUID = "ARG_ORDER_GUID";
+    private static final String ARG_ACTION = "ARG_ACTION";
     private static final String ARG_TITLE = "ARG_ORDER_TITLE";
+
+    public enum HoldOnAction{
+        ADD,
+        REMOVE
+    }
+
+    private HoldOnAction action;
 
     @Override
     protected SaleOrderModel readOrder() {
         String guid = getStringArg(ARG_ORDER_GUID);
         String title = getStringArg(ARG_TITLE);
+        action = (HoldOnAction) getArgs().getSerializable(ARG_ACTION);
 
         Cursor c = ProviderAction.query(URI_ORDER)
             .where(ShopStore.SaleOrderTable.GUID + " = ?", guid)
@@ -38,28 +47,31 @@ public class HoldOrderCommand extends UpdateSaleOrderCommand {
             }
             if (order == null)
                 return null;
-            order.setHoldName(title);
+            order.setHoldName(action == HoldOnAction.ADD ? title : "Canceled because of quantity");
             return order;
         } finally {
             c.close();
         }
     }
 
-    public static void start(Context context, BaseHoldOrderCallback callback, String orderGuid, String title) {
+    public static void start(Context context, BaseHoldOrderCallback callback, String orderGuid, String title, HoldOnAction action) {
         create(HoldOrderCommand.class)
                 .arg(ARG_ORDER_GUID, orderGuid)
+                .arg(ARG_ACTION, action)
                 .arg(ARG_TITLE, title).callback(callback).queueUsing(context);
     }
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
-        operations.add(ContentProviderOperation.newUpdate(URI_ORDER)
-                .withValues(order.toValues())
-                .withSelection(ShopStore.SaleOrderTable.GUID + " = ?", new String[]{order.guid})
-                .build());
+        if(action == HoldOnAction.ADD) {
+            operations.add(ContentProviderOperation.newUpdate(URI_ORDER)
+                    .withValues(order.toValues())
+                    .withSelection(ShopStore.SaleOrderTable.GUID + " = ?", new String[]{order.guid})
+                    .build());
+        }
         ContentValues values = new ContentValues();
-        values.put(ShopStore.SaleOrderTable.STATUS, OrderStatus.HOLDON.ordinal());
+        values.put(ShopStore.SaleOrderTable.STATUS, action == HoldOnAction.ADD ? OrderStatus.HOLDON.ordinal() : OrderStatus.CANCELED.ordinal());
         operations.add(ContentProviderOperation.newUpdate(URI_ORDER)
                 .withValues(values)
                 .withSelection(ShopStore.SaleOrderTable.GUID + " = ?", new String[]{getStringArg(ARG_ORDER_GUID)})
@@ -69,7 +81,7 @@ public class HoldOrderCommand extends UpdateSaleOrderCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        order.orderStatus = OrderStatus.HOLDON;
+        order.orderStatus = action == HoldOnAction.ADD ? OrderStatus.HOLDON : OrderStatus.CANCELED;
         return JdbcFactory.getConverter(order).updateSQL(order, getAppCommandContext());
     }
 

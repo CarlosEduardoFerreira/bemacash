@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.fragment.user.LoginFragment;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -27,8 +28,11 @@ public class EBTPaymentTypeChooserDialogFragment extends StyledDialogFragment {
     }
 
     public interface EBTTypeChooseListener {
-         void onEBTCashTypeChosen();
-         void onEBTFoodStampTypeChosen();
+        void onEBTCashTypeChosen();
+
+        void onEBTFoodStampTypeChosen();
+
+        void onCancal();
     }
 
     @ViewById
@@ -44,25 +48,25 @@ public class EBTPaymentTypeChooserDialogFragment extends StyledDialogFragment {
     }
 
     @Click
-    protected void btnPaxEbtFoodstampClicked(){
-        if(listener!=null) {
+    protected void btnPaxEbtFoodstampClicked() {
+        if (listener != null) {
             listener.onEBTFoodStampTypeChosen();
         }
     }
 
     @Click
-    protected void btnPaxEbtCashClicked(){
-        if(listener!=null) {
+    protected void btnPaxEbtCashClicked() {
+        if (listener != null) {
             listener.onEBTCashTypeChosen();
         }
     }
 
     @Override
-    protected boolean hasPositiveButton(){
+    protected boolean hasPositiveButton() {
         return false;
     }
 
-        @Override
+    @Override
     protected int getDialogContentLayout() {
         return R.layout.ebt_chooser_fragment;
     }
@@ -78,13 +82,24 @@ public class EBTPaymentTypeChooserDialogFragment extends StyledDialogFragment {
     }
 
     @Override
+    protected OnDialogClickListener getNegativeButtonListener()
+    {
+        return new OnDialogClickListener() {
+            @Override
+            public boolean onClick() {
+                listener.onCancal();
+                return true;
+            }
+        };
+    }
+    @Override
     protected int getPositiveButtonTitle() {
         return 0;
     }
 
     @Override
     protected OnDialogClickListener getPositiveButtonListener() {
-        return new OnDialogClickListener(){
+        return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
                 Toast.makeText(getActivity(), "OnDialogClickListener", Toast.LENGTH_SHORT).show();

@@ -361,6 +361,11 @@ public class PrepaidLongDistanceActivity extends PrepaidBaseFragmentActivity {
 
                     }
 
+                    @Override
+                    public void onEbtPayment(boolean isTaxSwitch) {
+
+                    }
+
                 }).setPrepaidMode().init(context);
 
             }

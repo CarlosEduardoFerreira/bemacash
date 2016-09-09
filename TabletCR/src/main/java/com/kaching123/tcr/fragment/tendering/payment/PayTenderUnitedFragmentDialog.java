@@ -19,6 +19,7 @@ import com.kaching123.tcr.adapter.BondItemAdapter;
 import com.kaching123.tcr.commands.display.DisplayTenderCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.CustomEditBox;
@@ -54,6 +55,8 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     protected CurrencyTextWatcher currencyTextWatcher;
 
     private static final List<Integer> BONDS_LIST = new ArrayList<>();
+
+    protected boolean pressEBTBtn;
 
     static {
         BONDS_LIST.add(1);
@@ -124,7 +127,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 tryProceed(PaymentMethod.CASH);
             }
         });
- }
+    }
 
     private void setTenderButtonsVisibilityWithServerSettings() {
         btnGiftCard.setVisibility(getApp().isGiftCardEnabled() ? View.VISIBLE : View.GONE);
@@ -132,7 +135,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 getApp().isCreditCardEnabled() ? View.VISIBLE : View.GONE);
         btnPaxDebit.setVisibility(getApp().isPaxConfigured() &&
                 getApp().isDebitCardEnabled() ? View.VISIBLE : View.GONE);
-        btnPaxEbtCash.setVisibility(orderEbtTotal!=null
+        btnPaxEbtCash.setVisibility(orderEbtTotal != null
                 && !orderEbtTotal.equals(BigDecimal.ZERO)
                 && getApp().isPaxConfigured()
                 && getApp().isEbtEnabled() ? View.VISIBLE : View.GONE);
@@ -151,7 +154,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
 
         entered = getDecimalValue();
-        if(entered.equals(BigDecimal.ZERO)) {
+        if (entered.equals(BigDecimal.ZERO)) {
             AlertDialogFragment.showAlert(getActivity(), R.string.pay_tender_wrong_amount_title, getString(R.string.pay_tender_zero_amount_error_message));
             charge.selectAll();
             return false;
@@ -166,6 +169,9 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
 
         BigDecimal remainingEbtAmonut = orderEbtTotal.subtract(completedEbtAmount);
+        BigDecimal remainingEbtAmonutWithTax = remainingEbtAmonut.multiply(BigDecimal.ONE.add(ebtPartialTax));
+        Logger.d("ebtWithTax =" + remainingEbtAmonutWithTax);
+
         if ((method.equals(PaymentMethod.PAX_EBT_FOODSTAMP) || method.equals(PaymentMethod.PAX_EBT_CASH))
                 && value.length() > 0 && remainingEbtAmonut.compareTo(entered) < 0) {
             entered = alreadyPayed;
@@ -176,8 +182,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
 
         if (listener != null && String.valueOf(charge.getText()).length() > 0) {
-          BigDecimal total = orderTotal;
-            listener.onUnitedPaymentAmountSelected(method, total, getDecimalValue());
+            listener.onUnitedPaymentAmountSelected(method, orderTotal, entered);
             return true;
         }
         Toast.makeText(getActivity(), R.string.pay_toast_zero, Toast.LENGTH_LONG).show();
@@ -335,6 +340,11 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     @Click
     protected void btnPaxEbtCashClicked() {
+
+        listener.onEbtClicked(true);
+        if (orderTotal.compareTo(new BigDecimal(charge.getText().toString().trim())) != 0)
+            pressEBTBtn = true;
+
         EBTPaymentTypeChooserDialogFragment.show(getActivity(), new EBTPaymentTypeChooserDialogFragment.EBTTypeChooseListener() {
             @Override
             public void onEBTCashTypeChosen() {
@@ -346,6 +356,13 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             public void onEBTFoodStampTypeChosen() {
                 tryProceed(PaymentMethod.PAX_EBT_FOODSTAMP);
                 EBTPaymentTypeChooserDialogFragment.hide(getActivity());
+            }
+
+            @Override
+            public void onCancal() {
+                pressEBTBtn = false;
+                listener.onEbtClicked(false);
+
             }
         });
     }
@@ -378,14 +395,16 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     @Override
     protected void updateAfterCalculated() {
+        if (pressEBTBtn && completedAmount.compareTo(BigDecimal.ZERO) == 0)
+            return;
         BigDecimal alreadyPayed;
         BigDecimal alreadyEbtPayed;
-        if(orderTotal != null && completedEbtAmount != null) {
+        if (orderTotal != null && completedEbtAmount != null) {
             alreadyEbtPayed = orderEbtTotal.subtract(completedEbtAmount);
             remainingEbt.setText(UiHelper.valueOf(alreadyEbtPayed));
         }
 
-        if(orderTotal != null && completedAmount != null) {
+        if (orderTotal != null && completedAmount != null) {
             alreadyPayed = orderTotal.subtract(completedAmount);
             difference.setText(UiHelper.valueOf(alreadyPayed));
             charge.setText(getApp().isAutoFillPaymentAmount() ? UiHelper.valueOf(alreadyPayed) : "");
@@ -395,7 +414,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
         enable(true);
         getPositiveButton().setText(hasCompletedTransactions()
-                    && !(transactionsAmount() == 1 && isCashTheFirstTransaction()) ? R.string.btn_void : R.string.btn_cancel);
+                && !(transactionsAmount() == 1 && isCashTheFirstTransaction()) ? R.string.btn_void : R.string.btn_cancel);
 
         charge.selectAll(); //highlight text according to     BEMA-887 Payment screen Rework
     }
@@ -429,7 +448,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             public boolean onClick() {
                 if (listener != null) {
                     if (hasCompletedTransactions()
-                        && !(transactionsAmount() == 1 && isCashTheFirstTransaction())) {// special case for cash
+                            && !(transactionsAmount() == 1 && isCashTheFirstTransaction())) {// special case for cash
                         boolean voidSalesPermitted = getApp().hasPermission(Permission.VOID_SALES);
                         if (!voidSalesPermitted) {
                             PermissionFragment.showCancelable(getActivity(), new SuperBaseActivity.BaseTempLoginListener(getActivity()), Permission.VOID_SALES);
@@ -461,10 +480,5 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     public static void hide(FragmentActivity activity) {
         DialogUtil.hide(activity, DIALOG_NAME);
     }
-
-    private void setValue(BigDecimal value) {
-        charge.setText(UiHelper.valueOf(value));
-    }
-
 
 }

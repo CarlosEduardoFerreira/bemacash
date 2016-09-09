@@ -8,7 +8,7 @@
 
     <fragment
         android:name="com.kaching123.tcr.fragment.creditreceipt.CreditReceiptListFragment_"
-        android:layout_width="960dp"
+        android:layout_width="@dimen/creditreceipt_views_width"
         android:layout_height="match_parent"
         android:id="@+id/creditreceipt_list_fragment"/>
 

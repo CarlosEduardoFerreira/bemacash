@@ -646,6 +646,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
      * Ask the user for the payment method
      */
     private void proceedToTender(final FragmentActivity context, int animation) {
+        callback.onEbtPayment(false);
         proceedToTender(context, animation, singleTenderEnabled);
     }
 
@@ -712,6 +713,11 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             }
 
             @Override
+            public void onEbtClicked(boolean isClicked) {
+                callback.onEbtPayment(isClicked);
+            }
+
+            @Override
             public void onSingleTenderCheck(boolean singleTenderEnabled) {
                 PaymentProcessor.this.singleTenderEnabled = singleTenderEnabled;
             }
@@ -723,8 +729,9 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
             @Override
             public void onCancel() {
-                if (callback != null)
+                if (callback != null) {
                     callback.onCancel();
+                }
 
                 hide();
             }
@@ -770,10 +777,10 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         Logger.d("Price send to Processor" + amount.toString());
         switch (method) {
             case CASH: {
-                transaction = PaymentGateway.CASH.gateway().createTransaction(context, orderTotal, orderGuid);
+                transaction = PaymentGateway.CASH.gateway().createTransaction(context, amount, orderGuid);
                 transaction.cashBack = BigDecimal.ZERO;
                 transaction.setType(TransactionType.CASH);
-                proceedToCashPayment(context, amount, transaction);
+                proceedToCashPayment(context, transaction);
                 break;
             }
             case CREDIT_CARD: {
@@ -985,8 +992,8 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
     /**
      * Follow with the cash payment
      */
-    private void proceedToCashPayment(final FragmentActivity context, final BigDecimal amount, final Transaction transaction) {
-        PaySilentCashFragmentDialog.show(context, orderPayed, amount, transaction, new PaySilentCashFragmentDialog.ISaleCashListener() {
+    private void proceedToCashPayment(final FragmentActivity context, final Transaction transaction) {
+       PaySilentCashFragmentDialog.show(context, getPendingAmount(), transaction, new PaySilentCashFragmentDialog.ISaleCashListener() {
 
             @Override
             public void onPaymentAmountSelected(BigDecimal amount, BigDecimal changeAmount) {
@@ -1631,6 +1638,8 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         public void onUpdateOrderList();
 
         public void onPrintComplete();
+
+        public void onEbtPayment(boolean isTaxSwitch);
     }
 
 

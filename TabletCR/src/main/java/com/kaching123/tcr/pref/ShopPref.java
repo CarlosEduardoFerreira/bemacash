@@ -416,4 +416,6 @@ public interface ShopPref {
 
     boolean emailReceiptDefault();
 
+    boolean autogenerateProductCode();
+
 }

@@ -1,5 +1,5 @@
 <resources>
-<string name="api_server_url">http://54.191.248.229/</string>
+<string name="api_server_url">http://54.186.121.244/</string>
 <string name="api_basic_cred"></string>
-<string name="merchant_register_url">http://54.191.248.229/#merchant_signup</string>
+<string name="merchant_register_url">http://54.186.121.244/#merchant_signup</string>
 </resources>

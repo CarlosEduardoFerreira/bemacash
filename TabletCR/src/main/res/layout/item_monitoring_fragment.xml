@@ -3,15 +3,17 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-
-    <TableLayout
+    <ScrollView
         android:layout_weight="1"
         android:layout_width="0dp"
+        android:layout_height="match_parent">
+        <TableLayout
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:stretchColumns="1">
 
         <TableRow
-            android:minHeight="@dimen/table_row_height">
+            android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/item_activity_monitoring"
@@ -26,7 +28,7 @@
         </TableRow>
 
         <TableRow
-            android:minHeight="@dimen/table_row_height">
+            android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/item_limit_qty"
@@ -41,7 +43,7 @@
         </TableRow>
 
         <TableRow
-            android:minHeight="@dimen/table_row_height">
+            android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/item_activity_available_quantity" />
@@ -55,7 +57,7 @@
         </TableRow>
 
         <TableRow
-            android:minHeight="@dimen/table_row_height">
+            android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/item_activity_minimum_qty" />
@@ -69,7 +71,7 @@
         </TableRow>
 
         <TableRow
-            android:minHeight="@dimen/table_row_height">
+            android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
                 android:text="@string/item_activity_recommended_qty" />
@@ -82,6 +84,7 @@
                 android:inputType="numberDecimal"/>
         </TableRow>
     </TableLayout>
+    </ScrollView>
 
     <View
         android:layout_width="0dp"
