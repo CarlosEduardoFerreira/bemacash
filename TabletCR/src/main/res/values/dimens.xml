@@ -46,10 +46,6 @@
     <dimen name="pay_tender_dialog_height">526dp</dimen>
     <dimen name="pay_tender_dialog_height_expanded">630dp</dimen>
     <dimen name="pay_tender_dialog_width">900dp</dimen>
-    <dimen name="pay_tender_dialog_width_large">1080dp</dimen>
-    <dimen name="pay_tender_dialog_height_3">648dp</dimen>
-    <dimen name="pay_tender_dialog_height_3_large">748dp</dimen>
-    <dimen name="pay_tender_dialog_height_3_expanded">672dp</dimen>
     <dimen name="pay_tender_dialog_height_3_expanded_large">772dp</dimen>
     <dimen name="listPreferredItemHeight">48dp</dimen>
     <dimen name="listPreferredItemHeight2">86dp</dimen>
@@ -222,8 +218,6 @@
 
 
 
-    <dimen name="payment_tender_dlg_button_width">120dp</dimen>
-    <dimen name="payment_tender_dlg_button_height">120dp</dimen>
     <dimen name="payment_tender_dlg_main_layout_padding_top">10dp</dimen>
     <dimen name="payment_tender_dlg_main_layout_padding_left">20dp</dimen>
     <dimen name="payment_tender_dlg_main_layout_padding_right">20dp</dimen>
@@ -261,7 +255,6 @@
 
     <dimen name="payment_tender_dlg_remaining_ebt_value_tw_layout_height">24dp</dimen>
     <dimen name="payment_tender_dlg_remaining_ebt_value_tw_padding_right">4dp</dimen>
-    <dimen name="payment_tender_dlg_transaction_list_layout_width">400dp</dimen>
     <dimen name="payment_tender_dlg_exact_btn_margin_top">10dp</dimen>
 
 </resources>

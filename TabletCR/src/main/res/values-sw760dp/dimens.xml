@@ -53,4 +53,14 @@
 
     <dimen name="edit_item_table_margin_left">30dp</dimen>
 
+    <dimen name="pay_tender_dialog_width_large">950dp</dimen>
+    <dimen name="pay_tender_dialog_height_3_expanded">642dp</dimen>
+    <dimen name="pay_tender_dialog_height_3">618dp</dimen>
+    <dimen name="pay_tender_dialog_height_3_large">718dp</dimen>
+
+    <dimen name="payment_tender_dlg_button_width">100dp</dimen>
+    <dimen name="payment_tender_dlg_button_height">100dp</dimen>
+    <dimen name="payment_tender_dlg_transaction_list_layout_width">320dp</dimen>
+
+
 </resources>
