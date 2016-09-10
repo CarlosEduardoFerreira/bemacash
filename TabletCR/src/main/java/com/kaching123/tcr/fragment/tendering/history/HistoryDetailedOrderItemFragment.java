@@ -13,12 +13,15 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
+import com.kaching123.tcr.commands.print.digital.ResendDigitalOrderCommand;
+import com.kaching123.tcr.commands.print.digital.ResendDigitalOrderCommand.BaseResendDigitalOrderCallback;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
@@ -327,8 +330,20 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
 
     @Click
     protected void btnEmailClicked() {
-        assert listener != null;
-        listener.onEmailClick();
+        if (customerEmail != null){
+            ResendDigitalOrderCommand.start(getActivity(), orderGuid, customerEmail, new BaseResendDigitalOrderCallback() {
+                @Override
+                protected void onDigitalOrderSent() {
+                    Toast.makeText(getContext(), getContext().getString(R.string.send_email_toast_msg) + " " + customerEmail, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                protected void onDigitalOrderSendError() {
+                }
+            });
+        }else{
+            Toast.makeText(getContext(), "Email is empty", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Click
