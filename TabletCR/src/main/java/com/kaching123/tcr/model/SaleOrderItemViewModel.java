@@ -228,7 +228,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
         return this.itemModel.notes;
     }
 
-    public static class AddonInfo {
+    public static class AddonInfo implements Serializable{
         public SaleOrderItemAddonModel addon;
         public String addonTitle;
         public String groupName;
