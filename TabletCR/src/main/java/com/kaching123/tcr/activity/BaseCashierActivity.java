@@ -1901,6 +1901,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     private void doPayment() {
+        if (orderItemListFragment.getListView().getCount() == 0){
+            Toast.makeText(self(), "No items in the order", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         isPaying = true;
         StartTransactionCommand.start(BaseCashierActivity.this, orderGuid);
         processor = PaymentProcessor.create(orderGuid, OrderType.SALE, saleOrderModel.kitchenPrintStatus, salesmanGuids.toArray(new String[salesmanGuids.size()]))
