@@ -964,7 +964,7 @@
     </style>
 
     <style name="StyledDialog.Content.SpinnerItemView">
-        <item name="android:textColor">@color/light_gray</item>
+        <item name="android:textColor">@color/text_grey</item>
         <item name="android:textSize">@dimen/dlg_edit_text_font_size</item>
     </style>
 

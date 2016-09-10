@@ -38,33 +38,59 @@ import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 @EFragment(R.layout.item_price_fragment)
 public class ItemPriceFragment extends ItemBaseFragment {
 
-    @ViewById protected CheckBox discountable;
-    @ViewById protected Spinner discountType;
-    @ViewById protected EditText discount;
-    @ViewById protected Spinner priceType;
-    @ViewById protected CheckBox taxable;
-    @ViewById protected EditText cost;
-    @ViewById protected CheckBox commissionEligible;
-    @ViewById protected EditText commission;
-    @ViewById protected CheckBox forSale;
-    @ViewById protected TableRow forSaleRow;
+    @ViewById
+    protected CheckBox discountable;
+    @ViewById
+    protected Spinner discountType;
+    @ViewById
+    protected EditText discount;
+    @ViewById
+    protected Spinner priceType;
+    @ViewById
+    protected CheckBox taxable;
+    @ViewById
+    protected EditText cost;
+    @ViewById
+    protected CheckBox commissionEligible;
+    @ViewById
+    protected EditText commission;
+    @ViewById
+    protected CheckBox forSale;
+    @ViewById
+    protected TableRow forSaleRow;
 
     @Override
     protected void setViews() {
         ArrayAdapter<PriceType> priceTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_dark, PriceType.values());
         priceTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         priceType.setAdapter(priceTypeAdapter);
+        priceType.setSelection(getPriceTypeSelected());
 
         ArrayAdapter<DiscountType> discountTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_light, DiscountType.values());
         discountTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         discountType.setAdapter(discountTypeAdapter);
 
-        if (getModel().isReferenceItem()){
+        if (getModel().isReferenceItem()) {
             forSale.setChecked(false);
             forSaleRow.setVisibility(View.GONE);
         }
 
         setFilters();
+    }
+
+    private int getPriceTypeSelected() {
+        switch (getModel().priceType) {
+            case UNIT_PRICE:
+                return 2;
+            case FIXED:
+                return 0;
+            case OPEN:
+                return 1;
+            default:
+                return 0;
+
+        }
+
     }
 
     @Override
@@ -114,7 +140,7 @@ public class ItemPriceFragment extends ItemBaseFragment {
         return true;
     }
 
-    private void setFilters(){
+    private void setFilters() {
         InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
         InputFilter[] percentFilter = new InputFilter[]{new PercentFormatInputFilter()};
         discount.setFilters(currencyFilter);
@@ -125,13 +151,13 @@ public class ItemPriceFragment extends ItemBaseFragment {
     }
 
     @ItemSelect
-    protected void priceTypeItemSelected(boolean selected, int position){
+    protected void priceTypeItemSelected(boolean selected, int position) {
         getModel().priceType = (PriceType) priceType.getItemAtPosition(position);
         getItemProvider().onPriceTypeChanged();
     }
 
     @CheckedChange
-    protected void forSaleCheckedChanged(CompoundButton cb, boolean isChecked){
+    protected void forSaleCheckedChanged(CompoundButton cb, boolean isChecked) {
         getModel().isSalable = isChecked;
     }
 }
