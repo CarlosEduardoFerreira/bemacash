@@ -62,9 +62,9 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     @ViewById
     protected Button btnOfflineCredit;
 
- /*   @ViewById
-    protected Button btnPaxGiftCard;
-*/
+    /*   @ViewById
+       protected Button btnPaxGiftCard;
+   */
     @ViewById
     protected Button btnGiftCard;
 
@@ -129,7 +129,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     }
 
     protected void injectFakeTransactions(ArrayList<PaymentTransactionModel> transactions) {
-        if(transactions != null) {
+        if (transactions != null) {
             fakeTransactions.addAll(transactions);
         }
     }
@@ -170,14 +170,14 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
                     && PaymentType.SALE.equals(transaction.paymentType)) {
 
 
-                if(transaction.cardName.contains("EBT")) {
+                if (transaction.cardName.contains("EBT")) {
                     completedEbtAmount = completedEbtAmount.add(transaction.availableAmount);
                 } else {
                     completedNotEbtAmount = completedNotEbtAmount.add(transaction.availableAmount);
                 }
             }
         }
-        isCashTheFirstTransaction = saleOrderModels!=null && saleOrderModels.size()>0
+        isCashTheFirstTransaction = saleOrderModels != null && saleOrderModels.size() > 0
                 && saleOrderModels.get(0).gateway.equals(PaymentGateway.CASH);
 
         completedAmount = completedAmount.add(completedNotEbtAmount);
@@ -189,17 +189,17 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
         onLoadComplete();
     }
 
-    protected void calculateDlgHeight(){
+    protected void calculateDlgHeight() {
         boolean useCreditReceipt = getApp().getShopInfo().useCreditReceipt && orderType != OrderType.PREPAID;
         boolean isRefund = isRefund();
         boolean expand = saleOrderModels != null && saleOrderModels.size() > 0;
 
         int height = expand ? R.dimen.pay_tender_dialog_height_expanded : R.dimen.pay_tender_dialog_height;
-        if(isRefund && useCreditReceipt){
+        if (isRefund && useCreditReceipt) {
             height = R.dimen.pay_tender_dialog_height;
-        }else if(isRefund){
+        } else if (isRefund) {
             height = R.dimen.pay_tender_dialog_height_3_expanded;
-        }else if(useCreditReceipt){
+        } else if (useCreditReceipt) {
             height = expand ? R.dimen.pay_tender_dialog_height_3_expanded : R.dimen.pay_tender_dialog_height_3;
         }
         //saleOrderModels != null && saleOrderModels.size() > 0 ? R.dimen.pay_tender_dialog_height_expanded : R.dimen.pay_tender_dialog_height)
@@ -299,7 +299,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
                     BigDecimal availableDiscount,
                     BigDecimal transactionFee) {
                 Logger.d("-= Loading reached level 2 =-");
-              //  calcTotal(totalOrderPrice.add(transactionFee), totalOrderEbtPrice);
+                //  calcTotal(totalOrderPrice.add(transactionFee), totalOrderEbtPrice);
                 calcTotalWithEbt(totalOrderPrice, totalOrderEbtPrice, totalItemTotal, totalTaxVatValue,
                         totalEbtTaxVatValue, transactionFee);
 
@@ -313,12 +313,12 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
 
     protected void calcTotalWithEbt(BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal totalItemTotal, BigDecimal totalTaxVatValue,
                                     BigDecimal totalEbtTaxVatValue, BigDecimal transactionFee) {
-       //totalOrder = totalNoEbt+totalEbt+totalNoEbtTax+totalEbtTax
+        //totalOrder = totalNoEbt+totalEbt+totalNoEbtTax+totalEbtTax
         // -completedEbt-completedEbtTaxKoef*completedEbtTax
         // = totalNoEbt+totalEbt+totalNoEbtTax+totalEbtTax
         // - completedEbt*(1+completedEbtTaxKoef)
 
-        if(!totalOrderEbtPrice.equals(BigDecimal.ZERO)) {
+        if (!totalOrderEbtPrice.equals(BigDecimal.ZERO) && totalEbtTaxVatValue.compareTo(BigDecimal.ZERO) > 0 && totalOrderEbtPrice.compareTo(BigDecimal.ZERO) > 0) {
             ebtPartialTax = totalEbtTaxVatValue.divide(totalOrderEbtPrice, 2, BigDecimal.ROUND_HALF_UP);
         }
 
