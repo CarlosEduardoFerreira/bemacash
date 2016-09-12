@@ -84,6 +84,7 @@ import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand.BaseSuccessOrderCommandCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand.TaxCallback;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
@@ -1924,7 +1925,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     @Override
                     public void onCancel() {
                         UpdateSaleOrderTaxStatusCommand.start(BaseCashierActivity.this, orderGuid, true,
-                                new UpdateSaleOrderTaxStatusCommand.TaxCallback() {
+                                new TaxCallback() {
                                     @Override
                                     protected void onSuccess(String orderGuid) {
                                         Logger.d("[SaleOrder] onTaxUpdate");
@@ -1953,7 +1954,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     public void onBilling(ArrayList<PaymentTransactionModel> transactionModels, List<SaleOrderItemViewModel> prepaidResultList, List<SaleOrderItemViewModel> giftCardList) {
 //                        callback.onBillingSuccess();
                         EndTransactionCommand.start(BaseCashierActivity.this);
-
+                        isPaying = false;
 
                         prepaidList = prepaidResultList;
                         prepaidCount = prepaidList.size();
@@ -1995,7 +1996,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     @Override
                     public void onEbtPayment(boolean isTaxSwitch) {
                         UpdateSaleOrderTaxStatusCommand.start(BaseCashierActivity.this, orderGuid, !isTaxSwitch,
-                                new UpdateSaleOrderTaxStatusCommand.TaxCallback() {
+                                new TaxCallback() {
                                     @Override
                                     protected void onSuccess(String orderGuid) {
                                         Logger.d("[SaleOrder] onTaxUpdate");
