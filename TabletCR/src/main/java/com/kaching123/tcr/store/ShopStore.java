@@ -2794,11 +2794,11 @@ public abstract class ShopStore {
         @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM_ADDON, onColumn = SaleAddonTable.CHILD_ITEM_ID)
         String TABLE_SALE_ADDON_SUB_ITEM = "sale_addon_sub_item_table";
 
-        @Columns(ModifierTable.TITLE)
+        @Columns({ModifierTable.TITLE, ModifierTable.ORDER_NUM})
         @Join(type = Join.Type.LEFT, joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.MODIFIER_GUID, onTableAlias = TABLE_SALE_ORDER_ITEM_ADDON, onColumn = SaleAddonTable.ADDON_GUID)
         String TABLE_MODIFIER = "modifier_table";
 
-        @Columns(ModifierGroupTable.TITLE)
+        @Columns({ModifierGroupTable.TITLE, ModifierGroupTable.ORDER_NUM})
         @Join(type = Join.Type.LEFT, joinTable = ModifierGroupTable.TABLE_NAME, joinColumn = ModifierGroupTable.GUID, onTableAlias = TABLE_MODIFIER, onColumn = ModifierTable.ITEM_GROUP_GUID)
         String TABLE_MODIFIER_GROUP = "modifier_group_table";
 

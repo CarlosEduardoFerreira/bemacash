@@ -20,6 +20,7 @@ import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleOrderTable;
@@ -173,8 +174,9 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                             ContentValuesUtilBase._decimalQty(c, c.getColumnIndex(SaleAddonTable.CHILD_ITEM_QTY))),
 
                     c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.TITLE)),
-                    groupName
-            );
+                    groupName,
+                    c.getInt(c.getColumnIndex(ModifierGroupTable.ORDER_NUM)),
+                    c.getInt(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.ORDER_NUM)));
         }
         return null;
     }

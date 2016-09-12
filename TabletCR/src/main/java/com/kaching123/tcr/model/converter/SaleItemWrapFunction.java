@@ -22,6 +22,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ItemTable;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonSubItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.SaleItemTable;
@@ -253,13 +254,16 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 title = c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.TITLE));
             }
 
+            int groupOrderNum = c.getInt(c.getColumnIndex(ModifierGroupTable.ORDER_NUM));
+            int orderNum = c.getInt(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.ORDER_NUM));
+
             /*** result ***/
             return new AddonInfo(
                     saleModifierModel,
                     title,
-                    groupName
-
-            );
+                    groupName,
+                    groupOrderNum,
+                    orderNum);
         }
         return null;
     }

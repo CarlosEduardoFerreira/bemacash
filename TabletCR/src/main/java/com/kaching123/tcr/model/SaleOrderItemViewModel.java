@@ -232,11 +232,15 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
         public SaleOrderItemAddonModel addon;
         public String addonTitle;
         public String groupName;
+        public int orderNum;
+        public int groupOrderNum;
 
-        public AddonInfo(SaleOrderItemAddonModel addon, String addonTitle, String groupName) {
+        public AddonInfo(SaleOrderItemAddonModel addon, String addonTitle, String groupName, int groupOrderNum, int orderNum) {
             this.addon = addon;
             this.addonTitle = addonTitle;
             this.groupName = groupName;
+            this.groupOrderNum = groupOrderNum;
+            this.orderNum = orderNum;
         }
     }
 
@@ -244,16 +248,21 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
     private static Comparator<AddonInfo> comparator = new Comparator<AddonInfo>() {
         @Override
         public int compare(AddonInfo lhs, AddonInfo rhs) {
-            if(lhs.groupName == null)
-                return 0;
-            int dif = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
-            if(dif != 0)
-                return dif;
-            boolean l = TextUtils.isEmpty(lhs.groupName), r = TextUtils.isEmpty(rhs.groupName);
-            if(l && r) return 0;
-            if(l) return 1;
-            if(r) return -1;
-            return lhs.groupName.compareTo(rhs.groupName);
+            int diff;
+
+            diff = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
+            if (diff != 0)
+                return diff;
+
+            diff = lhs.groupOrderNum - rhs.groupOrderNum;
+            if (diff != 0)
+                return diff;
+
+            diff = lhs.orderNum - rhs.orderNum;
+            if (diff != 0)
+                return diff;
+
+            return  lhs.addonTitle.compareTo(rhs.addonTitle);
         }
     };
 
