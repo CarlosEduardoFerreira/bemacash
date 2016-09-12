@@ -245,27 +245,6 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
     }
 
 
-    private static Comparator<AddonInfo> comparator = new Comparator<AddonInfo>() {
-        @Override
-        public int compare(AddonInfo lhs, AddonInfo rhs) {
-            int diff;
-
-            diff = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
-            if (diff != 0)
-                return diff;
-
-            diff = lhs.groupOrderNum - rhs.groupOrderNum;
-            if (diff != 0)
-                return diff;
-
-            diff = lhs.orderNum - rhs.orderNum;
-            if (diff != 0)
-                return diff;
-
-            return  lhs.addonTitle.compareTo(rhs.addonTitle);
-        }
-    };
-
     public Spannable toAddonsString() {
 
         SpannableStringBuilder builder =
@@ -277,7 +256,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
             return builder;
 
         ArrayList<AddonInfo> mods = modifiers;
-        Collections.sort(mods, comparator);
+        Collections.sort(mods, new AddonCompoarator());
 
         boolean needComa = false;
 
@@ -301,5 +280,27 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
         }
 
         return builder;
+    }
+
+    public static class AddonCompoarator implements Comparator<AddonInfo> {
+
+        @Override
+        public int compare(AddonInfo lhs, AddonInfo rhs) {
+            int diff;
+
+            diff = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
+            if (diff != 0)
+                return diff;
+
+            diff = lhs.groupOrderNum - rhs.groupOrderNum;
+            if (diff != 0)
+                return diff;
+
+            diff = lhs.orderNum - rhs.orderNum;
+            if (diff != 0)
+                return diff;
+
+            return  lhs.addonTitle.compareTo(rhs.addonTitle);
+        }
     }
 }

@@ -119,11 +119,6 @@ public class PrintItemsForKitchenProcessor {
                     printer.addAddsOn(modifier);
                 }
             }
-//            if (!TextUtils.isEmpty(item.modifier)){
-////                description = description + ", " + item.modifier;
-//                item.addons.add(item.modifier);
-//            }
-
 
             if (!item.addons.isEmpty()){
                 for (String addon : item.addons){

@@ -3,7 +3,6 @@ package com.kaching123.tcr.print.processor;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
@@ -17,6 +16,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonCompoarator;
 import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
@@ -31,7 +31,6 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -118,21 +117,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                                    BigDecimal itemSubtotal, BigDecimal itemDiscount,
                                    BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note, TaxGroupModel model1, TaxGroupModel model2, BigDecimal loyaltyPoints) {
                 List<String> unitAsStrings = new ArrayList<String>(units.size());
-                Comparator<SaleOrderItemViewModel.AddonInfo> comparator = new Comparator<SaleOrderItemViewModel.AddonInfo>() {
-                    @Override
-                    public int compare(SaleOrderItemViewModel.AddonInfo lhs, SaleOrderItemViewModel.AddonInfo rhs) {
-                        int dif = lhs.addon.type.ordinal() - rhs.addon.type.ordinal();
-                        if (dif != 0)
-                            return dif;
-                        boolean l = TextUtils.isEmpty(lhs.groupName), r = TextUtils.isEmpty(rhs.groupName);
-                        if(l && r) return 0;
-                        if(l) return 1;
-                        if(r) return -1;
-                        return lhs.groupName.compareTo(rhs.groupName);
-                    }
-                };
                 if (addons != null)
-                    Collections.sort(addons, comparator);
+                    Collections.sort(addons, new AddonCompoarator());
                 for (Unit unit : units) {
                     unitAsStrings.add(unit.serialCode);
                 }
