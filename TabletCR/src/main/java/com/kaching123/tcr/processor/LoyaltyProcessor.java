@@ -13,6 +13,7 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.loyalty.LoyaltyFragmentDialog;
 import com.kaching123.tcr.fragment.loyalty.LoyaltyFragmentDialog.LoyaltyDialogListener;
+import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.LoyaltyViewModel;
 import com.kaching123.tcr.model.LoyaltyViewModel.IncentiveExModel;
@@ -122,16 +123,21 @@ public class LoyaltyProcessor {
     }
 
     private void applyGiftCardIncentive(IncentiveExModel incentive){
-        //TODO implement gift card incentives
+        currentIncentive = incentive;
+        ItemExModel item = new ItemExModel(incentive.rewardValue);
+        item.isIncentive = true;
+        item.discountType = DiscountType.VALUE;
+        item.discount = incentive.rewardValue;
+        item.isDiscountable = true;
         banIncentive(incentive.guid);
-        processIncentive();
+        callback.onAddItemRequest(item, null, null, true);
     }
 
     private void applyItemIncentive(IncentiveExModel incentive){
         currentIncentive = incentive;
         ItemExModel item = ItemExModel.loadSync(context, incentive.incentiveItemExModel.item.guid);
         item.isIncentive = true;
-        callback.onAddItemRequest(item, incentive.incentiveItemExModel.price, incentive.incentiveItemExModel.qty);
+        callback.onAddItemRequest(item, incentive.incentiveItemExModel.price, incentive.incentiveItemExModel.qty, false);
     }
 
     public void onItemAddedToOrder(String orderGuid, boolean success){
@@ -175,7 +181,7 @@ public class LoyaltyProcessor {
     }
 
     public interface LoyaltyProcessorCallback {
-        void onAddItemRequest(ItemExModel item, BigDecimal price, BigDecimal qty);
+        void onAddItemRequest(ItemExModel item, BigDecimal price, BigDecimal qty, boolean isGiftCard);
         void onComplete();
     }
 }

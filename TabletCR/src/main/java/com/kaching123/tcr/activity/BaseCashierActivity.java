@@ -1887,7 +1887,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 loyaltyProcessor = LoyaltyProcessor.create(customer.guid, orderGuid);
                 loyaltyProcessor.setCallback(new LoyaltyProcessorCallback() {
                     @Override
-                    public void onAddItemRequest(ItemExModel item, BigDecimal price, BigDecimal qty) {
+                    public void onAddItemRequest(ItemExModel item, BigDecimal price, BigDecimal qty, boolean isGiftCard) {
+                        isGiftCardReload = true;
                         tryToAddItem(item, price, qty, null);
                     }
 
