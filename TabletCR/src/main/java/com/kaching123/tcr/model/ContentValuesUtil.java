@@ -386,6 +386,10 @@ public final class ContentValuesUtil {
         return String.format(Locale.US, "lower(%s)", column);
     }
 
+    public static String _coalesce(String column, String defVal){
+        return String.format(Locale.US, "coalesce(%s, %s)", column, defVal);
+    }
+
     private ContentValuesUtil() {
     }
 }
