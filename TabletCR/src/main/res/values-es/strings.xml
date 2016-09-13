@@ -907,6 +907,7 @@
     <string name="edit_printer_default">Impresora</string>
     <string name="edit_pax_default">pinpad Pax</string>
     <string name="edit_printer_unknown">Desconocido</string>
+    <string name="tender_type_unknown">Desconocido</string>
     <string name="printer_edit_dialog_title">Editar impresora</string>
     <string name="pax_edit_dialog_title">Editar pinpad PAX</string>
     <string name="printer_delete_dialog_title">Borrar Impresora</string>

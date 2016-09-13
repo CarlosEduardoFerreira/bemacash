@@ -1373,6 +1373,7 @@
     <string name="edit_kds_default">Default KDS</string>
     <string name="edit_pax_default">PAX pinpad</string>
     <string name="edit_printer_unknown">&lt;Unknown></string>
+    <string name="tender_type_unknown">Unknown</string>
     <string name="printer_edit_dialog_title">Edit printer</string>
     <string name="kds_edit_dialog_title">Edit KDS</string>
     <string name="pax_edit_dialog_title">Edit PAX pinpad</string>

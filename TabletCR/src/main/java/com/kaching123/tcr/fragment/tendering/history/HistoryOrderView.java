@@ -5,15 +5,16 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EViewGroup;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SaleOrderTipsViewModel.TenderType;
 import com.kaching123.tcr.model.SaleOrderTipsViewModel.TransactionsState;
 import com.kaching123.tcr.util.DateUtils;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -73,7 +74,7 @@ public class HistoryOrderView extends FrameLayout {
         this.date.setText(DateUtils.formatFull(date));
         this.amount.setText(UiHelper.valueOf(total));
         this.cashier.setText(operatorName);
-        this.tenderType.setText(tenderType != null ? tenderType.label : R.string.edit_printer_unknown);
+        this.tenderType.setText(tenderType != null ? tenderType.label : R.string.tender_type_unknown);
         this.prepaid.setText(orderType == OrderType.PREPAID ? R.string.order_status_prepaid_yes : R.string.order_status_prepaid_no);
 
         if (!isTipsEnabled)
