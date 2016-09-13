@@ -44,7 +44,7 @@ public class PrepaidBaseFragmentActivity extends SuperBaseActivity {
         if (mContent != to) {
             mContent = to;
             FragmentTransaction transaction = mFragmentMan.beginTransaction().setCustomAnimations(
-                    R.anim.fragment_slide_left_enter, R.anim.fragment_slide_right_exit);
+                    R.animator.fragment_slide_left_enter, R.animator.fragment_slide_right_exit);
             if (!to.isAdded()) {
                 transaction.hide(from).add(frame, to).commit();
             } else {
