@@ -131,7 +131,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
         try {
 
             PaymentRequest request = new PaymentRequest();
-            request.TransType = TRANS_TYPE_INQUIRY;
+            request.TransType = TRANS_TYPE_SALE;
             preFillRequest(request, transaction);
 
             request.Amount = sAmount;
