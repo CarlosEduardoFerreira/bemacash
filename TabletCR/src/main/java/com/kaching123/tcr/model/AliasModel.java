@@ -1,6 +1,7 @@
 package com.kaching123.tcr.model;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Created by long.jiao on 6.7.16.
@@ -11,6 +12,10 @@ public abstract class AliasModel implements Serializable, IValueModel {
 
     public String guid;
     public String alias;
+
+    public AliasModel(){
+        this.guid = UUID.randomUUID().toString();
+    }
 
     public AliasModel(String guid, String alias) {
         this.guid = guid;

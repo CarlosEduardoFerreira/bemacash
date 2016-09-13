@@ -23,6 +23,7 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickList
 import com.kaching123.tcr.fragment.printeralias.AddEditDialog;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PrinterAliasModel;
+import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
@@ -70,7 +71,7 @@ public class PrinterAliasActivity extends SuperBaseActivity {
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                AddEditDialog.show(PrinterAliasActivity.this, adapter.getItem(i));
+                AddEditDialog.show(PrinterAliasActivity.this, adapter.getItem(i), StartMode.EDIT);
             }
         });
         getSupportLoaderManager().restartLoader(0, null, new PrinterAliasLoader());
@@ -78,7 +79,7 @@ public class PrinterAliasActivity extends SuperBaseActivity {
 
     @OptionsItem
     protected void actionAddSelected(){
-        AddEditDialog.show(this, null);
+        AddEditDialog.show(this, new PrinterAliasModel(), StartMode.ADD);
     }
 
     private class Adapter extends ObjectsCursorAdapter<PrinterAliasModel> implements DragSortListView.RemoveListener {

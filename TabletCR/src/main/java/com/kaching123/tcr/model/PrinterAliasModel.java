@@ -9,6 +9,10 @@ import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
  */
 public class PrinterAliasModel extends AliasModel {
 
+    public PrinterAliasModel() {
+        super();
+    }
+
     public PrinterAliasModel(String guid, String alias) {
         super(guid, alias);
     }

@@ -9,6 +9,10 @@ import com.kaching123.tcr.store.ShopStore;
  */
 public class KDSAliasModel extends AliasModel {
 
+    public KDSAliasModel(){
+        super();
+    }
+
     public KDSAliasModel(String guid, String alias) {
         super(guid, alias);
     }

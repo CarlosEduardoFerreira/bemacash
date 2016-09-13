@@ -10,9 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.store.inventory.AddKDSAliasCommand;
 import com.kaching123.tcr.commands.store.inventory.AddPrinterAliasCommand;
@@ -23,6 +20,11 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.AliasModel;
 import com.kaching123.tcr.model.KDSAliasModel;
 import com.kaching123.tcr.model.PrinterAliasModel;
+import com.kaching123.tcr.model.StartMode;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 /**
  * Created by vkompaniets on 12.02.14.
@@ -34,6 +36,9 @@ public class AddEditDialog extends StyledDialogFragment {
 
     @FragmentArg
     protected AliasModel model;
+
+    @FragmentArg
+    protected StartMode mode;
 
     @ViewById
     protected EditText title;
@@ -71,7 +76,7 @@ public class AddEditDialog extends StyledDialogFragment {
 
     @Override
     protected int getDialogTitle() {
-        return model == null ? R.string.printer_alias_dialog_title_create : R.string.printer_alias_dialog_title_edit;
+        return mode == StartMode.ADD ? R.string.printer_alias_dialog_title_create : R.string.printer_alias_dialog_title_edit;
     }
 
     @Override
@@ -97,7 +102,7 @@ public class AddEditDialog extends StyledDialogFragment {
     private boolean doClick() {
         if (valideForm()){
             String title = this.title.getText().toString().trim();
-            if (model != null){
+            if (mode == StartMode.EDIT){
                 model.alias = title;
                 if(model instanceof PrinterAliasModel)
                     EditPrinterAliasCommand.start(getActivity(), (PrinterAliasModel) model);
@@ -121,8 +126,8 @@ public class AddEditDialog extends StyledDialogFragment {
         return true;
     }
 
-    public static void show (FragmentActivity activity, AliasModel model){
-        DialogUtil.show(activity, DIALOG_NAME, AddEditDialog_.builder().model(model).build());
+    public static void show(FragmentActivity activity, AliasModel model, StartMode mode){
+        DialogUtil.show(activity, DIALOG_NAME, AddEditDialog_.builder().model(model).mode(mode).build());
     }
 
 
