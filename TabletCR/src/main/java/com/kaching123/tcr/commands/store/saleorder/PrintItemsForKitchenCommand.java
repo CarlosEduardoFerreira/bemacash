@@ -3,7 +3,7 @@ package com.kaching123.tcr.commands.store.saleorder;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
@@ -18,8 +18,9 @@ import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.print.printer.PosKitchenPrinter;
 import com.kaching123.tcr.print.processor.PrintItemsForKitchenProcessor;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2;
+import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2.ModifierTable;
+import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2.SaleAddonTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleItemExDelView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleItemExDelView2.SaleItemTable;
 import com.kaching123.tcr.store.ShopStore;
@@ -239,35 +240,20 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         for (ItemInfo item : items) {
             c = ProviderAction
                     .query(URI_MODIFIERS)
-                    .projection(SaleAddonView2.SaleAddonTable.TYPE, ModifierTable.TITLE, ModifierTable.ITEM_GROUP_GUID)
-                    .where(SaleAddonView2.SaleAddonTable.ITEM_GUID + " = ?", item.guid)
+                    .where(SaleAddonTable.ITEM_GUID + " = ?", item.guid)
                     .perform(getContext());
-            ArrayList<SimpleModifier> modifiers = new ArrayList<>();
+            ArrayList<SimpleModifier> modifiers = new ArrayList<>(c.getCount());
             while (c.moveToNext()) {
-                ModifierType type = _modifierType(c, 0);
-                String title = c.getString(1);
-                String groupGuid = c.getString(2);
-                if (type == ModifierType.MODIFIER) {
-                    if(TextUtils.isEmpty(groupGuid)){
-                        modifiers.add(new SimpleModifier(title, null));
-                        continue;
-                    }
-                    Cursor cursor = ProviderAction.query((URI_MODIFIERS_GROUP))
-                            .projection(ShopStore.ModifierGroupTable.TITLE)
-                            .where(ShopStore.ModifierGroupTable.GUID + " = ?", groupGuid)
-                            .perform(getContext());
-                    cursor.moveToFirst();
-                    modifiers.add(new SimpleModifier(title, cursor.getString(0)));
-                    cursor.close();
-                } else if (type == ModifierType.ADDON) {
-                    item.addons.add(title);
-                } else if (type == ModifierType.OPTIONAL) {
-                    item.options.add(title);
-                }
+                ModifierType type = _modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE));
+                String title = c.getString(c.getColumnIndex(ModifierTable.TITLE));
+                int groupOrderNum = c.getInt(c.getColumnIndex(ModifierGroupTable.ORDER_NUM));
+                int orderNum = c.getInt(c.getColumnIndex(ModifierTable.ORDER_NUM));
+
+                modifiers.add(new SimpleModifier(type, title, groupOrderNum, orderNum));
             }
             Collections.sort(modifiers);
-            for(SimpleModifier mod: modifiers)
-                item.modifier.add(mod.title);
+            item.modifiers = modifiers;
+
         }
         if (c != null)
             c.close();
@@ -275,18 +261,36 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         return items;
     }
 
-    class SimpleModifier implements Comparable<SimpleModifier>{
-        String title;
-        String groupTitle;
+    public class SimpleModifier implements Comparable<SimpleModifier>{
+        public ModifierType type;
+        public String title;
+        public int groupOrderNum;
+        public int orderNum;
 
-        public SimpleModifier(String title, String groupTitle){
+        public SimpleModifier(ModifierType type, String title, int groupOrderNum, int orderNum){
+            this.type = type;
             this.title = title;
-            this.groupTitle = groupTitle;
+            this.groupOrderNum = groupOrderNum;
+            this.orderNum = orderNum;
         }
 
         @Override
-        public int compareTo(SimpleModifier another) {
-            return this.groupTitle.compareTo(another.groupTitle);
+        public int compareTo(@NonNull SimpleModifier another) {
+            int diff;
+
+            diff = type.ordinal() - another.type.ordinal();
+            if (diff != 0)
+                return diff;
+
+            diff = groupOrderNum - another.groupOrderNum;
+            if (diff != 0)
+                return diff;
+
+            diff = orderNum - another.orderNum;
+            if (diff != 0)
+                return diff;
+
+            return  title.compareTo(another.title);
         }
     }
 
@@ -383,6 +387,8 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         public BigDecimal printedQty;
         public String printAliasGuid;
         public String notes;
+
+        public ArrayList<SimpleModifier> modifiers;
 
         public ArrayList<String> modifier = new ArrayList<>();
         public ArrayList<String> addons = new ArrayList<String>();

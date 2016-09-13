@@ -10,7 +10,9 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.PrinterInfo;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.ItemInfo;
+import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.SimpleModifier;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
+import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
@@ -129,6 +131,14 @@ public class PrintItemsForKitchenProcessor {
             if (!item.options.isEmpty()){
                 for (String option : item.options){
                     printer.addAddsOn(context.getString(R.string.kitchen_receipt_no_option_prefix) + option);
+                }
+            }
+
+            if (item.modifiers != null && !item.modifiers.isEmpty()){
+                String no = context.getString(R.string.kitchen_receipt_no_option_prefix);
+                for (SimpleModifier modifier : item.modifiers){
+                    String modifierTitle = modifier.type == ModifierType.OPTIONAL ? no + modifier.title : modifier.title;
+                    printer.addAddsOn(modifierTitle);
                 }
             }
 

@@ -16,7 +16,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
-import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonCompoarator;
+import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonComparator;
 import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
@@ -118,7 +118,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                                    BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note, TaxGroupModel model1, TaxGroupModel model2, BigDecimal loyaltyPoints) {
                 List<String> unitAsStrings = new ArrayList<String>(units.size());
                 if (addons != null)
-                    Collections.sort(addons, new AddonCompoarator());
+                    Collections.sort(addons, new AddonComparator());
                 for (Unit unit : units) {
                     unitAsStrings.add(unit.serialCode);
                 }

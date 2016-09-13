@@ -3734,10 +3734,14 @@ public abstract class ShopStore {
         @From(SaleAddonTable.TABLE_NAME)
         String TABLE_SALE_ADDON = "sale_addon_table";
 
-        @Columns({ModifierTable.TITLE, ModifierTable.ITEM_GROUP_GUID})
+        @Columns({ModifierTable.TITLE, ModifierTable.ITEM_GROUP_GUID, ModifierTable.ORDER_NUM})
         @Join(joinTable = ModifierTable.TABLE_NAME, joinColumn = ModifierTable.MODIFIER_GUID,
                 onTableAlias = TABLE_SALE_ADDON, onColumn = SaleAddonTable.ADDON_GUID)
         String TABLE_MODIFIER = "modifier_table";
+
+        @Columns(ModifierGroupTable.ORDER_NUM)
+        @Join(type = Join.Type.LEFT, joinTable = ModifierGroupTable.TABLE_NAME, joinColumn = ModifierGroupTable.GUID, onTableAlias = TABLE_MODIFIER, onColumn = ModifierTable.ITEM_GROUP_GUID)
+        String TABLE_MODIFIER_GROUP = "modifier_group_table";
     }
 
     @SimpleView(InventoryStatusReportView.VIEW_NAME)

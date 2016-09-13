@@ -256,7 +256,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
             return builder;
 
         ArrayList<AddonInfo> mods = modifiers;
-        Collections.sort(mods, new AddonCompoarator());
+        Collections.sort(mods, new AddonComparator());
 
         boolean needComa = false;
 
@@ -282,7 +282,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
         return builder;
     }
 
-    public static class AddonCompoarator implements Comparator<AddonInfo> {
+    public static class AddonComparator implements Comparator<AddonInfo> {
 
         @Override
         public int compare(AddonInfo lhs, AddonInfo rhs) {
