@@ -70,6 +70,10 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         if(getGateway().equals(PaymentGateway.PAX_EBT_CASH) || getGateway().equals(PaymentGateway.PAX_EBT_FOODSTAMP)) {
             cardName = "EBT CARD";
         }
+
+        if(getGateway().equals(PaymentGateway.PAX_GIFT_CARD)) {
+            cardName = "GIFT CARD";
+        }
         //end of hack, needs to be replaced by real detection
 
         amount = new BigDecimal(response.ApprovedAmount).divide(CalculationUtil.ONE_HUNDRED);

@@ -124,20 +124,25 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
             case CREDIT_WITH_TOKEN:
             case PRE_AUTHORIZATION:
                 request.TenderType = TRANSACTION_ID_CREDIT_SALE;
+                request.TransType = TRANS_TYPE_INQUIRY;
                 break;
             case SALEDEBIT:
             case PAX_DEBIT:
                 request.TenderType = TRANSACTION_ID_DEBIT_SALE;
+                request.TransType = TRANS_TYPE_INQUIRY;
                 break;
             case PAX_EBT_FOODSTAMP:
                 request.TenderType = TRANSACTION_ID_EBT_FOODSTAMP_SALE;
+                request.TransType = TRANS_TYPE_INQUIRY;
                 break;
 
             case PAX_EBT_CASH:
                 request.TenderType = TRANSACTION_ID_EBT_CASH_SALE;
+                request.TransType = TRANS_TYPE_INQUIRY;
                 break;
             case PAX_GIFT_CARD:
                 request.TenderType = TRANSACTION_ID_GIFT;
+                request.TransType = TRANS_TYPE_SALE;
                 break;
             default:
                 request.TenderType = 0;

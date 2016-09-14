@@ -84,7 +84,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     protected boolean enableSignatureCheckbox() {
         for (PaymentTransactionModel i : transactions) {
             PaymentGateway gateway = i.gateway;
-            if (gateway != null && gateway.isTrueCreditCard()) {
+            if (gateway != null && gateway.isTrueCreditCard() && gateway.isGiftCard()) {
                 return true;
             }
         }
@@ -116,7 +116,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (!enableSignatureCheckbox() || giftCardResults == null || giftCardResults.size() == 0) {
+        if (!enableSignatureCheckbox()) {
             signatureBox.setEnabled(false);
             signatureBox.setChecked(false);
             signatureBox.setFocusable(false);

@@ -47,5 +47,5 @@ public interface ITransaction {
 
     public BigDecimal getCashBack();
 
-    public BigDecimal getEBTBalance();
+    public BigDecimal getBalance();
 }

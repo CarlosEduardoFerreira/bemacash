@@ -120,7 +120,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.availableAmount = transaction.getAvailableAmount();
         this.isPreauth = transaction.getIsPreauth();
         this.cashBack = transaction.getCashBack();
-        this.balance = transaction.getEBTBalance();
+        this.balance = transaction.getBalance();
     }
 
     public PaymentTransactionModel(String shiftGuid, ITransaction transaction) {
@@ -152,7 +152,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.lastFour = transaction.getLastFour();
         this.availableAmount = transaction.getAvailableAmount();
         this.cashBack = transaction.getCashBack();
-        this.balance = transaction.getEBTBalance();
+        this.balance = transaction.getBalance();
     }
 
     public Transaction toTransaction() {

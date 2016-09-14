@@ -107,7 +107,7 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
         int rId;
 
         sId = PaxProcessorSaleCommand.TRANSACTION_ID_GIFT;
-        rId = PaxProcessorSaleCommand.TRANS_TYPE_RETURN;
+        rId = PaxProcessorSaleCommand.TRANS_TYPE_SALE;
 
         return new PaxGateway(sId, rId, PaxMethod.GIFT);
 
@@ -172,20 +172,20 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
     }
 
     public TaskHandler reload(Context context,
-                            Object callback,
-                            User user,
-                            Void ignore,
-                            Transaction transaction,
-                            Object reloadResponse) {
+                              Object callback,
+                              User user,
+                              Void ignore,
+                              Transaction transaction,
+                              Object reloadResponse) {
         transaction.setCode(TransactionStatusCode.OPERATION_COMPLETED_SUCCESSFULLY);
 
-            return PaxProcessorGiftCardReloadCommand.startSaleFromData(
-                    context,
-                    PaxModel.get(),
-                    transaction,
-                    saleId,
-                    (SaleActionResponse) reloadResponse,
-                    (PaxProcessorGiftCardReloadCommand.PaxGiftCardReloadCallback) callback);
+        return PaxProcessorGiftCardReloadCommand.startSaleFromData(
+                context,
+                PaxModel.get(),
+                transaction,
+                saleId,
+                (SaleActionResponse) reloadResponse,
+                (PaxProcessorGiftCardReloadCommand.PaxGiftCardReloadCallback) callback);
 
     }
 
@@ -317,6 +317,9 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
                 break;
             case EBT_CASH:
                 gateway = PaymentGateway.PAX_EBT_CASH;
+                break;
+            case GIFT:
+                gateway = PaymentGateway.PAX_GIFT_CARD;
                 break;
         }
         return PaxTransactionFactory.create(TcrApplication.get().getOperatorGuid(), orderGuid, gateway, false).setAmount(amount);
