@@ -84,7 +84,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     protected boolean enableSignatureCheckbox() {
         for (PaymentTransactionModel i : transactions) {
             PaymentGateway gateway = i.gateway;
-            if (gateway != null && gateway.isTrueCreditCard() && gateway.isGiftCard()) {
+            if (gateway != null && gateway.isTrueCreditCard()) {
                 return true;
             }
         }
