@@ -83,7 +83,7 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         //TODO PosLink need change to HostCode later.
 //        userTransactionNumber = response.RefNum;
         try {
-            balance = new BigDecimal(response.ExtraBalance).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
+            balance = new BigDecimal(response.RemainingBalance).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
         }
         catch (Exception ex )
         {

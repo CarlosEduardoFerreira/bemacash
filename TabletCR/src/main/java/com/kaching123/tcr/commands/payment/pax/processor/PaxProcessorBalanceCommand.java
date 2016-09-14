@@ -64,7 +64,7 @@ public class PaxProcessorBalanceCommand extends PaxProcessorBaseCommand {
 
             PaymentRequest paymentRequest = new PaymentRequest();
             paymentRequest.TransType = TRANS_TYPE_INQUIRY;
-            paymentRequest.TenderType = EDC_TYPE_EBT;
+            paymentRequest.TenderType = EDC_TYPE_LOYALTY;
             paymentRequest.ECRRefNum = ECRREFNUM_DEFAULT;
 
             PosLink posLink = createPosLink();
