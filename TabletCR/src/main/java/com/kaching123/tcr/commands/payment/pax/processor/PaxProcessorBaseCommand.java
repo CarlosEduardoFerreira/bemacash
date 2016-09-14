@@ -137,7 +137,7 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
                 request.TenderType = TRANSACTION_ID_EBT_CASH_SALE;
                 break;
             case PAX_GIFT_CARD:
-                request.TransType = TRANSACTION_ID_GIFT;
+                request.TenderType = TRANSACTION_ID_GIFT;
                 break;
             default:
                 request.TenderType = 0;

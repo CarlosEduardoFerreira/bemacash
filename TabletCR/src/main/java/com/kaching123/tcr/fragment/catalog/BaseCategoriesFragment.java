@@ -193,7 +193,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
         if (cursor == null || this.listener == null)
             return;
 
-        if (getAdapterView().getCheckedItemPosition() == -1){
+        if (getAdapterView().getCheckedItemPosition() == -1 && getAdapterView().getCount() > 0){
             AbsListView list = getAdapterView();
             ListAdapter adapter = getAdapterView().getAdapter();
             list.performItemClick(adapter.getView(0, null, null), 0, adapter.getItemId(0));
