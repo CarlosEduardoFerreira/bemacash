@@ -18,6 +18,7 @@ import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.print.printer.PosKitchenPrinter;
 import com.kaching123.tcr.print.processor.PrintItemsForKitchenProcessor;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2;
 import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2.ModifierGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleAddonView2.SaleAddonTable;
@@ -245,7 +246,9 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
             ArrayList<SimpleModifier> modifiers = new ArrayList<>(c.getCount());
             while (c.moveToNext()) {
                 ModifierType type = _modifierType(c, c.getColumnIndex(SaleAddonTable.TYPE));
-                String title = c.getString(c.getColumnIndex(ModifierTable.TITLE));
+                String title = c.getString(c.getColumnIndex(SaleAddonView2.ItemTable.DESCRIPTION));
+                if (title == null)
+                    title = c.getString(c.getColumnIndex(ModifierTable.TITLE));
                 int groupOrderNum = c.getInt(c.getColumnIndex(ModifierGroupTable.ORDER_NUM));
                 int orderNum = c.getInt(c.getColumnIndex(ModifierTable.ORDER_NUM));
 

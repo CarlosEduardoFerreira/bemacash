@@ -3742,6 +3742,10 @@ public abstract class ShopStore {
         @Columns(ModifierGroupTable.ORDER_NUM)
         @Join(type = Join.Type.LEFT, joinTable = ModifierGroupTable.TABLE_NAME, joinColumn = ModifierGroupTable.GUID, onTableAlias = TABLE_MODIFIER, onColumn = ModifierTable.ITEM_GROUP_GUID)
         String TABLE_MODIFIER_GROUP = "modifier_group_table";
+
+        @Columns(ItemTable.DESCRIPTION)
+        @Join(type = Join.Type.LEFT, joinTable =  ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ADDON, onColumn = SaleAddonTable.CHILD_ITEM_ID)
+        String TABLE_ITEM = "item_table";
     }
 
     @SimpleView(InventoryStatusReportView.VIEW_NAME)
