@@ -50,6 +50,10 @@ public enum PaymentGateway {
         return this == PAX_EBT_CASH || this == PAX_EBT_FOODSTAMP;
     }
 
+    public boolean isGiftCard() {
+        return this == PAX_GIFT_CARD;
+    }
+
 
 
     public boolean isTrueCreditCard(){ //not ebt, not debit

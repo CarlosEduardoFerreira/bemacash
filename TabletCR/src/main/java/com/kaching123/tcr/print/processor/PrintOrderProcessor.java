@@ -191,7 +191,9 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         });
 
         boolean isEbtPaymentExists = false;
+        boolean isGiftCardPaymnetExists = false;
         BigDecimal ebtBalance = BigDecimal.ZERO;
+        BigDecimal giftCardBalance = BigDecimal.ZERO;
 
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
@@ -204,6 +206,10 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 isEbtPaymentExists = true;
                 ebtBalance = p.balance;
             }
+            if (p.balance != null && p.gateway.isGiftCard()) {
+                isGiftCardPaymnetExists = true;
+                giftCardBalance = p.balance;
+            }
         }
 
         if (isEbtPaymentExists) {
@@ -213,6 +219,10 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         BigDecimal counts = getSaleItemAmount(orderGuid, context);
         if (counts.compareTo(BigDecimal.ZERO) > 0) {
             printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
+        }
+
+        if (isGiftCardPaymnetExists) {
+            printerWrapper.orderFooter(context.getString(R.string.printer_gift_card_balance), new BigDecimal(FormatterUtil.priceFormat(giftCardBalance)), true);
         }
 
         if (prepaidReleaseResults != null)
