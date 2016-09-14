@@ -116,7 +116,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (!enableSignatureCheckbox()) {
+        if (!enableSignatureCheckbox() || giftCardResults == null || giftCardResults.size() == 0) {
             signatureBox.setEnabled(false);
             signatureBox.setChecked(false);
             signatureBox.setFocusable(false);
@@ -136,7 +136,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             printItemsToKitchen(null, false, false, false);
         }
 
-        printBox.setChecked(getApp().getPrintReceiptDefault() );
+        printBox.setChecked(getApp().getPrintReceiptDefault());
         emailBox.setChecked(getApp().getEmailReceiptDefault());
     }
 
