@@ -238,6 +238,8 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                     type.setText("");
                     model.setItem(null);
                     model.childItemGuid = null;
+                    autoApplySelected.setEnabled(false);
+                    childSelected.setEnabled(false);
                 } else {
                     description.setEnabled(false);
                     description.setText(null);
@@ -525,7 +527,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                 // initial edit
                 firstLoad = false;
             } else {
-                childSelected.setChecked(false);
+//                childSelected.setChecked(false);
                 model.setItem(null);
                 qtyEditbox.setText("");
                 qtyEditbox.setEnabled(false);

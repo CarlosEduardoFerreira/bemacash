@@ -237,10 +237,20 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
 
     private CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {
         @Override
-        public void onCollected(ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers, final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit, boolean hasAutoApply) {
+        public void onCollected(final ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers, final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit, boolean hasAutoApply) {
 
             if (hasAutoApply) {
-                tryToAddCheckPriceType(model, getModifiers(modifiers), null, null, price, quantity, unit);
+                ItemsNegativeStockTrackingCommand.start(QuickServiceActivity.this, ItemsNegativeStockTrackingCommand.ItemType.MODIFIER, model.getGuid(),  getModifiers(modifiers), null, null,
+                        new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
+                            @Override
+                            protected void handleSuccess(boolean result) {
+                                if (!result) {
+                                    Toast.makeText(QuickServiceActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                tryToAddCheckPriceType(model, getModifiers(modifiers), null, null, price, quantity, unit);
+                            }
+                        });
                 return;
             }
 
