@@ -162,7 +162,8 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         } else if (PaymentGateway.PAX.equals(gateway)
                 || PaymentGateway.PAX_DEBIT.equals(gateway)
                 || PaymentGateway.PAX_EBT_CASH.equals(gateway)
-                || PaymentGateway.PAX_EBT_FOODSTAMP.equals(gateway)) {
+                || PaymentGateway.PAX_EBT_FOODSTAMP.equals(gateway)
+                || PaymentGateway.PAX_GIFT_CARD.equals(gateway)) {
             result = new PaxTransaction(this).setGateway(gateway);
         } else {
             Assert.assertNotNull(amount);
