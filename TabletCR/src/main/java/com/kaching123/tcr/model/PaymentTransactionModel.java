@@ -227,7 +227,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         v.put(PaymentTransactionTable.AMOUNT, _decimal(amount));
         v.put(PaymentTransactionTable.TYPE, _enum(paymentType));
         v.put(PaymentTransactionTable.STATUS, _enum(status));
-        v.put(PaymentTransactionTable.GATEWAY, _enum(gateway));
+        v.put(PaymentTransactionTable.GATEWAY, _enum(gateway == null ? PaymentGateway.CASH : gateway));
         v.put(PaymentTransactionTable.GATEWAY_PAYMENT_ID, paymentId);
         v.put(PaymentTransactionTable.GATEWAY_PREAUTH_PAYMENT_ID, preauthPaymentId);
         v.put(PaymentTransactionTable.GATEWAY_CLOSED_PERAUTH_GUID, closedPerauthGuid);
