@@ -216,13 +216,13 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(ebtBalance)), true);
         }
 
+        if (isGiftCardPaymnetExists) {
+            printerWrapper.orderFooter(context.getString(R.string.printer_gift_card_balance), new BigDecimal(FormatterUtil.priceFormat(giftCardBalance)), true);
+        }
+
         BigDecimal counts = getSaleItemAmount(orderGuid, context);
         if (counts.compareTo(BigDecimal.ZERO) > 0) {
             printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
-        }
-
-        if (isGiftCardPaymnetExists) {
-            printerWrapper.orderFooter(context.getString(R.string.printer_gift_card_balance), new BigDecimal(FormatterUtil.priceFormat(giftCardBalance)), true);
         }
 
         if (prepaidReleaseResults != null)
