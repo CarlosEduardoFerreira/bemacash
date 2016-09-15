@@ -31,8 +31,6 @@ public class EBTPaymentTypeChooserDialogFragment extends StyledDialogFragment {
         void onEBTCashTypeChosen();
 
         void onEBTFoodStampTypeChosen();
-
-        void onCancal();
     }
 
     @ViewById
@@ -87,7 +85,6 @@ public class EBTPaymentTypeChooserDialogFragment extends StyledDialogFragment {
         return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
-                listener.onCancal();
                 return true;
             }
         };

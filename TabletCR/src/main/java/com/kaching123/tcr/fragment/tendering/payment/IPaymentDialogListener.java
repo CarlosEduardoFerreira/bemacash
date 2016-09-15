@@ -40,7 +40,6 @@ public interface IPaymentDialogListener {
         void onUnitedCancel();
         void onVoidRequested(List<PaymentTransactionModel> transactions);
         void onDataLoaded(BigDecimal alreadyPayed, BigDecimal orderTotal, ArrayList<PaymentTransactionModel> transactions);
-        void onEbtClicked(boolean isClicked);
 
     }
 }

@@ -646,7 +646,6 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
      * Ask the user for the payment method
      */
     private void proceedToTender(final FragmentActivity context, int animation) {
-        callback.onEbtPayment(false);
         proceedToTender(context, animation, singleTenderEnabled);
     }
 
@@ -710,11 +709,6 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                     });
                 } else if (getDisplayBinder(context) != null)
                     getDisplayBinder(context).startCommand(new DisplayPartialTenderCommand(orderTotal, orderTotal.subtract(alreadyPayed)));
-            }
-
-            @Override
-            public void onEbtClicked(boolean isClicked) {
-                callback.onEbtPayment(isClicked);
             }
 
             @Override
@@ -1638,8 +1632,6 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         public void onUpdateOrderList();
 
         public void onPrintComplete();
-
-        public void onEbtPayment(boolean isTaxSwitch);
     }
 
 

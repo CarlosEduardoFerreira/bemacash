@@ -187,11 +187,6 @@ public class PrepaidProcessor {
 
                     }
 
-                    @Override
-                    public void onEbtPayment(boolean isTaxSwitch) {
-
-                    }
-
                 }).setPrepaidMode().init(context);
 
             }

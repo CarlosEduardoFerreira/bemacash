@@ -146,6 +146,9 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     private boolean tryProceed(PaymentMethod method) {
+        if (((!method.equals(PaymentMethod.PAX_EBT_FOODSTAMP) && !method.equals(PaymentMethod.PAX_EBT_CASH))) || completedAmount.compareTo(BigDecimal.ZERO) > 0)
+            btnPaxEbtCash.setVisibility(View.GONE);
+
         final String value = charge.getText().toString();
         BigDecimal entered;
         BigDecimal alreadyPayed = BigDecimal.ZERO;
@@ -341,7 +344,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     @Click
     protected void btnPaxEbtCashClicked() {
 
-        listener.onEbtClicked(true);
         if (orderTotal.compareTo(new BigDecimal(charge.getText().toString().trim())) != 0)
             pressEBTBtn = true;
 
@@ -356,13 +358,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
             public void onEBTFoodStampTypeChosen() {
                 tryProceed(PaymentMethod.PAX_EBT_FOODSTAMP);
                 EBTPaymentTypeChooserDialogFragment.hide(getActivity());
-            }
-
-            @Override
-            public void onCancal() {
-                pressEBTBtn = false;
-                listener.onEbtClicked(false);
-
             }
         });
     }

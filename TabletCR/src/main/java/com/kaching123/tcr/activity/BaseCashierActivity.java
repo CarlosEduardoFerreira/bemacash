@@ -1993,17 +1993,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         });
                     }
 
-                    @Override
-                    public void onEbtPayment(boolean isTaxSwitch) {
-                        UpdateSaleOrderTaxStatusCommand.start(BaseCashierActivity.this, orderGuid, !isTaxSwitch,
-                                new TaxCallback() {
-                                    @Override
-                                    protected void onSuccess(String orderGuid) {
-                                        Logger.d("[SaleOrder] onTaxUpdate");
-                                        totalCostFragment.setOrderGuid(orderGuid);
-                                    }
-                                });
-                    }
                 }).setCustomer(customer);
         setCallback(processor);
         processor.init(this);
