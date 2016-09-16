@@ -821,6 +821,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String EBT_ELIGIBLE = "ebt_eligible";
 
+        @Column(type = Column.Type.TEXT)
+        String TMP_EBT_PAYED = "tmp_ebt_payed";
+
         @Column(type = Column.Type.INTEGER)
         String PRICE_TYPE = "price_type";
 
@@ -890,7 +893,7 @@ public abstract class ShopStore {
                 foreignKey(SaleItemTable.PARENT_GUID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID)
         );
 
-        applyTmpFields(SaleItemTable.TABLE_NAME, SaleItemTable.TMP_REFUND_QUANTITY);
+        applyTmpFields(SaleItemTable.TABLE_NAME, SaleItemTable.TMP_REFUND_QUANTITY, SaleItemTable.TMP_EBT_PAYED);
     }
 
     @Table(SaleAddonTable.TABLE_NAME)

@@ -19,7 +19,6 @@ import com.kaching123.tcr.adapter.BondItemAdapter;
 import com.kaching123.tcr.commands.display.DisplayTenderCommand;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
-import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.CustomEditBox;
@@ -55,8 +54,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     protected CurrencyTextWatcher currencyTextWatcher;
 
     private static final List<Integer> BONDS_LIST = new ArrayList<>();
-
-    protected boolean pressEBTBtn;
 
     static {
         BONDS_LIST.add(1);
@@ -146,9 +143,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     private boolean tryProceed(PaymentMethod method) {
-        if (((!method.equals(PaymentMethod.PAX_EBT_FOODSTAMP) && !method.equals(PaymentMethod.PAX_EBT_CASH))) || completedAmount.compareTo(BigDecimal.ZERO) > 0)
-            btnPaxEbtCash.setVisibility(View.GONE);
-
         final String value = charge.getText().toString();
         BigDecimal entered;
         BigDecimal alreadyPayed = BigDecimal.ZERO;
@@ -343,10 +337,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     @Click
     protected void btnPaxEbtCashClicked() {
-
-        if (orderTotal.compareTo(new BigDecimal(charge.getText().toString().trim())) != 0)
-            pressEBTBtn = true;
-
         EBTPaymentTypeChooserDialogFragment.show(getActivity(), new EBTPaymentTypeChooserDialogFragment.EBTTypeChooseListener() {
             @Override
             public void onEBTCashTypeChosen() {
@@ -390,8 +380,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     @Override
     protected void updateAfterCalculated() {
-        if (pressEBTBtn && completedAmount.compareTo(BigDecimal.ZERO) == 0)
-            return;
         BigDecimal alreadyPayed;
         BigDecimal alreadyEbtPayed;
         if (orderTotal != null && completedEbtAmount != null) {

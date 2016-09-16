@@ -216,7 +216,8 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 _decimal(c, c.getColumnIndex(SaleItemTable.LOYALTY_POINTS)),
                 _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)),
                 c.getString(c.getColumnIndex(SaleItemTable.DISCOUNT_BUNDLE_ID)),
-                _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)));
+                _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)),
+                _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT)));
     }
 
     private AddonInfo readModifier(Cursor c) {

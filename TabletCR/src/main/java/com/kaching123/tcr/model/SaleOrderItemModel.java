@@ -37,6 +37,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     public String parentGuid;
 
     public BigDecimal tmpRefundQty;
+    public BigDecimal tmpEBTpayed;
 
     public BigDecimal finalGrossPrice;
     public BigDecimal finalTax;
@@ -70,7 +71,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               BigDecimal loyaltyPoints,
                               boolean pointsForDollarAmount,
                               String discountBundleId,
-                              boolean isEbtEligible) {
+                              boolean isEbtEligible,
+                              BigDecimal tmpEBTpayed) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -98,6 +100,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.pointsForDollarAmount = pointsForDollarAmount;
         this.discountBundleId = discountBundleId;
         this.isEbtEligible = isEbtEligible;
+        this.tmpEBTpayed = tmpEBTpayed;
     }
 
     public SaleOrderItemModel(String saleItemGuid, String orderGuid, String itemGuid, String description,
@@ -115,7 +118,8 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
                               BigDecimal loyaltyPoints,
                               boolean pointsForDollarAmount,
                               String discountBundleId,
-                              boolean isEbtEligible) {
+                              boolean isEbtEligible,
+                              BigDecimal tmpEBTpayed) {
         this.saleItemGuid = saleItemGuid;
         this.orderGuid = orderGuid;
         this.itemGuid = itemGuid;
@@ -144,6 +148,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         this.pointsForDollarAmount = pointsForDollarAmount;
         this.discountBundleId = discountBundleId;
         this.isEbtEligible = isEbtEligible;
+        this.tmpEBTpayed = tmpEBTpayed;
     }
 
     @Override
