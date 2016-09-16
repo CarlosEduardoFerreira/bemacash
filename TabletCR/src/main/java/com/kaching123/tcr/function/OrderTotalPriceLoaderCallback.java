@@ -48,6 +48,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             SaleItemTable.QUANTITY,
             SaleItemTable.PRICE,
             SaleItemTable.EBT_ELIGIBLE,
+            SaleItemTable.TMP_EBT_PAYED,
             SaleItemTable.DISCOUNTABLE,
             SaleItemTable.DISCOUNT,
             SaleItemTable.DISCOUNT_TYPE,
@@ -166,7 +167,8 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                     _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                     _decimal(c, c.getColumnIndex(SaleItemTable.TAX), BigDecimal.ZERO),
                     _decimal(c, c.getColumnIndex(SaleItemTable.TAX2), BigDecimal.ZERO),
-                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)));
+                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)),
+                    _decimal(c, c.getColumnIndex(SaleItemTable.TMP_EBT_PAYED), BigDecimal.ZERO));
 
             result.map.put(saleItemId, value);
         }

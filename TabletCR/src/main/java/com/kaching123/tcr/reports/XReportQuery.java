@@ -738,7 +738,7 @@ public class XReportQuery {
                              String departmentGuid, String departmentTitle,
                              String categoryGuid, String categoryTitle, boolean isEbtEligible) {
             super(saleItemGiud, itemGiud, description, qty, totalPrice, discountable, discount,
-                    discountType, isTaxable, tax, tax2, isEbtEligible);
+                    discountType, isTaxable, tax, tax2, isEbtEligible, BigDecimal.ZERO);
             this.itemCost = itemCost;
             this.departmentGuid = departmentGuid;
             this.departmentTitle = departmentTitle;

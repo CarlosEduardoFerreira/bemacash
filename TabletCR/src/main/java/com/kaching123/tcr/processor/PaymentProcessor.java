@@ -979,6 +979,9 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             transactionModel.balance = transaction.balance;
             Logger.d("PaymentProcessor.proceedToNotificationBlock(): successful transaction: " + transactionModel);
             PaymentProcessor.this.successfullCCtransactionModels.add(transactionModel);
+            if (transaction.getGateway() == PaymentGateway.PAX_EBT_CASH || transaction.getGateway() == PaymentGateway.PAX_EBT_FOODSTAMP){
+                //cover EBT items
+            }
         }
         proceedToCardPaymentNotification(context, false, success, messageSpannable, transaction, null);
     }
