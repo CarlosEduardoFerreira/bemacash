@@ -48,4 +48,13 @@ public interface ITransaction {
     public BigDecimal getCashBack();
 
     public BigDecimal getBalance();
+
+    public String getApplicationIdentifier();
+
+    public String getResultCode();
+
+    public String getEntryMethod();
+
+    public String getApplicationCryptogramType();
+
 }

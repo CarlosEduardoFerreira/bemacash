@@ -1404,6 +1404,7 @@
     <string name="email_order_title">Email</string>
     <string name="email_order_send_label">Send</string>
     <string name="print_order_copy_header">COPY</string>
+    <string name="print_order_body_sale_subtitle">SALE</string>
     <string name="print_gift_card_balance_header">Gift Card Balance</string>
     <string name="printers_action_add">Add</string>
     <string name="printers_action_search">Search</string>

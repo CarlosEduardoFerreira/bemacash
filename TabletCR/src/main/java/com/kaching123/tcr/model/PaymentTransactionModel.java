@@ -49,6 +49,11 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
     public String closedPerauthGuid;
     public BigDecimal balance;
     public BigDecimal cashBack;
+    public String applicationIdentifier;
+    public String resultCode;
+    public String entryMethod;
+    public String applicationCryptogramType;
+
 
     public boolean allowReload; // tmp var
 
@@ -121,6 +126,10 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.isPreauth = transaction.getIsPreauth();
         this.cashBack = transaction.getCashBack();
         this.balance = transaction.getBalance();
+        this.applicationIdentifier = transaction.getApplicationIdentifier();
+        this.resultCode = transaction.getResultCode();
+        this.entryMethod = transaction.getEntryMethod();
+        this.applicationCryptogramType = transaction.getApplicationCryptogramType();
     }
 
     public PaymentTransactionModel(String shiftGuid, ITransaction transaction) {
@@ -153,6 +162,10 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.availableAmount = transaction.getAvailableAmount();
         this.cashBack = transaction.getCashBack();
         this.balance = transaction.getBalance();
+        this.applicationIdentifier = transaction.getApplicationIdentifier();
+        this.resultCode = transaction.getResultCode();
+        this.entryMethod = transaction.getEntryMethod();
+        this.applicationCryptogramType = transaction.getApplicationCryptogramType();
     }
 
     public Transaction toTransaction() {
@@ -189,6 +202,10 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         result.allowReload = allowReload;
         result.cashBack = cashBack;
         result.balance = balance;
+        result.applicationIdentifier = applicationIdentifier;
+        result.entryMethod = entryMethod;
+        result.applicationCryptogramType = applicationCryptogramType;
+        result.resultCode = resultCode;
         return result;
     }
 
@@ -209,7 +226,11 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
                 .append("\ncardName : ").append(cardName)
                 .append("\nisPreauth : ").append(isPreauth)
                 .append("\ncashBack : ").append(cashBack)
-                .append("\nbalance : ").append(balance);
+                .append("\nbalance : ").append(balance)
+                .append("\napplicationIdentifier : ").append(applicationIdentifier)
+                .append("\nentryMethod : ").append(entryMethod)
+                .append("\nresultCode : ").append(resultCode)
+                .append("\napplicationCryptogramType : ").append(applicationCryptogramType);
         return sb.toString();
     }
 
@@ -241,6 +262,10 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
         v.put(PaymentTransactionTable.CASH_BACK, _decimal(cashBack));
         v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
+        v.put(PaymentTransactionTable.APPLICATION_IDENTIFIER, applicationIdentifier);
+        v.put(PaymentTransactionTable.RESULT_CODE, resultCode);
+        v.put(PaymentTransactionTable.ENTRY_METHOD, entryMethod);
+        v.put(PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE, applicationCryptogramType);
         return v;
     }
 

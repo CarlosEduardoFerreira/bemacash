@@ -80,6 +80,10 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         serviceTransactionNumber = response.RefNum;
         authorizationNumber = response.AuthCode;
         lastFour = response.BogusAccountNum;
+
+        //added for Heartland requirements
+        resultCode = response.ResultCode;
+//        applicationCryptogramType = response.
         //TODO PosLink need change to HostCode later.
 //        userTransactionNumber = response.RefNum;
         try {

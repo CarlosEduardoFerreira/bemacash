@@ -50,6 +50,10 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
     public boolean isPreauth;
     private boolean isClosedPreauth;
     public BigDecimal cashBack;
+    public String applicationIdentifier;
+    public String resultCode;
+    public String entryMethod;
+    public String applicationCryptogramType;
 
     @Expose
     @SerializedName(WebAPI.BlackStoneAPI.REQUEST_PARAM_AMOUNT)
@@ -176,6 +180,26 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
     @Override
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    @Override
+    public String getEntryMethod() {
+        return entryMethod;
+    }
+
+    @Override
+    public String getApplicationCryptogramType() {
+        return applicationCryptogramType;
+    }
+
+    @Override
+    public String getResultCode() {
+        return resultCode;
+    }
+
+    @Override
+    public String getApplicationIdentifier() {
+        return applicationIdentifier;
     }
 
     public void setAvailableAmount(BigDecimal availableValue) {
