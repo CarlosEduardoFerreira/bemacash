@@ -188,6 +188,7 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
         values.put(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT, pointsForDollarAmount);
         values.put(SaleItemTable.DISCOUNT_BUNDLE_ID, discountBundleId);
         values.put(SaleItemTable.EBT_ELIGIBLE,isEbtEligible);
+        values.put(SaleItemTable.TMP_EBT_PAYED, _decimal(tmpEBTpayed, 6));
         return values;
     }
 

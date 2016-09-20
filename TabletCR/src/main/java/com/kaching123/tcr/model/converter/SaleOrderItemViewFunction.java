@@ -61,7 +61,7 @@ public class SaleOrderItemViewFunction implements Function<Cursor, SaleOrderItem
                 _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)),
                 c.getString(c.getColumnIndex(SaleItemTable.DISCOUNT_BUNDLE_ID)),
                 _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)),
-                _decimal(c, c.getColumnIndex(SaleItemTable.TMP_EBT_PAYED), BigDecimal.ZERO));
+                _decimal(c, c.getColumnIndex(SaleItemTable.TMP_EBT_PAYED), 6, BigDecimal.ZERO));
 
         SaleOrderItemAddonModel saleAddon = null;
         String addonGuid = c.getString(c.getColumnIndex(SaleAddonTable.ADDON_GUID));

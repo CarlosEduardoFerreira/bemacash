@@ -37,6 +37,7 @@ import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal2;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
@@ -157,7 +158,7 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
                 _bool(c, c.getColumnIndex(SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT)),
                 c.getString(c.getColumnIndex(SaleItemTable.DISCOUNT_BUNDLE_ID)),
                 _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)),
-                _decimal(c, c.getColumnIndex(SaleItemTable.TMP_EBT_PAYED), BigDecimal.ZERO));
+                _decimal2(c, c.getColumnIndex(SaleItemTable.TMP_EBT_PAYED), 6, BigDecimal.ZERO));
     }
 
     private AddonInfo readModifier(Cursor c) {

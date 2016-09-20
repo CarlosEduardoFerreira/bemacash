@@ -21,6 +21,7 @@ import com.kaching123.tcr.util.CalculationUtil;
 import com.telly.groundy.TaskResult;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -151,13 +152,13 @@ public class CoverEBTitemsCommand extends AsyncCommand {
         BigDecimal totalAmount;
         BigDecimal coveredAmount;
 
-        public CoverInfo(BigDecimal totalAmount, BigDecimal coveredAmount) {
+        CoverInfo(BigDecimal totalAmount, BigDecimal coveredAmount) {
             this.totalAmount = totalAmount;
             this.coveredAmount = coveredAmount;
         }
 
         BigDecimal getCoverCoefficient(){
-            return coveredAmount.divide(totalAmount, 6, BigDecimal.ROUND_HALF_EVEN);
+            return coveredAmount.divide(totalAmount, 6, RoundingMode.HALF_UP);
         }
     }
 

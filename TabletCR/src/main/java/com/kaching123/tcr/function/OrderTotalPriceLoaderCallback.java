@@ -27,6 +27,7 @@ import java.math.RoundingMode;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal2;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
@@ -168,7 +169,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                     _decimal(c, c.getColumnIndex(SaleItemTable.TAX), BigDecimal.ZERO),
                     _decimal(c, c.getColumnIndex(SaleItemTable.TAX2), BigDecimal.ZERO),
                     _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)),
-                    _decimal(c, c.getColumnIndex(SaleItemTable.TMP_EBT_PAYED), BigDecimal.ZERO));
+                    _decimal2(c, c.getColumnIndex(SaleItemTable.TMP_EBT_PAYED), 6, BigDecimal.ZERO));
 
             result.map.put(saleItemId, value);
         }
