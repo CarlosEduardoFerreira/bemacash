@@ -323,6 +323,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private PaymentProcessor processor;
     private LoyaltyProcessor loyaltyProcessor;
+    private boolean isItemFromLoyalty;
     private ArrayList<PaymentTransactionModel> successfullCCtransactionModels;
     private List<SaleOrderItemViewModel> prepaidList;
     private List<SaleOrderItemViewModel> giftcardList;
@@ -1899,6 +1900,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 loyaltyProcessor.setCallback(new LoyaltyProcessorCallback() {
                     @Override
                     public void onAddItemRequest(ItemExModel item, BigDecimal price, BigDecimal qty, boolean isGiftCard) {
+                        isItemFromLoyalty = true;
                         isGiftCardReload = isGiftCard;
                         tryToAddItem(item, price, qty, null);
                     }
@@ -2016,7 +2018,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (loyaltyProcessor == null)
             return;
 
-        loyaltyProcessor.onItemAddedToOrder(orderGuid, success);
+        if (isItemFromLoyalty){
+            loyaltyProcessor.onItemAddedToOrder(orderGuid, success);
+            isItemFromLoyalty = false;
+        }
     }
 
     public void updateItemCountMsg() {
@@ -2865,7 +2870,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    public class AddItem2SaleOrderCallback extends BaseAddItem2SaleOrderCallback {
+    private class AddItem2SaleOrderCallback extends BaseAddItem2SaleOrderCallback {
 
         @Override
         protected void onItemAdded(final SaleOrderItemModel item) {
