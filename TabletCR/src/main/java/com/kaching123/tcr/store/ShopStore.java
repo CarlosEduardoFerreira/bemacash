@@ -893,7 +893,7 @@ public abstract class ShopStore {
                 foreignKey(SaleItemTable.PARENT_GUID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID)
         );
 
-        applyTmpFields(SaleItemTable.TABLE_NAME, SaleItemTable.TMP_REFUND_QUANTITY, SaleItemTable.TMP_EBT_PAYED);
+        applyTmpFields(SaleItemTable.TABLE_NAME, SaleItemTable.TMP_REFUND_QUANTITY);
     }
 
     @Table(SaleAddonTable.TABLE_NAME)

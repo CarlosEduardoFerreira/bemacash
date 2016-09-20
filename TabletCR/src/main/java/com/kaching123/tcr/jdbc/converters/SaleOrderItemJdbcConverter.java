@@ -79,7 +79,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT),
                 rs.getString(DISCOUNT_BUNDLE_ID),
                 rs.getBoolean(EBT_ELIGIBLE),
-                BigDecimal.ZERO);
+                null);
     }
 
     @Override
