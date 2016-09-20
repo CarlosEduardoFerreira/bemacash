@@ -136,9 +136,10 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         btnPaxDebit.setVisibility(getApp().isPaxConfigured() &&
                 getApp().isDebitCardEnabled() ? View.VISIBLE : View.GONE);
         btnPaxEbtCash.setVisibility(orderEbtTotal != null
-                && !orderEbtTotal.equals(BigDecimal.ZERO)
+                && orderEbtTotal.subtract(completedEbtAmount).compareTo(BigDecimal.ZERO) > 0
                 && getApp().isPaxConfigured()
-                && getApp().isEbtEnabled() ? View.VISIBLE : View.GONE);
+                && getApp().isEbtEnabled()
+                && !hasNonEbtTransactions ? View.VISIBLE : View.GONE);
 
         btnOfflineCredit.setVisibility(getApp().isOfflineCreditEnabled() ? View.VISIBLE : View.GONE);
         btnCheck.setVisibility(getApp().isCheckEnabled() ? View.VISIBLE : View.GONE);

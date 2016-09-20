@@ -100,16 +100,13 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     protected BigDecimal completedAmount = BigDecimal.ZERO;
     protected BigDecimal completedEbtAmount = BigDecimal.ZERO;
 
+    //we forbid EBT payments if other type of payment was done
+    protected boolean hasNonEbtTransactions;
+
     protected int customAnimationResource;
-    //    protected BigDecimal completedNotEbtAmount = BigDecimal.ZERO;
-//    protected BigDecimal ebtWithTax;
-//    protected BigDecimal ebtPartialTax = BigDecimal.ONE;
 
     protected ArrayList<PaymentTransactionModel> saleOrderModels = new ArrayList<>();
     protected ArrayList<PaymentTransactionModel> fakeTransactions = new ArrayList<>();
-
-//    private boolean isCashTheFirstTransaction;
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -175,6 +172,8 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
 
                 if (transaction.cardName.contains("EBT")) {
                     completedEbtAmount = completedEbtAmount.add(transaction.availableAmount);
+                }else{
+                    hasNonEbtTransactions = true;
                 }
                 completedAmount = completedAmount.add(transaction.availableAmount);
             }
@@ -301,28 +300,6 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     private void setZero() {
         showPrice(this.total, BigDecimal.ZERO);
     }
-
-    /*protected void calcTotalWithEbt(BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal totalItemTotal, BigDecimal totalTaxVatValue,
-                                    BigDecimal totalEbtTaxVatValue, BigDecimal transactionFee) {
-        //totalOrder = totalNoEbt+totalEbt+totalNoEbtTax+totalEbtTax
-        // -completedEbt-completedEbtTaxKoef*completedEbtTax
-        // = totalNoEbt+totalEbt+totalNoEbtTax+totalEbtTax
-        // - completedEbt*(1+completedEbtTaxKoef)
-
-        if (!totalOrderEbtPrice.equals(BigDecimal.ZERO) && totalEbtTaxVatValue.compareTo(BigDecimal.ZERO) > 0 && totalOrderEbtPrice.compareTo(BigDecimal.ZERO) > 0) {
-            ebtPartialTax = totalEbtTaxVatValue.divide(totalOrderEbtPrice, 2, BigDecimal.ROUND_HALF_UP);
-        }
-
-        ebtWithTax = completedEbtAmount.multiply(ebtPartialTax);
-        Logger.d("ebtWithTax = " + completedEbtAmount);
-        Logger.d("ebtWithTax = " + ebtWithTax);
-
-        Logger.d("ebtWithTax 2 completedAmount= " + completedAmount);
-
-        completedAmount = completedAmount.add(ebtWithTax);
-
-        calcTotal(totalOrderPrice.add(transactionFee), totalOrderEbtPrice);
-    }*/
 
     protected void calcTotal(BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice) {
         showPrice(this.total, orderTotal = totalOrderPrice);
