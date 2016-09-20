@@ -156,9 +156,18 @@ public class TotalCostFragment extends Fragment {
     private void updateClickable(boolean clickable) {
         btnHold.setEnabled(!isCreateReturnOrder && clickable);
         btnVoid.setEnabled(clickable);
-        btnPay.setEnabled(clickable);
         taxBlock.setEnabled(clickable);
         orderDiscountBlock.setEnabled(clickable);
+        btnPay.setEnabled(clickable && (!isCreateReturnOrder || getItemCount() > 0));
+    }
+
+    private int getItemCount(){
+        OrderItemListFragment fr = (OrderItemListFragment) getFragmentManager().findFragmentById(R.id.order_item_list_fragment);
+        if (fr == null){
+            return 0;
+        }else{
+            return fr.getListAdapter().getCount();
+        }
     }
 
     private void calcTotal(
@@ -189,13 +198,6 @@ public class TotalCostFragment extends Fragment {
 
         this.orderTotalVal = totalOrderPrice;
         showPrice(this.orderTotal, totalOrderPrice);
-        if (BigDecimal.ZERO.compareTo(totalItemTotal) != 0 && BigDecimal.ZERO.compareTo(totalOrderPrice) != -1) {
-            this.orderTotal.setTextColor(taxColorEmpty);
-            this.btnPay.setEnabled(false);
-        } else {
-            this.orderTotal.setTextColor(taxColorNormal);
-            this.btnPay.setEnabled(true);
-        }
     }
 
     public BigDecimal getOrderTotal() {
