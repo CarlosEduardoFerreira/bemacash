@@ -85,7 +85,7 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
         for (int i = 0; i < size; i++){
             for (int j = i + 1; j < size; j++){
                 if (checkedModels.get(i).isOverlapping(checkedModels.get(j))){
-                    Toast.makeText(getActivity(), "Special price overlapping", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.special_price_overlapping_msg, Toast.LENGTH_SHORT).show();
                     return false;
                 }
             }

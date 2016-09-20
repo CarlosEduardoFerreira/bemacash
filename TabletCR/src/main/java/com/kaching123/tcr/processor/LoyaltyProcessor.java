@@ -147,7 +147,7 @@ public class LoyaltyProcessor {
         if (success){
             addSaleIncentive(currentIncentive);
         }else{
-            Toast.makeText(context, "Failed to add item", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.item_add_fail_msg, Toast.LENGTH_SHORT).show();
             startCircle();
         }
     }

@@ -201,7 +201,7 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
 
     private void onSerialQtyClicked() {
         if (getItemProvider().isCreate()) {
-            Toast.makeText(getActivity(), "Item should be saved first", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.save_item_first_msg_2, Toast.LENGTH_SHORT).show();
         } else {
             UnitActivity.start(getActivity(), getModel(), BaseItemActivity2.TAG_RESULT_SERIAL);
         }

@@ -358,7 +358,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @Override
     public void onBackPressed() {
         if (changesInSubActivitiesDone){
-            Toast.makeText(self(), "You must save changes before leave this screen", Toast.LENGTH_LONG).show();
+            Toast.makeText(self(), R.string.save_item_first_msg, Toast.LENGTH_LONG).show();
             return;
         }else{
             super.onBackPressed();
