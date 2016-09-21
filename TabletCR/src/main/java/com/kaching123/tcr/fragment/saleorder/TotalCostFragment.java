@@ -170,6 +170,7 @@ public class TotalCostFragment extends Fragment {
         }
     }
 
+
     private void calcTotal(
             boolean taxable,
             BigDecimal orderDiscountVal,
@@ -198,6 +199,11 @@ public class TotalCostFragment extends Fragment {
 
         this.orderTotalVal = totalOrderPrice;
         showPrice(this.orderTotal, totalOrderPrice);
+
+        //in regular case we allow to proceed 0-price order; in return order we don't
+        if (isCreateReturnOrder){
+            this.btnPay.setEnabled(BigDecimal.ZERO.compareTo(totalOrderPrice) == -1);
+        }
     }
 
     public BigDecimal getOrderTotal() {
