@@ -288,7 +288,8 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
                     BigDecimal totalTaxVatValue,
                     BigDecimal totalEbtTaxVatValue,
                     BigDecimal totalItemDiscount,
-                    BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice,
+                    BigDecimal totalOrderPrice,
+                    BigDecimal totalOrderEbtPrice,
                     BigDecimal availableDiscount,
                     BigDecimal transactionFee) {
 
