@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.tendering.history.TransactionHistoryMiniFragment.ITransactionHistoryMiniFragmentLoader;
 import com.kaching123.tcr.fragment.tendering.history.TransactionHistoryMiniFragment_;
@@ -93,21 +92,21 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     protected String orderGuid;
     protected OrderType orderType;
 
+    //comes from SaleItems
     protected BigDecimal orderTotal;
     protected BigDecimal orderEbtTotal;
-    protected int customAnimationResource;
 
+    //comes from PaymentTransactions
     protected BigDecimal completedAmount = BigDecimal.ZERO;
-    protected BigDecimal completedNotEbtAmount = BigDecimal.ZERO;
     protected BigDecimal completedEbtAmount = BigDecimal.ZERO;
-    protected BigDecimal ebtWithTax;
-    protected BigDecimal ebtPartialTax = BigDecimal.ONE;
+
+    //we forbid EBT payments if other type of payment was done
+    protected boolean hasNonEbtTransactions;
+
+    protected int customAnimationResource;
 
     protected ArrayList<PaymentTransactionModel> saleOrderModels = new ArrayList<>();
     protected ArrayList<PaymentTransactionModel> fakeTransactions = new ArrayList<>();
-
-    private boolean isCashTheFirstTransaction;
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -163,7 +162,8 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
         for (PaymentTransactionModel saleOrderModel : loaded) {
             this.saleOrderModels.add(saleOrderModel);
         }
-        completedNotEbtAmount = BigDecimal.ZERO;
+        completedAmount = BigDecimal.ZERO;
+        completedEbtAmount = BigDecimal.ZERO;
         for (PaymentTransactionModel transaction : saleOrderModels) {
             if (transaction.status.isSuccessful()
                     && BigDecimal.ZERO.compareTo(transaction.availableAmount) < 0
@@ -172,20 +172,13 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
 
                 if (transaction.cardName.contains("EBT")) {
                     completedEbtAmount = completedEbtAmount.add(transaction.availableAmount);
-                } else {
-                    completedNotEbtAmount = completedNotEbtAmount.add(transaction.availableAmount);
+                }else{
+                    hasNonEbtTransactions = true;
                 }
+                completedAmount = completedAmount.add(transaction.availableAmount);
             }
         }
-        isCashTheFirstTransaction = saleOrderModels != null && saleOrderModels.size() > 0
-                && saleOrderModels.get(0).gateway.equals(PaymentGateway.CASH);
-
-        completedAmount = completedAmount.add(completedNotEbtAmount);
-        completedAmount = completedAmount.add(completedEbtAmount);
-        Logger.d("ebtWithTax 1 completedAmount= " + completedAmount);
-
         calculateDlgHeight();
-        Logger.d("-= Loading reached level 1 =-");
         onLoadComplete();
     }
 
@@ -210,7 +203,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     }
 
     protected boolean hasCompletedTransactions() {
-        return BigDecimal.ZERO.compareTo(completedNotEbtAmount) < 0;
+        return BigDecimal.ZERO.compareTo(completedAmount) < 0;
     }
 
     protected void enable(final boolean on) {
@@ -293,44 +286,19 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
                     BigDecimal orderDiscountVal,
                     BigDecimal totalItemTotal,
                     BigDecimal totalTaxVatValue,
-                    BigDecimal totalEbtTaxVatValue,
                     BigDecimal totalItemDiscount,
-                    BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice,
+                    BigDecimal totalOrderPrice,
+                    BigDecimal totalOrderEbtPrice,
                     BigDecimal availableDiscount,
                     BigDecimal transactionFee) {
-                Logger.d("-= Loading reached level 2 =-");
-                //  calcTotal(totalOrderPrice.add(transactionFee), totalOrderEbtPrice);
-                calcTotalWithEbt(totalOrderPrice, totalOrderEbtPrice, totalItemTotal, totalTaxVatValue,
-                        totalEbtTaxVatValue, transactionFee);
 
+                calcTotal(totalOrderPrice.add(transactionFee), totalOrderEbtPrice);
             }
         });
     }
 
     private void setZero() {
         showPrice(this.total, BigDecimal.ZERO);
-    }
-
-    protected void calcTotalWithEbt(BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal totalItemTotal, BigDecimal totalTaxVatValue,
-                                    BigDecimal totalEbtTaxVatValue, BigDecimal transactionFee) {
-        //totalOrder = totalNoEbt+totalEbt+totalNoEbtTax+totalEbtTax
-        // -completedEbt-completedEbtTaxKoef*completedEbtTax
-        // = totalNoEbt+totalEbt+totalNoEbtTax+totalEbtTax
-        // - completedEbt*(1+completedEbtTaxKoef)
-
-        if (!totalOrderEbtPrice.equals(BigDecimal.ZERO) && totalEbtTaxVatValue.compareTo(BigDecimal.ZERO) > 0 && totalOrderEbtPrice.compareTo(BigDecimal.ZERO) > 0) {
-            ebtPartialTax = totalEbtTaxVatValue.divide(totalOrderEbtPrice, 2, BigDecimal.ROUND_HALF_UP);
-        }
-
-        ebtWithTax = completedEbtAmount.multiply(ebtPartialTax);
-        Logger.d("ebtWithTax = " + completedEbtAmount);
-        Logger.d("ebtWithTax = " + ebtWithTax);
-
-        Logger.d("ebtWithTax 2 completedAmount= " + completedAmount);
-
-        completedAmount = completedAmount.add(ebtWithTax);
-
-        calcTotal(totalOrderPrice.add(transactionFee), totalOrderEbtPrice);
     }
 
     protected void calcTotal(BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice) {
@@ -342,12 +310,4 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
     }
 
     protected abstract void updateAfterCalculated();
-
-    protected boolean isCashTheFirstTransaction() {
-        return isCashTheFirstTransaction;
-    }
-
-    protected int transactionsAmount() {
-        return saleOrderModels.size();
-    }
 }

@@ -19,6 +19,8 @@ import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.model.payment.MovementType;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -183,6 +185,18 @@ public final class ContentValuesUtil {
             Logger.e("Parse number error", e);
         }
         return def;
+    }
+
+    public static BigDecimal _decimal2(Cursor c, int columnIndex, int scale, BigDecimal def){
+        String value = c.getString(columnIndex);
+        if (TextUtils.isEmpty(value))
+            return def;
+        MathContext mc = new MathContext(scale, RoundingMode.HALF_UP);
+        try {
+            return new BigDecimal(value, mc);
+        } catch (Exception e) {
+            return def;
+        }
     }
 
     public static ContentValues _putItemRefType(ContentValues v, String key, ItemRefType itemRefType) {

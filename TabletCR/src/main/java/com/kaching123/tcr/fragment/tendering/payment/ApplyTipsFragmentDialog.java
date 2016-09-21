@@ -159,7 +159,7 @@ public class ApplyTipsFragmentDialog extends KeyboardDialogFragment {
 
             @Override
             public void onCalcTotal(boolean isTaxableOrder, BigDecimal orderDiscount, DiscountType orderDiscountType, BigDecimal orderDiscountVal, BigDecimal totalItemTotal,
-                                    BigDecimal totalTaxVatValue, BigDecimal totalEbtTaxVatValue, BigDecimal totalItemDiscount, BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal availableDiscount, BigDecimal transactionFee) {
+                                    BigDecimal totalTaxVatValue, BigDecimal totalItemDiscount, BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal availableDiscount, BigDecimal transactionFee) {
                 setOrderPrice(totalOrderPrice, totalTaxVatValue);
             }
         };

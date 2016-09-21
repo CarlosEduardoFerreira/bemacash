@@ -1742,7 +1742,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 model.isIncentive || model.excludeFromLoyaltyPlan ? BigDecimal.ZERO : model.loyaltyPoints,
                 model.isIncentive || model.excludeFromLoyaltyPlan ? false : getApp().getShopInfo().loyaltyPointsForDollarAmount,
                 null,
-                model.isEbtEligible);
+                model.isEbtEligible,
+                BigDecimal.ZERO
+        );
 
         if (unit != null && orderGuid != null) {
             unit.orderId = orderGuid;

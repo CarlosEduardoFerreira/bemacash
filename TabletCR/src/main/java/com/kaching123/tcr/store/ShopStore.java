@@ -821,6 +821,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String EBT_ELIGIBLE = "ebt_eligible";
 
+        @Column(type = Column.Type.TEXT)
+        String TMP_EBT_PAYED = "tmp_ebt_payed";
+
         @Column(type = Column.Type.INTEGER)
         String PRICE_TYPE = "price_type";
 

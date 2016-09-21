@@ -78,7 +78,8 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBigDecimal(LOYALTY_POINTS),
                 rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT),
                 rs.getString(DISCOUNT_BUNDLE_ID),
-                rs.getBoolean(EBT_ELIGIBLE));
+                rs.getBoolean(EBT_ELIGIBLE),
+                null);
     }
 
     @Override

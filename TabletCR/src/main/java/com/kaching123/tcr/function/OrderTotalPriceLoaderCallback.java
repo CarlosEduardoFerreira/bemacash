@@ -27,6 +27,7 @@ import java.math.RoundingMode;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal2;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
@@ -48,6 +49,7 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             SaleItemTable.QUANTITY,
             SaleItemTable.PRICE,
             SaleItemTable.EBT_ELIGIBLE,
+            SaleItemTable.TMP_EBT_PAYED,
             SaleItemTable.DISCOUNTABLE,
             SaleItemTable.DISCOUNT,
             SaleItemTable.DISCOUNT_TYPE,
@@ -102,7 +104,6 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             BigDecimal orderDiscount, DiscountType orderDiscountType, BigDecimal orderDiscountVal,
             BigDecimal totalItemTotal,
             BigDecimal totalTaxVatValue,
-            BigDecimal totalEbtTaxVatValue,
             BigDecimal totalItemDiscount,
             BigDecimal totalOrderPrice,
             BigDecimal totalOrderEbtPrice,
@@ -124,9 +125,11 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                 result.tmpOderDiscountVal,
                 result.subTotalItemTotal,
                 result.totalTaxVatValue,
-                result.totalEbtTaxVatValue,
                 result.totalItemDiscount,
-                result.totalOrderPrice.setScale(2, RoundingMode.HALF_UP), result.totalOrderEbtPrice, result.totalDiscountableItemTotal, info.transactionFee);
+                result.totalOrderPrice.setScale(2, RoundingMode.HALF_UP),
+                result.totalOrderEbtPrice,
+                result.totalDiscountableItemTotal,
+                info.transactionFee);
     }
 
     public static SaleOrderInfo readCursor(Cursor c) {
@@ -166,7 +169,8 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                     _bool(c, c.getColumnIndex(SaleItemTable.TAXABLE)),
                     _decimal(c, c.getColumnIndex(SaleItemTable.TAX), BigDecimal.ZERO),
                     _decimal(c, c.getColumnIndex(SaleItemTable.TAX2), BigDecimal.ZERO),
-                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)));
+                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)),
+                    _decimal2(c, c.getColumnIndex(SaleItemTable.TMP_EBT_PAYED), 6, BigDecimal.ZERO));
 
             result.map.put(saleItemId, value);
         }
