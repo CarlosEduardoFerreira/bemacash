@@ -181,7 +181,7 @@ public class CustomerPickerExtremeFragment extends ChooseCustomerBaseDialog {
             @Override
             public void onCalcTotal(boolean isTaxableOrder, BigDecimal orderDiscount, DiscountType orderDiscountType,
                                     BigDecimal orderDiscountVal, BigDecimal totalItemTotal,
-                                    BigDecimal totalTaxVatValue, BigDecimal totalEbtTaxVatValue,BigDecimal totalItemDiscount,
+                                    BigDecimal totalTaxVatValue, BigDecimal totalItemDiscount,
                                     BigDecimal totalOrderPrice, BigDecimal totalOrderEbtPrice, BigDecimal availableDiscount, BigDecimal transactionFee) {
                 if (threshold = (totalOrderPrice != null && totalOrderPrice.compareTo(TRESHOLD) >= 0)) {
                     getNeutralButton().setEnabled(false);

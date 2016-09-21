@@ -104,7 +104,6 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
             BigDecimal orderDiscount, DiscountType orderDiscountType, BigDecimal orderDiscountVal,
             BigDecimal totalItemTotal,
             BigDecimal totalTaxVatValue,
-            BigDecimal totalEbtTaxVatValue,
             BigDecimal totalItemDiscount,
             BigDecimal totalOrderPrice,
             BigDecimal totalOrderEbtPrice,
@@ -126,9 +125,11 @@ public abstract class OrderTotalPriceLoaderCallback implements LoaderManager.Loa
                 result.tmpOderDiscountVal,
                 result.subTotalItemTotal,
                 result.totalTaxVatValue,
-                result.totalEbtTaxVatValue,
                 result.totalItemDiscount,
-                result.totalOrderPrice.setScale(2, RoundingMode.HALF_UP), result.totalOrderEbtPrice, result.totalDiscountableItemTotal, info.transactionFee);
+                result.totalOrderPrice.setScale(2, RoundingMode.HALF_UP),
+                result.totalOrderEbtPrice,
+                result.totalDiscountableItemTotal,
+                info.transactionFee);
     }
 
     public static SaleOrderInfo readCursor(Cursor c) {

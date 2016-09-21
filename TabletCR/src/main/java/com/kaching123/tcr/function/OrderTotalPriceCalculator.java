@@ -176,7 +176,6 @@ public final class OrderTotalPriceCalculator {
 
         }
         BigDecimal totalTaxVatValue = totalOrderPrice.subtract(subTotalItemTotal).add(totalItemDiscount).add(tmpOderDiscountVal);
-        BigDecimal totalEbtTaxVatValue = totalEbtOrderPrice.subtract(subTotalItemEbtTotal);
 
         Logger.d("TotalCost: --------------------- ");
         Logger.d("TotalCost: itemSubTotal:\t%s", subTotalItemTotal);
@@ -189,7 +188,7 @@ public final class OrderTotalPriceCalculator {
 
 
         return new SaleOrderCostInfo(info.isTaxableOrder, orderDiscount, orderDiscountType, tmpOderDiscountVal,
-                subTotalItemTotal, totalTaxVatValue, totalItemDiscount, totalOrderPrice, totalDiscountableItemTotal, subTotalItemEbtTotal, totalEbtTaxVatValue);
+                subTotalItemTotal, totalTaxVatValue, totalItemDiscount, totalOrderPrice, totalDiscountableItemTotal, subTotalItemEbtTotal);
     }
 
     private static ArrayList<CalcItemInfo> calcItemOrderDiscount(HashMap<String, SaleItemInfo> map, BigDecimal tmpOderDiscountVal, BigDecimal tmpOderDiscountPercent, Handler2 handler2) {
@@ -448,7 +447,6 @@ public final class OrderTotalPriceCalculator {
         public final BigDecimal tmpOderDiscountVal;
         public final BigDecimal subTotalItemTotal;
         public final BigDecimal totalTaxVatValue;
-        public final BigDecimal totalEbtTaxVatValue;
         public final BigDecimal totalItemDiscount;
         public final BigDecimal totalOrderPrice;
         public final BigDecimal totalOrderEbtPrice;
@@ -456,7 +454,7 @@ public final class OrderTotalPriceCalculator {
 
         public SaleOrderCostInfo(boolean isTaxableOrder, BigDecimal orderDiscount, DiscountType orderDiscountType,
                                  BigDecimal tmpOderDiscountVal, BigDecimal subTotalItemTotal, BigDecimal totalTaxVatValue,
-                                 BigDecimal totalItemDiscount, BigDecimal totalOrderPrice, BigDecimal totalDiscountableItemTotal, BigDecimal totalOrderEbtPrice, BigDecimal totalEbtTaxVatValue) {
+                                 BigDecimal totalItemDiscount, BigDecimal totalOrderPrice, BigDecimal totalDiscountableItemTotal, BigDecimal totalOrderEbtPrice) {
             this.isTaxableOrder = isTaxableOrder;
             this.orderDiscount = orderDiscount;
             this.orderDiscountType = orderDiscountType;
@@ -467,7 +465,6 @@ public final class OrderTotalPriceCalculator {
             this.totalOrderPrice = totalOrderPrice;
             this.totalDiscountableItemTotal = totalDiscountableItemTotal;
             this.totalOrderEbtPrice = totalOrderEbtPrice;
-            this.totalEbtTaxVatValue = totalEbtTaxVatValue;
         }
 
         public BigDecimal getOrderDiscount() {

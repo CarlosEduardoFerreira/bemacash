@@ -122,7 +122,6 @@ public class TotalCostFragment extends Fragment {
                     BigDecimal orderDiscountVal,
                     BigDecimal totalItemTotal,
                     BigDecimal totalTaxVatValue,
-                    BigDecimal totalEbtTaxVatValue,
                     BigDecimal totalItemDiscount,
                     BigDecimal totalOrderPrice,
                     BigDecimal totalOrderEbtPrice,
