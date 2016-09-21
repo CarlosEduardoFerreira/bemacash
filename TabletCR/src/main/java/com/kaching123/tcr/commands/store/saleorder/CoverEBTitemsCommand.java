@@ -53,6 +53,7 @@ public class CoverEBTitemsCommand extends AsyncCommand {
         List<ItemInfo> items = loadEbtItems(getContext(), orderId);
         HashMap<String, CoverInfo> covers = new HashMap<>();
         for (ItemInfo item : items){
+            BigDecimal alreadyCoveredAmount = item.ebtCovered.multiply(item.finalTotalPriceNoTax);
             BigDecimal amount2Cover = BigDecimal.ONE.subtract(item.ebtCovered).multiply(item.finalTotalPriceNoTax);
             if (amount.compareTo(amount2Cover) < 0)
                 amount2Cover = amount;
@@ -62,7 +63,7 @@ public class CoverEBTitemsCommand extends AsyncCommand {
                 covers.put(item.saleItemId, cover);
             }
             cover.totalAmount = cover.totalAmount.add(item.finalTotalPriceNoTax);
-            cover.coveredAmount = cover.coveredAmount.add(amount2Cover);
+            cover.coveredAmount = cover.coveredAmount.add(alreadyCoveredAmount).add(amount2Cover);
 
             amount = amount.subtract(amount2Cover);
             if (amount.compareTo(BigDecimal.ZERO) <=0)
