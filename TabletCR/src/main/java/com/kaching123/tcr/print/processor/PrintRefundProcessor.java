@@ -146,9 +146,10 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
     protected void printFooter(TcrApplication app, ITextPrinter printerWrapper) {
         if (orderInfo.customerLoyaltyPoints != null) {
             printerWrapper.header("Total Bonus Points Available", integralIntegerFormat(orderInfo.customerLoyaltyPoints));
-        }
-        if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0) {
-            printerWrapper.header("Bonus Points on this Return", integralIntegerFormat(orderInfo.earnedLoyaltyPoints.negate()));
+
+            if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0) {
+                printerWrapper.header("Bonus Points on this Return", integralIntegerFormat(orderInfo.earnedLoyaltyPoints.negate()));
+            }
         }
         super.printFooter(app, printerWrapper);
     }
