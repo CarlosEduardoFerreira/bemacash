@@ -97,7 +97,6 @@ public final class OrderTotalPriceCalculator {
 
         HashMap<String, SaleItemInfo> map = info.map;
 
-        BigDecimal subTotalItemEbtTotal = BigDecimal.ZERO;
         BigDecimal subTotalItemTotal = BigDecimal.ZERO;
         BigDecimal totalItemDiscount = BigDecimal.ZERO;
         BigDecimal totalDiscountableItemTotal = BigDecimal.ZERO;
@@ -108,9 +107,6 @@ public final class OrderTotalPriceCalculator {
 
             BigDecimal itemSubTotal = getSubTotal(i.qty, i.totalPrice);
             subTotalItemTotal = subTotalItemTotal.add(itemSubTotal);
-            if(i.isEbtEligible) {
-                subTotalItemEbtTotal = subTotalItemEbtTotal.add(itemSubTotal);
-            }
             if (i.discountable) {
                 BigDecimal itemDiscount = CalculationUtil.getItemDiscountValue(i.totalPrice, i.discount, i.discountType);
                 BigDecimal itemSubDiscount = getSubTotal(i.qty, itemDiscount);
@@ -123,7 +119,6 @@ public final class OrderTotalPriceCalculator {
 
         Logger.d("TotalCost: total item discount = %s", totalItemDiscount);
         Logger.d("TotalCost: discountable = %s", totalDiscountableItemTotal);
-        Logger.d("TotalEbtCost: subTotalItemEbtTotal:\t%s", subTotalItemEbtTotal);
         BigDecimal tmpOderDiscountVal = CalculationUtil.getDiscountValue(totalDiscountableItemTotal, orderDiscount, orderDiscountType);
         BigDecimal tmpOderDiscountPercent = CalculationUtil.getDiscountValueInPercent(totalDiscountableItemTotal, orderDiscount, orderDiscountType);
 
@@ -140,6 +135,10 @@ public final class OrderTotalPriceCalculator {
             BigDecimal itemFinalPrice = ci.finalItemPrice;//CalculationUtil.getSubTotal(BigDecimal.ONE, i.totalPrice, i.discount, i.discountType);
             BigDecimal itemFinalDiscount = ci.getFinalDiscount();//CalculationUtil.getDiscountValue(i.totalPrice, i.discount, i.discountType);
             BigDecimal itemTotal = itemFinalPrice;
+
+            if (i.isEbtEligible){
+                totalEbtOrderPrice = totalEbtOrderPrice.add(getSubTotal(i.qty, itemFinalPrice));
+            }
 
             BigDecimal itemFinalTax = BigDecimal.ZERO;
             if (i.isTaxable && info.isTaxableOrder) {
@@ -169,9 +168,6 @@ public final class OrderTotalPriceCalculator {
             if (handler != null) {
                 handler.handleItem(i, itemFinalPrice, itemFinalDiscount, itemFinalTax);
             }
-            if(ci.itemInfo.isEbtEligible) {
-                totalEbtOrderPrice = totalEbtOrderPrice.add(itemFinalPrice2);
-            }
             totalOrderPrice = totalOrderPrice.add(itemFinalPrice2);
 
         }
@@ -188,7 +184,7 @@ public final class OrderTotalPriceCalculator {
 
 
         return new SaleOrderCostInfo(info.isTaxableOrder, orderDiscount, orderDiscountType, tmpOderDiscountVal,
-                subTotalItemTotal, totalTaxVatValue, totalItemDiscount, totalOrderPrice, totalDiscountableItemTotal, subTotalItemEbtTotal);
+                subTotalItemTotal, totalTaxVatValue, totalItemDiscount, totalOrderPrice, totalDiscountableItemTotal, totalEbtOrderPrice);
     }
 
     private static ArrayList<CalcItemInfo> calcItemOrderDiscount(HashMap<String, SaleItemInfo> map, BigDecimal tmpOderDiscountVal, BigDecimal tmpOderDiscountPercent, Handler2 handler2) {
