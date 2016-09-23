@@ -1026,7 +1026,7 @@ public class DashboardActivity extends SuperBaseActivity {
             return CursorLoaderBuilder.forUri(SHIFT_URI)
                     .where(ShiftTable.REGISTER_ID + " = ?", getApp().getRegisterId())
                     .orderBy(ShopStore.ShiftTable.START_TIME + " DESC")
-                    .wrap(new SalesStatisticsConverter(DashboardActivity.this))
+                    .transform(new SalesStatisticsConverter(DashboardActivity.this))
                     .build(DashboardActivity.this);
         }
 
@@ -1055,7 +1055,7 @@ public class DashboardActivity extends SuperBaseActivity {
 //        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
 //            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ActivationCarrierTable.URI_CONTENT))
 //                    .where(ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
-//                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
+//                    .transformRow(new ListConverterFunction<ActivationCarrierModel>() {
 //                        @Override
 //                        public ActivationCarrierModel apply(Cursor cursor) {
 //                            return new ActivationCarrierModel(cursor);
@@ -1658,7 +1658,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
                     .where(ItemTable.STOCK_TRACKING + " = ?", 1)
                     .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY))
-                    .wrap(new Function<Cursor, Integer>() {
+                    .transform(new Function<Cursor, Integer>() {
                         @Override
                         public Integer apply(Cursor c) {
                             if (c.moveToFirst()) {
@@ -1691,7 +1691,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     .where(EmployeeTimesheetTable.EMPLOYEE_GUID + " = ?", getApp().getOperatorGuid())
                     .where(EmployeeTimesheetTable.CLOCK_IN + " < ?", curDate)
                     .where(EmployeeTimesheetTable.CLOCK_OUT + " IS NULL or " + EmployeeTimesheetTable.CLOCK_OUT + " > ?", curDate)
-                    .wrap(new Function<Cursor, Boolean>() {
+                    .transform(new Function<Cursor, Boolean>() {
                         @Override
                         public Boolean apply(Cursor c) {
                             boolean success = false;

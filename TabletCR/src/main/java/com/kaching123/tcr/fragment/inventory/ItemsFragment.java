@@ -143,7 +143,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         ((Adapter) adapter).setDraggable(draggable);
         list.setDragEnabled(draggable);
 
-        Loader<List<ItemExModel>> loader = builder.transform(new ItemExFunction()).build(getActivity());
+        Loader<List<ItemExModel>> loader = builder.transformRow(new ItemExFunction()).build(getActivity());
         return loader;
     }
 
@@ -180,7 +180,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         restartItemsLoader();
     }
 
-    private class Adapter extends ObjectCursorDragAdapter<ItemExModel> implements DragSortListView.DropListener {
+    private class Adapter extends ObjectCursorDragAdapter<ItemExModel> /*implements DragSortListView.DropListener */{
 
         private Drawable pencilDrawable;
         private Drawable pencilTransparent;

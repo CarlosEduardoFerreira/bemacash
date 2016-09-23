@@ -125,7 +125,7 @@ public class CommissionDialog extends StyledDialogFragment {
                     .where(EmployeeTable.IS_MERCHANT + " = ?", 0)
                     .where(EmployeeTable.STATUS + " = ?", EmployeeStatus.ACTIVE.ordinal())
                     .where(EmployeeTable.ELIGIBLE_FOR_COMMISSION + " = ?", 1)
-                    .transform(new ListConverterFunction<EmployeeModel>() {
+                    .transformRow(new ListConverterFunction<EmployeeModel>() {
                         @Override
                         public EmployeeModel apply(Cursor cursor) {
                             return new EmployeeModel(

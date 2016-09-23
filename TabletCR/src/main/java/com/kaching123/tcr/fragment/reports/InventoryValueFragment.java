@@ -76,7 +76,7 @@ public class InventoryValueFragment extends Fragment implements LoaderCallbacks<
     public Loader<List<Info>> onCreateLoader(int i, Bundle bundle) {
         return CursorLoaderBuilder.forUri(URI_ITEMS)
                 .projection(ItemTable.TMP_AVAILABLE_QTY, ItemTable.COST)
-                .wrap(new Function<Cursor, List<Info>>() {
+                .transform(new Function<Cursor, List<Info>>() {
                     @Override
                     public List<Info> apply(Cursor c) {
 

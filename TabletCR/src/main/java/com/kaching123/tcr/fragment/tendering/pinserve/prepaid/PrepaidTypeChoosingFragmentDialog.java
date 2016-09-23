@@ -181,7 +181,7 @@ public class PrepaidTypeChoosingFragmentDialog extends StyledDialogFragment impl
 //        public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
 //            return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ActivationCarrierTable.URI_CONTENT))
 //                    .where(ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
-//                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
+//                    .transformRow(new ListConverterFunction<ActivationCarrierModel>() {
 //                        @Override
 //                        public ActivationCarrierModel apply(Cursor cursor) {
 //                            return new ActivationCarrierModel(cursor);

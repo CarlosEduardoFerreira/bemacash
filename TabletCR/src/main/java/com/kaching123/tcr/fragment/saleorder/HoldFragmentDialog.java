@@ -23,9 +23,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -51,6 +48,10 @@ import com.kaching123.tcr.model.converter.SaleOrderFunction;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -235,7 +236,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
                 builder.where(ShopStore.SaleOrderTable.CREATE_TIME + " >= ? ", minCreateTime.getTime());
             return builder
                     .orderBy(ShopStore.SaleOrderTable.CREATE_TIME + " desc ")
-                    .transform(new SaleOrderFunction() {
+                    .transformRow(new SaleOrderFunction() {
                         @Override
                         public SaleOrderModel apply(Cursor c) {
                             Logger.d("COUNT: apply");

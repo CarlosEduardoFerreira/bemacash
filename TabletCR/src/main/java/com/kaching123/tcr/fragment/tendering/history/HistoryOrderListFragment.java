@@ -202,7 +202,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             loader.where(SaleOrderTable.GUID + " IN (" + sb.toString() + ")", loadedOrderGuids);
 
             return loader.orderBy(SaleOrderTable.CREATE_TIME + " desc ")
-                    .transform(new SaleOrderTipsViewFunction()).build(getActivity());
+                    .transformRow(new SaleOrderTipsViewFunction()).build(getActivity());
         }
 
         boolean isOrderSearch = registerTitle != null && !registerTitle.isEmpty()
@@ -212,7 +212,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
         if (isOrderLoadedFromServerByUnit) {
             loader.where("0");
 
-            return loader.transform(new SaleOrderTipsViewFunction()).build(getActivity());
+            return loader.transformRow(new SaleOrderTipsViewFunction()).build(getActivity());
         }
 
         if (!isOrderSearch && isTipsEnabled) {
@@ -285,7 +285,7 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
             loader.where("(" + SaleOrderTable.CREATE_TIME + " >= " + minCreateTime.getTime() + " OR " + SaleOrderView2.TipsTable.CREATE_TIME + " >= " + minCreateTime.getTime() + " OR " + SaleOrderTipsQuery.MAX_REFUND_CREATE_TIME + " >= " + minCreateTime.getTime() + ")");
 
         return loader.orderBy(SaleOrderTable.CREATE_TIME + " desc ")
-                .transform(new SaleOrderTipsViewFunction()).build(getActivity());
+                .transformRow(new SaleOrderTipsViewFunction()).build(getActivity());
     }
 
     @Override

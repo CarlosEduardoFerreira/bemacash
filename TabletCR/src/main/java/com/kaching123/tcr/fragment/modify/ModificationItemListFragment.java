@@ -173,6 +173,6 @@ public class ModificationItemListFragment extends ModifierItemListFragment {
         adapter.setDraggable(draggable);
         getListView().setDragEnabled(draggable);
 
-        return loader.transform(new ModifierExFunction()).build(getActivity());
+        return loader.transformRow(new ModifierExFunction()).build(getActivity());
     }
 }
