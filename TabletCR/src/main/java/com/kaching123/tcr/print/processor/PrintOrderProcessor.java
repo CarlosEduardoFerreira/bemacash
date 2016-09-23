@@ -107,9 +107,6 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
     }
 
     protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
-
-        printerWrapper.subTitle(context.getString(R.string.print_order_body_sale_subtitle));
-
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments =  ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);

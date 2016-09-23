@@ -1367,18 +1367,6 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String CASH_BACK = "cash_back";
-
-        @Column(type = Column.Type.TEXT)
-        String APPLICATION_IDENTIFIER = "application_identifier";
-
-        @Column(type = Column.Type.TEXT)
-        String RESULT_CODE = "result_code";
-
-        @Column(type = Column.Type.TEXT)
-        String ENTRY_METHOD = "entry_method";
-
-        @Column(type = Column.Type.TEXT)
-        String APPLICATION_CRYPTOGRAM_TYPE = "application_cryptogram_type";
     }
 
     static {
