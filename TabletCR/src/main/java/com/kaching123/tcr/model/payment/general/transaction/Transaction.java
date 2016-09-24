@@ -54,6 +54,7 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
     public String resultCode;
     public String entryMethod;
     public String applicationCryptogramType;
+    public String customerName;
 
     @Expose
     @SerializedName(WebAPI.BlackStoneAPI.REQUEST_PARAM_AMOUNT)
@@ -190,6 +191,11 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
     @Override
     public String getApplicationCryptogramType() {
         return applicationCryptogramType;
+    }
+
+    @Override
+    public String getCustomerName() {
+        return customerName;
     }
 
     @Override

@@ -53,6 +53,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
     public String resultCode;
     public String entryMethod;
     public String applicationCryptogramType;
+    public String customerName;
 
 
     public boolean allowReload; // tmp var
@@ -130,6 +131,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.resultCode = transaction.getResultCode();
         this.entryMethod = transaction.getEntryMethod();
         this.applicationCryptogramType = transaction.getApplicationCryptogramType();
+        this.customerName = transaction.getCustomerName();
     }
 
     public PaymentTransactionModel(String shiftGuid, ITransaction transaction) {
@@ -166,6 +168,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.resultCode = transaction.getResultCode();
         this.entryMethod = transaction.getEntryMethod();
         this.applicationCryptogramType = transaction.getApplicationCryptogramType();
+        this.customerName = transaction.getCustomerName();
     }
 
     public Transaction toTransaction() {
@@ -205,6 +208,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         result.applicationIdentifier = applicationIdentifier;
         result.entryMethod = entryMethod;
         result.applicationCryptogramType = applicationCryptogramType;
+        result.customerName = customerName;
         result.resultCode = resultCode;
         return result;
     }
@@ -230,7 +234,8 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
                 .append("\napplicationIdentifier : ").append(applicationIdentifier)
                 .append("\nentryMethod : ").append(entryMethod)
                 .append("\nresultCode : ").append(resultCode)
-                .append("\napplicationCryptogramType : ").append(applicationCryptogramType);
+                .append("\napplicationCryptogramType : ").append(applicationCryptogramType)
+                .append("\ncustomerName : ").append(customerName);
         return sb.toString();
     }
 

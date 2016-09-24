@@ -86,11 +86,11 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
             if (!TextUtils.isEmpty(ARQC)) {
                 printerWrapper.arqcNumber(ARQC);
             }
-            if (!TextUtils.isEmpty(approvalNumber)) {
-                printerWrapper.approvalNumber(approvalNumber);
+            if (!TextUtils.isEmpty(payment.authorizationNumber)) {
+                printerWrapper.approvalNumber(payment.authorizationNumber);
             }
-            if (!TextUtils.isEmpty(payment.authorizationNumber))
-                printerWrapper.authNumber(payment.authorizationNumber);
+//            if (!TextUtils.isEmpty(payment.authorizationNumber))
+//                printerWrapper.authNumber(payment.authorizationNumber);
             printerWrapper.amount(payment.amount);
             cashBackTotal = cashBackTotal.add(payment.cashBack.negate());
             amount = amount.add(payment.amount);

@@ -133,6 +133,8 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
                         applicationCryptogramType = datas.item(j).getTextContent();
                     if (datas.item(j).getNodeName().equalsIgnoreCase("AID"))
                         applicationIdentifier = datas.item(j).getTextContent();
+                    if (datas.item(j).getNodeName().equalsIgnoreCase("PLNameOnCard"))
+                        customerName = datas.item(j).getTextContent();
                 }
             }
         } catch (ParserConfigurationException e) {

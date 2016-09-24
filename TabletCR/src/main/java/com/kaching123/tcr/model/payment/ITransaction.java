@@ -57,4 +57,6 @@ public interface ITransaction {
 
     public String getApplicationCryptogramType();
 
+    public String getCustomerName();
+
 }

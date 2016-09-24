@@ -78,7 +78,8 @@ public class PosSignatureTextPrinter extends BasePosTextPrinter implements ISign
 
     @Override
     public void amount(BigDecimal amount) {
-        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, getContext().getString(R.string.printer_amount), priceFormat.format(amount))));
+        //Heartland Certification
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, getContext().getString(R.string.printer_total), priceFormat.format(amount))));
     }
 
     @Override
