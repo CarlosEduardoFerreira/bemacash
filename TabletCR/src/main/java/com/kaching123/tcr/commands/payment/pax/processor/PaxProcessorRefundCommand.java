@@ -229,7 +229,7 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
 
     private String getData(Date data)
     {
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMDD");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMDD");
         return sdf.format(data);
     }
     public PaymentRequest getRequest(boolean isVoid, String sAmount, PaymentTransactionModel transactionModel) {
