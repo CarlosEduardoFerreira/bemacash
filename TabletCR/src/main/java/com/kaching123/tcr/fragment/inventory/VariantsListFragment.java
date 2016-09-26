@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -38,6 +39,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.lang.ref.WeakReference;
+
+import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 
 
 /**
@@ -233,8 +236,12 @@ public class VariantsListFragment extends Fragment {
         public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
             switch (loaderId) {
                 case VARIANT_ITEMS_LOADER_TAG:
-                    return CursorLoaderBuilder.forUri(URI_VARIANT_SUB_ITEMS_COUNT).where("", model.guid, TcrApplication.get().getShopId())
-                            .build(getActivity());
+                    return new CursorLoader(getActivity(),
+                            URI_VARIANT_SUB_ITEMS_COUNT,
+                            null,
+                            null,
+                            _selectionArgs(model.guid, TcrApplication.get().getShopId()),
+                            null);
                 case VARIANT_SUB_ITEM_LOADER_TAG:
                     return CursorLoaderBuilder.forUri(URI_VARIANT_SUB_ITEM).where(ShopStore.VariantSubItemTable.ID + "=?", String.valueOf(args.getInt(VARIANT_SUB_ITEM_ID)))
                             .build(getActivity());

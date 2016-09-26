@@ -34,6 +34,7 @@ import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
+import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
 
@@ -115,11 +116,13 @@ public class RecalculateHostCompositionMetadataCommand extends AsyncCommand {
 
 
             if (quantity == null) {
-                Cursor c = ProviderAction
-                        .query(ITEM_QTY_URI)
-                        .projection(ShopStore.ItemMovementTable.QTY)
-                        .where("", itemGuid)
-                        .perform(getContext());
+                Cursor c = getContext().getContentResolver().query(
+                        ITEM_QTY_URI,
+                        new String[]{ShopStore.ItemMovementTable.QTY},
+                        null,
+                        _selectionArgs(itemGuid),
+                        null
+                );
                 try {
                     if (c.moveToFirst()) {
                         quantity = _decimal(c, 2, BigDecimal.ZERO);

@@ -113,6 +113,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
+import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 
 /**
  * Created by pkabakov on 03.12.13.
@@ -1120,17 +1121,13 @@ public class DashboardActivity extends SuperBaseActivity {
         }
 
         private Cursor loadSalesStatistics(ShiftModel shiftModel) {
-            return context.getContentResolver().query(TOTAL_SALES_URI, null, null, new String[]{shiftModel.guid,
-                    String.valueOf(PaymentTransactionModel.PaymentStatus.FAILED.ordinal()),
-                    shiftModel.guid}, null);
-
-
-            /*return ProviderAction.query(TOTAL_SALES_URI)
-                    .where("0 is not null",
-                            shiftModel.guid,
-                            PaymentTransactionModel.PaymentStatus.FAILED.ordinal(),
-                            shiftModel.guid)
-                    .perform(context);*/
+            return context.getContentResolver().query(
+                    TOTAL_SALES_URI,
+                    null,
+                    null,
+                    _selectionArgs(shiftModel.guid, PaymentTransactionModel.PaymentStatus.FAILED.ordinal(), shiftModel.guid),
+                    null
+            );
         }
 
         private void gatherSalesStatistics(Cursor cursor, SalesStatisticsModel salesStatisticsModel) {
