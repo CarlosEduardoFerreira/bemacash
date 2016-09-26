@@ -43,6 +43,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
     public static Uri VIEW_URI = ShopProvider.contentUriGroupBy(ShopStore.ItemExtView.URI_CONTENT, ItemTable.GUID);
 
     public static String[] PROJECTION = new String[]{
+            "0 as _id",
             ItemTable.GUID,
             ItemTable.CATEGORY_ID,
             ItemTable.DESCRIPTION,
