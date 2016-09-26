@@ -110,6 +110,7 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 }
                 printerWrapper.emptyLine();
                 printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
+                printerWrapper.subTitle(payment.customerName);
                 printerWrapper.emptyLine();
             }
         }

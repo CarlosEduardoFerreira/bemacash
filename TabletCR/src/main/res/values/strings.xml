@@ -577,7 +577,7 @@
     <string name="printer_amount">Amount:</string>
     <string name="printer_cashback">CashBack:</string>
     <string name="printer_ebt_cash">EBT CASH:</string>
-    <string name="printer_signature_line">Customer sign: _______________________________</string>
+    <string name="printer_signature_line">X: _______________________________</string>
     <string name="printer_manual_input_line">___________</string>
     <string name="printer_gratuity_colon">Gratuity:</string>
     <string name="printer_total_colon">Total:</string>
