@@ -188,7 +188,7 @@ public class CustomerGeneralInfoFragment extends CustomerBaseFragment implements
         @Override
         public Loader<List<LoyaltyPlanModel>> onCreateLoader(int id, Bundle args) {
             return CursorLoaderBuilder.forUri(ShopProvider.contentUri(LoyaltyPlanTable.URI_CONTENT))
-                    .wrap(new Function<Cursor, List<LoyaltyPlanModel>>() {
+                    .transform(new Function<Cursor, List<LoyaltyPlanModel>>() {
                         @Override
                         public List<LoyaltyPlanModel> apply(Cursor input) {
                             ArrayList<LoyaltyPlanModel> result = new ArrayList<>(input.getCount() + 1);

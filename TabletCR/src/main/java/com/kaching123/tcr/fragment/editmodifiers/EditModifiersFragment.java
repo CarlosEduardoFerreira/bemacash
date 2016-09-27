@@ -81,7 +81,7 @@ public class EditModifiersFragment extends Fragment implements LoaderCallbacks<L
         return CursorLoaderBuilder.forUri(URI_MODIFIERS)
                 .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                 .where(ModifierTable.TYPE + " = ?", type.ordinal())
-                .transform(new ModifierFunction()).build(getActivity());
+                .transformRow(new ModifierFunction()).build(getActivity());
     }
 
     @Override

@@ -412,7 +412,7 @@ public class CategoriesDialog extends StyledDialogFragment {
                     .projection(CategoryTable.TITLE)
                     .where(CategoryTable.DEPARTMENT_GUID + " = ?", adapter.getGuid(departmentSpinner.getSelectedItemPosition()))
                     .where(CategoryTable.GUID + " != ?", model == null ? "" : model.guid)
-                    .transform(new ListConverterFunction<String>() {
+                    .transformRow(new ListConverterFunction<String>() {
                         @Override
                         public String apply(Cursor cursor) {
                             return cursor.getString(0);

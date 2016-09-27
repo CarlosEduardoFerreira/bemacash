@@ -73,7 +73,7 @@ public class TaxGroupsEcuadorActivity extends TaxGroupsActivity {
         public Loader<List<TaxGroupModel>> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(URI_TAX_GROUPS)
                     .where(ShopStore.TaxGroupTable.IS_DEFAULT + " = ? ", 1)
-                    .transform(new TaxGroupConverter())
+                    .transformRow(new TaxGroupConverter())
                     .build(TaxGroupsEcuadorActivity.this);
         }
 

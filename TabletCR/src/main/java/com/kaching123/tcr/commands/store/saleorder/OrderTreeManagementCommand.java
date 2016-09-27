@@ -5,7 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.store.AsyncCommand;
+import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore.ReturnOrderItemsMappingQuery;
+import com.kaching123.tcr.store.ShopStore.SaleOrderItemsMappingQuery;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -14,17 +19,10 @@ import com.telly.groundy.annotations.OnSuccess;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.commands.store.AsyncCommand;
-import com.kaching123.tcr.service.ISqlCommand;
-import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore.SaleOrderItemsMappingQuery;
-import com.kaching123.tcr.store.ShopStore.ReturnOrderItemsMappingQuery;
 
 import static com.kaching123.tcr.util.ContentValuesUtilBase._bool;
 import static com.kaching123.tcr.util.ContentValuesUtilBase._decimalQty;
+import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 
 /**
  * Created by Hans on 6/24/2015.
@@ -70,15 +68,17 @@ public class OrderTreeManagementCommand extends AsyncCommand {
     }
 
     private List<MovementMetadata> getMetadata() {
-        Cursor c = ProviderAction
-                .query(URI_ITEMS)
-                .projection(SaleOrderItemsMappingQuery.ITEM_GUID,
+        Cursor c = getContext().getContentResolver().query(
+                URI_ITEMS,
+                new String[]{SaleOrderItemsMappingQuery.ITEM_GUID,
                         SaleOrderItemsMappingQuery.QUANTITY,
                         SaleOrderItemsMappingQuery.SOURCE,
                         SaleOrderItemsMappingQuery.FLAG,
-                        SaleOrderItemsMappingQuery.STOCK_TRACKING)
-               .where("", orderItemId, orderItemId, orderItemId, orderItemId)
-                .perform(getContext());
+                        SaleOrderItemsMappingQuery.STOCK_TRACKING},
+                null,
+                _selectionArgs(orderItemId, orderItemId, orderItemId, orderItemId),
+                null
+        );
 
         try {
             if (!c.moveToFirst()) {
@@ -103,18 +103,20 @@ public class OrderTreeManagementCommand extends AsyncCommand {
     }
 
     private List<MovementMetadata> getMetadataForReturn() {
-        Cursor c = ProviderAction
-                .query(URI_ITEMS_FOR_RETURN)
-                .projection(ReturnOrderItemsMappingQuery.ITEM_GUID,
+        Cursor c = getContext().getContentResolver().query(
+                URI_ITEMS_FOR_RETURN,
+                new String[]{ReturnOrderItemsMappingQuery.ITEM_GUID,
                         ReturnOrderItemsMappingQuery.QUANTITY,
                         ReturnOrderItemsMappingQuery.SOURCE,
                         ReturnOrderItemsMappingQuery.FLAG,
-                        ReturnOrderItemsMappingQuery.STOCK_TRACKING)
-                .where("", orderItemId, saleItemGuid,
+                        ReturnOrderItemsMappingQuery.STOCK_TRACKING},
+                null,
+                _selectionArgs(orderItemId, saleItemGuid,
                         orderItemId, saleItemGuid,
                         orderItemId, saleItemGuid,
-                        orderItemId, saleItemGuid)
-                .perform(getContext());
+                        orderItemId, saleItemGuid),
+                null
+        );
 
         try {
             if (!c.moveToFirst()) {

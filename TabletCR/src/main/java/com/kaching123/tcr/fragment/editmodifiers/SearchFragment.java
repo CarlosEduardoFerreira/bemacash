@@ -5,12 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
@@ -20,8 +20,11 @@ import com.kaching123.tcr.store.ShopStore.ModifiersCountView;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.List;
+import java.util.ArrayList;
+
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+
+import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 
 /**
  * Created by vkompaniets on 11.12.13.
@@ -71,22 +74,30 @@ public class SearchFragment extends Fragment {
         });
     }
 
-    private LoaderCallbacks<List<ModifierCountItemModel>> loader = new LoaderCallbacks<List<ModifierCountItemModel>>() {
+    private LoaderCallbacks<Cursor> loader = new LoaderCallbacks<Cursor>() {
         @Override
-        public Loader<List<ModifierCountItemModel>> onCreateLoader(int id, Bundle args) {
-            return CursorLoaderBuilder.forUri(URI_ITEMS)
-                    .where("", "%" + searchText + "%", itemGuid == null ? "" : itemGuid)
-                    .transform(new ItemConverter())
-                    .build(getActivity());
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(getActivity(),
+                    URI_ITEMS,
+                    null,
+                    null,
+                    _selectionArgs("%" + searchText + "%", itemGuid == null ? "" : itemGuid),
+                    null
+            );
         }
 
         @Override
-        public void onLoadFinished(Loader<List<ModifierCountItemModel>> loader, List<ModifierCountItemModel> data) {
-            adapter.changeCursor(data);
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            ItemConverter func = new ItemConverter();
+            ArrayList<ModifierCountItemModel> models = new ArrayList<>(data.getCount());
+            while (data.moveToNext()){
+                models.add(func.apply(data));
+            }
+            adapter.changeCursor(models);
         }
 
         @Override
-        public void onLoaderReset(Loader<List<ModifierCountItemModel>> loader) {
+        public void onLoaderReset(Loader<Cursor> loader) {
             adapter.changeCursor(null);
         }
     };

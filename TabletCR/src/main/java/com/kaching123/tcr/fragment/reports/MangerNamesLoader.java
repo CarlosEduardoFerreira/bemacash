@@ -29,7 +29,7 @@ public abstract class MangerNamesLoader implements LoaderCallbacks<List<Employee
         return CursorLoaderBuilder
                 .forUri(EMPLOYEE_URI)
                 .orderBy(ShopStore.EmployeeTable.LOGIN)
-                .transform(new EmployeesFunction())
+                .transformRow(new EmployeesFunction())
                 .build(getLoaderContext());
     }
 
