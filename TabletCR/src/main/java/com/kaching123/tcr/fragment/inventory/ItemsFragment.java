@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.SuperBaseActivity;
-import com.kaching123.tcr.adapter.ObjectCursorDragAdapter;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.store.inventory.BatchUpdateItemOrderCommand;
 import com.kaching123.tcr.fragment.catalog.BaseItemsPickFragment;
@@ -34,6 +32,7 @@ import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.util.DrawableUtil;
 import com.kaching123.tcr.util.UnitUtil;
+import com.mobeta.android.dslv.DragSortCursorAdapter;
 import com.mobeta.android.dslv.DragSortListView;
 
 import org.androidannotations.annotations.EFragment;
@@ -203,9 +202,9 @@ public class ItemsFragment extends BaseItemsPickFragment {
                 builder.where(ItemTable.SALABLE + " = ? ", "0");
                 draggable = false;
             }
-/*
-            ((Adapter) adapter).setDraggable(draggable);
-            list.setDragEnabled(draggable);*/
+
+            adapter2.setDraggable(draggable);
+            list.setDragEnabled(draggable);
 
             return builder.build(getActivity());
         }
@@ -221,204 +220,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         }
     }
 
-    private class Adapter extends ObjectCursorDragAdapter<ItemExModel> /*implements DragSortListView.DropListener */{
-
-        private Drawable pencilDrawable;
-        private Drawable pencilTransparent;
-
-        private boolean draggable;
-
-        public Adapter(Context context) {
-            super(context);
-
-            pencilDrawable = context.getResources().getDrawable(R.drawable.pencil);
-            DrawableUtil.boundDrawable(pencilDrawable);
-
-            pencilTransparent = context.getResources().getDrawable(R.drawable.square_opacity);
-            DrawableUtil.boundDrawable(pencilTransparent);
-        }
-
-        public void marks(LinearLayout holder,
-                          boolean composer,
-                          boolean composition,
-                          boolean reference,
-                          boolean forSale,
-                          boolean hasModifiers,
-                          boolean serial,
-                          boolean child) {
-            // Now the layout parameters, these are a little tricky at first
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.CENTER_VERTICAL | Gravity.RIGHT;
-            params.rightMargin = 5;
-            holder.removeAllViews();
-
-            if (composer) {
-                ImageView image = new ImageView(getContext());
-                image.setScaleType(ImageView.ScaleType.MATRIX);
-                image.setImageResource(R.drawable.ic_extension_black_18dp);
-                // Let's get the root layout and add our ImageView
-                holder.addView(image, 0, params);
-            }
-            if (composition) {
-                ImageView image = new ImageView(getContext());
-                image.setScaleType(ImageView.ScaleType.MATRIX);
-                image.setImageResource(R.drawable.ic_dashboard_black_18dp);
-                // Let's get the root layout and add our ImageView
-                holder.addView(image, 0, params);
-            }
-            if (reference) {
-                ImageView image = new ImageView(getContext());
-                image.setScaleType(ImageView.ScaleType.MATRIX);
-                image.setImageResource(R.drawable.tree_structure_24);
-                // Let's get the root layout and add our ImageView
-                holder.addView(image, 0, params);
-            }
-            if (child) {
-                ImageView image = new ImageView(getContext());
-                image.setScaleType(ImageView.ScaleType.MATRIX);
-                image.setImageResource(R.drawable.broken_link_24);
-                // Let's get the root layout and add our ImageView
-                holder.addView(image, 0, params);
-            }
-            if (!forSale) {
-                ImageView image = new ImageView(getContext());
-                image.setScaleType(ImageView.ScaleType.MATRIX);
-                image.setImageResource(R.drawable.ic_money_off_black_18dp);
-                // Let's get the root layout and add our ImageView
-                holder.addView(image, 0, params);
-            }
-            if (hasModifiers) {
-                ImageView image = new ImageView(getContext());
-                image.setScaleType(ImageView.ScaleType.MATRIX);
-                image.setImageResource(R.drawable.pie_chart_24);
-                // Let's get the root layout and add our ImageView
-                holder.addView(image, 0, params);
-            }
-            if (serial) {
-                ImageView image = new ImageView(getContext());
-                image.setScaleType(ImageView.ScaleType.MATRIX);
-                image.setImageResource(R.drawable.barcode_24);
-                // Let's get the root layout and add our ImageView
-                holder.addView(image, 0, params);
-            }
-        }
-
-        @Override
-        protected View newView(int position, ViewGroup parent) {
-            View convertView = LayoutInflater.from(getContext()).inflate(R.layout.inventory_item_view, parent, false);
-
-            ViewHolder holder = new ViewHolder();
-
-            holder.status = (LinearLayout) convertView.findViewById(R.id.status);
-            holder.description = (TextView) convertView.findViewById(R.id.description);
-            holder.ean = (TextView) convertView.findViewById(R.id.ean);
-            holder.cost = (TextView) convertView.findViewById(R.id.cost);
-            holder.price = (TextView) convertView.findViewById(R.id.price);
-            holder.qty = (TextView) convertView.findViewById(R.id.qty);
-            holder.units = (TextView) convertView.findViewById(R.id.units);
-            holder.totalCost = (TextView) convertView.findViewById(R.id.total_cost);
-            holder.drag = (ImageView) convertView.findViewById(R.id.drag);
-
-            convertView.setTag(holder);
-            return convertView;
-        }
-
-        private void showEanOrProductCode(ViewHolder holder, String productCode, String eanCode) {
-            if (TextUtils.isEmpty(eanCode)) {
-                if (TextUtils.isEmpty(productCode)) {
-                    holder.ean.setVisibility(View.GONE);
-                } else {
-                    holder.ean.setVisibility(View.VISIBLE);
-                    holder.ean.setText(productCode);
-                }
-            } else {
-                holder.ean.setVisibility(View.VISIBLE);
-                holder.ean.setText(eanCode);
-            }
-        }
-
-        @Override
-        protected View bindView(View convertView, int position, ItemExModel item) {
-            ViewHolder holder = (ViewHolder) convertView.getTag();
-
-            if (item == null)
-                return convertView;
-
-            holder.description.setText(item.description);
-
-            showEanOrProductCode(holder, item.productCode, item.eanCode);
-
-            showPrice(holder.cost, item.cost);
-            showPrice(holder.price, item.price);
-
-            holder.price.setCompoundDrawables(null, null, item.priceType == PriceType.OPEN ? pencilDrawable : pencilTransparent, null);
-
-            if (item.refType == ItemRefType.Simple) {
-                if (UnitUtil.isNotUnitPriceType(item.priceType)) {
-                    showBrandQtyInteger(holder.qty, item.availableQty);
-                    holder.units.setText(null);
-                    showPrice(holder.totalCost, getSubTotal(item.availableQty.setScale(0, BigDecimal.ROUND_FLOOR), item.cost));
-                } else {
-                    showBrandQty(holder.qty, item.availableQty);
-                    holder.units.setText(item.shortCut);
-                    showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
-                }
-            } else {
-                holder.qty.setText("");
-                holder.totalCost.setText("");
-            }
-
-            if (item.refType == ItemRefType.Simple) {
-                if (UnitUtil.isNotUnitPriceType(item.priceType)) {
-                    showBrandQtyInteger(holder.qty, item.availableQty);
-                    holder.units.setText(null);
-                    showPrice(holder.totalCost, getSubTotal(item.availableQty.setScale(0, BigDecimal.ROUND_FLOOR), item.cost));
-                } else {
-                    showBrandQty(holder.qty, item.availableQty);
-                    holder.units.setText(item.shortCut);
-                    showPrice(holder.totalCost, getSubTotal(item.availableQty, item.cost));
-                }
-            } else {
-                holder.qty.setText("");
-                holder.totalCost.setText("");
-            }
-
-            holder.drag.setVisibility(draggable ? View.VISIBLE : View.INVISIBLE);
-
-            marks(holder.status,
-                    item.isAComposer,
-                    item.isAComposisiton && !item.isSerializable(),
-                    item.refType == ItemRefType.Reference,
-                    item.isSalable,
-                    item.hasModificators(),
-                    item.isSerializable(),
-                    !TextUtils.isEmpty(item.referenceItemGuid) || !TextUtils.isEmpty(item.matrixGuid));
-
-            return convertView;
-        }
-
-        @Override
-        public void drop(final int from, final int to) {
-            if (from == to)
-                return;
-            super.drop(from, to);
-
-            int count = getCount();
-            String[] guids = new String[count];
-            for (int i = 0; i < count; i++) {
-                guids[i] = getItem(i).getGuid();
-            }
-            BatchUpdateItemOrderCommand.start(getContext(), guids);
-        }
-
-        public void setDraggable(boolean draggable) {
-            this.draggable = draggable;
-        }
-    }
-
-    private class Adapter2 extends CursorAdapter {
+    private class Adapter2 extends DragSortCursorAdapter {
 
         private ItemExFunction function;
         private Drawable pencilDrawable;
@@ -517,14 +319,34 @@ public class ItemsFragment extends BaseItemsPickFragment {
                     !TextUtils.isEmpty(item.referenceItemGuid) || !TextUtils.isEmpty(item.matrixGuid));
         }
 
-        public void marks(LinearLayout holder,
-                          boolean composer,
-                          boolean composition,
-                          boolean reference,
-                          boolean forSale,
-                          boolean hasModifiers,
-                          boolean serial,
-                          boolean child) {
+        @Override
+        public void drop(final int from, final int to) {
+            if (from == to)
+                return;
+            super.drop(from, to);
+
+            int count = getCount();
+            String[] guids = new String[count];
+            for (int i = 0; i < count; i++) {
+                Cursor c = (Cursor) getItem(i);
+                String guid = c.getString(c.getColumnIndex(ItemTable.GUID));
+                guids[i] = guid;
+            }
+            BatchUpdateItemOrderCommand.start(getContext(), guids);
+        }
+
+        public void setDraggable(boolean draggable) {
+            this.draggable = draggable;
+        }
+
+        void marks(LinearLayout holder,
+                   boolean composer,
+                   boolean composition,
+                   boolean reference,
+                   boolean forSale,
+                   boolean hasModifiers,
+                   boolean serial,
+                   boolean child) {
             // Now the layout parameters, these are a little tricky at first
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT,
