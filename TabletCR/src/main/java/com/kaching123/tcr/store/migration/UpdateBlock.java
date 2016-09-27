@@ -296,6 +296,7 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE sale_order_item ADD COLUMN loyalty_points TEXT");
         db.execSQL("ALTER TABLE sale_order_item ADD COLUMN points_for_dollar_amount INTEGER");
         db.execSQL("ALTER TABLE sale_order_item ADD COLUMN discount_bundle_id TEXT");
+        db.execSQL("ALTER TABLE sale_order_item ADD COLUMN tmp_ebt_payed TEXT");
 
         //Loyalty
         db.execSQL("CREATE TABLE loyalty_incentive( guid TEXT PRIMARY KEY, name TEXT NOT NULL, type INTEGER NOT NULL, reward_type INTEGER NOT NULL, birthday_offset INTEGER, point_threshold TEXT, reward_value TEXT, reward_value_type INTEGER, is_deleted INTEGER DEFAULT (0), update_time INTEGER, is_draft INTEGER DEFAULT (0))");
