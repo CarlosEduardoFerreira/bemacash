@@ -125,7 +125,7 @@ public class CreditReceiptListFragment extends SuperBaseFragment implements Cred
         builder.orderBy(CreditReceiptTable.CREATE_TIME + " DESC");
 
         if (loaderId == CREDIT_RECEIPT_INFO_LOADER_ID) {
-            return builder.transform(new CreditReceiptInfoFunction()).build(getActivity());
+            return builder.wrap(new CreditReceiptInfoFunction()).build(getActivity());
         }
 
         return builder.build(getActivity());

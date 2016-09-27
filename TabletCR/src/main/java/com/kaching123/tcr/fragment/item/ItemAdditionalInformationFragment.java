@@ -296,7 +296,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
             return CursorLoaderBuilder
                     .forUri(ShopProvider.contentUri(UnitLabelTable.URI_CONTENT))
                     .orderBy(ShopStore.UnitLabelTable.SHORTCUT)
-                    .transformRow(new UnitLabelFunction())
+                    .transform(new UnitLabelFunction())
                     .build(getActivity());
         }
 

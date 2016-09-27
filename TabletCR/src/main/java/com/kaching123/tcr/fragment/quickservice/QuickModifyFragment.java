@@ -190,7 +190,7 @@ public class QuickModifyFragment extends ItemModifiersFragment {
                     .forUri(URI_ITEMS)
                     .projection(PROJECTION)
                     .where(ItemTable.GUID + " = ?", itemGuid == null ? "" : itemGuid)
-                    .transform(new ItemWithModifierWrapFunction())
+                    .wrap(new ItemWithModifierWrapFunction())
                     .build(getActivity());
         }
 

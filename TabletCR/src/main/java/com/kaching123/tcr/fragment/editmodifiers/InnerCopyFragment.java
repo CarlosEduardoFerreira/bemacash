@@ -113,7 +113,7 @@ public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<
         return CursorLoaderBuilder.forUri(MODIFIER_URI)
                 .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                 .where(ModifierTable.TYPE + " = ?", type.ordinal())
-                .transformRow(new ModifierExFunction()).build(getActivity());
+                .transform(new ModifierExFunction()).build(getActivity());
     }
 
     @Override

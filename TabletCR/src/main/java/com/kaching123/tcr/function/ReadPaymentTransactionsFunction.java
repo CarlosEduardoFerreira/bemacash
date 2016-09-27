@@ -44,7 +44,7 @@ public final class ReadPaymentTransactionsFunction {
         return CursorLoaderBuilder.forUri(URI_TRANSACTIONS)
                 .where("(" + PaymentTransactionTable.STATUS + " = ? OR " + PaymentTransactionTable.STATUS + " = ?)", PaymentStatus.PRE_AUTHORIZED.ordinal(), PaymentStatus.SUCCESS.ordinal())
                 .where("(" + SaleOrderTable.GUID + " = ? or " + SaleOrderTable.PARENT_ID + " = ?)", orderGuid, orderGuid)
-                .transform(new Function<Cursor, ArrayList<PaymentTransactionModel>>() {
+                .wrap(new Function<Cursor, ArrayList<PaymentTransactionModel>>() {
                     @Override
                     public ArrayList<PaymentTransactionModel> apply(Cursor c) {
                         ArrayList<PaymentTransactionModel> result = readTransactions(c);
@@ -204,7 +204,7 @@ public final class ReadPaymentTransactionsFunction {
                 .where("(" + SaleOrderTable.GUID + " = ? or " + SaleOrderTable.PARENT_ID + " = ?)", orderGuid, orderGuid)
                 .where(PaymentTransactionTable.IS_PREAUTH + " = 1");
 
-        return builder.transform(new Function<Cursor, ArrayList<PaymentTransactionModel>>() {
+        return builder.wrap(new Function<Cursor, ArrayList<PaymentTransactionModel>>() {
             @Override
             public ArrayList<PaymentTransactionModel> apply(Cursor c) {
                 ArrayList<PaymentTransactionModel> result = readTransactions(c, false);

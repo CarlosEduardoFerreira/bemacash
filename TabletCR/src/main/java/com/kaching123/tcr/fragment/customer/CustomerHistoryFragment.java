@@ -82,7 +82,7 @@ public class CustomerHistoryFragment extends CustomerBaseFragment {
             return CursorLoaderBuilder.forUri(URI_ORDERS)
                     .where(CustomerTable.GUID + " = ?", getCustomer().guid)
                     .orderBy(SaleOrderTable.CREATE_TIME + " DESC")
-                    .transformRow(new SaleOrderTipsViewFunction())
+                    .transform(new SaleOrderTipsViewFunction())
                     .build(getActivity());
         }
 

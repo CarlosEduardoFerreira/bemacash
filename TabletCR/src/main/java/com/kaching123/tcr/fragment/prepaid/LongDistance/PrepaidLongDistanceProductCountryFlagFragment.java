@@ -119,7 +119,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_BILLPAYMENT_ITEMS);
             final LinkedList<BillPaymentItem> billPaymentItems = new LinkedList<BillPaymentItem>();
             return loader.orderBy(ShopStore.BillPayment.CATEGORYDESCRIPTION)
-                    .transform(new Function<Cursor, List<BillPaymentItem>>() {
+                    .wrap(new Function<Cursor, List<BillPaymentItem>>() {
                         @Override
                         public List<BillPaymentItem> apply(Cursor c) {
                             String currentCategory = null;
@@ -170,7 +170,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             final LinkedList<BillPaymentItem> billPaymentItems = new LinkedList<BillPaymentItem>();
 
             return loader.orderBy(ShopStore.BillPayment.CATEGORYDESCRIPTION)
-                    .transform(new Function<Cursor, List<BillPaymentItem>>() {
+                    .wrap(new Function<Cursor, List<BillPaymentItem>>() {
                         @Override
                         public List<BillPaymentItem> apply(Cursor c) {
 
@@ -214,7 +214,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_ORDER_ITEMS);
 
             return loader.orderBy(ShopStore.WirelessTable.NAME)
-                    .transform(new Function<Cursor, List<WirelessItem>>() {
+                    .wrap(new Function<Cursor, List<WirelessItem>>() {
                         @Override
                         public List<WirelessItem> apply(Cursor c) {
                             List<WirelessItem> items = new ArrayList<WirelessItem>(c.getCount());
@@ -278,7 +278,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_ORDER_ITEMS);
 
             return loader.orderBy(ShopStore.WirelessTable.NAME)
-                    .transform(new Function<Cursor, List>() {
+                    .wrap(new Function<Cursor, List>() {
                         @Override
                         public List<WirelessItem> apply(Cursor c) {
 //                        List<WirelessItem> items = new ArrayList<WirelessItem>(c.getCount());

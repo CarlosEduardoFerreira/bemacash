@@ -33,7 +33,7 @@ public class SaleOrderItemViewModelWrapFunction extends SaleItemWrapFunction {
         return CursorLoaderBuilder.forUri(URI_ORDER_ITEMS)
                 .where(SaleItemTable.ORDER_GUID + " = ? ", orderGuid)
                 .orderBy(ORDER_BY)
-                .transform(new SaleOrderItemViewModelWrapFunction(context))
+                .wrap(new SaleOrderItemViewModelWrapFunction(context))
                 .build(context);
     }
 }

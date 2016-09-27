@@ -150,7 +150,7 @@ public class BaseItemModifiersFragment extends Fragment {
                     .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                     .where(ModifierTable.TYPE + "= ?", ModifierType.MODIFIER.ordinal())
                     .orderBy(ModifierTable.TITLE)
-                    .transformRow(new ModifierFunction()).build(getActivity());
+                    .transform(new ModifierFunction()).build(getActivity());
         }
 
         @Override
@@ -189,7 +189,7 @@ public class BaseItemModifiersFragment extends Fragment {
                     .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                     .where(ModifierTable.TYPE + "= ?", type.ordinal())
                     .orderBy(ModifierTable.TITLE)
-                    .transformRow(new ModifierFunction()).build(getActivity());
+                    .transform(new ModifierFunction()).build(getActivity());
         }
 
         @Override

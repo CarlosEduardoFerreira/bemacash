@@ -101,7 +101,7 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
                     .where(TbpXRegisterTable.REGISTER_ID + " = ?", getApp().getRegisterId())
                     .where(TbpTable.IS_ACTIVE + " = ?", 1)
                     .orderBy(TbpTable.PRICE_LEVEL)
-                    .transform(new Function<Cursor, List<TBPWrapper>>() {
+                    .wrap(new Function<Cursor, List<TBPWrapper>>() {
                         @Override
                         public List<TBPWrapper> apply(Cursor input) {
                             ArrayList<TBPWrapper> output = new ArrayList<>(input.getCount());

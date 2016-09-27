@@ -496,7 +496,7 @@ public class InventoryActivity extends ScannerBaseActivity {
                     .forUri(ITEMS_URI)
                     .projection("count(" + ItemTable.GUID + ")")
                     .where(ItemTable.ITEM_REF_TYPE + " = ? ", ItemRefType.Simple.ordinal())
-                    .transform(new Function<Cursor, Integer>() {
+                    .wrap(new Function<Cursor, Integer>() {
                         @Override
                         public Integer apply(Cursor c) {
                             if (c.moveToFirst()) {

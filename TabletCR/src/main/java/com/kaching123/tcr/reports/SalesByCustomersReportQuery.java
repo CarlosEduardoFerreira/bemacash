@@ -30,7 +30,7 @@ public class SalesByCustomersReportQuery {
                 .where("(" + SaleOrderTable.STATUS + " = ? or " + SaleOrderTable.STATUS + " = ?)", OrderStatus.COMPLETED.ordinal(), OrderStatus.RETURN.ordinal())
                 .where(CustomerTable.GUID + " is not null")
                 .orderBy(CustomerTable.LAST_NAME);
-        return loader.transform(new SalesByCustomersWrapFunction())
+        return loader.wrap(new SalesByCustomersWrapFunction())
                 .build(context);
     }
 

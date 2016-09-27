@@ -1168,7 +1168,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
  
 +
          return loader.orderBy(WirelessTable.NAME)
-                 .transform(new Function<Cursor, List<WirelessItem>>() {
+                 .wrap(new Function<Cursor, List<WirelessItem>>() {
                      @Override
 @@ -430,7 +671,7 @@
                          List<SuperCategory> superItemsTmp = new ArrayList<SuperCategory>();

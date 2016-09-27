@@ -333,7 +333,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
                     .projection(EmployeePermissionTable.PERMISSION_ID)
                     .where(EmployeePermissionTable.USER_GUID + " = ?", model.guid)
                     .where(EmployeePermissionTable.ENABLED + " = ?", 1)
-                    .transform(new Function<Cursor, List<Permission>>() {
+                    .wrap(new Function<Cursor, List<Permission>>() {
                         @Override
                         public List<Permission> apply(Cursor c) {
                             List<Permission> permissions = new ArrayList<Permission>(c.getCount());

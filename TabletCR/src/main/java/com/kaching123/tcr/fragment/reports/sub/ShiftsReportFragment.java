@@ -106,7 +106,7 @@ public class ShiftsReportFragment extends SuperBaseFragment implements IDetailsF
         }
         loader.orderBy(ShiftTable.START_TIME + " DESC");
 
-        return loader.transformRow(new ListConverterFunction<ShiftViewModel>() {
+        return loader.transform(new ListConverterFunction<ShiftViewModel>() {
             @Override
             public ShiftViewModel apply(Cursor cursor) {
                 super.apply(cursor);

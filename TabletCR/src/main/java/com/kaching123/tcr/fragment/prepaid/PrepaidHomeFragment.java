@@ -94,7 +94,7 @@ public class PrepaidHomeFragment extends Fragment {
         public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
             return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.ActivationCarrierTable.URI_CONTENT))
                     .where(ShopStore.ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
-                    .transformRow(new ListConverterFunction<ActivationCarrierModel>() {
+                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
                         @Override
                         public ActivationCarrierModel apply(Cursor cursor) {
                             return new ActivationCarrierModel(cursor);

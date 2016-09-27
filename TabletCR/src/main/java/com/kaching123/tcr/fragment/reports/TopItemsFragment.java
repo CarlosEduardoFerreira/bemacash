@@ -76,7 +76,7 @@ public class TopItemsFragment extends SuperBaseFragment {
             if (selectedRegisterId > 0)
                 builder.where(ReportsTopItemsView2.SaleOrderTable.REGISTER_ID + " = ?", selectedRegisterId);
             return builder
-                    .transform(new ChartTopItemsFunction())
+                    .wrap(new ChartTopItemsFunction())
                     .build(getActivity());
         }
 

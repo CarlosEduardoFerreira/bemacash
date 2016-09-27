@@ -179,7 +179,7 @@ public class ComposerItemListFragment extends ListFragment implements LoaderMana
     public Loader<List<ComposerExModel>> onCreateLoader(int loaderId, Bundle args) {
         CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_UNITS);
         loader.where(ShopSchema2.ComposerView2.ComposerTable.ITEM_HOST_ID + " = ?", model.guid);
-        return loader.orderBy(ShopSchema2.ComposerView2.ItemChildTable.DESCRIPTION + " asc ").transformRow(new ComposerFunction()).build(getActivity());
+        return loader.orderBy(ShopSchema2.ComposerView2.ItemChildTable.DESCRIPTION + " asc ").transform(new ComposerFunction()).build(getActivity());
     }
 
     @Override

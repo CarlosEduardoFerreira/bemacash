@@ -181,7 +181,7 @@ public class UnitLabelListFragment extends ListFragment implements LoaderCallbac
                 .orderBy(ShopStore.UnitLabelTable.SHORTCUT)
                 .where(ShopStore.UnitLabelTable.SHORTCUT + " <> \'" +
                         TcrApplication.get().getShopInfo().defUnitLabelShortcut + "\'")
-                .transformRow(new UnitLabelFunction())
+                .transform(new UnitLabelFunction())
                 .build(getActivity());
     } // select * from UNIT_LABEL where shortcut <> 'und' and
 

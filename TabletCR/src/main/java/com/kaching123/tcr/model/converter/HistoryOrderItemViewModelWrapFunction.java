@@ -187,8 +187,8 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
         return CursorLoaderBuilder.forUri(URI_ORDER_ITEMS)
                 .where(SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .orderBy(ORDER_BY)
-                .transform(new HistoryOrderItemViewModelWrapFunction(context))
-                .transform(new Function<List<SaleOrderItemViewModel>, List<HistoryDetailedOrderItemModel>>() {
+                .wrap(new HistoryOrderItemViewModelWrapFunction(context))
+                .wrap(new Function<List<SaleOrderItemViewModel>, List<HistoryDetailedOrderItemModel>>() {
                     @Override
                     public List<HistoryDetailedOrderItemModel> apply(List<SaleOrderItemViewModel> in) {
                         ArrayList<HistoryDetailedOrderItemModel> result = new ArrayList<HistoryDetailedOrderItemModel>(in.size());
@@ -205,7 +205,7 @@ public class HistoryOrderItemViewModelWrapFunction implements Function<Cursor, L
         return CursorLoaderBuilder.forUri(URI_ORDER_ITEMS)
                 .where(SaleItemTable.ORDER_GUID + " = ?", orderGuid)
                 .orderBy(ORDER_BY)
-                .transform(new HistoryOrderItemViewModelWrapFunction(context))
+                .wrap(new HistoryOrderItemViewModelWrapFunction(context))
                 .build(context);
     }
 }
