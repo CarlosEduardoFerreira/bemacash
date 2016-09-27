@@ -20,17 +20,14 @@ import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.PriceType;
-import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
-import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ChildComposerTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
-import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitTable;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
 import org.androidannotations.annotations.EFragment;
@@ -45,11 +42,9 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._caseCount;
 import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
-import static com.kaching123.tcr.model.ContentValuesUtil._count;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
-import static com.kaching123.tcr.model.ContentValuesUtil._sum;
 
 @EFragment(R.layout.search_items_list_fragment)
 public class SearchItemsListFragment extends Fragment implements IPriceLevelListener, LoaderCallbacks<List<CategoryItemViewModel>> {
@@ -184,12 +179,6 @@ public class SearchItemsListFragment extends Fragment implements IPriceLevelList
                 _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.MODIFIER.ordinal()), ItemExtView.MODIFIERS_COUNT),
                 _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.ADDON.ordinal()), ItemExtView.ADDONS_COUNT),
                 _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.OPTIONAL.ordinal()), ItemExtView.OPTIONAL_COUNT),
-                _count(UnitTable.ID, ItemExtView.UNITS_COUNT),
-                _caseCount(UnitTable.STATUS,
-                        new String[]{String.valueOf(Status.NEW.ordinal()), String.valueOf(Status.USED.ordinal()), String.valueOf(Status.BROKEN.ordinal())},
-                        ItemExtView.AVAILABLE_UNITS_COUNT),
-                _count(ChildComposerTable.ID, ItemExtView.COMPOSERS_COUNT),
-                _sum(ChildComposerTable.FREE_OF_CHARGE_COMPOSER, ItemExtView.RESTRICT_COMPOSERS_COUNT),
                 CategoryTable.DEPARTMENT_GUID,
                 CategoryTable.TITLE,
                 TaxGroupTable.TAX,
@@ -243,10 +232,6 @@ public class SearchItemsListFragment extends Fragment implements IPriceLevelList
                     c.getInt(indexHolder.get(ItemExtView.MODIFIERS_COUNT)),
                     c.getInt(indexHolder.get(ItemExtView.ADDONS_COUNT)),
                     c.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT)),
-                    c.getInt(indexHolder.get(ItemExtView.UNITS_COUNT)),
-                    c.getInt(indexHolder.get(ItemExtView.AVAILABLE_UNITS_COUNT)),
-                    c.getInt(indexHolder.get(ItemExtView.COMPOSERS_COUNT)),
-                    c.getInt(indexHolder.get(ItemExtView.RESTRICT_COMPOSERS_COUNT)),
                     c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
                     c.getString(indexHolder.get(CategoryTable.TITLE)),
                     _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX)), BigDecimal.ZERO),

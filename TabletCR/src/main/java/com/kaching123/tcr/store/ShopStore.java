@@ -2927,10 +2927,6 @@ public abstract class ShopStore {
         String MODIFIERS_COUNT = "modifiers_count";
         String ADDONS_COUNT = "addons_count";
         String OPTIONAL_COUNT = "options_count";
-        String UNITS_COUNT = "units_count";
-        String AVAILABLE_UNITS_COUNT = "available_units_count";
-        String COMPOSERS_COUNT = "composers_count";
-        String RESTRICT_COMPOSERS_COUNT = "restrict_composers_count";
 
         @From(ItemTable.TABLE_NAME)
         String TABLE_ITEM = "item_table";
