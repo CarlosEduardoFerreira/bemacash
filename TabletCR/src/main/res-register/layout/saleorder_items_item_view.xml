@@ -260,7 +260,7 @@
             android:gravity="right|center_vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="@integer/saleorder_items_item_subtotal_weight" />
+            android:layout_weight="4" />
 
     </LinearLayout>
 
