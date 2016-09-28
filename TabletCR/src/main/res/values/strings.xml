@@ -2037,7 +2037,6 @@
     <string name="button_override">Override</string>
 
 
-
     <string name="ebt_type_chooser_dlg_title">Please choose:</string>
     <string name="payment_fragment_ebt_not_enabled">0.00</string>
     <string name="bond_item_adapter_btn_value_format">\u0024%1$d</string>
@@ -2058,5 +2057,8 @@
 
 
     <string name="modifiers_limit_exceed_msg">Group limit can not exceed (%d) modifier(s)</string>
-    <string name="modifiers_count_insufficient_msg" formatted = "false">You must select the required amount\nof modifiers for modifier group\n\'%s\'\nThe required amount is (%d)</string>
+    <string name="modifiers_count_insufficient_msg" formatted="false">You must select the required amount\nof modifiers for modifier group\n\'%s\'\nThe required amount is (%d)</string>
+
+    <string name="log_set">Set</string>
+    <string name="log_view">View</string>
 </resources>

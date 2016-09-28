@@ -1,10 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'signing'
-
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.1"
+    buildToolsVersion '21.1.0'
 
     defaultConfig {
         minSdkVersion 12
@@ -18,33 +17,26 @@ android {
         }
     }
 }
-
 group = "com.hoho.android"
 version = "0.2.0-SNAPSHOT"
-
 configurations {
     archives {
         extendsFrom configurations.default
     }
 }
-
 signing {
     required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
 }
-
 def getRepositoryUsername() {
     return hasProperty('sonatypeUsername') ? sonatypeUsername : ""
 }
-
 def getRepositoryPassword() {
     return hasProperty('sonatypePassword') ? sonatypePassword : ""
 }
-
 def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false
 }
-
 uploadArchives {
     def sonatypeRepositoryUrl
     if (isReleaseBuild()) {
@@ -96,4 +88,7 @@ uploadArchives {
             }
         }
     }
+}
+
+dependencies {
 }

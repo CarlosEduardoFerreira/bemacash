@@ -1,6 +1,7 @@
 package com.kaching123.tcr.fragment.settings;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,14 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ResourceCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.LogsViewerActivity_;
 import com.kaching123.tcr.commands.device.DeletePaxCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.SettingINI;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
@@ -29,6 +34,7 @@ import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PaxTable;
 import com.mobeta.android.dslv.DragSortListView;
+import com.pax.poslink.LogSetting;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -40,6 +46,7 @@ import org.androidannotations.annotations.ViewById;
 @EFragment(R.layout.settings_pax_list_fragment)
 @OptionsMenu(R.menu.discover_pax_activity)
 public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor> {
+    private static final String TAG = "PaxListFragment";
 
     private static final Uri URI_PRINTER = ShopProvider.getContentUri(PaxTable.URI_CONTENT);
     public static final int LOADER_ID = 123;
@@ -51,6 +58,12 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
 
     @ViewById
     protected EditText timeOutInput;
+
+    @ViewById
+    protected Spinner logSwitchEdit, logLevelEdit;
+
+    @ViewById
+    protected Button logSet, logView;
 
     private final int PAX_TIME_OUT_DEFAULT = 100;
 
@@ -77,6 +90,58 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
     @AfterViews
     protected void init() {
         timeOutInput.setText("" + (getPaxTimeout() == 0 ? PAX_TIME_OUT_DEFAULT : getPaxTimeout()));
+        String LogSettingIniFile =TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath() + "/" + SettingINI.FILENAME;
+        if(!SettingINI.loadSettingFromFile(LogSettingIniFile))
+        {
+            logSwitchEdit.setSelection(0);
+            logLevelEdit.setSelection(0);
+
+            LogSetting.setLogMode(true);
+            LogSetting.setLevel(LogSetting.LOGLEVEL.ERROR);
+            SettingINI.saveLogSettingToFile(LogSettingIniFile);
+        }
+        else
+        {
+            logSwitchEdit.setSelection(LogSetting.isLoggable()?0:1);
+            logLevelEdit.setSelection(LogSetting.getLevel().ordinal());
+        }
+
+        logView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewLogFile();
+            }
+        });
+
+        logSet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setLogSetting();
+            }
+        });
+    }
+
+    private void setLogSetting(){
+        String LogSettingIniFile = getContext().getApplicationContext().getFilesDir().getAbsolutePath() + "/" + SettingINI.FILENAME;
+
+        String[] mStrArrayLogSwitch = getResources().getStringArray(R.array.log_switch);
+
+        LogSetting.setLogMode(logSwitchEdit.getSelectedItem().toString().compareTo(mStrArrayLogSwitch[0]) == 0);
+        LogSetting.setLevel(LogSetting.LOGLEVEL.valueOf(logLevelEdit.getSelectedItem().toString()));
+
+        android.util.Log.i(TAG, "isLoggable =" + LogSetting.isLoggable() + "; LogLevel=" + LogSetting.getLevel()
+                + "; OutputPath=" + LogSetting.getOutputPath());
+
+        SettingINI.saveLogSettingToFile(LogSettingIniFile);
+    }
+
+    private void viewLogFile(){
+
+        Intent intent = new Intent(getActivity(),LogsViewerActivity_.class);
+        Bundle bundle=new Bundle();
+        bundle.putString("LogsPath", LogSetting.getOutputPath());
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     private int getPaxTimeout() {

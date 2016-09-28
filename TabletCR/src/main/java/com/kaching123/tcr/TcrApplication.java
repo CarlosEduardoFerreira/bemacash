@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.Settings.Secure;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
@@ -42,6 +43,7 @@ import com.kaching123.tcr.store.SyncOpenHelper;
 import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.kaching123.tcr.util.OrgJsonConverter;
+import com.pax.poslink.LogSetting;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.androidannotations.annotations.Background;
@@ -152,6 +154,9 @@ public class TcrApplication extends MultiDexApplication {
 
         lazyInstantiateShopPref();
         initPref();
+
+        String LogOutputFile = Environment.getExternalStorageDirectory().toString();
+        LogSetting.setOutputPath(LogOutputFile);
     }
 
     @Override
