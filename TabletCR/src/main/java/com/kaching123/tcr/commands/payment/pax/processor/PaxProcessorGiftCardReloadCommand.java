@@ -39,15 +39,18 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
 
 
     private static final String ARG_AMOUNT = "ARG_AMOUNT";
-//    public static final String RESULT_TRANSACTION = "RES_TRANSACTION";
+    //    public static final String RESULT_TRANSACTION = "RES_TRANSACTION";
     public static final String RESULT_ERROR_REASON = "ERROR";
+    public static final String RESULT_GIFT_CARD_BALANCE = "BALANCE";
     private static final String ARG_SALEACTIONRESPONSE = "SaleActionResponse";
     public static final String SUCCESS = "SUCCESS";
     public static final String FAIL = "FAIL";
     private static final String ARG_PURPOSE = "ARG_AMOUNT_1";
+    private static final String DEFAULT_GIFT_CARD_BALANCE = "0.00";
 
-//    private PaxTransaction transaction;
+    //    private PaxTransaction transaction;
     private String errorReason;
+    private String balance;
 
     private ArrayList<ContentProviderOperation> operations;
     private BatchSqlCommand sqlCommand;
@@ -96,7 +99,7 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
 
         return succeeded()
 //                .add(RESULT_TRANSACTION, transaction)
-                .add(RESULT_ERROR_REASON, errorReason);
+                .add(RESULT_ERROR_REASON, errorReason).add(RESULT_GIFT_CARD_BALANCE, balance);
     }
 
 
@@ -142,6 +145,7 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
 
             Logger.d("PaxProcessorSaleCommand response:" + ptr.Msg);
 
+
             if (ptr.Code == ProcessTransResultCode.OK) {
 
                 response = posLink.PaymentResponse;
@@ -154,7 +158,11 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
 //                            .withValues(transactionModel.toValues())
 //                            .build());
 //                    sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
+                    balance = new BigDecimal(response.RemainingBalance).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP).toString();
                     errorReason = SUCCESS;
+
+                    return succeeded().add(RESULT_ERROR_REASON, errorReason).add(RESULT_GIFT_CARD_BALANCE, balance);
+
                 } else {
 //                    transaction.allowReload = true;
                     errorReason = "Result Code: " + response.ResultCode + " (" + response.ResultTxt + ")";
@@ -181,7 +189,7 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
             Logger.e("Sale Pax", ex);
         }
 
-        return succeeded();
+        return succeeded().add(RESULT_GIFT_CARD_BALANCE, balance);
     }
 
     @Override
@@ -202,11 +210,11 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
     public static abstract class PaxGiftCardReloadCallback {
 
         @OnSuccess(PaxProcessorGiftCardReloadCommand.class)
-        public final void onSuccess(@Param(PaxProcessorGiftCardReloadCommand.RESULT_ERROR_REASON) String response) {
-            handleSuccess(response);
+        public final void onSuccess(@Param(PaxProcessorGiftCardReloadCommand.RESULT_ERROR_REASON) String response, @Param(RESULT_GIFT_CARD_BALANCE) String balance) {
+            handleSuccess(response, balance);
         }
 
-        protected abstract void handleSuccess(String errorReason);
+        protected abstract void handleSuccess(String errorReason, String balance);
 
         @OnFailure(PaxProcessorGiftCardReloadCommand.class)
         public final void onFailure() {

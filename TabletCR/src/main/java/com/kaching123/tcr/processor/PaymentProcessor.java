@@ -1016,6 +1016,10 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         });
     }
 
+    public void setOrderChange(String balance)
+    {
+        this.orderChange = new BigDecimal(balance);
+    }
     /**
      * Follow with the card payment
      */

@@ -2036,7 +2036,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             PAXReloadFragmentDialog.show(this, new PAXReloadFragmentDialog.IPaxReloadListener() {
 
                 @Override
-                public void onComplete(String msg) {
+                public void onComplete(String msg, String balance) {
+                    processor.setOrderChange(balance);
                     if (PaxProcessorGiftCardReloadCommand.SUCCESS.equalsIgnoreCase(msg)) {
                         ProceedToGiftCard(true, giftcardList.get(giftcardList.size() - giftcardCount));
                         PAXReloadFragmentDialog.hide(BaseCashierActivity.this);
@@ -2105,7 +2106,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     @OnSuccess(PaxProcessorGiftCardReloadCommand.class)
-    public void handleSuccess(@Param(PaxProcessorGiftCardReloadCommand.RESULT_ERROR_REASON) String errorReason) {
+    public void handleSuccess(@Param(PaxProcessorGiftCardReloadCommand.RESULT_ERROR_REASON) String errorReason, @Param(PaxProcessorGiftCardReloadCommand.RESULT_GIFT_CARD_BALANCE) String balance) {
 
     }
 

@@ -115,7 +115,7 @@ public class PAXReloadFragmentDialog extends TransactionPendingFragmentDialogBas
         PaxProcessorGiftCardReloadCommand.startSale(getContext(), model, amount, new PaxProcessorGiftCardReloadCommand.PaxGiftCardReloadCallback() {
 
             @Override
-            protected void handleSuccess(String errorReason) {
+            protected void handleSuccess(String errorReason, String balance) {
                 if (!errorReason.equalsIgnoreCase(PaxProcessorGiftCardReloadCommand.SUCCESS)) {
                     message.setText(errorReason);
                     message.setTextColor(Color.RED);
@@ -127,7 +127,7 @@ public class PAXReloadFragmentDialog extends TransactionPendingFragmentDialogBas
                     progressBar.setVisibility(View.GONE);
                 }
                 else
-                    listener.onComplete(errorReason);
+                    listener.onComplete(errorReason, balance);
             }
 
             @Override
@@ -141,7 +141,7 @@ public class PAXReloadFragmentDialog extends TransactionPendingFragmentDialogBas
 
     public interface IPaxReloadListener {
 
-        void onComplete(String msg);
+        void onComplete(String msg, String balance);
 
         void onCancel();
 
