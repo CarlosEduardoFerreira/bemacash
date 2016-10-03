@@ -46,7 +46,7 @@ public class PaxProcessorGiftCardReloadCommand extends PaxProcessorBaseCommand {
     public static final String SUCCESS = "SUCCESS";
     public static final String FAIL = "FAIL";
     private static final String ARG_PURPOSE = "ARG_AMOUNT_1";
-    private static final String DEFAULT_GIFT_CARD_BALANCE = "0.00";
+    public static final String DEFAULT_GIFT_CARD_BALANCE = "0.00";
 
     //    private PaxTransaction transaction;
     private String errorReason;
