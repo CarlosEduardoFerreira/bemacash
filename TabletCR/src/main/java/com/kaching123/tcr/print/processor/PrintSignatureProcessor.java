@@ -110,7 +110,7 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 }
                 printerWrapper.emptyLine();
                 printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
-                printerWrapper.subTitle(payment.customerName);
+                printerWrapper.subTitle(getCustomerName(payment.customerName));
                 printerWrapper.emptyLine();
             }
         }
@@ -142,6 +142,14 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
         }
 
         printerWrapper.drawLine();
+    }
+
+    private String getCustomerName(String customerName) {
+        String[] names = customerName.split("/");
+        if (names.length == 1)
+            return customerName;
+        else
+            return names[1].trim() + " " + names[0].trim();
     }
 
     private String getEntryMethod(String entryMethod) {

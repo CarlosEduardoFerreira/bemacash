@@ -236,7 +236,7 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
         PaymentRequest request = new PaymentRequest();
         if (!isVoid) {
             request.Amount = sAmount;
-            request.ExtData = "<OrigTransDate>"+getData(transaction.createTime)+"</OrigTransDate>";
+//            request.ExtData = "<OrigTransDate>"+getData(transaction.createTime)+"</OrigTransDate>";
         }
         if (isVoid)
             request.TransType = TRANS_TYPE_VOID;
