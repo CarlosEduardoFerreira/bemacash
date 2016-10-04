@@ -229,14 +229,14 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
 
     private String getData(Date data)
     {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMDD");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         return sdf.format(data);
     }
     public PaymentRequest getRequest(boolean isVoid, String sAmount, PaymentTransactionModel transactionModel) {
         PaymentRequest request = new PaymentRequest();
         if (!isVoid) {
             request.Amount = sAmount;
-            request.ExtData = "<ReturnReason>0</ReturnReason><OrigTransDate>"+getData(transaction.createTime)+"</OrigTransDate>";
+            request.ExtData = "<OrigTransDate>"+getData(transaction.createTime)+"</OrigTransDate>";
         }
         if (isVoid)
             request.TransType = TRANS_TYPE_VOID;
