@@ -13,7 +13,20 @@ import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.LastTrasnactionResponse;
 import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActionResponse;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.StringReader;
 import java.math.BigDecimal;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -38,7 +51,7 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
 
     public void updateWith(SaleActionResponse data) {
         cardName = data.getDetails().getSale().getType();
-        amount = new BigDecimal( data.getDetails().getAmount() );
+        amount = new BigDecimal(data.getDetails().getAmount());
         serviceTransactionNumber = data.getDetails().getTransactionNumber();
         authorizationNumber = data.getDetails().getSale().getAuthNumber();
         lastFour = data.getDetails().getDigits();
@@ -51,7 +64,7 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
 
     public void updateWith(LastTrasnactionResponse data) {
         cardName = data.getDetails().getDetails().getSale().getType();
-        amount = new BigDecimal( data.getDetails().getDetails().getAmount() );
+        amount = new BigDecimal(data.getDetails().getDetails().getAmount());
         serviceTransactionNumber = data.getDetails().getDetails().getTransactionNumber();
         authorizationNumber = data.getDetails().getDetails().getSale().getAuthNumber();
         lastFour = data.getDetails().getDetails().getDigits();
@@ -67,11 +80,11 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
 
         //fixme
         // hack for temporary detecting ebt card
-        if(getGateway().equals(PaymentGateway.PAX_EBT_CASH) || getGateway().equals(PaymentGateway.PAX_EBT_FOODSTAMP)) {
+        if (getGateway().equals(PaymentGateway.PAX_EBT_CASH) || getGateway().equals(PaymentGateway.PAX_EBT_FOODSTAMP)) {
             cardName = "EBT CARD";
         }
 
-        if(getGateway().equals(PaymentGateway.PAX_GIFT_CARD)) {
+        if (getGateway().equals(PaymentGateway.PAX_GIFT_CARD)) {
             cardName = "GIFT CARD";
         }
         //end of hack, needs to be replaced by real detection
@@ -80,20 +93,68 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         serviceTransactionNumber = response.RefNum;
         authorizationNumber = response.AuthCode;
         lastFour = response.BogusAccountNum;
+
+        //added for Heartland requirements
+        resultCode = response.ResultCode;
+        applicationCryptogramType = "";
+        applicationIdentifier = "";
+        entryMethod = "";
+        setExtData("<extData>" + response.ExtData + "</extData>");
         //TODO PosLink need change to HostCode later.
 //        userTransactionNumber = response.RefNum;
         try {
             balance = new BigDecimal(response.RemainingBalance).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
-        }
-        catch (Exception ex )
-        {
+        } catch (Exception ex) {
             Log.d(TAG, ex.getMessage());
         }
+    }
+
+    public void setExtData(String extData) {
+        StringReader sr = new StringReader(extData);
+
+        InputSource is = new InputSource(sr);
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        DocumentBuilder builder = null;
+        try {
+            builder = factory.newDocumentBuilder();
+            Document document = builder.parse(is);
+            NodeList exeDatas = document.getChildNodes();
+            for (int i = 0; i < exeDatas.getLength(); i++) {
+                Node node = exeDatas.item(i);
+                NodeList datas = node.getChildNodes();
+                for (int j = 0; j < datas.getLength(); j++) {
+                    System.out.println(datas.item(j).getNodeName()
+                            + ":" + datas.item(j).getTextContent());
+                    if (datas.item(j).getNodeName().equalsIgnoreCase("PLEntryMode"))
+                        entryMethod = datas.item(j).getTextContent();
+                    if (datas.item(j).getNodeName().equalsIgnoreCase("ARC"))
+                        applicationCryptogramType = datas.item(j).getTextContent();
+                    if (datas.item(j).getNodeName().equalsIgnoreCase("AID"))
+                        applicationIdentifier = datas.item(j).getTextContent();
+                    if (datas.item(j).getNodeName().equalsIgnoreCase("PLNameOnCard"))
+                        customerName = datas.item(j).getTextContent();
+                }
+            }
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getEntryMethod(String exData) {
+
+        return null;
     }
 
     private PaxTransaction() {
         super();
     }
+
     public PaxTransaction(PaymentTransactionModel mdoel) {
         super(mdoel);
     }

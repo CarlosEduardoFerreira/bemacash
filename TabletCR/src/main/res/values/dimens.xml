@@ -217,7 +217,6 @@
     <dimen name="ebt_chooser_dlg_btn_padding_right">10dp</dimen>
 
 
-
     <dimen name="payment_tender_dlg_main_layout_padding_top">10dp</dimen>
     <dimen name="payment_tender_dlg_main_layout_padding_left">20dp</dimen>
     <dimen name="payment_tender_dlg_main_layout_padding_right">20dp</dimen>

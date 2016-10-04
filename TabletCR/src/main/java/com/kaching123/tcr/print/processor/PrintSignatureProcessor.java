@@ -39,6 +39,8 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
 
     protected void printBody(Context context, TcrApplication app, ISignaturePrinter printerWrapper) {
 
+        printerWrapper.subTitle(context.getString(R.string.print_order_body_sale_subtitle));
+
         if (type == ReceiptType.DEBIT)
             printerWrapper.subTitle(context.getString(R.string.printer_debit_subtitle));
         else if (type == ReceiptType.EBT_CASH)
@@ -68,11 +70,27 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
             printerWrapper.date(payment.createTime);
             printerWrapper.cardName(payment.cardName);
             String shifted = UiHelper.formatLastFour(payment.lastFour);
+            String entry = getEntryMethod(payment.entryMethod);
+            String AID = payment.applicationIdentifier;
+            String ARQC = payment.applicationCryptogramType;
+            String approvalNumber = payment.resultCode;
             if (!TextUtils.isEmpty(shifted)) {
                 printerWrapper.shiftedNumber(shifted);
             }
-            if (!TextUtils.isEmpty(payment.authorizationNumber))
-                printerWrapper.authNumber(payment.authorizationNumber);
+            if (!TextUtils.isEmpty(entry)) {
+                printerWrapper.entryMethod(entry);
+            }
+            if (!TextUtils.isEmpty(AID)) {
+                printerWrapper.aidNumber(AID);
+            }
+            if (!TextUtils.isEmpty(ARQC)) {
+                printerWrapper.arqcNumber(ARQC);
+            }
+            if (!TextUtils.isEmpty(payment.authorizationNumber)) {
+                printerWrapper.approvalNumber(payment.authorizationNumber);
+            }
+//            if (!TextUtils.isEmpty(payment.authorizationNumber))
+//                printerWrapper.authNumber(payment.authorizationNumber);
             printerWrapper.amount(payment.amount);
             cashBackTotal = cashBackTotal.add(payment.cashBack.negate());
             amount = amount.add(payment.amount);
@@ -92,6 +110,7 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 }
                 printerWrapper.emptyLine();
                 printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
+                printerWrapper.subTitle(getCustomerName(payment.customerName));
                 printerWrapper.emptyLine();
             }
         }
@@ -123,6 +142,34 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
         }
 
         printerWrapper.drawLine();
+    }
+
+    private String getCustomerName(String customerName) {
+        String[] names = customerName.split("/");
+        if (names.length == 1)
+            return customerName;
+        else
+            return names[1].trim() + " " + names[0].trim();
+    }
+
+    private String getEntryMethod(String entryMethod) {
+        int method = Integer.parseInt(entryMethod.equalsIgnoreCase("") ? "6" : entryMethod);
+        switch (method) {
+            case 0:
+                return "Manual";
+            case 1:
+                return "Swipe";
+            case 2:
+                return "Contactless";
+            case 3:
+                return "Scanner";
+            case 4:
+                return "Chip";
+            case 5:
+                return "Chip Fall Back Swipe";
+            default:
+                return "";
+        }
     }
 
     @Override

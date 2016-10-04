@@ -2043,12 +2043,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             PAXReloadFragmentDialog.show(this, new PAXReloadFragmentDialog.IPaxReloadListener() {
 
                 @Override
-                public void onComplete(String msg) {
+                public void onComplete(String msg, String balance) {
                     if (PaxProcessorGiftCardReloadCommand.SUCCESS.equalsIgnoreCase(msg)) {
-                        ProceedToGiftCard(true, giftcardList.get(giftcardList.size() - giftcardCount));
+                        ProceedToGiftCard(true, giftcardList.get(giftcardList.size() - giftcardCount), balance);
                         PAXReloadFragmentDialog.hide(BaseCashierActivity.this);
                     } else {
-                        ProceedToGiftCard(false, giftcardList.get(giftcardList.size() - giftcardCount));
+                        ProceedToGiftCard(false, giftcardList.get(giftcardList.size() - giftcardCount), PaxProcessorGiftCardReloadCommand.DEFAULT_GIFT_CARD_BALANCE);
                     }
 
 //                    else {
@@ -2059,7 +2059,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 @Override
                 public void onCancel() {
                     PAXReloadFragmentDialog.hide(BaseCashierActivity.this);
-                    ProceedToGiftCard(false, giftcardList.get(giftcardList.size() - giftcardCount));
+                    ProceedToGiftCard(false, giftcardList.get(giftcardList.size() - giftcardCount), PaxProcessorGiftCardReloadCommand.DEFAULT_GIFT_CARD_BALANCE);
 //                    if (--giftcardCount > 0)
 //                        OnGiftCardBilling();
 //                    else {
@@ -2097,22 +2097,23 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //                    });
     }
 
-    private void ProceedToGiftCard(boolean success, SaleOrderItemViewModel model) {
+    private void ProceedToGiftCard(boolean success, SaleOrderItemViewModel model, String balance) {
         if (success)
-            giftCardResultList.add(new GiftCardBillingResult(PaxProcessorGiftCardReloadCommand.SUCCESS, model));
+            giftCardResultList.add(new GiftCardBillingResult(PaxProcessorGiftCardReloadCommand.SUCCESS, model, balance));
         else
-            giftCardResultList.add(new GiftCardBillingResult(PaxProcessorGiftCardReloadCommand.FAIL, model));
+            giftCardResultList.add(new GiftCardBillingResult(PaxProcessorGiftCardReloadCommand.FAIL, model, balance));
 
         if (--giftcardCount > 0)
             OnGiftCardBilling();
         if (giftcardCount == 0) {
+            processor.setOrderChange(balance);
             processor.proceedToGiftCard(BaseCashierActivity.this, successfullCCtransactionModels, giftCardResultList);
             giftCardResultList = new ArrayList<GiftCardBillingResult>();
         }
     }
 
     @OnSuccess(PaxProcessorGiftCardReloadCommand.class)
-    public void handleSuccess(@Param(PaxProcessorGiftCardReloadCommand.RESULT_ERROR_REASON) String errorReason) {
+    public void handleSuccess(@Param(PaxProcessorGiftCardReloadCommand.RESULT_ERROR_REASON) String errorReason, @Param(PaxProcessorGiftCardReloadCommand.RESULT_GIFT_CARD_BALANCE) String balance) {
 
     }
 

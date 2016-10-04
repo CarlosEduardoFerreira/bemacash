@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/logs_path"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textColor="@android:color/white" />
+
+    <View
+        android:id="@+id/file_path_line"
+        android:layout_width="match_parent"
+        android:layout_height="0.3dp"
+        android:background="@android:color/darker_gray" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.3dp"
+        android:background="@android:color/darker_gray" />
+
+    <ListView
+        android:id="@+id/logs_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="0.3dp"
+        android:listSelector="@null"
+        android:scrollbars="none" />
+
+</LinearLayout>

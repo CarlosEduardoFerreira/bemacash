@@ -109,7 +109,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
     protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
-        final List<PaymentTransactionModel> payments =  ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
+        final List<PaymentTransactionModel> payments = ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
 
             @Override
@@ -206,7 +206,12 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 isEbtPaymentExists = true;
                 ebtBalance = p.balance;
             }
-            if (p.balance != null && p.gateway.isGiftCard()) {
+            if (giftCardResults != null)
+                for (GiftCardBillingResult result : giftCardResults) {
+                    isGiftCardPaymnetExists = true;
+                    giftCardBalance = new BigDecimal(result.balance);
+                }
+            if ((p.balance != null && p.gateway.isGiftCard())) {
                 isGiftCardPaymnetExists = true;
                 giftCardBalance = p.balance;
             }
@@ -241,22 +246,20 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
 
             }
-        if (giftCardResults != null)
-            for (GiftCardBillingResult result : giftCardResults) {
-                printerWrapper.addAddsOn(result.model.description, result.model.finalPrice);
-            }
+//        if (giftCardResults != null)
+//            for (GiftCardBillingResult result : giftCardResults) {
+//                printerWrapper.addAddsOn(result.model.description, result.model.finalPrice);
+//            }
     }
 
     @Override
     protected void printFooter(TcrApplication app, ITextPrinter printerWrapper) {
-        if (orderInfo.customerLoyaltyPoints != null){
+        if (orderInfo.customerLoyaltyPoints != null) {
             printerWrapper.header("Total Bonus Points Available", integralIntegerFormat(orderInfo.customerLoyaltyPoints));
-
-            if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0){
-                printerWrapper.header("Bonus Points on this Sale", integralIntegerFormat(orderInfo.earnedLoyaltyPoints));
-            }
         }
-
+        if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0) {
+            printerWrapper.header("Bonus Points on this Sale", integralIntegerFormat(orderInfo.earnedLoyaltyPoints));
+        }
         super.printFooter(app, printerWrapper);
     }
 
