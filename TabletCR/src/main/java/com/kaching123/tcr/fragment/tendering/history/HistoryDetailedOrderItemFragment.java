@@ -19,6 +19,7 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
 import com.kaching123.tcr.commands.print.digital.ResendDigitalOrderCommand;
 import com.kaching123.tcr.commands.print.digital.ResendDigitalOrderCommand.BaseResendDigitalOrderCallback;
@@ -306,7 +307,7 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
 
         AlertDialogFragment.showConfirmationNoImage(getActivity(),
                 R.string.dlg_return_title,
-                String.format(getString(R.string.dlg_return_msg), refundAmount.getText().toString(), num.getText().toString()),
+                String.format(getString(R.string.dlg_return_msg), TcrApplication.getCountryFunctionality().currencySymbol(), refundAmount.getText().toString(), num.getText().toString()),
                 new StyledDialogFragment.OnDialogClickListener() {
                     @Override
                     public boolean onClick() {

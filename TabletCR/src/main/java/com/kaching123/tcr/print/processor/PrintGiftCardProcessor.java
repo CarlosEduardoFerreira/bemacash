@@ -71,7 +71,7 @@ public class PrintGiftCardProcessor extends BasePrintProcessor<ITextPrinter> {
     }
 
     @Override
-    protected void printFooter(TcrApplication app, ITextPrinter printerWrapper) {
+    protected void printFooter(Context context, TcrApplication app, ITextPrinter printerWrapper) {
 //        super.printFooter(app, printerWrapper);
     }
 

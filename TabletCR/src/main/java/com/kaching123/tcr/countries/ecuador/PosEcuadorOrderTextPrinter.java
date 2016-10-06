@@ -1,4 +1,4 @@
-package com.kaching123.tcr.ecuador;
+package com.kaching123.tcr.countries.ecuador;
 
 import com.kaching123.pos.printer.PrintLineAction;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;

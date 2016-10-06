@@ -70,7 +70,8 @@ public class TaxGroupDialog extends StyledDialogFragment {
                 return false;
             }
         });
-        isDefault.setVisibility(TcrApplication.isEcuadorVersion() ? View.VISIBLE : View.GONE);
+        isDefault.setVisibility(TcrApplication.getCountryFunctionality().isMultiTaxGroup()//.isCurrentCountryUsesMultiTax()
+                ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class TaxGroupDialog extends StyledDialogFragment {
         if (model != null) {
             title.setText(model.title);
             UiHelper.showDecimal(tax, model.tax);
-            if (TcrApplication.isEcuadorVersion()) {
+            if (TcrApplication.getCountryFunctionality().isMultiTaxGroup()) {//.isCurrentCountryUsesMultiTax()) {
                 isDefault.setChecked(model.isDefault);
             }
         }
@@ -125,7 +126,8 @@ public class TaxGroupDialog extends StyledDialogFragment {
             if (!isChanged()) {
                 return true;
             }
-            if (TcrApplication.isEcuadorVersion() && !canBeDefault && this.isDefault.isChecked()) {
+            if (TcrApplication.getCountryFunctionality().isMultiTaxGroup()//.isCurrentCountryUsesMultiTax()
+                    && !canBeDefault && this.isDefault.isChecked()) {
                 AlertDialogFragment_.showAlert(getActivity(), R.string.warning_dialog_title, "There have already been defined 2 default tax groups");
                 return false;
             }

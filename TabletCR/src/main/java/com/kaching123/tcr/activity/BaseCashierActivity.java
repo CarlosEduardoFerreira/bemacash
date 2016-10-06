@@ -640,8 +640,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     protected void tryToAddItem(final ItemExModel model) {
-        if (!TcrApplication.isEcuadorVersion())
+        /*if (!TcrApplication.isEcuadorVersion()){
             tryToAddItem(model, null, null, null);
+        } else if(!TcrApplication.isPeruVersion()) {
+            tryToAddItem(model, null, null, null);
+        }*/
+        if (!TcrApplication.getCountryFunctionality().isMultiTaxGroup()) {//.isCurrentCountryUsesMultiTax()){
+            tryToAddItem(model, null, null, null);
+        }
         else {
             if (saleItemCount < 10)
                 tryToAddItem(model, null, null, null);

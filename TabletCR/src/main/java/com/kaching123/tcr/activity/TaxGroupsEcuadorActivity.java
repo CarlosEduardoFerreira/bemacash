@@ -8,7 +8,7 @@ import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.ecuador.TaxHelper;
+import com.kaching123.tcr.countries.ecuador.TaxHelper;
 import com.kaching123.tcr.fragment.taxgroup.TaxGroupDialog;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.store.ShopProvider;

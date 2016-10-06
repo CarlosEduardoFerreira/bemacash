@@ -1,124 +1,74 @@
-package com.kaching123.tcr.print.processor;
+package com.kaching123.tcr.countries.puertorico;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
+import android.text.TextUtils;
 
-import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
-import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
-import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonComparator;
-import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
-import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2;
-import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.UnitLabelTable;
-import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.print.processor.GiftCardBillingResult;
+import com.kaching123.tcr.print.processor.PrintOrderProcessor;
 import com.kaching123.tcr.util.CalculationUtil;
-import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
+import com.telly.groundy.PublicGroundyTask;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.kaching123.tcr.fragment.UiHelper.integralIntegerFormat;
-import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 
 /**
- * Created by gdubina on 23.12.13.
+ * Created by alboyko on 23.09.2016.
  */
-public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
-    private boolean reprint;
-
+public class PuertoricoPrintProcessor extends PrintOrderProcessor {
     private final String TRANSACTION_FEE = "Transaction Fee";
+    private boolean reprint;
+    private ITextPrinter printerWrapper;
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setPrinterWrapper(ITextPrinter printerWrapper) {
+        this.printerWrapper = printerWrapper;
     }
 
-    public void setSubtotal(String subtotal) {
-        this.subTotal = subtotal;
-    }
-
-    public void setDiscountTotal(String discountTotal) {
-        this.discountTotal = discountTotal;
-    }
-
-    public void setTaxTotal(String taxTotal) {
-        this.taxTotal = taxTotal;
-    }
-
-    public void setPaxTransactions(ArrayList<PaymentTransactionModel> transactions) {
-        this.transactions = transactions;
-    }
-
-    public void setAmountTotal(String amountTotal) {
-        this.amountTotal = amountTotal;
-    }
-
-    public void setPrepaidReleaseResults(ArrayList<PrepaidReleaseResult> results) {
-        this.prepaidReleaseResults = results;
-    }
-
-    public void setGiftCardResults(ArrayList<GiftCardBillingResult> giftCardResults) {
-        this.giftCardResults = giftCardResults;
-    }
-
-
-    public PrintOrderProcessor(String orderGuid, IAppCommandContext appCommandContext) {
+    public PuertoricoPrintProcessor(String orderGuid, PublicGroundyTask.IAppCommandContext appCommandContext) {
         super(orderGuid, appCommandContext);
     }
 
-    public PrintOrderProcessor(String orderGuid, boolean reprint, IAppCommandContext appCommandContext) {
+    public PuertoricoPrintProcessor(String orderGuid, boolean reprint, PublicGroundyTask.IAppCommandContext appCommandContext) {
         super(orderGuid, appCommandContext);
         this.reprint = reprint;
     }
 
-    @Override
-    public void printHeader(Context context, TcrApplication app, ITextPrinter printerWrapper) {
-        if (reprint) {
-            printerWrapper.subTitle(context.getString(R.string.print_order_copy_header));
-            printerWrapper.emptyLine();
-        }
-
-        super.printHeader(context, app, printerWrapper);
+    private String[] getFormattedLine(String receipt) {
+        return receipt.split("\\n");
     }
 
     @Override
-    protected void printMidTid(ITextPrinter printer, String label, String value, boolean bold) {
-        printer.addWithTab2(label, value, true, bold);
-    }
-
     protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments =  ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
-        OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
+        OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new OrderTotalPriceCursorQuery.PrintHandler() {
 
             @Override
             public void handleItem(String saleItemGuid, String description, String unitLabel, PriceType priceType, BigDecimal qty,
                                    BigDecimal itemSubtotal, BigDecimal itemDiscount,
-                                   BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note, TaxGroupModel model1, TaxGroupModel model2, BigDecimal loyaltyPoints) {
-                List<String> unitAsStrings = new ArrayList<String>(units.size());
+                                   BigDecimal itemTax, BigDecimal singleItemPrice, List<Unit> units, ArrayList<SaleOrderItemViewModel.AddonInfo> addons, BigDecimal transactionFee, BigDecimal itemFullPrice, String note, TaxGroupModel model1, TaxGroupModel model2, BigDecimal loyaltyPoints) {
+                List<String> unitAsStrings = new ArrayList<>(units.size());
                 if (addons != null)
-                    Collections.sort(addons, new AddonComparator());
+                    Collections.sort(addons, new SaleOrderItemViewModel.AddonComparator());
                 for (Unit unit : units) {
                     unitAsStrings.add(unit.serialCode);
                 }
@@ -170,10 +120,19 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 else
                     printerWrapper.orderFooter(context.getString(R.string.printer_subtotal), (new BigDecimal(subTotal)).subtract(new BigDecimal(discountTotal).add(totalCashBack)));
 
-                if (taxTotal == null)
-                    printerWrapper.orderFooter(context.getString(R.string.printer_tax), totalTax);
-                else
-                    printerWrapper.orderFooter(context.getString(R.string.printer_tax), new BigDecimal(taxTotal));
+                for (TaxGroupModel key : taxes.keySet()) {
+                    if (!TextUtils.isEmpty(key.title)) {
+                        printerWrapper.orderFooter(
+                                //String.format( context.getString(R.string.item_multi_tax_group), key.title.toUpperCase()),//, percentFormat(key.tax)),
+                                String.format( context.getString(R.string.item_multi_tax_group), key.title),//, percentFormat(key.tax)),
+                                taxes.get(key));
+                    } else {
+                       // printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default).toUpperCase()
+                            //    + " " + percentFormat(TcrApplication.get().getTaxVat()), taxes.get(key));
+                        printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default), taxes.get(key));
+                    }
+                }
+
 
                 if (BigDecimal.ZERO.compareTo(tipsAmount) != 0) {
                     printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
@@ -184,6 +143,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                     printerWrapper.orderFooter(context.getString(R.string.printer_total), totalOrderPrice.add(tipsAmount).add(transactionFee).add(totalCashBack), true);
                 else
                     printerWrapper.orderFooter(context.getString(R.string.printer_total), new BigDecimal(amountTotal).add(transactionFee).add(totalCashBack), true);
+
                 printerWrapper.drawLine();
 
                 orderInfo.earnedLoyaltyPoints = totalLoyaltyPoints;
@@ -246,53 +206,5 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.addAddsOn(result.model.description, result.model.finalPrice);
             }
     }
-
-    @Override
-    protected void printFooter(Context context, TcrApplication app, ITextPrinter printerWrapper) {
-        if (orderInfo.customerLoyaltyPoints != null){
-            printerWrapper.header(context.getString(R.string.total_bonus_points_available), integralIntegerFormat(orderInfo.customerLoyaltyPoints));
-
-            if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0){
-                printerWrapper.header(context.getString(R.string.bonus_points_on_this_sale), integralIntegerFormat(orderInfo.earnedLoyaltyPoints));
-            }
-        }
-
-        super.printFooter(context, app, printerWrapper);
-    }
-
-    private String[] getFormattedLine(String receipt) {
-        return receipt.split("\\n");
-    }
-
-    private static final Uri SALE_ITEM_ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
-
-    protected BigDecimal getSaleItemAmount(String orderGuid, Context context) {
-        BigDecimal saleItemAmount = BigDecimal.ZERO;
-        Cursor c = ProviderAction.query(SALE_ITEM_ORDER_URI)
-                .where(ShopSchema2.SaleOrderItemsView2.SaleItemTable.ORDER_GUID + " = ?", orderGuid)
-                .perform(context);
-        BigDecimal itemQty = BigDecimal.ZERO;
-        HashMap<String, BigDecimal> list = new HashMap<>();
-        if (c.moveToFirst()) {
-            do {
-                String unitLabel = c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT));
-                itemQty = unitLabel != null && unitLabel.equalsIgnoreCase("LB") ? BigDecimal.ONE : _decimal(c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.QUANTITY)), BigDecimal.ZERO);
-                String itemGuid = c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.SaleItemTable.SALE_ITEM_GUID));
-                list.put(itemGuid, itemQty);
-//                if(!unitLabel.equalsIgnoreCase("LB"))
-//                    saleItemAmount = saleItemAmount.add(itemQty);
-//                else
-//                    saleItemAmount = saleItemAmount.add(BigDecimal.ONE);
-            } while (c.moveToNext());
-            c.close();
-        }
-        Iterator iter = list.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            BigDecimal val = (BigDecimal) entry.getValue();
-            saleItemAmount = saleItemAmount.add(val);
-        }
-        return saleItemAmount;
-    }
-
 }
+

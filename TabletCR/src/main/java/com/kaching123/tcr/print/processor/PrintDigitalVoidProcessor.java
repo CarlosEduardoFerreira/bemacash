@@ -19,6 +19,6 @@ public class PrintDigitalVoidProcessor extends PrintVoidProcessor{
 
     protected void printFooter(Context context, TcrApplication app, PosOrderTextPrinter printerWrapper) {
         printerWrapper.emptyLine();
-        super.printFooter(app, printerWrapper);
+        super.printFooter(context, app, printerWrapper);
     }
 }

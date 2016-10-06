@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.kaching123.pos.PosPrinter;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.BaseCashierActivity;
-import com.kaching123.tcr.ecuador.EcuadorPrintProcessor;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
@@ -55,8 +53,19 @@ public class PrintOrderCommand extends BasePrintOrderCommand {
     }
 
     protected PrintOrderProcessor getPrintOrderProcessor(String orderGuid, IAppCommandContext appCommandContext) {
-        return TcrApplication.isEcuadorVersion() ?
-                new EcuadorPrintProcessor(orderGuid, appCommandContext) : new PrintOrderProcessor(orderGuid, appCommandContext);
+      /*  return TcrApplication.isEcuadorVersion() ?
+                new EcuadorPrintProcessor(orderGuid, appCommandContext) : new PrintOrderProcessor(orderGuid, appCommandContext);*/
+
+/*
+        if(TcrApplication.isEcuadorVersion()){
+            return new EcuadorPrintProcessor(orderGuid, appCommandContext);
+        } else if(TcrApplication.isPeruVersion()) {
+            return new PeruPrintProcessor(orderGuid, appCommandContext);
+        } else {
+            return new PrintOrderProcessor(orderGuid, appCommandContext);
+        }
+*/
+        return  TcrApplication.getCountryFunctionality().getOrderOrderProcessor(orderGuid, appCommandContext);
     }
 
     public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, ArrayList<PaymentTransactionModel> transactions, ArrayList<PrepaidReleaseResult> receipts, ArrayList<GiftCardBillingResult> giftCardResults, BasePrintCallback callback) {

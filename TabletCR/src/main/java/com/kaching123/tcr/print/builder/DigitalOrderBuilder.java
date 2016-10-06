@@ -22,7 +22,7 @@ import static com.kaching123.tcr.print.FormatterUtil.commaPriceFormat;
 public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrinter {
 
     private static final DecimalFormat quantityFormat = new DecimalFormat("0.###");
-    private static final DecimalFormat priceFormat = new DecimalFormat("0.00");
+    //private static final DecimalFormat priceFormat = new DecimalFormat("0.00");
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy, h:mm a", Locale.US);
     private static final String SPACES_2 = "&nbsp;&nbsp;";
 
@@ -30,7 +30,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
         otherSymbols.setDecimalSeparator('.');
         otherSymbols.setGroupingSeparator(',');
-        priceFormat.setDecimalFormatSymbols(otherSymbols);
+       // priceFormat.setDecimalFormatSymbols(otherSymbols);
         quantityFormat.setDecimalFormatSymbols(otherSymbols);
     }
 
@@ -113,7 +113,8 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
 
     @Override
     public void add(String title, BigDecimal qty, BigDecimal totalPrice, BigDecimal itemPrice, List<String> units) {
-        add(title, quantityFormat.format(qty), priceFormat.format(totalPrice), units);
+        add(title, quantityFormat.format(qty), commaPriceFormat(totalPrice),//priceFormat.format(totalPrice),
+                units);
     }
 
     @Override
@@ -125,11 +126,12 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
             stringBuilder.append(_styled("table", TABLE_STYLE));
             stringBuilder.append("<tr>");
             stringBuilder.append("<td>");
-            stringBuilder.append("  ").append(qty).append(" " + unitsLabel).append(" @ ").append("1 " + unitsLabel).append(" /" + unitPrice);
+            stringBuilder.append("  ").append(qty).append(" ").append(unitsLabel).append(" @ ")
+                    .append(unitPrice).append("/ ").append(unitsLabel);
             stringBuilder.append("</td>");
 
             stringBuilder.append(_styled("td", PRICE_STYLE));
-            stringBuilder.append(price);
+            stringBuilder.append(commaPriceFormat(price));//price);
             stringBuilder.append("</td>");
             stringBuilder.append("</tr>");
 
@@ -146,7 +148,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
 
     @Override
     public void addItemDiscount(String title, BigDecimal discoutn) {
-        add(SPACES_2 + title, priceFormat.format(discoutn));
+        add(SPACES_2 + title, commaPriceFormat(discoutn));//priceFormat.format(discoutn));
     }
 
     @Override
@@ -244,7 +246,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
         stringBuilder.append(label);
         stringBuilder.append("</td>");
         stringBuilder.append(_styled("td", PRICE_STYLE));
-        stringBuilder.append(priceFormat.format(price));
+        stringBuilder.append(commaPriceFormat(price));//priceFormat.format(price));
         stringBuilder.append("</td>");
         stringBuilder.append("</tr>");
         stringBuilder.append("</table>");
@@ -284,7 +286,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
         stringBuilder.append(cardName);
         stringBuilder.append("</td>");
         stringBuilder.append(_styled("td", PRICE_STYLE));
-        stringBuilder.append(priceFormat.format(amount));
+        stringBuilder.append(commaPriceFormat(amount));//priceFormat.format(amount));
         stringBuilder.append("</td>");
         stringBuilder.append("</tr>");
         stringBuilder.append("</table>");

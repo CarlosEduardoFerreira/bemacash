@@ -4,9 +4,6 @@ import android.content.Context;
 
 import com.kaching123.pos.PosPrinter;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.ecuador.EcuadorPrintProcessor;
-import com.kaching123.tcr.model.PaymentTransactionModel;
-import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
 import com.kaching123.tcr.print.processor.PrintGiftCardProcessor;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
@@ -14,7 +11,6 @@ import com.telly.groundy.TaskResult;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 /**
  * Created by gdubina on 03.12.13.
@@ -38,8 +34,10 @@ public class PrintGiftCardBalanceCommand extends BasePrintOrderCommand {
     }
 
     protected PrintOrderProcessor getPrintOrderProcessor(String orderGuid, IAppCommandContext appCommandContext) {
-        return TcrApplication.isEcuadorVersion() ?
-                new EcuadorPrintProcessor(orderGuid, appCommandContext) : new PrintOrderProcessor(orderGuid, appCommandContext);
+        return TcrApplication.getCountryFunctionality().getOrderOrderProcessor(orderGuid, appCommandContext);
+        /*TcrApplication.isEcuadorVersion() ?
+                new EcuadorPrintProcessor(orderGuid, appCommandContext) : new PrintOrderProcessor(orderGuid, appCommandContext);*/
+
     }
 
     public static void start(Context context, String amount, BasePrintCallback callback) {

@@ -94,7 +94,7 @@ public class BasePosTextPrinter implements IPrinter {
     @Override
     public void print(PosPrinter posPrinter) throws IOException {
         for (Action s : commands) {
-            System.out.println("|" + s + "|");
+             System.out.println("|" + s + "|");
             if (posPrinter != null) {
                 s.execute(posPrinter);
             }
@@ -313,11 +313,11 @@ public class BasePosTextPrinter implements IPrinter {
         } else {
             printBuilder.append(title);
         }
-        if (printBuilder.length() < maxLeftPart) {
+        //if (printBuilder.length() < maxLeftPart) {
             for (int i = printBuilder.length(); i < maxLeftPart + 5; i++) {
                 printBuilder.append(' ');
             }
-        }
+        //}
         printBuilder.append(price);
         return printBuilder.toString();
     }
@@ -561,6 +561,36 @@ public class BasePosTextPrinter implements IPrinter {
         }
 
         return line.toString();
+    }
+
+
+    public static String formatStringMultiLineLastPart(int maxLen, int priceLen, int qtyLen, String title, String price) {
+        if (title == null)
+            title = "";
+        StringBuilder printTitle = new StringBuilder();
+
+     //   printTitle.append(qty);
+
+        int maxLeftPart = maxLen - priceLen;
+
+ //       int maxTitleLen = maxLeftPart - qtyLen;
+   //     if (title.length() > maxTitleLen) {
+     //       printTitle.append(crop(maxTitleLen, title));
+      //  } else {
+            printTitle.append(title);
+        //}
+
+        if (printTitle.length() < maxLeftPart) {
+            for (int i = printTitle.length(); i < maxLeftPart; i++) {
+                printTitle.append(' ');
+            }
+        }
+        for (int i = 0; i < priceLen - price.length(); i++) {
+            printTitle.append(' ');
+        }
+//        printTitle.append("$");
+        printTitle.append(price);
+        return printTitle.toString();
     }
 
 }

@@ -282,7 +282,11 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @OptionsItem
     protected void actionManageTaxGroupsSelected() {
-        if (TcrApplication.isEcuadorVersion()) {
+        /*if (TcrApplication.isEcuadorVersion()) {
+            TaxGroupsEcuadorActivity.start(this);
+        } else if(TcrApplication.isPeruVersion()){
+            TaxGroupsPeruActivity.start(this);*/
+        if(TcrApplication.getCountryFunctionality().isMultiTaxGroup()) {//.isCurrentCountryUsesMultiTax()){
             TaxGroupsEcuadorActivity.start(this);
         } else {
             TaxGroupsActivity.start(this);

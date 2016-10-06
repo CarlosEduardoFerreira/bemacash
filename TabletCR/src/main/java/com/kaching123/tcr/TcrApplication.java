@@ -26,6 +26,12 @@ import com.kaching123.tcr.commands.rest.sync.GetPagedArrayResponse;
 import com.kaching123.tcr.commands.rest.sync.GetPrepaidOrderIdResponse;
 import com.kaching123.tcr.commands.rest.sync.GetResponse;
 import com.kaching123.tcr.commands.rest.sync.v1.UploadResponseV1;
+import com.kaching123.tcr.countries.costarica.CostaRicaSettings;
+import com.kaching123.tcr.countries.CountryFunctionality;
+import com.kaching123.tcr.countries.ecuador.EcuadorSettings;
+import com.kaching123.tcr.countries.peru.PeruSettings;
+import com.kaching123.tcr.countries.puertorico.PuertoRicoSettings;
+import com.kaching123.tcr.countries.USASettings;
 import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter.BarcodePrefixes;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo.ViewType;
@@ -131,6 +137,7 @@ public class TcrApplication extends MultiDexApplication {
     private Boolean isNetworkConnected;
 
     private SyncOpenHelper syncOpenHelper;
+    private static CountryFunctionality countryFunctionality;
 
     @Override
     public void onCreate() {
@@ -301,6 +308,7 @@ public class TcrApplication extends MultiDexApplication {
         registerSerial = formatByBlocksString(registerSerial);
 
         setUsers();
+        changeCountryFunctionalityById(shopPref.countryId().get());
 
     }
 
@@ -667,6 +675,7 @@ public class TcrApplication extends MultiDexApplication {
 
         setUsers();
         saveInventoryLimit(info.inventoryLimit);
+        changeCountryFunctionalityById(shopPref.countryId().get());
     }
 
     public synchronized void saveShopInfoInner(ShopInfo info) {
@@ -993,9 +1002,65 @@ public class TcrApplication extends MultiDexApplication {
         Logger.d("[OFFLINE MODE] near expiration: " + result);
         return result;
     }
-
-    public static boolean isEcuadorVersion() {
+/*
+    private static boolean isEcuadorVersion() {
         return TcrApplication.get().getShopPref().countryId().get() == 2;
+    }
+
+    private static boolean isPeruVersion() {
+        return TcrApplication.get().getShopPref().countryId().get() == CountryName.PERU.ordinal();
+    }
+
+    private static boolean isCostaRicaVersion() {
+        return TcrApplication.get().getShopPref().countryId().get() == CountryName.COSTA_RICA.ordinal();
+    }
+
+
+    private static boolean isPuertoRicoVersion() {
+        return TcrApplication.get().getShopPref().countryId().get() == CountryName.PUERTO_RICO.ordinal();
+    }
+
+   public static boolean isCurrentCountryUsesMultiTax() {
+        return isEcuadorVersion()
+                ||isPeruVersion()
+                ||isPuertoRicoVersion();
+    }*/
+
+    private static void setCountryFunctionality(CountryFunctionality country) {
+        countryFunctionality = country;
+    }
+
+    public static CountryFunctionality getCountryFunctionality() {
+        return countryFunctionality;
+    }
+
+    public static void changeCountryFunctionalityById(long countryId) {
+        CountryName type = CountryName.getByPosition((int) countryId);
+        switch (type) {
+            case UNITED_STATES:
+                setCountryFunctionality(new USASettings());
+                break;
+            case ECUADOR:
+                setCountryFunctionality(new EcuadorSettings());
+                break;
+            case PERU:
+                setCountryFunctionality(new PeruSettings());
+                break;
+            case PUERTO_RICO:
+                setCountryFunctionality(new PuertoRicoSettings());
+                break;
+            case COSTA_RICA:
+                setCountryFunctionality(new CostaRicaSettings());
+                break;
+            default:
+                setCountryFunctionality(new USASettings());
+                break;
+        }
+    }
+
+
+    public static CountryName getAppVersionByCountry(int countryId) {
+        return CountryName.getByPosition(countryId);
     }
 
     private Long getOfflineStartTime() {
@@ -1283,6 +1348,21 @@ public class TcrApplication extends MultiDexApplication {
                 Logger.d("Tcrapplication closeSerialScanner faile: " + e.toString());
                 serialPortScanner = null;
             }
+        }
+    }
+
+    private enum CountryName {
+        UNKNOWN,
+        UNITED_STATES,
+        ECUADOR,
+        PARAGUAY,
+        PERU,
+        COSTA_RICA,
+        OTHER,
+        PUERTO_RICO;
+
+        public static CountryName getByPosition(int ordinal) {
+            return ordinal < values().length ? values()[ordinal] : UNKNOWN;
         }
     }
 }

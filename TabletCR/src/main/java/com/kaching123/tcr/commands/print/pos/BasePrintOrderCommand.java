@@ -1,9 +1,6 @@
 package com.kaching123.tcr.commands.print.pos;
 
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.ecuador.PosEcuadorKitchenPrinter;
-import com.kaching123.tcr.ecuador.PosEcuadorOrderTextPrinter;
-import com.kaching123.tcr.print.printer.PosKitchenPrinter;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
 
 /**
@@ -11,7 +8,8 @@ import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
  */
 public abstract class BasePrintOrderCommand extends BasePrintCommand<PosOrderTextPrinter> {
 
-    @Override
+
+    /*
     protected PosOrderTextPrinter createTextPrinter() {
         if (getPrinter() != null) {
             return getPrinter().printerType.equalsIgnoreCase("Thermal") ?
@@ -19,5 +17,38 @@ public abstract class BasePrintOrderCommand extends BasePrintCommand<PosOrderTex
                     : (TcrApplication.isEcuadorVersion() ? new PosEcuadorKitchenPrinter() : new PosKitchenPrinter());
         }
         return TcrApplication.isEcuadorVersion() ? new PosEcuadorOrderTextPrinter() : new PosOrderTextPrinter();
+    }*/
+    @Override
+    protected PosOrderTextPrinter createTextPrinter() {
+
+        if (getPrinter() != null) {
+            if (getPrinter().printerType.equalsIgnoreCase("Thermal")) {
+                /*if (TcrApplication.isEcuadorVersion()) {
+                    return new PosEcuadorOrderTextPrinter();
+                } else if (TcrApplication.isPeruVersion()) {
+                    return new PosPeruOrderTextPrinter();
+                } else {
+                    return new PosOrderTextPrinter();
+                }*/
+                return TcrApplication.getCountryFunctionality().getOrderPrinter();
+            } else {
+                /*if (TcrApplication.isEcuadorVersion()) {
+                    return new PosEcuadorKitchenPrinter();
+                } else if (TcrApplication.isPeruVersion()) {
+                    return new PosPeruKitchenPrinter();
+                } else {
+                    return new PosKitchenPrinter();
+                }*/
+                return TcrApplication.getCountryFunctionality().getPosKitchenPrinter();
+            }
+        }
+        return TcrApplication.getCountryFunctionality().getOrderPrinter();
+            /*if(TcrApplication.isEcuadorVersion()) {
+                return new PosEcuadorOrderTextPrinter();
+            } else if(TcrApplication.isPeruVersion()){
+                return new PosPeruOrderTextPrinter();
+            } else {
+                return new PosOrderTextPrinter();
+            }*/
     }
 }

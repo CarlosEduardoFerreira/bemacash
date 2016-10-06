@@ -81,7 +81,8 @@ public class DetailedReportPrintOrdersProcessor extends PrintOrderProcessor {
         OrderType orderType = _orderType(c, 5);
         String customerIdentification = c.getString(6);
         if (TextUtils.isEmpty(customerIdentification)) {
-            customerIdentification = TcrApplication.isEcuadorVersion() ? "9999999999999" : "";
+            customerIdentification = TcrApplication.getCountryFunctionality().isMultiTaxGroup() //.isCurrentCountryUsesMultiTax()
+             ? "9999999999999" : "";
         }
         c.close();
 
@@ -139,7 +140,7 @@ public class DetailedReportPrintOrdersProcessor extends PrintOrderProcessor {
     }
 
     @Override
-    protected void printFooter(TcrApplication app, ITextPrinter printerWrapper) {
+    protected void printFooter(Context context, TcrApplication app, ITextPrinter printerWrapper) {
         printerWrapper.emptyLine();
         if(lastReceipt) {
             printerWrapper.addWithTab2(app.getString(R.string.report_detailed_sales_total),

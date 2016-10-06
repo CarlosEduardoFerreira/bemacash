@@ -1,4 +1,4 @@
-package com.kaching123.tcr.ecuador;
+package com.kaching123.tcr.countries.peru;
 
 import com.kaching123.pos.printer.BarcodeTextBelowPositionAction;
 import com.kaching123.pos.printer.InitPrintAction;
@@ -8,22 +8,21 @@ import com.kaching123.pos.util.IKitchenPrinter;
 import java.math.BigDecimal;
 
 /**
- * Created by vkompaniets on 14.02.14.
+ * Created by alboyko on 23.09.2016.
  */
-public class PosEcuadorKitchenPrinter extends PosEcuadorOrderTextPrinter implements IKitchenPrinter {
+
+public class PosPeruKitchenPrinter extends PosPeruOrderTextPrinter implements IKitchenPrinter {
     public static final int PRINTER_KITCHEN_MAX_TEXT_LEN = 39;
 
-    public PosEcuadorKitchenPrinter() {
+    public PosPeruKitchenPrinter() {
         add(new InitPrintAction());
-        //add(new SelectPOSAction());
-        //add(new SelectPOSUtf8Action());
-
         //init barcode
         add(new BarcodeTextBelowPositionAction());
     }
 
     @Override
-    public void header(String shopName, String registerTitle, String orderNumLabel, int orderSeqNum, String operatorLabel, String operatorName, String stationLabel, String station, String orderHolder, String orderTitle) {
+    public void header(String shopName, String registerTitle, String orderNumLabel, int orderSeqNum,
+                       String operatorLabel, String operatorName, String stationLabel, String station, String orderHolder, String orderTitle) {
         boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, shopName)));
         tabbed(orderNumLabel, String.format("%s-%d", registerTitle, orderSeqNum));
         tabbed(stationLabel, station);
@@ -88,4 +87,5 @@ public class PosEcuadorKitchenPrinter extends PosEcuadorOrderTextPrinter impleme
     }
 
 }
+
 

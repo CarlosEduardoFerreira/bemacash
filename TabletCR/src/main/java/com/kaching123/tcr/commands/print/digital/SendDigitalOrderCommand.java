@@ -3,12 +3,12 @@ package com.kaching123.tcr.commands.print.digital;
 import android.content.Context;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.rest.email.BaseSendEmailCommand;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.print.builder.DigitalOrderBuilder;
-import com.kaching123.tcr.print.processor.PrintDigitalOrderProcessor;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
@@ -30,7 +30,7 @@ public class SendDigitalOrderCommand extends BaseSendEmailCommand {
         String orderGuid = getStringArg(ARG_ORDER_GUID);
         String email = getStringArg(ARG_EMAIL);
 
-        DigitalOrderBuilder orderBuilder = new DigitalOrderBuilder();
+        DigitalOrderBuilder orderBuilder = TcrApplication.getCountryFunctionality().getDigitalOrderBuilder();//new DigitalOrderBuilder();
         PrintOrderProcessor printProcessor = getPrintDigitalOrderProcessor(orderGuid, getAppCommandContext());
         printProcessor.setPaxTransactions((ArrayList<PaymentTransactionModel>) getArgs().getSerializable(ARG_TRANSACTIONS));
         printProcessor.setPrepaidReleaseResults((ArrayList<PrepaidReleaseResult>) getArgs().getSerializable(ARG_RELEASE_RESULT_LIST));
@@ -44,7 +44,8 @@ public class SendDigitalOrderCommand extends BaseSendEmailCommand {
     }
 
     protected PrintOrderProcessor getPrintDigitalOrderProcessor(String orderGuid, IAppCommandContext appCommandContext) {
-        return new PrintDigitalOrderProcessor(orderGuid, appCommandContext);
+        return TcrApplication.getCountryFunctionality().getOrderOrderProcessor(orderGuid, appCommandContext);
+        //new PrintDigitalOrderProcessor(orderGuid, appCommandContext);
     }
 
     private String getSubject(String orderNumber) {

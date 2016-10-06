@@ -8,8 +8,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -35,7 +37,7 @@ public class BondItemAdapter extends ArrayAdapter<Integer> {
             view = (Button)convertView;
         }
         int value = list.get(position);
-        String  name = context.getString(R.string.bond_item_adapter_btn_value_format, value);
+        String  name = String.format(Locale.US, "%1$s%2$d", TcrApplication.getCountryFunctionality().currencySymbol() , value);
         view.setText(name);
         view.setTag(value);
         return view;

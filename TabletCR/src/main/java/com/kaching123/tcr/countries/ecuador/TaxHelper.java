@@ -1,4 +1,4 @@
-package com.kaching123.tcr.ecuador;
+package com.kaching123.tcr.countries.ecuador;
 
 import android.database.Cursor;
 

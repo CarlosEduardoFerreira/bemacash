@@ -322,7 +322,7 @@
     <string name="dlg_void_title">Void order</string>
     <string name="dlg_prepaid_app_missing_title">Prepaid Mini</string>
     <string name="dlg_return_title">Return order</string>
-    <string name="dlg_return_msg">Are you sure you want to return $ %1$s on order %2$s?</string>
+    <string name="dlg_return_msg">Are you sure you want to return %1$s %2$s on order %3$s?</string>
     <string name="dlg_void_fail_title">Void Fail</string>
     <string name="dlg_void_msg">Are you sure you want to void order?</string>
     <string name="dlg_void_forbidden_msg">This order had been Kichen-Printed, cannot be avoided. Need to ask Manager for Permission</string>
@@ -913,7 +913,9 @@
     <string name="tax_group_delete_warning_dialog_message">You are about to delete tax group \'%s\', this will affect all items that linked to it. Do you want to proceed?</string>
     <string name="tax_group_delete_succeded_message">Tax group \'%s\' successfully deleted</string>
     <string name="tax_group_delete_failed_message">Failed to delete tax group \'%s\'.\nTry again later</string>
-    <string name="item_tax_group_default">Store tax</string>
+    <string name="item_tax_group_default">Store tax Total</string>
+    <string name="item_tax_group_peru_default">Store tax</string>
+    <string name="item_multi_tax_group">%1$s Total</string>
     <string name="permission_sales_transaction">Sales Transaction</string>
     <string name="permission_sales_discount">Sales Discount</string>
     <string name="permission_void_items">Void Items</string>
@@ -2058,4 +2060,14 @@
     <string name="save_item_first_msg">You must save changes before leave this screen</string>
     <string name="save_item_first_msg_2">Item should be saved first</string>
     <string name="special_price_overlapping_msg">Special price overlapping</string>
+
+<string name="price_format_usa">\u0024%1$s</string>
+<string name="price_format_ecuador">\u0024%1$s</string>
+<string name="price_format_peru">%1$sS/</string>
+<string name="price_format_puerto_rico">\u0024%1$s</string>
+<string name="price_format_costa_rica">\u20a1%1$s</string>
+
+    <string name="total_bonus_points_available">Total Bonus Points Available</string>
+    <string name="bonus_points_on_this_sale">Bonus Points on this Sale</string>
+
 </resources>

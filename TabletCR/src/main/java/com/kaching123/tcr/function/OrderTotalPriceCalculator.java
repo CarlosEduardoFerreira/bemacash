@@ -144,7 +144,7 @@ public final class OrderTotalPriceCalculator {
             if (i.isTaxable && info.isTaxableOrder) {
                 BigDecimal taxableFinalPrice = BigDecimal.ONE.subtract(i.ebtPayed).multiply(itemFinalPrice);
                 itemFinalTax = CalculationUtil.getTaxVatValue(taxableFinalPrice, i.tax);
-                if (TcrApplication.isEcuadorVersion()) {
+                if (TcrApplication.getCountryFunctionality().isMultiTaxGroup()) {//.isCurrentCountryUsesMultiTax()) {//.isEcuadorVersion()) {
                     BigDecimal tax2 = CalculationUtil.getTaxVatValue(taxableFinalPrice, i.tax2);
                     Logger.d("TotalCost: [ecuador] tax2: %s;", tax2);
                     itemFinalTax = itemFinalTax.add(tax2);

@@ -1,5 +1,7 @@
 package com.kaching123.tcr.print;
 
+import com.kaching123.tcr.TcrApplication;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -36,7 +38,7 @@ public final class FormatterUtil {
 
     private static ThreadLocal<DecimalFormat> commaPriceFormat = new ThreadLocal<DecimalFormat>(){
         protected DecimalFormat initialValue() {
-            DecimalFormat format = new DecimalFormat("$ #,##0.00");
+            DecimalFormat format = new DecimalFormat("#,##0.00");
             format.setDecimalFormatSymbols(otherSymbols);
             return format;
         }
@@ -67,7 +69,8 @@ public final class FormatterUtil {
     }
 
     public static String commaPriceFormat(BigDecimal value){
-        return commaPriceFormat.get().format(value);
+        return String.format("%1$s%2$s", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value));
+      //  return commaPriceFormat.get().format(value);
     }
 
     public static String commaFormat(BigDecimal value){
@@ -75,6 +78,7 @@ public final class FormatterUtil {
     }
 
     public static String commaBracketsPriceFormat(BigDecimal value){
-        return commaBracketsPriceFormat.get().format(value);
+        return String.format("%1$s(%2$s)", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value));
+        //return commaBracketsPriceFormat.get().format(value);
     }
 }

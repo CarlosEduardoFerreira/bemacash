@@ -30,7 +30,7 @@
         android:permissionGroup="android.permission-group.HARDWARE_CONTROLS"
         android:protectionLevel="signature" />
 
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".TcrApplication_"
@@ -91,7 +91,7 @@
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+      <!--  <activity
             android:name=".activity.EditItemActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
@@ -110,7 +110,7 @@
             android:name=".ecuador.AddEcuadorItemActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden" />-->
         <activity
             android:name=".activity.ComposerActivity_"
             android:label="@string/inventory_activity_label"
@@ -123,7 +123,7 @@
             android:name=".activity.ModifierGroupsActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape" />
-        <activity
+      <!-- <activity
             android:name=".activity.AddReferenceItemActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
@@ -142,7 +142,7 @@
             android:name=".ecuador.EditEcuadorReferenceItemActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden" />-->
         <activity
             android:name=".activity.VariantsActivity_"
             android:label="@string/inventory_activity_label"
@@ -333,11 +333,11 @@
         <service
             android:name=".service.SerialPortScannerService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"/>
         <service
             android:name=".AutoUpdateService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"/>
         <service
             android:name=".service.ScaleService"
             android:enabled="true"
@@ -345,7 +345,7 @@
         <service
             android:name=".service.USBScannerService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false"/>
 </application>
 
 </manifest>

@@ -32,6 +32,13 @@ public final class DateUtils {
         }
     };
 
+    private static final ThreadLocal<DateFormat> dateFormatThreadLocalPeru = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
+        }
+    };
+
     private static final ThreadLocal<DateFormat> dateFormatThreadLocalFull = new ThreadLocal<DateFormat>() {
         @Override
         protected DateFormat initialValue() {
@@ -140,6 +147,12 @@ public final class DateUtils {
         if (date == null)
             return null;
         return dateFormatThreadLocalEcuador.get().format(date);
+    }
+
+    public static String formatPeru(Date date) {
+        if (date == null)
+            return null;
+        return dateFormatThreadLocalPeru.get().format(date);
     }
 
     public static String formatInterval(final long timestamp) {

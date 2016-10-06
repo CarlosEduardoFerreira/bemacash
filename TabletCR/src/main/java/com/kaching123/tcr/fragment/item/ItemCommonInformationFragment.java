@@ -23,7 +23,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.SpinnerAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
-import com.kaching123.tcr.ecuador.TaxHelper;
+import com.kaching123.tcr.countries.ecuador.TaxHelper;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.taxgroup.ChooseTaxGroupsDialog;
 import com.kaching123.tcr.model.ItemModel;
@@ -81,18 +81,20 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         categoryAdapter = new CategorySpinnerAdapter(getActivity());
         category.setAdapter(categoryAdapter);
 
-        if (TcrApplication.isEcuadorVersion()){
-
-        }else{
+        if (!TcrApplication.getCountryFunctionality().isMultiTaxGroup()) { //isCurrentCountryUsesMultiTax()){
             taxGroupAdapter = new TaxGroupSpinnerAdapter(getActivity());
             taxGroup.setAdapter(taxGroupAdapter);
         }
-        taxGroupRow.setVisibility(TcrApplication.isEcuadorVersion() ? View.GONE : View.VISIBLE);
-        ecuadorTaxGroupRow.setVisibility(TcrApplication.isEcuadorVersion() ? View.VISIBLE : View.GONE);
+
+//        taxGroupRow.setVisibility(TcrApplication.isCurrentCountryUsesMultiTax() ? View.GONE : View.VISIBLE);
+//        ecuadorTaxGroupRow.setVisibility(TcrApplication.isCurrentCountryUsesMultiTax() ? View.VISIBLE : View.GONE);
+        taxGroupRow.setVisibility(TcrApplication.getCountryFunctionality().isMultiTaxGroup() ? View.GONE : View.VISIBLE);
+        ecuadorTaxGroupRow.setVisibility(TcrApplication.getCountryFunctionality().isMultiTaxGroup() ? View.VISIBLE : View.GONE);
 
         setFilters();
         initLoaders();
     }
+
 
     @Override
     protected void setModel() {
@@ -241,7 +243,11 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     }
 
     private void onTaxGroupLoaded(Cursor cursor){
-        if (TcrApplication.isEcuadorVersion()){
+        /*if (TcrApplication.isEcuadorVersion()){
+            handleEcuadorTaxes(cursor);
+        } else if(TcrApplication.isPeruVersion()) {
+            handlePeruTaxes(cursor);
+        }*/if(TcrApplication.getCountryFunctionality().isMultiTaxGroup()) { //isCurrentCountryUsesMultiTax()) {
             handleEcuadorTaxes(cursor);
         }else{
             taxGroupAdapter.changeCursor(cursor);
@@ -286,6 +292,14 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
 
         ecuadorTaxGroup.setText(TaxHelper.getTaxDisplayText(itemTaxes));
         taxGroupRow.invalidate();
+    }
+
+    private void handlePeruTaxes(Cursor cursor) {
+
+//// TODO: 26.09.2016 add tax calculations
+        //leave the same calculation as for ecuador for a while
+
+        handleEcuadorTaxes(cursor);
     }
 
 

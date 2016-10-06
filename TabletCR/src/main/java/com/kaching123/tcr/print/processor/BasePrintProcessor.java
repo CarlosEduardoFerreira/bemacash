@@ -67,7 +67,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
-        printFooter(app, printerWrapper);
+        printFooter(context, app, printerWrapper);
     }
 
     protected boolean isGiftCard() {
@@ -76,7 +76,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 
     protected abstract void printBody(final Context context, final TcrApplication app, final T printerWrapper);
 
-    protected void printFooter(TcrApplication app, T printerWrapper) {
+    protected void printFooter(Context context, TcrApplication app, T printerWrapper) {
 
         if (title == null || title.equalsIgnoreCase("ARG_ORDER_TITLE"))
             printerWrapper.barcode(orderNumber);
@@ -154,7 +154,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
                 new Date(orderInfo.createTime), context.getString(R.string.printer_cashier), orderInfo.operatorName != null ? orderInfo.operatorName : "",
                 context.getString(R.string.printer_customer_identification), orderInfo.customerIdentification);
         if (orderInfo.customerName != null) {
-            printerWrapper.header("Customer Name:", orderInfo.customerName);
+            printerWrapper.header(context.getString(R.string.printer_ec_customer_name), orderInfo.customerName);
         }
         printMidTid(context, app, printerWrapper, orderInfo.orderType);
         if (title != null && !title.equalsIgnoreCase("ARG_ORDER_TITLE"))
@@ -231,7 +231,8 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         info.orderType = _orderType(c, 5);
         String customerIdentification = c.getString(6);
         if (TextUtils.isEmpty(customerIdentification)) {
-            info.customerIdentification = TcrApplication.isEcuadorVersion() ? "9999999999999" : "";
+            info.customerIdentification = TcrApplication.getCountryFunctionality().isMultiTaxGroup()//.isCurrentCountryUsesMultiTax()
+                    ? "9999999999999" : "";
         }
         String loyaltyPoints = c.getString(7);
         if (loyaltyPoints != null) {
@@ -252,6 +253,6 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         protected String customerIdentification;
         protected String customerName;
         protected BigDecimal customerLoyaltyPoints;
-        protected BigDecimal earnedLoyaltyPoints = BigDecimal.ZERO;
+        public BigDecimal earnedLoyaltyPoints = BigDecimal.ZERO;
     }
 }
