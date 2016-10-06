@@ -30,7 +30,7 @@ public final class FormatterUtil {
 
     private static ThreadLocal<DecimalFormat> decimalPercentFormat = new ThreadLocal<DecimalFormat>(){
         protected DecimalFormat initialValue() {
-            DecimalFormat format = new DecimalFormat("0.##");
+            DecimalFormat format = new DecimalFormat("0.0000");
             format.setDecimalFormatSymbols(otherSymbols);
             return format;
         }
@@ -70,7 +70,6 @@ public final class FormatterUtil {
 
     public static String commaPriceFormat(BigDecimal value){
         return String.format("%1$s%2$s", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value));
-      //  return commaPriceFormat.get().format(value);
     }
 
     public static String commaFormat(BigDecimal value){
@@ -79,6 +78,5 @@ public final class FormatterUtil {
 
     public static String commaBracketsPriceFormat(BigDecimal value){
         return String.format("%1$s(%2$s)", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value));
-        //return commaBracketsPriceFormat.get().format(value);
     }
 }

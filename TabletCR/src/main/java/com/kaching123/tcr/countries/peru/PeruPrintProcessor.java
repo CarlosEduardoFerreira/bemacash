@@ -22,6 +22,7 @@ import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
+import com.kaching123.tcr.print.builder.DigitalOrderBuilder;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
@@ -132,7 +133,7 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
     @Override
     public void printHeader(Context context, TcrApplication app, ITextPrinter printerWrapper) {
         setPrinterWrapper(printerWrapper);
-        printTopOffset(printerWrapper);
+        //printTopOffset(printerWrapper);
         if (reprint) {
             printerWrapper.subTitle(context.getString(R.string.print_order_copy_header));
             printerWrapper.emptyLine();
@@ -208,13 +209,20 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ?
                 transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
-
-        ((PosPeruOrderTextPrinter) printerWrapper).addHeaderTitle(context.getString(R.string.printer_ec_header_description),
-                context.getString(R.string.printer_ec_header_qty),
-               // context.getString(R.string.printer_ec_header_iva),
-                context.getString(R.string.printer_ec_header_dto),
-                context.getString(R.string.printer_ec_header_total),
-                context.getString(R.string.printer_ec_header_unit_price));
+        if(printerWrapper instanceof PosPeruOrderTextPrinter) {
+            ((PosPeruOrderTextPrinter) printerWrapper).addHeaderTitle(context.getString(R.string.printer_ec_header_description),
+                    context.getString(R.string.printer_ec_header_qty),
+                    // context.getString(R.string.printer_ec_header_iva),
+                    context.getString(R.string.printer_ec_header_dto),
+                    context.getString(R.string.printer_ec_header_total),
+                    context.getString(R.string.printer_ec_header_unit_price));
+        } else if(printerWrapper instanceof DigitalOrderBuilder){
+            ((PeruDigitalOrderBuilder)printerWrapper).addHeader(context.getString(R.string.printer_ec_header_description),
+                    context.getString(R.string.printer_ec_header_qty),
+                    context.getString(R.string.printer_ec_header_dto),
+                    context.getString(R.string.printer_ec_header_total),
+                    context.getString(R.string.printer_ec_header_unit_price));
+        }
 
         printerWrapper.drawLine();
 
@@ -246,9 +254,15 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
                     else
                         isIva = context.getString(R.string.printer_tax_is_not_iva);
                     */
-                    ((PosPeruOrderTextPrinter) printerWrapper).addPeru(description, qty.toString(),
+                    if(printerWrapper instanceof PosPeruOrderTextPrinter) {
+                        ((PosPeruOrderTextPrinter) printerWrapper).addPeru(description, qty.toString(),
                             /*isIva,*/ itemDiscount, itemSubtotal.subtract(itemDiscount), itemPrice, unitAsStrings);
-//                    printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitAsStrings);
+                    }else if(printerWrapper instanceof DigitalOrderBuilder){
+                        ((PeruDigitalOrderBuilder)printerWrapper).add(description, qty.toString(),
+                            itemDiscount, itemSubtotal.subtract(itemDiscount), itemPrice, unitAsStrings);
+
+                    }
+
                 }
                 if (addons != null && addons.size() != 0)
                     for (SaleOrderItemViewModel.AddonInfo addon : addons) {

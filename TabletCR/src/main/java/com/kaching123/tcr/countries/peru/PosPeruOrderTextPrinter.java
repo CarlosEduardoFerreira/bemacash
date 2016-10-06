@@ -35,7 +35,7 @@ public class PosPeruOrderTextPrinter extends PosOrderTextPrinter {
                 add(title, commaFormat(price));
             else {
                 add(new PrintLineAction(formatStringTitle(title)));
-                add(new PrintLineAction(formatLabelString(PRINTER_MAX_TEXT_LEN, quantityFormat.format(qty), commaFormat(unitPrice), unitsLabel, commaFormat(price))));
+                add(new PrintLineAction(formatLabelString(PRINTER_MAX_TEXT_LEN, quantityFormat.format(qty), commaPriceFormat(unitPrice), unitsLabel, commaPriceFormat(price))));
             }
             if (units == null || units.isEmpty())
                 return;

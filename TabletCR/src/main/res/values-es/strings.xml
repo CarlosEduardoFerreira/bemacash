@@ -305,7 +305,7 @@
   <string name="dlg_void_title">Anulación de Orden</string>
   <string name="dlg_prepaid_app_missing_title">Prepaid Mini</string>
   <string name="dlg_return_title">Devolucion de la orden </string>
-  <string name="dlg_return_msg">Esta seguro que desea devolver $ sobre la orden # </string>
+  <string name="dlg_return_msg">Esta seguro que desea devolver \n%1$s %2$s sobre la orden %3$s </string>
   <string name="dlg_void_fail_title">Anulación fallida</string>
   <string name="dlg_void_msg">Esta seguro que desea anular la orden?</string>
   <string name="dlg_void_forbidden_msg">Eta orden ha sido enviada a la cocina, no puede ser anulada, se requiere de autorización del administrador</string>
