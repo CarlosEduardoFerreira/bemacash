@@ -73,7 +73,7 @@ public abstract class BaseItemsPickFragment extends Fragment implements IPriceLe
                 .where(ItemTable.CATEGORY_ID + " = ? ", categoryGuid == null ? "" : categoryGuid)
                 .projection(ItemExFunction.PROJECTION)
                 .orderBy(sortOrder)
-                .transform(new ItemExFunction())
+                .transformRow(new ItemExFunction())
                 .build(getActivity());
     }
 

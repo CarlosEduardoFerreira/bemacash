@@ -151,7 +151,7 @@ public class PrinterAliasActivity extends SuperBaseActivity {
         @Override
         public Loader<List<PrinterAliasModel>> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(URI_PRINTER_ALIAS)
-                    .transform(new PrinterAliasConverter())
+                    .transformRow(new PrinterAliasConverter())
                     .build(PrinterAliasActivity.this);
         }
 

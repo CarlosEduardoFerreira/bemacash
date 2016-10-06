@@ -32,4 +32,12 @@ public final class CursorUtil {
         }
     }
 
+    public static String[] _selectionArgs(Object... args){
+        String[] selectionArgs = new String[args.length];
+        for (int i = 0; i < args.length; i++) {
+            selectionArgs[i] = args[i].toString();
+        }
+
+        return selectionArgs;
+    }
 }

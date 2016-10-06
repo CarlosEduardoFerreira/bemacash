@@ -81,7 +81,7 @@ public class SoldOrdersReportQuery {
         return list;
     }
 
-    /*.wrap(new Function<Cursor, List<SaleOrderViewModel>>() {
+    /*.transform(new Function<Cursor, List<SaleOrderViewModel>>() {
         @Override
         public List<SaleOrderViewModel> apply(Cursor c) {
             SaleOrderViewFunction transform = new SaleOrderViewFunction();

@@ -27,7 +27,7 @@ public class ReadTipsFunction {
         return CursorLoaderBuilder.forUri(TIPS_URI)
                 .projection(TipsTable.AMOUNT)
                 .where(SaleOrderTable.GUID + " = ? OR " + SaleOrderTable.PARENT_ID + " = ?", orderGuid, orderGuid)
-                .wrap(new Function<Cursor, BigDecimal>() {
+                .transform(new Function<Cursor, BigDecimal>() {
                     @Override
                     public BigDecimal apply(Cursor cursor) {
                         BigDecimal result = BigDecimal.ZERO;

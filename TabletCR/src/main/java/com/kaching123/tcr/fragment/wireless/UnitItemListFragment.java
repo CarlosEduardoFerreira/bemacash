@@ -242,7 +242,7 @@ public class UnitItemListFragment extends ListFragment implements LoaderCallback
         } else if (minCreateTime != null) {
             loader.where("( " + UnitsView2.UnitTable.STATUS + " != " + Status.SOLD.ordinal() + " or " + UnitsView2.SaleOrderTable.CREATE_TIME + " >= " + minCreateTime.getTime() + " )");
         }
-        return loader.orderBy(UnitsView2.UnitTable.UPDATE_TIME + " desc ").transform(new UnitViewFunction()).build(getActivity());
+        return loader.orderBy(UnitsView2.UnitTable.UPDATE_TIME + " desc ").transformRow(new UnitViewFunction()).build(getActivity());
     }
 
     @Override

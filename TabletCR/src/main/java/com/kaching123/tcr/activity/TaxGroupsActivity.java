@@ -205,7 +205,7 @@ public class TaxGroupsActivity extends SuperBaseActivity {
         @Override
         public Loader<List<TaxGroupModel>> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(URI_TAX_GROUPS)
-                    .transform(new TaxGroupConverter())
+                    .transformRow(new TaxGroupConverter())
                     .build(TaxGroupsActivity.this);
         }
 

@@ -40,7 +40,7 @@ public class InventoryStatusReportQuery {
             loader.orderBy(CategoryTable.DEPARTMENT_GUID);
         }
 
-        return loader.wrap(new DepInfoWrapFunction()).build(context);
+        return loader.transform(new DepInfoWrapFunction()).build(context);
     }
 
     public static Query syncQuery(String depGuid){

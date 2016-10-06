@@ -34,10 +34,6 @@ public class ItemExModel extends ItemModel {
     public int modifiersCount;
     public int addonsCount;
     public int optionalCount;
-    public int unitCount;
-    public int availableUnitCount;
-    public int composersCount;
-    public int restrictComposersCount;
 
     public String departmentGuid;
     public BigDecimal tax;
@@ -186,10 +182,6 @@ public class ItemExModel extends ItemModel {
                        int modifiersCount,
                        int addonsCount,
                        int optionalCount,
-                       int unitCount,
-                       int availableUnitCount,
-                       int composersCount,
-                       int restrictComposersCount,
                        String departmentGuid,
                        BigDecimal tax,
                        BigDecimal tax2,
@@ -247,9 +239,6 @@ public class ItemExModel extends ItemModel {
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;
         this.optionalCount = optionalCount;
-        this.unitCount = unitCount;
-        this.composersCount = composersCount;
-        this.restrictComposersCount = restrictComposersCount;
         this.departmentGuid = departmentGuid;
         this.tax = tax;
         this.tax2 = tax2;
