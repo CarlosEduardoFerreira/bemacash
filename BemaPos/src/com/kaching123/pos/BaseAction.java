@@ -16,6 +16,9 @@ public abstract class BaseAction<T> {
 
     public static final byte F8 = (byte) 0xf8;
     public static final byte F9 = (byte) 0xf9;
+    public static final byte F0 = (byte) 0xf0;
+    public static final byte FE = (byte) 0xfe;
+
 
     public static final byte C0X37 = (byte) 0x37;
     public static final byte C0X02 = (byte) 0x02;

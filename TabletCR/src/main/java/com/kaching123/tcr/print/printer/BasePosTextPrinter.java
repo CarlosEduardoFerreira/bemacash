@@ -247,6 +247,43 @@ public class BasePosTextPrinter implements IPrinter {
         return printTitle.toString();
     }
 
+    public static String formatStringPeruItem(int maxLen, int priceLen, int qtyLen, String title, String qty, String itemPrice, String discount, String price) {
+        String croppedTitle;
+
+        if (title == null)
+            title = "";
+
+        StringBuilder printTitle = new StringBuilder();
+
+        croppedTitle = String.format("%1$s %2$s", qty, title);
+
+        int maxLeftPart = maxLen - priceLen * 2;
+        int maxTitleLen = maxLeftPart - qtyLen;
+
+        croppedTitle = (croppedTitle.length() > maxTitleLen) ?  crop(maxTitleLen, croppedTitle) : croppedTitle;
+        printTitle.append(croppedTitle);
+
+        if (printTitle.length() < maxLeftPart) {
+            for (int i = croppedTitle.length(); i < maxLeftPart; i++) {
+                printTitle.append(' ');
+            }
+        }
+        printTitle.append(itemPrice).append(" ");
+
+        for (int i = 0; i < priceLen - itemPrice.length() - 4; i++) {
+            printTitle.append(' ');
+        }
+
+        printTitle.append(discount);
+        for (int i = 0; i < 5 - discount.length() ; i++) {
+            printTitle.append(' ');
+        }
+
+        printTitle.append(price);
+        return printTitle.toString();
+    }
+
+
     public static String formatString(int maxLen, int priceLen, int qtyLen, String title, String qty, String Iva, String discount, String totalPrice, String itemPrice) {
         if (title == null)
             title = "";
@@ -272,6 +309,39 @@ public class BasePosTextPrinter implements IPrinter {
 
         printBuilder.append(itemPrice);
         for (int i = 0; i < priceLen - itemPrice.length() - 4; i++) {
+            printBuilder.append(' ');
+        }
+        printBuilder.append(discount);
+        for (int i = 0; i < 5 - discount.length(); i++) {
+            printBuilder.append(' ');
+        }
+        printBuilder.append(totalPrice);
+        return printBuilder.toString();
+    }
+
+    public static String formatStringPeruHeader(int maxLen, int priceLen, int qtyLen, String title, String qty, String discount, String totalPrice, String itemPrice) {
+        if (title == null)
+            title = "";
+
+        StringBuilder printBuilder = new StringBuilder();
+        printBuilder.append(qty);
+        int maxLeftPart = maxLen - priceLen * 2;
+        printBuilder.append(' ');
+        int maxTitleLen = maxLeftPart - qtyLen;
+        if (title.length() > maxTitleLen) {
+            printBuilder.append(crop(maxTitleLen, title));
+        } else {
+            printBuilder.append(title);
+        }
+        if (printBuilder.length() < maxLeftPart) {
+            for (int i = printBuilder.length(); i < maxLeftPart; i++) {
+                printBuilder.append(' ');
+            }
+        }
+        printBuilder.append(' ');
+
+        printBuilder.append(itemPrice);
+        for (int i = 0; i < priceLen - itemPrice.length() - 3; i++) {
             printBuilder.append(' ');
         }
         printBuilder.append(discount);
@@ -308,15 +378,27 @@ public class BasePosTextPrinter implements IPrinter {
             title = "";
         StringBuilder printBuilder = new StringBuilder();
         int maxLeftPart = maxLen - priceLen;
-        if (title.length() > maxLeftPart) {
+
+        String croppedPrice = (title.length() > maxLeftPart) ? crop(maxLeftPart, title) : title;
+        printBuilder.append(croppedPrice);
+
+        for(int i = croppedPrice.length(); i < maxLeftPart; i++) {
+            printBuilder.append(' ');
+        }
+ /*       for(int i = price.length(); i<priceLen; i++) {
+            printBuilder.append('*');
+        }*/
+
+      /*  if (title.length() > maxLeftPart) {
+
             printBuilder.append(crop(maxLeftPart, title));
         } else {
             printBuilder.append(title);
-        }
+        }*/
         //if (printBuilder.length() < maxLeftPart) {
-            for (int i = printBuilder.length(); i < maxLeftPart + 5; i++) {
+       /*     for (int i = printBuilder.length(); i < maxLeftPart + 5; i++) {
                 printBuilder.append(' ');
-            }
+            }*/
         //}
         printBuilder.append(price);
         return printBuilder.toString();

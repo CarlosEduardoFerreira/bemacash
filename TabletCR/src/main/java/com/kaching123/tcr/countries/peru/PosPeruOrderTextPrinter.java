@@ -53,7 +53,7 @@ public class PosPeruOrderTextPrinter extends PosOrderTextPrinter {
         }
 
         void addPeru(String title, String qty, /*String isVal,*/ BigDecimal discount, BigDecimal price, BigDecimal itemPrice, List<String> units) {
-            add(new PrintLineAction(formatStringEcua(42, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, qty, /*isVal,*/ "", commaFormat(itemPrice),  commaFormat(discount),  commaFormat(price))));
+            add(new PrintLineAction(formatStringPeruItem(42, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, qty, commaFormat(itemPrice),  commaFormat(discount),  commaFormat(price))));
 
             if (units == null || units.isEmpty())
                 return;
