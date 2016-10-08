@@ -83,26 +83,10 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
 
 
     private void init() {
-        BigDecimal tenderAmount = BigDecimal.ZERO;
-        BigDecimal changeAmount = BigDecimal.ZERO;
-        String chargeStr = UiHelper.valueOf(transaction.amount);
-        try {
-            tenderAmount = UiHelper.parseBrandDecimalInput(chargeStr);
-            calculateChange(tenderAmount);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }
+        BigDecimal tenderAmount = transaction.amount;
+        BigDecimal changeAmount = transaction.changeValue;
         if (getDisplayBinder() != null) {
             getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
-        }
-    }
-
-    private void calculateChange(final BigDecimal receivedAmount) {
-        BigDecimal changeAmount = receivedAmount.subtract(pending);
-        if (changeAmount.compareTo(BigDecimal.ZERO) >= 0) {
-            transaction.changeValue = changeAmount;
-        } else {
-            transaction.amount = receivedAmount;
         }
     }
 
