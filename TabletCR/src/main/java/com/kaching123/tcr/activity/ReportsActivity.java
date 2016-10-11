@@ -102,6 +102,11 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
     }
 
     @Override
+    public void onZReportRegisterChosen(ReportType zReportType, long registerID, long fromDate, long toDate) {
+        PrintZReportFragment.show(this, null, zReportType, registerID, fromDate, toDate);
+    }
+
+    @Override
     public void onDetailedReportFiltered(long registerId, long fromDate, long toDate) {
         PrintDetailedSalesReportFragment.show(this, registerId, fromDate, toDate);
     }
