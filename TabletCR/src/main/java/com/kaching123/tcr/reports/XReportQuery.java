@@ -522,6 +522,23 @@ public class XReportQuery {
         return totalTransactionFee;
     }
 
+    protected static BigDecimal getDailyOrdersTransactionFee(Context context, OrderStatus type, long registerId, long fromDate, long toDate) {
+        Cursor c = ProviderAction.query(URI_SALE_ORDER)
+                .projection(ShopStore.SaleOrderTable.TRANSACTION_FEE)
+                .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
+                .where(ShopStore.SaleOrderTable.REGISTER_ID + " = ?", registerId)
+                .where(ShopStore.SaleOrderTable.STATUS + " = ?", type.ordinal())
+                .perform(context);
+
+        BigDecimal totalTransactionFee = BigDecimal.ZERO;
+        while (c.moveToNext()) {
+            totalTransactionFee = _decimal(c, 0, BigDecimal.ZERO);
+        }
+        c.close();
+
+        return totalTransactionFee;
+    }
+
     protected static BigDecimal getLastShiftDailyOpenAmount(Context context, String shiftGuid) {
         BigDecimal openAmount = BigDecimal.ZERO;
         try {

@@ -317,12 +317,12 @@ public final class ZReportQuery extends XReportQuery {
 
     }
 
-    public static ZReportInfo loadDailySalesZReport(Context context, long registerId) {
+    public static ZReportInfo loadDailySalesZReport(Context context, long registerID, long fromDate, long toDate) {
 
         final Date startDate = getStartOfDay();
         final Date endDate = getEndOfDay();
 
-        final List<String> guidList = ShiftModel.getDailyGuidList(context);
+        final List<String> guidList = ShiftModel.getDailyGuidList(context, registerID, fromDate, toDate);
 
         BigDecimal grossSale = BigDecimal.ZERO;
         BigDecimal discount = BigDecimal.ZERO;
@@ -366,15 +366,15 @@ public final class ZReportQuery extends XReportQuery {
         returnsCount = BigDecimal.ZERO;
         voidCount = BigDecimal.ZERO;
 
-        String lastShiftGuid = getLastDailyGuid(context, registerId);
+        String lastShiftGuid = getLastDailyGuid(context, registerID);
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
-        transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerId));//returnInfo is negative
+        transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerID, fromDate, toDate));//returnInfo is negative
 
         for (String guid : guidList) {
             Logger.d("===== Daily Sales Report. guid:" + guid + " =====");
 
-            final StatInfo saleInfo = getDailyOrders(context, guid, OrderStatus.COMPLETED, registerId);
-            final StatInfo returnInfo = getDailyOrders(context, guid, OrderStatus.RETURN, registerId);
+            final StatInfo saleInfo = getDailyOrders(context, guid, OrderStatus.COMPLETED, registerID);
+            final StatInfo returnInfo = getDailyOrders(context, guid, OrderStatus.RETURN, registerID);
 
             grossSale = grossSale.add(saleInfo.grossSale);
             Logger.d("||grossSale:" + grossSale);
@@ -541,7 +541,7 @@ public final class ZReportQuery extends XReportQuery {
         Logger.d("||totalTender:" + totalTender);
         grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
 
-        dailySVRCounter(context, registerId);
+        dailySVRCounter(context, registerID, fromDate, toDate);
 
         return new ZReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax,
                 totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt,
@@ -559,10 +559,10 @@ public final class ZReportQuery extends XReportQuery {
                 totalValue, salesCount, voidCount, returnsCount);
     }
 
-    private static void dailySVRCounter(Context context, long registerId) {  //slaes, voids, refunds - S.V.R.
+    private static void dailySVRCounter(Context context, long registerId, long fromDate, long toDate) {  //slaes, voids, refunds - S.V.R.
 
         Cursor c = ProviderAction.query(URI_Z_SALE_ITEMS)
-                .where(ShopSchema2.ZReportView2.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
+                .where(ShopSchema2.ZReportView2.SaleOrderTable.CREATE_TIME + " > ? AND " + ShopSchema2.ZReportView2.SaleOrderTable.CREATE_TIME + " < ? ", fromDate, toDate)
                 .where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
                 .perform(context);
 
