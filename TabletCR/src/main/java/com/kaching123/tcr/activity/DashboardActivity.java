@@ -553,16 +553,16 @@ public class DashboardActivity extends SuperBaseActivity {
 
     @OptionsItem
     protected void actionOrderItemsSelected() {
-        if (!getApp().hasPermission(Permission.SALES_RETURN)) {
-            PermissionFragment.showCancelable(this, new BaseTempLoginListener(this) {
-                @Override
-                public void onLoginComplete() {
-                    super.onLoginComplete();
-                    actionOrderItemsSelected();
-                }
-            }, Permission.SALES_RETURN);
-            return;
-        }
+//        if (!getApp().hasPermission(Permission.SALES_RETURN)) {
+//            PermissionFragment.showCancelable(this, new BaseTempLoginListener(this) {
+//                @Override
+//                public void onLoginComplete() {
+//                    super.onLoginComplete();
+//                    actionOrderItemsSelected();
+//                }
+//            }, Permission.SALES_RETURN);
+//            return;
+//        }
         HistoryActivity.start(DashboardActivity.this);
     }
 

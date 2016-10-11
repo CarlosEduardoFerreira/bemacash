@@ -1572,17 +1572,17 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @OptionsItem
     protected void actionOrderItemsSelected() {
         actionBarItemClicked();
-        boolean salesReturnPermitted = getApp().hasPermission(Permission.SALES_RETURN);
-        if (!salesReturnPermitted) {
-            PermissionFragment.showCancelable(this, new BaseTempLoginListener(this) {
-                @Override
-                public void onLoginComplete() {
-                    super.onLoginComplete();
-                    actionOrderItemsSelected();
-                }
-            }, Permission.SALES_RETURN);
-            return;
-        }
+//        boolean salesReturnPermitted = getApp().hasPermission(Permission.SALES_RETURN);
+//        if (!salesReturnPermitted) {
+//            PermissionFragment.showCancelable(this, new BaseTempLoginListener(this) {
+//                @Override
+//                public void onLoginComplete() {
+//                    super.onLoginComplete();
+//                    actionOrderItemsSelected();
+//                }
+//            }, Permission.SALES_RETURN);
+//            return;
+//        }
         if (!isSPMSRSet()) {
             MsrDataFragment msr = getMsr();
             if (msr != null) {
