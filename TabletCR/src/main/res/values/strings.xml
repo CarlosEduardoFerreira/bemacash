@@ -2065,4 +2065,5 @@
 
     <string name="log_set">Set</string>
     <string name="log_view">View</string>
+    <string name="zreprot_register_id_title_">Register ID</string>
 </resources>

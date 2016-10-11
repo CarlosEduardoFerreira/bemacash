@@ -1462,6 +1462,9 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String REGISTER_SERIAL = "register_serial";
 
+        @Column(type = Type.TEXT)
+        String DESCRIPTION = "description";
+
         @Column(type = Column.Type.TEXT)
         String TITLE = "title";
 

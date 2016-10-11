@@ -1,14 +1,19 @@
 package com.kaching123.tcr.commands.print.digital;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.model.XReportInfo;
 import com.kaching123.tcr.print.builder.DigitalXReportBuilder;
 import com.kaching123.tcr.print.processor.PrintXReportProcessor;
 import com.kaching123.tcr.reports.XReportQuery;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -37,6 +42,8 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
 
     private ReportType xReportType;
 
+    protected static final Uri URI_REGISTER = ShopProvider.getContentWithLimitUri(ShopStore.RegisterTable.URI_CONTENT, 1);
+
     @Override
     protected TaskResult doInBackground() {
         String shiftGuid = getStringArg(ARG_SHIFT_GUID);
@@ -51,6 +58,7 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         }
 
         PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE), getBooleanArg(ARG_ITEM_XREPORT_ENABLE));
+        processor.setRegisterDescription(getRegisterDescription());
         processor.print(getContext(), getApp(), builder);
 
         File file = new File(getContext().getExternalCacheDir(), getContext().getString(R.string.report_type_xreport) + ".html");
@@ -90,5 +98,20 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         protected abstract void onDigitalPrintSuccess(Uri attachment);
 
         protected abstract void onDigitalPrintError();
+    }
+
+    private String getRegisterDescription() {
+        Cursor c = ProviderAction.query(URI_REGISTER)
+                .projection(
+                        ShopStore.RegisterTable.DESCRIPTION
+                )
+                .where(ShopStore.RegisterTable.ID + "=?", ((TcrApplication) getContext().getApplicationContext()).getRegisterId())
+                .perform(getContext());
+        String description = null;
+        if (c.moveToFirst()) {
+            description = c.getString(0);
+        }
+        c.close();
+        return description;
     }
 }

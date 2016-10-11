@@ -25,6 +25,7 @@ public class PrintZReportProcessor {
 
     private ZReportInfo report;
     private ReportType zReportType;
+    private String registerDescription;
 
     private final PublicGroundyTask.IAppCommandContext appCommandContext;
 
@@ -78,12 +79,15 @@ public class PrintZReportProcessor {
     private void drawSubtitle(IXReportPrinter printer, Context context) {
         if (ReportType.Z_REPORT_CURRENT_SHIFT == zReportType) {
             printer.footer(context.getString(R.string.zreport_current_shift_subtitle));
+            printer.footer(context.getString(R.string.zreprot_register_id_title_) + " - " + String.valueOf(((TcrApplication) context.getApplicationContext()).getRegisterId()) + (registerDescription == null || registerDescription.isEmpty() ? "" : "/" + registerDescription));
             printer.titledDate(context.getString(R.string.zreport_print_time), new Date());
         } else if (ReportType.Z_REPORT_DAILY_SALES == zReportType) {
             printer.footer(context.getString(R.string.zreport_daily_subtitle));
+            printer.footer(context.getString(R.string.zreprot_register_id_title_) + " - " + String.valueOf(((TcrApplication) context.getApplicationContext()).getRegisterId()) + (registerDescription == null || registerDescription.isEmpty() ? "" : "/" + registerDescription));
             printer.titledDate(context.getString(R.string.zreport_print_time), new Date());
         } else {
             printer.footer(context.getString(R.string.zreport_subtitle));
+            printer.footer(context.getString(R.string.zreprot_register_id_title_) + " - " + String.valueOf(((TcrApplication) context.getApplicationContext()).getRegisterId()) + (registerDescription == null || registerDescription.isEmpty() ? "" : "/" + registerDescription));
         }
     }
 
@@ -141,8 +145,8 @@ public class PrintZReportProcessor {
         printer.pair(context.getString(R.string.zreport_cash), report.tenderCash);
         printer.pair(context.getString(R.string.zreport_credit_receipt), report.tenderCreditReceipt);
         printer.pair(context.getString(R.string.zreport_offline_credit), report.tenderOfflineCredit);
-      //  printer.pair(context.getString(R.string.zreport_offline_debit), report.tenderOfflineDebit);
-       // printer.pair(context.getString(R.string.zreport_offline_voucher), report.tenderOfflineVoucher);
+        //  printer.pair(context.getString(R.string.zreport_offline_debit), report.tenderOfflineDebit);
+        // printer.pair(context.getString(R.string.zreport_offline_voucher), report.tenderOfflineVoucher);
 
         printer.pair(context.getString(R.string.xreport_check), report.tenderCheck);
 
@@ -178,4 +182,7 @@ public class PrintZReportProcessor {
 
     }
 
+    public void setRegisterDescription(String registerDescription) {
+        this.registerDescription = registerDescription;
+    }
 }

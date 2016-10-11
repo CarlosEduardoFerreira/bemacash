@@ -18,10 +18,12 @@ public class RegisterModel implements IValueModel {
     public RegisterStatus status;
     public int prepaidTid;
     public int blackstonePaymentCid;
+    public String description;
 
     public RegisterModel(Cursor cursor) {
         this(cursor.getLong(cursor.getColumnIndex(RegisterTable.ID)),
             cursor.getString(cursor.getColumnIndex(RegisterTable.REGISTER_SERIAL)),
+                cursor.getString(cursor.getColumnIndex(RegisterTable.DESCRIPTION)),
             cursor.getString(cursor.getColumnIndex(RegisterTable.TITLE)),
             RegisterStatus.values()[cursor.getInt(cursor.getColumnIndex(RegisterTable.STATUS))],
             cursor.getInt(cursor.getColumnIndex(RegisterTable.PREPAID_TID)),
@@ -29,13 +31,14 @@ public class RegisterModel implements IValueModel {
         );
     }
 
-    public RegisterModel(long id, String registerSerial, String title, RegisterStatus status, int prepaidTid, int blackstonePaymentCid) {
+    public RegisterModel(long id, String registerSerial, String description, String title, RegisterStatus status, int prepaidTid, int blackstonePaymentCid) {
         this.id = id;
         this.registerSerial = registerSerial;
         this.title = title;
         this.status = status;
         this.prepaidTid = prepaidTid;
         this.blackstonePaymentCid = blackstonePaymentCid;
+        this.description = description;
     }
 
     @Override
