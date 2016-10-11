@@ -46,7 +46,7 @@ public class PrintZReportCommand extends BasePrintCommand<IXReportPrinter> {
             reportInfo = ZReportQuery.loadZReport(getContext(), shiftGuid);
         }
         PrintZReportProcessor processor = new PrintZReportProcessor(reportInfo, zReportType, getAppCommandContext());
-        processor.setRegisterDescription(getRegisterDescription());
+        setDescriptionInfo(processor);
         processor.print(getContext(), getApp(), printerWrapper);
     }
 
@@ -59,18 +59,23 @@ public class PrintZReportCommand extends BasePrintCommand<IXReportPrinter> {
                 .callback(callback).queueUsing(context);
     }
 
-    private String getRegisterDescription() {
+    private void setDescriptionInfo(PrintZReportProcessor processor) {
         Cursor c = ProviderAction.query(URI_REGISTER)
                 .projection(
-                        ShopStore.RegisterTable.DESCRIPTION
+                        ShopStore.RegisterTable.DESCRIPTION,
+                        ShopStore.RegisterTable.TITLE
                 )
-                .where(ShopStore.RegisterTable.ID + "=?", ((TcrApplication) getContext().getApplicationContext()).getRegisterId())
+                .where(ShopStore.RegisterTable.REGISTER_SERIAL + "=?", ((TcrApplication) getContext().getApplicationContext()).getRegisterSerial())
                 .perform(getContext());
         String description = null;
+        String title = null;
         if (c.moveToFirst()) {
             description = c.getString(0);
+            title = c.getString(1);
         }
+        processor.setRegisterDescription(description);
+        processor.setRegisterID(title);
+
         c.close();
-        return description;
     }
 }

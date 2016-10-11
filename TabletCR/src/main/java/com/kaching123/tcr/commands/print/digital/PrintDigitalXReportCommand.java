@@ -11,6 +11,7 @@ import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.model.XReportInfo;
 import com.kaching123.tcr.print.builder.DigitalXReportBuilder;
 import com.kaching123.tcr.print.processor.PrintXReportProcessor;
+import com.kaching123.tcr.print.processor.PrintZReportProcessor;
 import com.kaching123.tcr.reports.XReportQuery;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -58,7 +59,7 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         }
 
         PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE), getBooleanArg(ARG_ITEM_XREPORT_ENABLE));
-        processor.setRegisterDescription(getRegisterDescription());
+        setDescriptionInfo(processor);
         processor.print(getContext(), getApp(), builder);
 
         File file = new File(getContext().getExternalCacheDir(), getContext().getString(R.string.report_type_xreport) + ".html");
@@ -100,18 +101,23 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         protected abstract void onDigitalPrintError();
     }
 
-    private String getRegisterDescription() {
+    private void setDescriptionInfo(PrintXReportProcessor processor) {
         Cursor c = ProviderAction.query(URI_REGISTER)
                 .projection(
-                        ShopStore.RegisterTable.DESCRIPTION
+                        ShopStore.RegisterTable.DESCRIPTION,
+                        ShopStore.RegisterTable.TITLE
                 )
-                .where(ShopStore.RegisterTable.ID + "=?", ((TcrApplication) getContext().getApplicationContext()).getRegisterId())
+                .where(ShopStore.RegisterTable.REGISTER_SERIAL + "=?", ((TcrApplication) getContext().getApplicationContext()).getRegisterSerial())
                 .perform(getContext());
         String description = null;
+        String title = null;
         if (c.moveToFirst()) {
             description = c.getString(0);
+            title = c.getString(1);
         }
+        processor.setRegisterDescription(description);
+        processor.setRegisterID(title);
+
         c.close();
-        return description;
     }
 }

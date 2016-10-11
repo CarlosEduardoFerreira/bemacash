@@ -26,6 +26,7 @@ public class PrintZReportProcessor {
     private ZReportInfo report;
     private ReportType zReportType;
     private String registerDescription;
+    private String registerID;
 
     private final PublicGroundyTask.IAppCommandContext appCommandContext;
 
@@ -79,15 +80,15 @@ public class PrintZReportProcessor {
     private void drawSubtitle(IXReportPrinter printer, Context context) {
         if (ReportType.Z_REPORT_CURRENT_SHIFT == zReportType) {
             printer.footer(context.getString(R.string.zreport_current_shift_subtitle));
-            printer.footer(context.getString(R.string.zreprot_register_id_title_) + " - " + String.valueOf(((TcrApplication) context.getApplicationContext()).getRegisterId()) + (registerDescription == null || registerDescription.isEmpty() ? "" : "/" + registerDescription));
+            printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
             printer.titledDate(context.getString(R.string.zreport_print_time), new Date());
         } else if (ReportType.Z_REPORT_DAILY_SALES == zReportType) {
             printer.footer(context.getString(R.string.zreport_daily_subtitle));
-            printer.footer(context.getString(R.string.zreprot_register_id_title_) + " - " + String.valueOf(((TcrApplication) context.getApplicationContext()).getRegisterId()) + (registerDescription == null || registerDescription.isEmpty() ? "" : "/" + registerDescription));
+            printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
             printer.titledDate(context.getString(R.string.zreport_print_time), new Date());
         } else {
             printer.footer(context.getString(R.string.zreport_subtitle));
-            printer.footer(context.getString(R.string.zreprot_register_id_title_) + " - " + String.valueOf(((TcrApplication) context.getApplicationContext()).getRegisterId()) + (registerDescription == null || registerDescription.isEmpty() ? "" : "/" + registerDescription));
+            printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
         }
     }
 
@@ -184,5 +185,9 @@ public class PrintZReportProcessor {
 
     public void setRegisterDescription(String registerDescription) {
         this.registerDescription = registerDescription;
+    }
+
+    public void setRegisterID(String registerID) {
+        this.registerID = registerID;
     }
 }
