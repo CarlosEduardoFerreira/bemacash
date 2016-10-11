@@ -120,7 +120,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
     private CustomerModel customer;
 
     private BigDecimal orderTotal;
-    private BigDecimal orderPayed;
+    private BigDecimal orderPayed = BigDecimal.ZERO;
     private BigDecimal orderChange;
     private IPaymentProcessor callback;
     private boolean singleTenderEnabled;
@@ -772,7 +772,13 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         Logger.d("Price send to Processor" + amount.toString());
         switch (method) {
             case CASH: {
-                transaction = PaymentGateway.CASH.gateway().createTransaction(context, amount, orderGuid);
+                BigDecimal pendingAmount = getPendingAmount();
+                if (amount.compareTo(pendingAmount) == 1) {
+                    transaction = PaymentGateway.CASH.gateway().createTransaction(context, pendingAmount, orderGuid);
+                    transaction.changeValue = amount.subtract(pendingAmount);
+                } else {
+                    transaction = PaymentGateway.CASH.gateway().createTransaction(context, amount, orderGuid);
+                }
                 transaction.cashBack = BigDecimal.ZERO;
                 transaction.setType(TransactionType.CASH);
                 proceedToCashPayment(context, transaction);

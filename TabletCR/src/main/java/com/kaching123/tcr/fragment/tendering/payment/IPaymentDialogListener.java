@@ -36,7 +36,7 @@ public interface IPaymentDialogListener {
     }
 
     interface IPayTenderUnitedListener extends ISaleTenderListener{
-        void onUnitedPaymentAmountSelected(PaymentMethod method, BigDecimal orderTotal,BigDecimal amount);
+        void onUnitedPaymentAmountSelected(PaymentMethod method, BigDecimal orderTotal, BigDecimal amount);
         void onUnitedCancel();
         void onVoidRequested(List<PaymentTransactionModel> transactions);
         void onDataLoaded(BigDecimal alreadyPayed, BigDecimal orderTotal, ArrayList<PaymentTransactionModel> transactions);

@@ -3030,7 +3030,7 @@ public abstract class ShopStore {
         String TIPS = "tips";
 
         @SqlQuery
-        String QUERY = "select coalesce(transactions.amount, 0) - coalesce(transactions.change_amount, 0), " + TR + "." + PaymentTransactionTable.GATEWAY + ", " + TIPS + "." + EmployeeTipsTable.AMOUNT
+        String QUERY = "select " + TR + "." + PaymentTransactionTable.AMOUNT + ", " + TR + "." + PaymentTransactionTable.GATEWAY + ", " + TIPS + "." + EmployeeTipsTable.AMOUNT
                 + " from " + PaymentTransactionTable.TABLE_NAME + " as " + TR
                 + " left join " + EmployeeTipsTable.TABLE_NAME + " as " + TIPS
                 + " on " + TR + "." + PaymentTransactionTable.GUID + " = " + TIPS + "." + EmployeeTipsTable.PAYMENT_TRANSACTION_ID
