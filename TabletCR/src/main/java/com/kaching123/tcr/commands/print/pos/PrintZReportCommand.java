@@ -1,14 +1,20 @@
 package com.kaching123.tcr.commands.print.pos;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.IXReportPrinter;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.model.ZReportInfo;
 import com.kaching123.tcr.print.printer.PosXReportTextPrinter;
 import com.kaching123.tcr.print.processor.PrintZReportProcessor;
 import com.kaching123.tcr.reports.ZReportQuery;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 
 /**
  * Created by alboyko on 26.11.2015.
@@ -21,6 +27,8 @@ public class PrintZReportCommand extends BasePrintCommand<IXReportPrinter> {
     private static final String ARG_ZREPORT_REGISTER_ID = "ARG_ZREPORT_REGISTER_ID";
     private static final String ARG_ZREPORT_FROMDATE = "ARG_ZREPORT_FROMDATE";
     private static final String ARG_ZREPORT_TODATE = "ARG_ZREPORT_TODATE";
+
+    protected static final Uri URI_REGISTER = ShopProvider.getContentWithLimitUri(ShopStore.RegisterTable.URI_CONTENT, 1);
 
     @Override
     protected IXReportPrinter createTextPrinter() {
@@ -44,6 +52,7 @@ public class PrintZReportCommand extends BasePrintCommand<IXReportPrinter> {
             reportInfo = ZReportQuery.loadZReport(getContext(), shiftGuid);
         }
         PrintZReportProcessor processor = new PrintZReportProcessor(reportInfo, zReportType, getAppCommandContext());
+        setDescriptionInfo(processor);
         processor.print(getContext(), getApp(), printerWrapper);
     }
 
@@ -57,5 +66,25 @@ public class PrintZReportCommand extends BasePrintCommand<IXReportPrinter> {
                 .arg(ARG_ZREPORT_FROMDATE, fromDate)
                 .arg(ARG_ZREPORT_TODATE, toDate)
                 .callback(callback).queueUsing(context);
+    }
+
+    private void setDescriptionInfo(PrintZReportProcessor processor) {
+        Cursor c = ProviderAction.query(URI_REGISTER)
+                .projection(
+                        ShopStore.RegisterTable.DESCRIPTION,
+                        ShopStore.RegisterTable.TITLE
+                )
+                .where(ShopStore.RegisterTable.REGISTER_SERIAL + "=?", ((TcrApplication) getContext().getApplicationContext()).getRegisterSerial())
+                .perform(getContext());
+        String description = null;
+        String title = null;
+        if (c.moveToFirst()) {
+            description = c.getString(0);
+            title = c.getString(1);
+        }
+        processor.setRegisterDescription(description);
+        processor.setRegisterID(title);
+
+        c.close();
     }
 }

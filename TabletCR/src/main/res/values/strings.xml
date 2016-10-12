@@ -570,6 +570,10 @@
     <string name="printer_card_name">Card Type:</string>
     <string name="printer_auth_number">Authorization:</string>
     <string name="printer_shifted_number">Account Number:</string>
+    <string name="printer_entry_method">ENTRY:</string>
+    <string name="printer_approval">APPROVAL:</string>
+    <string name="printer_aid">AID:</string>
+    <string name="printer_arqc">ARQC:</string>
     <string name="printer_amount">Amount:</string>
     <string name="printer_cashback">CashBack:</string>
     <string name="printer_ebt_cash">EBT CASH:</string>
@@ -2058,4 +2062,8 @@
     <string name="save_item_first_msg">You must save changes before leave this screen</string>
     <string name="save_item_first_msg_2">Item should be saved first</string>
     <string name="special_price_overlapping_msg">Special price overlapping</string>
+
+    <string name="log_set">Set</string>
+    <string name="log_view">View</string>
+    <string name="zreprot_register_id_title_">Register ID</string>
 </resources>
