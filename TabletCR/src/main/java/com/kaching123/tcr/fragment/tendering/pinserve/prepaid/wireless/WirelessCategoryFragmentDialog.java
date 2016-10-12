@@ -868,7 +868,7 @@ public class WirelessCategoryFragmentDialog extends StyledDialogFragment impleme
 
 
         return loader.orderBy(WirelessTable.NAME)
-                .transform(new Function<Cursor, List<WirelessItem>>() {
+                .wrap(new Function<Cursor, List<WirelessItem>>() {
                     @Override
                     public List<WirelessItem> apply(Cursor c) {
                         List<WirelessItem> items = new ArrayList<WirelessItem>(c.getCount());

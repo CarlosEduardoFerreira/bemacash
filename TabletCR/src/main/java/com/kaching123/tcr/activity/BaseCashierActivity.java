@@ -2488,7 +2488,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     .orderBy(SaleOrderTable.UPDATE_TIME + " desc ");
 
             return builder
-                    .transform(new Function<Cursor, OrdersStatInfo>() {
+                    .wrap(new Function<Cursor, OrdersStatInfo>() {
                         @Override
                         public OrdersStatInfo apply(Cursor cursor) {
                             if (cursor.moveToFirst()) {
@@ -2558,7 +2558,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         public Loader<SaleOrderViewResult> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(ORDER_VIEW_URI)
                     .where(SaleOrderView2.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-                    .transform(new Function<Cursor, SaleOrderViewResult>() {
+                    .wrap(new Function<Cursor, SaleOrderViewResult>() {
                         @Override
                         public SaleOrderViewResult apply(Cursor cursor) {
                             if (!cursor.moveToFirst()) {
@@ -3149,7 +3149,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             return CursorLoaderBuilder.forUri(ShopProvider.contentUri(MultipleDiscountTable.URI_CONTENT))
                     .where(MultipleDiscountTable.IS_ACTIVE + " = ?", 1)
                     .orderBy(MultipleDiscountTable.BUNDLE_ID)
-                    .transform(new MultipleDiscountWrapFunction())
+                    .wrap(new MultipleDiscountWrapFunction())
                     .build(self());
         }
 

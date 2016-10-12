@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:text="@string/order_header_title"
-        android:layout_weight="20"/>
+        android:layout_weight="19"/>
 
     <TextView
         style="@style/ItemList.HeaderText.Border"
@@ -29,7 +29,7 @@
         style="@style/ItemList.HeaderText.Border"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
+        android:layout_weight="6"
         android:gravity="center"
         android:text="@string/order_header_unit_price"/>
 

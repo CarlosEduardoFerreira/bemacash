@@ -335,7 +335,7 @@ public class ApplyTipsFragmentDialog extends KeyboardDialogFragment {
                     .where(EmployeeTable.TIPS_ELIGIBLE + " = ?", 1)
                     .where(EmployeeTable.STATUS + " = ?", EmployeeStatus.ACTIVE.ordinal())
                     .orderBy(EmployeeTable.FIRST_NAME)
-                    .transformRow(new Function<Cursor, EmployeeModel>() {
+                    .transform(new Function<Cursor, EmployeeModel>() {
                         @Override
                         public EmployeeModel apply(Cursor c) {
                             return new EmployeeModel(
@@ -344,7 +344,7 @@ public class ApplyTipsFragmentDialog extends KeyboardDialogFragment {
                                     c.getString(2),
                                     null);
                         }
-                    }).transform(new Function<List<EmployeeModel>, List<EmployeeModel>>() {
+                    }).wrap(new Function<List<EmployeeModel>, List<EmployeeModel>>() {
                         @Override
                         public List<EmployeeModel> apply(List<EmployeeModel> result) {
                             ArrayList<EmployeeModel> arrayList = new ArrayList<EmployeeModel>(result.size() + 1);

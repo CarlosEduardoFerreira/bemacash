@@ -570,6 +570,10 @@
     <string name="printer_card_name">Card Type:</string>
     <string name="printer_auth_number">Authorization:</string>
     <string name="printer_shifted_number">Account Number:</string>
+    <string name="printer_entry_method">ENTRY:</string>
+    <string name="printer_approval">APPROVAL:</string>
+    <string name="printer_aid">AID:</string>
+    <string name="printer_arqc">ARQC:</string>
     <string name="printer_amount">Amount:</string>
     <string name="printer_cashback">CashBack:</string>
     <string name="printer_ebt_cash">EBT CASH:</string>

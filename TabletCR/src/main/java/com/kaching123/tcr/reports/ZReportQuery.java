@@ -317,12 +317,12 @@ public final class ZReportQuery extends XReportQuery {
 
     }
 
-    public static ZReportInfo loadDailySalesZReport(Context context, long registerId) {
+    public static ZReportInfo loadDailySalesZReport(Context context, long registerID, long fromDate, long toDate) {
 
         final Date startDate = getStartOfDay();
         final Date endDate = getEndOfDay();
 
-        final List<String> guidList = ShiftModel.getDailyGuidList(context);
+        final List<String> guidList = ShiftModel.getDailyGuidList(context, registerID, fromDate, toDate);
 
         BigDecimal grossSale = BigDecimal.ZERO;
         BigDecimal discount = BigDecimal.ZERO;
@@ -366,15 +366,15 @@ public final class ZReportQuery extends XReportQuery {
         returnsCount = BigDecimal.ZERO;
         voidCount = BigDecimal.ZERO;
 
-        String lastShiftGuid = getLastDailyGuid(context, registerId);
+        String lastShiftGuid = getLastDailyGuid(context, registerID);
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
-        transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerId));//returnInfo is negative
+        transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerID, fromDate, toDate));//returnInfo is negative
 
         for (String guid : guidList) {
             Logger.d("===== Daily Sales Report. guid:" + guid + " =====");
 
-            final StatInfo saleInfo = getDailyOrders(context, guid, OrderStatus.COMPLETED, registerId);
-            final StatInfo returnInfo = getDailyOrders(context, guid, OrderStatus.RETURN, registerId);
+            final StatInfo saleInfo = getDailyOrders(context, guid, OrderStatus.COMPLETED, registerID);
+            final StatInfo returnInfo = getDailyOrders(context, guid, OrderStatus.RETURN, registerID);
 
             grossSale = grossSale.add(saleInfo.grossSale);
             Logger.d("||grossSale:" + grossSale);
@@ -541,7 +541,7 @@ public final class ZReportQuery extends XReportQuery {
         Logger.d("||totalTender:" + totalTender);
         grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
 
-        dailySVRCounter(context, registerId);
+        dailySVRCounter(context, registerID, guidList);
 
         return new ZReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax,
                 totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt,
@@ -559,31 +559,35 @@ public final class ZReportQuery extends XReportQuery {
                 totalValue, salesCount, voidCount, returnsCount);
     }
 
-    private static void dailySVRCounter(Context context, long registerId) {  //slaes, voids, refunds - S.V.R.
+    private static void dailySVRCounter(Context context, long registerId, List<String> guidList) {  //slaes, voids, refunds - S.V.R.
 
-        Cursor c = ProviderAction.query(URI_Z_SALE_ITEMS)
-                .where(ShopSchema2.ZReportView2.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
-                .where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
-                .perform(context);
+        Cursor c = null;
+        for (String guid : guidList) {
+            c = ProviderAction.query(URI_Z_SALE_ITEMS)
+                    .where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
+                    .where(ShopSchema2.ZReportView2.SaleOrderTable.SHIFT_GUID + " = ?", guid)
+                    .perform(context);
 
-        while (c.moveToNext()) {
-            BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO);
+            while (c.moveToNext()) {
+                BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO);
 
-            BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY), BigDecimal.ZERO);
-            if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
-                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
-                    c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
+                BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY), BigDecimal.ZERO);
+                if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
+                        ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
+                        c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
 
-                voidCount = voidCount.add(itemQty);
-            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
-                salesCount = salesCount.add(itemQty);
-            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
-                returnsCount = returnsCount.add(itemQty);
+                    voidCount = voidCount.add(itemQty);
+                } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
+                    salesCount = salesCount.add(itemQty);
+                } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
+                    returnsCount = returnsCount.add(itemQty);
+                }
             }
         }
 
         assert c != null;
-        c.close();
+        if (c != null)
+            c.close();
     }
 
     private static void shiftSVRCounter(Context context, String shiftGuid) {

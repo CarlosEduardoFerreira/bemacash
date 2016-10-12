@@ -181,7 +181,7 @@ public class CategoriesActivity extends SuperBaseActivity {
         public Loader<List<CategoryModel>> onCreateLoader(int arg0, Bundle arg1) {
             return CursorLoaderBuilder.forUri(URI_CATEGORIES)
                     .orderBy(CategorySimpleView2.CategoryTable.ORDER_NUM + ", " + CategorySimpleView2.CategoryTable.TITLE)
-                    .transformRow(new CategoryConverter())
+                    .transform(new CategoryConverter())
                     .build(CategoriesActivity.this);
         }
 

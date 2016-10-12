@@ -1462,6 +1462,9 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String REGISTER_SERIAL = "register_serial";
 
+        @Column(type = Type.TEXT)
+        String DESCRIPTION = "description";
+
         @Column(type = Column.Type.TEXT)
         String TITLE = "title";
 
@@ -2927,6 +2930,10 @@ public abstract class ShopStore {
         String MODIFIERS_COUNT = "modifiers_count";
         String ADDONS_COUNT = "addons_count";
         String OPTIONAL_COUNT = "options_count";
+        String UNITS_COUNT = "units_count";
+        String AVAILABLE_UNITS_COUNT = "available_units_count";
+        String COMPOSERS_COUNT = "composers_count";
+        String RESTRICT_COMPOSERS_COUNT = "restrict_composers_count";
 
         @From(ItemTable.TABLE_NAME)
         String TABLE_ITEM = "item_table";
@@ -3023,7 +3030,7 @@ public abstract class ShopStore {
         String TIPS = "tips";
 
         @SqlQuery
-        String QUERY = "select coalesce(transactions.amount, 0) - coalesce(transactions.change_amount, 0), " + TR + "." + PaymentTransactionTable.GATEWAY + ", " + TIPS + "." + EmployeeTipsTable.AMOUNT
+        String QUERY = "select " + TR + "." + PaymentTransactionTable.AMOUNT + ", " + TR + "." + PaymentTransactionTable.GATEWAY + ", " + TIPS + "." + EmployeeTipsTable.AMOUNT
                 + " from " + PaymentTransactionTable.TABLE_NAME + " as " + TR
                 + " left join " + EmployeeTipsTable.TABLE_NAME + " as " + TIPS
                 + " on " + TR + "." + PaymentTransactionTable.GUID + " = " + TIPS + "." + EmployeeTipsTable.PAYMENT_TRANSACTION_ID

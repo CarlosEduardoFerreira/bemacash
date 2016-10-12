@@ -466,7 +466,7 @@ public class ReportsFragment extends DateRangeFragment {
             }
 
             return builder
-                    .transform(new PaymentTransactionsFunction(fromDate, toDate, inDays))
+                    .wrap(new PaymentTransactionsFunction(fromDate, toDate, inDays))
                     .build(getActivity());
         }
 
@@ -497,7 +497,7 @@ public class ReportsFragment extends DateRangeFragment {
                 builder.where(ReportsTopItemsView2.SaleOrderTable.REGISTER_ID + " = ?", selectedRegisterId);
             }
             return builder
-                    .transform(new TopItemsFunction())
+                    .wrap(new TopItemsFunction())
                     .build(getActivity());
 
         }
@@ -520,7 +520,7 @@ public class ReportsFragment extends DateRangeFragment {
             return CursorLoaderBuilder
                     .forUri(SHIFTS_URI)
                     .orderBy(ShiftView2.ShiftTable.START_TIME + " DESC")
-                    .transformRow(new ShiftsFunction())
+                    .transform(new ShiftsFunction())
                     .build(getActivity());
         }
 

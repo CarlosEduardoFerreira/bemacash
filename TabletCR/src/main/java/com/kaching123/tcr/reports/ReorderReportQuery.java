@@ -32,7 +32,7 @@ public class ReorderReportQuery {
                 .where(ItemTable.STOCK_TRACKING + " = ?", 1)
                 .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY))
                 .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " < "  + _castAsReal(ItemTable.RECOMMENDED_QTY))
-                .transformRow(new ConvertFunction())
+                .transform(new ConvertFunction())
                 .build(context);
     }
 
@@ -45,7 +45,7 @@ public class ReorderReportQuery {
                 .where(ItemTable.DESCRIPTION + " like ? ", "%" + textFilter + "%")
                 .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY))
                 .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " < "  + _castAsReal(ItemTable.RECOMMENDED_QTY))
-                .transformRow(new ConvertFunction())
+                .transform(new ConvertFunction())
                 .build(context);
     }
 

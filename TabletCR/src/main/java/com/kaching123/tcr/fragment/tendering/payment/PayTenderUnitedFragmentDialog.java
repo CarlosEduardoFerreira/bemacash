@@ -147,17 +147,17 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
     }
 
     private boolean tryProceed(PaymentMethod method) {
-        BigDecimal amount = getDecimalValue();
+        BigDecimal receivedAmount = getDecimalValue();
         BigDecimal remainingAmount = orderTotal.subtract(completedAmount);
         BigDecimal remainingEbtAmount = orderEbtTotal.subtract(completedEbtAmount);
 
-        if (amount.equals(BigDecimal.ZERO)) {
+        if (receivedAmount.equals(BigDecimal.ZERO)) {
             charge.selectAll();
             AlertDialogFragment.showAlert(getActivity(), R.string.pay_tender_wrong_amount_title, getString(R.string.pay_tender_zero_amount_error_message));
             return false;
         }
 
-        if (method != PaymentMethod.CASH && amount.compareTo(remainingAmount) > 0) {
+        if (method != PaymentMethod.CASH && receivedAmount.compareTo(remainingAmount) > 0) {
             charge.setText(UiHelper.valueOf(remainingAmount));
             charge.selectAll();
             AlertDialogFragment.showAlert(getActivity(), R.string.pay_tender_wrong_amount_title, getString(R.string.pay_tender_wrong_amount_error_message));
@@ -165,15 +165,15 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
         }
 
         if (method == PaymentMethod.PAX_EBT_FOODSTAMP || method == PaymentMethod.PAX_EBT_CASH){
-            if (remainingEbtAmount.compareTo(amount) < 0){
-                amount = remainingEbtAmount;
-                charge.setText(valueOf(amount));
+            if (remainingEbtAmount.compareTo(receivedAmount) < 0){
+                receivedAmount = remainingEbtAmount;
+                charge.setText(valueOf(receivedAmount));
                 charge.selectAll();
             }
         }
 
         if (listener != null){
-            listener.onUnitedPaymentAmountSelected(method, orderTotal, amount);
+            listener.onUnitedPaymentAmountSelected(method, orderTotal, receivedAmount);
             return true;
         }
 

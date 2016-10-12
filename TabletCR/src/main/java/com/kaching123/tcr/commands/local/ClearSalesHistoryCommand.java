@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
-
 /**
  * Created by pkabakov on 24.12.2014.
  */
@@ -77,17 +75,13 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                 ArrayList<String> orderGuids = null;
                 StringBuilder inBuilder = new StringBuilder();
                 do {
-                    c = getContext().getContentResolver().query(
-                            OLD_SALE_ORDERS_URI,
-                            null,
-                            null,
-                            _selectionArgs(
+                    c = ProviderAction.query(OLD_SALE_ORDERS_URI)
+                            .where("",
                                     minCreateTime,
                                     minCreateTime,
                                     minCreateTime,
-                                    MAX_PARAMETERS_COUNT),
-                            null
-                    );
+                                    MAX_PARAMETERS_COUNT)
+                            .perform(getContext());
                     Logger.d("ClearSalesHistoryCommand: old sale orders loaded, count: " + c.getCount());
 
                     if (c.getCount() == 0) {
@@ -135,13 +129,9 @@ public class ClearSalesHistoryCommand extends PublicGroundyTask {
                 int totalCount = 0;
                 ArrayList<String> updateQtyFlags = null;
                 do {
-                    c = getContext().getContentResolver().query(
-                            OLD_MOVEMENT_GROUPS_URI,
-                            null,
-                            null,
-                            _selectionArgs(minCreateTime, MAX_PARAMETERS_COUNT),
-                            null
-                    );
+                    c = ProviderAction.query(OLD_MOVEMENT_GROUPS_URI)
+                            .where("", minCreateTime, MAX_PARAMETERS_COUNT)
+                            .perform(getContext());
                     Logger.d("ClearSalesHistoryCommand: old item movement groups loaded, count: " + c.getCount());
 
                     if (c.getCount() == 0) {

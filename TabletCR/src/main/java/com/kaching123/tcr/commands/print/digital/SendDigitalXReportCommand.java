@@ -26,7 +26,9 @@ public class SendDigitalXReportCommand extends BaseSendEmailCommand {
     private static final String ARG_XREPORT_ENABLE = "ARG_XREPORT_ENABLE";
 
     private static final String ARG_ITEM_XREPORT_ENABLE = "ARG_ITEM_XREPORT_ENABLE";
-
+    private static final String ARG_ZREPORT_REGISTER_ID = "ARG_ZREPORT_REGISTER_ID";
+    private static final String ARG_ZREPORT_FROMDATE = "ARG_ZREPORT_FROMDATE";
+    private static final String ARG_ZREPORT_TODATE = "ARG_ZREPORT_TODATE";
     @Override
     protected Response execute(SyncApi restApi, String apiKey) {
         String email = getApp().getShopInfo().ownerEmail;
@@ -34,12 +36,15 @@ public class SendDigitalXReportCommand extends BaseSendEmailCommand {
             return Response.responseFailed();
 
         String shiftGuid = getStringArg(ARG_SHIFT_GUID);
+        long registerID = getLongArg(ARG_ZREPORT_REGISTER_ID);
+        long fromDate = getLongArg(ARG_ZREPORT_FROMDATE);
+        long toDate = getLongArg(ARG_ZREPORT_TODATE);
         final ReportType xReportType = (ReportType) getArgs().getSerializable(ARG_XREPORT_TYPE);
 
         final DigitalXReportBuilder builder = new DigitalXReportBuilder();
         XReportInfo reportInfo;
         if (ReportType.X_REPORT_DAILY_SALES == xReportType) {
-            reportInfo = XReportQuery.loadDailySalesXReport(getContext(), getAppCommandContext().getRegisterId());
+            reportInfo = XReportQuery.loadDailySalesXReport(getContext(),registerID, fromDate, toDate);
         } else {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
@@ -60,12 +65,15 @@ public class SendDigitalXReportCommand extends BaseSendEmailCommand {
     }
 
 
-    public static void start(Context context, String shiftGuid, ReportType xReportType, boolean enableEreportDepartSale, boolean itemXreportSaleEnabled, SendPrintDigitalXReportCallback callback) {
+    public static void start(Context context, String shiftGuid, ReportType xReportType, boolean enableEreportDepartSale, boolean itemXreportSaleEnabled, SendPrintDigitalXReportCallback callback, long registerID, long fromDate, long toDate) {
         create(SendDigitalXReportCommand.class)
                 .arg(ARG_SHIFT_GUID, shiftGuid)
                 .arg(ARG_XREPORT_TYPE, xReportType)
                 .arg(ARG_XREPORT_ENABLE, enableEreportDepartSale)
                 .arg(ARG_ITEM_XREPORT_ENABLE,itemXreportSaleEnabled)
+                .arg(ARG_ZREPORT_REGISTER_ID, registerID)
+                .arg(ARG_ZREPORT_FROMDATE, fromDate)
+                .arg(ARG_ZREPORT_TODATE, toDate)
                 .callback(callback).queueUsing(context);
     }
 

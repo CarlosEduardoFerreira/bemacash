@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.getbase.android.db.provider.Query;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.activity.DashboardActivity.SalesStatisticsConverter;
@@ -329,7 +330,7 @@ public class XReportQuery {
                 payOuts, cashBack, departsSales, result, totalValue);
     }
 
-    public static XReportInfo loadDailySalesXReport(Context context, long registerId) {
+    public static XReportInfo loadDailySalesXReport(Context context, long registerID, long fromDate, long toDate) {
 
         final Date startDate = getStartOfDay();
         final Date endDate = getEndOfDay();
@@ -365,13 +366,13 @@ public class XReportQuery {
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>();
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
 
-        String lastShiftGuid = getLastDailyGuid(context, registerId);
+        String lastShiftGuid = getLastDailyGuid(context, registerID);
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
-        transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerId));//returnInfo is negative
+        transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerID, fromDate, toDate));//returnInfo is negative
 
         for (String guid : guidList) {
-            final StatInfo saleInfo = getDailyOrders(context, guid, OrderStatus.COMPLETED, registerId);
-            final StatInfo returnInfo = getDailyOrders(context, guid, OrderStatus.RETURN, registerId);
+            final StatInfo saleInfo = getDailyOrders(context, guid, OrderStatus.COMPLETED, registerID);
+            final StatInfo returnInfo = getDailyOrders(context, guid, OrderStatus.RETURN, registerID);
 
             grossSale = grossSale.add(saleInfo.grossSale);
             Logger.d("||grossSale:" + grossSale);
@@ -522,6 +523,30 @@ public class XReportQuery {
         return totalTransactionFee;
     }
 
+    protected static BigDecimal getDailyOrdersTransactionFee(Context context, OrderStatus type, long registerId, long fromDate, long toDate) {
+        Cursor c = null;
+        Query query = ProviderAction.query(URI_SALE_ORDER)
+                .projection(ShopStore.SaleOrderTable.TRANSACTION_FEE)
+                .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime());
+        if (registerId == 0) {
+            c = query.where(ShopStore.SaleOrderTable.STATUS + " = ?", type.ordinal())
+                    .perform(context);
+        } else {
+            c = query.where(ShopStore.SaleOrderTable.REGISTER_ID + " = ?", registerId)
+                    .where(ShopStore.SaleOrderTable.STATUS + " = ?", type.ordinal())
+                    .perform(context);
+        }
+
+
+        BigDecimal totalTransactionFee = BigDecimal.ZERO;
+        while (c.moveToNext()) {
+            totalTransactionFee = _decimal(c, 0, BigDecimal.ZERO);
+        }
+        c.close();
+
+        return totalTransactionFee;
+    }
+
     protected static BigDecimal getLastShiftDailyOpenAmount(Context context, String shiftGuid) {
         BigDecimal openAmount = BigDecimal.ZERO;
         try {
@@ -570,12 +595,25 @@ public class XReportQuery {
     }
 
     protected static StatInfo getDailyOrders(Context context, String shiftGuid, OrderStatus type, long registerId) {
-        Cursor c = ProviderAction.query(URI_SALE_ITEMS)
+        Cursor c = null;
+        Query query = ProviderAction.query(URI_SALE_ITEMS)
                 .where(SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .where(SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
-                .where(SaleOrderTable.REGISTER_ID + " = ?", registerId)
-                .where(SaleOrderTable.STATUS + " = ?", type.ordinal())
-                .perform(context);
+                .where(SaleOrderTable.STATUS + " = ?", type.ordinal());
+
+        if (registerId == 0) {
+            c = query.perform(context);
+        } else {
+            c = query.where(SaleOrderTable.REGISTER_ID + " = ?", registerId)
+                    .perform(context);
+        }
+
+//        Cursor c = ProviderAction.query(URI_SALE_ITEMS)
+//                .where(SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
+//                .where(SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
+//                .where(SaleOrderTable.REGISTER_ID + " = ?", registerId)
+//                .where(SaleOrderTable.STATUS + " = ?", type.ordinal())
+//                .perform(context);
         return getOrders(context, c, shiftGuid, type);
     }
 

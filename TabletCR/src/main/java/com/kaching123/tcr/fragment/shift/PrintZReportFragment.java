@@ -14,6 +14,8 @@ import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.FragmentById;
 
 
 /**
@@ -24,8 +26,14 @@ import org.androidannotations.annotations.EFragment;
 public class PrintZReportFragment extends PrintBaseReportFragment {
 
     private static final String DIALOG_NAME = PrintZReportFragment.class.getSimpleName();
+    @FragmentArg
+    protected long registerID;
 
+    @FragmentArg
+    protected long fromDate;
 
+    @FragmentArg
+    protected long toDate;
     @Override
     protected int getDialogTitle() {
         if (ReportType.Z_REPORT_CURRENT_SHIFT == reportType || ReportType.Z_REPORT_DAILY_SALES == reportType) {
@@ -38,6 +46,16 @@ public class PrintZReportFragment extends PrintBaseReportFragment {
         DialogUtil.show(activity, DIALOG_NAME, PrintZReportFragment_.builder()
                 .shiftGuid(shiftGuid)
                 .reportType(reportType)
+                .build());
+    }
+
+    public static void show(FragmentActivity activity, String shiftGuid, ReportsActivity.ReportType reportType, long registerID, long fromDate, long toDate) {
+        DialogUtil.show(activity, DIALOG_NAME, PrintZReportFragment_.builder()
+                .shiftGuid(shiftGuid)
+                .reportType(reportType)
+                .registerID(registerID)
+                .fromDate(fromDate)
+                .toDate(toDate)
                 .build());
     }
 
@@ -54,7 +72,7 @@ public class PrintZReportFragment extends PrintBaseReportFragment {
             return;
 
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_print_zreport));
-        PrintZReportCommand.start(getActivity(), shiftGuid, reportType, ignorePaperEnd, searchByMac, new PrintReportCallback());
+        PrintZReportCommand.start(getActivity(), shiftGuid, reportType, ignorePaperEnd, searchByMac, new PrintReportCallback(), registerID, fromDate, toDate);
     }
 
     @Override
@@ -62,7 +80,7 @@ public class PrintZReportFragment extends PrintBaseReportFragment {
         if (getActivity() == null)
             return;
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_print_zreport));
-        SendDigitalZReportCommand.start(getActivity(), shiftGuid, reportType, new SendDigitalZReportCallback());
+        SendDigitalZReportCommand.start(getActivity(), shiftGuid, reportType, new SendDigitalZReportCallback(), registerID, fromDate, toDate);
     }
 
     @Override
@@ -70,7 +88,7 @@ public class PrintZReportFragment extends PrintBaseReportFragment {
         if (getActivity() == null)
             return;
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_print_zreport));
-        PrintDigitalZReportCommand.start(getActivity(), shiftGuid, reportType, new PrintDigitalZReportCallback());
+        PrintDigitalZReportCommand.start(getActivity(), shiftGuid, reportType, new PrintDigitalZReportCallback(), registerID, fromDate, toDate);
     }
 
     @Override

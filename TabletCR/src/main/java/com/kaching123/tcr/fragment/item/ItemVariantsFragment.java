@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.view.View;
@@ -14,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.VariantsActivity;
@@ -24,8 +24,6 @@ import com.kaching123.tcr.store.ShopStore.VariantSubItemsCountView;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
-
-import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 
 /**
  * Created by vkompaniets on 10.08.2016.
@@ -75,12 +73,9 @@ public class ItemVariantsFragment extends ItemBaseFragment {
 
         @Override
         public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-            return new CursorLoader(getActivity(),
-                    URI_VARIANT_SUB_ITEMS_COUNT,
-                    null,
-                    null,
-                    _selectionArgs(getModel().guid, TcrApplication.get().getShopId()),
-                    null);
+            return CursorLoaderBuilder.forUri(URI_VARIANT_SUB_ITEMS_COUNT)
+                    .where("", getModel().guid, TcrApplication.get().getShopId())
+                    .build(getActivity());
         }
 
         @Override

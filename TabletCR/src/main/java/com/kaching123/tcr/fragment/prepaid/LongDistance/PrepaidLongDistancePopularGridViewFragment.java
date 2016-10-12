@@ -93,7 +93,7 @@ public class PrepaidLongDistancePopularGridViewFragment extends PrepaidLongDista
             final ArrayList<BillPaymentItem> billPaymentItems = new ArrayList<BillPaymentItem>();
 
             return loader.orderBy(ShopStore.BillPayment.CATEGORYDESCRIPTION)
-                    .transform(new Function<Cursor, List<BillPaymentItem>>() {
+                    .wrap(new Function<Cursor, List<BillPaymentItem>>() {
                         @Override
                         public List<BillPaymentItem> apply(Cursor c) {
 
@@ -139,7 +139,7 @@ public class PrepaidLongDistancePopularGridViewFragment extends PrepaidLongDista
 
         final LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         return loader.orderBy(ShopStore.WirelessTable.NAME)
-                .transform(new Function<Cursor, List<WirelessItem>>() {
+                .wrap(new Function<Cursor, List<WirelessItem>>() {
                     @Override
                     public List<WirelessItem> apply(Cursor c) {
                         List<WirelessItem> items = new ArrayList<WirelessItem>(c.getCount());

@@ -121,7 +121,6 @@ import java.util.concurrent.TimeUnit;
 import retrofit.RetrofitError;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
-import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 
 public class SyncCommand implements Runnable {
 
@@ -901,13 +900,9 @@ public class SyncCommand implements Runnable {
     }
 
     private ArrayList<String> getInvalidOldActiveUnitOrders(long minUpdateTime) {
-        Cursor c = service.getContentResolver().query(
-                ShopProvider.contentUri(OldActiveUnitOrdersQuery.CONTENT_PATH),
-                null,
-                null,
-                _selectionArgs(minUpdateTime),
-                null
-        );
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(OldActiveUnitOrdersQuery.CONTENT_PATH))
+                .where("", minUpdateTime)
+                .perform(service);
 
         if (c.getCount() == 0) {
             c.close();

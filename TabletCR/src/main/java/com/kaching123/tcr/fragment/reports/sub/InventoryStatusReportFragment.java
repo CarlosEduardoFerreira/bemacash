@@ -437,14 +437,14 @@ public class InventoryStatusReportFragment extends SuperBaseFragment {
             return CursorLoaderBuilder
                     .forUri(URI_DEPARTMENT)
                     .projection(DepartmentTable.GUID, DepartmentTable.TITLE)
-                    .transformRow(new Function<Cursor, String[]>() {
+                    .transform(new Function<Cursor, String[]>() {
 
                         @Override
                         public String[] apply(Cursor cursor) {
                             return new String[]{cursor.getString(0), cursor.getString(1)};
                         }
                     })
-                    .transform(new Function<List<String[]>, List<String[]>>() {
+                    .wrap(new Function<List<String[]>, List<String[]>>() {
 
                         @Override
                         public List<String[]> apply(List<String[]> strings) {

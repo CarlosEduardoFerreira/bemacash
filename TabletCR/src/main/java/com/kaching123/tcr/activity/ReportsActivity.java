@@ -89,6 +89,11 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
     }
 
     @Override
+    public void onXReportTypeChosen(ReportType xReportType, long registerID, long fromDate, long toDate) {
+        PrintXReportFragment.show(this, null, xReportType, registerID, fromDate, toDate);
+    }
+
+    @Override
     public void onZReportTypeChosen(ReportType zReportType) {
         if (ReportType.Z_REPORT_CURRENT_SHIFT == zReportType) {
             if (!getApp().isShiftOpened()) {
@@ -99,6 +104,11 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
         } else if (ReportType.Z_REPORT_DAILY_SALES == zReportType) {
             PrintZReportFragment.show(this, null, zReportType);
         }
+    }
+
+    @Override
+    public void onZReportRegisterChosen(ReportType zReportType, long registerID, long fromDate, long toDate) {
+        PrintZReportFragment.show(this, null, zReportType, registerID, fromDate, toDate);
     }
 
     @Override

@@ -133,7 +133,7 @@ import java.util.List;
             return super.getCount() - removedCursorPositions.size();
         }
 
-        /*public int getCursorPosition(int position) {
+        public int getCursorPosition(int position) {
             return listMapping.get(position, position);
         }
 
@@ -166,5 +166,5 @@ import java.util.List;
                 items.add(getItem(i));
             }
             return items;
-        }*/
+        }
     }

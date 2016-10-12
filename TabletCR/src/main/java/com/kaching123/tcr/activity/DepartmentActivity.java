@@ -163,7 +163,7 @@ public class DepartmentActivity extends SuperBaseActivity {
         @Override
         public Loader<List<DepartmentModel>> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(URI_DEPARTMENTS)
-                    .transformRow(new DepartmentConverter())
+                    .transform(new DepartmentConverter())
                     .build(DepartmentActivity.this);
         }
 

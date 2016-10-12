@@ -89,7 +89,7 @@ public class EmployeeAttendanceFragment extends DateRangeFragment implements Loa
                 .where(EmployeeTimesheetTable.EMPLOYEE_GUID + " =?", employeeGuid)
                 .where(EmployeeTimesheetTable.CLOCK_IN + " >= ? and " + EmployeeTimesheetTable.CLOCK_IN + " <= ?", fromDate.getTime(), toDate.getTime())
                 .orderBy(EmployeeTimesheetTable.CLOCK_IN)
-                .transformRow(new Function<Cursor, TimeInfo>() {
+                .transform(new Function<Cursor, TimeInfo>() {
                     @Override
                     public TimeInfo apply(Cursor c) {
                         return new TimeInfo(c.getString(0), c.getLong(1), c.getLong(2));

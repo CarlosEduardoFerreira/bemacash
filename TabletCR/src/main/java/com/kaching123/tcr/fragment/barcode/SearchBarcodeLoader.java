@@ -160,7 +160,7 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
                 .projection(ItemExFunction.PROJECTION)
                 .where(ItemTable.EAN_CODE + " = ? OR " + ItemTable.PRODUCT_CODE + " = ?", code, code)
                 .where(ItemTable.IS_DELETED + " = ?", 0)
-                .transform(new ItemExFunction.Wrap())
+                .wrap(new ItemExFunction.Wrap())
                 .build(context);
     }
 

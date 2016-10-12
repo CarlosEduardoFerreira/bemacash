@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 
@@ -87,13 +88,45 @@ public class ShiftModel implements IValueModel {
         return guidList;
     }
 
+    public static List<String> getDailyGuidList(Context context, long registerID, long fromDate, long toDate) {
+        final Cursor c = ProviderAction.query(URI_SHIFT)
+                .where(ShiftTable.START_TIME + " > ? ", fromDate)
+//                .where(ShiftTable.END_TIME + " < ? " , toDate)
+                .where(ShiftTable.REGISTER_ID + " = ? ", registerID)
+                .perform(context);
+        final List<String> guidList = new ArrayList<>();
+//        while(c != null && c.moveToNext())
+//        {
+//
+//        }
+        if (c != null && c.moveToFirst()) {
+            do {
+                final String currentGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));
+                guidList.add(currentGuid);
+            } while (c.moveToNext());
+            c.close();
+        }
+        return guidList;
+    }
+
     public static String getLastDailyGuid(Context context, long registerId) {
         String lastShiftGuid = null;
-        Cursor c = ProviderAction.query(URI_SHIFT)
-                .projection(ShiftTable.GUID)
-                .where(ShiftTable.REGISTER_ID + " = ?", registerId)
-                .orderBy(ShiftTable.START_TIME + " DESC")
-                .perform(context);
+        Cursor c = null;
+        Query query = ProviderAction.query(URI_SHIFT)
+                .projection(ShiftTable.GUID);
+        if (registerId == 0)
+            c = query.orderBy(ShiftTable.START_TIME + " DESC")
+                    .perform(context);
+        else
+            c = query.where(ShiftTable.REGISTER_ID + " = ?", registerId)
+                    .orderBy(ShiftTable.START_TIME + " DESC")
+                    .perform(context);
+//
+//        Cursor c = ProviderAction.query(URI_SHIFT)
+//                .projection(ShiftTable.GUID)
+//                .where(ShiftTable.REGISTER_ID + " = ?", registerId)
+//                .orderBy(ShiftTable.START_TIME + " DESC")
+//                .perform(context);
 
         if (c.moveToFirst()) {
             lastShiftGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));

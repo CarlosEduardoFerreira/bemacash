@@ -180,7 +180,7 @@ public class EmployeeReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
                     .projection(EmployeeTable.GUID, EmployeeTable.FIRST_NAME, EmployeeTable.LAST_NAME)
                     .where(EmployeeTable.IS_MERCHANT + " = ?", 0)
                     .orderBy(EmployeeTable.LAST_NAME)
-                    .transformRow(new Function<Cursor, EmployeeModel>() {
+                    .transform(new Function<Cursor, EmployeeModel>() {
                         @Override
                         public EmployeeModel apply(Cursor c) {
                             return new EmployeeModel(
@@ -190,7 +190,7 @@ public class EmployeeReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
                                     null);
                         }
                     })
-                    .transform(new Function<List<EmployeeModel>, List<EmployeeModel>>() {
+                    .wrap(new Function<List<EmployeeModel>, List<EmployeeModel>>() {
                         @Override
                         public List<EmployeeModel> apply(List<EmployeeModel> result) {
                             ArrayList<EmployeeModel> arrayList = new ArrayList<EmployeeModel>(result.size() + 1);

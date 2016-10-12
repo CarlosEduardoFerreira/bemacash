@@ -165,7 +165,7 @@ public class KDSAliasActivity extends SuperBaseActivity {
         @Override
         public Loader<List<KDSAliasModel>> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(URI_KDS_ALIAS)
-                    .transformRow(new KDSAliasConverter())
+                    .transform(new KDSAliasConverter())
                     .build(KDSAliasActivity.this);
         }
 

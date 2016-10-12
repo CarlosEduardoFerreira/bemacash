@@ -27,7 +27,7 @@ public abstract class RegistersLoader implements LoaderCallbacks<List<RegisterMo
         return CursorLoaderBuilder
                 .forUri(REGISTERS_URI)
                 .orderBy(RegisterTable.TITLE)
-                .transformRow(new RegistersFunction())
+                .transform(new RegistersFunction())
                 .build(getLoaderContext());
     }
 

@@ -36,6 +36,8 @@ public class PrintXReportProcessor {
 
     private final IAppCommandContext appCommandContext;
     private boolean enableEreportItemSale;
+    private String registerDescription;
+    private String registerID;
 
     public PrintXReportProcessor(XReportInfo report, ReportType xReportType, IAppCommandContext appCommandContext, boolean enableEreportDepartSale, boolean enableEreportItemSale) {
         this.report = report;
@@ -95,12 +97,15 @@ public class PrintXReportProcessor {
     private void drawSubtitle(IXReportPrinter printer, Context context) {
         if (ReportType.X_REPORT_CURRENT_SHIFT == xReportType) {
             printer.footer(context.getString(R.string.xreport_current_shift_subtitle));
+            printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
             printer.titledDate(context.getString(R.string.xreport_print_time), new Date());
         } else if (ReportType.X_REPORT_DAILY_SALES == xReportType) {
             printer.footer(context.getString(R.string.xreport_daily_subtitle));
+            printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
             printer.titledDate(context.getString(R.string.xreport_print_time), new Date());
         } else {
             printer.footer(context.getString(R.string.xreport_subtitle));
+            printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
         }
     }
 
@@ -221,4 +226,11 @@ public class PrintXReportProcessor {
 
     }
 
+    public void setRegisterDescription(String registerDescription) {
+        this.registerDescription = registerDescription;
+    }
+
+    public void setRegisterID(String registerID) {
+        this.registerID = registerID;
+    }
 }

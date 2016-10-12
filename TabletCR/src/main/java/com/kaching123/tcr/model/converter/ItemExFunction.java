@@ -7,6 +7,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.Unit.Status;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.CategoryTable;
@@ -17,6 +18,7 @@ import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ItemTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.ModifierTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.TaxGroupTable;
 import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitLabelTable;
+import com.kaching123.tcr.store.ShopSchema2.ItemExtView2.UnitTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemExtView;
 
@@ -25,11 +27,13 @@ import java.math.BigDecimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._caseCount;
 import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
+import static com.kaching123.tcr.model.ContentValuesUtil._count;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._itemRefType;
 import static com.kaching123.tcr.model.ContentValuesUtil._priceType;
+import static com.kaching123.tcr.model.ContentValuesUtil._sum;
 
 /**
  * Created by gdubina on 22/11/13.
@@ -39,7 +43,6 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
     public static Uri VIEW_URI = ShopProvider.contentUriGroupBy(ShopStore.ItemExtView.URI_CONTENT, ItemTable.GUID);
 
     public static String[] PROJECTION = new String[]{
-            "0 as _id",
             ItemTable.GUID,
             ItemTable.CATEGORY_ID,
             ItemTable.DESCRIPTION,
@@ -78,6 +81,12 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.MODIFIER.ordinal()), ItemExtView.MODIFIERS_COUNT),
             _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.ADDON.ordinal()), ItemExtView.ADDONS_COUNT),
             _caseCount(ModifierTable.TYPE, String.valueOf(ModifierType.OPTIONAL.ordinal()), ItemExtView.OPTIONAL_COUNT),
+            _count(UnitTable.ID, ItemExtView.UNITS_COUNT),
+            _caseCount(UnitTable.STATUS,
+                    new String[]{String.valueOf(Status.NEW.ordinal()), String.valueOf(Status.USED.ordinal()), String.valueOf(Status.BROKEN.ordinal())},
+                    ItemExtView.AVAILABLE_UNITS_COUNT),
+            _count(ChildComposerTable.ID, ItemExtView.COMPOSERS_COUNT),
+            _sum(ChildComposerTable.FREE_OF_CHARGE_COMPOSER, ItemExtView.RESTRICT_COMPOSERS_COUNT),
             TaxGroupTable.TAX,
             ShopSchema2.ItemExtView2.TaxGroupTable2.TAX,
             ItemTable.ORDER_NUM,
@@ -139,6 +148,10 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 c.getInt(indexHolder.get(ItemExtView.MODIFIERS_COUNT)),
                 c.getInt(indexHolder.get(ItemExtView.ADDONS_COUNT)),
                 c.getInt(indexHolder.get(ItemExtView.OPTIONAL_COUNT)),
+                c.getInt(indexHolder.get(ItemExtView.UNITS_COUNT)),
+                c.getInt(indexHolder.get(ItemExtView.AVAILABLE_UNITS_COUNT)),
+                c.getInt(indexHolder.get(ItemExtView.COMPOSERS_COUNT)),
+                c.getInt(indexHolder.get(ItemExtView.RESTRICT_COMPOSERS_COUNT)),
                 c.getString(indexHolder.get(CategoryTable.DEPARTMENT_GUID)),
                 _decimal(c.getString(indexHolder.get(TaxGroupTable.TAX)), BigDecimal.ZERO),
                 _decimal(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.TaxGroupTable2.TAX)), BigDecimal.ZERO),
