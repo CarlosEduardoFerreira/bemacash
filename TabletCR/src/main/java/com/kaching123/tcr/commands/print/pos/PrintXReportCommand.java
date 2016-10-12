@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.getbase.android.db.provider.Query;
 import com.kaching123.pos.util.IXReportPrinter;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
@@ -55,7 +56,7 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
         PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE) ,getBooleanArg(ARG_ITEM_XREPORT_ENABLE));
-        setDescriptionInfo(processor);
+        setDescriptionInfo(processor, registerID);
         processor.print(getContext(), getApp(), printer);
     }
 
@@ -73,14 +74,21 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
                 .callback(callback).queueUsing(context);
     }
 
-    private void setDescriptionInfo(PrintXReportProcessor processor) {
-        Cursor c = ProviderAction.query(URI_REGISTER)
+    private void setDescriptionInfo(PrintXReportProcessor processor, long registerID) {
+        Cursor c = null;
+        Query query = ProviderAction.query(URI_REGISTER)
                 .projection(
                         ShopStore.RegisterTable.DESCRIPTION,
                         ShopStore.RegisterTable.TITLE
-                )
-                .where(ShopStore.RegisterTable.REGISTER_SERIAL + "=?", ((TcrApplication) getContext().getApplicationContext()).getRegisterSerial())
-                .perform(getContext());
+                );
+        if (registerID == 0) {
+            c = query.perform(getContext());
+        } else {
+            c = query.where(ShopStore.RegisterTable.ID + "=?", registerID)
+                    .perform(getContext());
+
+        }
+
         String description = null;
         String title = null;
         if (c.moveToFirst()) {
@@ -88,7 +96,7 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
             title = c.getString(1);
         }
         processor.setRegisterDescription(description);
-        processor.setRegisterID(title.equalsIgnoreCase("0") ? "ALL" : title);
+        processor.setRegisterID(registerID == 0 ? "ALL" : title);
 
         c.close();
     }

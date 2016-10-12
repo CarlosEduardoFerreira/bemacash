@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
@@ -61,7 +62,7 @@ public class PrintDigitalZReportCommand extends PublicGroundyTask {
         }
 
         PrintZReportProcessor processor = new PrintZReportProcessor(reportInfo, zReportType, getAppCommandContext());
-        setDescriptionInfo(processor);
+        setDescriptionInfo(processor, registerID);
         processor.print(getContext(), getApp(), builder);
 
         File file = new File(getContext().getExternalCacheDir(), getContext().getString(R.string.report_type_zreport) + ".html");
@@ -104,14 +105,21 @@ public class PrintDigitalZReportCommand extends PublicGroundyTask {
         protected abstract void onDigitalPrintError();
     }
 
-    private void setDescriptionInfo(PrintZReportProcessor processor) {
-        Cursor c = ProviderAction.query(URI_REGISTER)
+    private void setDescriptionInfo(PrintZReportProcessor processor, long registerID) {
+        Cursor c = null;
+        Query query = ProviderAction.query(URI_REGISTER)
                 .projection(
                         ShopStore.RegisterTable.DESCRIPTION,
                         ShopStore.RegisterTable.TITLE
-                )
-                .where(ShopStore.RegisterTable.REGISTER_SERIAL + "=?", ((TcrApplication) getContext().getApplicationContext()).getRegisterSerial())
-                .perform(getContext());
+                );
+        if (registerID == 0) {
+            c = query.perform(getContext());
+        } else {
+            c = query.where(ShopStore.RegisterTable.ID + "=?", registerID)
+                    .perform(getContext());
+
+        }
+
         String description = null;
         String title = null;
         if (c.moveToFirst()) {
@@ -119,7 +127,7 @@ public class PrintDigitalZReportCommand extends PublicGroundyTask {
             title = c.getString(1);
         }
         processor.setRegisterDescription(description);
-        processor.setRegisterID(title.equalsIgnoreCase("0") ? "ALL" : title);
+        processor.setRegisterID(registerID == 0 ? "ALL" : title);
 
         c.close();
     }
