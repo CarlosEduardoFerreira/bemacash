@@ -2075,4 +2075,8 @@
     <string name="total_bonus_points_available">Total Bonus Points Available</string>
     <string name="bonus_points_on_this_sale">Bonus Points on this Sale</string>
 
+    <string name="log_set">Set</string>
+    <string name="log_view">View</string>
+    <string name="zreprot_register_id_title_">Register ID</string>
+
 </resources>
