@@ -541,7 +541,7 @@ public final class ZReportQuery extends XReportQuery {
         Logger.d("||totalTender:" + totalTender);
         grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
 
-        dailySVRCounter(context, registerID, fromDate, toDate);
+        dailySVRCounter(context, registerID, guidList);
 
         return new ZReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax,
                 totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt,
@@ -559,31 +559,35 @@ public final class ZReportQuery extends XReportQuery {
                 totalValue, salesCount, voidCount, returnsCount);
     }
 
-    private static void dailySVRCounter(Context context, long registerId, long fromDate, long toDate) {  //slaes, voids, refunds - S.V.R.
+    private static void dailySVRCounter(Context context, long registerId, List<String> guidList) {  //slaes, voids, refunds - S.V.R.
 
-        Cursor c = ProviderAction.query(URI_Z_SALE_ITEMS)
-                .where(ShopSchema2.ZReportView2.SaleOrderTable.CREATE_TIME + " > ? AND " + ShopSchema2.ZReportView2.SaleOrderTable.CREATE_TIME + " < ? ", fromDate, toDate)
-                .where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
-                .perform(context);
+        Cursor c = null;
+        for (String guid : guidList) {
+            c = ProviderAction.query(URI_Z_SALE_ITEMS)
+                    .where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
+                    .where(ShopSchema2.ZReportView2.SaleOrderTable.SHIFT_GUID + " = ?", guid)
+                    .perform(context);
 
-        while (c.moveToNext()) {
-            BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO);
+            while (c.moveToNext()) {
+                BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO);
 
-            BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY), BigDecimal.ZERO);
-            if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
-                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
-                    c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
+                BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY), BigDecimal.ZERO);
+                if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
+                        ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
+                        c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
 
-                voidCount = voidCount.add(itemQty);
-            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
-                salesCount = salesCount.add(itemQty);
-            } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
-                returnsCount = returnsCount.add(itemQty);
+                    voidCount = voidCount.add(itemQty);
+                } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
+                    salesCount = salesCount.add(itemQty);
+                } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
+                    returnsCount = returnsCount.add(itemQty);
+                }
             }
         }
 
         assert c != null;
-        c.close();
+        if (c != null)
+            c.close();
     }
 
     private static void shiftSVRCounter(Context context, String shiftGuid) {

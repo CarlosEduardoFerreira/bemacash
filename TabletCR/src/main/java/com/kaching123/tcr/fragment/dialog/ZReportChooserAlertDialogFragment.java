@@ -16,6 +16,7 @@ import android.widget.Spinner;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.component.picker.DateTimePickerFragment;
 import com.kaching123.tcr.fragment.reports.DetailedSalesRegistersAdapter;
@@ -184,14 +185,31 @@ public class ZReportChooserAlertDialogFragment extends StyledDialogFragment {
         getLoaderManager().restartLoader(0, null, registersLoader);
     }
 
+    private int defaultPosition;
+    private void setDefaultPosition(int position)
+    {
+        this.defaultPosition = position;
+    }
+    private int getDefaultSelectedP()
+    {
+       return defaultPosition;
+    }
+
     private LoaderManager.LoaderCallbacks<List<RegisterModel>> registersLoader = new RegistersLoader() {
 
         @Override
         public void onLoadFinished(Loader<List<RegisterModel>> loader, List<RegisterModel> result) {
             ArrayList<RegisterModel> arrayList = new ArrayList<RegisterModel>(result.size());
 //            arrayList.add(new RegisterModel(0, null, null, getString(R.string.register_label_all), null, 0, 0));
+            long id = ((TcrApplication)getContext().getApplicationContext()).getRegisterId();
+            for(int p = 0; p < result.size(); p++)
+            {
+                if(result.get(p).id == id)
+                    setDefaultPosition(p);
+            }
             arrayList.addAll(result);
             registersAdapter.changeCursor(arrayList);
+            registerSpinner.setSelection(getDefaultSelectedP());
         }
 
         @Override
