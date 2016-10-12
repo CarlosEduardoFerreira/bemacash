@@ -40,7 +40,9 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
     private static final String ARG_XREPORT_ENABLE = "ARG_XREPORT_ENABLE";
 
     private static final String ARG_ITEM_XREPORT_ENABLE = "ARG_ITEM_XREPORT_ENABLE";
-
+    private static final String ARG_ZREPORT_REGISTER_ID = "ARG_ZREPORT_REGISTER_ID";
+    private static final String ARG_ZREPORT_FROMDATE = "ARG_ZREPORT_FROMDATE";
+    private static final String ARG_ZREPORT_TODATE = "ARG_ZREPORT_TODATE";
     private ReportType xReportType;
 
     protected static final Uri URI_REGISTER = ShopProvider.getContentWithLimitUri(ShopStore.RegisterTable.URI_CONTENT, 1);
@@ -48,12 +50,15 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
     @Override
     protected TaskResult doInBackground() {
         String shiftGuid = getStringArg(ARG_SHIFT_GUID);
+        long registerID = getLongArg(ARG_ZREPORT_REGISTER_ID);
+        long fromDate = getLongArg(ARG_ZREPORT_FROMDATE);
+        long toDate = getLongArg(ARG_ZREPORT_TODATE);
         xReportType = (ReportType) getArgs().getSerializable(ARG_XREPORT_TYPE);
         final DigitalXReportBuilder builder = new DigitalXReportBuilder();
 
         final XReportInfo reportInfo;
         if (ReportType.X_REPORT_DAILY_SALES == xReportType) {
-            reportInfo = XReportQuery.loadDailySalesXReport(getContext(), getAppCommandContext().getRegisterId());
+            reportInfo = XReportQuery.loadDailySalesXReport(getContext(),registerID, fromDate, toDate);
         } else {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
@@ -75,12 +80,15 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         return succeeded().add(EXTRA_XREPORT, Uri.fromFile(file));
     }
 
-    public static void start(Context context, String shiftGuid, ReportType xReportType, BasePrintDigitalXReportCallback callback, boolean enableEreportDepartSale, boolean itemXreportSaleEnabled) {
+    public static void start(Context context, String shiftGuid, ReportType xReportType, BasePrintDigitalXReportCallback callback, boolean enableEreportDepartSale, boolean itemXreportSaleEnabled, long registerID, long fromDate, long toDate) {
         create(PrintDigitalXReportCommand.class)
                 .arg(ARG_SHIFT_GUID, shiftGuid)
                 .arg(ARG_XREPORT_TYPE, xReportType)
                 .arg(ARG_XREPORT_ENABLE, enableEreportDepartSale)
                 .arg(ARG_ITEM_XREPORT_ENABLE, itemXreportSaleEnabled)
+                .arg(ARG_ZREPORT_REGISTER_ID, registerID)
+                .arg(ARG_ZREPORT_FROMDATE, fromDate)
+                .arg(ARG_ZREPORT_TODATE, toDate)
                 .callback(callback).queueUsing(context);
     }
 
@@ -116,7 +124,7 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
             title = c.getString(1);
         }
         processor.setRegisterDescription(description);
-        processor.setRegisterID(title);
+        processor.setRegisterID(title.equalsIgnoreCase("0") ? "ALL" : title);
 
         c.close();
     }

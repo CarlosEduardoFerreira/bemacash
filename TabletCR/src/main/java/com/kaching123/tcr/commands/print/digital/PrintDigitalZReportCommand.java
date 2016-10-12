@@ -119,7 +119,7 @@ public class PrintDigitalZReportCommand extends PublicGroundyTask {
             title = c.getString(1);
         }
         processor.setRegisterDescription(description);
-        processor.setRegisterID(title);
+        processor.setRegisterID(title.equalsIgnoreCase("0") ? "ALL" : title);
 
         c.close();
     }

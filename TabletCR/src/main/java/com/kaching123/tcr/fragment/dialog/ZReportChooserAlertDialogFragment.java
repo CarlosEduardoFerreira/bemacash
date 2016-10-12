@@ -48,6 +48,7 @@ public class ZReportChooserAlertDialogFragment extends StyledDialogFragment {
     private static final int MAX_PERIODS_COUNT = 31;
     private static final long DAY_IN_MILLIS = TimeUnit.DAYS.toMillis(1);
     private static final long HOUR_IN_MILLIS = TimeUnit.HOURS.toMillis(1);
+
     public interface ZReportTypeChooserListener {
         void onZReportTypeChosen(ReportType zReportType);
 
@@ -186,26 +187,25 @@ public class ZReportChooserAlertDialogFragment extends StyledDialogFragment {
     }
 
     private int defaultPosition;
-    private void setDefaultPosition(int position)
-    {
+
+    private void setDefaultPosition(int position) {
         this.defaultPosition = position;
     }
-    private int getDefaultSelectedP()
-    {
-       return defaultPosition;
+
+    private int getDefaultSelectedP() {
+        return defaultPosition;
     }
 
     private LoaderManager.LoaderCallbacks<List<RegisterModel>> registersLoader = new RegistersLoader() {
 
         @Override
         public void onLoadFinished(Loader<List<RegisterModel>> loader, List<RegisterModel> result) {
-            ArrayList<RegisterModel> arrayList = new ArrayList<RegisterModel>(result.size());
-//            arrayList.add(new RegisterModel(0, null, null, getString(R.string.register_label_all), null, 0, 0));
-            long id = ((TcrApplication)getContext().getApplicationContext()).getRegisterId();
-            for(int p = 0; p < result.size(); p++)
-            {
-                if(result.get(p).id == id)
-                    setDefaultPosition(p);
+            ArrayList<RegisterModel> arrayList = new ArrayList<RegisterModel>(result.size() + 1);
+            arrayList.add(new RegisterModel(0, null, getString(R.string.register_label_all), null, 0, 0));
+            long id = ((TcrApplication) getContext().getApplicationContext()).getRegisterId();
+            for (int p = 0; p < result.size(); p++) {
+                if (result.get(p).id == id)
+                    setDefaultPosition(p == 0 ? 0 : p + 1);
             }
             arrayList.addAll(result);
             registersAdapter.changeCursor(arrayList);

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 
@@ -110,11 +111,22 @@ public class ShiftModel implements IValueModel {
 
     public static String getLastDailyGuid(Context context, long registerId) {
         String lastShiftGuid = null;
-        Cursor c = ProviderAction.query(URI_SHIFT)
-                .projection(ShiftTable.GUID)
-                .where(ShiftTable.REGISTER_ID + " = ?", registerId)
-                .orderBy(ShiftTable.START_TIME + " DESC")
-                .perform(context);
+        Cursor c = null;
+        Query query = ProviderAction.query(URI_SHIFT)
+                .projection(ShiftTable.GUID);
+        if (registerId == 0)
+            c = query.orderBy(ShiftTable.START_TIME + " DESC")
+                    .perform(context);
+        else
+            c = query.where(ShiftTable.REGISTER_ID + " = ?", registerId)
+                    .orderBy(ShiftTable.START_TIME + " DESC")
+                    .perform(context);
+//
+//        Cursor c = ProviderAction.query(URI_SHIFT)
+//                .projection(ShiftTable.GUID)
+//                .where(ShiftTable.REGISTER_ID + " = ?", registerId)
+//                .orderBy(ShiftTable.START_TIME + " DESC")
+//                .perform(context);
 
         if (c.moveToFirst()) {
             lastShiftGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));

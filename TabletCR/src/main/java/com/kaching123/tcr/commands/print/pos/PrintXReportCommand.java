@@ -27,6 +27,9 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
     private static final String ARG_XREPORT_TYPE = "ARG_XREPORT_TYPE";
     private static final String ARG_XREPORT_ENABLE = "ARG_XREPORT_ENABLE";
     private static final String ARG_ITEM_XREPORT_ENABLE = "ARG_ITEM_XREPORT_ENABLE";
+    private static final String ARG_ZREPORT_REGISTER_ID = "ARG_ZREPORT_REGISTER_ID";
+    private static final String ARG_ZREPORT_FROMDATE = "ARG_ZREPORT_FROMDATE";
+    private static final String ARG_ZREPORT_TODATE = "ARG_ZREPORT_TODATE";
     protected static final Uri URI_REGISTER = ShopProvider.getContentWithLimitUri(ShopStore.RegisterTable.URI_CONTENT, 1);
 
     @Override
@@ -38,12 +41,16 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
     protected void printBody(IXReportPrinter printer) {
         String shiftGuid = getStringArg(ARG_SHIFT_GUID);
 
+        long registerID = getLongArg(ARG_ZREPORT_REGISTER_ID);
+        long fromDate = getLongArg(ARG_ZREPORT_FROMDATE);
+        long toDate = getLongArg(ARG_ZREPORT_TODATE);
+
         ReportType xReportType = (ReportType) getArgs().getSerializable(ARG_XREPORT_TYPE);
 
         final DigitalXReportBuilder builder = new DigitalXReportBuilder();
         XReportInfo reportInfo;
         if (ReportType.X_REPORT_DAILY_SALES == xReportType) {
-            reportInfo = XReportQuery.loadDailySalesXReport(getContext(), getAppCommandContext().getRegisterId());
+            reportInfo = XReportQuery.loadDailySalesXReport(getContext(),registerID, fromDate, toDate);
         } else {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
@@ -52,7 +59,7 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
         processor.print(getContext(), getApp(), printer);
     }
 
-    public static void start(Context context, String shiftGuid, ReportType xReportType, boolean ignorePaperEnd, boolean searchByMac, BasePrintCallback callback, boolean enableEreportDepartSale, boolean itemXreportSaleEnabled) {
+    public static void start(Context context, String shiftGuid, ReportType xReportType, boolean ignorePaperEnd, boolean searchByMac, BasePrintCallback callback, boolean enableEreportDepartSale, boolean itemXreportSaleEnabled, long registerID, long fromDate, long toDate) {
         create(PrintXReportCommand.class)
                 .arg(ARG_SHIFT_GUID, shiftGuid)
                 .arg(ARG_SKIP_PAPER_WARNING, ignorePaperEnd)
@@ -60,6 +67,9 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
                 .arg(ARG_XREPORT_TYPE, xReportType)
                 .arg(ARG_XREPORT_ENABLE,enableEreportDepartSale)
                 .arg(ARG_ITEM_XREPORT_ENABLE,itemXreportSaleEnabled)
+                .arg(ARG_ZREPORT_REGISTER_ID, registerID)
+                .arg(ARG_ZREPORT_FROMDATE, fromDate)
+                .arg(ARG_ZREPORT_TODATE, toDate)
                 .callback(callback).queueUsing(context);
     }
 
@@ -78,7 +88,7 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
             title = c.getString(1);
         }
         processor.setRegisterDescription(description);
-        processor.setRegisterID(title);
+        processor.setRegisterID(title.equalsIgnoreCase("0") ? "ALL" : title);
 
         c.close();
     }

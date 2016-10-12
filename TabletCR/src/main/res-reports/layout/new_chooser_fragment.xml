@@ -15,7 +15,8 @@
             android:id="@+id/chooser_second_radio_button"
             style="@style/StyledDialog.RadioGroup.Label"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:checked="true" />
 
         <TextView
             android:id="@+id/register_spinner_label"
@@ -81,8 +82,7 @@
         android:id="@+id/chooser_first_radio_button"
         style="@style/StyledDialog.RadioGroup.Label"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="true" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
 

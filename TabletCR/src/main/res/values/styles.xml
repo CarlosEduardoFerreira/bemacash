@@ -976,7 +976,8 @@
     <style name="StyledDialog.RadioGroup" />
 
     <style name="StyledDialog.RadioGroup.Label">
-        <item name="android:textColor">@color/prepaid_dialog_white</item>
+        <!--<item name="android:textColor">@color/prepaid_dialog_white</item>-->
+        <item name="android:textColor">@color/mint_text_color</item>
         <item name="android:textSize">16sp</item>
     </style>
 
