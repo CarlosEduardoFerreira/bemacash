@@ -16,4 +16,5 @@ public interface CountryFunctionality {
     boolean isMultiTaxGroup();
     PrintOrderProcessor getOrderOrderProcessor(String orderGuid, PublicGroundyTask.IAppCommandContext appCommandContext);
     String currencySymbol();
+    String currencySymbolForPrinter();
 }

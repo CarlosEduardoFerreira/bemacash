@@ -4,6 +4,7 @@ import com.kaching123.pos.printer.PrintLineAction;
 import com.kaching123.tcr.print.printer.PosOrderTextPrinter;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import static com.kaching123.tcr.print.FormatterUtil.commaFormat;
@@ -25,6 +26,13 @@ public class PosPeruOrderTextPrinter extends PosOrderTextPrinter {
             }
         }
 
+    @Override
+    public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String operatorTitle, String operatorName, String customerTitle, String customerIdentification) {
+        if (orderPrefix != null && !orderPrefix.equalsIgnoreCase(""))
+            add(new PrintLineAction(formatString_Header(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_DATE_LEN, orderPrefix + " " + registerTitle + "-" + orderSeqNum, dateFormat.format(date))));
+        header(operatorTitle, operatorName);
+    }
+
         public void add(String title, BigDecimal qty, /*String Iva,*/ String discount, BigDecimal totalPrice, BigDecimal itemPrice, List<String> units) {
             add(title, quantityFormat.format(qty), /*Iva,*/ discount,commaFormat(totalPrice), commaFormat(itemPrice), units);
         }
@@ -44,15 +52,11 @@ public class PosPeruOrderTextPrinter extends PosOrderTextPrinter {
             }
         }
 
-        void addHeaderTitle(String title, String qty, /*String Iva,*/ String discount, String price, String unitPrice) {
-            add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, qty/*, Iva*/, "  ", discount, price, unitPrice)));
+        void addHeaderTitle(String title, String qty, String discount, String price, String unitPrice) {
+            add(new PrintLineAction(formatStringPeruHeader(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, qty, discount, price, unitPrice)));
         }
 
-        public void addBodyItem(String title, String qty/*, String Iva*/, String discount, String price, String unitPrice, List<String> units) {
-            add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, qty/*, Iva*/, "", discount, price, unitPrice)));
-        }
-
-        void addPeru(String title, String qty, /*String isVal,*/ BigDecimal discount, BigDecimal price, BigDecimal itemPrice, List<String> units) {
+        void addPeru(String title, String qty, BigDecimal discount, BigDecimal price, BigDecimal itemPrice, List<String> units) {
             add(new PrintLineAction(formatStringPeruItem(42, PRINTER_MAX_PRICE_LEN, PRINTER_MAX_QTY_LEN, title, qty, commaFormat(itemPrice),  commaFormat(discount),  commaFormat(price))));
 
             if (units == null || units.isEmpty())
@@ -61,6 +65,10 @@ public class PosPeruOrderTextPrinter extends PosOrderTextPrinter {
                 add(new PrintLineAction(crop(PRINTER_MAX_TEXT_LEN, "Serial : " + unit)));
             }
         }
+
+    void printLoyalty(String name, String value) {
+        add(name, value);
+    }
 
         @Override
         public void addAddsOn(String title, BigDecimal price) {
@@ -89,4 +97,4 @@ public class PosPeruOrderTextPrinter extends PosOrderTextPrinter {
             add(label, commaPriceFormat(price));
         }
 
-    }
+}

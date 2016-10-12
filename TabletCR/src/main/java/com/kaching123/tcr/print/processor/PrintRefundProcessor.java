@@ -143,7 +143,7 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
     }
 
     @Override
-    protected void printFooter(Context context, TcrApplication app, ITextPrinter printerWrapper) {
+    protected void printLoyalty(Context context, TcrApplication app, ITextPrinter printerWrapper) {
         if (orderInfo.customerLoyaltyPoints != null) {
             printerWrapper.header("Total Bonus Points Available", integralIntegerFormat(orderInfo.customerLoyaltyPoints));
 
@@ -151,6 +151,10 @@ public class PrintRefundProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.header("Bonus Points on this Return", integralIntegerFormat(orderInfo.earnedLoyaltyPoints.negate()));
             }
         }
+    }
+
+    @Override
+    protected void printFooter(Context context, TcrApplication app, ITextPrinter printerWrapper) {
         super.printFooter(context, app, printerWrapper);
     }
 }

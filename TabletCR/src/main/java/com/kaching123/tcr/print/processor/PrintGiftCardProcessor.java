@@ -97,4 +97,8 @@ public class PrintGiftCardProcessor extends BasePrintProcessor<ITextPrinter> {
 
 
     }
+
+    @Override
+    protected void printLoyalty(Context context, TcrApplication app, ITextPrinter printerWrapper) {
+    }
 }

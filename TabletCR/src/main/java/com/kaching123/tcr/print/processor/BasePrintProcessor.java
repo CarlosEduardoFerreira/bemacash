@@ -67,6 +67,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
+        printLoyalty(context, app, printerWrapper);
         printFooter(context, app, printerWrapper);
     }
 
@@ -75,6 +76,8 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     }
 
     protected abstract void printBody(final Context context, final TcrApplication app, final T printerWrapper);
+    protected abstract void printLoyalty(Context context, TcrApplication app, T printerWrapper);
+
 
     protected void printFooter(Context context, TcrApplication app, T printerWrapper) {
 
@@ -245,14 +248,14 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     }
 
     protected class PrintOrderInfo {
-        protected String registerTitle;
-        protected int seqNum;
-        protected long createTime;
-        protected String operatorName;
-        protected OrderType orderType;
-        protected String customerIdentification;
-        protected String customerName;
-        protected BigDecimal customerLoyaltyPoints;
+        public String registerTitle;
+        public int seqNum;
+        public long createTime;
+        public String operatorName;
+        public OrderType orderType;
+        public String customerIdentification;
+        public String customerName;
+        public BigDecimal customerLoyaltyPoints;
         public BigDecimal earnedLoyaltyPoints = BigDecimal.ZERO;
     }
 }

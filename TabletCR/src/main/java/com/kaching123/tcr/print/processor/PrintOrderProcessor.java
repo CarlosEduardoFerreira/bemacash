@@ -248,15 +248,25 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
     }
 
     @Override
+    protected void printLoyalty(Context context, TcrApplication app, ITextPrinter printerWrapper) {
+        if (orderInfo.customerLoyaltyPoints != null) {
+            printerWrapper.header(context.getString(R.string.total_bonus_points_available), integralIntegerFormat(orderInfo.customerLoyaltyPoints));
+
+            if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0) {
+                printerWrapper.header(context.getString(R.string.bonus_points_on_this_sale), integralIntegerFormat(orderInfo.earnedLoyaltyPoints));
+            }
+        }
+    }
+
+    @Override
     protected void printFooter(Context context, TcrApplication app, ITextPrinter printerWrapper) {
-        if (orderInfo.customerLoyaltyPoints != null){
+        /*if (orderInfo.customerLoyaltyPoints != null){
             printerWrapper.header(context.getString(R.string.total_bonus_points_available), integralIntegerFormat(orderInfo.customerLoyaltyPoints));
 
             if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0){
                 printerWrapper.header(context.getString(R.string.bonus_points_on_this_sale), integralIntegerFormat(orderInfo.earnedLoyaltyPoints));
             }
-        }
-
+        }*/
         super.printFooter(context, app, printerWrapper);
     }
 

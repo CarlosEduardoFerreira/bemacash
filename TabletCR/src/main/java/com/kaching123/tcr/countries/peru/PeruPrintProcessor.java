@@ -38,8 +38,10 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
+import static com.kaching123.tcr.fragment.UiHelper.integralIntegerFormat;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 import static com.kaching123.tcr.print.FormatterUtil.percentFormat;
+import static com.kaching123.tcr.print.printer.BasePosTextPrinter.crop;
 import static com.kaching123.tcr.util.CalculationUtil.negative;
 import static com.kaching123.tcr.util.DateUtils.formatPeru;
 
@@ -216,6 +218,7 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
                     context.getString(R.string.printer_ec_header_dto),
                     context.getString(R.string.printer_ec_header_total),
                     context.getString(R.string.printer_ec_header_unit_price));
+            printerWrapper.drawLine();
         } else if(printerWrapper instanceof DigitalOrderBuilder){
             ((PeruDigitalOrderBuilder)printerWrapper).addHeader(context.getString(R.string.printer_ec_header_description),
                     context.getString(R.string.printer_ec_header_qty),
@@ -223,8 +226,6 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
                     context.getString(R.string.printer_ec_header_total),
                     context.getString(R.string.printer_ec_header_unit_price));
         }
-
-        printerWrapper.drawLine();
 
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new OrderTotalPriceCursorQuery.PrintHandler() {
             @Override
@@ -247,13 +248,6 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
                 if (app.getShopPref().printDetailReceipt().get()) {
                     printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitLabel, priceType == PriceType.UNIT_PRICE, unitAsStrings);
                 } else {
-                    /*String isIva;
-                    if (model1 != null && model1.title != null && (model1.title.toUpperCase().contains("IVA"))
-                    || ((model2 != null && model2.title != null && model2.title.toUpperCase().contains("IVA"))))
-                        isIva = context.getString(R.string.printer_tax_is_iva);
-                    else
-                        isIva = context.getString(R.string.printer_tax_is_not_iva);
-                    */
                     if(printerWrapper instanceof PosPeruOrderTextPrinter) {
                         ((PosPeruOrderTextPrinter) printerWrapper).addPeru(description, qty.toString(),
                             /*isIva,*/ itemDiscount, itemSubtotal.subtract(itemDiscount), itemPrice, unitAsStrings);
@@ -284,8 +278,13 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
             public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount, BigDecimal totalTax, BigDecimal totalLoyaltyPoints, BigDecimal tipsAmount, BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
                 BigDecimal totalCashBack = BigDecimal.ZERO;
 
-                printerWrapper.drawLine();
-                for (PaymentTransactionModel p : payments) {
+                if(printerWrapper instanceof PosPeruOrderTextPrinter) {
+                    printerWrapper.drawLine();
+                } else if(printerWrapper instanceof DigitalOrderBuilder){
+                    ((PeruDigitalOrderBuilder)printerWrapper).addColspannedLine();
+                }
+
+                    for (PaymentTransactionModel p : payments) {
                     totalCashBack = totalCashBack.add(p.cashBack.negate());
                 }
                 if (totalCashBack.compareTo(BigDecimal.ZERO) > 0)
@@ -299,19 +298,10 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
                 else
                     printerWrapper.orderFooter(context.getString(R.string.printer_subtotal), (new BigDecimal(subTotal)).subtract(new BigDecimal(discountTotal).add(totalCashBack)));
 
-                /*for (TaxGroupModel key : taxes.keySet()) {
-                    if (!TextUtils.isEmpty(key.title)) {
-                        printerWrapper.orderFooter(key.title.toUpperCase() + " " + percentFormat(key.tax), taxes.get(key));
-                    } else {
-                        printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default).toUpperCase()
-                                + " " + percentFormat(TcrApplication.get().getTaxVat()), taxes.get(key));
-                    }
-                }*/
-
                 for (TaxGroupModel key : taxes.keySet()) {
                     if (!TextUtils.isEmpty(key.title)) {
                         printerWrapper.orderFooter(
-                                String.format( "%1$s %2$s", key.title, percentFormat(key.tax)),
+                                String.format( "%1$s %2$s", crop(19, key.title), percentFormat(key.tax)),
                                 taxes.get(key));
                     } else {
                         printerWrapper.orderFooter(context.getString(R.string.item_tax_group_peru_default)
@@ -331,56 +321,16 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
                 else
                     printerWrapper.orderFooter(context.getString(R.string.printer_total), new BigDecimal(amountTotal).add(transactionFee).add(totalCashBack), true);
 
-                printerWrapper.drawLine();
+                if(printerWrapper instanceof PosPeruOrderTextPrinter) {
+                    printerWrapper.drawLine();
+                } else if(printerWrapper instanceof DigitalOrderBuilder){
+                    ((PeruDigitalOrderBuilder)printerWrapper).addColspannedLine();
+               }
+
 
                 orderInfo.earnedLoyaltyPoints = totalLoyaltyPoints;
             }
 
-            /*public void handleTotal(BigDecimal totalSubtotal, Map<TaxGroupModel, BigDecimal> subtotals, BigDecimal totalDiscount,
-                                    BigDecimal totalTax, BigDecimal totalLoyaltyPoints, BigDecimal tipsAmount,
-                                    BigDecimal transactionFee, Map<TaxGroupModel, BigDecimal> taxes) {
-                BigDecimal totalCashBack = BigDecimal.ZERO;
-                printerWrapper.drawLine();
-                for (PaymentTransactionModel p : payments) {
-                    totalCashBack = totalCashBack.add(p.cashBack.negate());
-                }
-                if (totalCashBack.compareTo(BigDecimal.ZERO) > 0) {
-                    printerWrapper.orderFooter(context.getString(R.string.printer_cash_back), totalCashBack);
-                }
-                if (BigDecimal.ZERO.compareTo(totalDiscount) != 0) {
-                    printerWrapper.orderFooter(context.getString(R.string.printer_discount), totalDiscount);
-                }
-                for (TaxGroupModel key : subtotals.keySet()) {
-                    if (!TextUtils.isEmpty(key.title)) {
-                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " " +
-                                percentFormat(key.tax), subtotals.get(key));
-                    } else {
-                        printerWrapper.orderFooter(context.getString(R.string.printer_subtotal) + " "
-                                + percentFormat(TcrApplication.get().getTaxVat()), subtotals.get(key));
-                    }
-                }
-                printerWrapper.orderFooter(context.getString(R.string.printer_subtotal_iva), BigDecimal.ZERO);
-                printerWrapper.orderFooter(context.getString(R.string.printer_subtotal_p_total), totalSubtotal.subtract(totalDiscount));
-
-                for (TaxGroupModel key : taxes.keySet()) {
-                    if (!TextUtils.isEmpty(key.title)) {
-                        printerWrapper.orderFooter(key.title.toUpperCase() + " " + percentFormat(key.tax), taxes.get(key));
-                    } else {
-                        printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default).toUpperCase()
-                                + " " + percentFormat(TcrApplication.get().getTaxVat()), taxes.get(key));
-                    }
-                }
-                printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
-
-                BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
-                totalOrderPrice = totalOrderPrice.setScale(2, BigDecimal.ROUND_UP);
-                if (amountTotal == null) {
-                    printerWrapper.orderFooter(context.getString(R.string.printer_total), totalOrderPrice.add(tipsAmount).add(transactionFee).add(totalCashBack), true);
-                } else {
-                    printerWrapper.orderFooter(context.getString(R.string.printer_total), new BigDecimal(amountTotal).add(transactionFee).add(totalCashBack), true);
-                }
-                printerWrapper.drawLine();
-            }*/
         });
 
         boolean isEbtPaymentExists = false;
@@ -410,6 +360,10 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
             printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(ebtBalance)), true);
         }
 
+        if(printerWrapper instanceof DigitalOrderBuilder){
+            ((PeruDigitalOrderBuilder)printerWrapper).closeTable();
+        }
+
         if (prepaidReleaseResults != null)
             for (PrepaidReleaseResult result : prepaidReleaseResults) {
                 if (Integer.parseInt(result.error) == 200) {
@@ -426,9 +380,31 @@ public class PeruPrintProcessor extends PrintOrderProcessor {
                 }
 
             }
+
+
     }
 
     private String[] getFormattedLine(String receipt) {
         return receipt.split("\\n");
     }
+
+    @Override
+    protected void printLoyalty(Context context, TcrApplication app, ITextPrinter printerWrapper) {
+        if (orderInfo.customerLoyaltyPoints != null) {
+            if(printerWrapper instanceof PosPeruOrderTextPrinter) {
+                ((PosPeruOrderTextPrinter)printerWrapper).printLoyalty(context.getString(R.string.total_bonus_points_available), integralIntegerFormat(orderInfo.customerLoyaltyPoints));
+            } else if(printerWrapper instanceof DigitalOrderBuilder){
+                ((PeruDigitalOrderBuilder)printerWrapper).printLoyalty(context.getString(R.string.total_bonus_points_available), integralIntegerFormat(orderInfo.customerLoyaltyPoints));
+            }
+
+            if (orderInfo.earnedLoyaltyPoints != null && orderInfo.earnedLoyaltyPoints.compareTo(BigDecimal.ZERO) != 0) {
+                if(printerWrapper instanceof PosPeruOrderTextPrinter) {
+                    ((PosPeruOrderTextPrinter)printerWrapper).printLoyalty(context.getString(R.string.bonus_points_on_this_sale), integralIntegerFormat(orderInfo.earnedLoyaltyPoints));
+                }else if(printerWrapper instanceof DigitalOrderBuilder){
+                    ((PeruDigitalOrderBuilder)printerWrapper).printLoyalty(context.getString(R.string.bonus_points_on_this_sale), integralIntegerFormat(orderInfo.earnedLoyaltyPoints));
+                }
+            }
+        }
+    }
+
 }

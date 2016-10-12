@@ -36,6 +36,11 @@ public class EcuadorSettings implements CountryFunctionality {
 
     @Override
     public String currencySymbol() {
-        return "";//"USD";
-    }
+        return "";
+        }
+
+    @Override
+    public String currencySymbolForPrinter() {
+            return "";
+        }
 }

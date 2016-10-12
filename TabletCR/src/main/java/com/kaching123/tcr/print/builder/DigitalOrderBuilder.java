@@ -36,11 +36,11 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
 
 
     private static final String H1_STYLE = "text-align:center;font-style:italic;font-weight:bold;font-size:1.5em;";
-    private static final String BOLD_ITALIC_STYLE = "font-style:italic;font-weight:bold;";
+    protected static final String BOLD_ITALIC_STYLE = "font-style:italic;font-weight:bold;";
     private static final String POWER_BY_STYLE = "font-style:italic;font-weight:bold;font-size:0.8em;";
     private static final String FOOTER_STYLE = "text-align:center;font-size:0.8em;";
     private static final String HEADER_STYLE = "font-size:0.8em;";
-    private static final String PRICE_STYLE = "text-align:right;";
+    protected static final String PRICE_STYLE = "text-align:right;";
 
     private static final int BODY_WIDTH = 250;
 

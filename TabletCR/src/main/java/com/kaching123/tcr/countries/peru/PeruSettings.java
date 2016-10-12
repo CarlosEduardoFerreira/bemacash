@@ -35,8 +35,14 @@ public class PeruSettings implements CountryFunctionality {
     public PrintOrderProcessor getOrderOrderProcessor(String orderGuid, PublicGroundyTask.IAppCommandContext appCommandContext) {
         return new PeruPrintProcessor(orderGuid, appCommandContext);
     }
+
     @Override
     public String currencySymbol() {
+        return "S/";
+    }
+
+    @Override
+    public String currencySymbolForPrinter() {
         return "S/";
     }
 }

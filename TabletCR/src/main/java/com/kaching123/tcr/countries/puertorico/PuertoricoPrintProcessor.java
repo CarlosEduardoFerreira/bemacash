@@ -129,7 +129,7 @@ public class PuertoricoPrintProcessor extends PrintOrderProcessor {
                     } else {
                        // printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default).toUpperCase()
                             //    + " " + percentFormat(TcrApplication.get().getTaxVat()), taxes.get(key));
-                        printerWrapper.orderFooter(context.getString(R.string.item_tax_group_default), taxes.get(key));
+                        printerWrapper.orderFooter(context.getString(R.string.item_tax_group_puerto_rico_default), taxes.get(key));
                     }
                 }
 

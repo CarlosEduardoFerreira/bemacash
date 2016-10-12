@@ -258,7 +258,7 @@ public class BasePosTextPrinter implements IPrinter {
         croppedTitle = String.format("%1$s %2$s", qty, title);
 
         int maxLeftPart = maxLen - priceLen * 2;
-        int maxTitleLen = maxLeftPart - qtyLen;
+        int maxTitleLen = maxLeftPart - 2;//let make it in two symbols shorter
 
         croppedTitle = (croppedTitle.length() > maxTitleLen) ?  crop(maxTitleLen, croppedTitle) : croppedTitle;
         printTitle.append(croppedTitle);
@@ -573,7 +573,7 @@ public class BasePosTextPrinter implements IPrinter {
             printTitle.setLength(maxLen);
         } else {
             int spaceCount = maxLen - title.length();
-            for (int i = 0; i < spaceCount / 2; i++) {
+            for (int i = 0; i <= spaceCount / 2; i++) {
                 printTitle.append(' ');
             }
             printTitle.append(title);

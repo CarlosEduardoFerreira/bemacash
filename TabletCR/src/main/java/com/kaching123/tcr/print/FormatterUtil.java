@@ -70,7 +70,7 @@ public final class FormatterUtil {
 
     public static String commaPriceFormat(BigDecimal value){
         if(value.compareTo(BigDecimal.ZERO) == -1) {
-            return String.format("-%1$s %2$s", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value));
+            return String.format("-%1$s %2$s", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value.abs()));
         } else {
             return String.format("%1$s %2$s", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value));
         }
@@ -81,6 +81,10 @@ public final class FormatterUtil {
     }
 
     public static String commaBracketsPriceFormat(BigDecimal value){
-        return String.format("%1$s(%2$s)", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value));
+        if(value.compareTo(BigDecimal.ZERO) == -1) {
+            return String.format("-%1$s(%2$s)", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value.abs()));
+        } else {
+            return String.format("%1$s(%2$s)", TcrApplication.getCountryFunctionality().currencySymbol(), commaPriceFormat.get().format(value));
+        }
     }
 }

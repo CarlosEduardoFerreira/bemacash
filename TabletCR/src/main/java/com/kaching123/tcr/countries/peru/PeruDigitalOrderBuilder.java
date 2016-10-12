@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.kaching123.tcr.print.FormatterUtil.commaFormat;
+import static com.kaching123.tcr.print.FormatterUtil.commaPriceFormat;
 import static com.kaching123.tcr.print.printer.BasePosTextPrinter.crop;
 
 /**
@@ -50,7 +51,7 @@ public class PeruDigitalOrderBuilder extends DigitalOrderBuilder {
         stringBuilder.append("</td>");
 
         stringBuilder.append("</tr>");
-        stringBuilder.append("</table>");
+        addColspannedLine();
     }
 
     public void add(String title, String qty, BigDecimal discount, BigDecimal price, BigDecimal itemPrice, List<String> units) {
@@ -60,7 +61,7 @@ public class PeruDigitalOrderBuilder extends DigitalOrderBuilder {
         int qtyLen =  PRINTER_MAX_QTY_LEN;
 
         int maxLeftPart = maxLen - priceLen * 2;
-        int maxTitleLen = maxLeftPart - qtyLen;
+        int maxTitleLen = maxLeftPart - 3;//let make it in 3 symbols shorter;
         String printTitle;
         String printQty = qty;
         String printItemPrice = commaFormat(itemPrice);
@@ -76,23 +77,6 @@ public class PeruDigitalOrderBuilder extends DigitalOrderBuilder {
         } else {
             printTitle = title;
         }
-
-     /*   if (printTitle.length() < maxLeftPart) {
-            for (int i = printTitle.length(); i < maxLeftPart; i++) {
-                spacePrintTitle+=' ';
-            }
-        }
-
-        for (int i = 0; i < priceLen - printItemPrice.length() - 4; i++) {
-            spacePrintItemPrice += ' ';
-        }
-
-        for (int i = 0; i < 5 - printDiscount.length() ; i++) {
-            spacePrintDiscount += ' ';
-        }*/
-
-
-        stringBuilder.append(_styled("table", TABLE_FULL_STYLE));
         stringBuilder.append("<tr>");
 
         stringBuilder.append("<td>");
@@ -126,7 +110,56 @@ public class PeruDigitalOrderBuilder extends DigitalOrderBuilder {
             stringBuilder.append("</tr>");
         }
 
-        stringBuilder.append("</table>");
-
     }
+
+    public void addColspannedLine() {
+        stringBuilder.append("<tr>");
+        stringBuilder.append("<td colspan=\"5\">");
+        stringBuilder.append(_styled("hr", HR_STYLE));
+        stringBuilder.append("</td>");
+    }
+
+    @Override
+    public void orderFooter(String label, BigDecimal price, boolean bold) {
+        stringBuilder.append(bold ? _styled("tr", BOLD_STYLE) : "<tr>");
+        stringBuilder.append("<td colspan=\"3\">");
+        stringBuilder.append(label);
+        stringBuilder.append("</td>");
+        stringBuilder.append(_styled("td colspan=\"2\"", "text-align:left;"));
+        stringBuilder.append(commaPriceFormat(price));
+        stringBuilder.append("</td>");
+        stringBuilder.append("</tr>");
+    }
+
+    @Override
+    public void payment(String cardName, BigDecimal amount) {
+        stringBuilder.append(_styled("tr", BOLD_ITALIC_STYLE));
+        stringBuilder.append("<td colspan=\"3\">");
+        stringBuilder.append(cardName);
+        stringBuilder.append("</td>");
+        stringBuilder.append(_styled("td colspan=\"2\"", "text-align:left;"));
+        stringBuilder.append(commaPriceFormat(amount));
+        stringBuilder.append("</td>");
+        stringBuilder.append("</tr>");
+    }
+
+
+    public void closeTable() {
+        stringBuilder.append("</table>");
+    }
+
+    public void printLoyalty(String left, String right) {
+        stringBuilder.append(_styled("table", TABLE_STYLE));
+        stringBuilder.append("<tr>");
+        stringBuilder.append("<td colspan=\"3\">");
+        stringBuilder.append(left);
+        stringBuilder.append("</td>");
+
+        stringBuilder.append(_styled("td colspan=\"2\"", "text-align:left;"));
+        stringBuilder.append(right);
+        stringBuilder.append("</td>");
+        stringBuilder.append("</tr>");
+        stringBuilder.append("</table>");
+    }
+
 }

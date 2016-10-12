@@ -126,6 +126,11 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
     }
 
     @Override
+    protected void printLoyalty(Context context, TcrApplication app, ISignaturePrinter printerWrapper) {
+
+    }
+
+    @Override
     protected void printFooter(Context context, TcrApplication app, ISignaturePrinter printerWrapper) {
         ShopInfo shopInfo = app.getShopInfo();
         if (!TextUtils.isEmpty(shopInfo.footerMsg1)) {

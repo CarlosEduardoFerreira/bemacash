@@ -40,6 +40,10 @@ public class CostaRicaSettings implements CountryFunctionality {
 
     @Override
     public String currencySymbol() {
-        return "CRC";
-    }
+        return "^";    }
+
+    @Override
+    public String currencySymbolForPrinter() {
+        return "^";    }
+
 }

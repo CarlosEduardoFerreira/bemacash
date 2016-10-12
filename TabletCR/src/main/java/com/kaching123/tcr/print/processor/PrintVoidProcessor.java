@@ -100,6 +100,11 @@ public class PrintVoidProcessor extends BasePrintProcessor<PosOrderTextPrinter> 
         }
     }
 
+    @Override
+    protected void printLoyalty(Context context, TcrApplication app, PosOrderTextPrinter printerWrapper) {
+
+    }
+
 
     @Override
     protected void printMidTid(PosOrderTextPrinter printer, String label, String value, boolean bold) {

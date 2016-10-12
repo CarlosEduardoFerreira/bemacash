@@ -40,4 +40,10 @@ public class USASettings implements CountryFunctionality {
     public String currencySymbol() {
         return "$";
     }
+
+    @Override
+    public String currencySymbolForPrinter() {
+        return "$";
+    }
+
 }
