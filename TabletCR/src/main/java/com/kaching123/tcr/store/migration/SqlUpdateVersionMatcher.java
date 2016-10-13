@@ -194,6 +194,11 @@ import com.kaching123.tcr.store.migration.version.to7.Update6_4to7;
 import com.kaching123.tcr.store.migration.version.to7.Update6_5to7;
 import com.kaching123.tcr.store.migration.version.to7.Update6_6to7;
 import com.kaching123.tcr.store.migration.version.to7.Update6_7to7;
+import com.kaching123.tcr.store.migration.version.to8.Update6_4to8;
+import com.kaching123.tcr.store.migration.version.to8.Update6_5to8;
+import com.kaching123.tcr.store.migration.version.to8.Update6_6to8;
+import com.kaching123.tcr.store.migration.version.to8.Update6_7to8;
+import com.kaching123.tcr.store.migration.version.to8.Update7to8;
 
 public class SqlUpdateVersionMatcher {
 
@@ -211,8 +216,6 @@ public class SqlUpdateVersionMatcher {
                 return version.container;
             }
         }
-
-//        return null;
         throw new UnsupportedOperationException("This update not supported. oldVersion: " + oldVersion + " newVersion: " + newVersion);
     }
 
@@ -430,7 +433,14 @@ public class SqlUpdateVersionMatcher {
         UPDATE6_4TO7(new Update6_4to7()),
         UPDATE6_5TO7(new Update6_5to7()),
         UPDATE6_6TO7(new Update6_6to7()),
-        UPDATE6_7TO7(new Update6_7to7());
+        UPDATE6_7TO7(new Update6_7to7()),
+
+        UPDATE6_4TO8(new Update6_4to8()),
+        UPDATE6_5TO8(new Update6_5to8()),
+        UPDATE6_6TO8(new Update6_6to8()),
+        UPDATE6_7TO8(new Update6_7to8()),
+        UPDATE7TO8(new Update7to8());
+
 
         private IUpdateContainer container;
 
