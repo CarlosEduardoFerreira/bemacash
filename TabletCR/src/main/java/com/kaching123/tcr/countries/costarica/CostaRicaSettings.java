@@ -43,7 +43,7 @@ public class CostaRicaSettings implements CountryFunctionality {
         return "^";    }
 
     @Override
-    public String currencySymbolForPrinter() {
-        return "^";    }
+    public String currencySymbolUTF() {
+        return "\u20a1";    }
 
 }

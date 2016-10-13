@@ -37,7 +37,7 @@ public class BondItemAdapter extends ArrayAdapter<Integer> {
             view = (Button)convertView;
         }
         int value = list.get(position);
-        String  name = String.format(Locale.US, "%1$s%2$d", TcrApplication.getCountryFunctionality().currencySymbol() , value);
+        String  name = String.format(Locale.US, "%1$s%2$d", TcrApplication.getCountryFunctionality().currencySymbolUTF() , value);
         view.setText(name);
         view.setTag(value);
         return view;

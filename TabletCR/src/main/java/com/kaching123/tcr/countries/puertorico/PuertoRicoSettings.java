@@ -41,7 +41,7 @@ public class PuertoRicoSettings implements CountryFunctionality {
     }
 
     @Override
-    public String currencySymbolForPrinter() {
+    public String currencySymbolUTF() {
         return "$";
     }
 }

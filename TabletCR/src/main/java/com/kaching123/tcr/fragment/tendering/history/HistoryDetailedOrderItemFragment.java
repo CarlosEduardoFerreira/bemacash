@@ -307,7 +307,7 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
 
         AlertDialogFragment.showConfirmationNoImage(getActivity(),
                 R.string.dlg_return_title,
-                String.format(getString(R.string.dlg_return_msg), TcrApplication.getCountryFunctionality().currencySymbol(), refundAmount.getText().toString(), num.getText().toString()),
+                String.format(getString(R.string.dlg_return_msg), TcrApplication.getCountryFunctionality().currencySymbolUTF(), refundAmount.getText().toString(), num.getText().toString()),
                 new StyledDialogFragment.OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
