@@ -2078,5 +2078,7 @@
     <string name="log_set">Set</string>
     <string name="log_view">View</string>
     <string name="zreprot_register_id_title_">Register ID</string>
+    <string name="reprot_start_date">Start Date</string>
+    <string name="reprot_to_date">End Date</string>
 
 </resources>

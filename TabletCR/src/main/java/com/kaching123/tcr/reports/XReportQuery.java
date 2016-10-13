@@ -408,8 +408,9 @@ public class XReportQuery {
 
             Cursor c = ProviderAction.query(URI_PAYMENTS)
                     .projection(PaymentTransactionTable.AMOUNT, PaymentTransactionTable.GATEWAY, PaymentTransactionTable.CARD_NAME, PaymentTransactionView2.EmployeeTipsTable.AMOUNT, PaymentTransactionTable.CASH_BACK)
-                    .where(PaymentTransactionTable.SHIFT_GUID + " = ?", guid)
-                    .where(PaymentTransactionTable.CREATE_TIME + " > ?", startDate.getTime())
+                    .where(PaymentTransactionTable.CREATE_TIME + " > ?", fromDate)
+                    .where(PaymentTransactionTable.CREATE_TIME + " < ?", toDate)
+                    .where(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.ORDER_GUID + " = ?", guid)
                     .where("(" + PaymentTransactionTable.STATUS + " = ? OR " + PaymentTransactionTable.STATUS + " = ?)", PaymentStatus.PRE_AUTHORIZED.ordinal(), PaymentStatus.SUCCESS.ordinal())
                     .perform(context);
 
@@ -600,7 +601,6 @@ public class XReportQuery {
     protected static StatInfo getDailyOrders(Context context, OrderStatus type, long registerId, long fromdate, long toDate) {
         Cursor c = null;
         Query query = ProviderAction.query(URI_SALE_ITEMS)
-                .where(SaleOrderTable.REGISTER_ID + " = ?", registerId)
                 .where(SaleOrderTable.CREATE_TIME + " > ?", fromdate)
                 .where(SaleOrderTable.CREATE_TIME + " < ?", toDate)
                 .where(SaleOrderTable.STATUS + " = ?", type.ordinal());

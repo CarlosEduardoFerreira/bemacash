@@ -7,7 +7,6 @@ import android.net.Uri;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.kaching123.pos.util.IXReportPrinter;
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.model.XReportInfo;
 import com.kaching123.tcr.print.builder.DigitalXReportBuilder;
@@ -17,6 +16,10 @@ import com.kaching123.tcr.print.processor.PrintXReportProcessor;
 import com.kaching123.tcr.reports.XReportQuery;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+
+import java.util.Date;
+
+import static com.kaching123.tcr.print.printer.BasePosTextPrinter.dateFormat;
 
 /**
  * Created by gdubina on 06/12/13.
@@ -56,7 +59,7 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
         PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE) ,getBooleanArg(ARG_ITEM_XREPORT_ENABLE));
-        setDescriptionInfo(processor, registerID);
+        setDescriptionInfo(processor, registerID, fromDate, toDate);
         processor.print(getContext(), getApp(), printer);
     }
 
@@ -74,7 +77,7 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
                 .callback(callback).queueUsing(context);
     }
 
-    private void setDescriptionInfo(PrintXReportProcessor processor, long registerID) {
+    private void setDescriptionInfo(PrintXReportProcessor processor, long registerID, long fromDate, long toDate) {
         Cursor c = null;
         Query query = ProviderAction.query(URI_REGISTER)
                 .projection(
@@ -97,6 +100,8 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
         }
         processor.setRegisterDescription(description);
         processor.setRegisterID(registerID == 0 ? "ALL" : title);
+        processor.setFromDate(dateFormat.format(new Date(fromDate)));
+        processor.setToDate(dateFormat.format(new Date(toDate)));
 
         c.close();
     }

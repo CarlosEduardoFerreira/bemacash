@@ -15,6 +15,7 @@ import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -39,6 +40,24 @@ public class PrintXReportProcessor {
     private String registerDescription;
     private String registerID;
 
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
+
+    private String fromDate;
+    private String toDate;
     public PrintXReportProcessor(XReportInfo report, ReportType xReportType, IAppCommandContext appCommandContext, boolean enableEreportDepartSale, boolean enableEreportItemSale) {
         this.report = report;
         this.xReportType = xReportType;
@@ -107,6 +126,9 @@ public class PrintXReportProcessor {
             printer.footer(context.getString(R.string.xreport_subtitle));
             printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
         }
+        SimpleDateFormat format = new SimpleDateFormat("");
+        printer.pair(context.getString(R.string.reprot_start_date) + ":", getFromDate());
+        printer.pair(context.getString(R.string.reprot_to_date) + ":", getToDate());
     }
 
     private void printBody(Context context, TcrApplication app, IXReportPrinter printer) {

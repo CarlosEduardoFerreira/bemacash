@@ -7,12 +7,10 @@ import android.net.Uri;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.model.XReportInfo;
 import com.kaching123.tcr.print.builder.DigitalXReportBuilder;
 import com.kaching123.tcr.print.processor.PrintXReportProcessor;
-import com.kaching123.tcr.print.processor.PrintZReportProcessor;
 import com.kaching123.tcr.reports.XReportQuery;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -26,6 +24,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
+
+import static com.kaching123.tcr.print.printer.BasePosTextPrinter.dateFormat;
 
 /**
  * Created by vkompaniets on 23.01.14.
@@ -65,7 +66,7 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         }
 
         PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE), getBooleanArg(ARG_ITEM_XREPORT_ENABLE));
-        setDescriptionInfo(processor, registerID);
+        setDescriptionInfo(processor, registerID, fromDate, toDate);
         processor.print(getContext(), getApp(), builder);
 
         File file = new File(getContext().getExternalCacheDir(), getContext().getString(R.string.report_type_xreport) + ".html");
@@ -110,7 +111,7 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         protected abstract void onDigitalPrintError();
     }
 
-    private void setDescriptionInfo(PrintXReportProcessor processor, long registerID) {
+    private void setDescriptionInfo(PrintXReportProcessor processor, long registerID, long fromDate, long toDate) {
         Cursor c = null;
         Query query = ProviderAction.query(URI_REGISTER)
                 .projection(
@@ -133,6 +134,8 @@ public class PrintDigitalXReportCommand extends PublicGroundyTask {
         }
         processor.setRegisterDescription(description);
         processor.setRegisterID(registerID == 0 ? "ALL" : title);
+        processor.setFromDate(dateFormat.format(new Date(fromDate)));
+        processor.setToDate(dateFormat.format(new Date(toDate)));
 
         c.close();
     }

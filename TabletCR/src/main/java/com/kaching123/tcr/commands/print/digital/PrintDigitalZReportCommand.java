@@ -7,7 +7,6 @@ import android.net.Uri;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.model.ZReportInfo;
 import com.kaching123.tcr.print.builder.DigitalXReportBuilder;
@@ -25,6 +24,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
+
+import static com.kaching123.tcr.print.printer.BasePosTextPrinter.dateFormat;
 
 /**
  * Created by alboyko on 26.11.2015.
@@ -62,7 +64,7 @@ public class PrintDigitalZReportCommand extends PublicGroundyTask {
         }
 
         PrintZReportProcessor processor = new PrintZReportProcessor(reportInfo, zReportType, getAppCommandContext());
-        setDescriptionInfo(processor, registerID);
+        setDescriptionInfo(processor, registerID, fromDate, toDate);
         processor.print(getContext(), getApp(), builder);
 
         File file = new File(getContext().getExternalCacheDir(), getContext().getString(R.string.report_type_zreport) + ".html");
@@ -105,7 +107,7 @@ public class PrintDigitalZReportCommand extends PublicGroundyTask {
         protected abstract void onDigitalPrintError();
     }
 
-    private void setDescriptionInfo(PrintZReportProcessor processor, long registerID) {
+    private void setDescriptionInfo(PrintZReportProcessor processor, long registerID, long fromDate, long toDate) {
         Cursor c = null;
         Query query = ProviderAction.query(URI_REGISTER)
                 .projection(
@@ -128,6 +130,8 @@ public class PrintDigitalZReportCommand extends PublicGroundyTask {
         }
         processor.setRegisterDescription(description);
         processor.setRegisterID(registerID == 0 ? "ALL" : title);
+        processor.setFromDate(dateFormat.format(new Date(fromDate)));
+        processor.setToDate(dateFormat.format(new Date(toDate)));
 
         c.close();
     }

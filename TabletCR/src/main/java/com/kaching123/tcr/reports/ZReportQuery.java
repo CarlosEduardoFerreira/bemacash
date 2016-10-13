@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.print.SaleReportsProcessor;
@@ -507,23 +508,28 @@ public final class ZReportQuery extends XReportQuery {
         BigDecimal drops = BigDecimal.ZERO;
         BigDecimal payouts = BigDecimal.ZERO;
         Cursor cashDrawerCursor = ProviderAction.query(URI_CASH_DRAWER_DATA)
-                .projection(ShopStore.CashDrawerMovementTable.AMOUNT)
-                .where(ShopStore.CashDrawerMovementTable.MOVEMENT_TIME + " > ?", getStartOfDay().getTime())
+                .projection(ShopStore.CashDrawerMovementTable.AMOUNT, ShopStore.CashDrawerMovementTable.TYPE)
+                .where(ShopStore.CashDrawerMovementTable.MOVEMENT_TIME + " > ?", fromDate)
+                .where(ShopStore.CashDrawerMovementTable.MOVEMENT_TIME + " < ?", toDate)
                 .perform(context);
 
-        ArrayList<BigDecimal> cashDropsPayouts = new ArrayList<BigDecimal>();
+        ArrayList<BigDecimal> cashPayouts = new ArrayList<BigDecimal>();
+        ArrayList<BigDecimal> cashDrops = new ArrayList<BigDecimal>();
 
         while (cashDrawerCursor.moveToNext()) {
-            cashDropsPayouts.add(_decimal(cashDrawerCursor.getString(cashDrawerCursor.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT)), BigDecimal.ZERO));
+            if (cashDrawerCursor.getInt(cashDrawerCursor.getColumnIndex(ShopStore.CashDrawerMovementTable.TYPE)) == 0)
+                cashDrops.add(_decimal(cashDrawerCursor.getString(cashDrawerCursor.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT)), BigDecimal.ZERO));
+            else
+                cashPayouts.add(_decimal(cashDrawerCursor.getString(cashDrawerCursor.getColumnIndex(ShopStore.CashDrawerMovementTable.AMOUNT)), BigDecimal.ZERO));
         }
         cashDrawerCursor.close();
 
-        for (BigDecimal bigDecimal : cashDropsPayouts) {
-            if (bigDecimal.signum() > 0) {
-                payouts = payouts.add(bigDecimal);
-            } else {
-                drops = drops.add(bigDecimal.abs());
-            }
+        for (BigDecimal bigDecimal : cashDrops) {
+            drops = drops.add(bigDecimal.abs());
+        }
+
+        for (BigDecimal bigDecimal : cashPayouts) {
+            payouts = payouts.add(bigDecimal.negate());
         }
 
         grossSale = grossSale.add(positiveTips);
@@ -563,10 +569,16 @@ public final class ZReportQuery extends XReportQuery {
 
         Cursor c = null;
         for (String guid : guidList) {
-            c = ProviderAction.query(URI_Z_SALE_ITEMS)
-                    .where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
-                    .where(ShopSchema2.ZReportView2.SaleOrderItemTable.ORDER_GUID + " = ?", guid)
-                    .perform(context);
+            Query query = ProviderAction.query(URI_Z_SALE_ITEMS)
+                    .where(ShopSchema2.ZReportView2.SaleOrderItemTable.ORDER_GUID + " = ?", guid);
+
+            if (registerId == 0) {
+                c = query.perform(context);
+            } else {
+                c = query.where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
+                        .perform(context);
+            }
+
 
             while (c.moveToNext()) {
                 BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO);

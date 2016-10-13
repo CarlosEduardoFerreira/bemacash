@@ -28,6 +28,25 @@ public class PrintZReportProcessor {
     private String registerDescription;
     private String registerID;
 
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
+
+    private String fromDate;
+    private String toDate;
+
     private final PublicGroundyTask.IAppCommandContext appCommandContext;
 
     public PrintZReportProcessor(ZReportInfo report, ReportType zReportType, PublicGroundyTask.IAppCommandContext appCommandContext) {
@@ -90,6 +109,9 @@ public class PrintZReportProcessor {
             printer.footer(context.getString(R.string.zreport_subtitle));
             printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
         }
+        printer.pair(context.getString(R.string.reprot_start_date) + ":", getFromDate());
+        printer.pair(context.getString(R.string.reprot_to_date) + ":", getToDate());
+
     }
 
     private void printBody(Context context, TcrApplication app, IXReportPrinter printer) {

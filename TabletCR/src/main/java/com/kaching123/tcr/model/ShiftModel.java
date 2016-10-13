@@ -95,11 +95,17 @@ public class ShiftModel implements IValueModel {
 //                .where(ShiftTable.START_TIME + " > ? ", fromDate)
 ////                .where(ShiftTable.END_TIME + " < ? " , toDate)
 //                .where(ShiftTable.REGISTER_ID + " = ? ", registerID)
-        final Cursor c = ProviderAction.query(URI_SALE_ORDER)
-                .where(ShopStore.SaleOrderTable.REGISTER_ID + " = ? ", registerID)
+        Cursor c = null;
+        Query query = ProviderAction.query(URI_SALE_ORDER)
                 .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ? ", fromDate)
-                .where(ShopStore.SaleOrderTable.CREATE_TIME + " < ? ", toDate)
-                .perform(context);
+                .where(ShopStore.SaleOrderTable.CREATE_TIME + " < ? ", toDate);
+        if (registerID == 0) {
+            c = query.perform(context);
+        } else {
+            c = query.where(ShopStore.SaleOrderTable.REGISTER_ID + " = ? ", registerID)
+                    .perform(context);
+
+        }
         final List<String> guidList = new ArrayList<>();
 //        while(c != null && c.moveToNext())
 //        {
