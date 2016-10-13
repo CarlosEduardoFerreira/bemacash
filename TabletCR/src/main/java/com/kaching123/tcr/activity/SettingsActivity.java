@@ -186,10 +186,10 @@ public class SettingsActivity extends ScannerBaseActivity implements SyncSetting
                 fragment = PlanOptions.isScaleConnectionAllowed() ?
                         ScaleFragment.instance() : UnavailabledOptionFragment.instance();
                 break;
-            case 7:
+           /* case 7:
                 fragment = KDSListFragment.instance();
-                break;
-            case 8:
+                break;*/
+            case 7:
                 fragment = DiagnoseFragment.instance();
                 break;
 

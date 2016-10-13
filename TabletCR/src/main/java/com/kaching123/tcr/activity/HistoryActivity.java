@@ -84,9 +84,9 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     private static final int LOADER_OPENED_TRANSACTIONS_ID = 3;
 
-    static {
-        permissions.add(Permission.SALES_RETURN);
-    }
+//    static {
+//        permissions.add(Permission.SALES_RETURN);
+//    }
 
     boolean showingFront = true;
 
@@ -156,7 +156,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!isSPMSRSet()) {
+        if (!isSPMSRSet()) {
             Fragment frm = getSupportFragmentManager().findFragmentByTag(MsrDataFragment.FTAG);
             if (frm == null) {
                 getSupportFragmentManager().beginTransaction().add(MsrDataFragment.newInstance(), MsrDataFragment.FTAG).commit();
@@ -169,10 +169,10 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     }
 
     @Override
-    protected boolean isInSettingPage()
-    {
+    protected boolean isInSettingPage() {
         return true;
     }
+
     @AfterViews
     protected void init() {
         orderListFragment.addListener(historyFragment);
@@ -199,7 +199,15 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     @Override
     public void onReturnClick() {
-        //need to load all transactions
+        if (!getApp().hasPermission(Permission.SALES_RETURN)) {
+            PermissionFragment.showCancelable(this, new BaseTempLoginListener(this) {
+                @Override
+                public void onLoginComplete() {
+                    super.onLoginComplete();
+                }
+            }, Permission.SALES_RETURN);
+            return;
+        }
         WaitDialogFragment.show(this, getString(R.string.loading_message));
         getSupportLoaderManager().restartLoader(0, null, refundTransactionsLoaderCallback);
     }
@@ -296,20 +304,20 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         int creditReceiptCount = 0;
         int creditCardCount = 0;
 
-        for(PaymentTransactionModel t : transactions){
-            if(t.gateway.isCreditCard()){
-                creditCardCount ++;
-            }else if(t.gateway == PaymentGateway.CASH){
-                cashGatewayCount ++;
-            }else if(t.gateway == PaymentGateway.CREDIT){
-                creditReceiptCount ++;
+        for (PaymentTransactionModel t : transactions) {
+            if (t.gateway.isCreditCard()) {
+                creditCardCount++;
+            } else if (t.gateway == PaymentGateway.CASH) {
+                cashGatewayCount++;
+            } else if (t.gateway == PaymentGateway.CREDIT) {
+                creditReceiptCount++;
             }
         }
-        if(cashGatewayCount == transactions.size())
+        if (cashGatewayCount == transactions.size())
             return PaymentMethod.CASH;
-        if(creditCardCount == transactions.size())
+        if (creditCardCount == transactions.size())
             return PaymentMethod.CREDIT_CARD;
-        if(creditReceiptCount == transactions.size())
+        if (creditReceiptCount == transactions.size())
             return PaymentMethod.CREDIT_RECEIPT;
         return null;
     }
@@ -321,7 +329,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         OrderType orderType = totalCostFragment.getOrderType();
         if (printOrder) {
             reprintOrder(false, false);
-        } else if (printRefund){
+        } else if (printRefund) {
             reprintRefund(false, false);
         }
     }
@@ -349,7 +357,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     private void reprintOrder(boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(this, getString(R.string.wait_printing));
-        switch (totalCostFragment.getOrderType()){
+        switch (totalCostFragment.getOrderType()) {
             case SALE:
                 ReprintOrderCommand.start(this, skipPaperWarning, searchByMac, orderItemsListFragment.guid, printCallback);
                 break;
@@ -362,8 +370,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         }
     }
 
-    private static IPrePaidInfo getEmptyPrepaidInfo(PrepaidType type){
-        switch (type){
+    private static IPrePaidInfo getEmptyPrepaidInfo(PrepaidType type) {
+        switch (type) {
             case SUNPASS:
                 return new SunpassInfo();
             case WIRELESS_PIN:
@@ -434,7 +442,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
             }
             if (i == 0) {
 
-                Logger.d("HistoryActivity onBarcodeReceived: "+",Thread, "+Thread.currentThread().getId());
+                Logger.d("HistoryActivity onBarcodeReceived: " + ",Thread, " + Thread.currentThread().getId());
 
                 historyFragment.setOrderNumber(barcode);
             }
@@ -493,7 +501,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         }
 
         @Override
-        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {}
+        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {
+        }
     };
 
     private LoaderCallbacks<ArrayList<PaymentTransactionModel>> tipsRefundTransactionsLoaderCallback = new LoaderCallbacks<ArrayList<PaymentTransactionModel>>() {
@@ -515,7 +524,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         }
 
         @Override
-        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {}
+        public void onLoaderReset(Loader<ArrayList<PaymentTransactionModel>> arrayListLoader) {
+        }
     };
 
     private BasePrintCallback printCallback = new BasePrintCallback() {
@@ -536,7 +546,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
         @Override
         protected void onPrintSuccess() {
-            HistoryActivity.this.onReprintOrderSuccess();;
+            HistoryActivity.this.onReprintOrderSuccess();
+            ;
         }
 
         @Override

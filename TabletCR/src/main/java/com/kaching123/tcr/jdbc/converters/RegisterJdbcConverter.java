@@ -24,6 +24,7 @@ public class RegisterJdbcConverter extends JdbcConverter<RegisterModel> {
 
     private static final String ID = "ID";
     public static final String REGISTER_SERIAL = "REGISTER_SERIAL";
+    public static final String DESCRIPTION = "REGISTER_SERIAL";
     private static final String TITLE = "TITLE";
     public static final String STATUS = "STATUS";
     public static final String PREPAID_TID = "PREPAID_TID";
@@ -34,6 +35,7 @@ public class RegisterJdbcConverter extends JdbcConverter<RegisterModel> {
         return new RegisterModel(
                 rs.getLong(ID),
                 rs.getString(REGISTER_SERIAL),
+                rs.getString(DESCRIPTION),
                 rs.getString(TITLE),
                 _enum(RegisterStatus.class, rs.getString(STATUS), RegisterStatus.ACTIVE),
                 rs.optInt(PREPAID_TID),

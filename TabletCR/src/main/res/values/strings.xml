@@ -577,7 +577,7 @@
     <string name="printer_amount">Amount:</string>
     <string name="printer_cashback">CashBack:</string>
     <string name="printer_ebt_cash">EBT CASH:</string>
-    <string name="printer_signature_line">Customer sign: _______________________________</string>
+    <string name="printer_signature_line">X: _______________________________</string>
     <string name="printer_manual_input_line">___________</string>
     <string name="printer_gratuity_colon">Gratuity:</string>
     <string name="printer_total_colon">Total:</string>
@@ -1411,6 +1411,7 @@
     <string name="email_order_title">Email</string>
     <string name="email_order_send_label">Send</string>
     <string name="print_order_copy_header">COPY</string>
+    <string name="print_order_body_sale_subtitle">SALE</string>
     <string name="print_gift_card_balance_header">Gift Card Balance</string>
     <string name="printers_action_add">Add</string>
     <string name="printers_action_search">Search</string>
@@ -2037,7 +2038,6 @@
     <string name="sale_composer_without_composition_desc">Following items have not enough composition quantity.</string>
     <string name="sale_composer_without_composition_row" formatted="false">%s, Need: %s, Available: %s\n</string>
     <string name="button_override">Override</string>
-
 
 
     <string name="ebt_type_chooser_dlg_title">Please choose:</string>

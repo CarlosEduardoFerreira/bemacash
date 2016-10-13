@@ -49,13 +49,37 @@ public class PosSignatureTextPrinter extends BasePosTextPrinter implements ISign
     }
 
     @Override
+    public void approvalNumber(String approval) {
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, SHIFTED_NUMBER_LENGTH, getContext().getString(R.string.printer_approval), approval)));
+    }
+
+    @Override
+    public void aidNumber(String aid) {
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, SHIFTED_NUMBER_LENGTH, getContext().getString(R.string.printer_aid), aid)));
+    }
+
+    @Override
+    public void arqcNumber(String arqc) {
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, SHIFTED_NUMBER_LENGTH, getContext().getString(R.string.printer_arqc), arqc)));
+    }
+    protected PosSignatureTextPrinter() {
+        super();
+    }
+
+    @Override
+    public void entryMethod(String entryMethod) {
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, SHIFTED_NUMBER_LENGTH, getContext().getString(R.string.printer_entry_method), entryMethod)));
+    }
+
+    @Override
     public void addWithTab(String left, String right) {
         add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, SHIFTED_NUMBER_LENGTH, left, right)));
     }
 
     @Override
     public void amount(BigDecimal amount) {
-        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, getContext().getString(R.string.printer_amount), priceFormat.format(amount))));
+        //Heartland Certification
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, PRINTER_MAX_PRICE_LEN, getContext().getString(R.string.printer_total), priceFormat.format(amount))));
     }
 
     @Override

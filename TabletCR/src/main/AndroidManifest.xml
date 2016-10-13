@@ -7,6 +7,7 @@
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="23" />
+
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
@@ -18,7 +19,6 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
-
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -50,6 +50,7 @@
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
+
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/usb_device_filter" />
@@ -160,12 +161,10 @@
             android:name=".activity.CopyModifiersActivity_"
             android:label="@string/inventory_activity_label"
             android:screenOrientation="sensorLandscape" />
-
         <activity
             android:name=".activity.UnitLabelActivity_"
             android:label="@string/units_activity_label"
             android:screenOrientation="sensorLandscape" />
-
         <activity
             android:name=".activity.HistoryActivity_"
             android:label="@string/history_activity_label"
@@ -234,19 +233,15 @@
             android:label="@string/reports_activity_label"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Holo.NoCapsTabText" />
-
         <activity
             android:name=".activity.XReportActivity_"
             android:label="@string/xreport_activity_label" />
-
         <activity
             android:name=".activity.ZReportActivity_"
             android:label="@string/xreport_activity_label" />
-
         <activity
             android:name=".activity.DetailedReportActivity_"
             android:label="@string/detailed_report_activity_label" />
-
         <activity
             android:name=".activity.PrinterAliasActivity_"
             android:label="@string/printer_alias_label"
@@ -260,7 +255,6 @@
             android:label="@string/credit_receipt_activity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Holo.NoCapsTabText" />
-
         <activity
             android:name=".activity.ActivationActivity_"
             android:label="@string/activation_activity_label"
@@ -281,19 +275,20 @@
             android:name=".activity.PrepaidActivity.PrepaidProcessorActivity_"
             android:screenOrientation="sensorLandscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-
         <activity
             android:name=".activity.PrepaidActivity.PrepaidLongDistanceActivity_"
             android:screenOrientation="sensorLandscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-
         <activity
             android:name=".activity.PrepaidActivity.PrepaidSunPassActivity_"
             android:screenOrientation="sensorLandscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-
         <activity
             android:name=".activity.ReleaseNoteActivity_"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name=".activity.LogsViewerActivity_"
             android:screenOrientation="sensorLandscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
@@ -333,11 +328,11 @@
         <service
             android:name=".service.SerialPortScannerService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
         <service
             android:name=".AutoUpdateService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
         <service
             android:name=".service.ScaleService"
             android:enabled="true"
@@ -345,7 +340,8 @@
         <service
             android:name=".service.USBScannerService"
             android:enabled="true"
-            android:exported="false"/>
-</application>
+            android:exported="false" />
+
+    </application>
 
 </manifest>

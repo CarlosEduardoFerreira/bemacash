@@ -48,6 +48,7 @@ public class PrintOrderCommand extends BasePrintOrderCommand {
         printProcessor.setPaxTransactions(transactions);
         printProcessor.setAmountTotal(getStringArg(ARG_ORDER_TOTALAMOUNT));
         printProcessor.setPrepaidReleaseResults((ArrayList<PrepaidReleaseResult>) getArgs().getSerializable(ARG_PREPAID_RECEIPTS));
+        printProcessor.setGiftCardResults(giftCardBillingResults);
 
         printProcessor.print(getContext(), getApp(), printerWrapper);
     }

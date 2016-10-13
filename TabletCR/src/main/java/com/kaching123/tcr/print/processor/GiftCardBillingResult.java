@@ -10,9 +10,11 @@ import java.io.Serializable;
 public class GiftCardBillingResult implements Serializable {
     public String msg;
     public SaleOrderItemViewModel model;
+    public String balance;
 
-    public GiftCardBillingResult(String result, SaleOrderItemViewModel model) {
+    public GiftCardBillingResult(String result, SaleOrderItemViewModel model, String balance) {
         this.msg = result;
         this.model = model;
+        this.balance = balance;
     }
 }

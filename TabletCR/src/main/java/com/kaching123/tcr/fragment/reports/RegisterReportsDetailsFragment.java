@@ -354,7 +354,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         @Override
         public void onLoadFinished(Loader<List<RegisterModel>> loader, List<RegisterModel> result) {
             ArrayList<RegisterModel> arrayList = new ArrayList<RegisterModel>(result.size() + 1);
-            arrayList.add(new RegisterModel(0, null, getString(R.string.register_label_all), null, 0, 0));
+            arrayList.add(new RegisterModel(0, null, null, getString(R.string.register_label_all), null, 0, 0));
             arrayList.addAll(result);
             registersAdapter.changeCursor(arrayList);
         }
