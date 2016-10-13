@@ -547,7 +547,6 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
         @Override
         protected void onPrintSuccess() {
             HistoryActivity.this.onReprintOrderSuccess();
-            ;
         }
 
         @Override

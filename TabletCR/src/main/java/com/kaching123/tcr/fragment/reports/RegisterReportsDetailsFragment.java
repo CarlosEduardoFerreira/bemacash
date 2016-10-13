@@ -413,7 +413,7 @@ public class RegisterReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
         return RegisterReportsDetailsFragment_.builder().type(reportType).build();
     }
 
-    public static interface IDetailsFragment {
+    public interface IDetailsFragment {
         void updateData(long startTime, long endTime, long resisterId, int type, String managerGuid);
     }
 

@@ -286,7 +286,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         return v;
     }
 
-    public static enum PaymentStatus {
+    public enum PaymentStatus {
         SUCCESS, FAILED, IN_PROGRESS, CANCELED, PRE_AUTHORIZED;
 
         public static PaymentStatus valueOf(boolean passed) {
@@ -298,7 +298,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         }
     }
 
-    public static enum PaymentType {
+    public enum PaymentType {
         SALE, VOID, REFUND;
 
         public static PaymentType valueOf(int id) {

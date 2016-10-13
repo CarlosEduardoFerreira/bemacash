@@ -62,6 +62,7 @@ public class PosSignatureTextPrinter extends BasePosTextPrinter implements ISign
     public void arqcNumber(String arqc) {
         add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, SHIFTED_NUMBER_LENGTH, getContext().getString(R.string.printer_arqc), arqc)));
     }
+
     protected PosSignatureTextPrinter() {
         super();
     }

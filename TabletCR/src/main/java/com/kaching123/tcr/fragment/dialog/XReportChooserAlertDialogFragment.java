@@ -11,12 +11,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -26,6 +21,10 @@ import com.kaching123.tcr.component.picker.DateTimePickerFragment;
 import com.kaching123.tcr.fragment.reports.DetailedSalesRegistersAdapter;
 import com.kaching123.tcr.fragment.reports.RegistersLoader;
 import com.kaching123.tcr.model.RegisterModel;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -197,7 +196,7 @@ public class XReportChooserAlertDialogFragment extends StyledDialogFragment {
         @Override
         public void onLoadFinished(Loader<List<RegisterModel>> loader, List<RegisterModel> result) {
             ArrayList<RegisterModel> arrayList = new ArrayList<RegisterModel>(result.size());
-            arrayList.add(new RegisterModel(0, null, getString(R.string.register_label_all), null, 0, 0));
+            arrayList.add(new RegisterModel(0, null, null, getString(R.string.register_label_all), null, 0, 0));
             long id = ((TcrApplication)getContext().getApplicationContext()).getRegisterId();
             for(int p = 0; p < result.size(); p++)
             {

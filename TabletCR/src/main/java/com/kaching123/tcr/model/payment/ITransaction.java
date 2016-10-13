@@ -13,50 +13,50 @@ import java.math.BigDecimal;
  */
 public interface ITransaction {
 
-    public String getParentTransactionGuid();
+    String getParentTransactionGuid();
 
-    public PaymentType getPaymentType();
+    PaymentType getPaymentType();
 
-    public String getGuid();
+    String getGuid();
 
-    public String getOrderGuid();
+    String getOrderGuid();
 
-    public BigDecimal getAmount();
+    BigDecimal getAmount();
 
-    public BigDecimal getAvailableAmount();
+    BigDecimal getAvailableAmount();
 
-    public PaymentStatus getStatus();
+    PaymentStatus getStatus();
 
-    public PaymentGateway getGateway();
+    PaymentGateway getGateway();
 
-    public String getPaymentId();
+    String getPaymentId();
 
-    public String getAuthorizationNumber();
+    String getAuthorizationNumber();
 
-    public String getDeclineReason();
+    String getDeclineReason();
 
-    public String getOperatorId();
+    String getOperatorId();
 
-    public String getCardName();
+    String getCardName();
 
-    public String getLastFour();
+    String getLastFour();
 
     BigDecimal getChangeAmount();
 
-    public boolean getIsPreauth();
+    boolean getIsPreauth();
 
-    public BigDecimal getCashBack();
+    BigDecimal getCashBack();
 
-    public BigDecimal getBalance();
+    BigDecimal getBalance();
 
-    public String getApplicationIdentifier();
+    String getApplicationIdentifier();
 
-    public String getResultCode();
+    String getResultCode();
 
-    public String getEntryMethod();
+    String getEntryMethod();
 
-    public String getApplicationCryptogramType();
+    String getApplicationCryptogramType();
 
-    public String getCustomerName();
+    String getCustomerName();
 
 }

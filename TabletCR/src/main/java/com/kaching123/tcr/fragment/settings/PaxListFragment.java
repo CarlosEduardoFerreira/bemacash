@@ -90,19 +90,16 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
     @AfterViews
     protected void init() {
         timeOutInput.setText("" + (getPaxTimeout() == 0 ? PAX_TIME_OUT_DEFAULT : getPaxTimeout()));
-        String LogSettingIniFile =TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath() + "/" + SettingINI.FILENAME;
-        if(!SettingINI.loadSettingFromFile(LogSettingIniFile))
-        {
+        String LogSettingIniFile = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath() + "/" + SettingINI.FILENAME;
+        if (!SettingINI.loadSettingFromFile(LogSettingIniFile)) {
             logSwitchEdit.setSelection(0);
             logLevelEdit.setSelection(0);
 
             LogSetting.setLogMode(true);
             LogSetting.setLevel(LogSetting.LOGLEVEL.ERROR);
             SettingINI.saveLogSettingToFile(LogSettingIniFile);
-        }
-        else
-        {
-            logSwitchEdit.setSelection(LogSetting.isLoggable()?0:1);
+        } else {
+            logSwitchEdit.setSelection(LogSetting.isLoggable() ? 0 : 1);
             logLevelEdit.setSelection(LogSetting.getLevel().ordinal());
         }
 
@@ -121,7 +118,7 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
         });
     }
 
-    private void setLogSetting(){
+    private void setLogSetting() {
         String LogSettingIniFile = getContext().getApplicationContext().getFilesDir().getAbsolutePath() + "/" + SettingINI.FILENAME;
 
         String[] mStrArrayLogSwitch = getResources().getStringArray(R.array.log_switch);
@@ -135,10 +132,10 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
         SettingINI.saveLogSettingToFile(LogSettingIniFile);
     }
 
-    private void viewLogFile(){
+    private void viewLogFile() {
 
-        Intent intent = new Intent(getActivity(),LogsViewerActivity_.class);
-        Bundle bundle=new Bundle();
+        Intent intent = new Intent(getActivity(), LogsViewerActivity_.class);
+        Bundle bundle = new Bundle();
         bundle.putString("LogsPath", LogSetting.getOutputPath());
         intent.putExtras(bundle);
         startActivity(intent);
@@ -161,10 +158,7 @@ public class PaxListFragment extends Fragment implements LoaderCallbacks<Cursor>
         } catch (NullPointerException e) {
             return false;
         }
-        if (t > 0)
-            return true;
-        else
-            return false;
+        return t > 0;
     }
 
     @OptionsItem

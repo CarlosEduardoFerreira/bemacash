@@ -31,7 +31,6 @@ import com.kaching123.tcr.fragment.settings.DiagnoseFragment;
 import com.kaching123.tcr.fragment.settings.DisplayFragment;
 import com.kaching123.tcr.fragment.settings.DrawerSettingsFragment;
 import com.kaching123.tcr.fragment.settings.FindDeviceFragment;
-import com.kaching123.tcr.fragment.settings.KDSListFragment;
 import com.kaching123.tcr.fragment.settings.PaxListFragment;
 import com.kaching123.tcr.fragment.settings.PrinterListFragment;
 import com.kaching123.tcr.fragment.settings.ScaleFragment;

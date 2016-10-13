@@ -1746,7 +1746,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 isPrepaidItemStart,
                 isGiftCardReload,
                 model.isIncentive || model.excludeFromLoyaltyPlan ? BigDecimal.ZERO : model.loyaltyPoints,
-                model.isIncentive || model.excludeFromLoyaltyPlan ? false : getApp().getShopInfo().loyaltyPointsForDollarAmount,
+                !(model.isIncentive || model.excludeFromLoyaltyPlan) && getApp().getShopInfo().loyaltyPointsForDollarAmount,
                 null,
                 model.isEbtEligible,
                 BigDecimal.ZERO
@@ -2548,7 +2548,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
 
     public boolean isOrderDiscounted() {
-        final boolean isDiscounted = (saleOrderModel.discount.equals(BigDecimal.ZERO)) ? false : true;
+        final boolean isDiscounted = !saleOrderModel.discount.equals(BigDecimal.ZERO);
         Logger.d("Order discount = " + saleOrderModel.discount + " => Can apply discount to items = " + !isDiscounted);
         return isDiscounted;
     }

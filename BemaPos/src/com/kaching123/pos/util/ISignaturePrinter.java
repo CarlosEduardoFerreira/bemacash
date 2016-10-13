@@ -8,18 +8,30 @@ import java.util.Date;
  */
 public interface ISignaturePrinter extends IHeaderFooterPrinter {
 
-    public void date(Date date);
-    public void cardName(String cardName);
-    public void authNumber(String authNumber);
-    public void shiftedNumber(String shiftedNumber);
-    public void entryMethod(String entryMethod);
-    public void approvalNumber(String approval);
-    public void aidNumber(String aid);
-    public void arqcNumber(String arqc);
-    public void addWithTab(String left, String right);
-    public void amount(BigDecimal amount);
-    public void cashBack(BigDecimal amount);
-    public void total(BigDecimal amount);
-    public void cropLine(String line);
+    void date(Date date);
+
+    void cardName(String cardName);
+
+    void authNumber(String authNumber);
+
+    void shiftedNumber(String shiftedNumber);
+
+    void entryMethod(String entryMethod);
+
+    void approvalNumber(String approval);
+
+    void aidNumber(String aid);
+
+    void arqcNumber(String arqc);
+
+    void addWithTab(String left, String right);
+
+    void amount(BigDecimal amount);
+
+    void cashBack(BigDecimal amount);
+
+    void total(BigDecimal amount);
+
+    void cropLine(String line);
 
 }

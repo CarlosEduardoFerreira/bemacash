@@ -76,7 +76,6 @@ import com.kaching123.tcr.fragment.user.TimesheetNewFragment;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.ActivationCarrierModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
-import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.ShiftModel;
 import com.kaching123.tcr.model.TipsModel;
@@ -106,18 +105,13 @@ import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
-import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
-import static com.kaching123.tcr.model.ContentValuesUtil._paymentStatus;
-import static com.kaching123.tcr.model.ContentValuesUtil._paymentType;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
 
 /**

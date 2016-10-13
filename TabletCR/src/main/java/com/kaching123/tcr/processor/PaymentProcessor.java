@@ -1026,8 +1026,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
         });
     }
 
-    public void setOrderChange(String balance)
-    {
+    public void setOrderChange(String balance) {
         this.orderChange = new BigDecimal(balance);
     }
     /**
@@ -1633,19 +1632,19 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
     public interface IPaymentProcessor {
 
-        public void onSuccess();
+        void onSuccess();
 
-        public void onCancel();
+        void onCancel();
 
-        public void onPrintValues(String order, ArrayList<PaymentTransactionModel> list, BigDecimal changeAmount);
+        void onPrintValues(String order, ArrayList<PaymentTransactionModel> list, BigDecimal changeAmount);
 
-        public void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList, List<SaleOrderItemViewModel> giftCardList);
+        void onBilling(ArrayList<PaymentTransactionModel> successfullCCtransactionModels, List<SaleOrderItemViewModel> prepaidList, List<SaleOrderItemViewModel> giftCardList);
 
-        public void onRefund(final HistoryDetailedOrderItemListFragment.RefundAmount amount);
+        void onRefund(final HistoryDetailedOrderItemListFragment.RefundAmount amount);
 
-        public void onUpdateOrderList();
+        void onUpdateOrderList();
 
-        public void onPrintComplete();
+        void onPrintComplete();
     }
 
 

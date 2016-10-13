@@ -48,11 +48,11 @@ public class FileManagerAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup arg2) {
         FileMangerHolder holder;
-        if(null == convertView){
+        if (null == convertView) {
             holder = new FileMangerHolder();
             convertView = LayoutInflater.from(mContext).inflate(R.layout.file_item, null);
 
-            LinearLayout ll = (LinearLayout)convertView.findViewById(R.id.for_adjust_listview_item_height);
+            LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.for_adjust_listview_item_height);
 
             LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) ll.getLayoutParams();
             linearParams.height = mScreenHeight;
@@ -61,25 +61,25 @@ public class FileManagerAdapter extends BaseAdapter {
             holder.icon = (ImageView) convertView.findViewById(R.id.file_item_icon);
             holder.name = (TextView) convertView.findViewById(R.id.file_item_name);
             holder.name.setTextSize(20);
-            holder.name.setGravity(Gravity.CENTER|Gravity.LEFT);
+            holder.name.setGravity(Gravity.CENTER | Gravity.LEFT);
 
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (FileMangerHolder) convertView.getTag();
         }
 
-        holder.icon.setImageResource((Integer)list.get(position).get("icon"));
-        holder.name.setText((String)(list.get(position).get("name")));
+        holder.icon.setImageResource((Integer) list.get(position).get("icon"));
+        holder.name.setText((String) (list.get(position).get("name")));
 
         return convertView;
     }
 
-    static class FileMangerHolder{
+    static class FileMangerHolder {
         public ImageView icon;
         public TextView name;
     }
 
-    public void setFileListInfo(List<Map<String, Object>> infos){
+    public void setFileListInfo(List<Map<String, Object>> infos) {
         list.clear();
         list.addAll(infos);
         notifyDataSetChanged();

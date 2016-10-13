@@ -17,9 +17,6 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Optional;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.chart.BarChart;
@@ -49,6 +46,10 @@ import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionView;
 import com.kaching123.tcr.store.ShopStore.ShiftView;
 import com.kaching123.tcr.util.CalculationUtil;
+
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -715,7 +716,7 @@ public class ReportsFragment extends DateRangeFragment {
         }
     }
 
-    public static interface ReportsFragmentListener {
-        public void onShowTopItems();
+    public interface ReportsFragmentListener {
+        void onShowTopItems();
     }
 }

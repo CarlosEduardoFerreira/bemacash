@@ -8,13 +8,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.payment.PaymentGateway;
-import com.kaching123.tcr.commands.payment.WebCommand;
-import com.kaching123.tcr.commands.payment.pax.PaxGateway;
-import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBalanceCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorGiftCardReloadCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
-import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.tendering.TransactionPendingFragmentDialogBase;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
@@ -23,8 +18,6 @@ import com.kaching123.tcr.websvc.api.pax.model.payment.result.response.SaleActio
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
-
-import java.math.BigDecimal;
 
 /**
  * @author Ivan v. Rikhmayer
