@@ -8,6 +8,7 @@ import android.net.Uri;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ import static com.kaching123.tcr.util.DateUtils.getStartOfDay;
 public class ShiftModel implements IValueModel {
 
     protected static final Uri URI_SHIFT = ShopProvider.getContentUri(ShiftTable.URI_CONTENT);
+    protected static final Uri URI_SALE_ORDER = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
 
     public String guid;
     public Date startTime;
@@ -89,10 +91,14 @@ public class ShiftModel implements IValueModel {
     }
 
     public static List<String> getDailyGuidList(Context context, long registerID, long fromDate, long toDate) {
-        final Cursor c = ProviderAction.query(URI_SHIFT)
-                .where(ShiftTable.START_TIME + " > ? ", fromDate)
-//                .where(ShiftTable.END_TIME + " < ? " , toDate)
-                .where(ShiftTable.REGISTER_ID + " = ? ", registerID)
+//        final Cursor c = ProviderAction.query(URI_SHIFT)
+//                .where(ShiftTable.START_TIME + " > ? ", fromDate)
+////                .where(ShiftTable.END_TIME + " < ? " , toDate)
+//                .where(ShiftTable.REGISTER_ID + " = ? ", registerID)
+        final Cursor c = ProviderAction.query(URI_SALE_ORDER)
+                .where(ShopStore.SaleOrderTable.REGISTER_ID + " = ? ", registerID)
+                .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ? ", fromDate)
+                .where(ShopStore.SaleOrderTable.CREATE_TIME + " < ? ", toDate)
                 .perform(context);
         final List<String> guidList = new ArrayList<>();
 //        while(c != null && c.moveToNext())
@@ -101,7 +107,7 @@ public class ShiftModel implements IValueModel {
 //        }
         if (c != null && c.moveToFirst()) {
             do {
-                final String currentGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));
+                final String currentGuid = c.getString(c.getColumnIndex(ShopStore.SaleOrderTable.GUID));
                 guidList.add(currentGuid);
             } while (c.moveToNext());
             c.close();
@@ -183,9 +189,8 @@ public class ShiftModel implements IValueModel {
 
         ShiftModel that = (ShiftModel) o;
 
-        if (!guid.equals(that.guid)) return false;
+        return guid.equals(that.guid);
 
-        return true;
     }
 
     @Override

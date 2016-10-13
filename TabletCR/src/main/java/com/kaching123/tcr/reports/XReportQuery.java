@@ -334,7 +334,7 @@ public class XReportQuery {
 
         final Date startDate = getStartOfDay();
         final Date endDate = getEndOfDay();
-        final List<String> guidList = ShiftModel.getDailyGuidList(context);
+        final List<String> guidList = ShiftModel.getDailyGuidList(context, registerID, fromDate, toDate);
 
         BigDecimal grossSale = BigDecimal.ZERO;
         BigDecimal discount = BigDecimal.ZERO;
@@ -370,22 +370,41 @@ public class XReportQuery {
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
         transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerID, fromDate, toDate));//returnInfo is negative
 
+        final StatInfo saleInfo = getDailyOrders(context, OrderStatus.COMPLETED, registerID, fromDate, toDate);
+        final StatInfo returnInfo = getDailyOrders(context, OrderStatus.RETURN, registerID, fromDate, toDate);
+
+        grossSale = grossSale.add(saleInfo.grossSale);
+        Logger.d("||grossSale:" + grossSale);
+
+        discount = discount.add(saleInfo.discount);
+        Logger.d("||discount:" + discount);
+
+        returned = returned.add(negative(returnInfo.grossSale.subtract(returnInfo.discount)));
+        Logger.d("||returned:" + returned);
+
+
+        tax = tax.add(saleInfo.tax.add(returnInfo.tax));//returnInfo is negative
+        cogs = cogs.add(saleInfo.cogs.add(returnInfo.cogs));//returnInfo is negative
+
+        Cursor tipsCursor = ProviderAction.query(URI_TIPS)
+                .projection(EmployeeTipsTable.AMOUNT, EmployeeTipsTable.PAYMENT_TYPE)
+                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " > ?", fromDate)
+                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " < ?", toDate)
+                .perform(context);
+
+        while (tipsCursor.moveToNext()) {
+            BigDecimal amount = _decimal(tipsCursor, 0, BigDecimal.ZERO);
+            PaymentType type = _tipsPaymentType(tipsCursor, 1);
+
+            if (type == PaymentType.CASH) {
+                cash = cash.add(amount);
+            } else if (type == PaymentType.CREDIT) {
+                creditCard = creditCard.add(amount);
+            }
+            gratuity = gratuity.add(amount);
+        }
+
         for (String guid : guidList) {
-            final StatInfo saleInfo = getDailyOrders(context, guid, OrderStatus.COMPLETED, registerID);
-            final StatInfo returnInfo = getDailyOrders(context, guid, OrderStatus.RETURN, registerID);
-
-            grossSale = grossSale.add(saleInfo.grossSale);
-            Logger.d("||grossSale:" + grossSale);
-
-            discount = discount.add(saleInfo.discount);
-            Logger.d("||discount:" + discount);
-
-            returned = returned.add(negative(returnInfo.grossSale.subtract(returnInfo.discount)));
-            Logger.d("||returned:" + returned);
-
-
-            tax = tax.add(saleInfo.tax.add(returnInfo.tax));//returnInfo is negative
-            cogs = cogs.add(saleInfo.cogs.add(returnInfo.cogs));//returnInfo is negative
 
             Cursor c = ProviderAction.query(URI_PAYMENTS)
                     .projection(PaymentTransactionTable.AMOUNT, PaymentTransactionTable.GATEWAY, PaymentTransactionTable.CARD_NAME, PaymentTransactionView2.EmployeeTipsTable.AMOUNT, PaymentTransactionTable.CASH_BACK)
@@ -452,29 +471,12 @@ public class XReportQuery {
             }
 
             cashSale = cash;
-            c = ProviderAction.query(URI_TIPS)
-                    .projection(EmployeeTipsTable.AMOUNT, EmployeeTipsTable.PAYMENT_TYPE)
-                    .where(EmployeeTipsTable.CREATE_TIME + " = ?", getStartOfDay().getTime())
-                    .where(EmployeeTipsTable.SHIFT_ID + " = ?", guid)
-                    .perform(context);
-
-            while (c.moveToNext()) {
-                BigDecimal amount = _decimal(c, 0, BigDecimal.ZERO);
-                PaymentType type = _tipsPaymentType(c, 1);
-
-                if (type == PaymentType.CASH) {
-                    cash = cash.add(amount);
-                } else if (type == PaymentType.CREDIT) {
-                    creditCard = creditCard.add(amount);
-                }
-                gratuity = gratuity.add(amount);
-            }
             c.close();
 
             for (Entry<String, BigDecimal> e : cards.entrySet()) {
                 Logger.d("[XREPORT]\t%s\t%s", e.getKey(), e.getValue());
             }
-            drawerDifference = drawerDifference.add(getDrawerDifference(context, guid));
+//            drawerDifference = drawerDifference.add(getDrawerDifference(context, guid));
         }
 
         netSale = grossSale.subtract(discount).subtract(returned);
@@ -527,7 +529,8 @@ public class XReportQuery {
         Cursor c = null;
         Query query = ProviderAction.query(URI_SALE_ORDER)
                 .projection(ShopStore.SaleOrderTable.TRANSACTION_FEE)
-                .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime());
+                .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ?", fromDate)
+                .where(ShopStore.SaleOrderTable.CREATE_TIME + " < ?", toDate);
         if (registerId == 0) {
             c = query.where(ShopStore.SaleOrderTable.STATUS + " = ?", type.ordinal())
                     .perform(context);
@@ -594,11 +597,12 @@ public class XReportQuery {
         return null;
     }
 
-    protected static StatInfo getDailyOrders(Context context, String shiftGuid, OrderStatus type, long registerId) {
+    protected static StatInfo getDailyOrders(Context context, OrderStatus type, long registerId, long fromdate, long toDate) {
         Cursor c = null;
         Query query = ProviderAction.query(URI_SALE_ITEMS)
-                .where(SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
-                .where(SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
+                .where(SaleOrderTable.REGISTER_ID + " = ?", registerId)
+                .where(SaleOrderTable.CREATE_TIME + " > ?", fromdate)
+                .where(SaleOrderTable.CREATE_TIME + " < ?", toDate)
                 .where(SaleOrderTable.STATUS + " = ?", type.ordinal());
 
         if (registerId == 0) {
@@ -614,7 +618,7 @@ public class XReportQuery {
 //                .where(SaleOrderTable.REGISTER_ID + " = ?", registerId)
 //                .where(SaleOrderTable.STATUS + " = ?", type.ordinal())
 //                .perform(context);
-        return getOrders(context, c, shiftGuid, type);
+        return getOrders(context, c, type);
     }
 
     protected static StatInfo getShiftOrders(Context context, String shiftGuid, OrderStatus type) {
@@ -622,10 +626,10 @@ public class XReportQuery {
                 .where(SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .where(SaleOrderTable.STATUS + " = ?", type.ordinal())
                 .perform(context);
-        return getOrders(context, c, shiftGuid, type);
+        return getOrders(context, c, type);
     }
 
-    private static StatInfo getOrders(Context context, Cursor c, String shiftGuid, OrderStatus type) {
+    private static StatInfo getOrders(Context context, Cursor c, OrderStatus type) {
         HashMap<String, SaleOrderInfo> ordersInfo = readCursor(c);
         c.close();
 

@@ -1167,7 +1167,7 @@
     <string name="zreport_offline_voucher">Offline Voucher:</string>
     <string name="zreport_check">Check:</string>
 
-    <string name="zreport_transaction_count">Transaction Count</string>
+    <string name="zreport_transaction_count">Transaction Item Count</string>
     <string name="zreport_sales">Sales:</string>
     <string name="zreport_voids">Voids:</string>
     <string name="zreport_refunds">Refunds:</string>
