@@ -291,8 +291,8 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
             boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
-
-            printerWrapper.payment(p.cardName == null ? p.gateway == PaymentGateway.CASH ? context.getString(R.string.printer_cash) : p.gateway.name() : p.cardName.equalsIgnoreCase(context.getString(R.string.printer_check)) ? context.getString(R.string.printer_check_ecu) : p.cardName.equalsIgnoreCase(context.getString(R.string.printer_offline_credit))? context.getString(R.string.printer_offline_credit_ecu) : p.cardName.equalsIgnoreCase("Cash") ? context.getString(R.string.printer_cash) : p.cardName, isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
+            printerWrapper.payment(p.cardName == null ? p.gateway == PaymentGateway.CASH ? context.getString(R.string.printer_cash) : p.gateway.name() : p.cardName.equalsIgnoreCase(context.getString(R.string.printer_check)) ? context.getString(R.string.printer_check_ecu) : p.cardName.equalsIgnoreCase(context.getString(R.string.printer_offline_credit))? context.getString(R.string.printer_offline_credit_ecu) : p.cardName.equalsIgnoreCase("Cash") ? context.getString(R.string.printer_cash) : p.cardName,
+                    isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
             if (isChanged) {
                 printerWrapper.change(changeText, p.changeAmount);
             }

@@ -158,7 +158,8 @@ public class PuertoricoPrintProcessor extends PrintOrderProcessor {
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
             boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
-            printerWrapper.payment(p.cardName == null ? p.gateway.name() : p.cardName, isChanged ? p.amount.add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
+            printerWrapper.payment(p.cardName == null ? p.gateway.name() : p.cardName,
+                    isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
             if (isChanged) {
                 printerWrapper.change(changeText, p.changeAmount);
             }

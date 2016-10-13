@@ -42,7 +42,7 @@ public class PeruSettings implements CountryFunctionality {
     }
 
     @Override
-    public String currencySymbolForPrinter() {
+    public String currencySymbolUTF() {
         return "S/";
     }
 }

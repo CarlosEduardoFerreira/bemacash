@@ -31,6 +31,7 @@ public interface IUpdateContainer {
     int VERSION6_6 = 305; // VERSION CODE 23
     int VERSION6_7 = 306; // VERSION CODE 31
     int VERSION7 = 307;
+    int VERSION8 = 308;
 
     void onUpdate(final SQLiteDatabase db);
 

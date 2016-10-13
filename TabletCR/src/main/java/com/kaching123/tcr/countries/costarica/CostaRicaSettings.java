@@ -15,7 +15,7 @@ public class CostaRicaSettings implements CountryFunctionality {
 
     @Override
     public PosOrderTextPrinter getOrderPrinter() {
-        return new PosOrderTextPrinter();
+        return new PosCostaricaOrderTextPrinter();
     }
 
     @Override
@@ -40,10 +40,10 @@ public class CostaRicaSettings implements CountryFunctionality {
 
     @Override
     public String currencySymbol() {
-        return "^";    }
+        return "$";    }
 
     @Override
-    public String currencySymbolForPrinter() {
-        return "^";    }
+    public String currencySymbolUTF() {
+        return "\u20a1";    }
 
 }

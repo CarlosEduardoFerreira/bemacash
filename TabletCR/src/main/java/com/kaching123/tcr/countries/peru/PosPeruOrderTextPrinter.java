@@ -33,8 +33,8 @@ public class PosPeruOrderTextPrinter extends PosOrderTextPrinter {
         header(operatorTitle, operatorName);
     }
 
-        public void add(String title, BigDecimal qty, /*String Iva,*/ String discount, BigDecimal totalPrice, BigDecimal itemPrice, List<String> units) {
-            add(title, quantityFormat.format(qty), /*Iva,*/ discount,commaFormat(totalPrice), commaFormat(itemPrice), units);
+        public void add(String title, BigDecimal qty, String discount, BigDecimal totalPrice, BigDecimal itemPrice, List<String> units) {
+            add(title, quantityFormat.format(qty), discount,commaFormat(totalPrice), commaFormat(itemPrice), units);
         }
 
         @Override
