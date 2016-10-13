@@ -10,7 +10,6 @@ import org.json.JSONException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
-import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
 
 /**
  * Created by gdubina on 03/12/13.

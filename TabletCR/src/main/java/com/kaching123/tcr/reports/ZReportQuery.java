@@ -3,7 +3,6 @@ package com.kaching123.tcr.reports;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.telecom.GatewayInfo;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
@@ -370,24 +369,58 @@ public final class ZReportQuery extends XReportQuery {
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
         transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerID, fromDate, toDate));//returnInfo is negative
 
+
+        final StatInfo saleInfo = getDailyOrders(context, OrderStatus.COMPLETED, registerID, fromDate, toDate);
+        final StatInfo returnInfo = getDailyOrders(context, OrderStatus.RETURN, registerID, fromDate, toDate);
+
+        grossSale = grossSale.add(saleInfo.grossSale);
+        Logger.d("||grossSale:" + grossSale);
+
+        discount = discount.add(saleInfo.discount);
+        Logger.d("||discount:" + discount);
+
+        returned = returned.add(negative(returnInfo.grossSale.subtract(returnInfo.discount)));
+        Logger.d("||returned:" + returned);
+
+
+        tax = tax.add(saleInfo.tax.add(returnInfo.tax));//returnInfo is negative
+        cogs = cogs.add(saleInfo.cogs.add(returnInfo.cogs));//returnInfo is negative
+
+        Cursor tipsCursor = ProviderAction.query(URI_TIPS)
+                .projection(ShopStore.EmployeeTipsTable.AMOUNT)
+                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " > ?", fromDate)
+                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " < ?", toDate)
+                .perform(context);
+
+        while (tipsCursor.moveToNext()) {
+            BigDecimal tips = _decimal(tipsCursor, 0, BigDecimal.ZERO);
+            if (tips.compareTo(BigDecimal.ZERO) > 0) {
+                positiveTips = positiveTips.add(tips);
+            } else {
+                negativeTips = negativeTips.add(tips);
+            }
+        }
+
+
+        Cursor gratuityCursor = ProviderAction.query(URI_TIPS)
+                .projection(ShopStore.EmployeeTipsTable.AMOUNT, ShopStore.EmployeeTipsTable.PAYMENT_TYPE)
+                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " > ?", fromDate)
+                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " < ?", toDate)
+                .perform(context);
+
+        while (gratuityCursor.moveToNext()) {
+            BigDecimal amount = _decimal(gratuityCursor, 0, BigDecimal.ZERO);
+            TipsModel.PaymentType type = _tipsPaymentType(gratuityCursor, 1);
+
+//                if (type == PaymentType.CASH) {
+//                    cash = cash.add(amount);
+//                } else if (type == PaymentType.CREDIT) {
+//                    creditCard = creditCard.add(amount);
+//                }
+            gratuity = gratuity.add(amount);
+        }
+
         for (String guid : guidList) {
-            Logger.d("===== Daily Sales Report. guid:" + guid + " =====");
-
-            final StatInfo saleInfo = getDailyOrders(context, guid, OrderStatus.COMPLETED, registerID);
-            final StatInfo returnInfo = getDailyOrders(context, guid, OrderStatus.RETURN, registerID);
-
-            grossSale = grossSale.add(saleInfo.grossSale);
-            Logger.d("||grossSale:" + grossSale);
-
-            discount = discount.add(saleInfo.discount);
-            Logger.d("||discount:" + discount);
-
-            returned = returned.add(negative(returnInfo.grossSale.subtract(returnInfo.discount)));
-            Logger.d("||returned:" + returned);
-
-
-            tax = tax.add(saleInfo.tax.add(returnInfo.tax));//returnInfo is negative
-            cogs = cogs.add(saleInfo.cogs.add(returnInfo.cogs));//returnInfo is negative
 
             Cursor c = ProviderAction.query(URI_PAYMENTS)
                     .projection(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.AMOUNT,
@@ -397,29 +430,13 @@ public final class ZReportQuery extends XReportQuery {
                             ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.ORDER_GUID,
                             ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK,
                             ShopSchema2.PaymentTransactionView2.EmployeeTipsTable.AMOUNT)
-                    .where(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.SHIFT_GUID + " = ?", guid)
-                    .where(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CREATE_TIME + " > ?", startDate.getTime())
+                    .where(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.ORDER_GUID + " = ?", guid)
+//                    .where(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CREATE_TIME + " > ?", startDate.getTime())
 //                    .where("(" + ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.STATUS + " = ? OR " + ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.STATUS + " = ?)",
 //                            PaymentTransactionModel.PaymentStatus.PRE_AUTHORIZED.ordinal(), PaymentTransactionModel.PaymentStatus.SUCCESS.ordinal())
                     .perform(context);
 
 
-            Cursor tipsCursor = ProviderAction.query(URI_TIPS)
-                    .projection(ShopStore.EmployeeTipsTable.AMOUNT)
-                    .where(ShopStore.EmployeeTipsTable.SHIFT_ID + " = ?", guid)
-                    .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
-                    .perform(context);
-
-            while (tipsCursor.moveToNext()) {
-                BigDecimal tips = _decimal(tipsCursor, 0, BigDecimal.ZERO);
-                if (tips.compareTo(BigDecimal.ZERO) > 0) {
-                    positiveTips = positiveTips.add(tips);
-                } else {
-                    negativeTips = negativeTips.add(tips);
-                }
-            }
-
-            String orderGuid = "";
             while (c.moveToNext()) {
                 BigDecimal transactionAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.AMOUNT)), BigDecimal.ZERO);
                 BigDecimal transactionTip = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.EmployeeTipsTable.AMOUNT)), BigDecimal.ZERO);
@@ -478,29 +495,12 @@ public final class ZReportQuery extends XReportQuery {
 
             }
 
-            c = ProviderAction.query(URI_TIPS)
-                    .projection(ShopStore.EmployeeTipsTable.AMOUNT, ShopStore.EmployeeTipsTable.PAYMENT_TYPE)
-                    .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
-                    .where(ShopStore.EmployeeTipsTable.SHIFT_ID + " = ?", guid)
-                    .perform(context);
-
-            while (c.moveToNext()) {
-                BigDecimal amount = _decimal(c, 0, BigDecimal.ZERO);
-                TipsModel.PaymentType type = _tipsPaymentType(c, 1);
-
-//                if (type == PaymentType.CASH) {
-//                    cash = cash.add(amount);
-//                } else if (type == PaymentType.CREDIT) {
-//                    creditCard = creditCard.add(amount);
-//                }
-                gratuity = gratuity.add(amount);
-            }
             c.close();
 
             for (Map.Entry<String, BigDecimal> e : cards.entrySet()) {
                 Logger.d("[ZREPORT]\t%s\t%s", e.getKey(), e.getValue());
             }
-            drawerDifference = drawerDifference.add(getDrawerDifference(context, guid));
+//            drawerDifference = drawerDifference.add(getDrawerDifference(context, guid));
         }
 
 
@@ -528,7 +528,7 @@ public final class ZReportQuery extends XReportQuery {
 
         grossSale = grossSale.add(positiveTips);
         returned = returned.subtract(negativeTips);
-        netSale = grossSale.subtract(discount).subtract(returned);
+        netSale = grossSale.subtract(discount).subtract(returned).subtract(gratuity);
 
         cashSale = cash;
 
@@ -565,7 +565,7 @@ public final class ZReportQuery extends XReportQuery {
         for (String guid : guidList) {
             c = ProviderAction.query(URI_Z_SALE_ITEMS)
                     .where(ShopSchema2.ZReportView2.SaleOrderTable.REGISTER_ID + " = ?", registerId)
-                    .where(ShopSchema2.ZReportView2.SaleOrderTable.SHIFT_GUID + " = ?", guid)
+                    .where(ShopSchema2.ZReportView2.SaleOrderItemTable.ORDER_GUID + " = ?", guid)
                     .perform(context);
 
             while (c.moveToNext()) {
@@ -580,7 +580,7 @@ public final class ZReportQuery extends XReportQuery {
                 } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
                     salesCount = salesCount.add(itemQty);
                 } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.RETURN)) {
-                    returnsCount = returnsCount.add(itemQty);
+                    returnsCount = returnsCount.add(itemQty.negate());
                 }
             }
         }
