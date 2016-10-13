@@ -918,7 +918,7 @@
     <string name="tax_group_delete_succeded_message">Tax group \'%s\' successfully deleted</string>
     <string name="tax_group_delete_failed_message">Failed to delete tax group \'%s\'.\nTry again later</string>
     <string name="item_tax_group_default">Store tax</string>
-    <string name="item_tax_group_puerto_rico_default">Store tax</string>
+    <string name="item_tax_group_puerto_rico_default">Store tax Total</string>
     <string name="item_tax_group_peru_default">Store tax</string>
     <string name="item_multi_tax_group">%1$s Total</string>
     <string name="permission_sales_transaction">Sales Transaction</string>
