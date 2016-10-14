@@ -532,9 +532,9 @@ public final class ZReportQuery extends XReportQuery {
             payouts = payouts.add(bigDecimal.negate());
         }
 
-        grossSale = grossSale.add(positiveTips);
+//        grossSale = grossSale.add(positiveTips);
         returned = returned.subtract(negativeTips);
-        netSale = grossSale.subtract(discount).subtract(returned).subtract(gratuity);
+        netSale = grossSale.subtract(discount).subtract(returned);
 
         cashSale = cash;
 
