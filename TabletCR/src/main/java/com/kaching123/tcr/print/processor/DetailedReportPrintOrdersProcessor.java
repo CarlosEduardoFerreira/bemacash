@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
+import static com.kaching123.tcr.print.FormatterUtil.commaPriceFormat;
 
 /**
  * Created by mboychenko on 25.08.2016.
@@ -144,7 +145,7 @@ public class DetailedReportPrintOrdersProcessor extends PrintOrderProcessor {
         printerWrapper.emptyLine();
         if(lastReceipt) {
             printerWrapper.addWithTab2(app.getString(R.string.report_detailed_sales_total),
-                    new DecimalFormat("0.00").format(new BigDecimal(reportTotal)), true, true);
+                    commaPriceFormat(new BigDecimal(reportTotal)), true, true);
 
             printerWrapper.emptyLine();
 

@@ -107,7 +107,7 @@ public class DigitalDetailReportOrdersBuilder extends BaseDigitalBuilder impleme
 
     @Override
     public void add(String title, BigDecimal qty, BigDecimal totalPrice, BigDecimal itemPrice, List<String> units) {
-        add(title, quantityFormat.format(qty), priceFormat.format(totalPrice), units);
+        add(title, quantityFormat.format(qty), commaPriceFormat(totalPrice), units);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class DigitalDetailReportOrdersBuilder extends BaseDigitalBuilder impleme
 
     @Override
     public void addItemDiscount(String title, BigDecimal discoutn) {
-        add(SPACES_2 + title, priceFormat.format(discoutn));
+        add(SPACES_2 + title, commaPriceFormat(discoutn));
     }
 
     @Override
@@ -248,7 +248,7 @@ public class DigitalDetailReportOrdersBuilder extends BaseDigitalBuilder impleme
         stringBuilder.append(label);
         stringBuilder.append("</td>");
         stringBuilder.append(_styled("td", PRICE_STYLE));
-        stringBuilder.append(priceFormat.format(price));
+        stringBuilder.append(commaPriceFormat(price));
         stringBuilder.append("</td>");
         stringBuilder.append("</tr>");
         stringBuilder.append("</table>");
@@ -288,7 +288,7 @@ public class DigitalDetailReportOrdersBuilder extends BaseDigitalBuilder impleme
         stringBuilder.append(cardName);
         stringBuilder.append("</td>");
         stringBuilder.append(_styled("td", PRICE_STYLE));
-        stringBuilder.append(priceFormat.format(amount));
+        stringBuilder.append(commaPriceFormat(amount));
         stringBuilder.append("</td>");
         stringBuilder.append("</tr>");
         stringBuilder.append("</table>");
