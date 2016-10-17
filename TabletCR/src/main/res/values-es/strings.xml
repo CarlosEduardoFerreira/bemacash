@@ -524,7 +524,7 @@
   <string name="printer_ec_cashier">Usuario Caja:</string>
   <string name="printer_ec_email">Correo:</string>
   <string name="printer_ec_order">Sec.Int.:</string>
-  <string name="printer_ec_tax">EFECTIVO</string>
+  <string name="printer_ec_tax">Efectivo</string>
   <string name="printer_ec_tax_title">Offline Credit</string>
   <string name="printer_ec_header_description">Descripcion</string>
   <string name="printer_ec_header_qty">Cant.</string>
@@ -535,9 +535,9 @@
   <string name="printer_tax_title">IVA</string>
   <string name="printer_tax_is_iva">S</string>
   <string name="printer_tax_is_not_iva">N</string>
-  <string name="printer_cash">EFECTIVO</string>
+  <string name="printer_cash">Efectivo</string>
   <string name="printer_offline_credit">Offline Credit</string>
-  <string name="printer_offline_credit_ecu">TARJETA OFFLINE</string>
+  <string name="printer_offline_credit_ecu">Tarjeta Offline</string>
   <string name="printer_refund_total">Total (incluyendo impuesto)</string>
   <string name="printer_refund_tips">Propinas</string>
   <string name="printer_signature_subtitle">Recibo firmado</string>
@@ -1165,6 +1165,22 @@
   <string name="report_sale_by_items_total">Total</string>
   <string name="report_sale_by_items_total_qty">Cantidad total</string>
   <string name="employees_header_status">Estado</string>
+
+  <string-array name="customer_tabs">
+    <item>Información General</item>
+    <item>Notas</item>
+    <item>Historia</item>
+  </string-array>
+
+  <string-array name="item_tabs">
+    <item>Precio</item>
+    <item>Información Dicional</item>
+    <item>Impresora/KDS</item>
+    <item>Precios Especiales</item>
+    <item>Supervisión</item>
+    <item>Variantes</item>
+  </string-array>
+
   <string name="report_details_menu_email">Enviar por correo electrónico</string>
   <string name="report_details_menu_print">Imprimir</string>
   <string name="report_details_menu_export">Exportar</string>
