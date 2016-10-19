@@ -58,6 +58,7 @@ public class PrintXReportProcessor {
 
     private String fromDate;
     private String toDate;
+
     public PrintXReportProcessor(XReportInfo report, ReportType xReportType, IAppCommandContext appCommandContext, boolean enableEreportDepartSale, boolean enableEreportItemSale) {
         this.report = report;
         this.xReportType = xReportType;
@@ -127,8 +128,10 @@ public class PrintXReportProcessor {
             printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
         }
         SimpleDateFormat format = new SimpleDateFormat("");
-        printer.pair(context.getString(R.string.reprot_start_date) + ":", getFromDate());
-        printer.pair(context.getString(R.string.reprot_to_date) + ":", getToDate());
+        if (ReportType.X_REPORT_DAILY_SALES == xReportType) {
+            printer.pair(context.getString(R.string.reprot_start_date) + ":", getFromDate());
+            printer.pair(context.getString(R.string.reprot_to_date) + ":", getToDate());
+        }
     }
 
     private void printBody(Context context, TcrApplication app, IXReportPrinter printer) {
@@ -174,11 +177,11 @@ public class PrintXReportProcessor {
             printer.emptyLine();
         }
 
-        if(enableEreportItemSale){
+        if (enableEreportItemSale) {
             printer.boldPair(context.getString(R.string.xreport_items_sales), report.totalValue, false);
-            for (SalesByItemsReportQuery.ReportItemInfo item: report.itemSales) {
+            for (SalesByItemsReportQuery.ReportItemInfo item : report.itemSales) {
                 if (item.revenue.compareTo(BigDecimal.ZERO) > 0)
-                    printer.pair(String.format(ITEM_STRING_FORMAT,item.description,item.qty.toString()), item.revenue);
+                    printer.pair(String.format(ITEM_STRING_FORMAT, item.description, item.qty.toString()), item.revenue);
             }
             printer.emptyLine();
         }

@@ -109,8 +109,10 @@ public class PrintZReportProcessor {
             printer.footer(context.getString(R.string.zreport_subtitle));
             printer.pair(context.getString(R.string.zreprot_register_id_title_) + ":", registerID + (registerDescription == null || registerDescription.isEmpty() ? "" : " - " + registerDescription));
         }
-        printer.pair(context.getString(R.string.reprot_start_date) + ":", getFromDate());
-        printer.pair(context.getString(R.string.reprot_to_date) + ":", getToDate());
+        if (ReportType.Z_REPORT_DAILY_SALES == zReportType) {
+            printer.pair(context.getString(R.string.reprot_start_date) + ":", getFromDate());
+            printer.pair(context.getString(R.string.reprot_to_date) + ":", getToDate());
+        }
 
     }
 
