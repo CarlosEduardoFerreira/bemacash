@@ -9,7 +9,6 @@ import com.getbase.android.db.provider.Query;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2.PaymentTransactionView2;
 import com.kaching123.tcr.store.ShopSchema2.PaymentTransactionView2.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopSchema2.PaymentTransactionView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionView;
@@ -42,8 +41,8 @@ public class SalesByTenderTypeQuery {
         HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
         while (c.moveToNext()) {
             BigDecimal amount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.AMOUNT)), BigDecimal.ZERO);
-            BigDecimal tipAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionView2.EmployeeTipsTable.AMOUNT)), BigDecimal.ZERO);
-            amount = amount.subtract(tipAmount);
+//            BigDecimal tipAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionView2.EmployeeTipsTable.AMOUNT)), BigDecimal.ZERO);
+//            amount = amount.subtract(tipAmount);
             PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(PaymentTransactionTable.GATEWAY));
             if(gateway.isCreditCard()){
                 String card = c.getString(c.getColumnIndex(PaymentTransactionTable.CARD_NAME));
