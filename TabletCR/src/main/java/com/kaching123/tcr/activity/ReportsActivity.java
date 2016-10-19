@@ -76,15 +76,15 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
     }
 
     @Override
-    public void onXReportTypeChosen(ReportType xReportType) {
+    public void onXReportTypeChosen(ReportType xReportType, long registerId) {
         if (ReportType.X_REPORT_CURRENT_SHIFT == xReportType) {
             if (!getApp().isShiftOpened()) {
                 AlertDialogFragment.showAlert(this, R.string.error_dialog_title, getResources().getString(R.string.reports_error_open_shift));
             } else {
-                PrintXReportFragment.show(this, getApp().getShiftGuid(), xReportType);
+                PrintXReportFragment.show(this, getApp().getShiftGuid(), xReportType, registerId);
             }
         } else if (ReportType.X_REPORT_DAILY_SALES == xReportType) {
-            PrintXReportFragment.show(this, null, xReportType);
+            PrintXReportFragment.show(this, null, xReportType, registerId);
         }
     }
 
@@ -94,15 +94,15 @@ public class ReportsActivity extends SuperBaseActivity implements OnReportSelect
     }
 
     @Override
-    public void onZReportTypeChosen(ReportType zReportType) {
+    public void onZReportTypeChosen(ReportType zReportType, long registerID) {
         if (ReportType.Z_REPORT_CURRENT_SHIFT == zReportType) {
             if (!getApp().isShiftOpened()) {
                 AlertDialogFragment.showAlert(this, R.string.error_dialog_title, getResources().getString(R.string.reports_error_open_shift));
             } else {
-                PrintZReportFragment.show(this, getApp().getShiftGuid(), zReportType);
+                PrintZReportFragment.show(this, getApp().getShiftGuid(), zReportType, registerID);
             }
         } else if (ReportType.Z_REPORT_DAILY_SALES == zReportType) {
-            PrintZReportFragment.show(this, null, zReportType);
+            PrintZReportFragment.show(this, null, zReportType, registerID);
         }
     }
 

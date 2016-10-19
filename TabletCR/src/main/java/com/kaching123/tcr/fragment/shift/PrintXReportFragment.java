@@ -40,9 +40,10 @@ public class PrintXReportFragment extends PrintBaseReportFragment {
         return R.string.dlg_print_zreport;
     }
 
-    public static void show(FragmentActivity activity, String shiftGuid, ReportType reportType) {
+    public static void show(FragmentActivity activity, String shiftGuid, ReportType reportType, long registerId) {
         DialogUtil.show(activity, DIALOG_NAME, PrintXReportFragment_.builder()
                 .shiftGuid(shiftGuid)
+                .registerID(registerId)
                 .reportType(reportType)
                 .build());
     }

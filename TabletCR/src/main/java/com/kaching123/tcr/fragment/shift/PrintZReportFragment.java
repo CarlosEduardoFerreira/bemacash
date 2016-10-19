@@ -15,7 +15,6 @@ import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.FragmentById;
 
 
 /**
@@ -42,9 +41,10 @@ public class PrintZReportFragment extends PrintBaseReportFragment {
         return R.string.dlg_print_zreport;
     }
 
-    public static void show(FragmentActivity activity, String shiftGuid, ReportsActivity.ReportType reportType) {
+    public static void show(FragmentActivity activity, String shiftGuid, ReportsActivity.ReportType reportType, long registerID) {
         DialogUtil.show(activity, DIALOG_NAME, PrintZReportFragment_.builder()
                 .shiftGuid(shiftGuid)
+                .registerID(registerID)
                 .reportType(reportType)
                 .build());
     }

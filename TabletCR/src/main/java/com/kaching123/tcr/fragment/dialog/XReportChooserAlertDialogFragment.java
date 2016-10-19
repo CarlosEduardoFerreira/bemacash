@@ -47,7 +47,7 @@ public class XReportChooserAlertDialogFragment extends StyledDialogFragment {
     private static final long HOUR_IN_MILLIS = TimeUnit.HOURS.toMillis(1);
 
     public interface XReportTypeChooseListener {
-        void onXReportTypeChosen(ReportType xReportType);
+        void onXReportTypeChosen(ReportType xReportType, long registerId);
         void onXReportTypeChosen(ReportType xReportType, long registerID, long fromDate, long toDate);
     }
 
@@ -138,7 +138,7 @@ public class XReportChooserAlertDialogFragment extends StyledDialogFragment {
             public boolean onClick() {
                 if (xReportTypeChooseListener != null) {
                     if (currentShiftRadioButton.isChecked()) {
-                        xReportTypeChooseListener.onXReportTypeChosen(ReportType.X_REPORT_CURRENT_SHIFT);
+                        xReportTypeChooseListener.onXReportTypeChosen(ReportType.X_REPORT_CURRENT_SHIFT, getCurrentRegisterId());
                     } else if (daySaleRadioButton.isChecked()) {
                         xReportTypeChooseListener.onXReportTypeChosen(ReportType.X_REPORT_DAILY_SALES, getSelectedRegisterId(), fromDate.getTime(), toDate.getTime());
                     }
@@ -146,6 +146,10 @@ public class XReportChooserAlertDialogFragment extends StyledDialogFragment {
                 return true;
             }
         };
+    }
+
+    private long getCurrentRegisterId() {
+        return getApp().getRegisterId();
     }
 
     @Override

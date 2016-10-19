@@ -48,7 +48,7 @@ public class ZReportChooserAlertDialogFragment extends StyledDialogFragment {
     private static final long HOUR_IN_MILLIS = TimeUnit.HOURS.toMillis(1);
 
     public interface ZReportTypeChooserListener {
-        void onZReportTypeChosen(ReportType zReportType);
+        void onZReportTypeChosen(ReportType zReportType, long registerID);
 
         void onZReportRegisterChosen(ReportType zReportType, long registerID, long fromDate, long toDate);
     }
@@ -140,7 +140,7 @@ public class ZReportChooserAlertDialogFragment extends StyledDialogFragment {
             public boolean onClick() {
                 if (zReportTypeChooseListener != null) {
                     if (currentShiftRadioButton.isChecked()) {
-                        zReportTypeChooseListener.onZReportTypeChosen(ReportType.Z_REPORT_CURRENT_SHIFT);
+                        zReportTypeChooseListener.onZReportTypeChosen(ReportType.Z_REPORT_CURRENT_SHIFT, getCurrentRegisterId());
                     } else if (daySaleRadioButton.isChecked()) {
                         zReportTypeChooseListener.onZReportRegisterChosen(ReportType.Z_REPORT_DAILY_SALES, getSelectedRegisterId(), fromDate.getTime(), toDate.getTime());
                     }
@@ -150,6 +150,9 @@ public class ZReportChooserAlertDialogFragment extends StyledDialogFragment {
         };
     }
 
+    private long getCurrentRegisterId() {
+        return getApp().getRegisterId();
+    }
 
     @Override
     public void onAttach(Activity activity) {
