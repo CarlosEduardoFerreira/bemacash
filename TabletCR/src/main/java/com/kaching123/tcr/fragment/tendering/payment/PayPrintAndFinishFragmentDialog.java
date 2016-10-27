@@ -249,8 +249,13 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     }
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
-        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, null);
+        /*
+         *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
+         */
+        if(getApp().getShopInfo().printOnholdOrders) {
+            WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+            PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, null);
+        }
     }
 
     public static void show(FragmentActivity context, String orderGuid, IFinishConfirmListener listener, ArrayList<PaymentTransactionModel> transactions, KitchenPrintStatus kitchenPrintStatus, BigDecimal changeAmount, ReceiptType debitGateway, boolean isPrinterTwoCopiesReceipt, ArrayList<PrepaidReleaseResult> releaseResultList, ArrayList<GiftCardBillingResult> giftCardResults) {
