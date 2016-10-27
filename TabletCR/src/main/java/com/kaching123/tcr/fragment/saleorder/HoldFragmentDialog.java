@@ -264,17 +264,19 @@ public class HoldFragmentDialog extends StyledDialogFragment {
         if(getApp().getShopInfo().printOnholdOrders) {
             WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
             PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
+        } else {
+            printToKitchenFlag = false;
+            if (printToKdsFlag) {
+                WaitDialogFragment.hide(getActivity());
+                onPositiveHandler();
+                dismiss();
+            }
         }
     }
 
     private void printItemToKds(){
         printToKdsFlag = false;
-        /*
-         *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
-         */
-        if(getApp().getShopInfo().printOnholdOrders) {
-            PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, false, new KDSPrintCallback());
-        }
+        PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, false, new KDSPrintCallback());
     }
 
     private class KitchenKitchenPrintCallback extends BaseKitchenPrintCallback {
