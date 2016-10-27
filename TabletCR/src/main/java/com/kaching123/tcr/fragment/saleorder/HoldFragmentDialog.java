@@ -283,12 +283,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
             @Override
             public void onRetry(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-                /*
-                 *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
-                 */
-                if(getApp().getShopInfo().printOnholdOrders) {
-                    printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac);
-                }
+                printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac);
             }
 
             @Override
