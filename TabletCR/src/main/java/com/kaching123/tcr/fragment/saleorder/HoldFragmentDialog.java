@@ -257,11 +257,11 @@ public class HoldFragmentDialog extends StyledDialogFragment {
     }
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
+        printToKitchenFlag = false;
         /*
          *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
          */
         if(getApp().getShopInfo().printOnholdOrders) {
-            printToKitchenFlag = false;
             WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
             PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
         }
@@ -283,7 +283,12 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
             @Override
             public void onRetry(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-                printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac);
+                /*
+                 *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
+                 */
+                if(getApp().getShopInfo().printOnholdOrders) {
+                    printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac);
+                }
             }
 
             @Override
