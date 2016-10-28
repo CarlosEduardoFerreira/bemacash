@@ -265,7 +265,9 @@ public class HoldFragmentDialog extends StyledDialogFragment {
         if(getApp().getShopInfo().printOnholdOrders) {
             WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         }
-        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
+        PrintItemsForKitchenCommand.itComesFromPay = false;
+        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip,
+                new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
     }
 
     private void printItemToKds(){

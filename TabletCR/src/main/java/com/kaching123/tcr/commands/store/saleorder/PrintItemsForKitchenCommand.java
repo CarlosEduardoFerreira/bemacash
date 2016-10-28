@@ -87,6 +87,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     private boolean printAllItems;
     private boolean isVoidOrder;
 
+    public static boolean itComesFromPay = true;
 
     @Override
     protected TaskResult doInBackground() {
@@ -347,7 +348,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 /*
                  *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
                  */
-                if(getApp().getShopInfo().printOnholdOrders) {
+                if(getApp().getShopInfo().printOnholdOrders || itComesFromPay) {
                     kitchenPrinter.print(printer);
                 }
             } catch (IOException e) {
@@ -479,6 +480,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 .callback(callback)
                 .queueUsing(context);
     }
+
     public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
                              boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle, boolean isVoidOrder) {
         create(PrintItemsForKitchenCommand.class)
