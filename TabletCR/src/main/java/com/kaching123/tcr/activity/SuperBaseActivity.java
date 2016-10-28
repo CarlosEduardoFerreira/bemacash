@@ -208,7 +208,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                             return list;
                         }
                     }).build(SuperBaseActivity.this);
-//                    .wrap(new Function<Cursor, Integer>() {
+//                    .transform(new Function<Cursor, Integer>() {
 //                        @Override
 //                        public Integer apply(Cursor c) {
 //                            if (c.moveToFirst()) {
