@@ -14,9 +14,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.StringRes;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsArrayAdapter;
 import com.kaching123.tcr.commands.store.inventory.DeleteModifierCommand;
@@ -30,6 +27,10 @@ import com.kaching123.tcr.model.converter.ModifierFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 import com.mobeta.android.dslv.DragSortListView;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringRes;
 
 import java.util.List;
 import java.util.Locale;
@@ -81,7 +82,7 @@ public class EditModifiersFragment extends Fragment implements LoaderCallbacks<L
         return CursorLoaderBuilder.forUri(URI_MODIFIERS)
                 .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                 .where(ModifierTable.TYPE + " = ?", type.ordinal())
-                .transform(new ModifierFunction()).build(getActivity());
+                .transformRow(new ModifierFunction()).build(getActivity());
     }
 
     @Override

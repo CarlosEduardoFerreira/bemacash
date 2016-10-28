@@ -103,7 +103,7 @@ public class SearchItemsListFragment extends Fragment implements IPriceLevelList
                                 + " like ?" + " OR " + ItemTable.PRODUCT_CODE + " like ? )", 1, 1,
                         "%" + searchText + "%", "%" + searchText + "%")
                 .orderBy(ItemTable.CATEGORY_ID + ", " + ItemTable.ORDER_NUM)
-                .wrap(new Function<Cursor, List<CategoryItemViewModel>>() {
+                .transform(new Function<Cursor, List<CategoryItemViewModel>>() {
                     @Override
                     public List<CategoryItemViewModel> apply(Cursor input) {
                         ItemConverter func = new ItemConverter();

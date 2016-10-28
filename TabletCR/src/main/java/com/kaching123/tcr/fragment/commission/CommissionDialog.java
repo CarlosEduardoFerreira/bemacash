@@ -16,10 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -28,6 +24,11 @@ import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.HashSet;
 import java.util.List;
@@ -125,7 +126,7 @@ public class CommissionDialog extends StyledDialogFragment {
                     .where(EmployeeTable.IS_MERCHANT + " = ?", 0)
                     .where(EmployeeTable.STATUS + " = ?", EmployeeStatus.ACTIVE.ordinal())
                     .where(EmployeeTable.ELIGIBLE_FOR_COMMISSION + " = ?", 1)
-                    .transform(new ListConverterFunction<EmployeeModel>() {
+                    .transformRow(new ListConverterFunction<EmployeeModel>() {
                         @Override
                         public EmployeeModel apply(Cursor cursor) {
                             return new EmployeeModel(

@@ -143,7 +143,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
         ((Adapter) adapter).setDraggable(draggable);
         list.setDragEnabled(draggable);
 
-        Loader<List<ItemExModel>> loader = builder.transform(new ItemExFunction()).build(getActivity());
+        Loader<List<ItemExModel>> loader = builder.transformRow(new ItemExFunction()).build(getActivity());
         return loader;
     }
 

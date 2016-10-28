@@ -253,7 +253,7 @@ public class EmployeeTipsFragmentDialog extends KeyboardDialogFragment {
                     .where(EmployeeTable.STATUS + " = ?", EmployeeStatus.ACTIVE.ordinal())
                     .where(EmployeeTable.IS_MERCHANT + " = ?", 0)
                     .orderBy(EmployeeTable.FIRST_NAME)
-                    .transform(new Function<Cursor, EmployeeModel>() {
+                    .transformRow(new Function<Cursor, EmployeeModel>() {
                         @Override
                         public EmployeeModel apply(Cursor c) {
                             return new EmployeeModel(
@@ -263,7 +263,7 @@ public class EmployeeTipsFragmentDialog extends KeyboardDialogFragment {
                                     null);
                         }
                     })
-                    .wrap(new Function<List<EmployeeModel>, List<EmployeeModel>>() {
+                    .transform(new Function<List<EmployeeModel>, List<EmployeeModel>>() {
                         @Override
                         public List<EmployeeModel> apply(List<EmployeeModel> result) {
                             tipsableEmployeeGuids = getTipsableEmployeeGuids(result);

@@ -9,11 +9,9 @@ import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.model.EmployeeForReportsModel;
-import com.kaching123.tcr.model.RegisterModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.RegisterTable;
 
 import java.util.List;
 
@@ -29,7 +27,7 @@ public abstract class MangerNamesLoader implements LoaderCallbacks<List<Employee
         return CursorLoaderBuilder
                 .forUri(EMPLOYEE_URI)
                 .orderBy(ShopStore.EmployeeTable.LOGIN)
-                .transform(new EmployeesFunction())
+                .transformRow(new EmployeesFunction())
                 .build(getLoaderContext());
     }
 

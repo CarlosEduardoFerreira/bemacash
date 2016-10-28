@@ -12,11 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ActivationActivity;
 import com.kaching123.tcr.fragment.tendering.pinserve.prepaid.wireless.ActivationTypeChoosingFragmentDialog;
@@ -24,6 +19,12 @@ import com.kaching123.tcr.model.ActivationCarrierModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class PrepaidHomeFragment extends Fragment {
         public Loader<List<ActivationCarrierModel>> onCreateLoader(int id, Bundle args) {
             return CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.ActivationCarrierTable.URI_CONTENT))
                     .where(ShopStore.ActivationCarrierTable.IS_ACTIVE + " = ?", 1)
-                    .transform(new ListConverterFunction<ActivationCarrierModel>() {
+                    .transformRow(new ListConverterFunction<ActivationCarrierModel>() {
                         @Override
                         public ActivationCarrierModel apply(Cursor cursor) {
                             return new ActivationCarrierModel(cursor);

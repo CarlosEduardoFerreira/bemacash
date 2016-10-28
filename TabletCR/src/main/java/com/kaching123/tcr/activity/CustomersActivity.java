@@ -256,7 +256,7 @@ public class CustomersActivity extends SuperBaseActivity {
                         filter, filter, filter, filter);
             }
 
-            return builder.transform(new ListConverterFunction<CustomerModel>() {
+            return builder.transformRow(new ListConverterFunction<CustomerModel>() {
                 @Override
                 public CustomerModel apply(Cursor cursor) {
                     return new CustomerModel(cursor);

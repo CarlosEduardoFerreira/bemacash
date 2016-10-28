@@ -61,7 +61,7 @@ public class ModifierGroupsActivity extends SuperBaseActivity {
             return CursorLoaderBuilder.forUri(ShopProvider.contentUri(ModifierGroupTable.URI_CONTENT))
                     .where(ModifierGroupTable.ITEM_GUID + " = ?", itemId)
                     .orderBy(ModifierGroupTable.ORDER_NUM)
-                    .transform(new Function<Cursor, ModifierGroupModel>() {
+                    .transformRow(new Function<Cursor, ModifierGroupModel>() {
                         @Override
                         public ModifierGroupModel apply(Cursor input) {
                             return new ModifierGroupModel(input);

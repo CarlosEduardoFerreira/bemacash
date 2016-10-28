@@ -76,7 +76,7 @@ public class SearchFragment extends Fragment {
         public Loader<List<ModifierCountItemModel>> onCreateLoader(int id, Bundle args) {
             return CursorLoaderBuilder.forUri(URI_ITEMS)
                     .where("", "%" + searchText + "%", itemGuid == null ? "" : itemGuid)
-                    .transform(new ItemConverter())
+                    .transformRow(new ItemConverter())
                     .build(getActivity());
         }
 
