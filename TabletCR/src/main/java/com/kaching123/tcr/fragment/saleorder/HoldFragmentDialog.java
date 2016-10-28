@@ -258,20 +258,14 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
         printToKitchenFlag = false;
+        Logger.e("CEF.HoldFragmentDialog.printItemsToKitchen:printOnholdOrders " + getApp().getShopInfo().printOnholdOrders);
         /*
          *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
          */
         if(getApp().getShopInfo().printOnholdOrders) {
             WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-            PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
-        } else {
-            printToKitchenFlag = false;
-            if (printToKdsFlag) {
-                WaitDialogFragment.hide(getActivity());
-                onPositiveHandler();
-                dismiss();
-            }
         }
+        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
     }
 
     private void printItemToKds(){

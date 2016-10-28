@@ -197,17 +197,12 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     }
 
     private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac, ReceiptType receiptType, PrintSignatureOrderCallback printSignatureCallback) {
-        /*
-         *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
-         */
-        if(getApp().getShopInfo().printOnholdOrders) {
-            WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-            if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH && receiptType != ReceiptType.EBT)
-                if (!printBox.isChecked()) {
-                    receiptType = ReceiptType.MERCHANT;
-                }
-            PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
-        }
+        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH && receiptType != ReceiptType.EBT)
+            if (!printBox.isChecked()) {
+                receiptType = ReceiptType.MERCHANT;
+            }
+        PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
     }
 
     @Override
@@ -254,13 +249,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     }
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
-        /*
-         *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
-         */
-        if(getApp().getShopInfo().printOnholdOrders) {
-            WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-            PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, null);
-        }
+        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, null);
     }
 
     public static void show(FragmentActivity context, String orderGuid, IFinishConfirmListener listener, ArrayList<PaymentTransactionModel> transactions, KitchenPrintStatus kitchenPrintStatus, BigDecimal changeAmount, ReceiptType debitGateway, boolean isPrinterTwoCopiesReceipt, ArrayList<PrepaidReleaseResult> releaseResultList, ArrayList<GiftCardBillingResult> giftCardResults) {
