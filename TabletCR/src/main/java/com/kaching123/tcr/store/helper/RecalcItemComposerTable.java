@@ -31,7 +31,7 @@ public class RecalcItemComposerTable extends ProviderHelper {
     public void recalcAfterSync() {
         Logger.d("RecalcItemMovementTable. after sync");
         Cursor c = getContext().getContentResolver().query(ITEM_COMPOSER_URI, null, null, null, null);
-        if (c.getCount() == 0) {
+        if (c!=null && c.getCount() == 0) {
             c.close();
         } else {
             handleCursor(c);
