@@ -10,12 +10,12 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/edit_item_row_margin_top"
         android:layout_marginLeft="0dp"
+        android:background="@drawable/inventory_title_line"
+        android:drawableLeft="@drawable/user_information"
+        android:drawablePadding="8dp"
         android:paddingBottom="8dp"
         android:paddingLeft="4dp"
-        android:drawablePadding="8dp"
-        android:drawableLeft="@drawable/user_information"
-        android:background="@drawable/inventory_title_line"
-        android:text="@string/edit_item_common_information"/>
+        android:text="@string/edit_item_common_information" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,26 +24,35 @@
         android:orientation="horizontal">
 
         <TableLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:stretchColumns="1">
 
-            <TableRow
-                android:minHeight="@dimen/table_row_height">
+            <TableRow android:minHeight="@dimen/table_row_height"
+                android:layout_width="match_parent">
+
                 <TextView
                     style="@style/EditItem.Table.Label.Required"
-                    android:text="@string/item_activity_name" />
+                    android:text="@string/item_activity_name"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
 
                 <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:id="@+id/description"
                     style="@style/EditItem.Table.Edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:inputType="textImeMultiLine"
+                    android:maxLines="1"/>
+
             </TableRow>
 
-            <TableRow
-                android:minHeight="@dimen/table_row_height">
+            <TableRow android:minHeight="@dimen/table_row_height"
+                android:layout_width="match_parent">
+
                 <TextView
                     style="@style/EditItem.Table.Label.Required"
                     android:text="@string/item_activity_sales_price" />
@@ -53,19 +62,19 @@
                     style="@style/EditItem.Table.Edittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"/>
+                    android:inputType="numberDecimal" />
             </TableRow>
         </TableLayout>
 
         <TableLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_marginLeft="@dimen/table_margin"
             android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/table_margin"
+            android:layout_weight="1"
             android:stretchColumns="1">
 
-            <TableRow
-                android:minHeight="@dimen/table_row_height">
+            <TableRow android:minHeight="@dimen/table_row_height">
+
                 <TextView
                     style="@style/EditItem.Table.Label.Required"
                     android:text="@string/item_activity_department" />
@@ -73,11 +82,11 @@
                 <Spinner
                     android:id="@+id/department"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow
-                android:minHeight="@dimen/table_row_height">
+            <TableRow android:minHeight="@dimen/table_row_height">
+
                 <TextView
                     style="@style/EditItem.Table.Label.Required"
                     android:text="@string/item_activity_category" />
@@ -85,34 +94,35 @@
                 <Spinner
                     android:id="@+id/category"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
             </TableRow>
         </TableLayout>
 
         <TableLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_marginLeft="@dimen/table_margin"
             android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/table_margin"
+            android:layout_weight="1"
             android:stretchColumns="1">
 
-            <TableRow
-                android:minHeight="@dimen/table_row_height">
+            <TableRow android:minHeight="@dimen/table_row_height">
+
                 <TextView
                     style="@style/EditItem.Table.Label"
                     android:text="@string/item_activity_active" />
 
                 <CheckBox
                     android:id="@+id/active_status"
+                    style="@style/EditItem.Table.CheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/EditItem.Table.CheckBox"
-                    android:checked="true"/>
+                    android:checked="true" />
             </TableRow>
 
             <TableRow
                 android:id="@+id/tax_group_row"
                 android:minHeight="@dimen/table_row_height">
+
                 <TextView
                     style="@style/EditItem.Table.Label"
                     android:text="@string/item_activity_tax_group" />
@@ -120,12 +130,13 @@
                 <Spinner
                     android:id="@+id/tax_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
             </TableRow>
 
             <TableRow
                 android:id="@+id/ecuador_tax_group_row"
                 android:minHeight="@dimen/table_row_height">
+
                 <TextView
                     style="@style/EditItem.Table.Label"
                     android:text="@string/item_activity_tax_group" />
@@ -134,7 +145,7 @@
                     android:id="@+id/ecuador_tax_group"
                     style="@style/EditItem.Table.Edittext"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
             </TableRow>
         </TableLayout>
 
