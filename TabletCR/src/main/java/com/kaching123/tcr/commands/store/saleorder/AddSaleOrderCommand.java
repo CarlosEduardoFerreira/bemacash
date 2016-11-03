@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-import static com.kaching123.tcr.util.CursorUtil._wrap;
-
 public class AddSaleOrderCommand extends AsyncCommand {
 
     private static final Uri URI_ORDER = ShopProvider.contentUri(SaleOrderTable.URI_CONTENT);
@@ -74,20 +72,17 @@ public class AddSaleOrderCommand extends AsyncCommand {
     public static SaleOrderModel createSaleOrder(Context context,
                                                  long registerId,
                                                  String operatorGuid, String shiftGuid, String customerGuid, OrderType type, BigDecimal transactionFee) {
-        Integer seq = _wrap(ProviderAction
-                        .query(URI_ORDER)
-                        .projection("max(" + SaleOrderTable.PRINT_SEQ_NUM + ")")
-                        .where(SaleOrderTable.REGISTER_ID + " = ?", registerId)
-                        .perform(context),
-                new Function<Cursor, Integer>() {
+        Integer seq = ProviderAction
+                .query(URI_ORDER)
+                .projection("max(" + SaleOrderTable.PRINT_SEQ_NUM + ")")
+                .where(SaleOrderTable.REGISTER_ID + " = ?", registerId).perform(context)
+                .toFluentIterable(new Function<Cursor, Integer>() {
                     @Override
                     public Integer apply(Cursor cursor) {
-                        if (cursor.moveToFirst()) {
                             return cursor.getInt(0) + 1;
-                        }
-                        return 1;
                     }
-                });
+                }).first().or(1);
+
         return new SaleOrderModel(UUID.randomUUID().toString(),
                 new Date(),
                 operatorGuid,

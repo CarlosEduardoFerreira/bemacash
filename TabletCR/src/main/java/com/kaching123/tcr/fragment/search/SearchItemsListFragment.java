@@ -195,7 +195,8 @@ public class SearchItemsListFragment extends Fragment implements IPriceLevelList
                 ItemTable.REFERENCE_ITEM_ID,
                 ItemTable.ITEM_REF_TYPE,
                 ItemTable.LOYALTY_POINTS,
-                ItemTable.EXCLUDE_FROM_LOYALTY_PLAN
+                ItemTable.EXCLUDE_FROM_LOYALTY_PLAN,
+                ItemTable.EBT_ELIGIBLE
         };
 
         @Override

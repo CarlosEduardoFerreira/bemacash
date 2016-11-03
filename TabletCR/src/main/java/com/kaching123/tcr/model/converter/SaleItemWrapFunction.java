@@ -73,6 +73,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
         HashMap<String, List<SaleOrderItemViewModel>> itemsMap = new HashMap<>();
 
         final HashMap<String, SaleOrderItemViewModel> saleItemsMap = new HashMap<>();
+        if (c != null && c.getCount() > 0) {
         if (c.moveToFirst()) {
             do {
                 String saleItemGuid = c.getString(c.getColumnIndex(SaleItemTable.SALE_ITEM_GUID));
@@ -141,6 +142,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
         }
 
 
+
         if (recalcSaleItems()) {
             OrderTotalPriceCalculator.calculate(items, null, new Handler() {
                 @Override
@@ -171,6 +173,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
 
             });
         }
+    }
         return items;
     }
 

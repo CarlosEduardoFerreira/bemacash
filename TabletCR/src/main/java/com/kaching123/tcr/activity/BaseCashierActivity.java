@@ -220,6 +220,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
+    private static final int NUMBER_OF_LETTERS_TO_START_SEARCH = 2;
 
     static {
         permissions.add(Permission.SALES_TRANSACTION);
@@ -387,7 +388,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     OnGiftCardBilling();
                 }
             });
-            releaseResultList = new ArrayList<PrepaidReleaseResult>();
+            releaseResultList = new ArrayList<>();
         }
     }
 
@@ -558,8 +559,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         setDefaultBarcodeListener();
         //ScannerProcessor.get(barcodeListener).start();
 
-        releaseResultList = new ArrayList<PrepaidReleaseResult>();
-        giftCardResultList = new ArrayList<GiftCardBillingResult>();
+        releaseResultList = new ArrayList<>();
+        giftCardResultList = new ArrayList<>();
 
         getSupportLoaderManager().restartLoader(LOADER_DISCOUNT_BUNDLES, null, discountBundleLoader);
     }
@@ -640,12 +641,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     protected void tryToAddItem(final ItemExModel model) {
-        /*if (!TcrApplication.isEcuadorVersion()){
-            tryToAddItem(model, null, null, null);
-        } else if(!TcrApplication.isPeruVersion()) {
-            tryToAddItem(model, null, null, null);
-        }*/
-        if (!TcrApplication.getCountryFunctionality().isMultiTaxGroup()) {//.isCurrentCountryUsesMultiTax()){
+        if (!TcrApplication.getCountryFunctionality().isMultiTaxGroup()) {
             tryToAddItem(model, null, null, null);
         }
         else {
@@ -679,7 +675,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     }
 
-    private CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {
+    public CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {
         @Override
         public void onCollected(final ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers, final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit, boolean hasAutoApply) {
 
@@ -1350,7 +1346,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filterSearchFragment(newText);
+                if(!TextUtils.isEmpty(newText) && newText.length() > NUMBER_OF_LETTERS_TO_START_SEARCH) {
+                    filterSearchFragment(newText);
+                }
                 return true;
             }
         });
@@ -2879,7 +2877,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    private class AddItem2SaleOrderCallback extends BaseAddItem2SaleOrderCallback {
+    public class AddItem2SaleOrderCallback extends BaseAddItem2SaleOrderCallback {
 
         @Override
         protected void onItemAdded(final SaleOrderItemModel item) {

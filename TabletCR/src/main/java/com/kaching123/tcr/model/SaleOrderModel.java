@@ -87,7 +87,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 _orderType(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.ORDER_TYPE)),
                 _bool(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.IS_TIPPED)),
                 _kitchenPrintStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.KITCHEN_PRINT_STATUS)),
-                _kdsSendStatus(c, c.getColumnIndex(SaleOrderTable.KDS_SEND_STATUS)),
+                _kdsSendStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.KDS_SEND_STATUS)),
                 _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO)
         );
     }
