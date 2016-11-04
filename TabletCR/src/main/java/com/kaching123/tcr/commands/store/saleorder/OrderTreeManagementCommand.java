@@ -5,7 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.store.AsyncCommand;
+import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore.ReturnOrderItemsMappingQuery;
+import com.kaching123.tcr.store.ShopStore.SaleOrderItemsMappingQuery;
 import com.telly.groundy.TaskHandler;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -14,17 +19,10 @@ import com.telly.groundy.annotations.OnSuccess;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.commands.store.AsyncCommand;
-import com.kaching123.tcr.service.ISqlCommand;
-import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore.SaleOrderItemsMappingQuery;
-import com.kaching123.tcr.store.ShopStore.ReturnOrderItemsMappingQuery;
 
 import static com.kaching123.tcr.util.ContentValuesUtilBase._bool;
 import static com.kaching123.tcr.util.ContentValuesUtilBase._decimalQty;
+import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 
 /**
  * Created by Hans on 6/24/2015.
@@ -35,7 +33,7 @@ public class OrderTreeManagementCommand extends AsyncCommand {
     private static final Uri URI_ITEMS = ShopProvider.contentUri(SaleOrderItemsMappingQuery.URI_CONTENT);
     private static final Uri URI_ITEMS_FOR_RETURN = ShopProvider.contentUri(ReturnOrderItemsMappingQuery.URI_CONTENT);
 
-    protected String orderItemId;
+    private String orderItemId;
     protected ArrayList<ContentProviderOperation> ops;
     protected List<MovementMetadata> result;
     private boolean isReturn;
@@ -45,8 +43,8 @@ public class OrderTreeManagementCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         List<MovementMetadata> metadata;
 
-        if(isReturn){
-            metadata =  getMetadataForReturn();
+        if (isReturn) {
+            metadata = getMetadataForReturn();
         } else {
             metadata = getMetadata();
         }
@@ -70,63 +68,62 @@ public class OrderTreeManagementCommand extends AsyncCommand {
     }
 
     private List<MovementMetadata> getMetadata() {
-        Cursor c = ProviderAction
-                .query(URI_ITEMS)
-                .projection(SaleOrderItemsMappingQuery.ITEM_GUID,
+
+        Cursor c = getContext().getContentResolver().query(
+                URI_ITEMS,
+                new String[]{SaleOrderItemsMappingQuery.ITEM_GUID,
                         SaleOrderItemsMappingQuery.QUANTITY,
                         SaleOrderItemsMappingQuery.SOURCE,
                         SaleOrderItemsMappingQuery.FLAG,
-                        SaleOrderItemsMappingQuery.STOCK_TRACKING)
-               .where("", orderItemId, orderItemId, orderItemId, orderItemId)
-                .perform(getContext());
+                        SaleOrderItemsMappingQuery.STOCK_TRACKING},
+                null,
+                _selectionArgs(orderItemId, orderItemId, orderItemId, orderItemId),
+                null
+        );
+        if (c != null && c.moveToFirst()) {
 
-        try {
-            if (!c.moveToFirst()) {
-                return null;
-            }
             result = new ArrayList<>(c.getCount());
             do {
                 MovementMetadata mv = new MovementMetadata();
                 mv.guid = c.getString(c.getColumnIndex(SaleOrderItemsMappingQuery.ITEM_GUID));
 
                 boolean isStockTracking = _bool(c, c.getColumnIndex(SaleOrderItemsMappingQuery.STOCK_TRACKING));
-                mv.movement = isStockTracking ? _decimalQty(c, c.getColumnIndex(SaleOrderItemsMappingQuery.QUANTITY_RESULT)): BigDecimal.ZERO; // -1 *  SUM(QUANTITY_TAG) as QUANTITY_RESULT
+                mv.movement = isStockTracking ? _decimalQty(c, c.getColumnIndex(SaleOrderItemsMappingQuery.QUANTITY_RESULT)) : BigDecimal.ZERO; // -1 *  SUM(QUANTITY_TAG) as QUANTITY_RESULT
 
                 mv.tag = c.getString(c.getColumnIndex(SaleOrderItemsMappingQuery.SOURCE));
                 mv.flag = c.getString(c.getColumnIndex(SaleOrderItemsMappingQuery.FLAG));
                 result.add(mv);
             } while (c.moveToNext());
-            return result;
-        } finally {
             c.close();
+            return result;
+        } else {
+            return null;
         }
     }
 
     private List<MovementMetadata> getMetadataForReturn() {
-        Cursor c = ProviderAction
-                .query(URI_ITEMS_FOR_RETURN)
-                .projection(ReturnOrderItemsMappingQuery.ITEM_GUID,
+        Cursor c = getContext().getContentResolver().query(
+                URI_ITEMS_FOR_RETURN,
+                new String[]{ReturnOrderItemsMappingQuery.ITEM_GUID,
                         ReturnOrderItemsMappingQuery.QUANTITY,
                         ReturnOrderItemsMappingQuery.SOURCE,
                         ReturnOrderItemsMappingQuery.FLAG,
-                        ReturnOrderItemsMappingQuery.STOCK_TRACKING)
-                .where("", orderItemId, saleItemGuid,
+                        ReturnOrderItemsMappingQuery.STOCK_TRACKING},
+                null,
+                _selectionArgs(orderItemId, saleItemGuid,
                         orderItemId, saleItemGuid,
                         orderItemId, saleItemGuid,
-                        orderItemId, saleItemGuid)
-                .perform(getContext());
-
-        try {
-            if (!c.moveToFirst()) {
-                return null;
-            }
+                        orderItemId, saleItemGuid),
+                null
+        );
+        if (c != null && !c.moveToFirst()) {
             result = new ArrayList<>(c.getCount());
             do {
                 MovementMetadata mv = new MovementMetadata();
                 mv.guid = c.getString(c.getColumnIndex(ReturnOrderItemsMappingQuery.ITEM_GUID));
 
                 boolean isStockTracking = _bool(c, c.getColumnIndex(ReturnOrderItemsMappingQuery.STOCK_TRACKING));
-                if(!isStockTracking) {
+                if (!isStockTracking) {
                     continue;
                 }
                 //mv.movement = isStockTracking ? _decimalQty(c, c.getColumnIndex(ReturnOrderItemsMappingQuery.QUANTITY_RESULT)): BigDecimal.ZERO; // -1 *  SUM(QUANTITY_TAG) as QUANTITY_RESULT
@@ -136,10 +133,13 @@ public class OrderTreeManagementCommand extends AsyncCommand {
                 mv.flag = c.getString(c.getColumnIndex(ReturnOrderItemsMappingQuery.FLAG));
                 result.add(mv);
             } while (c.moveToNext());
-            return result;
-        } finally {
+
             c.close();
+            return result;
+        } else {
+            return null;
         }
+
     }
 
 

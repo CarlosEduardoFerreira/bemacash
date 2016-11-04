@@ -5,12 +5,12 @@ import android.database.Cursor;
 import com.kaching123.tcr.model.SaleOrderTipsViewModel;
 import com.kaching123.tcr.model.SaleOrderTipsViewModel.TenderType;
 import com.kaching123.tcr.model.SaleOrderTipsViewModel.TransactionsState;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.CustomerTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.OperatorTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.SaleOrderTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.TipsTable;
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTipsQuery;
 
 import java.math.BigDecimal;
@@ -104,7 +104,7 @@ public class SaleOrderTipsViewFunction extends ListConverterFunction<SaleOrderTi
                 transactionState,
                 tenderType,
                 _kitchenPrintStatus(c, indexHolder.get(SaleOrderTable.KITCHEN_PRINT_STATUS)),
-                _kdsSendStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KDS_SEND_STATUS)),
+                _kdsSendStatus(c, c.getColumnIndex(ShopSchema2.SaleOrderView2.SaleOrderTable.KDS_SEND_STATUS)),
                 _decimal(c, indexHolder.get(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO)
         );
     }
