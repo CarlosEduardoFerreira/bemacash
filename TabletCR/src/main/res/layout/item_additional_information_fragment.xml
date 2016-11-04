@@ -15,13 +15,19 @@
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_ean_upc_code" />
+                android:text="@string/item_activity_ean_upc_code"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
 
             <EditText
                 android:id="@+id/ean_upc"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:inputType="textImeMultiLine"
+                android:maxLines="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
         </TableRow>
 
         <TableRow
@@ -29,13 +35,19 @@
             android:minHeight="@dimen/table_row_height">
             <TextView
                 style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_product_code" />
+                android:text="@string/item_activity_product_code"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
 
             <EditText
                 android:id="@+id/product_code"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:inputType="textImeMultiLine"
+                android:maxLines="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:maxLength="20"/>
         </TableRow>
 
@@ -148,9 +160,11 @@
             <EditText
                 android:id="@+id/bonus_points"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"/>
+                android:inputType="textImeMultiLine|number"
+                android:maxLines="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
         </TableRow>
 
         <TableRow

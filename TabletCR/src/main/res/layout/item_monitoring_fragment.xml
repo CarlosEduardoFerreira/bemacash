@@ -46,42 +46,58 @@
             android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_available_quantity" />
+                android:text="@string/item_activity_available_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
             <EditText
                 android:id="@+id/available_qty"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
+                android:inputType="textImeMultiLine|numberDecimal"
+                android:maxLines="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
         </TableRow>
 
         <TableRow
             android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_minimum_qty" />
+                android:text="@string/item_activity_minimum_qty"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
             <EditText
                 android:id="@+id/minimum_qty"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
+                android:inputType="textImeMultiLine|numberDecimal"
+                android:maxLines="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
         </TableRow>
 
         <TableRow
             android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_recommended_qty" />
+                android:text="@string/item_activity_recommended_qty"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:maxLines="2"
+                android:layout_weight="53"/>
 
             <EditText
                 android:id="@+id/recommended_qty"
                 style="@style/EditItem.Table.Edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
+                android:inputType="textImeMultiLine|numberDecimal"
+                android:maxLines="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="47"/>
         </TableRow>
     </TableLayout>
     </ScrollView>

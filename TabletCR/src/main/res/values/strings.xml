@@ -469,7 +469,7 @@
     <string name="item_activity_optionals">No-Options (%d):</string>
     <string name="item_activity_addons">Add-ons (%d):</string>
     <string name="item_activity_minimum_qty">Minimum quantity:</string>
-    <string name="item_activity_recommended_qty">Recommended\nquantity:</string>
+    <string name="item_activity_recommended_qty">Recommended quantity:</string>
     <string name="item_activity_available_quantity">Available quantity:</string>
     <string name="item_activity_stock_tracking">Stock tracking:</string>
     <string name="item_activity_sales_price">Sales Price:</string>

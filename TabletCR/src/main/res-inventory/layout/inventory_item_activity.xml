@@ -90,7 +90,7 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical">
 
@@ -113,27 +113,28 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                style="@style/EditItem.Table.LabelLayout.CommonInformation">
 
-                <FrameLayout
-                    style="@style/EditItem.Table.LabelLayout.CommonInformation">
-
-                    <TextView
-                        style="@style/EditItem.Table.Label"
-                        android:text="@string/item_activity_ean_upc_code"/>
-                </FrameLayout>
+                <TextView
+                    style="@style/EditItem.Table.Label"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/item_activity_ean_upc_code"/>
 
 
                 <EditText
                     style="@style/EditItem.Table.Edittext"
                     android:id="@+id/ean"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:maxLength="13"
-                    android:inputType="number"/>
+                    android:inputType="number|textImeMultiLine"
+                    android:maxLines="1"/>
 
             </TableRow>
 
