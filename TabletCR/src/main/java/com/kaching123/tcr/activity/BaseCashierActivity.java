@@ -152,6 +152,7 @@ import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.converter.IntegerFunction;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
+import com.kaching123.tcr.model.converter.StringFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
@@ -2733,28 +2734,30 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private void onScaleItemAdded(final SaleOrderItemModel item) {
         final SaleOrderItemViewModel model = getSaleItem(item.saleItemGuid);
-        if (scaleService.getStatus() == 0 && scaleService.isUnitsLabelMatch(model.unitsLabel)) {
+        if (model!=null && scaleService.getStatus() == 0 && scaleService.isUnitsLabelMatch(model.unitsLabel)) {
             BigDecimal newQty = new BigDecimal(scaleService.readScale());
             UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(), item.qty.add(newQty), updateQtySaleOrderItemCallback);
         } else {
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                     BaseCashierActivity.this);
-            alertDialogBuilder.setTitle("Scale Warning");
-            String header = !scaleServiceBound || scaleService.getStatus() < 0 ? "Check connection to the scale" : "Place " + item.description + " on the Scale";
-            header += " or enter the weight manually.";
+            alertDialogBuilder.setTitle(getString(R.string.scale_dlg_warning_title));
+
+            String header = !scaleServiceBound || scaleService.getStatus() < 0 ?
+                    getString(R.string.scale_dlg_warning_message_check_connection) :
+                    String.format(getString(R.string.scale_dlg_warning_message_place_on_scale),item.description);
+
             alertDialogBuilder
                     .setMessage(header)
                     .setCancelable(false)
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getString(R.string.scale_dlg_warning_negative_button), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             if (item.qty.equals(BigDecimal.ZERO)) {
                                 orderItemListFragment.doRemoceClickLine(item.getGuid());
                             }
                             dialog.cancel();
-                            return;
                         }
                     })
-                    .setNeutralButton("Setting", new DialogInterface.OnClickListener() {
+                    .setNeutralButton(getString(R.string.scale_dlg_warning_neutral_button), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             if (item.qty.equals(BigDecimal.ZERO)) {
                                 orderItemListFragment.doRemoceClickLine(item.getGuid());
@@ -2763,7 +2766,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                             SettingsActivity.start(BaseCashierActivity.this);
                         }
                     })
-                    .setPositiveButton("Manually", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getString(R.string.scale_dlg_warning_positive_button), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             if (getOperatorPermissions().contains(Permission.CHANGE_QTY)) {
                                 QtyEditFragment.showCancelable(BaseCashierActivity.this, item.getGuid(),
@@ -2799,7 +2802,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                             }
                                         }, Permission.CHANGE_QTY);
                             }
-                            return;
                         }
                     });
 
@@ -2816,16 +2818,19 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                         if (!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to "
-                                            + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
+                                    alertDialog.setMessage(
+                                            String.format(getString(R.string.scale_dlg_warning_unit_does_not_match),  model.unitsLabel.toUpperCase()));
                                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
                                 }
                             });
                         } else if (newQty.compareTo(BigDecimal.ZERO) != 1) {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    String header = !scaleServiceBound ? "Check connection to the scale" : "Place " + item.description + " on the Scale";
-                                    header += " or enter the weight manually.";
+                                    String header = !scaleServiceBound ?
+                                            getString(R.string.scale_dlg_warning_message_check_connection) :
+                                            String.format(getString(R.string.scale_dlg_warning_message_place_on_scale),item.description);
+
+
                                     alertDialog.setMessage(header);
                                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
                                 }
@@ -2852,8 +2857,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                 UpdateQtySaleOrderItemCommand.start(BaseCashierActivity.this, item.getGuid(),
                                         item.qty.add(finalNewQty), updateQtySaleOrderItemCallback);
                                 alertDialog.dismiss();
-//                                        Toast.makeText(BaseCashierActivity.this,"New qty = " + finalNewQty.toString(),Toast.LENGTH_SHORT).show();
-                                return;
                             }
                         });
                     }
@@ -2865,8 +2868,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.GONE);
                 if (!scaleService.isUnitsLabelMatch(model.unitsLabel)) {
                     Logger.d("Status = " + scaleService.getStatus());
-                    alertDialog.setMessage("The scale unit does not match the item unit of measurement. Switch scale to "
-                            + model.unitsLabel.toUpperCase() + " to continue Please check the scale.");
+                    alertDialog.setMessage(
+                            String.format(getString(R.string.scale_dlg_warning_unit_does_not_match),  model.unitsLabel.toUpperCase()));
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
                 }
             }
