@@ -18,7 +18,7 @@ public class BemaScale {
     static public final int OK = 0;
     static public final int GENERIC_ERROR = -100;
     public static final byte[] INIT = {0x05}; // initiate communication
-//    public static final byte[] REQ = {0x12}; // request of weight data of type-1
+    //    public static final byte[] REQ = {0x12}; // request of weight data of type-1
     public static final byte[] REQ = {0x57,0x0D}; // request of weight data
     public static final byte[] ZERO = {0x38,0x38,0x38,0x38}; // request of weight data
     private static final int ScaleDataLength = 16;
@@ -219,7 +219,8 @@ public class BemaScale {
                         bytesRead += ret;
                     }
                     formatBytes(bytes);
-                    return new String(Arrays.copyOfRange(bytes,7,9), "UTF-8");
+                    String unitLabel = new String(Arrays.copyOfRange(bytes,7,9), "UTF-8");
+                    return unitLabel.equalsIgnoreCase("LB") ? "LBS" : unitLabel;
                     //ToDo: Toast different error if necessary
                 }
             } catch (NumberFormatException e){
@@ -239,7 +240,7 @@ public class BemaScale {
         StringBuilder sb = new StringBuilder();
         sb.append(new String(bytes).substring(1,7));
         if(sb.indexOf(".") == -1)
-           sb = sb.delete(4,6);
+            sb = sb.delete(4,6);
         return sb.toString().replaceAll("^0+(?!$)", ""); // remove leading 0
     }
 
