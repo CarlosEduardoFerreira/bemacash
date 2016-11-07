@@ -1145,7 +1145,7 @@
         <item name="android:horizontalSpacing">@dimen/bar_chart_spacing</item>
         <item name="android:columnWidth">@dimen/bar_chart_bar_width</item>
         <item name="android:stretchMode">none</item>
-        <item name="android:gravity">left</item>
+        <item name="android:gravity">center_horizontal</item>
     </style>
 
     <style name="Reports.HorizontalBarChart">

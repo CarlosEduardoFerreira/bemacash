@@ -30,11 +30,8 @@
     <dimen name="horizontal_bar_chart_bar_height">57dp</dimen>
     <dimen name="bar_chart_spacing">8dp</dimen>
 
-
-
     <dimen name="dashboard_total_sales_container_width">4300dp</dimen>
     <dimen name="dashboard_total_sales_container_height">200dp</dimen>
-    <dimen name="dashboard_total_sales_sub_label">18sp</dimen>
 
     <dimen name="cashier_activity_background_width">430dp</dimen>
 

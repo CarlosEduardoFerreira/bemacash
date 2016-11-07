@@ -20,10 +20,10 @@
                 android:id="@+id/main_buttons_container"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                android:paddingTop="40dp"
-                android:paddingBottom="40dp"
-                android:paddingLeft="100dp"
-                android:paddingRight="100dp"
+                android:paddingTop="30dp"
+                android:paddingBottom="30dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="44dp"
                 android:background="@color/prepaid_dialog_white"
                 >
 
@@ -35,13 +35,6 @@
                     android:layout_marginRight="@dimen/dashboard_module_margin"
                     android:enabled="false">
 
-                    <ImageView
-                        android:layout_height="@dimen/dashboard_register_img_size"
-                        android:layout_width="@dimen/dashboard_register_img_size"
-                        android:background="@drawable/dashboard_register_bg"
-                        android:layout_marginTop="5dp"
-                        android:layout_centerHorizontal="true" />
-
                     <TextView
                         style="@style/DashboardModule.Label"
                         android:layout_height="wrap_content"
@@ -49,7 +42,18 @@
                         android:layout_centerHorizontal="true"
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="19dp"
-                        android:text="@string/dashboard_activity_register_button_label"/>
+                        android:text="@string/dashboard_activity_register_button_label"
+                        android:id="@+id/textView" />
+
+                    <ImageView
+                        android:layout_height="@dimen/dashboard_register_img_size"
+                        android:layout_width="@dimen/dashboard_register_img_size"
+                        android:background="@drawable/dashboard_register_bg"
+                        android:id="@+id/imageView2"
+                        android:layout_marginTop="10dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignRight="@+id/textView"
+                        android:layout_alignEnd="@+id/textView" />
 
                 </RelativeLayout>
 
@@ -62,7 +66,8 @@
                     android:layout_marginRight="@dimen/dashboard_module_margin">
 
                     <ImageView
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="15dp"
                         android:layout_height="@dimen/dashboard_inventory_img_size"
                         android:layout_width="@dimen/dashboard_inventory_img_size"
                         android:background="@drawable/dashboard_inventory_bg"
@@ -90,7 +95,7 @@
                     android:layout_toRightOf="@id/inventory_button">
 
                     <ImageView
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="10dp"
                         android:layout_height="@dimen/dashboard_nosale_img_size"
                         android:layout_width="@dimen/dashboard_nosale_img_size"
                         android:background="@drawable/dashboard_no_sale_bg"
@@ -123,7 +128,7 @@
                         android:layout_width="@dimen/dashboard_nosale_img_size"
                         android:background="@drawable/dashboard_drop_layouts"
                         android:id="@+id/imageView"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="10dp"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true" />
 
@@ -132,7 +137,6 @@
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:text="@string/dashboard_activity_drops_and_payouts_button_label"
-
                         android:layout_centerHorizontal="true"
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="19dp" />
@@ -153,7 +157,7 @@
                         android:layout_width="@dimen/dashboard_nosale_img_size"
                         android:background="@drawable/dashboard_checkin_out_layouts"
                         android:id="@+id/imageView1"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="10dp"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true" />
 
@@ -162,7 +166,6 @@
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:text="@string/dashboard_activity_checkin_and_out_button_label"
-
                         android:layout_centerHorizontal="true"
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="19dp" />
@@ -210,7 +213,7 @@
                         android:layout_height="@dimen/dashboard_customers_img_h"
                         android:layout_width="@dimen/dashboard_customers_img_w"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="0dp"
                         android:background="@drawable/dashboard_customers_bg"/>
 
                     <TextView
@@ -234,7 +237,7 @@
 
                     <ImageView
                         android:layout_height="@dimen/dashboard_nosale_img_size"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/dashboard_nosale_img_size"
                         android:background="@drawable/dashboard_reports_bg"
                         android:layout_marginTop="10dp"
                         android:layout_centerHorizontal="true" />
@@ -285,7 +288,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_below="@id/operator_name_value_label"
-                android:background="@android:color/darker_gray"/>
+                android:layout_marginTop="10dp"
+                android:background="@android:color/darker_gray"
+                android:id="@+id/view2" />
 
 
 
@@ -300,16 +305,35 @@
                 <ImageView
                     android:id="@+id/shift_action_image"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:background="@drawable/shift_open_btn_bg"
-                    android:paddingTop="10dp"/>
+                    android:paddingTop="20dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+
+                <TextView
+                    android:id="@+id/shift_time_label"
+                    style="@style/ShiftTime.Label"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_below="@+id/shift_action_image"
+                    android:layout_alignLeft="@id/shift_action_image"
+                    android:layout_alignRight="@id/shift_action_image"
+                    android:layout_alignTop="@id/shift_action_image"
+                    android:visibility="gone"
+                    android:layout_marginTop="22dp"
+                    />
 
                 <TextView
                     android:id="@+id/close_shift_label"
-                    android:textSize="28sp"
+                    android:textSize="20sp"
                     android:text="@string/button_close_shift"
                     android:layout_alignParentBottom="true"
-                    android:paddingBottom="12dp"
+                    android:paddingBottom="10dp"
                     android:textStyle="normal"
                     android:textColor="@color/text_yellow"
                     android:layout_centerHorizontal="true"
@@ -319,30 +343,16 @@
 
                 <TextView
                     android:id="@+id/open_shift_label"
-                    android:textSize="28sp"
+                    android:textSize="20sp"
                     android:text="@string/button_open_shift"
                     android:layout_alignParentBottom="true"
-                    android:paddingBottom="12dp"
+                    android:paddingBottom="10dp"
                     android:textStyle="normal"
                     android:textColor="@color/text_blue2"
                     android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"/>
-
-                <TextView
-                    android:id="@+id/shift_time_label"
-                    style="@style/ShiftTime.Label"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:layout_alignLeft="@id/shift_action_image"
-                    android:layout_alignRight="@id/shift_action_image"
-                    android:layout_alignBottom="@id/shift_action_image"
-                    android:layout_marginBottom="75dp"
-                    android:visibility="gone"
-                    />
-
 
 
 
@@ -351,14 +361,15 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/shift_action_button_container"
-                android:background="@android:color/darker_gray"/>
+                android:background="@android:color/darker_gray"
+                android:id="@+id/view3" />
 
             <RelativeLayout
                 android:id="@+id/total_sales_container"
                 android:layout_below="@+id/cash_on_drawer_container"
-                android:layout_width="@dimen/dashboard_total_sales_container_width"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/dashboard_total_sales_container_height"
-                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="8dp"
                 android:background="@drawable/addon_background"
@@ -386,10 +397,10 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
+                    android:layout_height="100dp"
                     android:orientation="horizontal"
                     android:layout_below="@id/total_sales_value_label"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp">
 
@@ -569,12 +580,12 @@
                     android:id="@+id/cash_on_drawer_label"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginRight="30dp"
                     android:layout_marginLeft="50dp"
                     android:textStyle="bold"
                     android:textColor="@color/beige"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:text="@string/dashboard_activity_cash_in_drawer_label"/>
 
                 <TextView
@@ -583,11 +594,11 @@
                     android:layout_width="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:layout_below="@id/cash_on_drawer_label"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="-4dp"
                     android:layout_marginRight="30dp"
                     android:textStyle="bold"
                     android:textColor="@color/dashboard_cash_on_drawer_value_text"
-                    android:textSize="40sp"
+                    android:textSize="36sp"
                     android:text="0.00"/>
 
                 <TextView
@@ -596,11 +607,11 @@
                     android:layout_width="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:layout_below="@id/cash_on_drawer_value_label"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginRight="30dp"
                     android:textStyle="bold"
                     android:textColor="@color/beige"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:text="@string/dashboard_activity_opening_amount"/>
 
                 <TextView
@@ -609,19 +620,21 @@
                     android:layout_width="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:layout_below="@id/opening_amount_label"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="-4dp"
                     android:layout_marginRight="30dp"
                     android:textStyle="bold"
                     android:textColor="@color/dashboard_opening_amount_value_text"
-                    android:textSize="40sp"
+                    android:textSize="36sp"
                     android:text="0.00"/>
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_alignTop="@id/opening_amount_value_label"
-                    android:layout_marginTop="70dp"
+                    android:layout_marginTop="60dp"
                     android:background="@android:color/darker_gray"/>
             </RelativeLayout>
+
+
 
 
         </RelativeLayout>

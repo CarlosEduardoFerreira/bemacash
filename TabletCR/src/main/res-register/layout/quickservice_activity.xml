@@ -23,7 +23,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="0.88"
             android:orientation="horizontal">
 
             <fragment
@@ -91,11 +91,13 @@
                 android:layout_height="match_parent" />
 
             <FrameLayout
-                android:layout_width="320dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_toRightOf="@+id/items_list_fragment"
                 android:paddingLeft="8dp"
-                android:paddingRight="8dp">
+                android:paddingRight="8dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true">
 
                 <fragment
                     android:id="@+id/total_cost_fragment"
