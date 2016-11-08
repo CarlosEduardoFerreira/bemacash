@@ -152,7 +152,6 @@ import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.converter.IntegerFunction;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
-import com.kaching123.tcr.model.converter.StringFunction;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.DoFullRefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundResponse;
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
@@ -448,6 +447,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     private boolean scaleServiceBound;
+    private boolean isItemWithPrefixedBarCodeAlreadyWeighed;
     private ScaleService scaleService;
     protected ServiceConnection scaleServiceConnection = new ServiceConnection() {
 
@@ -859,8 +859,16 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 //            return;
 //        }
 
-
+        isItemWithPrefixedBarCodeAlreadyWeighed =  isItemWithPrefixedBarCodeAlreadyWeighed(item, price, quantity);
         tryToAddItem(item, price, quantity, unit);
+    }
+
+    private boolean isItemWithPrefixedBarCodeAlreadyWeighed(ItemExModel item, BigDecimal price, BigDecimal quantity) {
+        return item.priceType == PriceType.UNIT_PRICE
+                && item.shortCut.equalsIgnoreCase("lb")
+                && price != null
+                && quantity != null
+                && BigDecimal.ZERO.compareTo(quantity) == -1;
     }
 
     public void focusUsbInput() {
@@ -2890,9 +2898,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 return;
             startCommand(new DisplaySaleItemCommand(item.saleItemGuid));
             if (item.priceType == PriceType.UNIT_PRICE) {
-                if (scaleServiceBound) {
+                if (scaleServiceBound && !isItemWithPrefixedBarCodeAlreadyWeighed) { //if item was scanned and has correct barcode we don't need to weight it again
                     onScaleItemAdded(item);
                 }
+                isItemWithPrefixedBarCodeAlreadyWeighed = false;
             }
             if (discountBundles != null && !discountBundles.isEmpty()){
                 ApplyMultipleDiscountCommand.start(self(), orderGuid, new ArrayList<>(discountBundles));
@@ -2901,6 +2910,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         protected void onItemAddError() {
+            isItemWithPrefixedBarCodeAlreadyWeighed = false;
             notifyLoyaltyProcessorItemAddedToOrder(false);
             if (isFinishing() || isDestroyed())
                 return;
@@ -2909,6 +2919,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         protected void onOrderAdded(String orderGuid) {
+            isItemWithPrefixedBarCodeAlreadyWeighed = false;
             if (isFinishing() || isDestroyed())
                 return;
             setOrderGuid(orderGuid, true);
