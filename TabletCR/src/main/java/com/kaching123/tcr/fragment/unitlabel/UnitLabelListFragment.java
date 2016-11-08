@@ -179,8 +179,9 @@ public class UnitLabelListFragment extends ListFragment implements LoaderCallbac
         return CursorLoaderBuilder
                 .forUri(URI_UNIT_LABELS)
                 .orderBy(ShopStore.UnitLabelTable.SHORTCUT)
-                .where(ShopStore.UnitLabelTable.SHORTCUT + " <> \'" +
-                        TcrApplication.get().getShopInfo().defUnitLabelShortcut + "\'")
+                //filter deleted for BEMA-1019
+                /*.where(ShopStore.UnitLabelTable.SHORTCUT + " <> \'" +
+                        TcrApplication.get().getShopInfo().defUnitLabelShortcut + "\'")*/
                 .transform(new UnitLabelFunction())
                 .build(getActivity());
     } // select * from UNIT_LABEL where shortcut <> 'und' and
