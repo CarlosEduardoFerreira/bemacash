@@ -44,6 +44,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
+                <fragment
+                    android:id="@+id/search_result_fragment"
+                    android:name="com.kaching123.tcr.fragment.search.SearchItemsListFragment_"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
                 <RelativeLayout
                     android:id="@+id/empty_holder"
                     android:layout_width="match_parent"
@@ -58,12 +64,6 @@
                         android:layout_centerInParent="true"
                         android:text="Add new" />
                 </RelativeLayout>
-
-                <fragment
-                    android:id="@+id/search_result_fragment"
-                    android:name="com.kaching123.tcr.fragment.search.SearchItemsListFragment_"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
 
             </FrameLayout>
 

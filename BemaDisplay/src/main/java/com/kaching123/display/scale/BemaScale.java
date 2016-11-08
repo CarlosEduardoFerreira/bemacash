@@ -220,7 +220,9 @@ public class BemaScale {
                     }
                     formatBytes(bytes);
                     String unitLabel = new String(Arrays.copyOfRange(bytes,7,9), "UTF-8");
-                    return unitLabel.equalsIgnoreCase("LB") ? "LBS" : unitLabel;
+                    unitLabel = unitLabel.equalsIgnoreCase("LB") ? "LBS" : unitLabel;
+                    unitLabel = unitLabel.equalsIgnoreCase("KG") ? "KGS" : unitLabel;
+                    return unitLabel;
                     //ToDo: Toast different error if necessary
                 }
             } catch (NumberFormatException e){

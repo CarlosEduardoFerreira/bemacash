@@ -18,15 +18,13 @@
                 style="@style/EditItem.Table.Label"
                 android:text="@string/item_activity_monitoring"
                 android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_weight="53"/>
+                android:textSize="20sp"/>
 
             <CheckBox
                 android:id="@+id/monitoring"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/EditItem.Table.CheckBox"
-                android:layout_weight="47"/>
+                style="@style/EditItem.Table.CheckBox"/>
         </TableRow>
 
         <TableRow
@@ -35,73 +33,58 @@
                 style="@style/EditItem.Table.Label"
                 android:text="@string/item_limit_qty"
                 android:textStyle="bold"
-                android:layout_weight="53"
                 android:textSize="20sp"/>
 
             <CheckBox
                 android:id="@+id/limit_qty"
                 style="@style/EditItem.Table.CheckBox"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="47"/>
+                android:layout_height="wrap_content"/>
         </TableRow>
 
         <TableRow
             android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_available_quantity"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="53"/>
+                android:text="@string/item_activity_available_quantity" />
 
             <EditText
                 android:id="@+id/available_qty"
                 style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:inputType="textImeMultiLine|numberDecimal"
-                android:maxLines="1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="47"/>
+                android:maxLines="1"/>
         </TableRow>
 
         <TableRow
             android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_minimum_qty"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="53"/>
+                android:text="@string/item_activity_minimum_qty" />
 
             <EditText
                 android:id="@+id/minimum_qty"
                 style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:inputType="textImeMultiLine|numberDecimal"
-                android:maxLines="1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="47"/>
+                android:maxLines="1"/>
         </TableRow>
 
         <TableRow
             android:minHeight="@dimen/table_row_height_item_monitoring">
             <TextView
                 style="@style/EditItem.Table.Label"
-                android:text="@string/item_activity_recommended_qty"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:maxLines="2"
-                android:layout_weight="53"/>
+                android:text="@string/item_activity_recommended_qty" />
 
             <EditText
                 android:id="@+id/recommended_qty"
                 style="@style/EditItem.Table.Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:inputType="textImeMultiLine|numberDecimal"
-                android:maxLines="1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="47"/>
+                android:maxLines="1"/>
         </TableRow>
     </TableLayout>
     </ScrollView>

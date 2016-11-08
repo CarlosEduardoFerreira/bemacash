@@ -66,8 +66,8 @@
 
         <GridView
             android:id="@+id/bonds"
-            android:layout_width="445dp"
-            android:layout_height="654dp"
+            android:layout_width="@dimen/payment_tender_dlg_payment_gridview_layout_width"
+            android:layout_height="wrap_content"
             android:background="@drawable/addon_background"
             android:columnWidth="@dimen/payment_tender_dlg_payment_gridview_column_width"
             android:fadingEdgeLength="0px"
@@ -319,10 +319,10 @@
         android:id="@+id/ebt_info"
         android:layout_width="@dimen/payment_tender_dlg_ebt_info_layout_width"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="9dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/h1"
-        android:layout_alignEnd="@+id/h1">
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/payment_tender_dlg_ebt_info_layout_margin_bottom"
+        android:layout_marginTop="@dimen/payment_tender_dlg_ebt_info_layout_margin_top">
 
         <TextView
             android:id="@+id/allowed_ebt_name_tw"
