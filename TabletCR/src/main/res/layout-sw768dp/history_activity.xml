@@ -14,25 +14,25 @@
 
         <ViewFlipper
             android:id="@+id/list_flipper"
-            android:layout_width="@dimen/history_views_width"
+            android:layout_width="1027dp"
             android:layout_height="match_parent">
 
             <fragment
                 android:name="com.kaching123.tcr.fragment.tendering.history.HistoryOrderListFragment_"
-                android:layout_width="@dimen/history_views_width"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/order_list_fragment"/>
 
             <fragment
                 android:name="com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment_"
-                android:layout_width="@dimen/history_views_width"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/order_items_list_fragment"/>
         </ViewFlipper>
 
         <ViewFlipper
             android:id="@+id/flipper"
-            android:layout_width="320dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"

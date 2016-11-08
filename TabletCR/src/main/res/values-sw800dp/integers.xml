@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="modify_dialog_height">500dp</dimen>
-
-    <integer name="modify_container_row_count">4</integer>
-
     <integer name="quick_categories_columns">2</integer>
     <integer name="quick_grid_items_grid_columns">9</integer>
     <integer name="quick_grid_rows">3</integer>
@@ -27,7 +24,7 @@
     <integer name="product_country_grid_columns">26</integer>
     <integer name="product_flag_grid_columns">3</integer>
     <integer name="product_carrier_grid_columns">4</integer>
-    <integer name="product_grid_rows">4</integer>
+    <integer name="product_grid_rows">3</integer>
     <integer name="addon_nooption_column">2</integer>
     <integer name="saleorder_items_item_subtotal_weight">4</integer>
     <integer-array name="tips_predefine">
