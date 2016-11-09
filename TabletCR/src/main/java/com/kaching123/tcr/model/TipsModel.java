@@ -29,23 +29,25 @@ public class TipsModel implements IValueModel, Serializable {
     public BigDecimal amount;
     public String comment;
     public PaymentType paymentType;
+    public String registerId;
 
     public TipsModel(Cursor c) {
         this(
-            c.getString(c.getColumnIndex(EmployeeTipsTable.GUID)),
-            c.getString(c.getColumnIndex(EmployeeTipsTable.PARENT_GUID)),
-            c.getString(c.getColumnIndex(EmployeeTipsTable.EMPLOYEE_ID)),
-            c.getString(c.getColumnIndex(EmployeeTipsTable.SHIFT_ID)),
-            c.getString(c.getColumnIndex(EmployeeTipsTable.ORDER_ID)),
-            c.getString(c.getColumnIndex(EmployeeTipsTable.PAYMENT_TRANSACTION_ID)),
-            _nullableDate(c, c.getColumnIndex(EmployeeTipsTable.CREATE_TIME)),
-            _decimal(c, c.getColumnIndex(EmployeeTipsTable.AMOUNT), BigDecimal.ZERO),
-            c.getString(c.getColumnIndex(EmployeeTipsTable.COMMENT)),
-            _tipsPaymentType(c, c.getColumnIndex(EmployeeTipsTable.PAYMENT_TYPE))
-            );
+                c.getString(c.getColumnIndex(EmployeeTipsTable.GUID)),
+                c.getString(c.getColumnIndex(EmployeeTipsTable.PARENT_GUID)),
+                c.getString(c.getColumnIndex(EmployeeTipsTable.EMPLOYEE_ID)),
+                c.getString(c.getColumnIndex(EmployeeTipsTable.SHIFT_ID)),
+                c.getString(c.getColumnIndex(EmployeeTipsTable.ORDER_ID)),
+                c.getString(c.getColumnIndex(EmployeeTipsTable.PAYMENT_TRANSACTION_ID)),
+                _nullableDate(c, c.getColumnIndex(EmployeeTipsTable.CREATE_TIME)),
+                _decimal(c, c.getColumnIndex(EmployeeTipsTable.AMOUNT), BigDecimal.ZERO),
+                c.getString(c.getColumnIndex(EmployeeTipsTable.COMMENT)),
+                _tipsPaymentType(c, c.getColumnIndex(EmployeeTipsTable.PAYMENT_TYPE)),
+                c.getString(c.getColumnIndex(EmployeeTipsTable.REGISTER_ID))
+        );
     }
 
-    public TipsModel(String id, String parentId, String employeeId, String shiftId, String orderId, String paymentTransactionId, Date createTime, BigDecimal amount, String comment, PaymentType paymentType) {
+    public TipsModel(String id, String parentId, String employeeId, String shiftId, String orderId, String paymentTransactionId, Date createTime, BigDecimal amount, String comment, PaymentType paymentType, String registerId) {
         this.id = id;
         this.parentId = parentId;
         this.employeeId = employeeId;
@@ -56,6 +58,7 @@ public class TipsModel implements IValueModel, Serializable {
         this.amount = amount;
         this.comment = comment;
         this.paymentType = paymentType;
+        this.registerId = registerId;
     }
 
     @Override

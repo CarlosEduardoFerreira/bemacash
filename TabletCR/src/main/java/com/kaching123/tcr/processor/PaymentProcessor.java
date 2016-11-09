@@ -280,7 +280,8 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                             null,
                             amount,
                             notes,
-                            null
+                            null,
+                            getRegisterId()
                     ));
                 }
             }, false, orderTotal, new OnDialogClickListener() {
@@ -293,6 +294,10 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
             return;
         }
         proceedToClosePreauth(context, transaction, null);
+    }
+
+    private String getRegisterId() {
+        return String.valueOf(getApp().getRegisterId());
     }
 
     private void proceedToClosePreauth(final FragmentActivity context, final PaymentTransactionModel transactionModel, final TipsModel tips) {
@@ -1430,7 +1435,8 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                         null,
                         amount,
                         notes,
-                        null
+                        null,
+                        getRegisterId()
                 ), true, null);
             }
 

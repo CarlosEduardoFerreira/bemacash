@@ -386,11 +386,18 @@ public class XReportQuery {
         tax = tax.add(saleInfo.tax.add(returnInfo.tax));//returnInfo is negative
         cogs = cogs.add(saleInfo.cogs.add(returnInfo.cogs));//returnInfo is negative
 
-        Cursor tipsCursor = ProviderAction.query(URI_TIPS)
+        Query query = ProviderAction.query(URI_TIPS)
                 .projection(EmployeeTipsTable.AMOUNT, EmployeeTipsTable.PAYMENT_TYPE)
                 .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " > ?", fromDate)
-                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " < ?", toDate)
-                .perform(context);
+                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " < ?", toDate);
+
+        Cursor tipsCursor = null;
+        if (registerID == 0) {
+            tipsCursor = query.perform(context);
+        } else {
+            tipsCursor = query.where(EmployeeTipsTable.REGISTER_ID + " = ? ", String.valueOf(registerID))
+                    .perform(context);
+        }
 
         while (tipsCursor.moveToNext()) {
             BigDecimal amount = _decimal(tipsCursor, 0, BigDecimal.ZERO);

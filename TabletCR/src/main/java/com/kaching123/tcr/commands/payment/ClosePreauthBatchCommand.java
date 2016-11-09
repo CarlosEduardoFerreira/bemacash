@@ -5,15 +5,14 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.user.AddTipsCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
-import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.TipsModel.PaymentType;
-import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -75,11 +74,16 @@ public class ClosePreauthBatchCommand extends AsyncCommand {
                         new Date(),
                         tipsAmount,
                         tipsComments,
-                        PaymentType.CREDIT
+                        PaymentType.CREDIT,
+                        getRegisterId()
                 ), getAppCommandContext()));
             }
         }
         return addTipsResult.size() != 0;
+    }
+
+    private String getRegisterId() {
+        return String.valueOf(((TcrApplication) (getContext().getApplicationContext())).getRegisterId());
     }
 
     @Override
