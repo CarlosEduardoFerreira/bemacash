@@ -14,11 +14,6 @@ import android.widget.AdapterView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidLongDistanceActivity;
@@ -29,9 +24,13 @@ import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.websvc.api.prepaid.Category;
-import com.kaching123.tcr.websvc.api.prepaid.MasterBiller;
 import com.viewpagerindicator.LinePageIndicator;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,7 +92,7 @@ public class PrepaidLongDistancePopularGridViewFragment extends PrepaidLongDista
             final ArrayList<BillPaymentItem> billPaymentItems = new ArrayList<BillPaymentItem>();
 
             return loader.orderBy(ShopStore.BillPayment.CATEGORYDESCRIPTION)
-                    .wrap(new Function<Cursor, List<BillPaymentItem>>() {
+                    .transform(new Function<Cursor, List<BillPaymentItem>>() {
                         @Override
                         public List<BillPaymentItem> apply(Cursor c) {
 
@@ -139,7 +138,7 @@ public class PrepaidLongDistancePopularGridViewFragment extends PrepaidLongDista
 
         final LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         return loader.orderBy(ShopStore.WirelessTable.NAME)
-                .wrap(new Function<Cursor, List<WirelessItem>>() {
+                .transform(new Function<Cursor, List<WirelessItem>>() {
                     @Override
                     public List<WirelessItem> apply(Cursor c) {
                         List<WirelessItem> items = new ArrayList<WirelessItem>(c.getCount());

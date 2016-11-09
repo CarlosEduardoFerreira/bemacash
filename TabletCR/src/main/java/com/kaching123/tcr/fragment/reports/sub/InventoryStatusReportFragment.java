@@ -24,10 +24,6 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
@@ -53,6 +49,11 @@ import com.kaching123.tcr.reports.InventoryStatusReportQuery.DepInfoWrapFunction
 import com.kaching123.tcr.reports.InventoryStatusReportQuery.ItemInfo;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -437,14 +438,14 @@ public class InventoryStatusReportFragment extends SuperBaseFragment {
             return CursorLoaderBuilder
                     .forUri(URI_DEPARTMENT)
                     .projection(DepartmentTable.GUID, DepartmentTable.TITLE)
-                    .transform(new Function<Cursor, String[]>() {
+                    .transformRow(new Function<Cursor, String[]>() {
 
                         @Override
                         public String[] apply(Cursor cursor) {
                             return new String[]{cursor.getString(0), cursor.getString(1)};
                         }
                     })
-                    .wrap(new Function<List<String[]>, List<String[]>>() {
+                    .transform(new Function<List<String[]>, List<String[]>>() {
 
                         @Override
                         public List<String[]> apply(List<String[]> strings) {

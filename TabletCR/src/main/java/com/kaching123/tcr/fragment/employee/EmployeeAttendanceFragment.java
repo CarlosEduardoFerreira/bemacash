@@ -14,11 +14,6 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.commands.store.user.AddClockInCommand;
@@ -33,6 +28,12 @@ import com.kaching123.tcr.fragment.reports.DateRangeFragment;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
 import com.kaching123.tcr.util.DateUtils;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.Date;
 import java.util.List;
@@ -89,7 +90,7 @@ public class EmployeeAttendanceFragment extends DateRangeFragment implements Loa
                 .where(EmployeeTimesheetTable.EMPLOYEE_GUID + " =?", employeeGuid)
                 .where(EmployeeTimesheetTable.CLOCK_IN + " >= ? and " + EmployeeTimesheetTable.CLOCK_IN + " <= ?", fromDate.getTime(), toDate.getTime())
                 .orderBy(EmployeeTimesheetTable.CLOCK_IN)
-                .transform(new Function<Cursor, TimeInfo>() {
+                .transformRow(new Function<Cursor, TimeInfo>() {
                     @Override
                     public TimeInfo apply(Cursor c) {
                         return new TimeInfo(c.getString(0), c.getLong(1), c.getLong(2));

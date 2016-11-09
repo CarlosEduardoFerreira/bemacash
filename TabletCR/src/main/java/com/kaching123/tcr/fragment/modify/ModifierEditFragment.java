@@ -579,7 +579,7 @@ public class ModifierEditFragment extends StyledDialogFragment implements Barcod
                     .forUri(URI_GROUP)
                     .where(ShopStore.ModifierGroupTable.ITEM_GUID + " = ?", itemGuid)
                     .orderBy(ModifierGroupTable.ORDER_NUM)
-                    .transform(new Function<Cursor, ModifierGroupModel>() {
+                    .transformRow(new Function<Cursor, ModifierGroupModel>() {
                         @Override
                         public ModifierGroupModel apply(Cursor c) {
                             return new ModifierGroupModel(c);

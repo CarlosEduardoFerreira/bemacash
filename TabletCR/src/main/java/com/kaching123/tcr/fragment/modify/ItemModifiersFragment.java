@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +72,7 @@ public class ItemModifiersFragment extends Fragment{
         CollectModifiersCommand.start(getActivity(), itemGuid, saleItemGuid, collectionCallback);
     }
 
-    private CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {
+    public CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {
         @Override
         public void onCollected(ArrayList<SelectedModifierExModel> modifiers, ItemExModel model, BigDecimal price, BigDecimal quantity, Unit unit, boolean hasAutoApply) {
             Map<String, List<SelectedModifierExModel>> sortedModifiers = sortModifiers(modifiers);
@@ -150,62 +149,6 @@ public class ItemModifiersFragment extends Fragment{
         return sortByComparator(groupedItems);
     }
 
-//    private static Map<String, List<SelectedModifierExModel>> sortModifiers(List<SelectedModifierExModel> modifiers){
-//        Comparator<String> comparator = new Comparator<String>() {
-//            @Override
-//            public int compare(String lhs, String rhs) {
-//                int lhsNum = intRepresentation(lhs);
-//                int rhsNum = intRepresentation(rhs);
-//
-//                return lhsNum - rhsNum;
-//            }
-//
-//            private int intRepresentation(String s){
-//                /* free_modifiers, mod_group1, mod_group2, ..., addons, oprionals */
-//                int i;
-//                if (s.equals(MODIFIERS_GROUP_ID)){
-//                    i = 1;
-//                }else if (s.equals(ADDONS_GROUP_ID)){
-//                    i = 3;
-//                }else if (s.equals(OPTIONAL_GROUP_ID)){
-//                    i = 4;
-//                }else{
-//                    i = 2;
-//                }
-//                return i;
-//            }
-//        };
-//
-//        HashMap<String, List<SelectedModifierExModel>> groupedItems = new HashMap<>();
-//        for (SelectedModifierExModel item : modifiers){
-//            String key;
-//            switch (item.type){
-//                case ADDON:
-//                    key = ADDONS_GROUP_ID;
-//                    break;
-//                case OPTIONAL:
-//                    key = OPTIONAL_GROUP_ID;
-//                    break;
-//                default:
-//                    key = item.modifierGroupGuid != null ? item.modifierGroupGuid : MODIFIERS_GROUP_ID;
-//                    break;
-//            }
-//            if (!groupedItems.containsKey(key)) {
-//                groupedItems.put(key, new ArrayList<SelectedModifierExModel>());
-//            }
-//            groupedItems.get(key).add(item);
-//        }
-//
-//        ArrayList<String> keys = new ArrayList<>(groupedItems.keySet());
-//        Collections.sort(keys, comparator);
-//        LinkedHashMap<String, List<SelectedModifierExModel>> groupedSortedItems = new LinkedHashMap<>(groupedItems.size());
-//        for (String key : keys){
-//            groupedSortedItems.put(key, groupedItems.get(key));
-//        }
-//
-//        return groupedSortedItems;
-//    }
-
     private static Map<String, List<SelectedModifierExModel>> sortByComparator(Map<String, List<SelectedModifierExModel>> unsortMap) {
 
         // Convert Map to List
@@ -228,8 +171,7 @@ public class ItemModifiersFragment extends Fragment{
 
         // Convert sorted map back to a Map
         Map<String, List<SelectedModifierExModel>> sortedMap = new LinkedHashMap<>();
-        for (Iterator<Map.Entry<String, List<SelectedModifierExModel>>> it = list.iterator(); it.hasNext();) {
-            Map.Entry<String, List<SelectedModifierExModel>> entry = it.next();
+        for (Map.Entry<String, List<SelectedModifierExModel>> entry : list) {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
         return sortedMap;
@@ -276,9 +218,11 @@ public class ItemModifiersFragment extends Fragment{
         width = Math.min(max, width);
 
         Window window = parent.getDialog().getWindow();
-        window.setLayout(
-                width,
-                window.getAttributes().height);
+        if(window!=null) {
+            window.setLayout(
+                    width,
+                    window.getAttributes().height);
+        }
     }
 
     private static int calcContainerWidth(Context context, int addonCnt) {

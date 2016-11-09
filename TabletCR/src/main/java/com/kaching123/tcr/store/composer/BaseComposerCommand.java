@@ -23,6 +23,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
+import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
 /**
@@ -81,11 +82,13 @@ public abstract class BaseComposerCommand extends AsyncCommand {
     }
 
     private static BigDecimal getQtyFromMovement(Context context, String itemGuid){
-        Cursor c = ProviderAction
-                .query(ITEM_QTY_URI)
-                .projection(ShopStore.ItemMovementTable.QTY)
-                .where("", itemGuid)
-                .perform(context);
+        Cursor c = context.getContentResolver().query(
+                ITEM_QTY_URI,
+                new String[]{ShopStore.ItemMovementTable.QTY},
+                null,
+                _selectionArgs(itemGuid),
+                null
+        );
 
         BigDecimal qty = BigDecimal.ZERO;
         if (c.moveToFirst()){

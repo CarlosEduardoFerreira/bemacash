@@ -14,11 +14,6 @@ import android.widget.AdapterView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.PrepaidActivity.PrepaidLongDistanceActivity;
@@ -32,6 +27,12 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CountryFlags;
 import com.viewpagerindicator.LinePageIndicator;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -119,7 +120,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_BILLPAYMENT_ITEMS);
             final LinkedList<BillPaymentItem> billPaymentItems = new LinkedList<BillPaymentItem>();
             return loader.orderBy(ShopStore.BillPayment.CATEGORYDESCRIPTION)
-                    .wrap(new Function<Cursor, List<BillPaymentItem>>() {
+                    .transform(new Function<Cursor, List<BillPaymentItem>>() {
                         @Override
                         public List<BillPaymentItem> apply(Cursor c) {
                             String currentCategory = null;
@@ -170,7 +171,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             final LinkedList<BillPaymentItem> billPaymentItems = new LinkedList<BillPaymentItem>();
 
             return loader.orderBy(ShopStore.BillPayment.CATEGORYDESCRIPTION)
-                    .wrap(new Function<Cursor, List<BillPaymentItem>>() {
+                    .transform(new Function<Cursor, List<BillPaymentItem>>() {
                         @Override
                         public List<BillPaymentItem> apply(Cursor c) {
 
@@ -214,7 +215,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_ORDER_ITEMS);
 
             return loader.orderBy(ShopStore.WirelessTable.NAME)
-                    .wrap(new Function<Cursor, List<WirelessItem>>() {
+                    .transform(new Function<Cursor, List<WirelessItem>>() {
                         @Override
                         public List<WirelessItem> apply(Cursor c) {
                             List<WirelessItem> items = new ArrayList<WirelessItem>(c.getCount());
@@ -278,7 +279,7 @@ public class PrepaidLongDistanceProductCountryFlagFragment extends PrepaidLongDi
             CursorLoaderBuilder loader = CursorLoaderBuilder.forUri(URI_ORDER_ITEMS);
 
             return loader.orderBy(ShopStore.WirelessTable.NAME)
-                    .wrap(new Function<Cursor, List>() {
+                    .transform(new Function<Cursor, List>() {
                         @Override
                         public List<WirelessItem> apply(Cursor c) {
 //                        List<WirelessItem> items = new ArrayList<WirelessItem>(c.getCount());

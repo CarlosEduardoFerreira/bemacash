@@ -90,7 +90,7 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
         public Loader<SaleOrderViewResult> onCreateLoader(int id, Bundle args) {
             return CursorLoaderBuilder.forUri(ShopProvider.contentUri(SaleOrderView.URI_CONTENT))
                     .where(SaleOrderView2.SaleOrderTable.GUID + " = ?", orderGuid == null ? "" : orderGuid)
-                    .wrap(new Function<Cursor, SaleOrderViewResult>() {
+                    .transform(new Function<Cursor, SaleOrderViewResult>() {
                         @Override
                         public SaleOrderViewResult apply(Cursor cursor) {
                             if (!cursor.moveToFirst()){

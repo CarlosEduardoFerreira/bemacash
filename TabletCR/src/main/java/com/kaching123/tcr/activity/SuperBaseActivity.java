@@ -176,7 +176,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                     .forUri(OPENED_TRANSACTIONS_URI)
 //                    .projection("count(" + PaymentTransactionTable.GUID + ")")
                     .where(ShopStore.PaymentTransactionTable.STATUS + " = ?", PaymentTransactionModel.PaymentStatus.PRE_AUTHORIZED.ordinal())
-                    .wrap(new Function<Cursor, List<PaymentTransactionModel>>() {
+                    .transform(new Function<Cursor, List<PaymentTransactionModel>>() {
                         @Override
                         public List<PaymentTransactionModel> apply(Cursor c) {
                             List<PaymentTransactionModel> list = new ArrayList<PaymentTransactionModel>();
@@ -208,7 +208,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                             return list;
                         }
                     }).build(SuperBaseActivity.this);
-//                    .wrap(new Function<Cursor, Integer>() {
+//                    .transform(new Function<Cursor, Integer>() {
 //                        @Override
 //                        public Integer apply(Cursor c) {
 //                            if (c.moveToFirst()) {

@@ -14,11 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
-
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
@@ -33,6 +28,10 @@ import com.kaching123.tcr.store.ShopSchema2.ShiftView2.RegisterTable;
 import com.kaching123.tcr.store.ShopSchema2.ShiftView2.ShiftTable;
 import com.kaching123.tcr.store.ShopStore.ShiftView;
 import com.kaching123.tcr.util.DateUtils;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -106,7 +105,7 @@ public class ShiftsReportFragment extends SuperBaseFragment implements IDetailsF
         }
         loader.orderBy(ShiftTable.START_TIME + " DESC");
 
-        return loader.transform(new ListConverterFunction<ShiftViewModel>() {
+        return loader.transformRow(new ListConverterFunction<ShiftViewModel>() {
             @Override
             public ShiftViewModel apply(Cursor cursor) {
                 super.apply(cursor);

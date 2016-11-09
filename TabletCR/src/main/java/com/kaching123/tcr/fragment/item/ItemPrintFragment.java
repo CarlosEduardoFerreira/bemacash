@@ -155,7 +155,7 @@ public class ItemPrintFragment extends ItemBaseFragment {
         @Override
         public Loader<List<KDSAliasModel>> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(KDS_ALIAS_URI)
-                    .transform(new KDSAliasActivity.KDSAliasConverter())
+                    .transformRow(new KDSAliasActivity.KDSAliasConverter())
                     .build(getActivity());
         }
 
@@ -247,7 +247,7 @@ public class ItemPrintFragment extends ItemBaseFragment {
         @Override
         public Loader<List<PrinterAliasModel>> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(ShopProvider.contentUri(PrinterAliasTable.URI_CONTENT))
-                    .transform(new PrinterAliasConverter())
+                    .transformRow(new PrinterAliasConverter())
                     .build(getActivity());
         }
 

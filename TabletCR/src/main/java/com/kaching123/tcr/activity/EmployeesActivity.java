@@ -307,7 +307,7 @@ public class EmployeesActivity extends SuperBaseActivity {
                 builder.where(EmployeeTable.FIRST_NAME + " like ? OR " + EmployeeTable.LAST_NAME + " like ?", filter, filter);
             }
 
-            return builder.transform(new ListConverterFunction<EmployeeModel>() {
+            return builder.transformRow(new ListConverterFunction<EmployeeModel>() {
                 @Override
                 public EmployeeModel apply(Cursor cursor) {
                     return new EmployeeModel(cursor);

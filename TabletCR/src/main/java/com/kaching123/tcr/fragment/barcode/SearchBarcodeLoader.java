@@ -24,7 +24,6 @@ import com.kaching123.tcr.store.ShopStore.ItemExtView;
 import com.kaching123.tcr.util.CalculationUtil;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -160,7 +159,7 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
                 .projection(ItemExFunction.PROJECTION)
                 .where(ItemTable.EAN_CODE + " = ? OR " + ItemTable.PRODUCT_CODE + " = ?", code, code)
                 .where(ItemTable.IS_DELETED + " = ?", 0)
-                .wrap(new ItemExFunction.Wrap())
+                .transform(new ItemExFunction.Wrap())
                 .build(context);
     }
 

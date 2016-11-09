@@ -42,7 +42,7 @@ public class RecalcItemMovementTable extends ProviderHelper {
                 null,
                 null, null,
                 null);
-        if (c.getCount() == 0) {
+        if (c!=null && c.getCount() == 0) {
             c.close();
             return;
         }

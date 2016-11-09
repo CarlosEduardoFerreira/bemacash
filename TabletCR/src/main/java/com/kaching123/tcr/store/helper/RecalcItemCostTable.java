@@ -29,7 +29,7 @@ public class RecalcItemCostTable extends ProviderHelper {
 
     public void recalcAfterSync() {
         Cursor c = getContext().getContentResolver().query(ITEM_COST_URI, null, null, null, null);
-        if (c.getCount() == 0) {
+        if (c!=null && c.getCount() == 0) {
             c.close();
         } else {
             handleCursor(c);
