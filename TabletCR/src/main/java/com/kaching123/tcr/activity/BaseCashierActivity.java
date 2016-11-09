@@ -184,6 +184,7 @@ import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.kaching123.tcr.store.ShopStore.TBPRegisterView;
 import com.kaching123.tcr.util.DateUtils;
 import com.kaching123.tcr.util.KeyboardUtils;
+import com.kaching123.tcr.util.UnitUtil;
 import com.telly.groundy.annotations.OnCancel;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
@@ -865,7 +866,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private boolean isItemWithPrefixedBarCodeAlreadyWeighed(ItemExModel item, BigDecimal price, BigDecimal quantity) {
         return item.priceType == PriceType.UNIT_PRICE
-                && item.shortCut.equalsIgnoreCase("lb")
+                && UnitUtil.isUnitLbs(item.shortCut)
                 && price != null
                 && quantity != null
                 && BigDecimal.ZERO.compareTo(quantity) == -1;

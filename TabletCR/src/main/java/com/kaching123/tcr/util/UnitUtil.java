@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
  */
 public final class UnitUtil {
 
+    public static final String LBS_LABEL = "lbs";
     public static final String PCS_LABEL = "pcs";
     private static final String PCS_DOT = "pcs.";
 
@@ -35,8 +36,11 @@ public final class UnitUtil {
 
     public static boolean isContainInvalidChar(CharSequence shortcut) {
         Matcher matcher = pattern.matcher(shortcut);
-        boolean find = matcher.find();
-        return find;
+        return matcher.find();
+    }
+
+    public static boolean isUnitLbs(String  shortCut) {
+       return shortCut.equalsIgnoreCase(LBS_LABEL);
     }
 
 }
