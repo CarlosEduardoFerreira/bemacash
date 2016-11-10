@@ -472,10 +472,10 @@ public class XReportQuery {
         totalTender = netSale.add(gratuity).add(tax);
         Logger.d("||totalTender:" + totalTender);
 
-        grossMargin = totalTender.subtract(cogs);
+        grossMargin = netSale.subtract(cogs);
         Logger.d("||totalTender:" + totalTender);
         grossMarginInPercent = CalculationUtil.value(CalculationUtil
-                .getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
+                .getDiscountValueInPercent(netSale, grossMargin, DiscountType.VALUE));
 
         Cursor cur = ProviderAction.query(URI_CASH_DRAWER_DATA)
                 .where(ShopStore.CashDrawerMovementTable.SHIFT_GUID + " = ?", lastShiftGuid)

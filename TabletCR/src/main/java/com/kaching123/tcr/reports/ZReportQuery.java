@@ -265,8 +265,8 @@ public final class ZReportQuery extends XReportQuery {
 
         Logger.d("[ZREPORT]\tCOGS:         %s", cogs);
 
-        BigDecimal grossMargin = totalTender.subtract(cogs);
-        BigDecimal grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
+        BigDecimal grossMargin = netSale.subtract(cogs);
+        BigDecimal grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(netSale, grossMargin, DiscountType.VALUE));
         Logger.d("[ZREPORT]");
         Logger.d("[ZREPORT]\tGross Margin: %s", grossMargin);
         Logger.d("[ZREPORT]\t              %s", grossMarginInPercent);
@@ -561,9 +561,9 @@ public final class ZReportQuery extends XReportQuery {
         totalTender = netSale.add(gratuity).add(tax);
         Logger.d("||totalTender:" + totalTender);
 
-        grossMargin = totalTender.subtract(cogs);
+        grossMargin = netSale.subtract(cogs);
         Logger.d("||totalTender:" + totalTender);
-        grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
+        grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(netSale, grossMargin, DiscountType.VALUE));
 
         dailySVRCounter(context, registerID, guidList);
 
