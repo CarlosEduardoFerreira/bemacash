@@ -143,7 +143,7 @@ public class PrintZReportProcessor {
         printer.emptyLine();
 
         printer.pair(context.getString(R.string.zreport_gross_margin), report.grossMargin);
-        printer.percent(report.grossMarginPercent);
+        printer.pair(context.getString(R.string.zreport_gross_margin_percent), report.grossMarginPercent);
         printer.emptyLine();
 
         printer.subtitle(context.getString(R.string.zreport_tender_summary), true);
