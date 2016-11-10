@@ -135,7 +135,6 @@ public class PrintZReportProcessor {
         printer.boldPair(context.getString(R.string.zreport_net_sales), report.netSales, false);
         printer.pair(context.getString(R.string.zreport_gratuity), report.gratuity);
         printer.pair(context.getString(R.string.xreport_tax), report.tax);
-        printer.pair(context.getString(R.string.xreport_transaction_fee), report.transactionFee);
         printer.emptyLine();
         printer.drawLine();
 
@@ -144,18 +143,19 @@ public class PrintZReportProcessor {
         printer.emptyLine();
 
         printer.pair(context.getString(R.string.zreport_gross_margin), report.grossMargin);
-        printer.percent(report.grossMarginPercent);
+        printer.pair(context.getString(R.string.zreport_gross_margin_percent), report.grossMarginPercent);
         printer.emptyLine();
 
         printer.subtitle(context.getString(R.string.zreport_tender_summary), true);
-
         if (app.getShopInfo().acceptCreditCards) {
             if (report.cards != null && !report.cards.isEmpty()) {
-                printer.subtitle(context.getString(R.string.zreport_credit_cards), false);
-                ArrayList<String> cardNames = new ArrayList<String>(report.cards.keySet());
+                printer.pair(context.getString(R.string.zreport_credit_cards), report.tenderCreditCard);
+                ArrayList<String> cardNames = new ArrayList<>(report.cards.keySet());
                 Collections.sort(cardNames);
                 for (String cardName : cardNames) {
-                    printer.subPair(cardName, report.cards.get(cardName), 1, false);
+                    if(!TextUtils.isEmpty(cardName) &&!TextUtils.equals(cardName, "EBT CARD")) {
+                        printer.subPair(cardName, report.cards.get(cardName), 1, false);
+                    }
                 }
             }
         }
@@ -163,17 +163,16 @@ public class PrintZReportProcessor {
         if (app.getShopInfo().acceptDebitCards) {
             printer.pair(context.getString(R.string.zreport_debit), report.tenderDebit);
         }
-        /*if (app.getShopInfo().acceptVoucherCards) {
-            printer.pair(context.getString(R.string.zreport_voucher), report.tenderVoucher);
-        }*/
 
         printer.pair(context.getString(R.string.zreport_cash), report.tenderCash);
         printer.pair(context.getString(R.string.zreport_credit_receipt), report.tenderCreditReceipt);
         printer.pair(context.getString(R.string.zreport_offline_credit), report.tenderOfflineCredit);
-        //  printer.pair(context.getString(R.string.zreport_offline_debit), report.tenderOfflineDebit);
-        // printer.pair(context.getString(R.string.zreport_offline_voucher), report.tenderOfflineVoucher);
-
         printer.pair(context.getString(R.string.xreport_check), report.tenderCheck);
+
+        if (app.getShopInfo().acceptEbtCards) {
+            printer.pair(context.getString(R.string.xreport_ebt_cash), report.tenderEbtCash);
+            printer.pair(context.getString(R.string.xreport_ebt_foodstamp), report.tenderEbtFoodstamp);
+        }
 
         printer.drawLine();
         printer.emptyLine();
@@ -181,8 +180,8 @@ public class PrintZReportProcessor {
         printer.subtitle(context.getString(R.string.zreport_transaction_count), true);
 
         printer.pair(context.getString(R.string.zreport_sales), String.valueOf(report.salesCounter));
-        printer.pair(context.getString(R.string.zreport_voids), String.valueOf(report.voidsCounter));
         printer.pair(context.getString(R.string.zreport_refunds), String.valueOf(report.refundsCounter));
+        printer.pair(context.getString(R.string.zreport_voids), String.valueOf(report.voidsCounter));
 
         printer.drawLine();
         printer.emptyLine();

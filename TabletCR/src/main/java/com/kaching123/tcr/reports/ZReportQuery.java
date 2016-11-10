@@ -203,6 +203,7 @@ public final class ZReportQuery extends XReportQuery {
             BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK)), BigDecimal.ZERO);
             cashBack = cashBackAmount;
             PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.GATEWAY));
+
             if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
                 creditCard = creditCard.add(amount);
             } else if (gateway == PaymentGateway.CASH) {
@@ -264,8 +265,8 @@ public final class ZReportQuery extends XReportQuery {
 
         Logger.d("[ZREPORT]\tCOGS:         %s", cogs);
 
-        BigDecimal grossMargin = totalTender.subtract(cogs);
-        BigDecimal grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
+        BigDecimal grossMargin = netSale.subtract(cogs);
+        BigDecimal grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(netSale, grossMargin, DiscountType.VALUE));
         Logger.d("[ZREPORT]");
         Logger.d("[ZREPORT]\tGross Margin: %s", grossMargin);
         Logger.d("[ZREPORT]\t              %s", grossMarginInPercent);
@@ -459,7 +460,9 @@ public final class ZReportQuery extends XReportQuery {
                 BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CASH_BACK)), BigDecimal.ZERO);
                 cashBack = cashBackAmount;
                 PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.GATEWAY));
-                if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
+
+                //if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
+                if (gateway!=null && gateway.isTrueCreditCard()) {
                     creditCard = creditCard.add(amount);
                 } else if (gateway == PaymentGateway.CASH) {
                     cash = cash.add(amount);
@@ -477,7 +480,8 @@ public final class ZReportQuery extends XReportQuery {
                     debit = debit.add(amount);
                 }
 
-                if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
+                if (gateway!=null && gateway.isCreditCard()) {
+                //if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
                     String card = c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CARD_NAME));
                     if (card == null)
                         card = gateway.name();
@@ -557,9 +561,9 @@ public final class ZReportQuery extends XReportQuery {
         totalTender = netSale.add(gratuity).add(tax);
         Logger.d("||totalTender:" + totalTender);
 
-        grossMargin = totalTender.subtract(cogs);
+        grossMargin = netSale.subtract(cogs);
         Logger.d("||totalTender:" + totalTender);
-        grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
+        grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(netSale, grossMargin, DiscountType.VALUE));
 
         dailySVRCounter(context, registerID, guidList);
 

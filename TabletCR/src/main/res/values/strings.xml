@@ -1107,6 +1107,7 @@
     <string name="xreport_total_tender">Total Tender:</string>
     <string name="xreport_cogs">COGS:</string>
     <string name="xreport_gross_margin">Gross Margin:</string>
+    <string name="xreport_gross_margin_percent">Gross Margin (%):</string>
     <string name="xreport_tender_summary">Tender Summary</string>
     <string name="xreport_credit_card">Credit Card:</string>
     <string name="xreport_cash">Cash:</string>
@@ -1155,6 +1156,7 @@
     <string name="zreport_total_tender">Total Tender:</string>
     <string name="zreport_cogs">COGS:</string>
     <string name="zreport_gross_margin">Gross Margin:</string>
+    <string name="zreport_gross_margin_percent">Gross Margin (%):</string>
 
     <string name="zreport_tender_summary">Tender Summary</string>
     <string name="zreport_credit_card">Credit Card:</string>

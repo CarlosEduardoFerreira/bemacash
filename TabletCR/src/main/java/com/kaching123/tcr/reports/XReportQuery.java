@@ -125,7 +125,7 @@ public class XReportQuery {
         BigDecimal payOuts = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
+        TreeMap<String, DepartsSale> departsSales = new TreeMap<>();
 
         Cursor c = ProviderAction.query(URI_SHIFT)
                 .where(ShiftTable.GUID + " = ?", shiftGuid)
@@ -139,7 +139,7 @@ public class XReportQuery {
         c.close();
 
         DepartsSale prepaidTotalSale = new DepartsSale("Prepaid", BigDecimal.ZERO);
-        ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
+        ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<>(createQuery().getItems(context, startDate.getTime(), shiftGuid, OrderType.PREPAID));
         final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
         for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
             prepaidTotalSale.sales = prepaidTotalSale.sales.add(item.revenue);
@@ -159,26 +159,6 @@ public class XReportQuery {
                 .where("(" + ShopSchema2.SaleItemDeptView2.PaymentTransactionTable.STATUS + " = ? OR " + ShopSchema2.SaleItemDeptView2.PaymentTransactionTable.STATUS + " = ?)", PaymentStatus.PRE_AUTHORIZED.ordinal(), PaymentStatus.SUCCESS.ordinal())
                 .perform(context);
         Logger.d("tcrtcr: " + c.getCount());
-//
-//
-//        while (c.moveToNext()) {
-//            String temp = c.getString(c.getColumnIndex(ShopSchema2.SaleItemDeptView2.DepartmentTable.TITLE));
-//            if (temp != null) {
-//                if (departsSales.size() == 0) {
-//                    DepartsSale tempDepartSale = getDepartSale(temp, c);
-//                    departsSales.put(tempDepartSale.departTitle, tempDepartSale);
-//                } else if (departsSales.size() != 0) {
-//                    if (!departsSales.containsKey(temp)) {
-//                        DepartsSale tempDepartSale = getDepartSale(temp, c);
-//                        departsSales.put(temp, tempDepartSale);
-//                    } else {
-//                        DepartsSale tempDepartSale = getDepartSale(temp, c);
-//                        departsSales.get(temp).sales = departsSales.get(temp).sales.add(tempDepartSale.sales);
-//                    }
-//                }
-//            }
-//        }
-//        c.close();
 
         final StatInfo saleInfo = getShiftOrders(context, shiftGuid, OrderStatus.COMPLETED);
         final StatInfo returnInfo = getShiftOrders(context, shiftGuid, OrderStatus.RETURN);
@@ -196,7 +176,6 @@ public class XReportQuery {
 
         Logger.d("[XREPORT]\tGross Sale:   %s", grossSale);
         Logger.d("[XREPORT]\tTransaction Fee:          %s", transactionFee);
-        //Logger.d("[XREPORT]\tGross2:       %s", saleInfo.grossSale2);
         Logger.d("[XREPORT]\tDiscount:     %s", discount);
         Logger.d("[XREPORT]\tReturns:      %s", returned);
         Logger.d("[XREPORT]\t------------------");
@@ -218,7 +197,7 @@ public class XReportQuery {
         BigDecimal ebtFoodstamp = BigDecimal.ZERO;
         BigDecimal debit = BigDecimal.ZERO;
 
-        HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
+        HashMap<String, BigDecimal> cards = new HashMap<>();
         while (c.moveToNext()) {
             BigDecimal transactionAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.AMOUNT)), BigDecimal.ZERO);
             BigDecimal transactionTip = _decimal(c.getString(c.getColumnIndex(PaymentTransactionView2.EmployeeTipsTable.AMOUNT)), BigDecimal.ZERO);
@@ -226,6 +205,7 @@ public class XReportQuery {
             BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.CASH_BACK)), BigDecimal.ZERO);
             cashBack = cashBackAmount;
             PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(PaymentTransactionTable.GATEWAY));
+
             if (gateway.isTrueCreditCard()) {
                 creditCard = creditCard.add(amount);
             } else if (gateway == PaymentGateway.CASH) {
@@ -288,8 +268,8 @@ public class XReportQuery {
 
         Logger.d("[XREPORT]\tCOGS:         %s", cogs);
 
-        BigDecimal grossMargin = totalTender.subtract(cogs);
-        BigDecimal grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
+        BigDecimal grossMargin = netSale.subtract(cogs);
+        BigDecimal grossMarginInPercent = CalculationUtil.value(CalculationUtil.getDiscountValueInPercent(netSale, grossMargin, DiscountType.VALUE));
         Logger.d("[XREPORT]");
         Logger.d("[XREPORT]\tGross Margin: %s", grossMargin);
         Logger.d("[XREPORT]\t              %s", grossMarginInPercent);
@@ -362,9 +342,9 @@ public class XReportQuery {
         BigDecimal payOuts = BigDecimal.ZERO;
         BigDecimal cashBack = BigDecimal.ZERO;
 
-        TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
+        TreeMap<String, DepartsSale> departsSales = new TreeMap<>();
         ArrayList<SalesByItemsReportQuery.ReportItemInfo> result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>();
-        HashMap<String, BigDecimal> cards = new HashMap<String, BigDecimal>();
+        HashMap<String, BigDecimal> cards = new HashMap<>();
 
         String lastShiftGuid = getLastDailyGuid(context, registerID);
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
@@ -428,7 +408,7 @@ public class XReportQuery {
                 BigDecimal cashBackAmount = _decimal(c.getString(c.getColumnIndex(PaymentTransactionTable.CASH_BACK)), BigDecimal.ZERO);
                 cashBack = cashBack.add(cashBackAmount);
                 PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(PaymentTransactionTable.GATEWAY));
-                if (gateway.isTrueCreditCard()) {
+                if (gateway!=null && gateway.isTrueCreditCard()) {
                     creditCard = creditCard.add(amount);
                 } else if (gateway == PaymentGateway.CASH) {
                     cash = cash.add(amount);
@@ -446,7 +426,7 @@ public class XReportQuery {
                     debit = debit.add(amount);
                 }
 
-                if (gateway.isCreditCard()) {
+                if (gateway!=null && gateway.isCreditCard()) {
                     String card = c.getString(c.getColumnIndex(PaymentTransactionTable.CARD_NAME));
                     if (card == null)
                         card = gateway.name();
@@ -461,14 +441,14 @@ public class XReportQuery {
             }
 
             DepartsSale prepaidTotalSale = new DepartsSale("Prepaid", BigDecimal.ZERO);
-            result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.PREPAID));
+            result = new ArrayList<>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.PREPAID));
             final ArrayList<SalesByItemsReportQuery.ReportItemInfo> groupedResult = SaleReportsProcessor.getGroupedResult(result, OrderType.PREPAID);
             for (SalesByItemsReportQuery.ReportItemInfo item : groupedResult) {
                 prepaidTotalSale.sales = prepaidTotalSale.sales.add(item.revenue);
             }
             departsSales.put(prepaidTotalSale.departTitle, prepaidTotalSale);
 
-            result = new ArrayList<SalesByItemsReportQuery.ReportItemInfo>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.SALE));
+            result = new ArrayList<>(createQuery().getItems(context, startDate.getTime(), guid, OrderType.SALE));
             Collection<SalesByDepartmentsReportQuery.DepartmentStatistics> deps = new SalesByDepartmentsReportQuery().getItems(context, startDate.getTime(), guid);
             totalValue = BigDecimal.ZERO;
             for (SalesByDepartmentsReportQuery.DepartmentStatistics d : deps) {
@@ -484,7 +464,6 @@ public class XReportQuery {
             for (Entry<String, BigDecimal> e : cards.entrySet()) {
                 Logger.d("[XREPORT]\t%s\t%s", e.getKey(), e.getValue());
             }
-//            drawerDifference = drawerDifference.add(getDrawerDifference(context, guid));
         }
 
         netSale = grossSale.subtract(discount).subtract(returned);
@@ -493,10 +472,10 @@ public class XReportQuery {
         totalTender = netSale.add(gratuity).add(tax);
         Logger.d("||totalTender:" + totalTender);
 
-        grossMargin = totalTender.subtract(cogs);
+        grossMargin = netSale.subtract(cogs);
         Logger.d("||totalTender:" + totalTender);
         grossMarginInPercent = CalculationUtil.value(CalculationUtil
-                .getDiscountValueInPercent(totalTender, grossMargin, DiscountType.VALUE));
+                .getDiscountValueInPercent(netSale, grossMargin, DiscountType.VALUE));
 
         Cursor cur = ProviderAction.query(URI_CASH_DRAWER_DATA)
                 .where(ShopStore.CashDrawerMovementTable.SHIFT_GUID + " = ?", lastShiftGuid)
@@ -619,12 +598,6 @@ public class XReportQuery {
                     .perform(context);
         }
 
-//        Cursor c = ProviderAction.query(URI_SALE_ITEMS)
-//                .where(SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
-//                .where(SaleOrderTable.CREATE_TIME + " > ?", getStartOfDay().getTime())
-//                .where(SaleOrderTable.REGISTER_ID + " = ?", registerId)
-//                .where(SaleOrderTable.STATUS + " = ?", type.ordinal())
-//                .perform(context);
         return getOrders(context, c, type);
     }
 
@@ -701,7 +674,6 @@ public class XReportQuery {
             this.totalTax = totalTax;
         }
     }
-    //public static calculate(
 
     private static HashMap<String, SaleOrderInfo> readCursor(Cursor c) {
         if (c == null) {
@@ -760,10 +732,6 @@ public class XReportQuery {
         value.totalPrice = _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_GROSS_PRICE), BigDecimal.ZERO);
         value.finalDiscount = _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_DISCOUNT), BigDecimal.ZERO);
         value.finalTax = _decimal(c, c.getColumnIndex(SaleItemTable.FINAL_TAX), BigDecimal.ZERO);
-        /*BigDecimal extra = _decimal(c, c.getColumnIndex(SaleAddonTable.EXTRA_COST));
-        if (extra != null && value.totalPrice != null) {
-            value.totalPrice = value.totalPrice.add(extra);
-        }*/
     }
 
     public static class SaleItemInfo2 extends SaleItemInfo {
