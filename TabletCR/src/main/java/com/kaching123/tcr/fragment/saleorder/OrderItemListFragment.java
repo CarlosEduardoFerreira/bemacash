@@ -330,7 +330,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                     c.getString(2)
             );
         }
-        if (saleOrderPrintInfo.kitchenPrintStatus != OrderStatus.COMPLETED.name() && saleOrderPrintInfo.Guid != null)
+        if (saleOrderPrintInfo!=null && saleOrderPrintInfo.kitchenPrintStatus != OrderStatus.COMPLETED.name() && saleOrderPrintInfo.Guid != null)
             if ((saleOrderPrintInfo.kitchenPrintStatus == PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED.name()) || getOperatorPermissions().contains(Permission.VOID_SALES))
                 doRemoceClickLine();
             else {
