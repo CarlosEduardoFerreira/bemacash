@@ -39,7 +39,7 @@
     <dimen name="dashboard_operator_name_label">28sp</dimen>
     <dimen name="dashboard_module_width">224dp</dimen>
     <dimen name="dashboard_module_height">194dp</dimen>
-    <dimen name="dashboard_module_margin">30dp</dimen>
+    <dimen name="dashboard_module_margin">104dp</dimen>
     <dimen name="dashboard_register_img_size">90dp</dimen>
     <dimen name="dashboard_inventory_img_size">95dp</dimen>
     <dimen name="dashboard_nosale_img_size">88dp</dimen>
@@ -63,10 +63,19 @@
 
     <dimen name="edit_item_table_margin_left">72dp</dimen>
 
+    <dimen name="payment_tender_dlg_main_layout_padding_top">10dp</dimen>
+    <dimen name="payment_tender_dlg_main_layout_padding_bottom">0dp</dimen>
+    <dimen name="payment_tender_dlg_blackbox_height">460dp</dimen>
+
+
     <dimen name="pay_tender_dialog_width_large">1080dp</dimen>
-    <dimen name="pay_tender_dialog_height_3_expanded">672dp</dimen>
+
+    <dimen name="pay_tender_dialog_height">501dp</dimen>
     <dimen name="pay_tender_dialog_height_3">648dp</dimen>
-    <dimen name="pay_tender_dialog_height_3_large">748dp</dimen>
+    <dimen name="pay_tender_dialog_height_3_expanded">612dp</dimen>
+    <dimen name="pay_tender_dialog_height_3_large">723dp</dimen>
+    <dimen name="pay_tender_dialog_height_3_expanded_large">723dp</dimen>
+
     <dimen name="payment_tender_dlg_button_width">120dp</dimen>
     <dimen name="payment_tender_dlg_button_height">120dp</dimen>
     <dimen name="payment_tender_dlg_transaction_list_layout_width">400dp</dimen>
