@@ -204,7 +204,7 @@ public final class ZReportQuery extends XReportQuery {
             cashBack = cashBackAmount;
             PaymentGateway gateway = _paymentGateway(c, c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.GATEWAY));
 
-            if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
+            if (gateway!=null && gateway.isTrueCreditCard()) {
                 creditCard = creditCard.add(amount);
             } else if (gateway == PaymentGateway.CASH) {
                 cash = cash.add(amount);
@@ -222,7 +222,7 @@ public final class ZReportQuery extends XReportQuery {
                 ebtFoodstamp = ebtFoodstamp.add(amount);
             }
 
-            if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
+            if (gateway!=null && gateway.isTrueCreditCard()) {
                 String card = c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CARD_NAME));
                 if (card == null)
                     card = gateway.name();
@@ -480,8 +480,7 @@ public final class ZReportQuery extends XReportQuery {
                     debit = debit.add(amount);
                 }
 
-                if (gateway!=null && gateway.isCreditCard()) {
-                //if (gateway.isCreditCard() && gateway != PaymentGateway.PAX_DEBIT) {
+                if (gateway!=null && gateway.isTrueCreditCard()) {
                     String card = c.getString(c.getColumnIndex(ShopSchema2.PaymentTransactionView2.PaymentTransactionTable.CARD_NAME));
                     if (card == null)
                         card = gateway.name();
