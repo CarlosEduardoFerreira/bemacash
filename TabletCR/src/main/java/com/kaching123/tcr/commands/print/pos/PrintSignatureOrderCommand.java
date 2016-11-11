@@ -29,7 +29,12 @@ public class PrintSignatureOrderCommand extends BasePrintCommand<PosSignatureTex
     }
 
     public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, ArrayList<PaymentTransactionModel> transactions, ReceiptType receiptType, BasePrintCallback callback) {
+
+
         create(PrintSignatureOrderCommand.class).arg(ARG_SKIP_PAPER_WARNING, skipPaperWarning).arg(ARG_SEARCH_BY_MAC, searchByMac).arg(ARG_ORDER_GUID, orderGuid).arg(ARG_TRANSACTIONS, transactions).arg(ARG_TYPE, receiptType).callback(callback).queueUsing(context);
+
+
+
     }
 
     @Override
