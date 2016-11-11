@@ -81,6 +81,12 @@ public class PosXReportTextPrinter extends BasePosTextPrinter implements IXRepor
     }
 
     @Override
+    public void percent(String name, BigDecimal percent) {
+        String right = percentFormat(percent);
+        add(new PrintLineAction(formatString(PRINTER_MAX_TEXT_LEN, right.length(), name, right)));
+    }
+
+    @Override
     public void subtitle(String name, boolean bold) {
         if (bold) {
             boldString(new PrintLineAction(crop(PRINTER_MAX_TEXT_LEN, name)));

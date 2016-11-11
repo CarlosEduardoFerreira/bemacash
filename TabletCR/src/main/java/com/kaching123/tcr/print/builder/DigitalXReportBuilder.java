@@ -58,6 +58,11 @@ public class DigitalXReportBuilder extends BaseDigitalBuilder implements IXRepor
     }
 
     @Override
+    public void percent(String name, BigDecimal percent) {
+        pair(name, percentFormat(percent), false);
+    }
+
+    @Override
     public void subtitle(String name, boolean bold) {
         stringBuilder.append(bold ? _styled("div", BOLD_STYLE) : "<div>").append(name).append("</div>");
     }

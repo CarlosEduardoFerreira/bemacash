@@ -13,6 +13,7 @@ public interface IXReportPrinter extends IPrinter {
     void pair(String name, BigDecimal cost);
     void pair(String left, String right);
     void percent(BigDecimal percent);
+    void percent(String name, BigDecimal percent);
     void boldPair(String name, BigDecimal cost, boolean brackets);
     void subtitle(String name, boolean bold);
     void subPair (String name, BigDecimal cost, int tabSize, boolean bold);
