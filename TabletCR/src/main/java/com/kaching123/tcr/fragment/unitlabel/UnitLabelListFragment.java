@@ -182,7 +182,7 @@ public class UnitLabelListFragment extends ListFragment implements LoaderCallbac
                 //filter deleted for BEMA-1019
                 /*.where(ShopStore.UnitLabelTable.SHORTCUT + " <> \'" +
                         TcrApplication.get().getShopInfo().defUnitLabelShortcut + "\'")*/
-                .transform(new UnitLabelFunction())
+                .transformRow(new UnitLabelFunction())
                 .build(getActivity());
     } // select * from UNIT_LABEL where shortcut <> 'und' and
 

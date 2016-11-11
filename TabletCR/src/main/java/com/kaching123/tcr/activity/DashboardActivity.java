@@ -113,6 +113,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._castAsReal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
+import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 
 /**
  * Created by pkabakov on 03.12.13.
@@ -1020,7 +1021,7 @@ public class DashboardActivity extends SuperBaseActivity {
             return CursorLoaderBuilder.forUri(SHIFT_URI)
                     .where(ShiftTable.REGISTER_ID + " = ?", getApp().getRegisterId())
                     .orderBy(ShopStore.ShiftTable.START_TIME + " DESC")
-                    .wrap(new SalesStatisticsConverter(DashboardActivity.this))
+                    .transform(new SalesStatisticsConverter(DashboardActivity.this))
                     .build(DashboardActivity.this);
         }
 
@@ -1119,15 +1120,15 @@ public class DashboardActivity extends SuperBaseActivity {
                     _decimal(c, indexHolder.get(ShopStore.ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO));
         }
 
-        private FluentCursor loadSalesStatistics(ShiftModel shiftModel) {
-            return ProviderAction.query(TOTAL_SALES_URI)
-                    .where("",
-                            shiftModel.guid,
-                            PaymentTransactionModel.PaymentStatus.FAILED.ordinal(),
-                            shiftModel.guid)
-                    .perform(context);
+        private Cursor loadSalesStatistics(ShiftModel shiftModel) {
+            return context.getContentResolver().query(
+                    TOTAL_SALES_URI,
+                    null,
+                    null,
+                    _selectionArgs(shiftModel.guid, PaymentTransactionModel.PaymentStatus.FAILED.ordinal(), shiftModel.guid),
+                    null
+            );
         }
-
         private void gatherSalesStatistics(Cursor cursor, SalesStatisticsModel salesStatisticsModel) {
             BigDecimal amount = _decimal(cursor, 0, BigDecimal.ZERO).subtract(cursor.isNull(2) ? BigDecimal.ZERO : _decimal(cursor, 2, BigDecimal.ZERO));
             Integer gatewayOrdinal = cursor.isNull(1) ? null : cursor.getInt(1);
@@ -1652,7 +1653,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     .where(ItemTable.ACTIVE_STATUS + " = ?", 1)
                     .where(ItemTable.STOCK_TRACKING + " = ?", 1)
                     .where(_castAsReal(ItemTable.TMP_AVAILABLE_QTY) + " <= " + _castAsReal(ItemTable.MINIMUM_QTY))
-                    .wrap(new Function<Cursor, Integer>() {
+                    .transform(new Function<Cursor, Integer>() {
                         @Override
                         public Integer apply(Cursor c) {
                             if (c.moveToFirst()) {
@@ -1685,7 +1686,7 @@ public class DashboardActivity extends SuperBaseActivity {
                     .where(EmployeeTimesheetTable.EMPLOYEE_GUID + " = ?", getApp().getOperatorGuid())
                     .where(EmployeeTimesheetTable.CLOCK_IN + " < ?", curDate)
                     .where(EmployeeTimesheetTable.CLOCK_OUT + " IS NULL or " + EmployeeTimesheetTable.CLOCK_OUT + " > ?", curDate)
-                    .wrap(new Function<Cursor, Boolean>() {
+                    .transform(new Function<Cursor, Boolean>() {
                         @Override
                         public Boolean apply(Cursor c) {
                             boolean success = false;

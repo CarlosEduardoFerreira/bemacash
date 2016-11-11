@@ -666,7 +666,7 @@
     <string name="scan_dialog_title">Please scan a barcode...</string>
     <string name="lottery_wait_dialog_title">Please wait...</string>
     <string name="lottery_fail_message">Fails to catch lottery</string>
-    <string name="apk_update_dialog_title">Would you like to update to version %s now?</string>
+    <string name="apk_update_dialog_title">Would you like to update to version %1$s now?</string>
     <string name="confirm_display_title">Do you see the message on the display?</string>
     <string name="confirm_scale_title">The number on the scale is : %s, is it correct?</string>
     <string name="confirm_scanner_title">The barcode you scanned is : %s, is it correct?</string>
@@ -1107,6 +1107,7 @@
     <string name="xreport_total_tender">Total Tender:</string>
     <string name="xreport_cogs">COGS:</string>
     <string name="xreport_gross_margin">Gross Margin:</string>
+    <string name="xreport_gross_margin_percent">Gross Margin (%):</string>
     <string name="xreport_tender_summary">Tender Summary</string>
     <string name="xreport_credit_card">Credit Card:</string>
     <string name="xreport_cash">Cash:</string>
@@ -1155,6 +1156,7 @@
     <string name="zreport_total_tender">Total Tender:</string>
     <string name="zreport_cogs">COGS:</string>
     <string name="zreport_gross_margin">Gross Margin:</string>
+    <string name="zreport_gross_margin_percent">Gross Margin (%):</string>
 
     <string name="zreport_tender_summary">Tender Summary</string>
     <string name="zreport_credit_card">Credit Card:</string>
@@ -2080,5 +2082,11 @@
     <string name="zreprot_register_id_title_">Register ID</string>
     <string name="reprot_start_date">Start Date</string>
     <string name="reprot_to_date">End Date</string>
-
+    <string name="scale_dlg_warning_title">Scale Warning</string>
+    <string name="scale_dlg_warning_negative_button">Cancel</string>
+    <string name="scale_dlg_warning_neutral_button">Setting</string>
+    <string name="scale_dlg_warning_positive_button">Manually</string>
+    <string name="scale_dlg_warning_message_check_connection">Check connection to the scale or enter the weight manually.</string>
+    <string name="scale_dlg_warning_message_place_on_scale">Place %1$s on the Scale or enter the weight manually.</string>
+    <string name="scale_dlg_warning_unit_does_not_match">The scale unit does not match the item unit of measurement. Switch scale to %1$s to continue Please check the scale."</string>
 </resources>

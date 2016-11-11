@@ -13,19 +13,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.model.ModifierExModel;
+import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.converter.ModifierExFunction;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ModifierTable;
+import com.kaching123.tcr.store.ShopStore.ModifierView;
+
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
-import com.kaching123.tcr.R;
-import com.kaching123.tcr.model.ModifierExModel;
-import com.kaching123.tcr.model.ModifierModel;
-import com.kaching123.tcr.model.ModifierType;
-import com.kaching123.tcr.model.converter.ModifierExFunction;
-import com.kaching123.tcr.model.converter.ModifierFunction;
-import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2.ModifierView2.ModifierTable;
-import com.kaching123.tcr.store.ShopStore.ModifierView;
 
 import java.util.HashSet;
 import java.util.List;
@@ -113,7 +112,7 @@ public class InnerCopyFragment extends Fragment implements LoaderCallbacks<List<
         return CursorLoaderBuilder.forUri(MODIFIER_URI)
                 .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                 .where(ModifierTable.TYPE + " = ?", type.ordinal())
-                .transform(new ModifierExFunction()).build(getActivity());
+                .transformRow(new ModifierExFunction()).build(getActivity());
     }
 
     @Override

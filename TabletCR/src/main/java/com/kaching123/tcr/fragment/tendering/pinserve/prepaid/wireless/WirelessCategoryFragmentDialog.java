@@ -25,13 +25,6 @@ import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.ColorRes;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
@@ -48,6 +41,14 @@ import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItem
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.WirelessItemDenomination;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.WirelessTable;
+
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.ColorRes;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -868,7 +869,7 @@ public class WirelessCategoryFragmentDialog extends StyledDialogFragment impleme
 
 
         return loader.orderBy(WirelessTable.NAME)
-                .wrap(new Function<Cursor, List<WirelessItem>>() {
+                .transform(new Function<Cursor, List<WirelessItem>>() {
                     @Override
                     public List<WirelessItem> apply(Cursor c) {
                         List<WirelessItem> items = new ArrayList<WirelessItem>(c.getCount());

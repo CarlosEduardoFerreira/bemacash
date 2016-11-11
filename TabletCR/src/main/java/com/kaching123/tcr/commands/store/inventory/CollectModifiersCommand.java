@@ -61,12 +61,13 @@ public class CollectModifiersCommand extends PublicGroundyTask {
         Unit unit = (Unit) getArgs().getSerializable(ARG_UNIT);
         boolean isAutoApplycheck = getArgs().getBoolean(ARG_AUTO_APPLY_CHECK);
 
-        Cursor c = ProviderAction.query(MODIFIER_URI)
+        Cursor modifierCursor = ProviderAction.query(MODIFIER_URI)
                 .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                 .orderBy(ModifierTable.ORDER_NUM)
                 .perform(getContext());
 
-        if (c.getCount() == 0) {
+        if (modifierCursor!=null && modifierCursor.getCount() == 0) {
+            modifierCursor.close();
             return succeeded()
                     .add(PARAM_ITEM_MODEL, model)
                     .add(PARAM_PRICE, price)
@@ -76,13 +77,14 @@ public class CollectModifiersCommand extends PublicGroundyTask {
 
         ArrayList<ModifierExModel> modifierModels = new ArrayList<>();
         ModifierExFunction function = new ModifierExFunction();
-        while (c.moveToNext()) {
-            modifierModels.add(function.apply(c));
+        while (modifierCursor!=null && modifierCursor.moveToNext()) {
+            modifierModels.add(function.apply(modifierCursor));
         }
 
         ArrayList<SelectedModifierExModel> wrappedModifiers = new ArrayList<>(modifierModels.size());
         ArrayList<SelectedModifierExModel> wrappedAutoApplyModifiers = new ArrayList<>(modifierModels.size());
         boolean hasAutoApply = false;
+
         if (TextUtils.isEmpty(saleItemGuid)) {
             ItemModel item = null;
             for (ModifierExModel modifier : modifierModels) {
@@ -97,21 +99,24 @@ public class CollectModifiersCommand extends PublicGroundyTask {
             }
 
         } else {
-            c = ProviderAction.query(SALE_MODIFIER_URI)
+           Cursor saleModifierCursor = ProviderAction.query(SALE_MODIFIER_URI)
                     .projection(SaleAddonTable.ADDON_GUID)
                     .where(SaleAddonTable.ITEM_GUID + " = ?", saleItemGuid)
                     .perform(getContext());
 
             HashSet<String> selectedGuids = new HashSet<>();
-            while (c.moveToNext()) {
-                selectedGuids.add(c.getString(0));
+            while (saleModifierCursor!=null && saleModifierCursor.moveToNext()) {
+                selectedGuids.add(saleModifierCursor.getString(0));
             }
 
             for (ModifierExModel modifier : modifierModels) {
                 wrappedModifiers.add(new SelectedModifierExModel(modifier, selectedGuids.contains(modifier.getGuid())));
             }
+            if(saleModifierCursor!=null) {
+                saleModifierCursor.close();
+            }
+
         }
-        c.close();
         return succeeded()
                 .add(PARAM_MODIFIERS, hasAutoApply ? wrappedAutoApplyModifiers : wrappedModifiers)
                 .add(PARAM_ITEM_MODEL, model)

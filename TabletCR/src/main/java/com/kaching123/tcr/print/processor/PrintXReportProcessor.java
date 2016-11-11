@@ -153,7 +153,6 @@ public class PrintXReportProcessor {
         printer.boldPair(context.getString(R.string.xreport_net_sales), report.netSales, false);
         printer.pair(context.getString(R.string.xreport_gratuity), report.gratuity);
         printer.pair(context.getString(R.string.xreport_tax), report.tax);
-        printer.pair(context.getString(R.string.xreport_transaction_fee), report.transactionFee);
         printer.emptyLine();
         printer.drawLine();
 
@@ -162,7 +161,7 @@ public class PrintXReportProcessor {
         printer.emptyLine();
 
         printer.pair(context.getString(R.string.xreport_gross_margin), report.grossMargin);
-        printer.percent(report.grossMarginPercent);
+        printer.pair(context.getString(R.string.xreport_gross_margin_percent), report.grossMarginPercent);
         printer.emptyLine();
 
         if (enableEreportDepartSale) {
@@ -188,6 +187,9 @@ public class PrintXReportProcessor {
 
         printer.subtitle(context.getString(R.string.xreport_tender_summary), true);
         printer.pair(context.getString(R.string.xreport_credit_card), report.tenderCreditCard);
+        if (app.getShopInfo().acceptDebitCards) {
+            printer.pair(context.getString(R.string.xreport_debit), report.tenderDebit);
+        }
         printer.pair(context.getString(R.string.xreport_cash), report.tenderCash);
         printer.pair(context.getString(R.string.xreport_credit_receipt), report.tenderCreditReceipt);
         printer.pair(context.getString(R.string.xreport_offline_credit), report.tenderOfflineCredit);
@@ -197,10 +199,6 @@ public class PrintXReportProcessor {
             printer.pair(context.getString(R.string.xreport_ebt_cash), report.tenderEbtCash);
             printer.pair(context.getString(R.string.xreport_ebt_foodstamp), report.tenderEbtFoodstamp);
         }
-        if (app.getShopInfo().acceptDebitCards) {
-            printer.pair(context.getString(R.string.xreport_debit), report.tenderDebit);
-        }
-
 
         printer.emptyLine();
 
@@ -209,7 +207,9 @@ public class PrintXReportProcessor {
             ArrayList<String> cardNames = new ArrayList<String>(report.cards.keySet());
             Collections.sort(cardNames);
             for (String cardName : cardNames) {
-                printer.pair(cardName, report.cards.get(cardName));
+                if(!TextUtils.isEmpty(cardName) && !TextUtils.equals(cardName, "EBT CARD")) {
+                    printer.pair(cardName, report.cards.get(cardName));
+                }
             }
         }
         if (xReportType != ReportType.X_REPORT_DAILY_SALES) {
@@ -234,8 +234,6 @@ public class PrintXReportProcessor {
                 printer.emptyLine();
             }
         }
-//        if (report.end.compareTo(report.begin) > 0)
-//            printer.pair(context.getString(R.string.xreport_drawer_difference), report.drawerDifference);
         printer.drawLine();
     }
 

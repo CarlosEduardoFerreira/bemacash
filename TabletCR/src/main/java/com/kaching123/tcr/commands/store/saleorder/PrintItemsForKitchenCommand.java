@@ -11,9 +11,12 @@ import com.google.common.base.Function;
 import com.kaching123.pos.PosPrinter;
 import com.kaching123.pos.data.PrinterStatusEx;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.activity.HistoryActivity;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.device.PrinterInfo;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.print.printer.PosKitchenPrinter;
 import com.kaching123.tcr.print.processor.PrintItemsForKitchenProcessor;
@@ -84,6 +87,8 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     private boolean printAllItems;
     private boolean isVoidOrder;
 
+    public static boolean itComesFromPay = true;
+
     @Override
     protected TaskResult doInBackground() {
         orderGuid = getStringArg(ARG_ORDER_GUID);
@@ -127,10 +132,12 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                     continue;
                 }
                 boolean qtyUpdated = new UpdateSaleItemKitchenQty().syncStandalone(getContext(), e.getValue(), getAppCommandContext());
-                return failed().add(PrintForKitchenCommand.EXTRA_ERROR_PRINTER, PrinterError.NOT_CONFIGURED).add(EXTRA_PRINTER, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
+                return failed().add(PrintForKitchenCommand.EXTRA_ERROR_PRINTER, PrinterError.NOT_CONFIGURED).add(EXTRA_PRINTER,
+                        aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
             }
             for (PrinterInfo p : pp) {
-                TaskResult result = new PrintForKitchenCommand().sync(getContext(), p, e.getValue(), aliasGuid, skipPaperWarning, searchByMac, isUpdated, getAppCommandContext());
+                TaskResult result = new PrintForKitchenCommand().sync(getContext(), p, e.getValue(), aliasGuid,
+                        skipPaperWarning, searchByMac, isUpdated, getAppCommandContext());
                 if (isFailed(result)) {
                     if (skip && fromPrinter.equals(aliasGuid)) {
                         continue;
@@ -331,12 +338,19 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         protected TaskResult execute(PosPrinter printer) throws IOException {
             final PosKitchenPrinter kitchenPrinter = new PosKitchenPrinter();
             kitchenPrinter.setVoidOrder(isVoidOrder);
-            PrintItemsForKitchenProcessor processor = new PrintItemsForKitchenProcessor(items, this.printer, aliasGuid, orderGuid, isUpdated, orderTitle, printAllItems, this.getAppCommandContext());
+            PrintItemsForKitchenProcessor processor = new PrintItemsForKitchenProcessor(items, this.printer, aliasGuid, orderGuid,
+                    isUpdated, orderTitle, printAllItems, this.getAppCommandContext());
+
             processor.print(getContext(), getApp(), kitchenPrinter);
 
             kitchenPrinter.emptyLine(5);
             try {
-                kitchenPrinter.print(printer);
+                /*
+                 *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
+                 */
+                if(getApp().getShopInfo().printOnholdOrders || itComesFromPay) {
+                    kitchenPrinter.print(printer);
+                }
             } catch (IOException e) {
                 Logger.e("PrintForKitchenCommand execute error: ", e);
                 return failed().add(EXTRA_ERROR_PRINTER, PrinterError.DISCONNECTED);
@@ -371,7 +385,8 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         }
 
 
-        public TaskResult sync(Context context, PrinterInfo printer, List<ItemInfo> items, String aliasGuid, boolean skipPaperWarning, boolean searchByMac, boolean isUpdated, IAppCommandContext appCommandContext) {
+        public TaskResult sync(Context context, PrinterInfo printer, List<ItemInfo> items, String aliasGuid, boolean skipPaperWarning,
+                               boolean searchByMac, boolean isUpdated, IAppCommandContext appCommandContext) {
             this.items = items;
             this.printer = printer;
             this.aliasGuid = aliasGuid;
@@ -451,7 +466,9 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         protected abstract void onPrinterPaperNearTheEnd(String fromPrinter, String aliasTitle);
     }
 
-    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter, boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle) {
+
+    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
+                             boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle) {
         create(PrintItemsForKitchenCommand.class)
                 .arg(ARG_ORDER_GUID, orderGuid)
                 .arg(ARG_FROM_PRINTER, fromPrinter)
@@ -463,7 +480,9 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 .callback(callback)
                 .queueUsing(context);
     }
-    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter, boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle, boolean isVoidOrder) {
+
+    public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
+                             boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle, boolean isVoidOrder) {
         create(PrintItemsForKitchenCommand.class)
                 .arg(ARG_ORDER_GUID, orderGuid)
                 .arg(ARG_FROM_PRINTER, fromPrinter)

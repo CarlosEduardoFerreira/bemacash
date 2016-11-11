@@ -23,9 +23,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
@@ -51,6 +48,10 @@ import com.kaching123.tcr.model.converter.SaleOrderFunction;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -235,7 +236,7 @@ public class HoldFragmentDialog extends StyledDialogFragment {
                 builder.where(ShopStore.SaleOrderTable.CREATE_TIME + " >= ? ", minCreateTime.getTime());
             return builder
                     .orderBy(ShopStore.SaleOrderTable.CREATE_TIME + " desc ")
-                    .transform(new SaleOrderFunction() {
+                    .transformRow(new SaleOrderFunction() {
                         @Override
                         public SaleOrderModel apply(Cursor c) {
                             Logger.d("COUNT: apply");
@@ -258,8 +259,16 @@ public class HoldFragmentDialog extends StyledDialogFragment {
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
         printToKitchenFlag = false;
-        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
+        Logger.e("CEF.HoldFragmentDialog.printItemsToKitchen:printOnholdOrders " + getApp().getShopInfo().printOnholdOrders);
+        /*
+         *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
+         */
+        if(getApp().getShopInfo().printOnholdOrders) {
+            WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        }
+        PrintItemsForKitchenCommand.itComesFromPay = false;
+        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip,
+                new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
     }
 
     private void printItemToKds(){

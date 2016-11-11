@@ -60,6 +60,7 @@ import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.util.UnitUtil;
 import com.telly.groundy.annotations.OnSuccess;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -329,7 +330,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                     c.getString(2)
             );
         }
-        if (saleOrderPrintInfo.kitchenPrintStatus != OrderStatus.COMPLETED.name() && saleOrderPrintInfo.Guid != null)
+        if (saleOrderPrintInfo!=null && saleOrderPrintInfo.kitchenPrintStatus != OrderStatus.COMPLETED.name() && saleOrderPrintInfo.Guid != null)
             if ((saleOrderPrintInfo.kitchenPrintStatus == PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED.name()) || getOperatorPermissions().contains(Permission.VOID_SALES))
                 doRemoceClickLine();
             else {
@@ -659,7 +660,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     private String getCount(List<SaleOrderItemViewModel> list) {
         BigDecimal count = BigDecimal.ZERO;
         for (SaleOrderItemViewModel model : list) {
-            if(model.unitsLabel !=null &&!model.unitsLabel.equalsIgnoreCase("LB"))
+            if(model.unitsLabel !=null &&!UnitUtil.isUnitLbs(model.unitsLabel))
                 count = count.add(model.itemModel.qty);
             else
                 count = count.add(BigDecimal.ONE);

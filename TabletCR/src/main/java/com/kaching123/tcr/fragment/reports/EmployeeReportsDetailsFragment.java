@@ -20,11 +20,6 @@ import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
-
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
@@ -42,6 +37,10 @@ import com.kaching123.tcr.fragment.reports.sub.PayrollReportFragment;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -180,7 +179,7 @@ public class EmployeeReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
                     .projection(EmployeeTable.GUID, EmployeeTable.FIRST_NAME, EmployeeTable.LAST_NAME)
                     .where(EmployeeTable.IS_MERCHANT + " = ?", 0)
                     .orderBy(EmployeeTable.LAST_NAME)
-                    .transform(new Function<Cursor, EmployeeModel>() {
+                    .transformRow(new Function<Cursor, EmployeeModel>() {
                         @Override
                         public EmployeeModel apply(Cursor c) {
                             return new EmployeeModel(
@@ -190,7 +189,7 @@ public class EmployeeReportsDetailsFragment extends ReportsDetailsWithSpinnerFra
                                     null);
                         }
                     })
-                    .wrap(new Function<List<EmployeeModel>, List<EmployeeModel>>() {
+                    .transform(new Function<List<EmployeeModel>, List<EmployeeModel>>() {
                         @Override
                         public List<EmployeeModel> apply(List<EmployeeModel> result) {
                             ArrayList<EmployeeModel> arrayList = new ArrayList<EmployeeModel>(result.size() + 1);

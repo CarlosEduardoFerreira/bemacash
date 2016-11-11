@@ -9,8 +9,6 @@ import android.support.v4.content.Loader;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.chart.HorizontalBarChart;
 import com.kaching123.tcr.component.chart.HorizontalBarChart.DescriptionBarChartData;
@@ -21,6 +19,9 @@ import com.kaching123.tcr.model.converter.TopItemsFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.ReportsTopItemsView2;
 import com.kaching123.tcr.store.ShopStore;
+
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.Date;
 import java.util.List;
@@ -76,7 +77,7 @@ public class TopItemsFragment extends SuperBaseFragment {
             if (selectedRegisterId > 0)
                 builder.where(ReportsTopItemsView2.SaleOrderTable.REGISTER_ID + " = ?", selectedRegisterId);
             return builder
-                    .wrap(new ChartTopItemsFunction())
+                    .transform(new ChartTopItemsFunction())
                     .build(getActivity());
         }
 

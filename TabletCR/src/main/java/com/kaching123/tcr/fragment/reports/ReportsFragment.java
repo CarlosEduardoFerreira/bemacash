@@ -467,7 +467,7 @@ public class ReportsFragment extends DateRangeFragment {
             }
 
             return builder
-                    .wrap(new PaymentTransactionsFunction(fromDate, toDate, inDays))
+                    .transform(new PaymentTransactionsFunction(fromDate, toDate, inDays))
                     .build(getActivity());
         }
 
@@ -498,7 +498,7 @@ public class ReportsFragment extends DateRangeFragment {
                 builder.where(ReportsTopItemsView2.SaleOrderTable.REGISTER_ID + " = ?", selectedRegisterId);
             }
             return builder
-                    .wrap(new TopItemsFunction())
+                    .transform(new TopItemsFunction())
                     .build(getActivity());
 
         }

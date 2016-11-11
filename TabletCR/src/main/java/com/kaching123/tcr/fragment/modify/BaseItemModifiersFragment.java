@@ -19,7 +19,6 @@ import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.converter.ModifierFunction;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 
 import org.androidannotations.annotations.AfterViews;
@@ -150,7 +149,7 @@ public class BaseItemModifiersFragment extends Fragment {
                     .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                     .where(ModifierTable.TYPE + "= ?", ModifierType.MODIFIER.ordinal())
                     .orderBy(ModifierTable.TITLE)
-                    .transform(new ModifierFunction()).build(getActivity());
+                    .transformRow(new ModifierFunction()).build(getActivity());
         }
 
         @Override
@@ -189,7 +188,7 @@ public class BaseItemModifiersFragment extends Fragment {
                     .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                     .where(ModifierTable.TYPE + "= ?", type.ordinal())
                     .orderBy(ModifierTable.TITLE)
-                    .transform(new ModifierFunction()).build(getActivity());
+                    .transformRow(new ModifierFunction()).build(getActivity());
         }
 
         @Override

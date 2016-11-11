@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
@@ -30,6 +28,7 @@ import com.kaching123.tcr.store.helper.RecalcSaleItemTable;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /*import com.kaching123.tcr.store.ShopStore.MaxUpdateTableChildTimeQuery;
 import com.kaching123.tcr.store.ShopStore.MaxUpdateTableParentTimeQuery;*/
@@ -46,20 +45,17 @@ public class ShopProviderExt extends ShopProvider {
 
     final static String URI_PATH_RAW_TABLE_QUERY = "URI_RAW_TABLE_QUERY";
 
-    protected Handler calculator = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            composerHelper.recalcAfterSync();
-            costComposerHelper.recalcAfterSync();
-            contentResolver.notifyChange(contentUri("items_ext_view"), null);
-        }
-    };
-
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    protected void sheduleUpdate() {
-        calculator.removeMessages(1);
-        calculator.sendEmptyMessageDelayed(1, 500);
+    protected void scheduleUpdate() {
+        scheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                composerHelper.recalcAfterSync();
+                costComposerHelper.recalcAfterSync();
+                contentResolver.notifyChange(contentUri("items_ext_view"), null);
+            }
+        }, 500L, TimeUnit.MILLISECONDS);
     }
 
 
@@ -284,7 +280,7 @@ public class ShopProviderExt extends ShopProvider {
             saleItemHelper.recalculateOrderTotalPriceByItem(values.getAsString(SaleAddonTable.ITEM_GUID));
         } else if (ItemMovementTable.URI_CONTENT.equals(path)) {
             itemMovementHelper.recalculateMovementAvailableQty(values.getAsString(ItemMovementTable.ITEM_UPDATE_QTY_FLAG));
-            sheduleUpdate();
+            scheduleUpdate();
         } else if (LoyaltyPointsMovementTable.URI_CONTENT.equals(path)){
             loyaltyPointsHelper.recalculateCustomerLoyaltyPoints(values.getAsString(LoyaltyPointsMovementTable.CUSTOMER_ID));
         }
@@ -295,7 +291,7 @@ public class ShopProviderExt extends ShopProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         String path = getUriPath(uri);
         if (ShopStore.ComposerTable.URI_CONTENT.equals(path)){
-            sheduleUpdate();
+            scheduleUpdate();
         }
         return super.delete(uri, selection, selectionArgs);
     }
@@ -316,16 +312,16 @@ public class ShopProviderExt extends ShopProvider {
             } else if (ItemMovementTable.URI_CONTENT.equals(path)) {
                 Logger.d("recalculateAvailableQty: bulkInsert ItemMovementTable");
                 itemMovementHelper.bulkRecalcAvailableItemMovementTableAfterSync(false);
-                sheduleUpdate();
+                scheduleUpdate();
             } else if (ItemTable.URI_CONTENT.equals(path)) {
                 Logger.d("recalculateAvailableQty: bulkInsert ItemTable");
                 itemMovementHelper.bulkRecalcAvailableItemMovementTableAfterSync(true);
-                sheduleUpdate();
+                scheduleUpdate();
             } else if (SaleOrderTable.URI_CONTENT.equals(path)) {
                 Logger.d("recalculateAvailableQty: bulkInsert SaleOrderTable");
                 saleItemHelper.bulkRecalculateOrderTotalPriceAfterSync();
             }else if (ShopStore.ComposerTable.URI_CONTENT.equals(path)){
-                sheduleUpdate();
+                scheduleUpdate();
             }else if (LoyaltyPointsMovementTable.URI_CONTENT.equals(path)){
                 Logger.d("recalculateLoyaltyPoints");
                 loyaltyPointsHelper.bulkRecalcCustomerLoyaltyPointsAfterSync();
@@ -342,7 +338,7 @@ public class ShopProviderExt extends ShopProvider {
                     && !values.containsKey(SaleOrderTable.IS_TIPPED) && !isKitchenStatusUpdate(values)) {
                 saleItemHelper.recalculateOrderTotalPrice(selectionArgs[0]);
             }else if (ItemTable.URI_CONTENT.equals(path)) {
-                sheduleUpdate();
+                scheduleUpdate();
             }
         }
 

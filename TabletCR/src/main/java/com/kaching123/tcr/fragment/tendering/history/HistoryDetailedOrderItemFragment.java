@@ -434,7 +434,7 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
         public Loader<Optional<ShiftModel>> onCreateLoader(int id, Bundle args) {
             return CursorLoaderBuilder.forUri(URI_SHIFTS)
                     .where(ShiftTable.GUID + " = ?", getApp().getShiftGuid())
-                    .wrap(new Function<Cursor, Optional<ShiftModel>>() {
+                    .transform(new Function<Cursor, Optional<ShiftModel>>() {
                         @Override
                         public Optional<ShiftModel> apply(Cursor cursor) {
                             ShiftModel model = null;
@@ -543,7 +543,7 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
             return CursorLoaderBuilder.forUri(ShopProvider.contentUri(SaleOrderView.URI_CONTENT))
                     .projection(CustomerTable.EMAIL)
                     .where(SaleOrderView2.SaleOrderTable.GUID + " = ?", orderGuid)
-                    .transform(new StringFunction())
+                    .transformRow(new StringFunction())
                     .build(getActivity());
         }
 

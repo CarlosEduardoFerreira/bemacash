@@ -240,7 +240,7 @@ public class ModifierItemListFragment extends ListFragment
             loader.where(ShopSchema2.ModifierView2.ModifierTable.TYPE + " = ?", modType.ordinal());
         }
         loader.orderBy(ItemGroupTable.ORDER_NUM + "," + ModifierTable.ORDER_NUM);
-        return loader.transform(new ModifierExFunction()).build(getActivity());
+        return loader.transformRow(new ModifierExFunction()).build(getActivity());
     }
 
     @Override
