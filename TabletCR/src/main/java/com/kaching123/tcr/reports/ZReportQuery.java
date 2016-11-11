@@ -388,18 +388,11 @@ public final class ZReportQuery extends XReportQuery {
         tax = tax.add(saleInfo.tax.add(returnInfo.tax));//returnInfo is negative
         cogs = cogs.add(saleInfo.cogs.add(returnInfo.cogs));//returnInfo is negative
 
-        Query query = ProviderAction.query(URI_TIPS)
+        Cursor tipsCursor = ProviderAction.query(URI_TIPS)
                 .projection(ShopStore.EmployeeTipsTable.AMOUNT)
                 .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " > ?", fromDate)
-                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " < ?", toDate);
-
-        Cursor tipsCursor = null;
-        if (registerID == 0) {
-            tipsCursor = query.perform(context);
-        } else {
-            tipsCursor = query.where(EmployeeTipsTable.REGISTER_ID + " = ? ", String.valueOf(registerID))
-                    .perform(context);
-        }
+                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " < ?", toDate)
+                .perform(context);
 
         while (tipsCursor.moveToNext()) {
             BigDecimal tips = _decimal(tipsCursor, 0, BigDecimal.ZERO);
@@ -411,18 +404,11 @@ public final class ZReportQuery extends XReportQuery {
         }
 
 
-        Query query1 = ProviderAction.query(URI_TIPS)
+        Cursor gratuityCursor = ProviderAction.query(URI_TIPS)
                 .projection(ShopStore.EmployeeTipsTable.AMOUNT, ShopStore.EmployeeTipsTable.PAYMENT_TYPE)
                 .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " > ?", fromDate)
-                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " < ?", toDate);
-
-        Cursor gratuityCursor = null;
-        if (registerID == 0) {
-            gratuityCursor = query1.perform(context);
-
-        } else {
-            gratuityCursor = query1.where(EmployeeTipsTable.SHIFT_ID + " = ? ", String.valueOf(registerID)).perform(context);
-        }
+                .where(ShopStore.EmployeeTipsTable.CREATE_TIME + " < ?", toDate)
+                .perform(context);
 
         while (gratuityCursor.moveToNext()) {
             BigDecimal amount = _decimal(gratuityCursor, 0, BigDecimal.ZERO);

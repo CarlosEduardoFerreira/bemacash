@@ -56,13 +56,13 @@ public abstract class ShopStore {
     }
 
     //@StaticWhere(column = ISupportDraftTable.UPDATE_IS_DRAFT, value = "0")
-    public interface ISupportDraftTable {
+    public static interface ISupportDraftTable {
         @Column(type = Column.Type.INTEGER, defVal = "0")
         String UPDATE_IS_DRAFT = DEFAULT_IS_DRAFT;
     }
 
     @StaticWhere(column = IBemaSyncTable.IS_DELETED, value = "0")
-    public interface IBemaSyncTable extends ISupportDraftTable {
+    public static interface IBemaSyncTable extends ISupportDraftTable {
 
         @Column(type = Type.INTEGER, defVal = "0")
         String IS_DELETED = DEFAULT_IS_DELETED;
@@ -73,7 +73,7 @@ public abstract class ShopStore {
     }
 
     @Table(ApkUpdate.TABLE_NAME)
-    public interface ApkUpdate extends IBemaSyncTable {
+    public static interface ApkUpdate extends IBemaSyncTable {
         @URI
         String URI_CONTENT = "apk_update";
         String TABLE_NAME = "apk_update";
@@ -99,7 +99,7 @@ public abstract class ShopStore {
     }
 
     @Table(BillPayment.TABLE_NAME)
-    public interface BillPayment {
+    public static interface BillPayment {
         @URI
         String URI_CONTENT = "BillPayment_item";
         String TABLE_NAME = "BillPayment_item";
@@ -122,7 +122,7 @@ public abstract class ShopStore {
     }
 
     @Table(WirelessTable.TABLE_NAME)
-    public interface WirelessTable {
+    public static interface WirelessTable {
 
         @URI
         String URI_CONTENT = "wireless_item";
@@ -240,7 +240,7 @@ public abstract class ShopStore {
             @Index(name = "sale_item", columns = UnitTable.SALE_ITEM_ID),
             @Index(name = "child_sale_item", columns = UnitTable.CHILD_ORDER_ID)
     })
-    public interface UnitTable extends IBemaSyncTable {
+    public static interface UnitTable extends IBemaSyncTable {
 
         @URI(altNotify = {UnitsView.URI_CONTENT})
         String URI_CONTENT = "unit";
@@ -288,7 +288,7 @@ public abstract class ShopStore {
     }
 
     @Table(DepartmentTable.TABLE_NAME)
-    public interface DepartmentTable extends IBemaSyncTable {
+    public static interface DepartmentTable extends IBemaSyncTable {
 
         @URI(altNotify = {CategorySimpleView.URI_CONTENT})
         String URI_CONTENT = "department";
@@ -312,7 +312,7 @@ public abstract class ShopStore {
 
     @Table(CategoryTable.TABLE_NAME)
     @Index(name = "deps", columns = CategoryTable.DEPARTMENT_GUID)
-    public interface CategoryTable extends IBemaSyncTable {
+    public static interface CategoryTable extends IBemaSyncTable {
 
         @URI(altNotify = {CategoryView.URI_CONTENT, CategorySimpleView.URI_CONTENT})
         String URI_CONTENT = "category";
@@ -519,7 +519,7 @@ public abstract class ShopStore {
     }
 
     @RawQuery(ItemTableAllColumns.QUERY_NAME)
-    public interface ItemTableAllColumns {
+    public static interface ItemTableAllColumns {
 
         String QUERY_NAME = "item_table_all_columns";
 
@@ -537,7 +537,7 @@ public abstract class ShopStore {
             @Index(name = "mvn_flag", columns = ItemMovementTable.ITEM_UPDATE_QTY_FLAG),
             @Index(name = "create_time", columns = ItemMovementTable.CREATE_TIME)
     })
-    public interface ItemMovementTable extends IBemaSyncTable {
+    public static interface ItemMovementTable extends IBemaSyncTable {
 
         @URI(altNotify = SaleOrderItemsView.URI_CONTENT)
         String URI_CONTENT = "item_movement";
@@ -673,7 +673,7 @@ public abstract class ShopStore {
             @Index(name = "status", columns = SaleOrderTable.STATUS),
             @Index(name = "parent", columns = SaleOrderTable.PARENT_ID)
     })
-    public interface SaleOrderTable extends IBemaSyncTable {
+    public static interface SaleOrderTable extends IBemaSyncTable {
 
         @URI(altNotify = {SaleOrderItemsView.URI_CONTENT, SaleOrderTipsQuery.URI_CONTENT, UnitsView.URI_CONTENT, SaleOrderView.URI_CONTENT})
         String URI_CONTENT = "sale_order";
@@ -787,7 +787,7 @@ public abstract class ShopStore {
             @Index(name = "item_guid", columns = SaleItemTable.ITEM_GUID),
             @Index(name = "parent", columns = SaleItemTable.PARENT_GUID)
     })
-    public interface SaleItemTable extends IBemaSyncTable {
+    public static interface SaleItemTable extends IBemaSyncTable {
 
         //@Trigger(when = When.AFTER, title = "updateSoTpSi")
         @URI(altNotify = SaleOrderItemsView.URI_CONTENT)
@@ -901,7 +901,7 @@ public abstract class ShopStore {
             @Index(name = "item_guid", columns = SaleAddonTable.ITEM_GUID),
             @Index(name = "addon_guid", columns = SaleAddonTable.ADDON_GUID)
     })
-    public interface SaleAddonTable extends IBemaSyncTable {
+    public static interface SaleAddonTable extends IBemaSyncTable {
 
         //@Trigger(when = When.AFTER, title = "updateSoTpSa")
         @URI(altNotify = SaleOrderItemsView.URI_CONTENT)
@@ -1029,7 +1029,7 @@ public abstract class ShopStore {
             @Index(name = "first_name", columns = EmployeeTable.FIRST_NAME),
             @Index(name = "email", columns = EmployeeTable.EMAIL)
     })
-    public interface EmployeeTable extends IBemaSyncTable {
+    public static interface EmployeeTable extends IBemaSyncTable {
 
         @URI
         String URI_CONTENT = "employee";
@@ -1129,7 +1129,7 @@ public abstract class ShopStore {
     @Table(EmployeePermissionTable.TABLE_NAME)
     @Index(name = "user", columns = EmployeePermissionTable.USER_GUID)
     @PrimaryKey(columns = {EmployeePermissionTable.USER_GUID, EmployeePermissionTable.PERMISSION_ID})
-    public interface EmployeePermissionTable {
+    public static interface EmployeePermissionTable {
 
         @URI
         String URI_CONTENT = "employee_permission";
@@ -1168,7 +1168,7 @@ public abstract class ShopStore {
             @Index(name = "close_manager", columns = ShiftTable.CLOSE_MANAGER_ID),
             @Index(name = "register", columns = ShiftTable.REGISTER_ID)
     })
-    public interface ShiftTable extends IBemaSyncTable {
+    public static interface ShiftTable extends IBemaSyncTable {
 
         @URI
         String URI_CONTENT = "shift";
@@ -1218,7 +1218,7 @@ public abstract class ShopStore {
             @Index(name = "shift", columns = CashDrawerMovementTable.SHIFT_GUID),
             @Index(name = "manager", columns = CashDrawerMovementTable.MANAGER_GUID)
     })
-    public interface CashDrawerMovementTable extends IBemaSyncTable {
+    public static interface CashDrawerMovementTable extends IBemaSyncTable {
 
         @URI(altNotify = ShiftTable.URI_CONTENT)
         String URI_CONTENT = "cashdrawer_tr";
@@ -1260,7 +1260,7 @@ public abstract class ShopStore {
     }
 
     @Table(SqlCommandTable.TABLE_NAME)
-    public interface SqlCommandTable {
+    public static interface SqlCommandTable {
 
         @URI
         String URI_CONTENT = "sql_command";
@@ -1298,7 +1298,7 @@ public abstract class ShopStore {
             @Index(name = "operator", columns = PaymentTransactionTable.OPERATOR_GUID),
             @Index(name = "shift", columns = PaymentTransactionTable.SHIFT_GUID)
     })
-    public interface PaymentTransactionTable extends IBemaSyncTable {
+    public static interface PaymentTransactionTable extends IBemaSyncTable {
 
         @URI(altNotify = {ShiftTable.URI_CONTENT, PaymentTransactionView.URI_CONTENT, SaleOrderTipsQuery.URI_CONTENT})
         String URI_CONTENT = "payment_transaction";
@@ -1386,7 +1386,7 @@ public abstract class ShopStore {
             @Index(name = "employee", columns = EmployeeTimesheetTable.EMPLOYEE_GUID),
             @Index(name = "clock_in", columns = EmployeeTimesheetTable.CLOCK_IN)
     })
-    public interface EmployeeTimesheetTable extends IBemaSyncTable {
+    public static interface EmployeeTimesheetTable extends IBemaSyncTable {
 
         @URI
         String URI_CONTENT = "employee_timesheet";
@@ -1417,7 +1417,7 @@ public abstract class ShopStore {
     }
 
     @Table(TaxGroupTable.TABLE_NAME)
-    public interface TaxGroupTable extends IBemaSyncTable {
+    public static interface TaxGroupTable extends IBemaSyncTable {
 
         @URI
         String URI_CONTENT = "tax_group";
@@ -1447,7 +1447,7 @@ public abstract class ShopStore {
     }
 
     @Table(RegisterTable.TABLE_NAME)
-    public interface RegisterTable extends IBemaSyncTable {
+    public static interface RegisterTable extends IBemaSyncTable {
 
         @URI
         String URI_CONTENT = "register";
@@ -1481,7 +1481,7 @@ public abstract class ShopStore {
 
     @Table(BillPaymentDescriptionTable.TABLE_NAME)
     @Index(name = "order", columns = BillPaymentDescriptionTable.ORDER_ID)
-    public interface BillPaymentDescriptionTable extends IBemaSyncTable {
+    public static interface BillPaymentDescriptionTable extends IBemaSyncTable {
         @URI
         String URI_CONTENT = "bp_description";
 
@@ -1520,7 +1520,7 @@ public abstract class ShopStore {
             @Index(name = "last_name", columns = CustomerTable.LAST_NAME),
             @Index(name = "email", columns = CustomerTable.EMAIL)
     })
-    public interface CustomerTable extends IBemaSyncTable {
+    public static interface CustomerTable extends IBemaSyncTable {
 
         @URI
         String URI_CONTENT = "customer";
@@ -1605,7 +1605,7 @@ public abstract class ShopStore {
     }
 
     @Table(PrinterAliasTable.TABLE_NAME)
-    public interface PrinterAliasTable extends IBemaSyncTable {
+    public static interface PrinterAliasTable extends IBemaSyncTable {
         @URI
         String URI_CONTENT = "printer_alias_table";
 
@@ -1622,7 +1622,7 @@ public abstract class ShopStore {
     }
 
     @Table(KDSAliasTable.TABLE_NAME)
-    public interface KDSAliasTable extends IBemaSyncTable {
+    public static interface KDSAliasTable extends IBemaSyncTable {
         @URI
         String URI_CONTENT = "kds_alias_table";
 
@@ -1639,7 +1639,7 @@ public abstract class ShopStore {
     }
 
     @Table(PaxTable.TABLE_NAME)
-    public interface PaxTable {
+    public static interface PaxTable {
 
         @URI
         String URI_CONTENT = "pax_table";
@@ -1677,7 +1677,7 @@ public abstract class ShopStore {
     }
 
     @Table(PrinterTable.TABLE_NAME)
-    public interface PrinterTable {
+    public static interface PrinterTable {
 
         @URI(altNotify = {PrinterView.URI_CONTENT})
         String URI_CONTENT = "printer_table";
@@ -1718,7 +1718,7 @@ public abstract class ShopStore {
     }
 
     @Table(KDSTable.TABLE_NAME)
-    public interface KDSTable {
+    public static interface KDSTable {
 
         @URI(altNotify = {KDSView.URI_CONTENT})
         String URI_CONTENT = "kds_table";
@@ -1745,7 +1745,7 @@ public abstract class ShopStore {
             @Index(name = "cashier", columns = CreditReceiptTable.CASHIER_GUID),
             @Index(name = "shift", columns = CreditReceiptTable.SHIFT_ID)
     })
-    public interface CreditReceiptTable extends IBemaSyncTable {
+    public static interface CreditReceiptTable extends IBemaSyncTable {
 
         @URI
         String URI_CONTENT = "credit_receipt_table";
@@ -1802,7 +1802,7 @@ public abstract class ShopStore {
             @Index(name = "payment", columns = EmployeeTipsTable.PAYMENT_TRANSACTION_ID),
             @Index(name = "parent", columns = EmployeeTipsTable.PARENT_GUID)
     })
-    public interface EmployeeTipsTable extends IBemaSyncTable {
+    public static interface EmployeeTipsTable extends IBemaSyncTable {
 
         @URI(altNotify = {TipsView.URI_CONTENT})
         String URI_CONTENT = "employee_tips";
@@ -1824,9 +1824,6 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String SHIFT_ID = "shift_id";
-
-        @Column(type = Type.TEXT)
-        String REGISTER_ID = "register_id";
 
         @Column(type = Type.TEXT)
         String ORDER_ID = "order_id";
@@ -1861,7 +1858,7 @@ public abstract class ShopStore {
     }
 
     @Table(ActivationCarrierTable.TABLE_NAME)
-    public interface ActivationCarrierTable {
+    public static interface ActivationCarrierTable {
 
         @URI
         String URI_CONTENT = "activation_carrier";
@@ -1891,7 +1888,7 @@ public abstract class ShopStore {
             @Index(name = "cashier", columns = EmployeeCommissionsTable.EMPLOYEE_ID),
             @Index(name = "order", columns = EmployeeCommissionsTable.ORDER_ID)
     })
-    public interface EmployeeCommissionsTable extends IBemaSyncTable {
+    public static interface EmployeeCommissionsTable extends IBemaSyncTable {
 
         @URI
         String URI_CONTENT = "employee_commissions";
@@ -1935,7 +1932,7 @@ public abstract class ShopStore {
     }
 
     @Table(UpdateTimeTable.TABLE_NAME)
-    public interface UpdateTimeTable {
+    public static interface UpdateTimeTable {
 
         @URI
         String URI_CONTENT = "update_time";
@@ -2402,7 +2399,7 @@ public abstract class ShopStore {
      */
 
     @SimpleView(UnitsView.VIEW_NAME)
-    public interface UnitsView {
+    public static interface UnitsView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "units_view";
@@ -2417,7 +2414,7 @@ public abstract class ShopStore {
         String TABLE_SALE_ORDER = "sale_order_table";
     }
 
-    public interface OldSaleOrdersQuery {
+    public static interface OldSaleOrdersQuery {
 
         String CONTENT_PATH = "old_sale_orders_query";
 
@@ -2444,7 +2441,7 @@ public abstract class ShopStore {
 
     }
 
-    public interface OldMovementGroupsQuery {
+    public static interface OldMovementGroupsQuery {
 
         String CONTENT_PATH = "old_movement_groups_query";
 
@@ -2465,7 +2462,7 @@ public abstract class ShopStore {
 
     }
 
-    public interface OldActiveUnitOrdersQuery {
+    public static interface OldActiveUnitOrdersQuery {
 
         String CONTENT_PATH = "old_active_unit_orders_query";
 
@@ -2484,7 +2481,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(CustomerView.VIEW_NAME)
-    public interface CustomerView {
+    public static interface CustomerView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "customer_view";
@@ -2733,7 +2730,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(PrinterView.VIEW_NAME)
-    public interface PrinterView {
+    public static interface PrinterView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "printer_view";
@@ -2749,7 +2746,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(KDSView.VIEW_NAME)
-    public interface KDSView {
+    public static interface KDSView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "kds_view";
@@ -2818,7 +2815,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(SaleOrderItemsViewFast.VIEW_NAME)
-    public interface SaleOrderItemsViewFast {
+    public static interface SaleOrderItemsViewFast {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "so_items_fast_view";
@@ -2837,7 +2834,7 @@ public abstract class ShopStore {
     }
 
     @RawQuery(SaleOrderItemsViewFastSynced.VIEW_NAME)
-    public interface SaleOrderItemsViewFastSynced {
+    public static interface SaleOrderItemsViewFastSynced {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "so_items_fast_view_synced";
@@ -2900,7 +2897,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(ReportsTopItemsView.VIEW_NAME)
-    public interface ReportsTopItemsView {
+    public static interface ReportsTopItemsView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "reports_top_items_view";
@@ -2923,7 +2920,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(ItemExtView.VIEW_NAME)
-    public interface ItemExtView {
+    public static interface ItemExtView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "items_ext_view";
@@ -2991,7 +2988,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(ShiftView.VIEW_NAME)
-    public interface ShiftView {
+    public static interface ShiftView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "shift_view";
@@ -3018,7 +3015,7 @@ public abstract class ShopStore {
     }
 
     @RawQuery(TotalSalesQuery.QUERY_NAME)
-    public interface TotalSalesQuery {
+    public static interface TotalSalesQuery {
 
         String QUERY_NAME = "total_sales_query";
 
@@ -3172,7 +3169,7 @@ public abstract class ShopStore {
 
 
     @SimpleView(SaleItemExView.VIEW_NAME)
-    public interface SaleItemExView {
+    public static interface SaleItemExView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "so_with_item_view";
@@ -3189,7 +3186,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(SaleItemExDelView.VIEW_NAME)
-    public interface SaleItemExDelView {
+    public static interface SaleItemExDelView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "so_with_deleted_item_view";
@@ -3207,7 +3204,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(SaleOrderView.VIEW_NAME)
-    public interface SaleOrderView {
+    public static interface SaleOrderView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "so_view";
@@ -3237,7 +3234,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(SaleOrderWithDelView.VIEW_NAME)
-    public interface SaleOrderWithDelView {
+    public static interface SaleOrderWithDelView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "so_with_del_view";
@@ -3251,7 +3248,7 @@ public abstract class ShopStore {
     }
 
     @RawQuery(SaleOrderTipsQuery.QUERY_NAME)
-    public interface SaleOrderTipsQuery {
+    public static interface SaleOrderTipsQuery {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "sale_order_tips_query";
@@ -3259,14 +3256,14 @@ public abstract class ShopStore {
         String QUERY_NAME = "sale_order_tips_query";
 
         //dirty hack
-        int PAYMENT_TRANSACTION_STATUS_SUCCESS = 0;
-        int PAYMENT_TRANSACTION_STATUS_PREAUTHORIZED = 4;
-        int SALE_ORDER_STATUS_COMPLETED = 1;
-        String CASH_GATEWAY = "5";
-        String CREDIT_GATEWAYS = "0, 4, 9";
-        String DEBIT_GATEWAY = "3";
-        String EBT_GATEWAYS = "1, 2";
-        String OTHER_GATEWAYS = "6, 7, 8";
+        final static int PAYMENT_TRANSACTION_STATUS_SUCCESS = 0;
+        final static int PAYMENT_TRANSACTION_STATUS_PREAUTHORIZED = 4;
+        final static int SALE_ORDER_STATUS_COMPLETED = 1;
+        final static String CASH_GATEWAY = "5";
+        final static String CREDIT_GATEWAYS = "0, 4, 9";
+        final static String DEBIT_GATEWAY = "3";
+        final static String EBT_GATEWAYS = "1, 2";
+        final static String OTHER_GATEWAYS = "6, 7, 8";
 
 
         String HAS_PREAUTH_TRANSACTIONS = "has_preauth_transactions";
@@ -3318,7 +3315,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(PaymentTransactionView.VIEW_NAME)
-    public interface PaymentTransactionView {
+    public static interface PaymentTransactionView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "payment_transaction_view";
@@ -3340,7 +3337,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(ItemMovementView.VIEW_NAME)
-    public interface ItemMovementView {
+    public static interface ItemMovementView {
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "so_im_view";
 
@@ -3355,7 +3352,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(ExportItemView.VIEW_NAME)
-    public interface ExportItemView {
+    public static interface ExportItemView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "export_items_view";
@@ -3395,7 +3392,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(SaleReportItemsView.VIEW_NAME)
-    public interface SaleReportItemsView {
+    public static interface SaleReportItemsView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "so_sale_reports_items_view";
@@ -3433,7 +3430,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(XReportView.VIEW_NAME)
-    public interface XReportView {
+    public static interface XReportView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "xreport_view";
@@ -3459,7 +3456,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(ZReportView.VIEW_NAME)
-    public interface ZReportView {
+    public static interface ZReportView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "zreport_view";
@@ -3489,7 +3486,7 @@ public abstract class ShopStore {
 
 
     @SimpleView(SaleItemDeptView.VIEW_NAME)
-    public interface SaleItemDeptView {
+    public static interface SaleItemDeptView {
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "sale_item_dept_view";
 
@@ -3526,7 +3523,7 @@ public abstract class ShopStore {
 
 
     @SimpleView(EmployeeTimesheetView.VIEW_NAME)
-    public interface EmployeeTimesheetView {
+    public static interface EmployeeTimesheetView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "employee_timesheet_view";
@@ -3543,7 +3540,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(EmployeeComissionView.VIEW_NAME)
-    public interface EmployeeComissionView {
+    public static interface EmployeeComissionView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "employee_comission_view";
@@ -3556,7 +3553,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(ItemManualMovementView.VIEW_NAME)
-    public interface ItemManualMovementView {
+    public static interface ItemManualMovementView {
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "inventory_log_view";
 
@@ -3571,7 +3568,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(ExportTopItemsView.VIEW_NAME)
-    public interface ExportTopItemsView {
+    public static interface ExportTopItemsView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "export_top_items_view";
@@ -3593,7 +3590,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(ExportSoldItemsView.VIEW_NAME)
-    public interface ExportSoldItemsView {
+    public static interface ExportSoldItemsView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "export_sold_items";
@@ -3624,7 +3621,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(KitchenPrintView.VIEW_NAME)
-    public interface KitchenPrintView {
+    public static interface KitchenPrintView {
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "kitchen_print";
 
@@ -3653,14 +3650,14 @@ public abstract class ShopStore {
         String TABLE_EMPLOYEE = "employee_table";
     }
 
-    public interface MaxUpdateTableTimeQuery {
+    public static interface MaxUpdateTableTimeQuery {
 
         String URI_CONTENT = "raw_max_time_table_query";
 
         String QUERY = "select " + DEFAULT_UPDATE_TIME + ", %2$s from %1$s where " + DEFAULT_UPDATE_TIME + " is not null order by " + DEFAULT_UPDATE_TIME + " DESC, %2$s DESC limit 1";
     }
 
-    public interface MaxUpdateTableTimeParentRelationsQuery {
+    public static interface MaxUpdateTableTimeParentRelationsQuery {
 
         String URI_CONTENT = "raw_max_time_table_query_parent";
 
@@ -3682,7 +3679,7 @@ public abstract class ShopStore {
     }*/
 
     @SimpleView(CreditReceiptView.VIEW_NAME)
-    public interface CreditReceiptView {
+    public static interface CreditReceiptView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "credit_receipt_view";
@@ -3698,7 +3695,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(CreditReceiptExView.VIEW_NAME)
-    public interface CreditReceiptExView {
+    public static interface CreditReceiptExView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "credit_receipt_ex_view";
@@ -3729,7 +3726,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(SaleAddonView.VIEW_NAME)
-    public interface SaleAddonView {
+    public static interface SaleAddonView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "sale_addon_view";
@@ -3754,7 +3751,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(InventoryStatusReportView.VIEW_NAME)
-    public interface InventoryStatusReportView {
+    public static interface InventoryStatusReportView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "inventory_status_report_view";
@@ -3776,7 +3773,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(PrepaidOrderView.VIEW_NAME)
-    public interface PrepaidOrderView {
+    public static interface PrepaidOrderView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "prepaid_order_view";
@@ -3796,7 +3793,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(TipsView.VIEW_NAME)
-    public interface TipsView {
+    public static interface TipsView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "tips_view";
@@ -3841,7 +3838,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(TipsReportView.VIEW_NAME)
-    public interface TipsReportView {
+    public static interface TipsReportView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "tips_report_view";
@@ -3862,7 +3859,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(SaleItemCommissionsView.VIEW_NAME)
-    public interface SaleItemCommissionsView {
+    public static interface SaleItemCommissionsView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "sale_items_commissions_view";
@@ -3881,7 +3878,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(CategoryView.VIEW_NAME)
-    public interface CategoryView {
+    public static interface CategoryView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "category_view";
@@ -3917,7 +3914,7 @@ public abstract class ShopStore {
     }
 
     @SimpleView(CategorySimpleView.VIEW_NAME)
-    public interface CategorySimpleView {
+    public static interface CategorySimpleView {
 
         @URI(type = URI.Type.DIR, onlyQuery = true)
         String URI_CONTENT = "category_simple_view";
@@ -3934,7 +3931,7 @@ public abstract class ShopStore {
     }
 
     @RawQuery(RecalcItemMovementTableView.VIEW_NAME)
-    public interface RecalcItemMovementTableView {
+    public static interface RecalcItemMovementTableView {
 
         String VIEW_NAME = "recalc_sync_item_movement";
 
@@ -3953,7 +3950,7 @@ public abstract class ShopStore {
     }
 
     @RawQuery(RecalcItemMovementForItemTableView.VIEW_NAME)
-    public interface RecalcItemMovementForItemTableView {
+    public static interface RecalcItemMovementForItemTableView {
 
         String VIEW_NAME = "recalc_sync_item_movement_4item";
 
@@ -3990,7 +3987,7 @@ public abstract class ShopStore {
 
 
     @RawQuery(RecalcSaleItemTableView.VIEW_NAME)
-    public interface RecalcSaleItemTableView {
+    public static interface RecalcSaleItemTableView {
 
         String VIEW_NAME = "recalc_sync_sale_item";
 
