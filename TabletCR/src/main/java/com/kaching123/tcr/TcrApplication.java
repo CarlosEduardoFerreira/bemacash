@@ -312,8 +312,6 @@ public class TcrApplication extends MultiDexApplication {
         registerSerial += cut4Symbols(Secure.getString(getContentResolver(), Secure.ANDROID_ID));
         registerSerial = formatByBlocksString(registerSerial);
 
-        //registerSerial = "320089-8e448a-7000c90";
-
         setUsers();
         changeCountryFunctionalityById(shopPref.countryId().get());
 
