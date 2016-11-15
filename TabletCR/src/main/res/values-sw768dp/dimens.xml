@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="report_spinner_def_width">172dp</dimen>
+    <dimen name="dashboard_operator_name_value_label">36sp</dimen>
+    <dimen name="prepaid_supass_choice_dlg_width">700dp</dimen>
+    <dimen name="prepaid_wireless_payment_complete_heigth">660dp</dimen>
+    <dimen name="prepaid_sunpass_credencial_width">860dp</dimen>
+    <dimen name="prepaid_sunpass_pyd_amount_width">1060dp</dimen>
+    <dimen name="prepaid_head_height">120dp</dimen>
+    <dimen name="prepaid_body_height">680dp</dimen>
+    <dimen name="prepaid_label_text_size">20sp</dimen>
+    <dimen name="product_view_width">240dp</dimen>
+    <dimen name="product_view_height">160dp</dimen>
+    <dimen name="product_country_character_width">40dp</dimen>
+    <dimen name="product_country_character_height">60dp</dimen>
+    <dimen name="product_items_grid_spacing">10dp</dimen>
+    <dimen name="product_carrier_width">350dp</dimen>
+    <dimen name="product_carrier_height">100dp</dimen>
+    <dimen name="product_amount_view_width">140dp</dimen>
+    <dimen name="product_amount_view_height">60dp</dimen>
+
+    <dimen name="modifier_list_vertical_spacing">14dp</dimen>
+    <dimen name="modifier_list_horizontal_spacing">16dp</dimen>
+
+    <dimen name="modify_button_width">82dp</dimen>
+    <dimen name="modify_button_height">84dp</dimen>
+    <dimen name="modifier_padding_top">10dp</dimen>
+
+    <dimen name="bar_chart_bar_width">44dp</dimen>
+    <dimen name="horizontal_bar_chart_bar_height">57dp</dimen>
+    <dimen name="bar_chart_spacing">10dp</dimen>
+
+    <dimen name="dashboard_total_sales_container_width">320dp</dimen>
+    <dimen name="dashboard_total_sales_container_height">170dp</dimen>
+
+    <dimen name="cashier_activity_background_width">310dp</dimen>
+
+    <dimen name="main_buttons_container_width">1066dp</dimen>
+    <dimen name="dashboard_operator_name_label">28sp</dimen>
+    <dimen name="dashboard_module_width">224dp</dimen>
+    <dimen name="dashboard_module_height">194dp</dimen>
+    <dimen name="dashboard_module_margin">104dp</dimen>
+    <dimen name="dashboard_register_img_size">90dp</dimen>
+    <dimen name="dashboard_inventory_img_size">95dp</dimen>
+    <dimen name="dashboard_nosale_img_size">88dp</dimen>
+    <dimen name="dashboard_customers_img_h">115dp</dimen>
+    <dimen name="dashboard_customers_img_w">110dp</dimen>
+    <dimen name="qa_items_list_fragment_w">960dp</dimen>
+    <dimen name="qa_modify_fragment_h">960dp</dimen>
+    <dimen name="saleorder_cashier_total_cost_fragment_h">380dp</dimen>
+    <dimen name="saleorder_total_cost_frg_btns_h">60dp</dimen>
+    <dimen name="saleorder_total_cost_frg_btn_customer_h">65dp</dimen>
+
+    <dimen name="history_views_width">960dp</dimen>
+    <dimen name="creditreceipt_views_width">960dp</dimen>
+
+    <dimen name="reports_fragment_grid_elem_reg">172dp</dimen>
+    <dimen name="reports_fragment_grid_elem_from_to">168dp</dimen>
+
+    <dimen name="edit_employee_activity_style_padding_left">80dp</dimen>
+    <dimen name="edit_employee_activity_style_padding_right">80dp</dimen>
+    <dimen name="edit_employee_activity_style_padding_top">40dp</dimen>
+
+    <dimen name="edit_item_table_margin_left">72dp</dimen>
+
+    <dimen name="payment_tender_dlg_main_layout_padding_top">10dp</dimen>
+    <dimen name="payment_tender_dlg_main_layout_padding_bottom">0dp</dimen>
+    <dimen name="payment_tender_dlg_blackbox_height">460dp</dimen>
+
+
+    <dimen name="pay_tender_dialog_width_large">1080dp</dimen>
+
+    <dimen name="pay_tender_dialog_height">501dp</dimen>
+    <dimen name="pay_tender_dialog_height_3">648dp</dimen>
+    <dimen name="pay_tender_dialog_height_3_expanded">612dp</dimen>
+    <dimen name="pay_tender_dialog_height_3_large">723dp</dimen>
+    <dimen name="pay_tender_dialog_height_3_expanded_large">723dp</dimen>
+
+    <dimen name="payment_tender_dlg_button_width">120dp</dimen>
+    <dimen name="payment_tender_dlg_button_height">120dp</dimen>
+    <dimen name="payment_tender_dlg_transaction_list_layout_width">400dp</dimen>
+
+
+</resources>

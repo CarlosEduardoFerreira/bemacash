@@ -39,6 +39,7 @@ android {
         jumboMode = true
         javaMaxHeapSize "4g"
     }
+
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 23

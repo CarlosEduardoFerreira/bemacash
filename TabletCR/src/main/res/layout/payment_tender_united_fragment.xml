@@ -4,91 +4,122 @@
     android:layout_height="fill_parent"
     android:paddingLeft="@dimen/payment_tender_dlg_main_layout_padding_left"
     android:paddingRight="@dimen/payment_tender_dlg_main_layout_padding_right"
-    android:paddingTop="@dimen/payment_tender_dlg_main_layout_padding_top">
+    android:paddingTop="@dimen/payment_tender_dlg_main_layout_padding_top"
+    android:paddingBottom="@dimen/payment_tender_dlg_main_layout_padding_bottom">
 
     <CheckBox
         android:id="@+id/checkbox_single"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:checked="true"
         android:text="@string/chkbx_payment_easy"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:id="@+id/pay_charge"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/checkbox_single"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/h1"
+        android:layout_width="@dimen/payment_tender_dlg_transaction_list_layout_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/payment_tender_dlg_report_layout_margin_left"
+        android:orientation="horizontal">
 
-        <RelativeLayout
-            android:id="@+id/h1_"
+        <TextView
+            android:id="@+id/a1"
+            style="@style/PaymentItem.18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="4dp"
+            android:padding="5dp"
+            android:text="@string/blackstone_pay_total"
+            android:visibility="gone" />
+
+        <TextView
+            style="@style/PaymentItem.18"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_toLeftOf="@+id/total"
+            android:layout_toRightOf="@+id/a1"
+            android:lines="1"
+            android:paddingTop="5dp"
+            android:text="@string/lots_o_dots"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/total"
+            style="@style/PaymentItem.Total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:layout_marginRight="4dp"
+            android:padding="5dp"
+            android:text="Total"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/list_view_holder"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/a2_"
-                style="@style/PaymentItem.20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="false"
-                android:layout_centerHorizontal="true"
-                android:paddingTop="@dimen/payment_side_padding_charge"
-                android:text="@string/payment_charge_amount_united" />
-
-            <com.kaching123.tcr.component.CustomEditBox
-                android:id="@+id/charge"
-                style="@style/CustomEditBox.PaymentInputField.50"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="false"
-                android:layout_below="@+id/a2_" />
-        </RelativeLayout>
-
-        <FrameLayout
-            android:id="@+id/dialog_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/payment_tender_dlg_dialog_content_padding_bottom"
-            android:layout_marginLeft="@dimen/payment_tender_dlg_dialog_content_padding_left"
-            android:layout_marginRight="@dimen/payment_tender_dlg_dialog_content_padding_right" />
-
-        <com.kaching123.tcr.component.PayTenderUnitedKeyboardView_
-            android:id="@+id/keyboard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/payment_tender_dlg_keyboard_layout_margin" />
-
-        <GridView
-            android:id="@+id/bonds"
-            android:layout_width="@dimen/payment_tender_dlg_payment_gridview_layout_width"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/payment_tender_dlg_blackbox_height"
+            android:layout_below="@+id/a2"
             android:background="@drawable/addon_background"
-            android:columnWidth="@dimen/payment_tender_dlg_payment_gridview_column_width"
-            android:fadingEdgeLength="0px"
-            android:horizontalSpacing="@dimen/payment_tender_dlg_payment_gridview_horizontal_spacing"
-            android:listSelector="@android:color/transparent"
-            android:numColumns="3"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="@dimen/payment_tender_dlg_payment_gridview_vertical_spacing" />
-    </LinearLayout>
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/a2"
+            style="@style/PaymentItem.Grayed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/total"
+            android:layout_gravity="center"
+            android:layout_marginLeft="4dp"
+            android:padding="5dp"
+            android:text="@string/blackstone_pay_remaining_balance" />
+
+        <TextView
+            android:id="@+id/dots"
+            style="@style/PaymentItem.Grayed"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/a2"
+            android:layout_gravity="center"
+            android:layout_toLeftOf="@+id/difference"
+            android:layout_toRightOf="@+id/a2"
+            android:lines="1"
+            android:padding="5dp"
+            android:text="@string/lots_o_dots" />
+
+        <TextView
+            android:id="@+id/difference"
+            style="@style/PaymentItem.Diff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/a2"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:layout_marginRight="4dp"
+            android:padding="5dp"
+            android:text="Total" />
+    </RelativeLayout>
 
     <GridLayout
         android:id="@+id/flipper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="false"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_toLeftOf="@+id/h1"
-        android:layout_toRightOf="@+id/pay_charge"
+        android:layout_height="520dp"
         android:columnCount="2"
-        android:useDefaultMargins="true">
+        android:useDefaultMargins="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/pay_charge"
+        android:layout_toLeftOf="@+id/h1"
+        android:layout_toStartOf="@+id/h1">
 
         <FrameLayout
             android:layout_width="@dimen/payment_tender_dlg_button_width"
@@ -219,110 +250,80 @@
 
     </GridLayout>
 
-
-    <RelativeLayout
-        android:id="@+id/h1"
-        android:layout_width="@dimen/payment_tender_dlg_transaction_list_layout_width"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/ebt_info"
-        android:layout_alignParentRight="true"
+    <LinearLayout
+        android:id="@+id/pay_charge"
+        android:layout_width="wrap_content"
+        android:layout_height="550dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:weightSum="1"
         android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/ebt_info">
 
-        android:layout_marginLeft="@dimen/payment_tender_dlg_report_layout_margin_left"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/a1"
-            style="@style/PaymentItem.18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center"
-            android:layout_marginLeft="4dp"
-            android:padding="5dp"
-            android:text="@string/blackstone_pay_total"
-            android:visibility="gone" />
-
-        <TextView
-            style="@style/PaymentItem.18"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_toLeftOf="@+id/total"
-            android:layout_toRightOf="@+id/a1"
-            android:lines="1"
-            android:paddingTop="5dp"
-            android:text="@string/lots_o_dots"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/total"
-            style="@style/PaymentItem.Total"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center"
-            android:layout_marginRight="4dp"
-            android:padding="5dp"
-            android:text="Total"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/list_view_holder"
+        <RelativeLayout
+            android:id="@+id/h1_"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/a2_"
+                style="@style/PaymentItem.20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="false"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="@dimen/payment_side_padding_charge"
+                android:text="@string/payment_charge_amount_united" />
+
+            <com.kaching123.tcr.component.CustomEditBox
+                android:id="@+id/charge"
+                style="@style/CustomEditBox.PaymentInputField.50"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="false"
+                android:layout_below="@+id/a2_" />
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/dialog_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/payment_tender_dlg_dialog_content_padding_bottom"
+            android:layout_marginLeft="@dimen/payment_tender_dlg_dialog_content_padding_left"
+            android:layout_marginRight="@dimen/payment_tender_dlg_dialog_content_padding_right" />
+
+        <com.kaching123.tcr.component.PayTenderUnitedKeyboardView_
+            android:id="@+id/keyboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/payment_tender_dlg_keyboard_layout_margin" />
+
+        <GridView
+            android:id="@+id/bonds"
+            android:layout_width="@dimen/payment_tender_dlg_payment_gridview_layout_width"
             android:layout_height="match_parent"
-            android:layout_below="@+id/a2"
             android:background="@drawable/addon_background"
-            android:orientation="vertical" />
-
-        <TextView
-            android:id="@+id/a2"
-            style="@style/PaymentItem.Grayed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/total"
-            android:layout_gravity="center"
-            android:layout_marginLeft="4dp"
-            android:padding="5dp"
-            android:text="@string/blackstone_pay_remaining_balance" />
-
-        <TextView
-            android:id="@+id/dots"
-            style="@style/PaymentItem.Grayed"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/a2"
-            android:layout_gravity="center"
-            android:layout_toLeftOf="@+id/difference"
-            android:layout_toRightOf="@+id/a2"
-            android:lines="1"
-            android:padding="5dp"
-            android:text="@string/lots_o_dots" />
-
-        <TextView
-            android:id="@+id/difference"
-            style="@style/PaymentItem.Diff"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/a2"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center"
-            android:layout_marginRight="4dp"
-            android:padding="5dp"
-            android:text="Total" />
-    </RelativeLayout>
+            android:columnWidth="@dimen/payment_tender_dlg_payment_gridview_column_width"
+            android:fadingEdgeLength="0px"
+            android:horizontalSpacing="@dimen/payment_tender_dlg_payment_gridview_horizontal_spacing"
+            android:listSelector="@android:color/transparent"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="@dimen/payment_tender_dlg_payment_gridview_vertical_spacing" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/ebt_info"
         android:layout_width="@dimen/payment_tender_dlg_ebt_info_layout_width"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/flipper"
+        android:layout_marginTop="-20dp"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="@dimen/payment_tender_dlg_ebt_info_layout_margin_bottom"
-        android:layout_marginTop="@dimen/payment_tender_dlg_ebt_info_layout_margin_top">
+        android:layout_alignParentEnd="true">
 
         <TextView
             android:id="@+id/allowed_ebt_name_tw"
