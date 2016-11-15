@@ -1,7 +1,19 @@
 package com.kaching123.tcr.util;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+
+import com.kaching123.tcr.activity.DashboardActivity;
+import com.kaching123.tcr.fragment.dialog.WriteSettingsPermissionDialogFragment;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +34,14 @@ public class ScreenUtils {
 
     public static long geScreenOffTimeout(Context context) {
         return Settings.System.getLong(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 0L);
+    }
+
+    public static boolean isGrantedWriteSettingsPermission(Context context) {
+        return !((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && (!Settings.System.canWrite(context)));
+    }
+
+    public static void getPermission(FragmentManager fragmentManager) {
+        WriteSettingsPermissionDialogFragment.show(fragmentManager);
     }
 
 }

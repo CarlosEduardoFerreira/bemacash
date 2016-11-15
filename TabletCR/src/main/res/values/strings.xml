@@ -2081,4 +2081,6 @@
     <string name="reprot_start_date">Start Date</string>
     <string name="reprot_to_date">End Date</string>
 
+    <string name="grand_write_settings_permission_button_text">OK</string>
+    <string name="grand_write_settings_permission_text_view_content">Gr</string>
 </resources>

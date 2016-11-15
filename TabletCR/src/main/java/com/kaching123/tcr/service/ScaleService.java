@@ -64,8 +64,11 @@ public class ScaleService extends Service {
     }
 
     public boolean isUnitsLabelMatch(String unitsLabel) {
-        if (scale != null)
-            return scale.getUnitsLabel().equalsIgnoreCase(unitsLabel);
+        if (scale != null) {
+            String scalesUnitLabel = scale.getUnitsLabel();
+            return scalesUnitLabel.equalsIgnoreCase(BemaScale.LB_UNIT_LABEL) ||
+                    scalesUnitLabel.equalsIgnoreCase(BemaScale.LBS_UNIT_LABEL);
+        }
         return true;
     }
 

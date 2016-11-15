@@ -1,13 +1,18 @@
 package com.kaching123.tcr.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -138,6 +143,7 @@ public class DashboardActivity extends SuperBaseActivity {
     private static final int LOADER_ACTIVATION_ID = 5;
     private static final int LOADER_SQL_COMMAND = 6;
     public static final int EXTRA_CODE = 1;
+    private static final int PERMISSIONS_REQUEST_WRITE_SETTINGS = 123;
 
     public static String EXTRA_FORCE_LOGOUT = "EXTRA_FORCE_LOGOUT";
     @ViewById
@@ -246,15 +252,23 @@ public class DashboardActivity extends SuperBaseActivity {
         DashboardActivity_.intent(context).start();
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
+        checkPermission();
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 
         if (getApp().isUserLogin() && !getApp().isTrainingMode() && getApp().isOfflineModeExpired()) {
             logout(false);
             Toast.makeText(this, R.string.offline_mode_error_toast_message_logout, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkPermission() {
+        if (!ScreenUtils.isGrantedWriteSettingsPermission(this)) {
+            ScreenUtils.getPermission(getFragmentManager());
         }
     }
 
@@ -463,6 +477,7 @@ public class DashboardActivity extends SuperBaseActivity {
     public void onResume() {
         super.onResume();
 
+        checkPermission();
         setTitle();
         setOperatorName();
         need2CollectData();
