@@ -77,6 +77,16 @@
             android:layout_weight="1.1"
             android:orientation="horizontal">
 
+            <fragment
+                android:id="@+id/items_list_fragment"
+                android:name="com.kaching123.tcr.fragment.quickservice.QuickItemsFragment_"
+                android:layout_width="@dimen/qa_items_list_fragment_w"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/frameLayout2"
+                android:layout_toStartOf="@+id/frameLayout2" />
 
             <fragment
                 android:id="@+id/modify_fragment"
@@ -84,7 +94,8 @@
                 android:layout_width="@dimen/qa_modify_fragment_h"
                 android:layout_height="match_parent"
                 android:layout_toLeftOf="@+id/frameLayout2"
-                android:layout_toStartOf="@+id/frameLayout2" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
             <FrameLayout
                 android:layout_width="320dp"
@@ -104,16 +115,7 @@
 
             </FrameLayout>
 
-            <fragment
-                android:id="@+id/items_list_fragment"
-                android:name="com.kaching123.tcr.fragment.quickservice.QuickItemsFragment_"
-                android:layout_width="@dimen/qa_items_list_fragment_w"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/frameLayout2"
-                android:layout_toStartOf="@+id/frameLayout2" />
+
 
         </RelativeLayout>
 

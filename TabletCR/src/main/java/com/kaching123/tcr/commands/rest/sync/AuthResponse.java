@@ -31,21 +31,22 @@ public class AuthResponse extends JsonResponse {
             EmployeeJdbcConverter employeeJdbc = (EmployeeJdbcConverter) JdbcFactory.getConverter(EmployeeTable.TABLE_NAME);
             RegisterJdbcConverter registerJdbc = (RegisterJdbcConverter) JdbcFactory.getConverter(RegisterTable.TABLE_NAME);
 
-            boolean key_register_null = KEY_REGISTER == null;
-            boolean key_employee_null = KEY_EMPLOYEE == null;
-            if(key_register_null || key_employee_null)
+            boolean key_register_is_null = KEY_REGISTER == null;
+            boolean key_employee_is_null = KEY_EMPLOYEE == null;
+            if(key_register_is_null || key_employee_is_null)
                 return null;
 
-            RegisterModel registerModel = registerJdbc.toValues(entity.getJSONObject(KEY_REGISTER));
+            RegisterModel registerModel = registerJdbc.toValues( entity.getJSONObject(KEY_REGISTER) );
 
             JdbcJSONObject rs = entity.getJSONObject(KEY_EMPLOYEE);
             //Long id_long = rs.getLong("SHOP_ID");
             //Long id_string = rs.getLong("SHOP_ID");
             //if( id_long == 0 || id_string == null )
-                //return null;
+            //    return null;
+
             EmployeeModel employeeModel = employeeJdbc.toValues(rs);
 
-            return new AuthInfo( key_register_null ? null : registerModel, key_employee_null ? null : employeeModel);
+            return new AuthInfo( key_register_is_null ? null : registerModel, key_employee_is_null ? null : employeeModel);
 
         } catch (Exception e) {
             Logger.e("AuthResponse error", e);
