@@ -161,7 +161,7 @@ public class PrintXReportProcessor {
         printer.emptyLine();
 
         printer.pair(context.getString(R.string.xreport_gross_margin), report.grossMargin);
-        printer.pair(context.getString(R.string.xreport_gross_margin_percent), report.grossMarginPercent);
+        printer.percent(context.getString(R.string.xreport_gross_margin_percent), report.grossMarginPercent);
         printer.emptyLine();
 
         if (enableEreportDepartSale) {

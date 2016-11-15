@@ -34,18 +34,19 @@
                 <TextView
                     style="@style/EditItem.Table.Label.Required"
                     android:text="@string/item_activity_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textImeMultiLine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:maxLines="1"/>
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/description"
-                    style="@style/EditItem.Table.Edittext"
-                    android:inputType="textImeMultiLine"
-                    android:maxLines="1"/>
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:id="@+id/description"
+                        style="@style/EditItem.Table.Edittext"
+                        android:inputType="textImeMultiLine"
+                        android:maxLines="1"/>
 
             </TableRow>
 
@@ -54,16 +55,17 @@
                 <TextView
                     style="@style/EditItem.Table.Label.Required"
                     android:text="@string/item_activity_sales_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textImeMultiLine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:maxLines="1"/>
 
                 <EditText
                     android:id="@+id/sales_price"
                     style="@style/EditItem.Table.Edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:inputType="numberDecimal"/>
             </TableRow>
         </TableLayout>

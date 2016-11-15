@@ -43,6 +43,7 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
     private BigDecimal price;
     private BigDecimal quantity;
     private String orderId;
+    private boolean hasPrefixes;
 
     public SearchBarcodeLoader(FragmentActivity context, int loaderId, String barcode) {
         this.loaderId = loaderId;
@@ -72,6 +73,7 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
         int numberLength = 0;
         int numberDecimals = 0;
         boolean isPrice = true;
+        hasPrefixes = true;
         if (code == barcodePrefixes.code10DItem) {
             codeLength = 10;
         } else if (code == barcodePrefixes.code6DItem4DPrice) {
@@ -119,6 +121,8 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
             numberLength = 5;
             numberDecimals = 0;
             isPrice = false;
+        } else {
+            hasPrefixes = false;
         }
 
         if (codeLength == 0) {
@@ -142,7 +146,6 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
         } catch (NumberFormatException e) {
             Logger.d("parseBarcode(): barcode invalid - decimal number expected; barcode: " + barcode);
             this.code = barcode;
-            return;
         }
     }
 
@@ -216,6 +219,10 @@ public class SearchBarcodeLoader implements LoaderCallbacks<Optional<ItemExModel
                 }
             }
         });
+    }
+
+    protected boolean hasPrefixes() {
+        return hasPrefixes;
     }
 
     @Override

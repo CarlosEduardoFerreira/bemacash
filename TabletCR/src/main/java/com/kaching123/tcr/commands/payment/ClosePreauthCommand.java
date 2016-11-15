@@ -4,7 +4,6 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
 
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.user.AddTipsCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -42,7 +41,6 @@ public class ClosePreauthCommand extends AsyncCommand {
     private boolean isResponseSuccessful;
     private boolean isPreauthCompletedBefore;
     private SyncResult addTipsResult;
-    private String registerId;
 
     public boolean sync(Context context, PaymentTransactionModel transactionModel, TransactionStatusCode responseCode, BigDecimal tipsAmount, String tipsComments, String tippedEmployeeId, IAppCommandContext appCommandContext) {
         this.transactionModel = transactionModel;
@@ -59,8 +57,6 @@ public class ClosePreauthCommand extends AsyncCommand {
     protected TaskResult doCommand() {
 
         isResponseSuccessful = TransactionStatusCode.OPERATION_COMPLETED_SUCCESSFULLY == responseCode;
-
-        registerId = String.valueOf(((TcrApplication) getContext().getApplicationContext()).getRegisterId());
 
         if (isResponseSuccessful) {
             if (!addTips(tipsAmount, tipsComments, tippedEmployeeId))
@@ -101,8 +97,7 @@ public class ClosePreauthCommand extends AsyncCommand {
                 new Date(),
                 tipsAmount,
                 tipsComments,
-                PaymentType.CREDIT,
-                registerId
+                PaymentType.CREDIT
         ), getAppCommandContext());
         return addTipsResult != null;
     }

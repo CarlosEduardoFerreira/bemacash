@@ -335,6 +335,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected int saleItemCount;
     private List<Integer> priceLevels = Collections.EMPTY_LIST;
     private List<DiscountBundle> discountBundles = Collections.EMPTY_LIST;
+    private boolean hasPrefixes;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -867,10 +868,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private boolean isItemWithPrefixedBarCodeAlreadyWeighed(ItemExModel item, BigDecimal price, BigDecimal quantity) {
         return item.priceType == PriceType.UNIT_PRICE
                 && UnitUtil.isUnitLbs(item.shortCut)
-                && price != null
-                && quantity != null
-                && BigDecimal.ZERO.compareTo(quantity) == -1;
-    }
+                && hasPrefixes;}
 
     public void focusUsbInput() {
 
@@ -1535,6 +1533,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 @Override
                 protected void onPostExecute(ItemExModel itemExModel, BigDecimal price, BigDecimal quantity) {
                     showScannerWaitBlock(false);
+                    hasPrefixes = hasPrefixes();
                     tryToAddByBarcode(itemExModel, barcode, price, quantity, fromScanner, null);
                 }
             }.execute();

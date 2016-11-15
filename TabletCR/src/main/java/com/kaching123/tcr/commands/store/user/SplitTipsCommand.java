@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
@@ -69,17 +68,12 @@ public class SplitTipsCommand extends AsyncCommand {
                     new Date(),
                     splittedAmount,
                     notes,
-                    PaymentType.CASH,
-                    getRegisterId()
+                    PaymentType.CASH
             );
             models.add(tipsModel);
         }
 
         return succeeded().add(EXTRA_COUNT, count);
-    }
-
-    private String getRegisterId() {
-        return String.valueOf(((TcrApplication) (getContext().getApplicationContext())).getRegisterId());
     }
 
     private ArrayList<String> loadTipsableGuids() {
