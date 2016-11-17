@@ -63,6 +63,7 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WriteSettingsPermissionDialogFragment;
 import com.kaching123.tcr.fragment.edit.CashDrawerMovementEditFragment;
 import com.kaching123.tcr.fragment.filemanager.FileChooserFragment;
 import com.kaching123.tcr.fragment.filemanager.FileChooserFragment.FileChooseListener;
@@ -256,7 +257,6 @@ public class DashboardActivity extends SuperBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Crittercism.initialize(getApplicationContext(), "5537af9f7365f84f7d3d6f29");
-        checkPermission();
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 
@@ -268,7 +268,7 @@ public class DashboardActivity extends SuperBaseActivity {
 
     private void checkPermission() {
         if (!ScreenUtils.isGrantedWriteSettingsPermission(this)) {
-            ScreenUtils.getPermission(getFragmentManager());
+            ScreenUtils.getPermission(this);
         }
     }
 
@@ -477,11 +477,17 @@ public class DashboardActivity extends SuperBaseActivity {
     public void onResume() {
         super.onResume();
 
-        checkPermission();
         setTitle();
         setOperatorName();
         need2CollectData();
         startUpdateShiftTime();
+        hideWriteSettingsPermissionDialogFragment();
+        checkPermission();
+    }
+
+    private void hideWriteSettingsPermissionDialogFragment() {
+        WriteSettingsPermissionDialogFragment.hide(this);
+
     }
 
     @Override

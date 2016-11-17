@@ -2,7 +2,6 @@ package com.kaching123.tcr.util;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,6 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 
 import com.kaching123.tcr.activity.DashboardActivity;
@@ -40,8 +41,8 @@ public class ScreenUtils {
         return !((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && (!Settings.System.canWrite(context)));
     }
 
-    public static void getPermission(FragmentManager fragmentManager) {
-        WriteSettingsPermissionDialogFragment.show(fragmentManager);
+    public static void getPermission(FragmentActivity activity) {
+        WriteSettingsPermissionDialogFragment.show(activity);
     }
 
 }
