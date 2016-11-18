@@ -65,6 +65,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
     private DeviceAdapter adapter;
 
+    private USBDiplayPrinter display = null;
+
     protected FindDeviceListener findDeviceListener;
     public static final String INTEGRATED_DISPLAYER = "Integrated Customer Display";
     public static final String SERIAL_PORT = "Integrated Customer Display";
@@ -141,6 +143,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
     @AfterViews
     protected void initViews() {
+
         if (mode == Mode.DISPLAY) {
             progressLabel.setText(R.string.find_display_progress);
             emptyView.setText(R.string.find_display_empty);
@@ -158,6 +161,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
         adapter = new DeviceAdapter(getActivity());
         listView.setAdapter(adapter);
         new GetDevicesTask().execute();
+
     }
 
     @ItemClick
@@ -243,7 +247,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
 
         private boolean isEmulate() {
-            return !BuildConfig.SUPPORT_PRINTER;
+            boolean retur = !BuildConfig.SUPPORT_PRINTER;
+            return retur;
         }
 
         @Override
@@ -256,16 +261,22 @@ public class FindDeviceFragment extends StyledDialogFragment {
             if (isEmulate()) {
                 return getEmulatedDevice();
             }
-
+            Logger.d("isEmulated: " + isEmulate());
             BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 //            if (adapter == null || !adapter.isEnabled()) {
 //                return null;
 //            }
-
+            boolean isemu = isEmulate();
             Set<BluetoothDevice> bluetoothDevices = adapter.getBondedDevices();
             Set<DeviceModel> devices = null;
             switch (mode) {
                 case DISPLAY:
+
+                    //searchForUsbDisplay();
+                    //boolean isd = display.isUSBDisplayer();
+                    //devices.add(new DeviceModel(USB_DISPLAY, USB_DISPLAY));
+                    devices = getDevices(bluetoothDevices);
+                    break;
                 case SCANNER:
                     devices = getDevices(bluetoothDevices);
                     break;
@@ -291,14 +302,19 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
                 PendingIntent mPermissionIntent;
 
-                mPermissionIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(PrinterCommand.ACTION_USB_PERMISSION), 0);
+                mPermissionIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent("com.android.example.USB_PERMISSION"), 0);
 
-                USBDiplayPrinter display = new USBDiplayPrinter(USBDiplayPrinter.LDX1000_PID,USBDiplayPrinter.LDX1000_VID,manager,null);
-                return display.findPrinter(true);
+                display = new USBDiplayPrinter(USBDiplayPrinter.LDX1000_PID,USBDiplayPrinter.LDX1000_VID,manager,null);
+
+                boolean findp = display.findPrinter(true);
+                return findp;
+
             }
             catch (Exception e) {
                 Logger.e("Discovery USB printers ", e);
+
             }
+
             return false;
         }
 
@@ -315,7 +331,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
         private Set<DeviceModel> getDevices(Set<BluetoothDevice> bluetoothDevices) {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
             boolean useConstraint = mode == Mode.DISPLAY;
-            if (isAIO())
+            //if (isAIO())
                 if (mode == Mode.DISPLAY) {
                     devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
                     devices.add(new DeviceModel("COM2","COM2"));

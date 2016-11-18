@@ -68,11 +68,11 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
+            buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
             minifyEnabled false
         }
         release {
-            buildConfigField 'boolean', 'SUPPORT_PRINTER', 'false'
+            buildConfigField 'boolean', 'SUPPORT_PRINTER', 'true'
 
             debuggable false
             jniDebuggable false
