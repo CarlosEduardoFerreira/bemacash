@@ -34,6 +34,7 @@
             android:id="@+id/flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:paddingBottom="8dp">
@@ -41,12 +42,14 @@
             <fragment
                 android:id="@+id/history_fragment"
                 android:name="com.kaching123.tcr.fragment.tendering.history.HistoryOrderFragment_"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
             <fragment
                 android:id="@+id/total_cost_fragment"
                 android:name="com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemFragment_"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
