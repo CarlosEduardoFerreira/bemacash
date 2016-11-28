@@ -33,6 +33,9 @@ public class SerialPort extends CommunicationPort {
     private final String pathCOM2 = "/dev/ttymxc1";
     private final String pathCOM3 = "/dev/ttymxc2";
 
+    private final String pathCOM1_3036 = "/dev/ttyS0";
+    private final String pathCOM2_3036 = "/dev/ttyS1";
+    private final String pathCOM3_3036 = "/dev/ttyS3";
 
 
     private int baudrate = 9600;
@@ -46,43 +49,87 @@ public class SerialPort extends CommunicationPort {
 
     private String getPathFromPath(String portName)
     {
+        String arch     = System.getProperty("os.arch","unknown");
+        String name     = System.getProperty("os.name","unknown");
+        String version  = System.getProperty("os.version","unknown");
+        Log.d("bemacarl","arch: " + arch);
+        Log.d("bemacarl","name: " + name);
+        Log.d("bemacarl","version: " + version);
+
         String upper = portName.toUpperCase();
         String path = portName;
         if ( upper.matches("COM1"))
         {
-            path =   pathCOM1;
+            path = version.equals("3.0.36+".toString()) ? pathCOM1_3036 : pathCOM1;
         }
         else if (upper.matches("COM2"))
         {
-            path = pathCOM2;
+            path = version.equals("3.0.36+".toString()) ? pathCOM2_3036 : pathCOM2;
+        }
+        else if (upper.matches("COM3"))
+        {
+            path = version.equals("3.0.36+".toString()) ? pathCOM3_3036 : pathCOM3;
         }
 
         return path;
     }
+
     private File initialize (String portName) throws SecurityException
     {
 
         File device = new File( getPathFromPath(portName));
-        /* Check access permission */
+
+        String path1 = device.getAbsolutePath();
+        String path2 = device.getPath();
+        Log.d("TCR.initialize.bemacarl", "path1: " + path1);
+        Log.d("TCR.initialize.bemacarl", "path2: " + path2);
+
+        if (!device.canRead() || !device.canWrite()) {
+            Log.d("TCR.bemacarl.no", device.getAbsolutePath());
+
+            try {
+                Runtime.getRuntime().exec("su -c chmod 666 " + path1);
+                if (!device.canRead() || !device.canWrite()) {
+                    Log.d("TCR.bemacarl.Runtime.no", path1);
+                } else {
+                    Log.d("TCR.bemacarl.Runtime.ye", path1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("TCR.initialze.exc: ", e.getMessage());
+                throw new SecurityException();
+            }
+
+        }else{
+            Log.d("TCR.bemacarl.yes", device.getAbsolutePath());
+        }
+
+
+
+        /*
+        // Check access permission
         if (!device.canRead() || !device.canWrite()) {
             try {
-				/* Missing read/write permission, trying to chmod the file */
+				// Missing read/write permission, trying to chmod the file
                 Process su;
-                su = Runtime.getRuntime().exec("/system/bin/su");
-                String cmd = "chmod 666 " + device.getAbsolutePath() + "\n"
+                su = Runtime.getRuntime().exec("/system/xbin/su");
+                String cmd = "chmod 666 " + path1 + " \n"
                         + "exit\n";
                 su.getOutputStream().write(cmd.getBytes());
+
                 if ((su.waitFor() != 0) || !device.canRead()
                         || !device.canWrite()) {
                     throw new SecurityException();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.d(TAG+"Initialze", e.getMessage());
+                Log.d(TAG + "Initialze", e.getMessage());
 
                 throw new SecurityException();
             }
         }
+        /**/
+
         return device;
 
     }
@@ -97,16 +144,13 @@ public class SerialPort extends CommunicationPort {
                 nativePort.close();
 
             }
-            nativePort = new android_serialport_api.SerialPort(device, baud, dataBits,
-                    parity, stopBits, flow);
-
+            nativePort = new android_serialport_api.SerialPort(device, baud, dataBits, parity, stopBits, flow);
 
             mFileInputStream = nativePort.getInputStream();
             mFileOutputStream = nativePort.getOutputStream();
         }
         catch ( SecurityException ex)
         {
-
             Log.d(TAG, "Access Denied");
             throw new CommunicationException(ex.getMessage(), CommunicationException.ErrorCode.AccessDenied);
 
