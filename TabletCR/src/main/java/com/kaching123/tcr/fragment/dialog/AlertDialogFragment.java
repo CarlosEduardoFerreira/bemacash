@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 
 import org.androidannotations.annotations.AfterViews;
@@ -77,6 +78,8 @@ public class AlertDialogFragment extends StyledDialogFragment {
     @AfterViews
     protected void bind() {
         setCancelable(false);
+        textView = (TextView) getView().findViewById(R.id.text_view);
+
         textView.setGravity(dialogType == DialogType.CONFIRM || dialogType == DialogType.CONFIRM_NONE ? Gravity.LEFT : Gravity.CENTER);
         textView.setText(errorMsg);
 //        if(listenMessage)
@@ -93,6 +96,7 @@ public class AlertDialogFragment extends StyledDialogFragment {
             icon.setImageLevel(dialogType.level);
         }
         textView.setVisibility(TextUtils.isEmpty(errorMsg) ? View.GONE : View.VISIBLE);
+
     }
 
     @Override

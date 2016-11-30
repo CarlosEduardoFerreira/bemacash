@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/cashier_activity_background"
+        android:orientation="vertical">
+
+        <com.kaching123.tcr.component.CustomEditBox
+            android:id="@+id/scanner_input"
+            style="@style/CashierActivity.Barcode"
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+
+        <com.kaching123.tcr.component.KeyboardView_
+            android:id="@+id/keyboard"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <fragment
+                android:id="@+id/categories_fragment"
+                android:name="com.kaching123.tcr.fragment.quickservice.QuickCategoriesFragment_"
+                android:layout_width="240dp"
+                android:layout_height="match_parent" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+
+                <fragment
+                    android:id="@+id/order_item_list_fragment"
+                    android:name="com.kaching123.tcr.fragment.saleorder.OrderItemListFragment_"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <fragment
+                    android:id="@+id/search_result_fragment"
+                    android:name="com.kaching123.tcr.fragment.search.SearchItemsListFragment_"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <RelativeLayout
+                    android:id="@+id/empty_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#DD000000"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/btn_add_order"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Add new" />
+                </RelativeLayout>
+
+            </FrameLayout>
+
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.1"
+            android:orientation="horizontal">
+
+
+            <fragment
+                android:id="@+id/items_list_fragment"
+                android:name="com.kaching123.tcr.fragment.quickservice.QuickItemsFragment_"
+                android:layout_width="@dimen/qa_items_list_fragment_w"
+                android:layout_height="match_parent" />
+
+            <fragment
+                android:id="@+id/modify_fragment"
+                android:name="com.kaching123.tcr.fragment.quickservice.QuickModifyFragment_"
+                android:layout_width="@dimen/qa_modify_fragment_h"
+                android:layout_height="match_parent" />
+
+            <FrameLayout
+                android:layout_width="320dp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/items_list_fragment"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp">
+
+                <fragment
+                    android:id="@+id/total_cost_fragment"
+                    android:name="com.kaching123.tcr.fragment.saleorder.TotalCostFragment_"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </FrameLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/scanner_wait_block"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone">
+
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/popup_window">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/dark_rounded_bg"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp" />
+
+                <TextView
+                    android:id="@+id/progress_msg"
+                    style="@style/TextAppearance.Dialog.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:singleLine="false"
+                    android:text="@string/search_barcode_wait_msg" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+
+    </RelativeLayout>
+</merge>

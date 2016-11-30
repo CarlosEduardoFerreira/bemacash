@@ -312,6 +312,9 @@ public class TcrApplication extends MultiDexApplication {
         registerSerial += cut4Symbols(Secure.getString(getContentResolver(), Secure.ANDROID_ID));
         registerSerial = formatByBlocksString(registerSerial);
 
+        //registerSerial = "715e09-0018a4-eeea715";
+        //registerSerial = "320089-8e448a-7000c90";
+
         setUsers();
         changeCountryFunctionalityById(shopPref.countryId().get());
 
@@ -321,6 +324,8 @@ public class TcrApplication extends MultiDexApplication {
         if (shopPref == null)
             shopPref = new ShopPref_(TcrApplication.this);
     }
+
+
 
     public void clearDbRelatedPreferences() {
         getShopPref().prepaidVersionId().put(null);

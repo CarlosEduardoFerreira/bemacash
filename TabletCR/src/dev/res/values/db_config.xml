@@ -1,5 +1,9 @@
 <resources>
+<<<<<<< HEAD
     <string name="api_server_url">http://54.191.12.2</string>
+=======
+    <string name="api_server_url">http://54.186.251.22</string>
+>>>>>>> Bemacash-3.3
     <string name="api_basic_cred"></string>
     <string name="merchant_register_url">http://bematech.demo162.dataart.com</string>
 </resources>

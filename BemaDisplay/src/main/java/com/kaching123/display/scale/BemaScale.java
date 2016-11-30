@@ -127,6 +127,7 @@ public class BemaScale {
                     Thread.sleep(200);
                     if (port.getInputStream().available() == 0)
                         return -1;
+                    Log.d(TAG, "port.getInputStream().available(): " + port.getInputStream().available());
                     if (port.getInputStream().available() != ScaleDataLength)
                         return -2;
                     port.setReadTimeout(2000);

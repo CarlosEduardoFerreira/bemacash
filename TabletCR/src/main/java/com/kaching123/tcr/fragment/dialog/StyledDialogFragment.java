@@ -1,6 +1,7 @@
 package com.kaching123.tcr.fragment.dialog;
 
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -113,6 +114,8 @@ public abstract class StyledDialogFragment extends SimpleDialogFragment{
     }
 
     protected View createDialogContentView(){
+        Log.e("bemacarl.createDial", "layoutInflater: " + layoutInflater.toString());
+        Log.e("bemacarl.createDial", "getDialogContentLayout(): " + getDialogContentLayout());
         return layoutInflater.inflate(getDialogContentLayout(), null, false);
     }
 

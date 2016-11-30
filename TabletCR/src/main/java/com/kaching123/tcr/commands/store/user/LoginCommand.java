@@ -294,13 +294,18 @@ public class LoginCommand extends GroundyTask {
             if (!resp.isSuccess()) {
                 return new RemoteLoginResult(null, null);
             }
-            AuthInfo info = resp.getResponse();
-            if (info == null) {
-                Logger.e("Login web login error: response is empty");
-                return null;
+
+            try {
+                AuthInfo info = resp.getResponse();
+                if (info == null) {
+                    Logger.e("Login web login error: response is empty");
+                    return null;
+                }
+                return new RemoteLoginResult(info.register.status, info.employee);
+            }catch(Exception e){
+                Logger.e("Login FAILED!", e);
             }
 
-             return new RemoteLoginResult(info.register.status, info.employee);
         } catch (Exception e) {
             Logger.e("Remote login FAILED!", e);
         }

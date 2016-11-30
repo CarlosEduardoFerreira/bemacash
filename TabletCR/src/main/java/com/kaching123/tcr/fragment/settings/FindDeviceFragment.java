@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bematechus.bemaUtils.PortInfo;
+import com.google.common.collect.Sets;
 import com.kaching123.display.USBDiplayPrinter;
 import com.kaching123.display.scale.BemaScale;
 import com.kaching123.pos.USBPrinter;
@@ -38,6 +40,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -64,6 +67,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
     protected TextView progressLabel;
 
     private DeviceAdapter adapter;
+
+    private USBDiplayPrinter display = null;
 
     protected FindDeviceListener findDeviceListener;
     public static final String INTEGRATED_DISPLAYER = "Integrated Customer Display";
@@ -141,6 +146,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
     @AfterViews
     protected void initViews() {
+
         if (mode == Mode.DISPLAY) {
             progressLabel.setText(R.string.find_display_progress);
             emptyView.setText(R.string.find_display_empty);
@@ -158,6 +164,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
         adapter = new DeviceAdapter(getActivity());
         listView.setAdapter(adapter);
         new GetDevicesTask().execute();
+
     }
 
     @ItemClick
@@ -243,7 +250,8 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
 
         private boolean isEmulate() {
-            return !BuildConfig.SUPPORT_PRINTER;
+            boolean retur = !BuildConfig.SUPPORT_PRINTER;
+            return retur;
         }
 
         @Override
@@ -256,16 +264,22 @@ public class FindDeviceFragment extends StyledDialogFragment {
             if (isEmulate()) {
                 return getEmulatedDevice();
             }
-
+            Logger.d("isEmulated: " + isEmulate());
             BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 //            if (adapter == null || !adapter.isEnabled()) {
 //                return null;
 //            }
-
+            boolean isemu = isEmulate();
             Set<BluetoothDevice> bluetoothDevices = adapter.getBondedDevices();
             Set<DeviceModel> devices = null;
             switch (mode) {
                 case DISPLAY:
+
+                    //searchForUsbDisplay();
+                    //boolean isd = display.isUSBDisplayer();
+                    //devices.add(new DeviceModel(USB_DISPLAY, USB_DISPLAY));
+                    devices = getDevices(bluetoothDevices);
+                    break;
                 case SCANNER:
                     devices = getDevices(bluetoothDevices);
                     break;
@@ -291,14 +305,19 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
                 PendingIntent mPermissionIntent;
 
-                mPermissionIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(PrinterCommand.ACTION_USB_PERMISSION), 0);
+                mPermissionIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent("com.android.example.USB_PERMISSION"), 0);
 
-                USBDiplayPrinter display = new USBDiplayPrinter(USBDiplayPrinter.LDX1000_PID,USBDiplayPrinter.LDX1000_VID,manager,null);
-                return display.findPrinter(true);
+                display = new USBDiplayPrinter(USBDiplayPrinter.LDX1000_PID,USBDiplayPrinter.LDX1000_VID,manager,null);
+
+                boolean findp = display.findPrinter(true);
+                return findp;
+
             }
             catch (Exception e) {
                 Logger.e("Discovery USB printers ", e);
+
             }
+
             return false;
         }
 
@@ -315,7 +334,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
         private Set<DeviceModel> getDevices(Set<BluetoothDevice> bluetoothDevices) {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
             boolean useConstraint = mode == Mode.DISPLAY;
-            if (isAIO())
+            //if (isAIO())
                 if (mode == Mode.DISPLAY) {
                     devices.add(new DeviceModel(SERIAL_PORT, SERIAL_PORT));
                     devices.add(new DeviceModel("COM2","COM2"));
@@ -324,6 +343,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
                         devices.add(new DeviceModel(USB_DISPLAY,USB_DISPLAY));
                 }
                 else if(mode == Mode.SCALE){
+                    devices.add(new DeviceModel("COM3","COM3"));
                     devices.add(new DeviceModel("COM2","COM2"));
                     devices.add(new DeviceModel("COM1","COM1"));
                 }
@@ -350,9 +370,45 @@ public class FindDeviceFragment extends StyledDialogFragment {
             return devices;
         }
 
+
+        /*
+            New function developed to support 15 inch AllinOne machine
+            The name of serial ports are different on this version
+         */
+        private Set<DeviceModel> getScaleDeviceNew() {
+
+            Set<DeviceModel> devices = new HashSet<DeviceModel>();
+
+            String arch     = System.getProperty("os.arch","unknown");
+            String name     = System.getProperty("os.name","unknown");
+            String version  = System.getProperty("os.version","unknown");
+            Log.d("bemacarl","arch: " + arch);
+            Log.d("bemacarl","name: " + name);
+            Log.d("bemacarl","version: " + version);
+
+            if(version.equals("3.0.36+".toString())) {
+                devices.add( new DeviceModel( "COM1" , "/dev/ttyS0") );
+                devices.add( new DeviceModel( "COM2" , "/dev/ttyS1") );
+                devices.add( new DeviceModel( "COM3" , "/dev/ttyS3") );
+            } else {
+                devices = getScaleDevice();
+            }
+
+            //SerialPortFinder finder = new SerialPortFinder();
+            //devices = finder.getAllDevices();
+            //Set<DeviceModel> mySet = new HashSet<DeviceModel>(Arrays.asList(devs));
+            //devices = Sets.newHashSet(devs);
+            //Collections.addAll(devices, devs);
+
+            return devices;
+        }
+
         private Set<DeviceModel> getScaleDevice() {
             Set<DeviceModel> devices = new HashSet<DeviceModel>();
-            for(int i = 1; i <= 2; i++) {
+
+            String version  = System.getProperty("os.version","unknown");
+
+            for(int i = 1; i <= 3; i++) {
                 String portName = "COM" + i;
                 PortInfo info = BemaScale.scalePortInfo();
                 info.setPortName(portName);
@@ -360,8 +416,15 @@ public class FindDeviceFragment extends StyledDialogFragment {
                 int state = scale.open();
                 Logger.d("state = "+state);
                 if( state >= 0) {
+                    String port_address = info.getPortName();
+                    // This rotine was created to be used on 15 inch AllinOne
+                    // machines which use kernel version 3.0.36+
+                    if(version.equals("3.0.36+".toString())) {
+                        int s = i == 1 ? 0 : (i == 2 ? 1 : 3);
+                        port_address = "/dev/ttyS" + s;
+                    }
                     Logger.d("Scale Connected to " + info.getPortName());
-                    devices.add(new DeviceModel(info.getPortName(), info.getPortName()));
+                    devices.add(new DeviceModel(info.getPortName(), port_address));
                 }
                 scale.close();
             }
