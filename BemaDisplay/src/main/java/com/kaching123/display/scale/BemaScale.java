@@ -14,6 +14,8 @@ import java.util.logging.Logger;
  * Created by long.jiao on 7/16/2015.
  */
 public class BemaScale {
+    public static final String LB_UNIT_LABEL = "LB";
+    public static final String LBS_UNIT_LABEL = "LBS";
     private static String TAG = "BemaScale";
     static public final int OK = 0;
     static public final int GENERIC_ERROR = -100;
@@ -221,8 +223,8 @@ public class BemaScale {
                     }
                     formatBytes(bytes);
                     String unitLabel = new String(Arrays.copyOfRange(bytes,7,9), "UTF-8");
-                    unitLabel = unitLabel.equalsIgnoreCase("LB") ? "LBS" : unitLabel;
-                    unitLabel = unitLabel.equalsIgnoreCase("KG") ? "KGS" : unitLabel;
+                    //unitLabel = unitLabel.equalsIgnoreCase(LB_UNIT_LABEL) ? LBS_UNIT_LABEL : unitLabel;
+                    //unitLabel = unitLabel.equalsIgnoreCase("KG") ? "KGS" : unitLabel;
                     return unitLabel;
                     //ToDo: Toast different error if necessary
                 }
@@ -246,6 +248,5 @@ public class BemaScale {
             sb = sb.delete(4,6);
         return sb.toString().replaceAll("^0+(?!$)", ""); // remove leading 0
     }
-
 }
 

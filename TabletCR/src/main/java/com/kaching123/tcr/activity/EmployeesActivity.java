@@ -344,16 +344,11 @@ public class EmployeesActivity extends SuperBaseActivity {
                     new Date(),
                     tipsAmount,
                     tipsNotes,
-                    PaymentType.CASH,
-                    getRegisterId()
+                    PaymentType.CASH
             ), addTipsCallback);
         } else {
             SplitTipsCommand.start(EmployeesActivity.this, new ArrayList<String>(tipsEmplGuids), tipsAmount, tipsNotes, splitTipsCallback);
         }
-    }
-
-    private String getRegisterId() {
-        return String.valueOf(getApp().getRegisterId());
     }
 
     private BaseOpenDrawerCallback openDrawerCallback = new BaseOpenDrawerCallback() {

@@ -9,6 +9,7 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import org.json.JSONException;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
+import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 /**
@@ -22,7 +23,6 @@ public class TipsJdbcConverter extends JdbcConverter<TipsModel> {
     private static final String PARENT_ID = "PARENT_ID";
     private static final String EMPLOYEE_ID = "EMPLOYEE_ID";
     private static final String SHIFT_ID = "SHIFT_ID";
-    private static final String REGISTER_ID = "REGISTER_ID";
     private static final String ORDER_ID = "ORDER_ID";
     private static final String PAYMENT_TRANSACTION_ID = "PAYMENT_TRANSACTION_ID";
     private static final String CREATE_TIME = "CREATE_TIME";
@@ -42,8 +42,7 @@ public class TipsJdbcConverter extends JdbcConverter<TipsModel> {
                 rs.getDate(CREATE_TIME),
                 rs.getBigDecimal(AMOUNT),
                 rs.getString(COMMENT),
-                _enum(TipsModel.PaymentType.class, rs.getString(PAYMENT_TYPE), TipsModel.PaymentType.CASH),
-                rs.getString(REGISTER_ID)
+                _enum(TipsModel.PaymentType.class, rs.getString(PAYMENT_TYPE), TipsModel.PaymentType.CASH)
         );
     }
 
@@ -74,7 +73,6 @@ public class TipsJdbcConverter extends JdbcConverter<TipsModel> {
                 .add(CREATE_TIME, model.createTime)
                 .add(AMOUNT, model.amount)
                 .add(COMMENT, model.comment)
-                .add(REGISTER_ID, model.registerId)
                 .add(PAYMENT_TYPE, model.paymentType)
                 .build(JdbcFactory.getApiMethod(model));
     }

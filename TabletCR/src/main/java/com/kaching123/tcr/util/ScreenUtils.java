@@ -1,7 +1,12 @@
 package com.kaching123.tcr.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,4 +29,15 @@ public class ScreenUtils {
         return Settings.System.getLong(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 0L);
     }
 
+    public static void getPermission(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.System.canWrite(context)) {
+//                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+//                intent.setData(Uri.parse("package:" + context.getPackageName()));
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                context.startActivity(intent);
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Settings.ACTION_MANAGE_WRITE_SETTINGS}, new Integer(0));
+            }
+        }
+    }
 }
