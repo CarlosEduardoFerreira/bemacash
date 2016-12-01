@@ -73,16 +73,17 @@
         <RelativeLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.1"
-            android:orientation="horizontal">
+            android:layout_height="340dp"
+            android:orientation="horizontal"
+            android:layout_weight="0.08">
 
 
             <fragment
                 android:id="@+id/items_list_fragment"
                 android:name="com.kaching123.tcr.fragment.quickservice.QuickItemsFragment_"
                 android:layout_width="@dimen/qa_items_list_fragment_w"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                />
 
             <fragment
                 android:id="@+id/modify_fragment"
@@ -101,7 +102,8 @@
                     android:id="@+id/total_cost_fragment"
                     android:name="com.kaching123.tcr.fragment.saleorder.TotalCostFragment_"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    />
 
             </FrameLayout>
 
