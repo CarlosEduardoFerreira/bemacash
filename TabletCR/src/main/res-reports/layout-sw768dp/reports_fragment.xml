@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_grey_color">
+
+    <GridLayout
+        android:layout_height="@dimen/reports_details_header_height"
+        android:layout_width="match_parent"
+        android:background="@color/bg_grey_color"
+        android:paddingTop="16dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:rowCount="2"
+        android:orientation="vertical">
+
+        <TextView
+            android:paddingLeft="12dp"
+            android:id="@+id/mode_entities_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:text="@string/reports_mode_entity_register"
+            android:layout_width="@dimen/reports_fragment_grid_elem_reg"/>
+
+        <Spinner
+            android:id="@+id/mode_entities_spinner"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/reports_fragment_grid_elem_reg"/>
+
+        <TextView
+            android:layout_marginLeft="8dp"
+            android:id="@+id/from_label"
+            style="@style/Reports.Label"
+            android:paddingLeft="12dp"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/reports_fragment_grid_elem_from_to"
+            android:text="@string/reports_from_label"/>
+
+        <EditText
+            android:layout_marginLeft="8dp"
+            android:id="@+id/from_edit"
+            style="@style/Reports.DateEdit"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/reports_fragment_grid_elem_from_to"/>
+
+        <TextView
+            android:layout_marginLeft="8dp"
+            android:id="@+id/to_label"
+            style="@style/Reports.Label"
+            android:paddingLeft="12dp"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/reports_fragment_grid_elem_from_to"
+            android:text="@string/reports_to_label"/>
+
+        <EditText
+            android:layout_marginLeft="8dp"
+            android:id="@+id/to_edit"
+            style="@style/Reports.DateEdit"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/reports_fragment_grid_elem_from_to"/>
+
+        <TextView
+            android:layout_marginLeft="40dp"
+            android:id="@+id/total_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="116dp"
+            android:text="@string/reports_total_label"/>
+
+        <TextView
+            android:layout_marginLeft="40dp"
+            android:id="@+id/total_value_label"
+            style="@style/Reports.Label.Value"
+            android:layout_height="wrap_content"
+            android:layout_width="116dp"
+            />
+
+        <TextView
+            android:layout_marginLeft="16dp"
+            android:id="@+id/average_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:text="@string/reports_average_label"/>
+
+        <TextView
+            android:layout_marginLeft="16dp"
+            android:id="@+id/average_value_label"
+            style="@style/Reports.Label.Value"
+            android:layout_height="wrap_content"
+            android:layout_width="100dp"/>
+
+        <TextView
+            android:layout_marginLeft="16dp"
+            android:id="@+id/transactions_label"
+            style="@style/Reports.Label"
+            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:text="@string/reports_transactions_label"/>
+
+        <TextView
+            android:layout_marginLeft="16dp"
+            android:id="@+id/transactions_value_label"
+            style="@style/Reports.Label.Value"
+            android:layout_height="wrap_content"
+            android:layout_width="100dp"/>
+
+        <RelativeLayout
+            android:layout_marginLeft="16dp"
+            android:id="@+id/top_items_container"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_rowSpan="2">
+
+            <TextView
+                android:id="@+id/top_items_label"
+                style="@style/Reports.Label"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/reports_top_items_label"/>
+
+            <TextView
+                android:id="@+id/top_items_more_label"
+                style="@style/Reports.Label.More"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignTop="@id/top_items_label"
+                android:layout_toRightOf="@id/top_items_label"
+                android:background="@drawable/refund_transaction_list_selector"
+                android:text="@string/reports_view_label"/>
+
+            <TextView
+                android:layout_below="@id/top_items_label"
+                android:id="@+id/top_items_value_label"
+                style="@style/Reports.Label.SubValue"
+                android:layout_height="match_parent"
+                android:layout_width="280dp"
+                android:lines="3"
+                android:maxLines="3"/>
+
+        </RelativeLayout>
+
+    </GridLayout>
+
+    <LinearLayout
+        android:layout_height="32dp"
+        android:layout_width="match_parent"
+        android:background="@color/blue_bright"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView
+            style="@style/SwitchText"
+            android:id="@+id/switch_count"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="25dp"
+            android:text="@string/report_switchtext_qty"/>
+
+        <TextView
+            style="@style/SwitchText"
+            android:id="@+id/switch_value"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/report_switchtext_value"/>
+
+
+    </LinearLayout>
+
+    <com.kaching123.tcr.component.chart.BarChart
+        android:id="@+id/bar_chart"
+        style="@style/Reports.BarChart"
+        android:background="@color/bg_grey_color"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="40dp"
+        />
+
+</LinearLayout>

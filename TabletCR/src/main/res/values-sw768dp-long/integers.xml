@@ -3,6 +3,8 @@
     <integer name="modify_container_row_count">3</integer>
     <integer name="addon_container_row_count">3</integer>
     <integer name="quick_categories_columns">2</integer>
+    <integer name="quick_grid_columns">10</integer>
+    <integer name="quick_grid_1024_768_columns">10</integer>
     <integer name="quick_grid_items_grid_columns">10</integer>
     <integer name="quick_grid_rows">3</integer>
     <integer name="quick_buttons_view_count">30</integer>
@@ -17,6 +19,9 @@
     <integer name="name_max_length">128</integer>
     <integer name="email_max_length">128</integer>
     <integer name="address_max_length">255</integer>
+    <integer name="notes_max_length">1000</integer>
+    <integer name="notes_min_lines">4</integer>
+    <integer name="notes_max_lines">6</integer>
     <integer name="full_address_max_length">512</integer>
     <integer name="phone_max_length">14</integer>
     <integer name="category_icon_columns_count">3</integer>
@@ -26,8 +31,8 @@
     <integer name="product_flag_grid_columns">3</integer>
     <integer name="product_carrier_grid_columns">4</integer>
     <integer name="product_grid_rows">3</integer>
-    <integer name="addon_nooption_column">2</integer>
-    <integer name="saleorder_items_item_subtotal_weight">6</integer>
+    <integer name="addon_nooption_column">3</integer>
+    <integer name="saleorder_items_item_subtotal_weight">4</integer>
     <integer-array name="tips_predefine">
         <item name="tip1">15</item>
         <item name="tip2">18</item>

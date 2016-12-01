@@ -5,6 +5,7 @@
     <integer name="quick_categories_columns">2</integer>
     <integer name="quick_grid_columns">9</integer>
     <integer name="quick_grid_1024_768_columns">7</integer>
+    <integer name="quick_grid_items_grid_columns">7</integer>
     <integer name="quick_grid_rows">3</integer>
     <integer name="quick_buttons_view_count">22</integer>
     <integer name="card_flip_time_full">300</integer>
@@ -31,6 +32,7 @@
     <integer name="product_carrier_grid_columns">4</integer>
     <integer name="product_grid_rows">3</integer>
     <integer name="addon_nooption_column">3</integer>
+    <integer name="saleorder_items_item_subtotal_weight">4</integer>
     <integer-array name="tips_predefine">
         <item name="tip1">15</item>
         <item name="tip2">18</item>
