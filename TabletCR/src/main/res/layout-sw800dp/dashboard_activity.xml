@@ -64,6 +64,7 @@
 
                     <ImageView
                         android:layout_marginTop="6dp"
+                        android:layout_marginLeft="15dp"
                         android:layout_height="@dimen/dashboard_inventory_img_size"
                         android:layout_width="@dimen/dashboard_inventory_img_size"
                         android:background="@drawable/dashboard_inventory_bg"
