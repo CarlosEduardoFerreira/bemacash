@@ -4,7 +4,10 @@ import android.os.Parcel;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
+import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
@@ -98,15 +101,23 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         applicationCryptogramType = "";
         applicationIdentifier = "";
         entryMethod = "";
+        Logger.d("bemacarl.updateWith: " + response.ExtData);
+
         setExtData("<extData>" + response.ExtData + "</extData>");
         //TODO PosLink need change to HostCode later.
 //        userTransactionNumber = response.RefNum;
+
+
+        // PaxSignature paxSign = new PaxSignature();
+
+
         try {
             balance = new BigDecimal(response.RemainingBalance).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
         } catch (Exception ex) {
             Log.d(TAG, ex.getMessage());
         }
     }
+
 
     public void setExtData(String extData) {
         StringReader sr = new StringReader(extData);
@@ -126,6 +137,7 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
                 for (int j = 0; j < datas.getLength(); j++) {
                     System.out.println(datas.item(j).getNodeName()
                             + ":" + datas.item(j).getTextContent());
+                    Logger.d("bemacarl.setExtData: " + datas.item(j).getNodeName() + ": " + datas.item(j).getTextContent());
                     if (datas.item(j).getNodeName().equalsIgnoreCase("PLEntryMode"))
                         entryMethod = datas.item(j).getTextContent();
                     if (datas.item(j).getNodeName().equalsIgnoreCase("ARC"))

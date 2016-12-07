@@ -157,6 +157,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                             .withValues(transactionModel.toValues())
                             .build());
                     sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
+                    PaxSignature sign = new PaxSignature(getPaxModel());
                 } else {
                     transaction.allowReload = true;
                     errorReason = "Result Code: " + response.ResultCode + " (" + response.ResultTxt + ")";

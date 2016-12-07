@@ -156,6 +156,36 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
 //            request.TransType = TRANS_TYPE_AUTH;
 //        } else {
         request.TransType = TRANS_TYPE_SALE;
+
+        /*  <SignatureCapture>
+            The ECR supports signature printing and the terminal supports signature capture.
+            If this field exists, the values below are valid:
+            0 = Do Not Capture (Default)
+            1 = Capture
+         */
+        request.ExtData  = "<SignatureCapture>1</SignatureCapture>";
+
+        /*  <SignUploadFlag>
+            Valid values:
+            0: Signature upload not required.
+            1: Signature upload required.
+            Notes: If this tag is not sent to the POS, the terminal will upload the signature
+            by default only when signature upload is supported by the host.
+         */
+        request.ExtData += "<SignUploadFlag>1</SignUploadFlag>";
+
+        /*
+            <GetSign>
+            Whether to get the signature data.
+            0 = not to upload (Default)
+            1 = to get
+         */
+        request.ExtData += "<GetSign>1</GetSign>";
+
+
+
+        //request.ConvertSigToPic(String sigpath,String type, String outfile
+
 //        }
 //        request.CashBackAmt = transaction.getCashBack().toPlainString();
 //        request.ClerkID = transaction.getOperatorId();
