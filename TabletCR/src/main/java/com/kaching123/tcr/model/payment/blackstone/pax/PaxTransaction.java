@@ -110,6 +110,9 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
 
         // PaxSignature paxSign = new PaxSignature();
 
+        if(response.RemainingBalance == ""){
+            response.RemainingBalance = "0";
+        }
 
         try {
             balance = new BigDecimal(response.RemainingBalance).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);

@@ -3,6 +3,10 @@ package com.kaching123.tcr.commands.payment.pax.processor;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import com.kaching123.tcr.Logger;
@@ -20,15 +24,31 @@ import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class PaxSignature extends PaxProcessorBaseCommand {
 
     public static final String RESULT_DETAILS = "RESULT_DETAILS";
     public static final String RESULT_CODE = "RESULT_CODE";
     private PaxModel paxModel;
+
+
+
+    public String filesDir = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath();
+    public String sigSavePath = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath() + "/img/receipt";
+
+    public byte[] bitmapdata;
+    public Bitmap SignatureBitmapObject;
 
     public PaxSignature(PaxModel paxModel) {
         this.paxModel = paxModel;
@@ -65,32 +85,28 @@ public class PaxSignature extends PaxProcessorBaseCommand {
         PosLink posLink = null;
 
         PaxGateway.Error error = PaxGateway.Error.UNDEFINED;
-        //String top = getApp().getShopInfo().displayWelcomeMsg;
-        //String bottom = getApp().getShopInfo().displayWelcomeMsgBottom;
-        //String displayMessage = String.format("%s\n%s", top != null ? top : "", bottom != null ? bottom : "");
         TransactionStatusCode responseCode = TransactionStatusCode.EMPTY_REQUEST;
         try {
 
-            String filesDir = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath();
-
-            posLink = createPosLink();
-            posLink.appDataFolder = filesDir;
-
             /** SigSavePath *************************/
-            String sigSavePath = filesDir + "/img/receipt;";
-            try {
-                String command = "mkdir " + sigSavePath;
-                Runtime runtime = Runtime.getRuntime();
-                runtime.exec(command);
-            } catch (IOException e) {
-                System.out.println("mkdir failed! " + sigSavePath);
+            File dirSigSavePath = new File(sigSavePath);
+            if (!dirSigSavePath.exists() || !dirSigSavePath.isDirectory()) {
+                try {
+                    String command = "mkdir " + sigSavePath;
+                    Runtime runtime = Runtime.getRuntime();
+                    runtime.exec(command);
+                } catch (IOException e) {
+                    System.out.println("mkdir failed! " + sigSavePath);
+                }
             }
-            try {
-                String command = "chmod 777 " + sigSavePath;
-                Runtime runtime = Runtime.getRuntime();
-                runtime.exec(command);
-            } catch (IOException e) {
-                System.out.println("chmod 777 failed!");
+            if(!dirSigSavePath.canWrite() || !dirSigSavePath.canRead()) {
+                try {
+                    String command = "chmod 777 " + sigSavePath;
+                    Runtime runtime = Runtime.getRuntime();
+                    runtime.exec(command);
+                } catch (IOException e) {
+                    System.out.println("chmod 777 failed!");
+                }
             }
             /************************* SigSavePath **/
 
@@ -100,6 +116,8 @@ public class PaxSignature extends PaxProcessorBaseCommand {
             manageRequest.SigSavePath = sigSavePath;
             Logger.d("manageRequest.SigSavePath 2: " + manageRequest.SigSavePath);
 
+            posLink = createPosLink();
+            posLink.appDataFolder = filesDir;
             posLink.ManageRequest = manageRequest;
 
             ProcessTransResult ptr = posLink.ProcessTrans();
@@ -109,25 +127,17 @@ public class PaxSignature extends PaxProcessorBaseCommand {
 
                 Logger.d("bemacark.response.SigFileName: " + response.SigFileName);
 
-                //File img    = new File(response.SigFileName);
-                //String newName = response.SigFileName.substring(0,response.SigFileName.length()-3) + "png";
-                //Logger.d("bemacark.response.SigFileName.newName: " + newName);
-                //File imgNew = new File(newName);
-                //img.renameTo(imgNew);
-
                 PaxProcessorResponse paxResp = new PaxProcessorResponse(response);
                 responseCode = paxResp.getStatusCode();
-                // TODO PosLink ResultCode "0000"?
+
                 if (response.ResultCode.equalsIgnoreCase(RESULT_CODE_SUCCESS)) {
                     Logger.d("PaxSignatureCommand ResultCode: " + response.ResultCode);
                     TcrApplication.get().getShopPref().paxUrl().put(paxTerminal.ip);
                     TcrApplication.get().getShopPref().paxPort().put(paxTerminal.port);
-                    manageRequest.ConvertSigToPic(response.SigFileName,"png",sigSavePath);
-                    //posLink.ManageRequest.ConvertSigToPic(response.SigFileName,"png",sigSavePath);
 
-                    PaxSignatureConvert(response.SigFileName);
+                    // Convert signature to bitmap object
+                    SignatureBitmapObject = this.ConvertPaxSignatureToBitmapObject(response.SigFileName);
 
-                    //manReq.ConvertSigToPic(String sigpath,String type, String outfile);
                     return succeeded().add(RESULT_DETAILS, response.ResultCode).add(RESULT_CODE, errorCode);
                 } else {
                     Logger.e("PaxSignatureCommand failed, pax error code(not RESULT_CODE_SUCCESS): " + ptr.Code);
@@ -151,11 +161,118 @@ public class PaxSignature extends PaxProcessorBaseCommand {
         return failed().add(RESULT_DETAILS, errorMsg).add(RESULT_CODE, errorCode);
     }
 
-    public void PaxSignatureConvert(String imageLocation){
-        Bitmap imageBitmap = BitmapFactory.decodeFile(imageLocation);
-        Logger.d("bemacarl.imageBitmap: " + imageBitmap);
+
+
+    public Bitmap ConvertPaxSignatureToBitmapObject(String imageLocation) throws IOException {
+
+
+        File file = new File(imageLocation);
+        BufferedReader sr = null;
+        String alldata = "";
+
+        try {
+            FileInputStream in = new FileInputStream(file);
+
+            String index;
+            for(sr = new BufferedReader(new InputStreamReader(in)); (index = sr.readLine()) != null; index = "") {
+                alldata = alldata + index;
+            }
+        } catch (Exception var11) {
+            var11.printStackTrace();
+        }
+        sr.close();
+
+
+        System.out.println("bemacarl.alldata: " + alldata);
+
+        String div = "\\^";
+        String[] signature_divide = alldata.split(div);
+        int margin_x = 180;
+        int margin_y =  20;
+        ArrayList xVal = new ArrayList(signature_divide.length);
+        ArrayList yVal = new ArrayList(signature_divide.length);
+
+        String x;
+        String y;
+        String x_y;
+        int i;
+        for (int image = 0; image < signature_divide.length - 1; ++image) {
+            try {
+                x_y = signature_divide[image];
+                i = x_y.indexOf(",");
+                x = x_y.substring(0, i);
+                y = x_y.substring(i + 1);
+                if (Integer.parseInt(y) != '\uffff') {
+                    xVal.add(Integer.valueOf(Integer.parseInt(x)));
+                    yVal.add(Integer.valueOf(Integer.parseInt(y)));
+                }
+                //both[image] = x.getBytes()[0];
+            } catch (Exception var22) {
+                //
+            }
+        }
+
+        Collections.sort(yVal);
+        Collections.sort(xVal);
+        System.out.println("bemacarl.yVal: " + yVal);
+        System.out.println("bemacarl.xVal: " + xVal);
+        int minx = Integer.parseInt(((Integer) xVal.get(0)).toString());
+        int miny = Integer.parseInt(((Integer) yVal.get(0)).toString());
+        int BitmapOriginalWidth  = Integer.parseInt(((Integer) xVal.get(xVal.size() - 1)).toString()) - minx + 1 + margin_x * 2;
+        int BitmapOriginalHeight = Integer.parseInt(((Integer) yVal.get(yVal.size() - 1)).toString()) - miny + 1 + margin_y * 2;
+
+        System.out.println("bemacarl.minx: " + minx);
+        System.out.println("bemacarl.miny: " + miny);
+        System.out.println("bemacarl.BitmapOriginalWidth: " + BitmapOriginalWidth);
+        System.out.println("bemacarl.BitmapOriginalHeight: " + BitmapOriginalHeight);
+
+        Bitmap bmp = Bitmap.createBitmap(BitmapOriginalWidth , BitmapOriginalHeight, Bitmap.Config.ARGB_8888);
+        bmp.eraseColor(Color.WHITE); // fundo branco
+        bmp.setDensity(Bitmap.DENSITY_NONE);
+        Canvas graph = new Canvas(bmp);
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK); // cor do pixel
+
+        for (i = 1; i < signature_divide.length - 1; ++i) {
+            x_y = signature_divide[i - 1];
+            int pos = signature_divide[i - 1].indexOf(",");
+            y = x_y.substring(pos + 1);
+            x = x_y.substring(0, pos);
+            if (Integer.parseInt(y) != '\uffff') {
+                int p1x = Integer.parseInt(x) + margin_x - minx;
+                int p1y = Integer.parseInt(y) + margin_y - miny;
+                x_y = signature_divide[i];
+                pos = signature_divide[i].indexOf(",");
+                y = x_y.substring(pos + 1);
+                x = x_y.substring(0, pos);
+                if (Integer.parseInt(y) != '\uffff') {
+                    int p2x = Integer.parseInt(x) + margin_x - minx;
+                    int p2y = Integer.parseInt(y) + margin_y - miny;
+                    graph.drawLine(p1x, p1y, p2x, p2y, paint);
+                }
+            }
+        }
+        System.out.println("bemacarl.imageBitmap: " + bmp);
+
+        return bmp;
+
+        /*
+        File f = new File(filesDir, "sign.bmp");
+        f.createNewFile();
+
+        Bitmap bitmap = bmp;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0 , bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+        FileOutputStream fos = new FileOutputStream(f);
+        fos.write(bitmapdata);
+        fos.flush();
+        fos.close();
+        /**/
+
     }
-    /**/
+
 
 
     public static abstract class PaxSignatureCallback {

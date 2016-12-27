@@ -6,10 +6,13 @@ import android.text.TextUtils;
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.CreditReceiptModel;
 import com.kaching123.tcr.util.PhoneUtil;
 
+import java.io.IOException;
 import java.util.Calendar;
 
 import static com.kaching123.tcr.print.FormatterUtil.priceFormat;

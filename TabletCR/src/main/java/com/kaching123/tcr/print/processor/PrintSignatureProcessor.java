@@ -3,12 +3,19 @@ package com.kaching123.tcr.print.processor;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Printer;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.pos.PosPrinter;
+import com.kaching123.pos.printer.BitmapCarl;
+import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.pos.util.ISignaturePrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.commands.print.pos.PrintSignatureOrderCommand.ReceiptType;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
@@ -17,6 +24,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -109,9 +117,30 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                     }
                 }
                 printerWrapper.emptyLine();
-                printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
+
+                // Signature Line to customer to sign
+                //printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
+
+                /** Pax Signature Bitmap Object ***********************************/
+                PaxSignature paxSignature = PaxProcessorBaseCommand.paxSignature;
+                Bitmap bmp = paxSignature.SignatureBitmapObject;
+                BitmapCarl bitmapCarl = new BitmapCarl();
+                /* Convert the Bitmap Object to be printed
+                    133x90  (original)
+                    166x113
+                    199x120
+                    266x180
+                 */
+                /**/
+                BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+                /*********************************** Pax Signature Bitmap Object **/
+
+
                 printerWrapper.subTitle(getCustomerName(payment.customerName));
                 printerWrapper.emptyLine();
+
+
             }
         }
         if ((type == ReceiptType.DEBIT || type == ReceiptType.EBT_CASH) && cashBackTotal.compareTo(BigDecimal.ZERO) > 0) {

@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 android {
     compileSdkVersion 19
-    buildToolsVersion '21.1.0'
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         minSdkVersion 12

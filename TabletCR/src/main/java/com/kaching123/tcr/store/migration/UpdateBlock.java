@@ -587,6 +587,7 @@ public class UpdateBlock {
         database.execSQL(SQL_CREATE_15);
         database.execSQL(SQL_CREATE_16);
         database.execSQL(SQL_CREATE_17);
+        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT;");
 
         database.execSQL(SQL_CREATE_EMPLOYEE_TIPS_SHIFT);
         database.execSQL(SQL_CREATE_EMPLOYEE_TIPS_CASHIER);

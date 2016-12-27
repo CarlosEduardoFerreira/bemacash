@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.kaching123.pos.printer.PrintLineAction;
+import com.kaching123.pos.printer.PrintSendBytesCarl;
 import com.kaching123.pos.util.ISignaturePrinter;
 import com.kaching123.tcr.R;
 
@@ -96,6 +97,11 @@ public class PosSignatureTextPrinter extends BasePosTextPrinter implements ISign
     @Override
     public void cropLine(String line) {
         add(new PrintLineAction(crop(PRINTER_MAX_TEXT_LEN, line)));
+    }
+
+    @Override
+    public void printPaxSignature(byte[] signBytes) {
+        add(new PrintSendBytesCarl(signBytes));
     }
 
     @Override

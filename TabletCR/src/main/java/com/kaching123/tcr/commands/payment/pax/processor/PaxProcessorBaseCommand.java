@@ -115,6 +115,8 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
 
     protected PaxModel paxTerminal;
 
+    public static PaxSignature paxSignature;
+
     protected String getTimeStamp() {
         java.util.Date date = new java.util.Date();
         return new SimpleDateFormat("yyyymmddhhmmss").format(date);
@@ -198,8 +200,8 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
     protected PosLink createPosLink() {
         paxTerminal = getPaxModel();
         PosLink posLink = new PosLink();
-        String path = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath() + "/" + FILENAME;
-        CommSetting settings = getCommSettingFromFile(path);
+        String path = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath();
+        CommSetting settings = getCommSettingFromFile(path + "/" + FILENAME);
         if (Validator.isIp(paxTerminal.ip)) {
             settings.setType(TCP_INT);
             settings.setDestIP(paxTerminal.ip);
@@ -210,12 +212,10 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
         }
         settings.setTimeOut(String.valueOf(CONNECTION_TIMEOUT));
 
-
         posLink.appDataFolder = path;
         posLink.SetCommSetting(settings);
-        saveCommSettingToFile(path, settings);
+        saveCommSettingToFile(path + "/" + FILENAME, settings);
         return posLink;
-
     }
 
     private final static String Deft = "";

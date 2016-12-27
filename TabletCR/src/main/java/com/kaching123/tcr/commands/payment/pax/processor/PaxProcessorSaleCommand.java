@@ -150,6 +150,9 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                 response = posLink.PaymentResponse;
 
                 if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
+
+                    paxSignature = new PaxSignature(getPaxModel());
+
                     transaction.updateWith(response);
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
@@ -157,7 +160,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                             .withValues(transactionModel.toValues())
                             .build());
                     sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
-                    PaxSignature sign = new PaxSignature(getPaxModel());
+
                 } else {
                     transaction.allowReload = true;
                     errorReason = "Result Code: " + response.ResultCode + " (" + response.ResultTxt + ")";

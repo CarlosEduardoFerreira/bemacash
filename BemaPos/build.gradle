@@ -5,7 +5,7 @@ dependencies {
 }
 android {
     compileSdkVersion 19
-    buildToolsVersion '21.1.0'
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         minSdkVersion 12
@@ -17,5 +17,9 @@ android {
             java.srcDirs = ['src']
             res.srcDirs = ['res']
         }
+    }
+    compileOptions {
+        targetCompatibility 1.7
+        sourceCompatibility 1.7
     }
 }

@@ -43,6 +43,7 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
     private static final String IS_PREAUTH = "IS_PREAUTH";
     private static final String CASH_BACK = "CASH_BACK";
     private static final String EBT_BALANCE = "EBT_BALANCE";
+    private static final String SIGNATURE_BYTES = "SIGNATURE_BYTES";
 
     @Override
     public PaymentTransactionModel toValues(JdbcJSONObject rs) throws JSONException {

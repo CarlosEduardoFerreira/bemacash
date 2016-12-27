@@ -34,4 +34,6 @@ public interface ISignaturePrinter extends IHeaderFooterPrinter {
 
     void cropLine(String line);
 
+    void printPaxSignature(byte[] bmpBytes);
+
 }

@@ -1370,6 +1370,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String CASH_BACK = "cash_back";
+
+        @Column(type = Column.Type.TEXT)
+        String SIGNATURE_BYTES = "signature_bytes";
     }
 
     static {
