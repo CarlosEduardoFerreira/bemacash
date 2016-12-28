@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="100dp"
+    android:keyHeight="80dp"
+    android:horizontalGap="5dp"
+    android:verticalGap="5dp">
+
+    <Row>
+        <Key android:codes="145" android:keyLabel="1" />
+        <Key android:codes="146" android:keyLabel="2" />
+        <Key android:codes="147" android:keyLabel="3" />
+        <Key
+            android:codes="67"
+            android:iconPreview="@drawable/sym_keyboard_delete_holo"
+            android:keyIcon="@drawable/sym_keyboard_delete_holo"/>
+    </Row>
+    <Row>
+        <Key android:codes="148"    android:keyLabel="4" />
+        <Key android:codes="149"    android:keyLabel="5" />
+        <Key android:codes="150"    android:keyLabel="6" />
+        <Key
+            android:codes="261"
+            android:keyLabel="Next" />
+    </Row>
+    <Row>
+        <Key android:codes="151"    android:keyLabel="7" />
+        <Key android:codes="152"    android:keyLabel="8" />
+        <Key android:codes="153"    android:keyLabel="9" />
+        <Key
+            android:codes="66"
+            android:keyLabel="OK"
+            android:keyHeight="170dp" />
+    </Row>
+    <Row>
+        <Key
+            android:codes="69"
+            android:keyLabel="-" />
+        <Key
+            android:codes="144"
+            android:keyLabel="0" />
+        <Key
+            android:codes="158"
+            android:keyLabel="." />
+    </Row>
+
+
+</Keyboard>

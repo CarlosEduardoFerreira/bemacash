@@ -43,4 +43,13 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"/>
 
+    <android.inputmethodservice.KeyboardView
+        android:id="@+id/keyboardview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:keyTextColor="#FFFFFF" />
+
 </RelativeLayout>

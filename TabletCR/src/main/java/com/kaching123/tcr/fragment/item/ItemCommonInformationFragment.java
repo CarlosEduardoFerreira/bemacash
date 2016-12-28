@@ -1,5 +1,6 @@
 package com.kaching123.tcr.fragment.item;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -10,7 +11,9 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -33,6 +36,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
+import com.kaching123.tcr.util.BemaKeyboard;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Click;
@@ -44,6 +48,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.kaching123.tcr.fragment.UiHelper.getDecimalValue;
 import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
@@ -72,6 +77,8 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     protected DepartmentSpinnerAdapter departmentAdapter;
     protected CategorySpinnerAdapter categoryAdapter;
     protected TaxGroupSpinnerAdapter taxGroupAdapter;
+
+
 
     @Override
     protected void setViews() {
@@ -103,7 +110,36 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         showPrice(salesPrice, model.price);
         activeStatus.setChecked(model.isActiveStatus);
 
+        //salesPrice.setFocusable(false);
+        //salesPrice.setFocusableInTouchMode(true);
+        salesPrice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                BemaKeyboard bemaKeyboard = new BemaKeyboard(TcrApplication.get(), getView().getRootView());
+                bemaKeyboard.editTextKeyboard = salesPrice;
+                Log.i("BemaKeyboard", "hasFocus: " + hasFocus);
+                Log.i("BemaKeyboard", "v: " + v);
+                Log.i("BemaKeyboard", "v.getRootView: " + v.getRootView());
+                if(hasFocus){
+                    salesPrice.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(salesPrice.getApplicationWindowToken(), 0);
+                            //((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(salesPrice.getRootView().getWindowToken(), 0);
+                        }
+                    },300); //use 300 to make it run when coming back from lock screen
+                    bemaKeyboard.openKeyboard(v);
+                }else {
+                    salesPrice.clearFocus();
+                    bemaKeyboard.closeKeyboard(v.getRootView());
+                }
+            }
+        });
+
     }
+
+
+
 
     @Override
     public void collectData() {
