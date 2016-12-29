@@ -1,6 +1,5 @@
 package com.kaching123.tcr.fragment.item;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -13,7 +12,6 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -48,7 +46,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.kaching123.tcr.fragment.UiHelper.getDecimalValue;
 import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
@@ -110,31 +107,25 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         showPrice(salesPrice, model.price);
         activeStatus.setChecked(model.isActiveStatus);
 
-        //salesPrice.setFocusable(false);
-        //salesPrice.setFocusableInTouchMode(true);
-        salesPrice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+
+
+
+
+        salesPrice.setFocusableInTouchMode(false);
+        salesPrice.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                BemaKeyboard bemaKeyboard = new BemaKeyboard(TcrApplication.get(), getView().getRootView());
-                bemaKeyboard.editTextKeyboard = salesPrice;
-                Log.i("BemaKeyboard", "hasFocus: " + hasFocus);
-                Log.i("BemaKeyboard", "v: " + v);
-                Log.i("BemaKeyboard", "v.getRootView: " + v.getRootView());
-                if(hasFocus){
-                    salesPrice.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(salesPrice.getApplicationWindowToken(), 0);
-                            //((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(salesPrice.getRootView().getWindowToken(), 0);
-                        }
-                    },300); //use 300 to make it run when coming back from lock screen
-                    bemaKeyboard.openKeyboard(v);
-                }else {
-                    salesPrice.clearFocus();
-                    bemaKeyboard.closeKeyboard(v.getRootView());
+            public void onClick(View view) {
+                salesPrice.setFocusableInTouchMode(true);
+                BemaKeyboard bemaKeyboard = new BemaKeyboard(view, salesPrice);
+                Log.i("BemaKeyboard", "hasFocus: " + view.hasFocus());
+                if(salesPrice.hasFocus()){
+                    bemaKeyboard.closeSoftKeyboard();
                 }
             }
         });
+        /**/
+
 
     }
 
@@ -180,6 +171,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     private void setFilters(){
         InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
         salesPrice.setFilters(currencyFilter);
+        //salesPrice.setFilters(new InputFilter[] { new BemaKeyboardDecimalsWithNegative(7, 2) });
         salesPrice.addTextChangedListener(new CurrencyTextWatcher(salesPrice));
     }
 

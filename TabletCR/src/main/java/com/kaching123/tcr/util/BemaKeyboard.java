@@ -14,6 +14,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static android.view.inputmethod.EditorInfo.IME_ACTION_NEXT;
 
 /**
  * Created by ferre on 27/12/2016.
@@ -26,13 +27,15 @@ public class BemaKeyboard {
     public EditText editTextKeyboard;
 
 
-    public BemaKeyboard(Context context, View view) {
+    public BemaKeyboard(View view, EditText editText) {
+
+        editTextKeyboard = editText;
 
         /* Routine to use the customized keyboard ************************************ */
         // Create the Keyboard
-        mKeyboard = new Keyboard(context, R.xml.keyboard_numbers_negative);
+        mKeyboard = new Keyboard(TcrApplication.get(), R.xml.keyboard_numbers_negative);
         // Lookup the KeyboardView
-        mKeyboardView = (KeyboardView) view.findViewById(R.id.keyboardview);
+        mKeyboardView = (KeyboardView) view.getRootView().findViewById(R.id.keyboardview);
         // Attach the keyboard to the view
         Log.i("BemaKeyboard", "mKeyboard: " + mKeyboard);
         Log.i("BemaKeyboard", "mKeyboardView: " + mKeyboardView);
@@ -43,20 +46,54 @@ public class BemaKeyboard {
         mKeyboardView.setOnKeyboardActionListener(mOnKeyboardActionListener);
         /* ************************************  Routine to use the customized keyboard  */
 
+        //salesPrice.setFocusable(false);
+        //salesPrice.setFocusableInTouchMode(false);
+        editTextKeyboard.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                Log.i("BemaKeyboard", "editTextKeyboard.hasFocus(): " + editTextKeyboard.hasFocus());
+                Log.i("BemaKeyboard", "v: " + v);
+                Log.i("BemaKeyboard", "v.getRootView: " + v.getRootView());
+                if(editTextKeyboard.hasFocus()) {
+                    openBemaKeyboard();
+                    closeSoftKeyboard();
+                }else {
+                    closeBemaKeyboard();
+                }
+            }
+
+        });
+
+        editTextKeyboard.requestFocus();
+
     }
 
 
-    public void openKeyboard(View v) {
+
+    public void openBemaKeyboard() {
         mKeyboardView.setVisibility(View.VISIBLE);
         mKeyboardView.setEnabled(true);
     }
 
-    public void closeKeyboard(View v) {
-        v.requestFocus();
-        ((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE)).showSoftInput(v, 0);
+    public void closeBemaKeyboard() {
         mKeyboardView.setVisibility(View.INVISIBLE);
         mKeyboardView.setEnabled(false);
     }
+
+
+    public void closeSoftKeyboard(){
+        editTextKeyboard.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(editTextKeyboard.getApplicationWindowToken(), 0);
+                //((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(salesPrice.getRootView().getWindowToken(), 0);
+            }
+        }, 200); //use 300 to make it run when coming back from lock screen
+    }
+
+
 
     private KeyboardView.OnKeyboardActionListener mOnKeyboardActionListener = new KeyboardView.OnKeyboardActionListener() {
         @Override
@@ -131,8 +168,17 @@ public class BemaKeyboard {
                         editTextKeyboard.setSelection(sales_price_end-1);
                     }
                     break;
+                case 261 :
+                    editTextKeyboard.setImeOptions(IME_ACTION_NEXT);
+                    break;
                 case KeyEvent.KEYCODE_ENTER :
-                    mKeyboardView.setVisibility(View.INVISIBLE);
+                    closeBemaKeyboard();
+                    editTextKeyboard.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            openBemaKeyboard();
+                        }
+                    });
                     break;
             }
         }
