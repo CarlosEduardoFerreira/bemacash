@@ -1,8 +1,10 @@
 package com.kaching123.tcr.fragment.saleorder;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -11,6 +13,7 @@ import org.androidannotations.annotations.EBean;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
+import com.kaching123.tcr.component.CarlHighlightItemView;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.util.DrawableUtil;
@@ -27,6 +30,8 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
     private Drawable pencilDrawable;
     private Drawable pencilTransparent;
     private HighlightedColumn highlightedColumn;
+
+    public CarlHighlightItemView carlHighlightItemView;
 
     public ItemsAdapter(Context context) {
         super(context);
@@ -148,8 +153,28 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
                 highlightedColumn = null;
             }
         }
+
+        if(carlHighlightItemView != null){
+            if(carlHighlightItemView.saleItemGuid.equals(item.itemModel.saleItemGuid)) {
+                //View v  = (View) getView(this.getCount() - 1,convertView,);
+                //View v1 = (View)carlHighlightItemView.findParentRecursively(v, R.id.item_front);
+                View v = itemView.priceBlock;
+                carlHighlightItemView.CarlHighlightItemViewRun(v);
+                /*
+                itemView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        carlHighlightItemView.saleItemGuid = "NULL";
+                        notifyDataSetChanged();
+                    }
+                }, 150);
+                /**/
+            }
+        }
+
         return convertView;
     }
+
 
     public void highlightedColumn(String saleItemGuid, HighlightedColumn.Type type) {
         highlightedColumn = new HighlightedColumn(saleItemGuid, type);

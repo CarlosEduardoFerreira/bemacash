@@ -28,7 +28,7 @@
         <Key android:codes="153"    android:keyLabel="9" />
         <Key
             android:codes="66"
-            android:keyLabel="OK"
+            android:keyLabel="Done"
             android:keyHeight="170dp" />
     </Row>
     <Row>

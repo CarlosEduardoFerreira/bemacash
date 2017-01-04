@@ -7,6 +7,7 @@ import android.inputmethodservice.KeyboardView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -45,6 +46,8 @@ public class BemaKeyboard {
         // Install the key handler
         mKeyboardView.setOnKeyboardActionListener(mOnKeyboardActionListener);
         /* ************************************  Routine to use the customized keyboard  */
+
+        //editTextKeyboard.setImeOptions(EditorInfo.IME_ACTION_NEXT); // to test into ItemCommonInformationFragment
 
         //salesPrice.setFocusable(false);
         //salesPrice.setFocusableInTouchMode(false);

@@ -50,6 +50,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:visibility="gone"
-        android:keyTextColor="#FFFFFF" />
+        android:keyTextColor="#FFFFFF"
+        android:padding="10dp"/>
 
 </RelativeLayout>

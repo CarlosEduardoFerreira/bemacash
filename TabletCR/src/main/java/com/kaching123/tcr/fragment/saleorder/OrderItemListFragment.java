@@ -1,7 +1,9 @@
 package com.kaching123.tcr.fragment.saleorder;
 
+import android.app.LauncherActivity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -9,10 +11,12 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
@@ -37,6 +41,7 @@ import com.kaching123.tcr.commands.store.saleorder.UpdatePriceSaleOrderItemComma
 import com.kaching123.tcr.commands.store.saleorder.UpdatePriceSaleOrderItemCommand.BaseUpdatePriceSaleOrderItemCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand.BaseUpdateQtySaleOrderItemCallback;
+import com.kaching123.tcr.component.CarlHighlightItemView;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.ComposerOverrideQtyDialog;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -435,6 +440,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         RemoveSaleOrderItemCommand.start(getActivity(), guid, OrderItemListFragment.this);
     }
 
+
+
     private void highlightedColumn(String saleItemGuid, Type type) {
         adapter.highlightedColumn(saleItemGuid, type);
         getView().postDelayed(new Runnable() {
@@ -444,6 +451,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             }
         }, ItemsAdapter.DEFAULT_ANIMATION_TIME + 100);
     }
+
+
 
     @OnSuccess(RemoveSaleOrderItemCommand.class)
     public void onItemRemovedCallback() {
@@ -638,8 +647,25 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         app.setSalesOnScreenTmpSize(list.size());
 
         itemsListHandler.onTotolQtyUpdated(getCount(list), false, null);
-        Collections.sort(list, SaleOrderItemViewModel.filterOrderItem);
+        //Collections.sort(list, SaleOrderItemViewModel.filterOrderItem); // do not sort - BEMA-1149 Register screen in ABC order
         adapter.changeCursor(list);
+
+
+
+
+        // CarlHighlightItemView
+        getListView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(getListView().getCount() > 0) {
+                    //getListView().getChildAt(getListView().getLastVisiblePosition()).setBackgroundColor(Color.WHITE);
+                    new CarlHighlightItemView(getView(), adapter, getLastItem().getSaleItemGuid());
+                }
+            }
+        }, 150);
+        /**/
+
+
         if (need2ScrollList) {
             getListView().postDelayed(new Runnable() {
                 @Override
@@ -655,6 +681,9 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             if (itemsListHandler != null)
                 itemsListHandler.onOrderLoaded(getLastItem());
         }
+
+
+
     }
 
     private String getCount(List<SaleOrderItemViewModel> list) {
