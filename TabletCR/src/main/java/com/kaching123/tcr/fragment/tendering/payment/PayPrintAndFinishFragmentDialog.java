@@ -3,10 +3,12 @@ package com.kaching123.tcr.fragment.tendering.payment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.commands.device.PrinterCommand;
@@ -112,6 +114,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     protected boolean debitOrEBTDetailsPrinted;
     protected boolean signatureOrderPrinted;
 
+    public boolean print_digital_signature = false;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -138,6 +142,81 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         printBox.setChecked(getApp().getPrintReceiptDefault());
         emailBox.setChecked(getApp().getEmailReceiptDefault());
+
+        doubleCheckBeforePrint();
+
+    }
+
+
+
+    protected void doubleCheckBeforePrint(){
+
+        boolean tips                = getApp().isTipsEnabled();         // tips
+        boolean digital_signature   = getApp().getDigitalSignature();   // pax signature
+        String  signature_receipt   = getApp().getSignatureReceipt();   // manual signature
+
+        Log.i("BemaCarl","doubleCheckBeforePrint tips: " + tips);
+        Log.i("BemaCarl","doubleCheckBeforePrint digital_signature: " + digital_signature);
+        Log.i("BemaCarl","doubleCheckBeforePrint signature_receipt: " + signature_receipt);
+
+        printBox.setChecked(true);
+        signatureBox.setEnabled(false);
+        signatureBox.setChecked(false);
+
+        /** Condition 1
+         *  If “Tips” are “Disabled” and “Digital Signature” is set to “Yes” and “Signature Receipt” is set to “Short”
+         *  "Signature Receipt" should be disabled. If the check box "Print Receipt"
+         *  it should print only 1 complete receipt with digital signature.
+         */
+        if(!tips && digital_signature && signature_receipt.equals("SHORT")) {        // condition 1
+            print_digital_signature = true;
+            Log.i("BemaCarl","doubleCheckBeforePrint Condition 1");
+
+        /** Condition 2
+         *  If “Tips” are “Disabled” and “Digital Signature” is set to “No” and “Signature Receipt” is set to “Short”
+         *  and user only selected "Print Receipt", print only 1 simple value receipt.
+         *
+         *  Condition 3
+         *  If user checks signatureBox, it should print the manual signature receipt too. Only "Merchant Copy".
+         */
+        }else if(!tips && !digital_signature && signature_receipt.equals("SHORT")) {   // condition 2
+            signatureBox.setEnabled(true);
+            Log.i("BemaCarl","doubleCheckBeforePrint Condition 2 e 3");
+
+        /** Condition 4
+         *  If “Tips” are “Disabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Long”
+         *  and user only selected "Print Receipt", print only 1 simple value receipt.
+         *
+         *  Condition 5
+         *  If user checks signatureBox, it should print the manual signature receipt too. Both "Merchant Copy" and "Customer Copy".
+         */
+        }else if(!tips && !digital_signature && signature_receipt.equals("LONG")) {   // condition 4
+            signatureBox.setEnabled(true);
+            Log.i("BemaCarl","doubleCheckBeforePrint Condition 4 e 5");
+
+        /** Condition 6
+         *  If “Tips” are “Enabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Short”
+         *  and user only selected "Print Receipt", print only 1 simple value receipt.
+         *
+         *  Condition 7
+         *  If user checks signatureBox, it should print the manual signature receipt too with "TIP". Only "Merchant Copy".
+         */
+        }else if(tips && !digital_signature && signature_receipt.equals("SHORT")) {   // condition 6
+            signatureBox.setEnabled(true);
+            Log.i("BemaCarl","doubleCheckBeforePrint Condition 6 e 7");
+
+        /** Condition 8
+         *  If “Tips” are “Enabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Long”
+         *  and user only selected "Print Receipt", print only 1 simple value receipt.
+         *
+         *  Condition 9
+         *  If user checks signatureBox, it should print the manual signature receipt too with "TIP". Both "Merchant Copy" and "Customer Copy".
+         */
+        }else if(tips && !digital_signature && signature_receipt.equals("LONG")) {   // condition 8
+            signatureBox.setEnabled(true);
+            Log.i("BemaCarl","doubleCheckBeforePrint Condition 8 e 9");
+        }
+
     }
 
     @Override
@@ -215,7 +294,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     protected void printReceipts() {
         WaitDialogFragment.hide(getActivity());
-        if (printBox.isChecked() && !orderPrinted) {
+        if (print_digital_signature) {
+            printOrder(false, false);
+        } else if (printBox.isChecked() && !orderPrinted) {
             printOrder(false, false);
         } else if (signatureBox.isChecked() && !signatureOrderPrinted) {
             printSignatureOrder(false, false);

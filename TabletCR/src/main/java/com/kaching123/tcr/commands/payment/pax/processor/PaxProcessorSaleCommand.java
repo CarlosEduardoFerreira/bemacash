@@ -151,7 +151,9 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                 if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
 
-                    paxSignature = new PaxSignature(getPaxModel());
+                    if(transaction.cardName == "Credit") {
+                        paxSignature = new PaxSignature(getPaxModel());
+                    }
 
                     transaction.updateWith(response);
 

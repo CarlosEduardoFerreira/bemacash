@@ -115,7 +115,7 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
 
     protected PaxModel paxTerminal;
 
-    public static PaxSignature paxSignature;
+    public static PaxSignature paxSignature = null;
 
     protected String getTimeStamp() {
         java.util.Date date = new java.util.Date();

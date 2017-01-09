@@ -418,4 +418,12 @@ public interface ShopPref {
 
     boolean autogenerateProductCode();
 
+    /* Digital signature / Signature receipt ********************** */
+
+    boolean digitalSignature();
+
+    String signatureReceipt();
+
+/* ********************** Digital signature / Signature receipt */
+
 }

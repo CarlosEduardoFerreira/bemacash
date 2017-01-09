@@ -135,6 +135,8 @@ public class ShopInfoViewJdbcConverter {
     private static final String CHECK_PAYMENT_BUTTON = "CHECK_PAYMENT_BUTTON";
     private static final String AUTOGENERATE_PRODUCT_CODE = "AUTOGENERATE_PRODUCT_CODE";
 
+    private static final String DIGITAL_SIGNATURE = "DIGITAL_SIGNATURE";
+    private static final String SIGNATURE_RECEIPT = "SIGNATURE_RECEIPT";
 
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
@@ -220,7 +222,9 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(CHECK_PAYMENT_BUTTON),
                 rs.getBoolean(PRINT_RECEIPT_DEFAULT),
                 rs.getBoolean(EMAIL_RECEIPT_DEFAULT),
-                rs.getBoolean(AUTOGENERATE_PRODUCT_CODE)
+                rs.getBoolean(AUTOGENERATE_PRODUCT_CODE),
+                rs.getBoolean(DIGITAL_SIGNATURE),
+                rs.getString(SIGNATURE_RECEIPT)
 
         );
     }
@@ -308,7 +312,9 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(CHECK_PAYMENT_BUTTON),
                 rs.getBoolean(PRINT_RECEIPT_DEFAULT),
                 rs.getBoolean(EMAIL_RECEIPT_DEFAULT),
-                rs.getBoolean(AUTOGENERATE_PRODUCT_CODE)
+                rs.getBoolean(AUTOGENERATE_PRODUCT_CODE),
+                rs.getBoolean(DIGITAL_SIGNATURE),
+                rs.getString(SIGNATURE_RECEIPT)
         );
     }
 
@@ -417,6 +423,10 @@ public class ShopInfoViewJdbcConverter {
         public final boolean emailReceiptDefault;
         public final boolean autogenerateProductCode;
 
+        public final boolean digitalSignature;
+        public final String signatureReceipt;
+
+
 
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
                         String address1,
@@ -495,7 +505,9 @@ public class ShopInfoViewJdbcConverter {
                         boolean checkPaymentButtonEnabled,
                         boolean printReceiptDefault,
                         boolean emailReceiptDefault,
-                        boolean autogenerateProductCode) {
+                        boolean autogenerateProductCode,
+                        boolean digitalSignature,
+                        String signatureReceipt) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -598,6 +610,9 @@ public class ShopInfoViewJdbcConverter {
             this.printReceiptDefault = printReceiptDefault;
             this.emailReceiptDefault = emailReceiptDefault;
             this.autogenerateProductCode = autogenerateProductCode;
+
+            this.digitalSignature = digitalSignature;
+            this.signatureReceipt = signatureReceipt;
         }
 
     }

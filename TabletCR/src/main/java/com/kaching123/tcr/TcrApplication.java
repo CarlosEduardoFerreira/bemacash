@@ -195,6 +195,7 @@ public class TcrApplication extends MultiDexApplication {
     @Background
     public void initPref() {
         Logger.d("[ShopPref] PrintReceiptTwice = " + shopPref.printReceiptTwice().get());
+        Logger.d("[ShopPref] signatureReceipt = "  + shopPref.signatureReceipt().get());
         synchronized (this) {
             shopInfo = new ShopInfo(
                     shopPref.shopId().get(),
@@ -284,8 +285,10 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.ebtCashPaymentButtonEnabled().getOr(false),
                     shopPref.offlineCreditPaymentButtonEnabled().getOr(false),
                     shopPref.checkPaymentButtonEnabled().getOr(false),
-                    shopPref.autogenerateProductCode().getOr(false)
-                    );
+                    shopPref.autogenerateProductCode().getOr(false),
+                    shopPref.digitalSignature().getOr(false),
+                    shopPref.signatureReceipt().get()
+            );
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -681,6 +684,8 @@ public class TcrApplication extends MultiDexApplication {
                 .offlineCreditPaymentButtonEnabled().put(info.offlineCreditPaymentButtonEnabled)
                 .checkPaymentButtonEnabled().put(info.checkPaymentButtonEnabled)
                 .autogenerateProductCode().put(info.autogenerateProductCode)
+                .digitalSignature().put(info.digitalSignature)
+                .signatureReceipt().put(info.signatureReceipt)
                 .apply();
 
         setUsers();
@@ -814,6 +819,14 @@ public class TcrApplication extends MultiDexApplication {
 
     public synchronized boolean getPrintReceiptDefault() {
         return shopInfo.printReceiptDefault;
+    }
+
+    public synchronized boolean getDigitalSignature() {
+        return shopInfo.digitalSignature;
+    }
+
+    public synchronized String getSignatureReceipt() {
+        return shopInfo.signatureReceipt;
     }
 
     public synchronized boolean getEmailReceiptDefault() {
