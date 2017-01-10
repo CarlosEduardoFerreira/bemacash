@@ -178,6 +178,8 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
     }
 
     private String getCustomerName(String customerName) {
+        if(customerName == null)
+            return "";
         String[] names = customerName.split("/");
         if (names.length == 1)
             return customerName;
