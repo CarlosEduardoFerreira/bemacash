@@ -2,12 +2,17 @@ package com.kaching123.tcr.print.processor;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.pos.printer.BitmapCarl;
+import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
@@ -217,7 +222,37 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 isGiftCardPaymnetExists = true;
                 giftCardBalance = p.balance;
             }
+
+            if(app.getShopPref().digitalSignature().getOr(false)){
+                printerWrapper.addNotes("Card Type:", p.cardName);
+                printerWrapper.addNotes("Account Number:", "####-####-####-" + p.lastFour);
+                printerWrapper.addNotes("Entry:", p.entryMethod);
+                printerWrapper.addNotes("AID:", p.authorizationNumber);
+                printerWrapper.addNotes("Approval:", p.preauthPaymentId);
+            }
+
         }
+
+
+        /** Pax Signature Bitmap Object ***********************************/
+        if(app.getShopPref().digitalSignature().getOr(false)) {
+            PaxSignature paxSignature = PaxProcessorBaseCommand.paxSignature;
+            Bitmap bmp = paxSignature.SignatureBitmapObject;
+            BitmapCarl bitmapCarl = new BitmapCarl();
+                    /* Convert the Bitmap Object to be printed
+                        133x90  (original)
+                        166x113
+                        199x120
+                        266x180
+                     */
+                    /**/
+            BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+            printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+            printerWrapper.drawLine();
+        }
+        /*********************************** Pax Signature Bitmap Object **/
+
+
 
         if (isEbtPaymentExists) {
             printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(ebtBalance)), true);
@@ -248,6 +283,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
 
             }
+
+
 //        if (giftCardResults != null)
 //            for (GiftCardBillingResult result : giftCardResults) {
 //                printerWrapper.addAddsOn(result.model.description, result.model.finalPrice);

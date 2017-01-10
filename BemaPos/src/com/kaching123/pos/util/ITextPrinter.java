@@ -24,4 +24,6 @@ public interface ITextPrinter extends IHeaderFooterPrinter {
     public void add(String content);
     public void addNotes(String notes, String noteWords);
     public void change(String cardName, BigDecimal amount);
+
+    void printPaxSignature(byte[] bmpBytes);
 }
