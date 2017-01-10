@@ -159,13 +159,15 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
 //        } else {
         request.TransType = TRANS_TYPE_SALE;
 
+        if(getApp().getShopPref().digitalSignature().get()) {
+
         /*  <SignatureCapture>
             The ECR supports signature printing and the terminal supports signature capture.
             If this field exists, the values below are valid:
             0 = Do Not Capture (Default)
             1 = Capture
          */
-        request.ExtData  = "<SignatureCapture>1</SignatureCapture>";
+            request.ExtData = "<SignatureCapture>1</SignatureCapture>";
 
         /*  <SignUploadFlag>
             Valid values:
@@ -174,7 +176,7 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
             Notes: If this tag is not sent to the POS, the terminal will upload the signature
             by default only when signature upload is supported by the host.
          */
-        request.ExtData += "<SignUploadFlag>1</SignUploadFlag>";
+            request.ExtData += "<SignUploadFlag>1</SignUploadFlag>";
 
         /*
             <GetSign>
@@ -182,7 +184,13 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
             0 = not to upload (Default)
             1 = to get
          */
-        request.ExtData += "<GetSign>1</GetSign>";
+            request.ExtData += "<GetSign>1</GetSign>";
+
+        } else {
+            request.ExtData = "<SignatureCapture>0</SignatureCapture>";
+            request.ExtData += "<SignUploadFlag>0</SignUploadFlag>";
+            request.ExtData += "<GetSign>0</GetSign>";
+        }
 
 
 
