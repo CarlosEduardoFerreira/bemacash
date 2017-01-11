@@ -333,4 +333,7 @@ public class DigitalDetailReportOrdersBuilder extends BaseDigitalBuilder impleme
     @Override
     public void print(PosPrinter posPrinter) throws IOException {
     }
+
+    @Override
+    public void printPaxSignature(byte[] bmpBytes){};
 }

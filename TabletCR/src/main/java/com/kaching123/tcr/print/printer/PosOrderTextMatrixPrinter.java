@@ -166,4 +166,7 @@ public class PosOrderTextMatrixPrinter extends PosOrderTextPrinter implements IT
         boldString(new PrintLineAction(crop(PRINTER_MAX_TEXT_LEN, label)));//double
     }
 
+    @Override
+    public void printPaxSignature(byte[] bmpBytes){};
+
 }

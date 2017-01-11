@@ -181,4 +181,7 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
         boldString(new PrintLineAction(crop(PRINTER_MAX_TEXT_LEN, label)));//double
     }
 
+
+    @Override
+    public void printPaxSignature(byte[] bmpBytes){};
 }

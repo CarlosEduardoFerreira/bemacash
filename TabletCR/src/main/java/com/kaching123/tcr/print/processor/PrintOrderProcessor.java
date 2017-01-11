@@ -116,6 +116,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
+        final boolean digitalsignature = app.getShopPref().digitalSignature().getOr(false);
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
 
             @Override
@@ -223,7 +224,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 giftCardBalance = p.balance;
             }
 
-            if(app.getShopPref().digitalSignature().getOr(false)){
+            if(digitalsignature){
                 printerWrapper.addNotes("Card Type:", p.cardName);
                 printerWrapper.addNotes("Account Number:", "####-####-####-" + p.lastFour);
                 printerWrapper.addNotes("Entry:", p.entryMethod);
@@ -235,17 +236,17 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
 
         /** Pax Signature Bitmap Object ***********************************/
-        if(app.getShopPref().digitalSignature().getOr(false)) {
+        if(digitalsignature) {
             PaxSignature paxSignature = PaxProcessorBaseCommand.paxSignature;
             Bitmap bmp = paxSignature.SignatureBitmapObject;
             BitmapCarl bitmapCarl = new BitmapCarl();
-                    /* Convert the Bitmap Object to be printed
-                        133x90  (original)
-                        166x113
-                        199x120
-                        266x180
-                     */
-                    /**/
+            /* Convert the Bitmap Object to be printed
+                133x90  (original example)
+                166x113
+                199x120
+                266x180
+             */
+            /**/
             BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
             printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
             printerWrapper.drawLine();

@@ -331,4 +331,7 @@ public class DigitalOrderBuilder extends BaseDigitalBuilder implements ITextPrin
     public void print(PosPrinter posPrinter) throws IOException {
     }
 
+    @Override
+    public void printPaxSignature(byte[] bmpBytes){};
+
 }
