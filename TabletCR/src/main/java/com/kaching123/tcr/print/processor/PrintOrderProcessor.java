@@ -231,8 +231,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.addNotes(p.cardName, "Card Type:");
                 printerWrapper.addNotes("####-####-####-" + p.lastFour,"Account Number:");
                 printerWrapper.addNotes(p.entryMethod == null ? "" : p.entryMethod, "Entry:");
-                printerWrapper.addNotes(p.authorizationNumber, "AID:");
-                printerWrapper.addNotes(p.preauthPaymentId, "Approval:");
+                printerWrapper.addNotes(p.authorizationNumber == null ? "" : p.authorizationNumber, "AID:");
+                printerWrapper.addNotes(p.preauthPaymentId == null ? "" : p.preauthPaymentId, "Approval:");
             }
 
         }
