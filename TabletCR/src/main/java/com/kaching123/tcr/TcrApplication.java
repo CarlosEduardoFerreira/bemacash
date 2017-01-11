@@ -141,6 +141,8 @@ public class TcrApplication extends MultiDexApplication {
     private SyncOpenHelper syncOpenHelper;
     private static CountryFunctionality countryFunctionality;
 
+    public boolean PAX_SIGNATURE_EMULATOR = false;
+
     @Override
     public void onCreate() {
         super.onCreate();

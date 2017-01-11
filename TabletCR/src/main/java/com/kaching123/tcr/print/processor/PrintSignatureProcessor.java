@@ -118,28 +118,8 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 }
                 printerWrapper.emptyLine();
 
-
-
-                PaxSignature paxSignature = PaxProcessorBaseCommand.paxSignature;
-                if(paxSignature == null) {
-                    // Signature Line to customer to sign
-                    printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
-                } else {
-                    /** Pax Signature Bitmap Object ***********************************/
-                    Bitmap bmp = paxSignature.SignatureBitmapObject;
-                    BitmapCarl bitmapCarl = new BitmapCarl();
-                    /* Convert the Bitmap Object to be printed
-                        133x90  (original)
-                        166x113
-                        199x120
-                        266x180
-                     */
-                    /**/
-                    BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-                    printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
-                    /*********************************** Pax Signature Bitmap Object **/
-                }
-
+                // Signature Line to customer to sign
+                printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
 
                 printerWrapper.subTitle(getCustomerName(payment.customerName));
                 printerWrapper.emptyLine();

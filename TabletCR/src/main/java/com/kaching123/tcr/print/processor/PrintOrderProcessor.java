@@ -227,7 +227,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             if(digitalsignature){
                 printerWrapper.addNotes("Card Type:", p.cardName);
                 printerWrapper.addNotes("Account Number:", "####-####-####-" + p.lastFour);
-                printerWrapper.addNotes("Entry:", p.entryMethod);
+                printerWrapper.addNotes("Entry:", p.entryMethod==null?"":p.entryMethod);
                 printerWrapper.addNotes("AID:", p.authorizationNumber);
                 printerWrapper.addNotes("Approval:", p.preauthPaymentId);
             }
