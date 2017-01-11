@@ -455,4 +455,7 @@ public class DigitalReportItemBuilder extends BaseDigitalBuilder implements IRep
     public void header(String orderPrefix, String registerTitle, int orderSeqNum, Date date, String opratorTitle, String operatorName, String customerTitle, String customerIdentification) {
 
     }
+
+    @Override
+    public void printPaxSignature(byte[] bmpBytes){}
 }

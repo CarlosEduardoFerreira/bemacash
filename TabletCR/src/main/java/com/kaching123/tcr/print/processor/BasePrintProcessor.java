@@ -2,13 +2,18 @@ package com.kaching123.tcr.print.processor;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.pos.printer.BitmapCarl;
+import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.pos.util.IHeaderFooterPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -67,6 +72,27 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
+        /** Pax Signature Bitmap Object ***********************************/
+        if(app.getShopPref().digitalSignature().getOr(false)) {
+            PaxSignature paxSignature = null;
+            if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+                paxSignature = new PaxSignature(null);
+            } else {
+                paxSignature = PaxProcessorBaseCommand.paxSignature;
+            }
+            Bitmap bmp = paxSignature.SignatureBitmapObject;
+            BitmapCarl bitmapCarl = new BitmapCarl();
+            /* Convert the Bitmap Object to be printed
+                133x90  (original example)
+                166x113
+                199x120
+                266x180
+             */
+            BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+            printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+            //printerWrapper.drawLine();
+        }
+        /*********************************** Pax Signature Bitmap Object **/
         printLoyalty(context, app, printerWrapper);
         printFooter(context, app, printerWrapper);
     }

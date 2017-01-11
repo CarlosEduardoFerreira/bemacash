@@ -116,7 +116,9 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
+
         final boolean digitalsignature = app.getShopPref().digitalSignature().getOr(false);
+
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
 
             @Override
@@ -224,36 +226,18 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 giftCardBalance = p.balance;
             }
 
-            if(digitalsignature){
-                printerWrapper.addNotes("Card Type:", p.cardName);
-                printerWrapper.addNotes("Account Number:", "####-####-####-" + p.lastFour);
-                printerWrapper.addNotes("Entry:", p.entryMethod==null?"":p.entryMethod);
-                printerWrapper.addNotes("AID:", p.authorizationNumber);
-                printerWrapper.addNotes("Approval:", p.preauthPaymentId);
+            if(digitalsignature && p.gateway.isCreditCard() && !TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+                printerWrapper.drawLine();
+                printerWrapper.addNotes(p.cardName, "Card Type:");
+                printerWrapper.addNotes("####-####-####-" + p.lastFour,"Account Number:");
+                printerWrapper.addNotes(p.entryMethod == null ? "" : p.entryMethod, "Entry:");
+                printerWrapper.addNotes(p.authorizationNumber, "AID:");
+                printerWrapper.addNotes(p.preauthPaymentId, "Approval:");
             }
 
         }
 
-
-        /** Pax Signature Bitmap Object ***********************************/
-        if(digitalsignature) {
-            PaxSignature paxSignature = PaxProcessorBaseCommand.paxSignature;
-            Bitmap bmp = paxSignature.SignatureBitmapObject;
-            BitmapCarl bitmapCarl = new BitmapCarl();
-            /* Convert the Bitmap Object to be printed
-                133x90  (original example)
-                166x113
-                199x120
-                266x180
-             */
-            /**/
-            BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-            printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
-            printerWrapper.drawLine();
-        }
-        /*********************************** Pax Signature Bitmap Object **/
-
-
+        printerWrapper.drawLine();
 
         if (isEbtPaymentExists) {
             printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(ebtBalance)), true);
@@ -284,6 +268,16 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
 
             }
+
+
+        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+            printerWrapper.drawLine();
+            printerWrapper.addNotes("Visa Test", "Card Type:");
+            printerWrapper.addNotes("####-####-####-1234", "Account Number:");
+            printerWrapper.addNotes("Chip", "Entry:");
+            printerWrapper.addNotes("ABC123123", "AID:");
+            printerWrapper.addNotes("123456", "Approval:");
+        }
 
 
 //        if (giftCardResults != null)

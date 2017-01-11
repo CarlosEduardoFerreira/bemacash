@@ -11,4 +11,7 @@ public class PosReportsMatrixPrinter extends PosReportsPrinter implements IRepor
     public void header(String header) {
         boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, header)));
     }
+
+    @Override
+    public void printPaxSignature(byte[] bmpBytes){}
 }

@@ -79,6 +79,14 @@ public class PaxSignature extends PaxProcessorBaseCommand {
 
     @Override
     protected TaskResult doCommand() {
+        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+            try {
+                SignatureBitmapObject = this.ConvertPaxSignatureToBitmapObject("");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
         String errorMsg = null;
         int errorCode = 0;
 
@@ -165,22 +173,40 @@ public class PaxSignature extends PaxProcessorBaseCommand {
 
     public Bitmap ConvertPaxSignatureToBitmapObject(String imageLocation) throws IOException {
 
-
-        File file = new File(imageLocation);
-        BufferedReader sr = null;
         String alldata = "";
 
-        try {
-            FileInputStream in = new FileInputStream(file);
+        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+            // Carlos
+            alldata = "0,65535^35,81^33,78^32,75^31,71^30,68^29,65^28,62^27,58^27,55^26,52^25,48^24,44^" +
+                    "24,41^24,38^24,35^25,31^28,28^30,31^29,35^28,38^28,41^28,44^28,48^28,51^28,54^" +
+                    "28,57^28,61^29,64^29,67^30,70^31,74^32,77^32,80^33,84^36,85^38,82^39,79^40,75^40,7" +
+                    "2^40,69^41,66^43,62^44,59^45,56^48,53^52,56^52,59^53,62^55,66^56,69^57,72^59,75^" +
+                    "62,75^62,71^62,68^62,65^62,62^61,58^61,55^61,52^60,48^58,45^55,43^52,41^49,44^" +
+                    "48,48^48,51^49,54^52,54^54,51^56,48^59,49^61,53^62,56^63,59^64,62^64,66^65,69^67,7" +
+                    "2^70,72^72,69^72,66^72,62^72,59^72,56^72,53^72,49^71,46^70,43^73,40^76,44^76,47^" +
+                    "78,50^79,53^80,57^81,60^83,63^84,66^88,69^91,66^92,62^93,59^94,56^95,52^95,48^" +
+                    "95,45^95,42^95,39^94,35^93,32^92,29^92,26^90,22^89,19^87,16^87,19^88,22^88,26^88,2" +
+                    "9^89,32^90,35^91,39^91,42^92,45^92,48^93,52^94,55^96,58^96,62^98,65^101,68^104,70^" +
+                    "108,66^108,63^108,60^109,57^109,53^109,50^109,47^110,44^111,40^112,44^113,47^" +
+                    "115,50^118,51^120,48^122,44^122,41^122,38^122,35^121,31^120,28^119,25^117,22^114," +
+                    "20^111,22^109,26^108,29^106,32^105,35^104,39^105,42^108,42^112,41^115,39^118,36^" +
+                    "121,33^124,30^127,26^130,24^132,27^134,31^135,34^136,37^136,40^136,44^136,47^" +
+                    "134,50^132,53^131,57^128,60^125,62^123,65^120,66^~";
+        }else {
+            File file = new File(imageLocation);
+            BufferedReader sr = null;
+            try {
+                FileInputStream in = new FileInputStream(file);
 
-            String index;
-            for(sr = new BufferedReader(new InputStreamReader(in)); (index = sr.readLine()) != null; index = "") {
-                alldata = alldata + index;
+                String index;
+                for (sr = new BufferedReader(new InputStreamReader(in)); (index = sr.readLine()) != null; index = "") {
+                    alldata = alldata + index;
+                }
+            } catch (Exception var11) {
+                var11.printStackTrace();
             }
-        } catch (Exception var11) {
-            var11.printStackTrace();
+            sr.close();
         }
-        sr.close();
 
 
         System.out.println("bemacarl.alldata: " + alldata);

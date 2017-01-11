@@ -17,4 +17,6 @@ public interface IHeaderFooterPrinter extends IPrinter {
 
 
     public void subTitle(String string);
+
+    void printPaxSignature(byte[] bmpBytes);
 }

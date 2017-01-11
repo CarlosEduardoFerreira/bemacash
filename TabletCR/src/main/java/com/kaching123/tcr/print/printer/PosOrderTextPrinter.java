@@ -3,6 +3,7 @@ package com.kaching123.tcr.print.printer;
 import android.text.TextUtils;
 
 import com.kaching123.pos.printer.PrintLineAction;
+import com.kaching123.pos.printer.PrintSendBytesCarl;
 import com.kaching123.pos.util.ITextPrinter;
 
 import java.math.BigDecimal;
@@ -181,7 +182,9 @@ public class PosOrderTextPrinter extends BasePosTextPrinter implements ITextPrin
         boldString(new PrintLineAction(crop(PRINTER_MAX_TEXT_LEN, label)));//double
     }
 
-
     @Override
-    public void printPaxSignature(byte[] bmpBytes){};
+    public void printPaxSignature(byte[] bmpBytes){
+        add(new PrintSendBytesCarl(bmpBytes));
+    }
+
 }

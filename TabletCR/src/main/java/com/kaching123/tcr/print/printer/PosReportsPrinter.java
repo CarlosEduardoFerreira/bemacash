@@ -289,4 +289,7 @@ public class PosReportsPrinter extends BasePosTextPrinter implements IReportsPri
 
         return printLine.toString();
     }
+
+    @Override
+    public void printPaxSignature(byte[] bmpBytes){}
 }
