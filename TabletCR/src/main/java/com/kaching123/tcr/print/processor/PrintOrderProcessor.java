@@ -9,9 +9,11 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.printer.BitmapCarl;
 import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.pos.util.ITextPrinter;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
@@ -267,6 +269,56 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
 
             }
+
+
+        printerWrapper.drawLine();
+
+        /** Pax Signature Bitmap Object ***********************************/
+        PaxSignature paxSignature = null;
+
+        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+            paxSignature = new PaxSignature(null);
+            printerWrapper.header("Card Type:", "Visa Test");
+            printerWrapper.header("Account Number:", "####-####-####-1234");
+            printerWrapper.header("Entry:", "Chip");
+            printerWrapper.header("AID:", "ABC123123");
+            printerWrapper.header("Approval:", "123456");
+        } else {
+            paxSignature = PaxProcessorSaleCommand.paxSignature;
+            printerWrapper.header("Card Type:", PaxProcessorSaleCommand.Card_CardType);
+            printerWrapper.header("Account Number:", "####-####-####-" + PaxProcessorSaleCommand.Card_AccountNumber);
+            printerWrapper.header("Entry:", PaxProcessorSaleCommand.Card_Entry);
+            printerWrapper.header("AID:", PaxProcessorSaleCommand.Card_AID);
+            printerWrapper.header("Approval:", PaxProcessorSaleCommand.Card_Approval);
+        }
+
+        if(app.getDigitalSignature()) {
+            Bitmap bmp = paxSignature.SignatureBitmapObject;
+            /* Convert the Bitmap Object to be printed
+                133x90  (original example)
+                166x113
+                199x120
+                266x180
+             */
+            if(bmp == null){
+                Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
+            }else {
+                try {
+                    Thread.sleep(300);
+                    BitmapCarl bitmapCarl = new BitmapCarl();
+                    Thread.sleep(300);
+                    BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                    Thread.sleep(300);
+                    printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        /*********************************** Pax Signature Bitmap Object **/
+
+        printerWrapper.drawLine();
 
 
 //        if (giftCardResults != null)

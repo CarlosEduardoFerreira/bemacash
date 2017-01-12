@@ -29,8 +29,20 @@ import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created by hamsterksu on 24.04.2014.
@@ -169,8 +181,8 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     if(!TextUtils.isEmpty(response.BogusAccountNum))
                         Card_AccountNumber = response.BogusAccountNum;
 
-                    if(!TextUtils.isEmpty(response.RefNum))
-                        Card_AID = response.RefNum;
+                    if(!TextUtils.isEmpty(transaction.applicationIdentifier))
+                        Card_AID = getExtData(response.ExtData, "AID");
 
                     Card_Entry = "Swipe";
 
@@ -218,6 +230,36 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
         return succeeded();
     }
+
+
+    public String getExtData(String extData, String tag) {
+        StringReader sr = new StringReader(extData);
+        InputSource is = new InputSource(sr);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        DocumentBuilder builder = null;
+        try {
+            builder = factory.newDocumentBuilder();
+            Document document = builder.parse(is);
+            NodeList exeDatas = document.getChildNodes();
+            for (int i = 0; i < exeDatas.getLength(); i++) {
+                Node node = exeDatas.item(i);
+                NodeList datas = node.getChildNodes();
+                for (int j = 0; j < datas.getLength(); j++) {
+                    if (datas.item(j).getNodeName().equalsIgnoreCase(tag))
+                        return datas.item(j).getTextContent();
+                }
+            }
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
     @Override
     protected boolean validateAppCommandContext() {

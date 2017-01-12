@@ -76,56 +76,6 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
-
-        printerWrapper.drawLine();
-
-        /** Pax Signature Bitmap Object ***********************************/
-        PaxSignature paxSignature = null;
-
-        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
-            paxSignature = new PaxSignature(null);
-            printerWrapper.header("Card Type:", "Visa Test");
-            printerWrapper.header("Account Number:", "####-####-####-1234");
-            printerWrapper.header("Entry:", "Chip");
-            printerWrapper.header("AID:", "ABC123123");
-            printerWrapper.header("Approval:", "123456");
-        } else {
-            paxSignature = PaxProcessorSaleCommand.paxSignature;
-            printerWrapper.header("Card Type:", PaxProcessorSaleCommand.Card_CardType);
-            printerWrapper.header("Account Number:", "####-####-####-" + PaxProcessorSaleCommand.Card_AccountNumber);
-            printerWrapper.header("Entry:", PaxProcessorSaleCommand.Card_Entry);
-            printerWrapper.header("AID:", PaxProcessorSaleCommand.Card_AID);
-            printerWrapper.header("Approval:", PaxProcessorSaleCommand.Card_Approval);
-        }
-
-        if(app.getDigitalSignature()) {
-            Bitmap bmp = paxSignature.SignatureBitmapObject;
-            /* Convert the Bitmap Object to be printed
-                133x90  (original example)
-                166x113
-                199x120
-                266x180
-             */
-            if(bmp == null){
-                Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
-            }else {
-                try {
-                    Thread.sleep(300);
-                    BitmapCarl bitmapCarl = new BitmapCarl();
-                    Thread.sleep(300);
-                    BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-                    Thread.sleep(300);
-                    printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-        /*********************************** Pax Signature Bitmap Object **/
-
-        printerWrapper.drawLine();
-
         printLoyalty(context, app, printerWrapper);
         printFooter(context, app, printerWrapper);
     }
