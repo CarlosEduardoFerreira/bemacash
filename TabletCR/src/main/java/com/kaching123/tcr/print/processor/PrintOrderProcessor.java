@@ -246,29 +246,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             printerWrapper.header("Approval:", "123456");
         }
 
-        /** Pax Signature Bitmap Object ***********************************/
-        if(app.getShopPref().digitalSignature().getOr(false)) {
-            PaxSignature paxSignature = null;
-            if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
-                paxSignature = new PaxSignature(null);
-            } else {
-                paxSignature = PaxProcessorBaseCommand.paxSignature;
-            }
-            Bitmap bmp = paxSignature.SignatureBitmapObject;
-            BitmapCarl bitmapCarl = new BitmapCarl();
-            /* Convert the Bitmap Object to be printed
-                133x90  (original example)
-                166x113
-                199x120
-                266x180
-             */
-            BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-            printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
-            //printerWrapper.drawLine();
-        }
-        /*********************************** Pax Signature Bitmap Object **/
 
-        printerWrapper.drawLine();
 
         if (isEbtPaymentExists) {
             printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(ebtBalance)), true);
