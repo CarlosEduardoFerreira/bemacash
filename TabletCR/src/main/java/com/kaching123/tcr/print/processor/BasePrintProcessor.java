@@ -5,11 +5,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.printer.BitmapCarl;
 import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.pos.util.IHeaderFooterPrinter;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
@@ -69,6 +71,7 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
     public void print(final Context context, final TcrApplication app, final T printerWrapper) {
         if (!isGiftCard())
             orderInfo = loadOrderInfo(context);
+
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
@@ -96,15 +99,19 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
 
         if(app.getDigitalSignature()) {
             Bitmap bmp = paxSignature.SignatureBitmapObject;
-            BitmapCarl bitmapCarl = new BitmapCarl();
             /* Convert the Bitmap Object to be printed
                 133x90  (original example)
                 166x113
                 199x120
                 266x180
              */
-            BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-            printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+            if(bmp == null){
+                Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
+            }else {
+                BitmapCarl bitmapCarl = new BitmapCarl();
+                BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+            }
         }
         /*********************************** Pax Signature Bitmap Object **/
 

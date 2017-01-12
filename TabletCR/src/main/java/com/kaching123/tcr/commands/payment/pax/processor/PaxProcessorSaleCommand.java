@@ -153,14 +153,15 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     transaction.updateWith(response);
 
+                    Card_CardType = response.CardType;
+                    Card_AccountNumber = response.BogusAccountNum;
+                    Card_AID = response.RefNum;
+                    Card_Entry = "Swipe";
+                    Card_Approval = response.AuthCode;
                     if(/*transaction.getGateway().isCreditCard() && */getApp().getDigitalSignature()) {
                         paxSignature = new PaxSignature(getPaxModel());
+                        Card_Entry = "Chip";
                     }
-                    Card_CardType = transaction.getCardName();
-                    Card_AccountNumber = transaction.getLastFour();
-                    Card_AID = transaction.getApplicationIdentifier();
-                    Card_Entry = transaction.getEntryMethod();
-                    Card_Approval = transaction.getAuthorizationNumber();
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                     operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))

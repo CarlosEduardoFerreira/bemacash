@@ -166,7 +166,7 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
 //        } else {
         request.TransType = TRANS_TYPE_SALE;
 
-        if(getApp().getShopPref().digitalSignature().get()) {
+        if(getApp().getDigitalSignature()) {
 
         /*  <SignatureCapture>
             The ECR supports signature printing and the terminal supports signature capture.
