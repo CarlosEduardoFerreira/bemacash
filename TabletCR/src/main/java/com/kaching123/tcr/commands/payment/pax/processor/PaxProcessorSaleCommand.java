@@ -50,6 +50,16 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
     private ArrayList<ContentProviderOperation> operations;
     private BatchSqlCommand sqlCommand;
 
+
+    public static PaxSignature paxSignature = null;
+
+    public static String Card_CardType = "";
+    public static String Card_AccountNumber = "";
+    public static String Card_Entry = "";
+    public static String Card_AID = "";
+    public static String Card_Approval = "";
+
+
     public static final TaskHandler startSale(Context context,
                                               PaxModel paxTerminal,
                                               Transaction transaction,
@@ -153,13 +163,24 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     transaction.updateWith(response);
 
-                    Card_CardType = response.CardType;
-                    Card_AccountNumber = response.BogusAccountNum;
-                    Card_AID = response.RefNum;
+                    if(!TextUtils.isEmpty(response.CardType))
+                        Card_CardType = response.CardType;
+
+                    if(!TextUtils.isEmpty(response.BogusAccountNum))
+                        Card_AccountNumber = response.BogusAccountNum;
+
+                    if(!TextUtils.isEmpty(response.RefNum))
+                        Card_AID = response.RefNum;
+
                     Card_Entry = "Swipe";
-                    Card_Approval = response.AuthCode;
+
+                    if(!TextUtils.isEmpty(response.AuthCode))
+                        Card_Approval = response.AuthCode;
+
                     if(/*transaction.getGateway().isCreditCard() && */getApp().getDigitalSignature()) {
+                        Thread.sleep(500);
                         paxSignature = new PaxSignature(getPaxModel());
+                        Thread.sleep(500);
                         Card_Entry = "Chip";
                     }
 

@@ -15,6 +15,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.OrderType;
@@ -89,12 +90,12 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
             printerWrapper.header("AID:", "ABC123123");
             printerWrapper.header("Approval:", "123456");
         } else {
-            paxSignature = PaxProcessorBaseCommand.paxSignature;
-            printerWrapper.header("Card Type:", paxSignature.Card_CardType);
-            printerWrapper.header("Account Number:", "####-####-####-" + paxSignature.Card_AccountNumber);
-            printerWrapper.header("Entry:", paxSignature.Card_Entry);
-            printerWrapper.header("AID:", paxSignature.Card_AID);
-            printerWrapper.header("Approval:", paxSignature.Card_Approval);
+            paxSignature = PaxProcessorSaleCommand.paxSignature;
+            printerWrapper.header("Card Type:", PaxProcessorSaleCommand.Card_CardType);
+            printerWrapper.header("Account Number:", "####-####-####-" + PaxProcessorSaleCommand.Card_AccountNumber);
+            printerWrapper.header("Entry:", PaxProcessorSaleCommand.Card_Entry);
+            printerWrapper.header("AID:", PaxProcessorSaleCommand.Card_AID);
+            printerWrapper.header("Approval:", PaxProcessorSaleCommand.Card_Approval);
         }
 
         if(app.getDigitalSignature()) {
@@ -108,9 +109,17 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
             if(bmp == null){
                 Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
             }else {
-                BitmapCarl bitmapCarl = new BitmapCarl();
-                BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-                printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+                try {
+                    Thread.sleep(300);
+                    BitmapCarl bitmapCarl = new BitmapCarl();
+                    Thread.sleep(300);
+                    BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                    Thread.sleep(300);
+                    printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
         /*********************************** Pax Signature Bitmap Object **/
