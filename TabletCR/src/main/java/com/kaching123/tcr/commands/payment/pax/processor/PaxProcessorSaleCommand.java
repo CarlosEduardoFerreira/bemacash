@@ -151,7 +151,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                 if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
 
-                    if(transaction.getGateway().isCreditCard() && getApp().getShopPref().digitalSignature().getOr(false)) {
+                    if(/*transaction.getGateway().isCreditCard() && */getApp().getShopPref().digitalSignature().getOr(false)) {
                         paxSignature = new PaxSignature(getPaxModel());
                     }
 
