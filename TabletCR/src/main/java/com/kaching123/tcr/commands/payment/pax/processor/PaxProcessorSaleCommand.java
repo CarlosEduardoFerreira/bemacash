@@ -182,7 +182,8 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                         Card_AccountNumber = response.BogusAccountNum;
 
                     if(!TextUtils.isEmpty(transaction.applicationIdentifier))
-                        Card_AID = getExtData(response.ExtData, "AID");
+                        Logger.d("response.ExtData: " + response.ExtData);
+                        Card_AID = getExtData("<extData>" + response.ExtData + "</extData>", "AID");
 
                     Card_Entry = "Swipe";
 
