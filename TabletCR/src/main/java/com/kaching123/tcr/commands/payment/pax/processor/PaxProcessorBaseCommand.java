@@ -117,6 +117,13 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
 
     public static PaxSignature paxSignature = null;
 
+    public String Card_CardType = "";
+    public String Card_AccountNumber = "";
+    public String Card_Entry = "";
+    public String Card_AID = "";
+    public String Card_Approval = "";
+
+
     protected String getTimeStamp() {
         java.util.Date date = new java.util.Date();
         return new SimpleDateFormat("yyyymmddhhmmss").format(date);

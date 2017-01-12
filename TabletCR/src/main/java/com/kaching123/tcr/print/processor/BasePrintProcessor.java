@@ -72,14 +72,29 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
+
+        printerWrapper.drawLine();
+
         /** Pax Signature Bitmap Object ***********************************/
-        if(app.getShopPref().digitalSignature().getOr(false)) {
-            PaxSignature paxSignature = null;
-            if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
-                paxSignature = new PaxSignature(null);
-            } else {
-                paxSignature = PaxProcessorBaseCommand.paxSignature;
-            }
+        PaxSignature paxSignature = null;
+
+        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+            paxSignature = new PaxSignature(null);
+            printerWrapper.header("Card Type:", "Visa Test");
+            printerWrapper.header("Account Number:", "####-####-####-1234");
+            printerWrapper.header("Entry:", "Chip");
+            printerWrapper.header("AID:", "ABC123123");
+            printerWrapper.header("Approval:", "123456");
+        } else {
+            paxSignature = PaxProcessorBaseCommand.paxSignature;
+            printerWrapper.header("Card Type:", paxSignature.Card_CardType);
+            printerWrapper.header("Account Number:", "####-####-####-" + paxSignature.Card_AccountNumber);
+            printerWrapper.header("Entry:", paxSignature.Card_Entry);
+            printerWrapper.header("AID:", paxSignature.Card_AID);
+            printerWrapper.header("Approval:", paxSignature.Card_Approval);
+        }
+
+        if(app.getDigitalSignature()) {
             Bitmap bmp = paxSignature.SignatureBitmapObject;
             BitmapCarl bitmapCarl = new BitmapCarl();
             /* Convert the Bitmap Object to be printed
@@ -90,9 +105,11 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
              */
             BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
             printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
-            printerWrapper.drawLine();
         }
         /*********************************** Pax Signature Bitmap Object **/
+
+        printerWrapper.drawLine();
+
         printLoyalty(context, app, printerWrapper);
         printFooter(context, app, printerWrapper);
     }

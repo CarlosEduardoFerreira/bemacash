@@ -117,7 +117,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
 
-        final boolean digitalsignature = app.getShopPref().digitalSignature().getOr(false);
+        final boolean digitalsignature = app.getDigitalSignature();
 
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
 
@@ -226,7 +226,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 giftCardBalance = p.balance;
             }
 
-            if(digitalsignature && /*p.gateway.isCreditCard() && */!TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+            /*
+            if(digitalsignature && !TcrApplication.get().PAX_SIGNATURE_EMULATOR){
                 printerWrapper.drawLine();
                 printerWrapper.header("Card Type:", p.cardName);
                 printerWrapper.header("Account Number:", "####-####-####-" + p.lastFour);
@@ -234,19 +235,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.header("AID:", p.authorizationNumber == null ? "" : p.authorizationNumber);
                 printerWrapper.header("Approval:", p.preauthPaymentId == null ? "" : p.preauthPaymentId);
             }
-
+            /**/
         }
-
-        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
-            printerWrapper.drawLine();
-            printerWrapper.header("Card Type:", "Visa Test");
-            printerWrapper.header("Account Number:", "####-####-####-1234");
-            printerWrapper.header("Entry:", "Chip");
-            printerWrapper.header("AID:", "ABC123123");
-            printerWrapper.header("Approval:", "123456");
-        }
-
-
 
         if (isEbtPaymentExists) {
             printerWrapper.orderFooter(context.getString(R.string.printer_balance), new BigDecimal(FormatterUtil.priceFormat(ebtBalance)), true);

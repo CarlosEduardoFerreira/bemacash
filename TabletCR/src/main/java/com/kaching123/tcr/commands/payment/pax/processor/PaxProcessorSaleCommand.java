@@ -151,11 +151,16 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                 if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
 
+                    transaction.updateWith(response);
+
                     if(/*transaction.getGateway().isCreditCard() && */getApp().getDigitalSignature()) {
                         paxSignature = new PaxSignature(getPaxModel());
                     }
-
-                    transaction.updateWith(response);
+                    Card_CardType = transaction.getCardName();
+                    Card_AccountNumber = transaction.getLastFour();
+                    Card_AID = transaction.getApplicationIdentifier();
+                    Card_Entry = transaction.getEntryMethod();
+                    Card_Approval = transaction.getAuthorizationNumber();
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                     operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
