@@ -226,7 +226,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 giftCardBalance = p.balance;
             }
 
-            if(digitalsignature && p.gateway.isCreditCard() && !TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+            if(digitalsignature && /*p.gateway.isCreditCard() && */!TcrApplication.get().PAX_SIGNATURE_EMULATOR){
                 printerWrapper.drawLine();
                 printerWrapper.header("Card Type:", p.cardName);
                 printerWrapper.header("Account Number:", "####-####-####-" + p.lastFour);
