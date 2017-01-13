@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.printer.BitmapCarl;
@@ -206,6 +207,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         BigDecimal ebtBalance = BigDecimal.ZERO;
         BigDecimal giftCardBalance = BigDecimal.ZERO;
 
+        BigDecimal total = BigDecimal.ZERO;
+
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
             boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
@@ -227,6 +230,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 isGiftCardPaymnetExists = true;
                 giftCardBalance = p.balance;
             }
+
+            total = total.add(p.amount);
 
             /*
             if(digitalsignature && !TcrApplication.get().PAX_SIGNATURE_EMULATOR){
@@ -271,6 +276,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
 
 
+
         printerWrapper.drawLine();
 
         /** Pax Signature Bitmap Object ***********************************/
@@ -288,11 +294,17 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             printerWrapper.header("Card Type:", PaxProcessorSaleCommand.Card_CardType);
             printerWrapper.header("Account Number:", "####-####-####-" + PaxProcessorSaleCommand.Card_AccountNumber);
             printerWrapper.header("Entry:", PaxProcessorSaleCommand.Card_Entry);
-            printerWrapper.header("AID:", PaxProcessorSaleCommand.Card_AID);
+            if(!TextUtils.isEmpty(PaxProcessorSaleCommand.Card_AID)) {
+                printerWrapper.header("AID:", PaxProcessorSaleCommand.Card_AID);
+            }
             printerWrapper.header("Approval:", PaxProcessorSaleCommand.Card_Approval);
         }
 
-        if(app.getDigitalSignature()) {
+
+        boolean signaturePrintLimit = app.getShopInfo().signaturePrintLimit != null && app.getShopInfo().signaturePrintLimit.compareTo(total) <= 0;
+
+
+        if(app.getDigitalSignature() && signaturePrintLimit) {
             Bitmap bmp = paxSignature.SignatureBitmapObject;
             /* Convert the Bitmap Object to be printed
                 133x90  (original example)

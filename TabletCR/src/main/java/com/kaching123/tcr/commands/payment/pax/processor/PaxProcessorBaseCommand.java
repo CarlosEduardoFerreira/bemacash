@@ -5,6 +5,7 @@ import android.content.ContentProviderOperation;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.PaxModel;
+import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.payment.blackstone.pax.PaxTransaction;
 import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -158,7 +160,10 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
 //        } else {
         request.TransType = TRANS_TYPE_SALE;
 
-        if(getApp().getDigitalSignature()) {
+        BigDecimal total = calcTotal(transaction);
+        boolean signaturePrintLimit = getApp().getShopInfo().signaturePrintLimit != null && getApp().getShopInfo().signaturePrintLimit.compareTo(total) <= 0;
+
+        if(getApp().getDigitalSignature() && signaturePrintLimit) {
 
         /*  <SignatureCapture>
             The ECR supports signature printing and the terminal supports signature capture.
@@ -201,6 +206,14 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
 //        request.AuthCode = transaction.getAuthorizationNumber();
 
     }
+
+
+    protected BigDecimal calcTotal(PaxTransaction transaction) {
+        BigDecimal totalValue = BigDecimal.ZERO;
+        totalValue = totalValue.add(transaction.amount);
+        return totalValue;
+    }
+
 
     public final static String FILENAME = "setting.ini";
 

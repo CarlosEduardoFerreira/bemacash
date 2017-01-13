@@ -181,10 +181,6 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     if(!TextUtils.isEmpty(response.BogusAccountNum))
                         Card_AccountNumber = response.BogusAccountNum;
 
-                    if(!TextUtils.isEmpty(transaction.applicationIdentifier))
-                        Logger.d("response.ExtData: " + response.ExtData);
-                        Card_AID = getExtData("<extData>" + response.ExtData + "</extData>", "AID");
-
                     Card_Entry = "Swipe";
 
                     if(!TextUtils.isEmpty(response.AuthCode))
@@ -195,6 +191,10 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                         paxSignature = new PaxSignature(getPaxModel());
                         Thread.sleep(500);
                         Card_Entry = "Chip";
+                        if(!TextUtils.isEmpty(response.ExtData)) {
+                            Logger.d("response.ExtData: " + response.ExtData);
+                            Card_AID = getExtData("<extData>" + response.ExtData + "</extData>", "AID");
+                        }
                     }
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);

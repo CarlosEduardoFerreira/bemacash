@@ -169,6 +169,13 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             signatureBox.setEnabled(true);
         }
 
+        if (getApp().getShopInfo().signaturePrintLimit != null && getApp().getShopInfo().signaturePrintLimit.compareTo(calcTotal()) <= 0) {
+            signatureBox.setEnabled(false);
+            signatureBox.setChecked(true);
+            signatureBox.setFocusable(false);
+        }
+
+
         /** Condition 1
          *  If “Tips” are “Disabled” and “Digital Signature” is set to “Yes” and “Signature Receipt” is set to “Short”
          *  "Signature Receipt" should be disabled. If the check box "Print Receipt"
