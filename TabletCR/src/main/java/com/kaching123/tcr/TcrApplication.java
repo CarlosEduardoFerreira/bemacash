@@ -145,6 +145,8 @@ public class TcrApplication extends MultiDexApplication {
 
     public boolean forceSignaturePrint = false;
 
+    public boolean RequireSignatureonTransactionsHigherThan = false;
+
 
     @Override
     public void onCreate() {

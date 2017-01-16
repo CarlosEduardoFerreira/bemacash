@@ -189,7 +189,8 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     if(!TextUtils.isEmpty(response.AuthCode))
                         pipm.Pax_Approval = response.AuthCode;
 
-                    if(/*transaction.getGateway().isCreditCard() && */getApp().getDigitalSignature()) {
+                    /*transaction.getGateway().isCreditCard() && */
+                    if(getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
                         Thread.sleep(500);
                         paxSignature = new PaxSignature(getPaxModel());
                         Thread.sleep(500);

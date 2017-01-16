@@ -161,9 +161,10 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
         request.TransType = TRANS_TYPE_SALE;
 
         BigDecimal total = calcTotal(transaction);
-        boolean signaturePrintLimit = getApp().getShopInfo().signaturePrintLimit != null && getApp().getShopInfo().signaturePrintLimit.compareTo(total) <= 0;
+        getApp().RequireSignatureonTransactionsHigherThan = getApp().getShopInfo().signaturePrintLimit != null &&
+                getApp().getShopInfo().signaturePrintLimit.compareTo(total) <= 0;
 
-        if(getApp().getDigitalSignature() && signaturePrintLimit) {
+        if(getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
 
         /*  <SignatureCapture>
             The ECR supports signature printing and the terminal supports signature capture.

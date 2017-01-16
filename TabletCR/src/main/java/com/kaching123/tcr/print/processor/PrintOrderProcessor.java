@@ -249,7 +249,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             printerWrapper.header(context.getString(R.string.printer_sale_item_amount), String.valueOf(counts));
         }
 
-        if (prepaidReleaseResults != null)
+        if (prepaidReleaseResults != null) {
             for (PrepaidReleaseResult result : prepaidReleaseResults) {
                 if (Integer.parseInt(result.error) == 200) {
                     if (result.receipt != null) {
@@ -265,7 +265,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
 
             }
-
+        }
 
 
         printerWrapper.drawLine();
@@ -281,7 +281,6 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             printerWrapper.header("AID:", "ABC123123");
             printerWrapper.header("Approval:", "123456");
         } else if(!totalPax.equals(BigDecimal.ZERO)){
-            paxSignature = PaxProcessorSaleCommand.paxSignature;
             ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = PaxProcessorSaleCommand.paxInformationPrintModelList;
             for(PaxInformationPrintModel pipm : paxInformationPrintModelList){
                 printerWrapper.header("Card Type:", pipm.Pax_CardType);
@@ -297,27 +296,30 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
 
         if(app.getDigitalSignature() && TcrApplication.get().forceSignaturePrint) {
-            Bitmap bmp = paxSignature.SignatureBitmapObject;
-            /* Convert the Bitmap Object to be printed
-                133x90  (original example)
-                166x113
-                199x120
-                266x180
-             */
-            if(bmp == null){
-                Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
-            }else {
-                try {
-                    Thread.sleep(300);
-                    BitmapCarl bitmapCarl = new BitmapCarl();
-                    Thread.sleep(300);
-                    BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-                    Thread.sleep(300);
-                    printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            paxSignature = PaxProcessorSaleCommand.paxSignature;
+            if(paxSignature != null) {
+                Bitmap bmp = paxSignature.SignatureBitmapObject;
+                /* Convert the Bitmap Object to be printed
+                    133x90  (original example)
+                    166x113
+                    199x120
+                    266x180
+                 */
+                if (bmp == null) {
+                    Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
+                } else {
+                    try {
+                        Thread.sleep(300);
+                        BitmapCarl bitmapCarl = new BitmapCarl();
+                        Thread.sleep(300);
+                        BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                        Thread.sleep(300);
+                        printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
+                }
             }
         }
         /*********************************** Pax Signature Bitmap Object **/
