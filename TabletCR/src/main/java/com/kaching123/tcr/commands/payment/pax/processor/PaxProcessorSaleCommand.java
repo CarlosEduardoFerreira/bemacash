@@ -66,7 +66,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
     public static PaxSignature paxSignature = null;
 
-    public static ArrayList<PaxInformationPrintModel> paxInformationPrintModelList;
+    public static ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = new ArrayList<PaxInformationPrintModel>();
 
 
     public static final TaskHandler startSale(Context context,
