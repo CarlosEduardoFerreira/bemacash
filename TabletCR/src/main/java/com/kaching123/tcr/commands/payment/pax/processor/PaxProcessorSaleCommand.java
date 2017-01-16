@@ -181,7 +181,10 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     if(!TextUtils.isEmpty(response.BogusAccountNum))
                         Card_AccountNumber = response.BogusAccountNum;
 
-                    Card_Entry = "Swipe";
+                    if(!TextUtils.isEmpty(response.ExtData)) {
+                        int Card_Entry_ID = Integer.parseInt(getExtData("<extData>" + response.ExtData + "</extData>", "PLEntryMode"));
+                        Card_Entry = getEntryModeByID(Card_Entry_ID);
+                    }
 
                     if(!TextUtils.isEmpty(response.AuthCode))
                         Card_Approval = response.AuthCode;
@@ -190,7 +193,6 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                         Thread.sleep(500);
                         paxSignature = new PaxSignature(getPaxModel());
                         Thread.sleep(500);
-                        Card_Entry = "Chip";
                         if(!TextUtils.isEmpty(response.ExtData)) {
                             Logger.d("response.ExtData: " + response.ExtData);
                             Card_AID = getExtData("<extData>" + response.ExtData + "</extData>", "AID");
@@ -230,6 +232,20 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
         }
 
         return succeeded();
+    }
+
+
+    public String getEntryModeByID(int Card_Entry_ID){
+        String PLEntryMode = "";
+        switch(Card_Entry_ID){
+            case 0: PLEntryMode = "Manual"; break;
+            case 1: PLEntryMode = "Swipe"; break;
+            case 2: PLEntryMode = "Contactless"; break;
+            case 3: PLEntryMode = "Scanner"; break;
+            case 4: PLEntryMode = "Chip"; break;
+            case 5: PLEntryMode = "Chip Fall Back Swipe"; break;
+        }
+        return PLEntryMode;
     }
 
 

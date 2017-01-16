@@ -120,14 +120,27 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        boolean tips                = getApp().isTipsEnabled();         // tips
+        boolean digital_signature   = getApp().getDigitalSignature();   // pax signature
+        String  signature_receipt   = getApp().getSignatureReceipt();   // manual signature
+
+        Log.i("BemaCarl","doubleCheckBeforePrint tips: " + tips);
+        Log.i("BemaCarl","doubleCheckBeforePrint digital_signature: " + digital_signature);
+        Log.i("BemaCarl","doubleCheckBeforePrint signature_receipt: " + signature_receipt);
+
+        boolean SignaturePrintLimit = getApp().getShopInfo().signaturePrintLimit != null && getApp().getShopInfo().signaturePrintLimit.compareTo(calcTotal()) <= 0;
+
+        signatureBox.setFocusable(false);
+
         if (!enableSignatureCheckbox()) {
             signatureBox.setEnabled(false);
             signatureBox.setChecked(false);
-            signatureBox.setFocusable(false);
-        } else if (getApp().getShopInfo().signaturePrintLimit != null && getApp().getShopInfo().signaturePrintLimit.compareTo(calcTotal()) <= 0) {
-            signatureBox.setEnabled(false);
+        } else if (digital_signature && !SignaturePrintLimit){
+            signatureBox.setEnabled(true);
+            signatureBox.setChecked(false);
+        } else if (SignaturePrintLimit) {
+            signatureBox.setEnabled(true);
             signatureBox.setChecked(true);
-            signatureBox.setFocusable(false);
         }
 
         if (changeAmount != null && changeAmount.compareTo(BigDecimal.ZERO) == 1) {
@@ -142,38 +155,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         printBox.setChecked(getApp().getPrintReceiptDefault());
         emailBox.setChecked(getApp().getEmailReceiptDefault());
-
-        doubleCheckBeforePrint();
-
-    }
-
-
-
-    protected void doubleCheckBeforePrint(){
-
-        boolean tips                = getApp().isTipsEnabled();         // tips
-        boolean digital_signature   = getApp().getDigitalSignature();   // pax signature
-        String  signature_receipt   = getApp().getSignatureReceipt();   // manual signature
-
-        Log.i("BemaCarl","doubleCheckBeforePrint tips: " + tips);
-        Log.i("BemaCarl","doubleCheckBeforePrint digital_signature: " + digital_signature);
-        Log.i("BemaCarl","doubleCheckBeforePrint signature_receipt: " + signature_receipt);
-
-        printBox.setChecked(true);
-        signatureBox.setEnabled(false);
-        signatureBox.setChecked(false);
-
-        if(digital_signature) {
-            print_digital_signature = true;
-        } else {
-            signatureBox.setEnabled(true);
-        }
-
-        if (getApp().getShopInfo().signaturePrintLimit != null && getApp().getShopInfo().signaturePrintLimit.compareTo(calcTotal()) <= 0) {
-            signatureBox.setEnabled(false);
-            signatureBox.setChecked(true);
-            signatureBox.setFocusable(false);
-        }
 
 
         /** Condition 1
