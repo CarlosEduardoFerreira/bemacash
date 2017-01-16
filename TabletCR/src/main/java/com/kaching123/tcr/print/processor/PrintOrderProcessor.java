@@ -291,6 +291,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                     printerWrapper.header("AID:", pipm.Pax_AID);
                 }
                 printerWrapper.header("Approval:", pipm.Pax_Approval);
+                printerWrapper.header("", "");
             }
         }
 

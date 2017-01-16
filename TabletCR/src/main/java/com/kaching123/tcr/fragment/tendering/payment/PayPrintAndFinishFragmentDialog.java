@@ -294,9 +294,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     protected void printReceipts() {
         WaitDialogFragment.hide(getActivity());
 
-        if(signatureBox.isChecked()){
-            getApp().forceSignaturePrint = true;
-        }
+        getApp().forceSignaturePrint = signatureBox.isChecked()?true:false;
 
         if (printBox.isChecked() && !orderPrinted) {
             printOrder(false, false);

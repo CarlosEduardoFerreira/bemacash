@@ -64,7 +64,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
     private BatchSqlCommand sqlCommand;
 
 
-    public static PaxSignature paxSignature = null;
+    public static PaxSignature paxSignature;
 
     public static ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = new ArrayList<PaxInformationPrintModel>();
 
@@ -130,6 +130,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
         operations = new ArrayList<>();
         sqlCommand = batchInsert(PaymentTransactionModel.class);
 
+        paxSignature = null;
 
         PaymentResponse response;
         Object possibleData = getArgs().getSerializable(ARG_SALEACTIONRESPONSE);
