@@ -8,9 +8,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
@@ -116,29 +114,34 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     public boolean print_digital_signature = false;
 
+    boolean tips                = false;    // tips
+    boolean digital_signature   = false;    // pax signature bitmap
+    String  signature_receipt   = "SHORT";  // manual signature
+    boolean signaturePrintLimit = false;    // Require Signature on Transactions Higher Than:
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        boolean tips                = getApp().isTipsEnabled();         // tips
-        boolean digital_signature   = getApp().getDigitalSignature();   // pax signature
-        String  signature_receipt   = getApp().getSignatureReceipt();   // manual signature
+        tips                = getApp().isTipsEnabled();
+        digital_signature   = getApp().getDigitalSignature();
+        signature_receipt   = getApp().getSignatureReceipt();
 
         Log.i("BemaCarl","doubleCheckBeforePrint tips: " + tips);
         Log.i("BemaCarl","doubleCheckBeforePrint digital_signature: " + digital_signature);
         Log.i("BemaCarl","doubleCheckBeforePrint signature_receipt: " + signature_receipt);
 
-        boolean SignaturePrintLimit = getApp().getShopInfo().signaturePrintLimit != null && getApp().getShopInfo().signaturePrintLimit.compareTo(calcTotal()) <= 0;
+        signaturePrintLimit = getApp().getShopInfo().signaturePrintLimit != null && getApp().getShopInfo().signaturePrintLimit.compareTo(calcTotal()) <= 0;
 
         signatureBox.setFocusable(false);
 
-        if (!enableSignatureCheckbox()) {
+        if (!enableSignatureCheckbox() && getApp().PAX_SIGNATURE_EMULATOR) {
             signatureBox.setEnabled(false);
             signatureBox.setChecked(false);
-        } else if (digital_signature && !SignaturePrintLimit){
+        } else if (digital_signature && !signaturePrintLimit){
             signatureBox.setEnabled(true);
             signatureBox.setChecked(false);
-        } else if (SignaturePrintLimit) {
+        } else if (signaturePrintLimit) {
             signatureBox.setEnabled(true);
             signatureBox.setChecked(true);
         }
@@ -290,9 +293,14 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     protected void printReceipts() {
         WaitDialogFragment.hide(getActivity());
+
+        if(signatureBox.isChecked()){
+            getApp().forceSignaturePrint = true;
+        }
+
         if (printBox.isChecked() && !orderPrinted) {
             printOrder(false, false);
-        } else if (signatureBox.isChecked() && !signatureOrderPrinted && !getApp().getShopPref().digitalSignature().getOr(false)) {
+        } else if (signatureBox.isChecked() && !signatureOrderPrinted && !digital_signature) {
             printSignatureOrder(false, false);
         } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
             printOrder(false, false);

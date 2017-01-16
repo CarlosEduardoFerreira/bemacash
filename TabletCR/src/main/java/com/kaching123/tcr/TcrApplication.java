@@ -143,6 +143,9 @@ public class TcrApplication extends MultiDexApplication {
 
     public boolean PAX_SIGNATURE_EMULATOR = false;
 
+    public boolean forceSignaturePrint = false;
+
+
     @Override
     public void onCreate() {
         super.onCreate();

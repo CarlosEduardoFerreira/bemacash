@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -65,11 +66,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
     public static PaxSignature paxSignature = null;
 
-    public static String Card_CardType = "";
-    public static String Card_AccountNumber = "";
-    public static String Card_Entry = "";
-    public static String Card_AID = "";
-    public static String Card_Approval = "";
+    public static ArrayList<PaxInformationPrintModel> paxInformationPrintModelList;
 
 
     public static final TaskHandler startSale(Context context,
@@ -175,19 +172,21 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     transaction.updateWith(response);
 
+                    PaxInformationPrintModel pipm = new PaxInformationPrintModel();
+
                     if(!TextUtils.isEmpty(response.CardType))
-                        Card_CardType = response.CardType;
+                        pipm.Pax_CardType = response.CardType;
 
                     if(!TextUtils.isEmpty(response.BogusAccountNum))
-                        Card_AccountNumber = response.BogusAccountNum;
+                        pipm.Pax_AccountNumber = response.BogusAccountNum;
 
                     if(!TextUtils.isEmpty(response.ExtData)) {
                         int Card_Entry_ID = Integer.parseInt(getExtData("<extData>" + response.ExtData + "</extData>", "PLEntryMode"));
-                        Card_Entry = getEntryModeByID(Card_Entry_ID);
+                        pipm.Pax_Entry = getEntryModeByID(Card_Entry_ID);
                     }
 
                     if(!TextUtils.isEmpty(response.AuthCode))
-                        Card_Approval = response.AuthCode;
+                        pipm.Pax_Approval = response.AuthCode;
 
                     if(/*transaction.getGateway().isCreditCard() && */getApp().getDigitalSignature()) {
                         Thread.sleep(500);
@@ -195,9 +194,11 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                         Thread.sleep(500);
                         if(!TextUtils.isEmpty(response.ExtData)) {
                             Logger.d("response.ExtData: " + response.ExtData);
-                            Card_AID = getExtData("<extData>" + response.ExtData + "</extData>", "AID");
+                            pipm.Pax_AID = getExtData("<extData>" + response.ExtData + "</extData>", "AID");
                         }
                     }
+
+                    paxInformationPrintModelList.add(pipm);
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                     operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))

@@ -13,6 +13,7 @@ import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxInformationPrintModel;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
@@ -207,7 +208,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         BigDecimal ebtBalance = BigDecimal.ZERO;
         BigDecimal giftCardBalance = BigDecimal.ZERO;
 
-        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal totalPax = BigDecimal.ZERO;
 
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
@@ -231,18 +232,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 giftCardBalance = p.balance;
             }
 
-            total = total.add(p.amount);
+            totalPax = totalPax.add(p.amount);
 
-            /*
-            if(digitalsignature && !TcrApplication.get().PAX_SIGNATURE_EMULATOR){
-                printerWrapper.drawLine();
-                printerWrapper.header("Card Type:", p.cardName);
-                printerWrapper.header("Account Number:", "####-####-####-" + p.lastFour);
-                printerWrapper.header("Entry:", p.entryMethod == null ? "" : p.entryMethod);
-                printerWrapper.header("AID:", p.authorizationNumber == null ? "" : p.authorizationNumber);
-                printerWrapper.header("Approval:", p.preauthPaymentId == null ? "" : p.preauthPaymentId);
-            }
-            /**/
         }
 
         if (isEbtPaymentExists) {
@@ -289,22 +280,22 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             printerWrapper.header("Entry:", "Chip");
             printerWrapper.header("AID:", "ABC123123");
             printerWrapper.header("Approval:", "123456");
-        } else {
+        } else if(!totalPax.equals(BigDecimal.ZERO)){
             paxSignature = PaxProcessorSaleCommand.paxSignature;
-            printerWrapper.header("Card Type:", PaxProcessorSaleCommand.Card_CardType);
-            printerWrapper.header("Account Number:", "####-####-####-" + PaxProcessorSaleCommand.Card_AccountNumber);
-            printerWrapper.header("Entry:", PaxProcessorSaleCommand.Card_Entry);
-            if(!TextUtils.isEmpty(PaxProcessorSaleCommand.Card_AID)) {
-                printerWrapper.header("AID:", PaxProcessorSaleCommand.Card_AID);
+            ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = PaxProcessorSaleCommand.paxInformationPrintModelList;
+            for(PaxInformationPrintModel pipm : paxInformationPrintModelList){
+                printerWrapper.header("Card Type:", pipm.Pax_CardType);
+                printerWrapper.header("Account Number:", "####-####-####-" + pipm.Pax_AccountNumber);
+                printerWrapper.header("Entry:", pipm.Pax_Entry);
+                if(!TextUtils.isEmpty(pipm.Pax_AID)) {
+                    printerWrapper.header("AID:", pipm.Pax_AID);
+                }
+                printerWrapper.header("Approval:", pipm.Pax_Approval);
             }
-            printerWrapper.header("Approval:", PaxProcessorSaleCommand.Card_Approval);
         }
 
 
-        boolean signaturePrintLimit = app.getShopInfo().signaturePrintLimit != null && app.getShopInfo().signaturePrintLimit.compareTo(total) <= 0;
-
-
-        if(app.getDigitalSignature() && signaturePrintLimit) {
+        if(app.getDigitalSignature() && TcrApplication.get().forceSignaturePrint) {
             Bitmap bmp = paxSignature.SignatureBitmapObject;
             /* Convert the Bitmap Object to be printed
                 133x90  (original example)
