@@ -12,9 +12,11 @@ import com.kaching123.pos.PosPrinter;
 import com.kaching123.pos.printer.BitmapCarl;
 import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.pos.util.ISignaturePrinter;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
+import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.commands.print.pos.PrintSignatureOrderCommand.ReceiptType;
 import com.kaching123.tcr.fragment.UiHelper;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import static com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand.paxSignature;
 import static com.kaching123.tcr.fragment.UiHelper.priceFormat;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
@@ -118,8 +121,35 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 }
                 printerWrapper.emptyLine();
 
-                // Signature Line to customer to sign
-                printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
+                if(app.getDigitalSignature() && app.forceSignaturePrint) {
+                    if(paxSignature != null) {
+                        Bitmap bmp = paxSignature.SignatureBitmapObject;
+                        /* Convert the Bitmap Object to be printed
+                            133x90  (original example)
+                            166x113
+                            199x120
+                            266x180
+                         */
+                        if (bmp == null) {
+                            Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
+                        } else {
+                            try {
+                                Thread.sleep(300);
+                                BitmapCarl bitmapCarl = new BitmapCarl();
+                                Thread.sleep(300);
+                                BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                                Thread.sleep(300);
+                                printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                }else {
+                    // Signature Line to customer to sign
+                    printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
+                }
 
                 printerWrapper.subTitle(getCustomerName(payment.customerName));
                 printerWrapper.emptyLine();

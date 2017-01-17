@@ -135,14 +135,14 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         signatureBox.setFocusable(false);
 
-        if (!enableSignatureCheckbox() && getApp().PAX_SIGNATURE_EMULATOR) {
+        if (!enableSignatureCheckbox() || getApp().PAX_SIGNATURE_EMULATOR) {
             signatureBox.setEnabled(false);
             signatureBox.setChecked(false);
-        } else if (digital_signature && !signaturePrintLimit){
+        } else if (!signaturePrintLimit){
             signatureBox.setEnabled(true);
             signatureBox.setChecked(false);
         } else if (signaturePrintLimit) {
-            signatureBox.setEnabled(true);
+            signatureBox.setEnabled(false);
             signatureBox.setChecked(true);
         }
 

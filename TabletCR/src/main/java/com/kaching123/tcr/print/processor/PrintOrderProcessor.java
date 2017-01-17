@@ -290,7 +290,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             if(!TextUtils.isEmpty(t.applicationIdentifier))
                 pipm.Pax_AID = t.applicationIdentifier;
 
-            pipm.Pax_Value = t.amount.divide(CalculationUtil.ONE_HUNDRED);
+            pipm.Pax_Value = t.amount;
 
             paxInformationPrintModelList.add(pipm);
         }
@@ -323,7 +323,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         }
 
 
-        if(app.getDigitalSignature() && TcrApplication.get().forceSignaturePrint) {
+        if(app.getDigitalSignature() && app.forceSignaturePrint) {
             paxSignature = PaxProcessorSaleCommand.paxSignature;
             if(paxSignature != null) {
                 Bitmap bmp = paxSignature.SignatureBitmapObject;
