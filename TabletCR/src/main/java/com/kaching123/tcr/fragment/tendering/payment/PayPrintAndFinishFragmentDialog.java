@@ -265,9 +265,13 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     //@Override
     private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac) {
         PayPrintAndFinishFragmentDialog.this.ignorePaperEnd = false;
-        if(!getApp().getShopPref().digitalSignature().getOr(false)) {
+        if(signature_receipt.equals("SHORT")){
+            printSignatureOrder(skipPaperWarning, searchByMac, ReceiptType.MERCHANT, printSignatureCallback);
+        }else{
+            printSignatureOrder(skipPaperWarning, searchByMac, ReceiptType.MERCHANT, printSignatureCallback);
             printSignatureOrder(skipPaperWarning, searchByMac, ReceiptType.CUSTOMER, printSignatureCallback);
         }
+
     }
 
     private void printDebitorEBTDetails(boolean skipPaperWarning, boolean searchByMac) {
@@ -277,9 +281,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac, ReceiptType receiptType, PrintSignatureOrderCallback printSignatureCallback) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH && receiptType != ReceiptType.EBT)
-            if (!printBox.isChecked()) {
-                receiptType = ReceiptType.MERCHANT;
-            }
+            //if (!printBox.isChecked()) {
+                //receiptType = ReceiptType.MERCHANT;
+            //}
         PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
     }
 

@@ -66,7 +66,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
     public static PaxSignature paxSignature;
 
-    public static ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = new ArrayList<PaxInformationPrintModel>();
+
 
 
     public static final TaskHandler startSale(Context context,
@@ -173,34 +173,12 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     transaction.updateWith(response);
 
-                    PaxInformationPrintModel pipm = new PaxInformationPrintModel();
-
-                    if(!TextUtils.isEmpty(response.CardType))
-                        pipm.Pax_CardType = response.CardType;
-
-                    if(!TextUtils.isEmpty(response.BogusAccountNum))
-                        pipm.Pax_AccountNumber = response.BogusAccountNum;
-
-                    if(!TextUtils.isEmpty(response.ExtData)) {
-                        int Card_Entry_ID = Integer.parseInt(getExtData("<extData>" + response.ExtData + "</extData>", "PLEntryMode"));
-                        pipm.Pax_Entry = getEntryModeByID(Card_Entry_ID);
-                    }
-
-                    if(!TextUtils.isEmpty(response.AuthCode))
-                        pipm.Pax_Approval = response.AuthCode;
-
                     /*transaction.getGateway().isCreditCard() && */
                     if(getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
                         Thread.sleep(500);
                         paxSignature = new PaxSignature(getPaxModel());
                         Thread.sleep(500);
-                        if(!TextUtils.isEmpty(response.ExtData)) {
-                            Logger.d("response.ExtData: " + response.ExtData);
-                            pipm.Pax_AID = getExtData("<extData>" + response.ExtData + "</extData>", "AID");
-                        }
                     }
-
-                    paxInformationPrintModelList.add(pipm);
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                     operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))

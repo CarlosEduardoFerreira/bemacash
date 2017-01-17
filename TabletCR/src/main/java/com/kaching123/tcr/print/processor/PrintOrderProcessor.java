@@ -121,8 +121,6 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
 
-        final boolean digitalsignature = app.getDigitalSignature();
-
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
 
             @Override
@@ -210,6 +208,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
         BigDecimal totalPax = BigDecimal.ZERO;
 
+        ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = new ArrayList<PaxInformationPrintModel>();
+
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
             boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
@@ -231,6 +231,29 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 isGiftCardPaymnetExists = true;
                 giftCardBalance = p.balance;
             }
+
+            PaxInformationPrintModel pipm = new PaxInformationPrintModel();
+
+            if(!TextUtils.isEmpty(p.cardName))
+                pipm.Pax_CardType = p.cardName;
+
+            if(!TextUtils.isEmpty(p.lastFour))
+                pipm.Pax_AccountNumber = p.lastFour;
+
+            if(!TextUtils.isEmpty(p.entryMethod)) {
+                int Card_Entry_ID = Integer.parseInt(p.entryMethod);
+                pipm.Pax_Entry = getEntryModeByID(Card_Entry_ID);
+            }
+
+            if(!TextUtils.isEmpty(p.authorizationNumber))
+                pipm.Pax_Approval = p.authorizationNumber;
+
+            if(!TextUtils.isEmpty(p.applicationIdentifier))
+                pipm.Pax_AID = p.applicationIdentifier;
+
+            pipm.Pax_Value = p.amount.divide(CalculationUtil.ONE_HUNDRED);
+
+            paxInformationPrintModelList.add(pipm);
 
             totalPax = totalPax.add(p.amount);
 
@@ -281,7 +304,6 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             printerWrapper.header("AID:", "ABC123123");
             printerWrapper.header("Approval:", "123456");
         } else if(!totalPax.equals(BigDecimal.ZERO)){
-            ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = PaxProcessorSaleCommand.paxInformationPrintModelList;
             for(PaxInformationPrintModel pipm : paxInformationPrintModelList){
                 printerWrapper.header("Card Type:", pipm.Pax_CardType);
                 printerWrapper.header("Account Number:", "####-####-####-" + pipm.Pax_AccountNumber);
@@ -290,6 +312,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                     printerWrapper.header("AID:", pipm.Pax_AID);
                 }
                 printerWrapper.header("Approval:", pipm.Pax_Approval);
+                printerWrapper.orderFooter("Value", pipm.Pax_Value, false);
                 printerWrapper.header("", "");
             }
         }
@@ -331,6 +354,20 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 //            for (GiftCardBillingResult result : giftCardResults) {
 //                printerWrapper.addAddsOn(result.model.description, result.model.finalPrice);
 //            }
+    }
+
+
+    public String getEntryModeByID(int Card_Entry_ID){
+        String PLEntryMode = "";
+        switch(Card_Entry_ID){
+            case 0: PLEntryMode = "Manual"; break;
+            case 1: PLEntryMode = "Swipe"; break;
+            case 2: PLEntryMode = "Contactless"; break;
+            case 3: PLEntryMode = "Scanner"; break;
+            case 4: PLEntryMode = "Chip"; break;
+            case 5: PLEntryMode = "Chip Fall Back Swipe"; break;
+        }
+        return PLEntryMode;
     }
 
     @Override

@@ -191,7 +191,7 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
          */
             request.ExtData += "<GetSign>1</GetSign>";
 
-        } else {
+        }else{
             request.ExtData = "<SignatureCapture>0</SignatureCapture>";
             request.ExtData += "<SignUploadFlag>0</SignUploadFlag>";
             request.ExtData += "<GetSign>0</GetSign>";
