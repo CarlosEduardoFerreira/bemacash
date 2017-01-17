@@ -270,7 +270,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         }
 
 
-        for(Transaction t : transactions){
+        for(PaymentTransactionModel t : transactions){
             PaxInformationPrintModel pipm = new PaxInformationPrintModel();
 
             if(!TextUtils.isEmpty(t.cardName))
