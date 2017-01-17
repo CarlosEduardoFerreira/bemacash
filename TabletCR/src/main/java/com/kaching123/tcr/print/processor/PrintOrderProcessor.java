@@ -29,6 +29,7 @@ import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonComparator;
 import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
@@ -36,6 +37,7 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.UnitUtil;
+import com.kaching123.tcr.websvc.api.pax.api.WebAPI;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.math.BigDecimal;
@@ -232,29 +234,6 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 giftCardBalance = p.balance;
             }
 
-            PaxInformationPrintModel pipm = new PaxInformationPrintModel();
-
-            if(!TextUtils.isEmpty(p.cardName))
-                pipm.Pax_CardType = p.cardName;
-
-            if(!TextUtils.isEmpty(p.lastFour))
-                pipm.Pax_AccountNumber = p.lastFour;
-
-            if(!TextUtils.isEmpty(p.entryMethod)) {
-                int Card_Entry_ID = Integer.parseInt(p.entryMethod);
-                pipm.Pax_Entry = getEntryModeByID(Card_Entry_ID);
-            }
-
-            if(!TextUtils.isEmpty(p.authorizationNumber))
-                pipm.Pax_Approval = p.authorizationNumber;
-
-            if(!TextUtils.isEmpty(p.applicationIdentifier))
-                pipm.Pax_AID = p.applicationIdentifier;
-
-            pipm.Pax_Value = p.amount.divide(CalculationUtil.ONE_HUNDRED);
-
-            paxInformationPrintModelList.add(pipm);
-
             totalPax = totalPax.add(p.amount);
 
         }
@@ -288,6 +267,32 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
 
             }
+        }
+
+
+        for(Transaction t : transactions){
+            PaxInformationPrintModel pipm = new PaxInformationPrintModel();
+
+            if(!TextUtils.isEmpty(t.cardName))
+                pipm.Pax_CardType = t.cardName;
+
+            if(!TextUtils.isEmpty(t.lastFour))
+                pipm.Pax_AccountNumber = t.lastFour;
+
+            if(!TextUtils.isEmpty(t.entryMethod)) {
+                int Card_Entry_ID = Integer.parseInt(t.entryMethod);
+                pipm.Pax_Entry = getEntryModeByID(Card_Entry_ID);
+            }
+
+            if(!TextUtils.isEmpty(t.authorizationNumber))
+                pipm.Pax_Approval = t.authorizationNumber;
+
+            if(!TextUtils.isEmpty(t.applicationIdentifier))
+                pipm.Pax_AID = t.applicationIdentifier;
+
+            pipm.Pax_Value = t.amount.divide(CalculationUtil.ONE_HUNDRED);
+
+            paxInformationPrintModelList.add(pipm);
         }
 
 
