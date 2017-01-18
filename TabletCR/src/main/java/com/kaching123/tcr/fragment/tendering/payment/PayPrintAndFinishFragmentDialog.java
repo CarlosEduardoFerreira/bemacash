@@ -261,59 +261,47 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     }
 
     protected void printReceipts() {
-        //WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
 
         getApp().forceSignaturePrint = signatureBox.isChecked() ? true : false;
 
         if (printBox.isChecked() && !orderPrinted) {
             printOrder(false, false);
-        }
-
-        if (signatureBox.isChecked() && !signatureOrderPrinted) {
-            printSignatureOrder(false, false);
-        }
-
-        if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
+        } else if (signatureBox.isChecked() && signature_receipt.equals("SHORT") && !signatureOrderPrinted) {
+            printSignatureOrder(false, false, ReceiptType.MERCHANT, printSignatureCallback);
+        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
             printOrder(false, false);
             isPrinterTwoCopiesReceipt = false;
-        }
-
-        if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && !debitOrEBTDetailsPrinted) {
+        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && !debitOrEBTDetailsPrinted) {
             printDebitorEBTDetails(false, false);
+        } else {
+            completeProcess();
+
+            WaitDialogFragment.hide(getActivity());
+
+            Logger.d("WaitDialogFragment.hide: " + getActivity());
         }
 
-        completeProcess();
 
-        WaitDialogFragment.hide(getActivity());
-
-        Logger.d("WaitDialogFragment.hide: " + getActivity());
     }
 
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
+        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, releaseResultList, giftCardResults, printOrderCallback);
-    }
-
-    //@Override
-    private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac) {
-        PayPrintAndFinishFragmentDialog.this.ignorePaperEnd = false;
-        if(signature_receipt.equals("SHORT")){
-            printSignatureOrder(skipPaperWarning, searchByMac, ReceiptType.MERCHANT, printSignatureCallback);
-        }else{
-            printSignatureOrder(skipPaperWarning, searchByMac, ReceiptType.MERCHANT, printSignatureCallback);
-            printSignatureOrder(skipPaperWarning, searchByMac, ReceiptType.CUSTOMER, printSignatureCallback);
-        }
-
+        WaitDialogFragment.hide(getActivity());
     }
 
     private void printDebitorEBTDetails(boolean skipPaperWarning, boolean searchByMac) {
         printSignatureOrder(skipPaperWarning, searchByMac, gateWay, printDebitorEBTCallback);
+        WaitDialogFragment.hide(getActivity());
     }
 
     private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac, ReceiptType receiptType, PrintSignatureOrderCallback printSignatureCallback) {
+        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH && receiptType != ReceiptType.EBT) {
             PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
         }
+        WaitDialogFragment.hide(getActivity());
     }
 
     @Override
@@ -327,6 +315,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         } else {
             super.completeProcess();
         }
+        WaitDialogFragment.hide(getActivity());
     }
 
     protected void sendDigitalOrder() {
@@ -376,7 +365,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         @Override
         public void onPrintSuccess() {
             orderPrinted = true;
-            //printReceipts();
+            printReceipts();
             WaitDialogFragment.hide(getActivity());
         }
 
@@ -470,6 +459,10 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             } else {
                 PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
             }
+            if(signature_receipt.equals("LONG")) {
+                printSignatureOrder(false, false, ReceiptType.CUSTOMER, printSignatureCallback);
+            }
+            printReceipts();
             WaitDialogFragment.hide(getActivity());
         }
 

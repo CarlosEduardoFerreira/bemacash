@@ -275,6 +275,9 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
         return balance;
     }
 
+    @Override
+    public byte[] getPaxDigitalSignature(){ return paxDigitalSignature; }
+
     public T setIsPreauth(boolean isPreauth) {
         this.isPreauth = isPreauth;
         return (T) this;

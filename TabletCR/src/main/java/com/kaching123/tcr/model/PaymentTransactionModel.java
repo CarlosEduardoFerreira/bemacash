@@ -170,6 +170,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.entryMethod = transaction.getEntryMethod();
         this.applicationCryptogramType = transaction.getApplicationCryptogramType();
         this.customerName = transaction.getCustomerName();
+        this.paxDigitalSignature = transaction.getPaxDigitalSignature();
     }
 
     public Transaction toTransaction() {

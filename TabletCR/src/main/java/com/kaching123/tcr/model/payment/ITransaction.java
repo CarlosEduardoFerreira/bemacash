@@ -59,4 +59,6 @@ public interface ITransaction {
 
     String getCustomerName();
 
+    byte[] getPaxDigitalSignature();
+
 }
