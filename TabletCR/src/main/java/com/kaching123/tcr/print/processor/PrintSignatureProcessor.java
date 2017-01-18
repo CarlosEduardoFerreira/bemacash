@@ -121,7 +121,7 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 }
                 printerWrapper.emptyLine();
 
-                if(app.getDigitalSignature() && app.forceSignaturePrint) {
+                if(app.getDigitalSignature()) {
                     if(paxSignature != null) {
                         Bitmap bmp = paxSignature.SignatureBitmapObject;
                         /* Convert the Bitmap Object to be printed

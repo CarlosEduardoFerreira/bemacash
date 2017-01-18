@@ -64,7 +64,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
     private BatchSqlCommand sqlCommand;
 
 
-    public static PaxSignature paxSignature;
+    public static PaxSignature paxSignature = null;
 
 
 
