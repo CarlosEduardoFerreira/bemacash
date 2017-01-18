@@ -148,6 +148,7 @@ public class PrintCreditReceiptFragmentDialog extends StyledDialogFragment {
     private void printChangeReceipt(boolean ignorePaperEnd, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         PrintCreditReceiptCommand.start(getActivity(), ignorePaperEnd, searchByMac, receiptGuid, new PrintCreditReceiptCallback());
+        WaitDialogFragment.hide(getActivity());
     }
 
     public class PrintCreditReceiptCallback extends BasePrintCallback {

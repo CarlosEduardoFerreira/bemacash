@@ -93,8 +93,8 @@ public class VoidPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDial
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-
         PrintRefundCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, childOrderModel.guid, refundItemsInfo, printRefundCallback);
+        WaitDialogFragment.hide(getActivity());
     }
 
     private void onPrintSuccess() {
