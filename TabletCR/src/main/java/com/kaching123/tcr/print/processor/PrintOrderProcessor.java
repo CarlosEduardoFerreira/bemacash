@@ -292,6 +292,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
             pipm.Pax_Value = t.amount;
 
+            pipm.Pax_DigitalSignature = t.paxDigitalSignature;
+
             paxInformationPrintModelList.add(pipm);
         }
 
@@ -319,37 +321,14 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.header("Approval:", pipm.Pax_Approval);
                 printerWrapper.orderFooter("Total", pipm.Pax_Value, false);
                 printerWrapper.header("", "");
-            }
-        }
-
-
-        if(app.getDigitalSignature() && app.forceSignaturePrint) {
-            paxSignature = PaxProcessorSaleCommand.paxSignature;
-            if(paxSignature != null) {
-                Bitmap bmp = paxSignature.SignatureBitmapObject;
-                /* Convert the Bitmap Object to be printed
-                    133x90  (original example)
-                    166x113
-                    199x120
-                    266x180
-                 */
-                if (bmp == null) {
-                    Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
-                } else {
-                    try {
-                        Thread.sleep(300);
-                        BitmapCarl bitmapCarl = new BitmapCarl();
-                        Thread.sleep(300);
-                        BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-                        Thread.sleep(300);
-                        printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
+                if(app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
+                    printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
                 }
             }
         }
+
+
+
         /*********************************** Pax Signature Bitmap Object **/
 
         printerWrapper.drawLine();

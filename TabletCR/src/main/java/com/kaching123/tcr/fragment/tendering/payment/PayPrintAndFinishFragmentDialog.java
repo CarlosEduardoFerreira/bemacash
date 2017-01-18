@@ -268,10 +268,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             printOrder(false, false);
         }
 
-        if(!digital_signature) {
-            if (signatureBox.isChecked() && !signatureOrderPrinted) {
-                printSignatureOrder(false, false);
-            }
+        if (signatureBox.isChecked() && !signatureOrderPrinted) {
+            printSignatureOrder(false, false);
         }
 
         if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
@@ -281,9 +279,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && !debitOrEBTDetailsPrinted) {
             printDebitorEBTDetails(false, false);
-        } else {
-            completeProcess();
         }
+
+        completeProcess();
     }
 
     @Override

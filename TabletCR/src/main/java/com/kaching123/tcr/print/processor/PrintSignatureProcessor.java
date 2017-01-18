@@ -121,34 +121,13 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 }
                 printerWrapper.emptyLine();
 
-                if(app.getDigitalSignature()) {
-                    if(paxSignature != null) {
-                        Bitmap bmp = paxSignature.SignatureBitmapObject;
-                        /* Convert the Bitmap Object to be printed
-                            133x90  (original example)
-                            166x113
-                            199x120
-                            266x180
-                         */
-                        if (bmp == null) {
-                            Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
-                        } else {
-                            try {
-                                Thread.sleep(300);
-                                BitmapCarl bitmapCarl = new BitmapCarl();
-                                Thread.sleep(300);
-                                BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-                                Thread.sleep(300);
-                                printerWrapper.printPaxSignature(printedBitmapCarl.toPrint());
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
+                if(app.RequireSignatureonTransactionsHigherThan) {
+                    if (app.getDigitalSignature()) {
+                        printerWrapper.printPaxSignature(payment.paxDigitalSignature);
+                    } else {
+                        // Signature Line to customer to sign
+                        printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
                     }
-                }else {
-                    // Signature Line to customer to sign
-                    printerWrapper.cropLine(context.getString(R.string.printer_signature_line));
                 }
 
                 printerWrapper.subTitle(getCustomerName(payment.customerName));

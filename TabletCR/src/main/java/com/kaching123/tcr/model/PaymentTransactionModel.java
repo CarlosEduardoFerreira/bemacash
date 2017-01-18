@@ -54,6 +54,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
     public String entryMethod;
     public String applicationCryptogramType;
     public String customerName;
+    public byte[] paxDigitalSignature = null;
 
 
     public boolean allowReload; // tmp var

@@ -2,8 +2,11 @@ package com.kaching123.tcr.commands.payment.pax.processor;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 
+import com.kaching123.pos.printer.BitmapCarl;
+import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -171,14 +174,33 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                 if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
 
-                    transaction.updateWith(response);
-
+                    byte[] paxDigitalSign = null;
                     /*transaction.getGateway().isCreditCard() && */
                     if(getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
-                        Thread.sleep(500);
+                        Thread.sleep(400);
                         paxSignature = new PaxSignature(getPaxModel());
-                        Thread.sleep(500);
+                        Thread.sleep(400);
+                        if(paxSignature != null) {
+                            Bitmap bmp = paxSignature.SignatureBitmapObject;
+                            if (bmp == null) {
+                                Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
+                            } else {
+                                try {
+                                    Thread.sleep(200);
+                                    BitmapCarl bitmapCarl = new BitmapCarl();
+                                    Thread.sleep(200);
+                                    BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                                    Thread.sleep(200);
+                                    paxDigitalSign = printedBitmapCarl.toPrint();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }
                     }
+
+                    transaction.updateWith(response, paxDigitalSign);
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                     operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))

@@ -77,7 +77,7 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         }
     }
 
-    public void updateWith(com.pax.poslink.PaymentResponse response) {
+    public void updateWith(com.pax.poslink.PaymentResponse response, byte[] paxDigitalSign) {
         cardName = TextUtils.isEmpty(response.CardType) ? cardName : response.CardType;
 
         //fixme
@@ -119,6 +119,9 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         } catch (Exception ex) {
             Log.d(TAG, ex.getMessage());
         }
+
+        paxDigitalSignature = paxDigitalSign;
+
     }
 
 

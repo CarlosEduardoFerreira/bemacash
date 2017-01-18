@@ -12,4 +12,5 @@ public class PaxInformationPrintModel {
     public static String Pax_AID = "";
     public static String Pax_Approval = "";
     public static BigDecimal Pax_Value = BigDecimal.ZERO;
+    public static byte[] Pax_DigitalSignature = null;
 }

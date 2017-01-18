@@ -56,6 +56,8 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
     public String applicationCryptogramType;
     public String customerName;
 
+    public byte[] paxDigitalSignature = null;
+
     @Expose
     @SerializedName(WebAPI.BlackStoneAPI.REQUEST_PARAM_AMOUNT)
     public BigDecimal amount;
@@ -108,6 +110,7 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
         isClosedPreauth = isPreauth && PaymentType.SALE.equals(paymentType) && PaymentStatus.SUCCESS.equals(model.status);
         cashBack = model.cashBack;
         balance = model.balance;
+        paxDigitalSignature = model.paxDigitalSignature;
     }
 
     public Transaction() {
