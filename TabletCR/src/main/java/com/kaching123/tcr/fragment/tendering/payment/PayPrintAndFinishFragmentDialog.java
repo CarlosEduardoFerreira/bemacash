@@ -266,7 +266,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         if (printBox.isChecked() && !orderPrinted) {
             printOrder(false, false);
-        } else if (signatureBox.isChecked() && !signatureOrderPrinted && !digital_signature) {
+        } else if (signatureBox.isChecked() && !signatureOrderPrinted) {
             printSignatureOrder(false, false, ReceiptType.MERCHANT, printSignatureCallback);
         } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
             printOrder(false, false);
@@ -286,7 +286,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
-        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        //WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, releaseResultList, giftCardResults, printOrderCallback);
         WaitDialogFragment.hide(getActivity());
     }
