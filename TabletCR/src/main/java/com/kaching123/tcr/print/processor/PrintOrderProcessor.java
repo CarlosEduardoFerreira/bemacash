@@ -210,7 +210,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
         BigDecimal totalPax = BigDecimal.ZERO;
 
-        ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = new ArrayList<PaxInformationPrintModel>();
+        //ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = new ArrayList<PaxInformationPrintModel>();
 
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
@@ -269,6 +269,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
         }
 
+        printerWrapper.drawLine();
 
         for(PaymentTransactionModel t : transactions){
             PaxInformationPrintModel pipm = new PaxInformationPrintModel();
@@ -294,11 +295,24 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
             pipm.Pax_DigitalSignature = t.paxDigitalSignature;
 
-            paxInformationPrintModelList.add(pipm);
+            //paxInformationPrintModelList.add(pipm);
+
+            printerWrapper.header("Card Type:", pipm.Pax_CardType);
+            printerWrapper.header("Account Number:", "####-####-####-" + pipm.Pax_AccountNumber);
+            printerWrapper.header("Entry:", pipm.Pax_Entry);
+            if(!TextUtils.isEmpty(pipm.Pax_AID)) {
+                printerWrapper.header("AID:", pipm.Pax_AID);
+            }
+            printerWrapper.header("Approval:", pipm.Pax_Approval);
+            printerWrapper.orderFooter("Total", pipm.Pax_Value, false);
+            printerWrapper.header("", "");
+            if(app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
+                printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
+            }
         }
 
 
-        printerWrapper.drawLine();
+
 
         /** Pax Signature Bitmap Object ***********************************/
         PaxSignature paxSignature = null;
@@ -311,7 +325,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             printerWrapper.header("AID:", "ABC123123");
             printerWrapper.header("Approval:", "123456");
         } else if(!totalPax.equals(BigDecimal.ZERO)){
-            for(PaxInformationPrintModel pipm : paxInformationPrintModelList){
+            /*for(PaxInformationPrintModel pipm : paxInformationPrintModelList){
                 printerWrapper.header("Card Type:", pipm.Pax_CardType);
                 printerWrapper.header("Account Number:", "####-####-####-" + pipm.Pax_AccountNumber);
                 printerWrapper.header("Entry:", pipm.Pax_Entry);
@@ -324,7 +338,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 if(app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
                     printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
                 }
-            }
+            }/**/
         }
 
 
