@@ -240,12 +240,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         return R.string.blackstone_pay_confirm_title;
     }
 
-    @Override
-    protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
-        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, releaseResultList, giftCardResults, printOrderCallback);
-    }
-
     protected void chooseCustomer() {
         PayChooseCustomerDialog.show(getActivity(), orderGuid, transactions, new emailSenderListener() {
             @Override
@@ -256,10 +250,44 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         }, releaseResultList);
     }
 
-    protected void sendDigitalOrder() {
-        SendDigitalOrderCommand.start(getActivity(), orderGuid, customer.email, null, transactions, releaseResultList);
-        listener.onConfirmed();
-        dismiss();
+
+    @Override
+    protected boolean onConfirm() {
+        printReceipts();
+        if (!getApp().isBlackstonePax() && getApp().isPaxConfigured())
+            PaxProcessorHelloCommand.start(getActivity(), PaxModel.get(), helloCallBack);
+        return false;
+    }
+
+    protected void printReceipts() {
+        WaitDialogFragment.hide(getActivity());
+
+        getApp().forceSignaturePrint = signatureBox.isChecked() ? true : false;
+
+        if (printBox.isChecked() && !orderPrinted) {
+            printOrder(false, false);
+        }
+
+        if (signatureBox.isChecked() && !signatureOrderPrinted) {
+            printSignatureOrder(false, false);
+        }
+
+        if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
+            printOrder(false, false);
+            isPrinterTwoCopiesReceipt = false;
+        }
+
+        if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && !debitOrEBTDetailsPrinted) {
+            printDebitorEBTDetails(false, false);
+        } else {
+            completeProcess();
+        }
+    }
+
+    @Override
+    protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
+        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        PrintOrderCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, transactions, releaseResultList, giftCardResults, printOrderCallback);
     }
 
     //@Override
@@ -282,36 +310,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH && receiptType != ReceiptType.EBT)
             //if (!printBox.isChecked()) {
-                //receiptType = ReceiptType.MERCHANT;
+            //receiptType = ReceiptType.MERCHANT;
             //}
-        PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
-    }
-
-    @Override
-    protected boolean onConfirm() {
-        printReceipts();
-        if (!getApp().isBlackstonePax() && getApp().isPaxConfigured())
-            PaxProcessorHelloCommand.start(getActivity(), PaxModel.get(), helloCallBack);
-        return false;
-    }
-
-    protected void printReceipts() {
-        WaitDialogFragment.hide(getActivity());
-
-        getApp().forceSignaturePrint = signatureBox.isChecked() ? true : false;
-
-        if (printBox.isChecked() && !orderPrinted) {
-            printOrder(false, false);
-        } else if (signatureBox.isChecked() && !signatureOrderPrinted && !digital_signature) {
-            printSignatureOrder(false, false);
-        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
-            printOrder(false, false);
-            isPrinterTwoCopiesReceipt = false;
-        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && !debitOrEBTDetailsPrinted) {
-            printDebitorEBTDetails(false, false);
-        } else {
-            completeProcess();
-        }
+            PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
     }
 
     @Override
@@ -328,9 +329,15 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         }
     }
 
+    protected void sendDigitalOrder() {
+        SendDigitalOrderCommand.start(getActivity(), orderGuid, customer.email, null, transactions, releaseResultList);
+        listener.onConfirmed();
+        dismiss();
+    }
+
     private void onSignaturePrintSuccess() {
         signatureOrderPrinted = true;
-        printReceipts();
+        //printReceipts();
     }
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
@@ -369,7 +376,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         @Override
         public void onPrintSuccess() {
             orderPrinted = true;
-            printReceipts();
+            //printReceipts();
         }
 
         @Override
@@ -450,7 +457,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         @Override
         protected void onPrintSuccess() {
             if (printBox.isChecked()) {
-                printSignatureOrder(false, false, ReceiptType.MERCHANT, printSignatureCallback2);
+                //printSignatureOrder(false, false, ReceiptType.MERCHANT, printSignatureCallback2);
             } else {
                 PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
             }
