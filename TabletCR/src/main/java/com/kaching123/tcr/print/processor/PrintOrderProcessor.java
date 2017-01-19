@@ -311,6 +311,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             if(app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
                 printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
             }
+            printerWrapper.drawLine();
         }
 
 
