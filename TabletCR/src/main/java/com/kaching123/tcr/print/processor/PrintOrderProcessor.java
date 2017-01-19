@@ -309,7 +309,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
                 printerWrapper.header("Approval:", pipm.Pax_Approval);
                 printerWrapper.orderFooter("Total", pipm.Pax_Value, false);
-                if (app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
+                if (t.gateway.isTrueCreditCard() && app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
                     printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
                 }
                 printerWrapper.drawLine();
