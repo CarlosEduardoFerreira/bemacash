@@ -1454,7 +1454,6 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
                 @Override
                 public void onConfirmed() {
-
                     callback.onPrintComplete();
                     if ((failReleaseResultList != null && failReleaseResultList.size() != 0) || (failGiftCardResultList != null && failGiftCardResultList.size() != 0)) {
                         final HistoryDetailedOrderItemListFragment.RefundAmount amount = getReturnAmount();
@@ -1466,8 +1465,9 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                             //todo onrefund
                             callback.onRefund(amount);
                         }
-                    } else
+                    } else {
                         finish();
+                    }
                 }
             }, transactions, kitchenPrintStatus, orderChange, gateWay, isPrinterTwoCopiesReceipt(), ReleaseResultList, successGiftCardResultList);
         } else {

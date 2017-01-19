@@ -44,7 +44,7 @@ public class PrepaidPrintAndFinishFragmentDialog extends PayPrintAndFinishFragme
 
     @Override
     protected void printOrder(boolean skipPaperWarning, boolean searchByMac) {
-        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        //WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         PrintPrepaidOrderCommand.start(getActivity(), false, skipPaperWarning, searchByMac, orderGuid, info, printOrderCallback);
     }
 
