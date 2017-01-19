@@ -264,6 +264,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         if (!getApp().isBlackstonePax() && getApp().isPaxConfigured())
             PaxProcessorHelloCommand.start(getActivity(), PaxModel.get(), helloCallBack);
         WaitDialogFragment.hide(getActivity());
+        dismiss();
         return false;
     }
 
@@ -282,8 +283,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             printDebitorEBTDetails(false, false);
         } else {
             WaitDialogFragment.hide(getActivity());
-            completeProcess();
         }
+        completeProcess();
 
 
     }
@@ -301,7 +302,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     }
 
     private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac, ReceiptType receiptType, PrintSignatureOrderCallback printSignatureCallback) {
-        //WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         //if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH && receiptType != ReceiptType.EBT) {
             PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
        //}

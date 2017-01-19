@@ -337,7 +337,9 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         }
         /*********************************** Pax Signature Bitmap Object **/
 
-        printerWrapper.drawLine();
+        if(totalPax.equals(BigDecimal.ZERO)){
+            printerWrapper.drawLine();
+        }
 
 
 //        if (giftCardResults != null)
