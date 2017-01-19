@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.kaching123.pos.printer.BitmapCarl;
 import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
@@ -175,8 +176,8 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                 if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
 
                     byte[] paxDigitalSign = null;
-                    /*transaction.getGateway().isCreditCard() && */
-                    if(transaction.getGateway().isCreditCard() && getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
+
+                    if(transaction.getGateway().equals(PaymentGateway.PAX) && getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
                         Thread.sleep(400);
                         paxSignature = new PaxSignature(getPaxModel());
                         Thread.sleep(400);
