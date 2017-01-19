@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 
+import com.kaching123.pos.printer.BitmapCarl;
+import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.pax.PaxGateway;
@@ -47,12 +49,34 @@ public class PaxSignature extends PaxProcessorBaseCommand {
     public String filesDir = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath();
     public String sigSavePath = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath() + "/img/receipt";
 
-    public byte[] bitmapdata;
+
     public Bitmap SignatureBitmapObject;
+    public byte[] signatureBitmapBytes;
 
     public PaxSignature(PaxModel paxModel) {
-        this.paxModel = paxModel;
-        this.doCommand();
+        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR) {
+            try {
+                SignatureBitmapObject = this.ConvertPaxSignatureToBitmapObject("");
+                Bitmap bmp = SignatureBitmapObject;
+                if (bmp == null) {
+                    Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
+                } else {
+                    Thread.sleep(200);
+                    BitmapCarl bitmapCarl = new BitmapCarl();
+                    Thread.sleep(200);
+                    BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                    Thread.sleep(200);
+                    signatureBitmapBytes = printedBitmapCarl.toPrint();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            this.paxModel = paxModel;
+            this.doCommand();
+        }
     }
 
     public static void start(Context context, PaxModel paxTerminal, PaxSignatureCallback callback) {
@@ -79,14 +103,6 @@ public class PaxSignature extends PaxProcessorBaseCommand {
 
     @Override
     protected TaskResult doCommand() {
-        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
-            try {
-                SignatureBitmapObject = this.ConvertPaxSignatureToBitmapObject("");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
         String errorMsg = null;
         int errorCode = 0;
 

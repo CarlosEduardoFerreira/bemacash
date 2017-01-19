@@ -305,44 +305,32 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
             printerWrapper.header("Approval:", pipm.Pax_Approval);
             printerWrapper.orderFooter("Total", pipm.Pax_Value, false);
-            printerWrapper.header("", "");
             if(app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
                 printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
             }
         }
 
 
-
-
         /** Pax Signature Bitmap Object ***********************************/
-        PaxSignature paxSignature = null;
-
         if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
-            paxSignature = new PaxSignature(null);
             printerWrapper.header("Card Type:", "Visa Test");
             printerWrapper.header("Account Number:", "####-####-####-1234");
             printerWrapper.header("Entry:", "Chip");
             printerWrapper.header("AID:", "ABC123123");
             printerWrapper.header("Approval:", "123456");
-        } else if(!totalPax.equals(BigDecimal.ZERO)){
-            /*for(PaxInformationPrintModel pipm : paxInformationPrintModelList){
-                printerWrapper.header("Card Type:", pipm.Pax_CardType);
-                printerWrapper.header("Account Number:", "####-####-####-" + pipm.Pax_AccountNumber);
-                printerWrapper.header("Entry:", pipm.Pax_Entry);
-                if(!TextUtils.isEmpty(pipm.Pax_AID)) {
-                    printerWrapper.header("AID:", pipm.Pax_AID);
+
+            PaxSignature paxSignature = new PaxSignature(null);
+            try {
+                Thread.sleep(1500);
+                if (paxSignature != null) {
+                    if (app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
+                        printerWrapper.printPaxSignature(paxSignature.signatureBitmapBytes);
+                    }
                 }
-                printerWrapper.header("Approval:", pipm.Pax_Approval);
-                printerWrapper.orderFooter("Total", pipm.Pax_Value, false);
-                printerWrapper.header("", "");
-                if(app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
-                    printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
-                }
-            }/**/
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
-
-
-
         /*********************************** Pax Signature Bitmap Object **/
 
         printerWrapper.drawLine();
