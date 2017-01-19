@@ -176,7 +176,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     byte[] paxDigitalSign = null;
                     /*transaction.getGateway().isCreditCard() && */
-                    if(getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
+                    if(transaction.getGateway().isCreditCard() && getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
                         Thread.sleep(400);
                         paxSignature = new PaxSignature(getPaxModel());
                         Thread.sleep(400);
