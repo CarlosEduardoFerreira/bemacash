@@ -112,6 +112,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     protected boolean orderPrinted;
     protected boolean debitOrEBTDetailsPrinted;
     protected boolean signatureOrderPrinted;
+    protected boolean longSignatureReceiptPrinted;
 
     public boolean print_digital_signature = false;
 
@@ -120,9 +121,12 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     String  signature_receipt   = "SHORT";  // manual signature
     boolean signaturePrintLimit = false;    // Require Signature on Transactions Higher Than:
 
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        longSignatureReceiptPrinted = false;
 
         tips                = getApp().isTipsEnabled();
         digital_signature   = getApp().getDigitalSignature();
@@ -467,7 +471,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             //} else {
                 PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
             //}
-            if(signature_receipt.equals("LONG")) {
+            if(signature_receipt.equals("LONG") && !longSignatureReceiptPrinted) {
+                longSignatureReceiptPrinted = true;
                 WaitDialogFragment.hide(getActivity());
                 printSignatureOrder(false, false, ReceiptType.CUSTOMER, printSignatureCallback);
             }
