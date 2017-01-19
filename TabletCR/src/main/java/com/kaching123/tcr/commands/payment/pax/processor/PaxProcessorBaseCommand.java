@@ -164,7 +164,7 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
         getApp().RequireSignatureonTransactionsHigherThan = getApp().getShopInfo().signaturePrintLimit != null &&
                 getApp().getShopInfo().signaturePrintLimit.compareTo(total) <= 0;
 
-        if(getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
+        if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
 
         /*  <SignatureCapture>
             The ECR supports signature printing and the terminal supports signature capture.
