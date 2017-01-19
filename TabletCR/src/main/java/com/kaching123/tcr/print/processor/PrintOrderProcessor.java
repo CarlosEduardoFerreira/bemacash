@@ -303,6 +303,9 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             if(!TextUtils.isEmpty(pipm.Pax_AID)) {
                 printerWrapper.header("AID:", pipm.Pax_AID);
             }
+            if(!TextUtils.isEmpty(t.applicationCryptogramType)) {
+                printerWrapper.header("ARQC:", t.applicationCryptogramType);
+            }
             printerWrapper.header("Approval:", pipm.Pax_Approval);
             printerWrapper.orderFooter("Total", pipm.Pax_Value, false);
             if(app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {

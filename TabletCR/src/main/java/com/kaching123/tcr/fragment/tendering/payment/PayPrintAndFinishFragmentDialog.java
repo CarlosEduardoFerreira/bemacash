@@ -298,7 +298,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     }
 
     private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac, ReceiptType receiptType, PrintSignatureOrderCallback printSignatureCallback) {
-        //WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         //if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH && receiptType != ReceiptType.EBT) {
             PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
        //}
@@ -365,6 +365,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         @Override
         public void onPrintSuccess() {
             orderPrinted = true;
+            WaitDialogFragment.hide(getActivity());
             printReceipts();
         }
 
@@ -445,6 +446,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         @Override
         protected void onPrintSuccess() {
+            WaitDialogFragment.hide(getActivity());
             //if (printBox.isChecked()) {
                 //printSignatureOrder(false, false, ReceiptType.MERCHANT, printSignatureCallback2);
             //} else {
