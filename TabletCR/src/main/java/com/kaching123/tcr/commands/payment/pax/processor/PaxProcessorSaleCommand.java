@@ -177,7 +177,9 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     byte[] paxDigitalSign = null;
 
-                    if(transaction.getGateway().equals(PaymentGateway.PAX) && getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
+                    transaction.updateWith(response, paxDigitalSign);
+
+                    if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
                         Thread.sleep(400);
                         paxSignature = new PaxSignature(getPaxModel());
                         Thread.sleep(400);
@@ -202,6 +204,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     }
 
                     transaction.updateWith(response, paxDigitalSign);
+
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                     operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
