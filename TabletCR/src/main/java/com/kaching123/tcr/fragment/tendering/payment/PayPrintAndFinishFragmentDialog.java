@@ -136,7 +136,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         signatureBox.setFocusable(false);
 
-        if (!enableSignatureCheckbox() || getApp().PAX_SIGNATURE_EMULATOR) {
+        if ((!enableSignatureCheckbox() || getApp().PAX_SIGNATURE_EMULATOR) || (digital_signature && signaturePrintLimit) ) {
             signatureBox.setEnabled(false);
             signatureBox.setChecked(false);
         } else if (!signaturePrintLimit){
@@ -146,6 +146,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             signatureBox.setEnabled(false);
             signatureBox.setChecked(true);
         }
+
+
 
         if (changeAmount != null && changeAmount.compareTo(BigDecimal.ZERO) == 1) {
             change.setVisibility(View.VISIBLE);
