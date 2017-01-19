@@ -271,47 +271,49 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
         printerWrapper.drawLine();
 
-        for(PaymentTransactionModel t : transactions){
-            PaxInformationPrintModel pipm = new PaxInformationPrintModel();
+        if(transactions != null) {
+            for (PaymentTransactionModel t : transactions) {
+                PaxInformationPrintModel pipm = new PaxInformationPrintModel();
 
-            if(!TextUtils.isEmpty(t.cardName))
-                pipm.Pax_CardType = t.cardName;
+                if (!TextUtils.isEmpty(t.cardName))
+                    pipm.Pax_CardType = t.cardName;
 
-            if(!TextUtils.isEmpty(t.lastFour))
-                pipm.Pax_AccountNumber = t.lastFour;
+                if (!TextUtils.isEmpty(t.lastFour))
+                    pipm.Pax_AccountNumber = t.lastFour;
 
-            if(!TextUtils.isEmpty(t.entryMethod)) {
-                int Card_Entry_ID = Integer.parseInt(t.entryMethod);
-                pipm.Pax_Entry = getEntryModeByID(Card_Entry_ID);
+                if (!TextUtils.isEmpty(t.entryMethod)) {
+                    int Card_Entry_ID = Integer.parseInt(t.entryMethod);
+                    pipm.Pax_Entry = getEntryModeByID(Card_Entry_ID);
+                }
+
+                if (!TextUtils.isEmpty(t.authorizationNumber))
+                    pipm.Pax_Approval = t.authorizationNumber;
+
+                if (!TextUtils.isEmpty(t.applicationIdentifier))
+                    pipm.Pax_AID = t.applicationIdentifier;
+
+                pipm.Pax_Value = t.amount;
+
+                pipm.Pax_DigitalSignature = t.paxDigitalSignature;
+
+                //paxInformationPrintModelList.add(pipm);
+
+                printerWrapper.header("Card Type:", pipm.Pax_CardType);
+                printerWrapper.header("Account Number:", "####-####-####-" + pipm.Pax_AccountNumber);
+                printerWrapper.header("Entry:", pipm.Pax_Entry);
+                if (!TextUtils.isEmpty(pipm.Pax_AID)) {
+                    printerWrapper.header("AID:", pipm.Pax_AID);
+                }
+                if (!TextUtils.isEmpty(t.applicationCryptogramType)) {
+                    printerWrapper.header("ARQC:", t.applicationCryptogramType);
+                }
+                printerWrapper.header("Approval:", pipm.Pax_Approval);
+                printerWrapper.orderFooter("Total", pipm.Pax_Value, false);
+                if (app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
+                    printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
+                }
+                printerWrapper.drawLine();
             }
-
-            if(!TextUtils.isEmpty(t.authorizationNumber))
-                pipm.Pax_Approval = t.authorizationNumber;
-
-            if(!TextUtils.isEmpty(t.applicationIdentifier))
-                pipm.Pax_AID = t.applicationIdentifier;
-
-            pipm.Pax_Value = t.amount;
-
-            pipm.Pax_DigitalSignature = t.paxDigitalSignature;
-
-            //paxInformationPrintModelList.add(pipm);
-
-            printerWrapper.header("Card Type:", pipm.Pax_CardType);
-            printerWrapper.header("Account Number:", "####-####-####-" + pipm.Pax_AccountNumber);
-            printerWrapper.header("Entry:", pipm.Pax_Entry);
-            if(!TextUtils.isEmpty(pipm.Pax_AID)) {
-                printerWrapper.header("AID:", pipm.Pax_AID);
-            }
-            if(!TextUtils.isEmpty(t.applicationCryptogramType)) {
-                printerWrapper.header("ARQC:", t.applicationCryptogramType);
-            }
-            printerWrapper.header("Approval:", pipm.Pax_Approval);
-            printerWrapper.orderFooter("Total", pipm.Pax_Value, false);
-            if(app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
-                printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
-            }
-            printerWrapper.drawLine();
         }
 
 
