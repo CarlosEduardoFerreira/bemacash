@@ -269,10 +269,13 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
         }
 
-        printerWrapper.drawLine();
+
 
         if(transactions != null) {
             for (PaymentTransactionModel t : transactions) {
+
+                printerWrapper.drawLine();
+
                 PaxInformationPrintModel pipm = new PaxInformationPrintModel();
 
                 if (!TextUtils.isEmpty(t.cardName))
@@ -312,8 +315,11 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 if (t.gateway.isTrueCreditCard() && app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
                     printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
                 }
-                printerWrapper.drawLine();
+
             }
+            printerWrapper.drawLine();
+        }else{
+            printerWrapper.drawLine();
         }
 
 
@@ -338,10 +344,6 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
         }
         /*********************************** Pax Signature Bitmap Object **/
-
-        if(totalPax.equals(BigDecimal.ZERO)){
-            printerWrapper.drawLine();
-        }
 
 
 //        if (giftCardResults != null)

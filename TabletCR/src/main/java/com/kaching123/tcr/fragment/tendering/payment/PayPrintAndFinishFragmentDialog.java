@@ -318,16 +318,22 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             dismiss();
             super.completeProcess();
         } else {
-            final WaitDialogFragment waitDialog = (WaitDialogFragment) activity.getSupportFragmentManager().findFragmentByTag("progressDialog");
-            waitDialog.show(getActivity(), getString(R.string.wait_printing));
-            printBox.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    waitDialog.hide(activity);
-                    printed = true;
-                    completeProcess();
-                }
-            }, 3000);
+            Logger.d("bemacarl.gateWay: " + gateWay);
+            if(gateWay != null) {
+                final WaitDialogFragment waitDialog = (WaitDialogFragment) activity.getSupportFragmentManager().findFragmentByTag("progressDialog");
+                waitDialog.show(getActivity(), getString(R.string.wait_printing));
+                printBox.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        waitDialog.hide(activity);
+                        printed = true;
+                        completeProcess();
+                    }
+                }, 3000);
+            }else{
+                printed = true;
+                completeProcess();
+            }
         }
     }
 
