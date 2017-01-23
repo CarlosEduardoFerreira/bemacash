@@ -99,7 +99,9 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
 
         Logger.d("bemacarl.updateWith: " + response.ExtData);
 
-        setExtData("<extData>" + response.ExtData + "</extData>");
+        String xmlExtData = "<extData>" + response.ExtData + "</extData>";
+
+        setExtData(xmlExtData);
         //TODO PosLink need change to HostCode later.
 //        userTransactionNumber = response.RefNum;
 
@@ -116,10 +118,10 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         }
 
         lastFour = response.BogusAccountNum;
-        int Card_Entry_ID = Integer.parseInt(getExtData(response.ExtData,"PLEntryMode"));
+        int Card_Entry_ID = Integer.parseInt(getExtData(xmlExtData,"PLEntryMode"));
         entryMethod = getEntryModeByID(Card_Entry_ID);
-        applicationIdentifier = getExtData(response.ExtData,"AID");
-        applicationCryptogramType = getExtData(response.ExtData,"CID");
+        applicationIdentifier = getExtData(xmlExtData,"AID");
+        applicationCryptogramType = getExtData(xmlExtData,"CID");
         authorizationNumber = response.AuthCode;
         paxDigitalSignature = paxDigitalSign;
 

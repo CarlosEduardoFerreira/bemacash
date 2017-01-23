@@ -198,7 +198,6 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-
                                 }
                             }else{
                                 getApp().paxSignatureCanceledByCustomer = true;
@@ -210,7 +209,6 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     }
 
                     transaction.updateWith(response, paxDigitalSign);
-
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
                     operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
