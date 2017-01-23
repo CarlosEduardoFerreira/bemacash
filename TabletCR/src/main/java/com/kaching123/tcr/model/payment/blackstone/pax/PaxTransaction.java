@@ -118,8 +118,7 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         }
 
         lastFour = response.BogusAccountNum;
-        int Card_Entry_ID = Integer.parseInt(getExtData(xmlExtData,"PLEntryMode"));
-        entryMethod = getEntryModeByID(Card_Entry_ID);
+        entryMethod = getExtData(xmlExtData,"PLEntryMode");
         applicationIdentifier = getExtData(xmlExtData,"AID");
         applicationCryptogramType = getExtData(xmlExtData,"CID");
         authorizationNumber = response.AuthCode;
