@@ -93,20 +93,15 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
 
         amount = new BigDecimal(response.ApprovedAmount).divide(CalculationUtil.ONE_HUNDRED);
         serviceTransactionNumber = response.RefNum;
-        authorizationNumber = response.AuthCode;
-        lastFour = response.BogusAccountNum;
 
         //added for Heartland requirements
         resultCode = response.ResultCode;
-        applicationCryptogramType = "";
-        applicationIdentifier = "";
-        entryMethod = "";
+
         Logger.d("bemacarl.updateWith: " + response.ExtData);
 
         setExtData("<extData>" + response.ExtData + "</extData>");
         //TODO PosLink need change to HostCode later.
 //        userTransactionNumber = response.RefNum;
-
 
         // PaxSignature paxSign = new PaxSignature();
 
@@ -120,8 +115,55 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
             Log.d(TAG, ex.getMessage());
         }
 
+        lastFour = response.BogusAccountNum;
+        int Card_Entry_ID = Integer.parseInt(getExtData(response.ExtData,"PLEntryMode"));
+        entryMethod = getEntryModeByID(Card_Entry_ID);
+        applicationIdentifier = getExtData(response.ExtData,"AID");
+        applicationCryptogramType = getExtData(response.ExtData,"CID");
+        authorizationNumber = response.AuthCode;
         paxDigitalSignature = paxDigitalSign;
 
+    }
+
+    public String getEntryModeByID(int Card_Entry_ID){
+        String PLEntryMode = "";
+        switch(Card_Entry_ID){
+            case 0: PLEntryMode = "Manual"; break;
+            case 1: PLEntryMode = "Swipe"; break;
+            case 2: PLEntryMode = "Contactless"; break;
+            case 3: PLEntryMode = "Scanner"; break;
+            case 4: PLEntryMode = "Chip"; break;
+            case 5: PLEntryMode = "Chip Fall Back Swipe"; break;
+        }
+        return PLEntryMode;
+    }
+
+    public String getExtData(String extData, String tag) {
+        StringReader sr = new StringReader(extData);
+        InputSource is = new InputSource(sr);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        DocumentBuilder builder = null;
+        try {
+            builder = factory.newDocumentBuilder();
+            Document document = builder.parse(is);
+            NodeList exeDatas = document.getChildNodes();
+            for (int i = 0; i < exeDatas.getLength(); i++) {
+                Node node = exeDatas.item(i);
+                NodeList datas = node.getChildNodes();
+                for (int j = 0; j < datas.getLength(); j++) {
+                    if (datas.item(j).getNodeName().equalsIgnoreCase(tag))
+                        return datas.item(j).getTextContent();
+                }
+            }
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
 

@@ -228,6 +228,33 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
             totalPax = totalPax.add(p.amount);
 
+            if (reprint) {
+                if (!TextUtils.isEmpty(p.cardName)) {
+                    printerWrapper.header("Card Type:", p.cardName);
+                }
+                if (!TextUtils.isEmpty(p.lastFour)) {
+                    printerWrapper.header("Account Number:", "####-####-####-" + p.lastFour);
+                }
+                if (!TextUtils.isEmpty(p.entryMethod)) {
+                    printerWrapper.header("Entry:", p.entryMethod);
+                }
+                if (!TextUtils.isEmpty(p.applicationIdentifier)) {
+                    printerWrapper.header("AID:", p.applicationIdentifier);
+                }
+                if (!TextUtils.isEmpty(p.applicationCryptogramType)) {
+                    printerWrapper.header("ARQC:", p.applicationCryptogramType);
+                }
+                if (!TextUtils.isEmpty(p.authorizationNumber)) {
+                    printerWrapper.header("Approval:", p.authorizationNumber);
+                }
+
+                printerWrapper.orderFooter("Total", p.amount, false);
+
+                if (p.paxDigitalSignature != null) {
+                    printerWrapper.printPaxSignature(p.paxDigitalSignature);
+                }
+            }
+
         }
 
         if (isEbtPaymentExists) {

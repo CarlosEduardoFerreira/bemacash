@@ -269,6 +269,12 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
         v.put(PaymentTransactionTable.CASH_BACK, _decimal(cashBack));
         v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
+
+        v.put(PaymentTransactionTable.LAST_FOUR, lastFour);
+        v.put(PaymentTransactionTable.ENTRY_METHOD, entryMethod);
+        v.put(PaymentTransactionTable.APPLICATION_IDENTIFIER, applicationIdentifier);
+        v.put(PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE, applicationCryptogramType);
+        v.put(PaymentTransactionTable.AUTHORIZATION_NUMBER, authorizationNumber);
         v.put(PaymentTransactionTable.SIGNATURE_BYTES, paxDigitalSignature);
         return v;
     }

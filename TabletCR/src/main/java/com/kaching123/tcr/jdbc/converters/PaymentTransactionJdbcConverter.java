@@ -43,6 +43,12 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
     private static final String IS_PREAUTH = "IS_PREAUTH";
     private static final String CASH_BACK = "CASH_BACK";
     private static final String EBT_BALANCE = "EBT_BALANCE";
+
+    private static final String LAST_FOUR = "LAST_FOUR";
+    private static final String ENTRY_METHOD = "ENTRY_METHOD";
+    private static final String APPLICATION_IDENTIFIER = "APPLICATION_IDENTIFIER";
+    private static final String APPLICATION_CRYPTOGRAM_TYPE = "APPLICATION_CRYPTOGRAM_TYPE";
+    private static final String AUTHORIZATION_NUMBER = "AUTHORIZATION_NUMBER";
     private static final String SIGNATURE_BYTES = "SIGNATURE_BYTES";
 
     @Override

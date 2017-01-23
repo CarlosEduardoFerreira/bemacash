@@ -1371,6 +1371,22 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String CASH_BACK = "cash_back";
 
+
+        @Column(type = Column.Type.TEXT)
+        String LAST_FOUR = "last_four";
+
+        @Column(type = Column.Type.TEXT)
+        String ENTRY_METHOD = "entry_method";
+
+        @Column(type = Column.Type.TEXT)
+        String APPLICATION_IDENTIFIER = "application_identifier";
+
+        @Column(type = Column.Type.TEXT)
+        String APPLICATION_CRYPTOGRAM_TYPE = "application_cryptogram_type";
+
+        @Column(type = Column.Type.TEXT)
+        String AUTHORIZATION_NUMBER = "authorization_number";
+
         @Column(type = Column.Type.TEXT)
         String SIGNATURE_BYTES = "signature_bytes";
     }

@@ -177,7 +177,8 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     transaction.updateWith(response, paxDigitalSign);
 
-                    if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature() && getApp().requireSignatureOnTransactionsHigherThan) {
+                    if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature()
+                            && getApp().requireSignatureOnTransactionsHigherThan) {
                         try {
                             Thread.sleep(400);
                             paxSignature = new PaxSignature(getPaxModel());
