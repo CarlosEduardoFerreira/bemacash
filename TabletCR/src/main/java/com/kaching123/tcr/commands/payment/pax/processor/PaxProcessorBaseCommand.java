@@ -5,7 +5,6 @@ import android.content.ContentProviderOperation;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.PaxModel;
-import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.payment.blackstone.pax.PaxTransaction;
 import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -161,10 +160,10 @@ public abstract class PaxProcessorBaseCommand extends AsyncCommand {
         request.TransType = TRANS_TYPE_SALE;
 
         BigDecimal total = calcTotal(transaction);
-        getApp().RequireSignatureonTransactionsHigherThan = getApp().getShopInfo().signaturePrintLimit != null &&
+        getApp().requireSignatureOnTransactionsHigherThan = getApp().getShopInfo().signaturePrintLimit != null &&
                 getApp().getShopInfo().signaturePrintLimit.compareTo(total) <= 0;
 
-        if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
+        if(getApp().getDigitalSignature() && getApp().requireSignatureOnTransactionsHigherThan) {
 
         /*  <SignatureCapture>
             The ECR supports signature printing and the terminal supports signature capture.

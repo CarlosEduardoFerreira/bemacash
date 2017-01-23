@@ -2,11 +2,9 @@ package com.kaching123.tcr.commands.payment.pax.processor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import com.kaching123.pos.printer.BitmapCarl;
@@ -18,7 +16,6 @@ import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode;
 import com.pax.poslink.ManageRequest;
 import com.pax.poslink.ManageResponse;
-import com.pax.poslink.PaymentResponse;
 import com.pax.poslink.PosLink;
 import com.pax.poslink.ProcessTransResult;
 import com.telly.groundy.TaskResult;
@@ -27,14 +24,10 @@ import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -50,11 +43,11 @@ public class PaxSignature extends PaxProcessorBaseCommand {
     public String sigSavePath = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath() + "/img/receipt";
 
 
-    public Bitmap SignatureBitmapObject;
-    public byte[] signatureBitmapBytes;
+    public Bitmap SignatureBitmapObject = null;
+    public byte[] signatureBitmapBytes = null;
 
     public PaxSignature(PaxModel paxModel) {
-        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR) {
+        if(TcrApplication.get().paxSignatureEmulator) {
             try {
                 SignatureBitmapObject = this.ConvertPaxSignatureToBitmapObject("");
                 Bitmap bmp = SignatureBitmapObject;
@@ -159,11 +152,17 @@ public class PaxSignature extends PaxProcessorBaseCommand {
                     TcrApplication.get().getShopPref().paxUrl().put(paxTerminal.ip);
                     TcrApplication.get().getShopPref().paxPort().put(paxTerminal.port);
 
-                    // Convert signature to bitmap object
-                    SignatureBitmapObject = this.ConvertPaxSignatureToBitmapObject(response.SigFileName);
+                    try {
+                        // Convert signature to bitmap object
+                        SignatureBitmapObject = this.ConvertPaxSignatureToBitmapObject(response.SigFileName);
+                    }catch(Exception e){
+                        getApp().paxSignatureCanceledByCustomer = true;
+                        e.printStackTrace();
+                    }
 
                     return succeeded().add(RESULT_DETAILS, response.ResultCode).add(RESULT_CODE, errorCode);
                 } else {
+                    getApp().paxSignatureCanceledByCustomer = true;
                     Logger.e("PaxSignatureCommand failed, pax error code(not RESULT_CODE_SUCCESS): " + ptr.Code);
                     error = PaxGateway.Error.PAX;
                     return failed().add(RESULT_ERROR, error).add(RESULT_ERROR_CODE, responseCode);
@@ -191,7 +190,7 @@ public class PaxSignature extends PaxProcessorBaseCommand {
 
         String alldata = "";
 
-        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+        if(TcrApplication.get().paxSignatureEmulator){
             // Carlos
             alldata = "0,65535^35,81^33,78^32,75^31,71^30,68^29,65^28,62^27,58^27,55^26,52^25,48^24,44^" +
                     "24,41^24,38^24,35^25,31^28,28^30,31^29,35^28,38^28,41^28,44^28,48^28,51^28,54^" +

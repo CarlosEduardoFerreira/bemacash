@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
@@ -144,7 +143,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         signatureBox.setFocusable(false);
 
-        if ((!enableSignatureCheckbox() || getApp().PAX_SIGNATURE_EMULATOR) || (digital_signature && signaturePrintLimit) ) {
+        if ((!enableSignatureCheckbox() || getApp().paxSignatureEmulator) || (digital_signature && signaturePrintLimit) ) {
             signatureBox.setEnabled(false);
             signatureBox.setChecked(false);
         } else if (!signaturePrintLimit){
@@ -152,6 +151,11 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             signatureBox.setChecked(false);
         } else if (signaturePrintLimit) {
             signatureBox.setEnabled(false);
+            signatureBox.setChecked(true);
+        }
+
+        if(digital_signature && getApp().paxSignatureCanceledByCustomer){
+            signatureBox.setEnabled(true);
             signatureBox.setChecked(true);
         }
 

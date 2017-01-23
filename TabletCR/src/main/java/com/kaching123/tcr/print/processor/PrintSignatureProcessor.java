@@ -121,7 +121,7 @@ public class PrintSignatureProcessor extends BasePrintProcessor<ISignaturePrinte
                 }
                 printerWrapper.emptyLine();
 
-                //if(app.RequireSignatureonTransactionsHigherThan) {
+                //if(app.requireSignatureOnTransactionsHigherThan) {
                     if (app.getDigitalSignature() && payment.paxDigitalSignature != null) {
                         printerWrapper.printPaxSignature(payment.paxDigitalSignature);
                     } else {

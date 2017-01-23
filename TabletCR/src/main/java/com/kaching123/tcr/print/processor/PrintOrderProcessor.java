@@ -2,20 +2,14 @@ package com.kaching123.tcr.print.processor;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
-import com.kaching123.pos.printer.BitmapCarl;
-import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.pos.util.ITextPrinter;
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxInformationPrintModel;
-import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
-import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
@@ -29,7 +23,6 @@ import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonComparator;
 import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
-import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.print.FormatterUtil;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
@@ -37,7 +30,6 @@ import com.kaching123.tcr.store.ShopSchema2.SaleOrderItemsView2.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
 import com.kaching123.tcr.util.UnitUtil;
-import com.kaching123.tcr.websvc.api.pax.api.WebAPI;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.math.BigDecimal;
@@ -312,7 +304,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 }
                 printerWrapper.header("Approval:", pipm.Pax_Approval);
                 printerWrapper.orderFooter("Total", pipm.Pax_Value, false);
-                if (t.gateway.isTrueCreditCard() && app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
+                if (t.gateway.isTrueCreditCard() && app.getDigitalSignature() &&
+                        app.requireSignatureOnTransactionsHigherThan && pipm.Pax_DigitalSignature != null) {
                     printerWrapper.printPaxSignature(pipm.Pax_DigitalSignature);
                 }
 
@@ -324,7 +317,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
 
         /** Pax Signature Bitmap Object ***********************************/
-        if(TcrApplication.get().PAX_SIGNATURE_EMULATOR){
+        if(TcrApplication.get().paxSignatureEmulator){
             printerWrapper.header("Card Type:", "Visa Test");
             printerWrapper.header("Account Number:", "####-####-####-1234");
             printerWrapper.header("Entry:", "Chip");
@@ -335,7 +328,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             try {
                 Thread.sleep(1500);
                 if (paxSignature != null) {
-                    if (app.getDigitalSignature() && app.RequireSignatureonTransactionsHigherThan) {
+                    if (app.getDigitalSignature() && app.requireSignatureOnTransactionsHigherThan && paxSignature.signatureBitmapBytes != null) {
                         printerWrapper.printPaxSignature(paxSignature.signatureBitmapBytes);
                     }
                 }

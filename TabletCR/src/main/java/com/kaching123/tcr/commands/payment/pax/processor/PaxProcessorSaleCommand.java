@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import com.kaching123.pos.printer.BitmapCarl;
 import com.kaching123.pos.printer.BitmapPrintedCarl;
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
@@ -43,7 +42,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -179,27 +177,34 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     transaction.updateWith(response, paxDigitalSign);
 
-                    if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature() && getApp().RequireSignatureonTransactionsHigherThan) {
-                        Thread.sleep(400);
-                        paxSignature = new PaxSignature(getPaxModel());
-                        Thread.sleep(400);
-                        if(paxSignature != null) {
-                            Bitmap bmp = paxSignature.SignatureBitmapObject;
-                            if (bmp == null) {
-                                Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
-                            } else {
-                                try {
-                                    Thread.sleep(200);
-                                    BitmapCarl bitmapCarl = new BitmapCarl();
-                                    Thread.sleep(200);
-                                    BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-                                    Thread.sleep(200);
-                                    paxDigitalSign = printedBitmapCarl.toPrint();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                    if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature() && getApp().requireSignatureOnTransactionsHigherThan) {
+                        try {
+                            Thread.sleep(400);
+                            paxSignature = new PaxSignature(getPaxModel());
+                            Thread.sleep(400);
+                            if (paxSignature != null) {
+                                Bitmap bmp = paxSignature.SignatureBitmapObject;
+                                if (bmp == null) {
+                                    Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
+                                } else {
+                                    try {
+                                        Thread.sleep(200);
+                                        BitmapCarl bitmapCarl = new BitmapCarl();
+                                        Thread.sleep(200);
+                                        BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                                        Thread.sleep(200);
+                                        paxDigitalSign = printedBitmapCarl.toPrint();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
 
+                                }
+                            }else{
+                                getApp().paxSignatureCanceledByCustomer = true;
                             }
+                        }catch(Exception e){
+                            getApp().paxSignatureCanceledByCustomer = true;
+                            e.printStackTrace();
                         }
                     }
 
