@@ -318,10 +318,10 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             dismiss();
             super.completeProcess();
         } else {
-            Logger.d("bemacarl.gateWay: " + gateWay);
-            if(gateWay != null) {
+            if(printBox.isChecked() || signatureBox.isChecked()) {
                 final WaitDialogFragment waitDialog = (WaitDialogFragment) activity.getSupportFragmentManager().findFragmentByTag("progressDialog");
                 waitDialog.show(getActivity(), getString(R.string.wait_printing));
+                /* should to fix to get printer status */
                 printBox.postDelayed(new Runnable() {
                     @Override
                     public void run() {
