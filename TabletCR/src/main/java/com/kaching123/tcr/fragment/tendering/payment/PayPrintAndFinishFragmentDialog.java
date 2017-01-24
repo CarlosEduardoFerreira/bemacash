@@ -157,7 +157,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         Logger.d("Bemacarl digital_signature paxSignatureCanceledByCustomer: |" + digital_signature + "|" + getApp().paxSignatureCanceledByCustomer + "|");
         if(digital_signature && getApp().paxSignatureCanceledByCustomer){
-            signatureBox.setEnabled(true);
+            signatureBox.setEnabled(false);
             signatureBox.setChecked(true);
         }
 
