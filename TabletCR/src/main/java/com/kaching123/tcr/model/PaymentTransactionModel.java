@@ -129,23 +129,25 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.closedPerauthGuid = transaction.getGuid();
         this.declineReason = transaction.getDeclineReason();
         this.parentTransactionGuid = transaction.getParentTransactionGuid();
-        this.authorizationNumber = transaction.getAuthorizationNumber();
         this.paymentType = transaction.getPaymentType();
         this.operatorId = transaction.getOperatorId();
         this.createTime = createTime;
         this.shiftGuid = shiftGuid;
         this.cardName = transaction.getCardName();
         this.changeAmount = transaction.getChangeAmount();
-        this.lastFour = transaction.getLastFour();
         this.availableAmount = transaction.getAvailableAmount();
         this.isPreauth = transaction.getIsPreauth();
         this.cashBack = transaction.getCashBack();
         this.balance = transaction.getBalance();
-        this.applicationIdentifier = transaction.getApplicationIdentifier();
         this.resultCode = transaction.getResultCode();
-        this.entryMethod = transaction.getEntryMethod();
-        this.applicationCryptogramType = transaction.getApplicationCryptogramType();
         this.customerName = transaction.getCustomerName();
+
+        this.lastFour = transaction.getLastFour();
+        this.entryMethod = transaction.getEntryMethod();
+        this.applicationIdentifier = transaction.getApplicationIdentifier();
+        this.applicationCryptogramType = transaction.getApplicationCryptogramType();
+        this.authorizationNumber = transaction.getAuthorizationNumber();
+        this.paxDigitalSignature = transaction.getPaxDigitalSignature();
     }
 
     public PaymentTransactionModel(String shiftGuid, ITransaction transaction) {
@@ -153,36 +155,33 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.orderGuid = transaction.getOrderGuid();
         this.amount = transaction.getAmount();
         this.status = transaction.getStatus();
-
         this.gateway = transaction.getGateway();
-
         this.isPreauth = transaction.getIsPreauth();
         this.paymentType = transaction.getPaymentType();
-
-        if (isPreauth && PaymentType.SALE.equals(paymentType))
+        if (isPreauth && PaymentType.SALE.equals(paymentType)) {
             this.preauthPaymentId = transaction.getPaymentId();
-        else
+        }else {
             this.paymentId = transaction.getPaymentId();
-
+        }
         this.declineReason = transaction.getDeclineReason();
         this.parentTransactionGuid = transaction.getParentTransactionGuid();
-        this.authorizationNumber = transaction.getAuthorizationNumber();
-
         this.operatorId = transaction.getOperatorId();
         //TODO fix it
         this.createTime = new Date();
         this.shiftGuid = shiftGuid;
         this.cardName = transaction.getCardName();
         this.changeAmount = transaction.getChangeAmount();
-        this.lastFour = transaction.getLastFour();
         this.availableAmount = transaction.getAvailableAmount();
         this.cashBack = transaction.getCashBack();
         this.balance = transaction.getBalance();
-        this.applicationIdentifier = transaction.getApplicationIdentifier();
         this.resultCode = transaction.getResultCode();
-        this.entryMethod = transaction.getEntryMethod();
-        this.applicationCryptogramType = transaction.getApplicationCryptogramType();
         this.customerName = transaction.getCustomerName();
+
+        this.lastFour = transaction.getLastFour();
+        this.entryMethod = transaction.getEntryMethod();
+        this.applicationIdentifier = transaction.getApplicationIdentifier();
+        this.applicationCryptogramType = transaction.getApplicationCryptogramType();
+        this.authorizationNumber = transaction.getAuthorizationNumber();
         this.paxDigitalSignature = transaction.getPaxDigitalSignature();
     }
 
@@ -204,27 +203,28 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         result.orderId = orderGuid;
         result.amount = amount;
         result.type = TransactionType.valueOf(gateway);
-
         result.serviceTransactionNumber = (TextUtils.isEmpty(preauthPaymentId) ? paymentId : preauthPaymentId);
-
-        result.authorizationNumber = authorizationNumber;
         result.parentTransactionGuid = parentTransactionGuid;
         result.paymentType = paymentType;
         result.operatorId = operatorId;
         result.code = TransactionStatusCode.UNKNOWN;
         result.cardName = cardName;
-        result.lastFour = lastFour;
         result.availableValue = availableAmount;
         result.isPreauth = isPreauth;
         result.balance = balance;
         result.allowReload = allowReload;
         result.cashBack = cashBack;
         result.balance = balance;
-        result.applicationIdentifier = applicationIdentifier;
-        result.entryMethod = entryMethod;
-        result.applicationCryptogramType = applicationCryptogramType;
         result.customerName = customerName;
         result.resultCode = resultCode;
+
+        result.lastFour = lastFour;
+        result.entryMethod = entryMethod;
+        result.applicationIdentifier = applicationIdentifier;
+        result.applicationCryptogramType = applicationCryptogramType;
+        result.authorizationNumber = authorizationNumber;
+        result.paxDigitalSignature = paxDigitalSignature;
+
         return result;
     }
 

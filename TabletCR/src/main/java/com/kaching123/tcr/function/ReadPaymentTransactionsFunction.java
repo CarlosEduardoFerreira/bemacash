@@ -159,12 +159,12 @@ public final class ReadPaymentTransactionsFunction {
                         _bool(c, c.getColumnIndex(PaymentTransactionTable.IS_PREAUTH)),
                         _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK), BigDecimal.ZERO),
                         _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO),
-                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.LAST_FOUR)),
-                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.ENTRY_METHOD)),
-                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.APPLICATION_IDENTIFIER)),
-                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE)),
-                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.AUTHORIZATION_NUMBER)),
-                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.SIGNATURE_BYTES))
+                        c.getString(c.getColumnIndex(PaymentTransactionTable.LAST_FOUR)),
+                        c.getString(c.getColumnIndex(PaymentTransactionTable.ENTRY_METHOD)),
+                        c.getString(c.getColumnIndex(PaymentTransactionTable.APPLICATION_IDENTIFIER)),
+                        c.getString(c.getColumnIndex(PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE)),
+                        c.getString(c.getColumnIndex(PaymentTransactionTable.AUTHORIZATION_NUMBER)),
+                        c.getString(c.getColumnIndex(PaymentTransactionTable.SIGNATURE_BYTES))
                 );
                 model.balance = _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO);
                 String parentGuid = c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID));
