@@ -53,6 +53,11 @@ public abstract class JdbcBuilder {
         //return addColumn(column, value == null ? NULL : "'" + value + "'");
     }
 
+    public JdbcBuilder add(String column, byte[] value) {
+        columns.add(new Pair(column, Types.BLOB, value));
+        return this;
+    }
+
     public JdbcBuilder add(String column, BigDecimal value) {
         columns.add(new Pair(column, Types.DECIMAL, value));
         return this;

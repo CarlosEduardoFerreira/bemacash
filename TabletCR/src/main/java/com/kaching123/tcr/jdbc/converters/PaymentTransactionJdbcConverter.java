@@ -113,6 +113,12 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
                 .add(IS_PREAUTH, model.isPreauth)
                 .add(CASH_BACK, model.cashBack)
                 .add(EBT_BALANCE, model.balance)
+                .add(LAST_FOUR, model.lastFour)
+                .add(ENTRY_METHOD, model.entryMethod)
+                .add(APPLICATION_IDENTIFIER, model.applicationIdentifier)
+                .add(APPLICATION_CRYPTOGRAM_TYPE, model.applicationCryptogramType)
+                .add(AUTHORIZATION_NUMBER, model.authorizationNumber)
+                .add(SIGNATURE_BYTES, model.paxDigitalSignature)
                 .build(JdbcFactory.getApiMethod(model));
     }
 

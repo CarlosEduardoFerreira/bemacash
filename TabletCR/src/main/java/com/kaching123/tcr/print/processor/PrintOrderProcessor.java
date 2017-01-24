@@ -195,14 +195,13 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
         });
 
+
         boolean isEbtPaymentExists = false;
         boolean isGiftCardPaymnetExists = false;
         BigDecimal ebtBalance = BigDecimal.ZERO;
         BigDecimal giftCardBalance = BigDecimal.ZERO;
 
         BigDecimal totalPax = BigDecimal.ZERO;
-
-        //ArrayList<PaxInformationPrintModel> paxInformationPrintModelList = new ArrayList<PaxInformationPrintModel>();
 
         for (PaymentTransactionModel p : payments) {
             updateHasCreditCardPayment(p.gateway.isCreditCard());
@@ -227,33 +226,6 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
 
             totalPax = totalPax.add(p.amount);
-
-            if (reprint) {
-                if (!TextUtils.isEmpty(p.cardName)) {
-                    printerWrapper.header("Card Type:", p.cardName);
-                }
-                if (!TextUtils.isEmpty(p.lastFour)) {
-                    printerWrapper.header("Account Number:", "####-####-####-" + p.lastFour);
-                }
-                if (!TextUtils.isEmpty(p.entryMethod)) {
-                    printerWrapper.header("Entry:", p.entryMethod);
-                }
-                if (!TextUtils.isEmpty(p.applicationIdentifier)) {
-                    printerWrapper.header("AID:", p.applicationIdentifier);
-                }
-                if (!TextUtils.isEmpty(p.applicationCryptogramType)) {
-                    printerWrapper.header("ARQC:", p.applicationCryptogramType);
-                }
-                if (!TextUtils.isEmpty(p.authorizationNumber)) {
-                    printerWrapper.header("Approval:", p.authorizationNumber);
-                }
-
-                printerWrapper.orderFooter("Total", p.amount, false);
-
-                if (p.paxDigitalSignature != null) {
-                    printerWrapper.printPaxSignature(p.paxDigitalSignature);
-                }
-            }
 
         }
 
@@ -288,8 +260,43 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             }
         }
 
+        if(payments != null) {
+            for (PaymentTransactionModel p : payments) {
+                printerWrapper.drawLine();
+                //if (reprint) {
+                if (!TextUtils.isEmpty(p.cardName)) {
+                    printerWrapper.header("Card Type:", p.cardName);
+                }
+                if (!TextUtils.isEmpty(p.lastFour)) {
+                    printerWrapper.header("Account Number:", "####-####-####-" + p.lastFour);
+                }
+                if (!TextUtils.isEmpty(p.entryMethod)) {
+                    printerWrapper.header("Entry:", p.entryMethod);
+                }
+                if (!TextUtils.isEmpty(p.applicationIdentifier)) {
+                    printerWrapper.header("AID:", p.applicationIdentifier);
+                }
+                if (!TextUtils.isEmpty(p.applicationCryptogramType)) {
+                    printerWrapper.header("ARQC:", p.applicationCryptogramType);
+                }
+                if (!TextUtils.isEmpty(p.authorizationNumber)) {
+                    printerWrapper.header("Approval:", p.authorizationNumber);
+                }
+
+                printerWrapper.orderFooter("Total", p.amount, false);
+
+                if (p.paxDigitalSignature != null) {
+                    printerWrapper.printPaxSignature(p.paxDigitalSignature);
+                }
+                //}
+            }
+            printerWrapper.drawLine();
+        }else{
+            printerWrapper.drawLine();
+        }
 
 
+        /*
         if(transactions != null) {
             for (PaymentTransactionModel t : transactions) {
 
@@ -341,6 +348,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
         }else{
             printerWrapper.drawLine();
         }
+        /**/
 
 
         /** Pax Signature Bitmap Object ***********************************/
