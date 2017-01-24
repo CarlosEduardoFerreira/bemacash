@@ -139,6 +139,9 @@ public class PaxSignature extends PaxProcessorBaseCommand {
 
                     try {
                         signaturePaxFileString = getStringFromPaxFile(response.SigFileName);
+                        if(signaturePaxFileString == null){
+                            getApp().paxSignatureCanceledByCustomer = true;
+                        }
                     }catch(Exception e){
                         getApp().paxSignatureCanceledByCustomer = true;
                         e.printStackTrace();
@@ -170,6 +173,11 @@ public class PaxSignature extends PaxProcessorBaseCommand {
 
 
     public String getStringFromPaxFile(String imageLocation){
+
+        if(imageLocation == null || imageLocation == ""){
+            return null;
+        }
+
         String alldata = null;
 
         if(TcrApplication.get().paxSignatureEmulator){
@@ -201,10 +209,12 @@ public class PaxSignature extends PaxProcessorBaseCommand {
                         alldata = alldata + index;
                     }
                 } catch (Exception var11) {
+                    alldata = null;
                     var11.printStackTrace();
                 }
                 sr.close();
             }catch(Exception e){
+                alldata = null;
                 e.printStackTrace();
             }
         }

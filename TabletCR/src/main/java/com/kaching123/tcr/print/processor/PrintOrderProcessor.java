@@ -270,7 +270,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                     printerWrapper.header("Account Number:", "####-####-####-" + p.lastFour);
                 }
                 if (!TextUtils.isEmpty(p.entryMethod)) {
-                    printerWrapper.header("Entry:", p.entryMethod);
+                    printerWrapper.header("Entry:", getEntryMethod(p.entryMethod));
                 }
                 if (!TextUtils.isEmpty(p.applicationIdentifier)) {
                     printerWrapper.header("AID:", p.applicationIdentifier);
@@ -381,17 +381,24 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
     }
 
 
-    public String getEntryModeByID(int Card_Entry_ID){
-        String PLEntryMode = "";
-        switch(Card_Entry_ID){
-            case 0: PLEntryMode = "Manual"; break;
-            case 1: PLEntryMode = "Swipe"; break;
-            case 2: PLEntryMode = "Contactless"; break;
-            case 3: PLEntryMode = "Scanner"; break;
-            case 4: PLEntryMode = "Chip"; break;
-            case 5: PLEntryMode = "Chip Fall Back Swipe"; break;
+    private String getEntryMethod(String entryMethod) {
+        int method = Integer.parseInt(entryMethod.equalsIgnoreCase("") ? "6" : entryMethod);
+        switch (method) {
+            case 0:
+                return "Manual";
+            case 1:
+                return "Swipe";
+            case 2:
+                return "Contactless";
+            case 3:
+                return "Scanner";
+            case 4:
+                return "Chip";
+            case 5:
+                return "Chip Fall Back Swipe";
+            default:
+                return "";
         }
-        return PLEntryMode;
     }
 
     @Override
