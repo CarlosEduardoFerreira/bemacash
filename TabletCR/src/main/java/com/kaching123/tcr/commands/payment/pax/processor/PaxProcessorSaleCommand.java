@@ -175,8 +175,6 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     String paxDigitalSign = null;
 
-                    transaction.updateWith(response, paxDigitalSign);
-
                     if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature()
                             && getApp().requireSignatureOnTransactionsHigherThan) {
                         try {
@@ -185,15 +183,16 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                             Thread.sleep(400);
                             if (paxSignature != null) {
                                 paxDigitalSign = paxSignature.signaturePaxFileString;
+                                Logger.d("Bemacarl.paxDigitalSign: " + paxDigitalSign);
+                                if(paxDigitalSign == null || paxDigitalSign == ""){
+                                    getApp().paxSignatureCanceledByCustomer = true;
+                                }
                             }
                         }catch(Exception e){
                             e.printStackTrace();
                         }
                     }
-                    Logger.d("Bemacarl.paxDigitalSign: " + paxDigitalSign);
-                    if(paxDigitalSign == null || paxDigitalSign == ""){
-                        getApp().paxSignatureCanceledByCustomer = true;
-                    }
+
                     transaction.updateWith(response, paxDigitalSign);
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
