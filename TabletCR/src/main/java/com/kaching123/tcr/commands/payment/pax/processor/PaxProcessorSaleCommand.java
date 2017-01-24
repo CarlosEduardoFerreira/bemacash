@@ -185,15 +185,15 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                             Thread.sleep(400);
                             if (paxSignature != null) {
                                 paxDigitalSign = paxSignature.signaturePaxFileString;
-                            }else{
-                                getApp().paxSignatureCanceledByCustomer = true;
                             }
                         }catch(Exception e){
-                            getApp().paxSignatureCanceledByCustomer = true;
                             e.printStackTrace();
                         }
                     }
-
+                    Logger.d("Bemacarl.paxDigitalSign: " + paxDigitalSign);
+                    if(paxDigitalSign == null || paxDigitalSign == ""){
+                        getApp().paxSignatureCanceledByCustomer = true;
+                    }
                     transaction.updateWith(response, paxDigitalSign);
 
                     PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
@@ -203,6 +203,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
 
                 } else {
+                    getApp().paxSignatureCanceledByCustomer = true;
                     transaction.allowReload = true;
                     errorReason = "Result Code: " + response.ResultCode + " (" + response.ResultTxt + ")";
                     Logger.d("Pax Error code: " + response.ResultCode + ", Message: " + response.ResultTxt);
