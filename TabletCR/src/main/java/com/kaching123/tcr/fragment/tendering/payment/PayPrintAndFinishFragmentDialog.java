@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
@@ -154,12 +155,11 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             signatureBox.setChecked(true);
         }
 
+        Logger.d("Bemacarl digital_signature paxSignatureCanceledByCustomer: |" + digital_signature + "|" + getApp().paxSignatureCanceledByCustomer + "|");
         if(digital_signature && getApp().paxSignatureCanceledByCustomer){
             signatureBox.setEnabled(true);
             signatureBox.setChecked(true);
         }
-
-
 
         if (changeAmount != null && changeAmount.compareTo(BigDecimal.ZERO) == 1) {
             change.setVisibility(View.VISIBLE);
