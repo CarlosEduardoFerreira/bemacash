@@ -15,6 +15,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.PaymentTransactionView2.PaymentTransactionTable;
 import com.kaching123.tcr.store.ShopSchema2.PaymentTransactionView2.SaleOrderTable;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionView;
 
 import java.math.BigDecimal;
@@ -157,7 +158,13 @@ public final class ReadPaymentTransactionsFunction {
                         _decimal(c, c.getColumnIndex(PaymentTransactionTable.CHANGE_AMOUNT), BigDecimal.ZERO),
                         _bool(c, c.getColumnIndex(PaymentTransactionTable.IS_PREAUTH)),
                         _decimal(c, c.getColumnIndex(PaymentTransactionTable.CASH_BACK), BigDecimal.ZERO),
-                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO)
+                        _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO),
+                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.LAST_FOUR)),
+                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.ENTRY_METHOD)),
+                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.APPLICATION_IDENTIFIER)),
+                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE)),
+                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.AUTHORIZATION_NUMBER)),
+                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.SIGNATURE_BYTES))
                 );
                 model.balance = _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO);
                 String parentGuid = c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID));

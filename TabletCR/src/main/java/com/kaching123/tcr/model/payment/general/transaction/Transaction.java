@@ -56,7 +56,7 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
     public String applicationCryptogramType;
     public String customerName;
 
-    public byte[] paxDigitalSignature = null;
+    public String paxDigitalSignature = null;
 
     @Expose
     @SerializedName(WebAPI.BlackStoneAPI.REQUEST_PARAM_AMOUNT)
@@ -276,7 +276,7 @@ public abstract class Transaction<T extends Transaction<T>> implements Parcelabl
     }
 
     @Override
-    public byte[] getPaxDigitalSignature(){ return paxDigitalSignature; }
+    public String getPaxDigitalSignature(){ return paxDigitalSignature; }
 
     public T setIsPreauth(boolean isPreauth) {
         this.isPreauth = isPreauth;

@@ -200,7 +200,13 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                                         _decimal(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.CHANGE_AMOUNT), BigDecimal.ZERO),
                                         _bool(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.IS_PREAUTH)),
                                         _decimal(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.CASH_BACK), BigDecimal.ZERO),
-                                        _decimal(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.BALANCE), BigDecimal.ZERO)
+                                        _decimal(c, c.getColumnIndex(ShopStore.PaymentTransactionTable.BALANCE), BigDecimal.ZERO),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.LAST_FOUR)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.ENTRY_METHOD)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.APPLICATION_IDENTIFIER)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.AUTHORIZATION_NUMBER)),
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.SIGNATURE_BYTES))
                                 );
 
                                 list.add(model);

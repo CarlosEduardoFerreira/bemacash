@@ -38,37 +38,22 @@ public class PaxSignature extends PaxProcessorBaseCommand {
     private PaxModel paxModel;
 
 
-
     public String filesDir = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath();
     public String sigSavePath = TcrApplication.get().getApplicationContext().getFilesDir().getAbsolutePath() + "/img/receipt";
 
+    public String signaturePaxFileString = null;
 
-    public Bitmap SignatureBitmapObject = null;
-    public byte[] signatureBitmapBytes = null;
 
     public PaxSignature(PaxModel paxModel) {
         if(TcrApplication.get().paxSignatureEmulator) {
-            try {
-                SignatureBitmapObject = this.ConvertPaxSignatureToBitmapObject("");
-                Bitmap bmp = SignatureBitmapObject;
-                if (bmp == null) {
-                    Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
-                } else {
-                    Thread.sleep(200);
-                    BitmapCarl bitmapCarl = new BitmapCarl();
-                    Thread.sleep(200);
-                    BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-                    Thread.sleep(200);
-                    signatureBitmapBytes = printedBitmapCarl.toPrint();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            signaturePaxFileString = this.getStringFromPaxFile("");
+        }else {
+            if(paxModel == null){
+                // do nothing
+            }else {
+                this.paxModel = paxModel;
+                this.doCommand();
             }
-        }else{
-            this.paxModel = paxModel;
-            this.doCommand();
         }
     }
 
@@ -153,8 +138,7 @@ public class PaxSignature extends PaxProcessorBaseCommand {
                     TcrApplication.get().getShopPref().paxPort().put(paxTerminal.port);
 
                     try {
-                        // Convert signature to bitmap object
-                        SignatureBitmapObject = this.ConvertPaxSignatureToBitmapObject(response.SigFileName);
+                        signaturePaxFileString = getStringFromPaxFile(response.SigFileName);
                     }catch(Exception e){
                         getApp().paxSignatureCanceledByCustomer = true;
                         e.printStackTrace();
@@ -185,10 +169,8 @@ public class PaxSignature extends PaxProcessorBaseCommand {
     }
 
 
-
-    public Bitmap ConvertPaxSignatureToBitmapObject(String imageLocation) throws IOException {
-
-        String alldata = "";
+    public String getStringFromPaxFile(String imageLocation){
+        String alldata = null;
 
         if(TcrApplication.get().paxSignatureEmulator){
             // Carlos
@@ -208,23 +190,32 @@ public class PaxSignature extends PaxProcessorBaseCommand {
                     "121,33^124,30^127,26^130,24^132,27^134,31^135,34^136,37^136,40^136,44^136,47^" +
                     "134,50^132,53^131,57^128,60^125,62^123,65^120,66^~";
         }else {
-            File file = new File(imageLocation);
-            BufferedReader sr = null;
             try {
-                FileInputStream in = new FileInputStream(file);
+                File file = new File(imageLocation);
+                BufferedReader sr = null;
+                try {
+                    FileInputStream in = new FileInputStream(file);
 
-                String index;
-                for (sr = new BufferedReader(new InputStreamReader(in)); (index = sr.readLine()) != null; index = "") {
-                    alldata = alldata + index;
+                    String index;
+                    for (sr = new BufferedReader(new InputStreamReader(in)); (index = sr.readLine()) != null; index = "") {
+                        alldata = alldata + index;
+                    }
+                } catch (Exception var11) {
+                    var11.printStackTrace();
                 }
-            } catch (Exception var11) {
-                var11.printStackTrace();
+                sr.close();
+            }catch(Exception e){
+                e.printStackTrace();
             }
-            sr.close();
         }
 
-
         System.out.println("bemacarl.alldata: " + alldata);
+
+        return alldata;
+    }
+
+
+    protected Bitmap ConvertPaxFileStringToBitmapObject(String alldata) throws IOException {
 
         String div = "\\^";
         String[] signature_divide = alldata.split(div);
@@ -312,6 +303,29 @@ public class PaxSignature extends PaxProcessorBaseCommand {
         fos.close();
         /**/
 
+    }
+
+
+
+    public byte[] convertPaxFileStringToPrintedByteArray(String _signaturePaxFileString){
+        try {
+            Bitmap _signatureBitmapObject = this.ConvertPaxFileStringToBitmapObject(_signaturePaxFileString);
+            Bitmap bmp = _signatureBitmapObject;
+            if (bmp == null) {
+                Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
+                return null;
+            } else {
+                Thread.sleep(200);
+                BitmapCarl bitmapCarl = new BitmapCarl();
+                Thread.sleep(200);
+                BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
+                Thread.sleep(200);
+                return printedBitmapCarl.toPrint();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

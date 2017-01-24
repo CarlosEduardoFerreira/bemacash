@@ -173,7 +173,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                 if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
 
-                    byte[] paxDigitalSign = null;
+                    String paxDigitalSign = null;
 
                     transaction.updateWith(response, paxDigitalSign);
 
@@ -184,21 +184,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                             paxSignature = new PaxSignature(getPaxModel());
                             Thread.sleep(400);
                             if (paxSignature != null) {
-                                Bitmap bmp = paxSignature.SignatureBitmapObject;
-                                if (bmp == null) {
-                                    Logger.d("bemacarl.BasePrintProcessor.bmp (109): " + bmp);
-                                } else {
-                                    try {
-                                        Thread.sleep(200);
-                                        BitmapCarl bitmapCarl = new BitmapCarl();
-                                        Thread.sleep(200);
-                                        BitmapPrintedCarl printedBitmapCarl = bitmapCarl.toPrint(bmp);
-                                        Thread.sleep(200);
-                                        paxDigitalSign = printedBitmapCarl.toPrint();
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
+                                paxDigitalSign = paxSignature.signaturePaxFileString;
                             }else{
                                 getApp().paxSignatureCanceledByCustomer = true;
                             }

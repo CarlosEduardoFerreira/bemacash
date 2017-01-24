@@ -9,7 +9,6 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.commands.payment.pax.processor.PaxInformationPrintModel;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
@@ -286,7 +285,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.orderFooter("Total", p.amount, false);
 
                 if (p.paxDigitalSignature != null) {
-                    printerWrapper.printPaxSignature(p.paxDigitalSignature);
+                    PaxSignature pax = new PaxSignature(null);
+                    printerWrapper.printPaxSignature(pax.convertPaxFileStringToPrintedByteArray(p.paxDigitalSignature));
                 }
                 //}
             }
@@ -363,8 +363,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
             try {
                 Thread.sleep(1500);
                 if (paxSignature != null) {
-                    if (app.getDigitalSignature() && app.requireSignatureOnTransactionsHigherThan && paxSignature.signatureBitmapBytes != null) {
-                        printerWrapper.printPaxSignature(paxSignature.signatureBitmapBytes);
+                    if (app.getDigitalSignature() && app.requireSignatureOnTransactionsHigherThan && paxSignature.signaturePaxFileString != null) {
+                        printerWrapper.printPaxSignature(paxSignature.convertPaxFileStringToPrintedByteArray(paxSignature.signaturePaxFileString));
                     }
                 }
             }catch(Exception e){

@@ -54,7 +54,7 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
     public String entryMethod;
     public String applicationCryptogramType;
     public String customerName;
-    public byte[] paxDigitalSignature = null;
+    public String paxDigitalSignature = null;
 
 
     public boolean allowReload; // tmp var
@@ -81,7 +81,13 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
                                    BigDecimal changeAmount,
                                    boolean isPreauth,
                                    BigDecimal cashBack,
-                                   BigDecimal ebtBalance) {
+                                   BigDecimal ebtBalance,
+                                   String lastFour,
+                                   String entryMethod,
+                                   String applicationIdentifier,
+                                   String applicationCryptogramType,
+                                   String authorizationNumber,
+                                   String paxDigitalSignature) {
         this.guid = guid;
         this.orderGuid = orderGuid;
         this.amount = amount;
@@ -104,6 +110,13 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.isPreauth = isPreauth;
         this.cashBack = cashBack;
         this.balance = ebtBalance;
+
+        this.lastFour = lastFour;
+        this.entryMethod = entryMethod;
+        this.applicationIdentifier = applicationIdentifier;
+        this.applicationCryptogramType = applicationCryptogramType;
+        this.authorizationNumber = authorizationNumber;
+        this.paxDigitalSignature = paxDigitalSignature;
     }
 
     public PaymentTransactionModel(String guid, String shiftGuid, Date createTime, ITransaction transaction) {

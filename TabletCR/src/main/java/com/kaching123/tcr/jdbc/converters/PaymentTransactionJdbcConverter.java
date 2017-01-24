@@ -72,7 +72,13 @@ public class PaymentTransactionJdbcConverter extends JdbcConverter<PaymentTransa
                 rs.getBigDecimal(CHANGE_AMOUNT),
                 rs.getBoolean(IS_PREAUTH),
                 rs.getBigDecimal(CASH_BACK),
-                rs.getBigDecimal(EBT_BALANCE)
+                rs.getBigDecimal(EBT_BALANCE),
+                rs.getString(LAST_FOUR),
+                rs.getString(ENTRY_METHOD),
+                rs.getString(APPLICATION_IDENTIFIER),
+                rs.getString(APPLICATION_CRYPTOGRAM_TYPE),
+                rs.getString(AUTHORIZATION_NUMBER),
+                rs.getString(SIGNATURE_BYTES)
         );
     }
 

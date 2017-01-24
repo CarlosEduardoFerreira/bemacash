@@ -3018,7 +3018,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     null,
                     false,
                     BigDecimal.ZERO,
-                    BigDecimal.ZERO
+                    BigDecimal.ZERO,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
             );
             model.availableAmount = model.amount;
             ArrayList<PaymentTransactionModel> transactions = new ArrayList<PaymentTransactionModel>();
