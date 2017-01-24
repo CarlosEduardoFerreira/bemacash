@@ -174,6 +174,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                 if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
 
                     String paxDigitalSign = null;
+                    getApp().paxSignatureCanceledByCustomer = false;
 
                     if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature()
                             && getApp().requireSignatureOnTransactionsHigherThan) {
