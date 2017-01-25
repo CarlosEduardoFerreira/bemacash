@@ -322,7 +322,7 @@ public class TcrApplication extends MultiDexApplication {
         registerSerial = formatByBlocksString(registerSerial);
 
         //paxSignatureEmulator = true;
-        //registerSerial = "715e09-0018a4-eeea715";
+        registerSerial = "715e09-0018a4-eeea715";
         //registerSerial = "320089-8e448a-7000c90";
 
         setUsers();

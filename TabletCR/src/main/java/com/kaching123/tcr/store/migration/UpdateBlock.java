@@ -587,6 +587,12 @@ public class UpdateBlock {
         database.execSQL(SQL_CREATE_15);
         database.execSQL(SQL_CREATE_16);
         database.execSQL(SQL_CREATE_17);
+
+        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT;");
+        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method INTEGER;");
+        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT;");
+        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT;");
+        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT;");
         database.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT;");
 
         database.execSQL(SQL_CREATE_EMPLOYEE_TIPS_SHIFT);
