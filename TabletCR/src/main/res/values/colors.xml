@@ -95,6 +95,8 @@
     <color name = "prepaid_instruction_blue_bg">#d9e7f5</color>
     <color name = "prepaid_transparent_bg">#00000000</color>
 
+    <color name = "white">#FFFFFF</color>
+
     <color name = "addon_grey">#929292</color>
     <color name = "addon_0">#CE2828</color>
     <color name = "addon_15">#C85126</color>

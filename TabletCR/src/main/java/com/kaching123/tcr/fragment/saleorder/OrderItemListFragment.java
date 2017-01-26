@@ -650,22 +650,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         //Collections.sort(list, SaleOrderItemViewModel.filterOrderItem); // do not sort - BEMA-1149 Register screen in ABC order
         adapter.changeCursor(list);
 
-
-
-
-        // CarlHighlightItemView
-        getListView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(getListView().getCount() > 0) {
-                    //getListView().getChildAt(getListView().getLastVisiblePosition()).setBackgroundColor(Color.WHITE);
-                    new CarlHighlightItemView(getView(), adapter, getLastItem().getSaleItemGuid());
-                }
-            }
-        }, 150);
-        /**/
-
-
         if (need2ScrollList) {
             getListView().postDelayed(new Runnable() {
                 @Override
@@ -682,7 +666,27 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 itemsListHandler.onOrderLoaded(getLastItem());
         }
 
-
+        /*
+        // CarlHighlightItemView
+        getListView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+         /**/
+                if (getListView().getCount() > 0){
+                    Logger.d("BemaCarl.highlight.OrderItemListFragment.getSaleItemGuid(): " + getLastItem().getSaleItemGuid());
+                    if(adapter.carlHighlightItemView == null) {
+                        CarlHighlightItemView carlHighlightItemView = new CarlHighlightItemView(getView(), adapter, getLastItem().getSaleItemGuid());
+                        adapter.carlHighlightItemView = carlHighlightItemView;
+                    }else{
+                        if(adapter.highlightedColumn == null) {
+                            adapter.carlHighlightItemView.saleItemGuid = getLastItem().getSaleItemGuid();
+                        }
+                    }
+                }
+        /*
+            }
+        }, 150);
+        /**/
 
     }
 

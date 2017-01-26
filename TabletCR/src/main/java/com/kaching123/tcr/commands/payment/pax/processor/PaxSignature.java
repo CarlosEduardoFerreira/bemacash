@@ -178,7 +178,7 @@ public class PaxSignature extends PaxProcessorBaseCommand {
             return null;
         }
 
-        String alldata = null;
+        String alldata;
 
         if(TcrApplication.get().paxSignatureEmulator){
             // Carlos
@@ -198,6 +198,7 @@ public class PaxSignature extends PaxProcessorBaseCommand {
                     "121,33^124,30^127,26^130,24^132,27^134,31^135,34^136,37^136,40^136,44^136,47^" +
                     "134,50^132,53^131,57^128,60^125,62^123,65^120,66^~";
         }else {
+            alldata = "";
             try {
                 File file = new File(imageLocation);
                 BufferedReader sr = null;
@@ -213,6 +214,7 @@ public class PaxSignature extends PaxProcessorBaseCommand {
                     var11.printStackTrace();
                 }
                 sr.close();
+                alldata = alldata.equals("")?null:alldata;
             }catch(Exception e){
                 alldata = null;
                 e.printStackTrace();

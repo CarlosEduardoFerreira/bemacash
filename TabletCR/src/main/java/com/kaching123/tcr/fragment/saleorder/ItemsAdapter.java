@@ -29,9 +29,11 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
 
     private Drawable pencilDrawable;
     private Drawable pencilTransparent;
-    private HighlightedColumn highlightedColumn;
+    public HighlightedColumn highlightedColumn;
 
     public CarlHighlightItemView carlHighlightItemView;
+    private String itemId;
+    private View itemParent;
 
     public ItemsAdapter(Context context) {
         super(context);
@@ -152,23 +154,12 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
                 //Logger.d("Animation: set null");
                 highlightedColumn = null;
             }
-        }
-
-        if(carlHighlightItemView != null){
-            if(carlHighlightItemView.saleItemGuid.equals(item.itemModel.saleItemGuid)) {
-                //View v  = (View) getView(this.getCount() - 1,convertView,);
-                //View v1 = (View)carlHighlightItemView.findParentRecursively(v, R.id.item_front);
-                View v = itemView.priceBlock;
-                carlHighlightItemView.CarlHighlightItemViewRun(v);
-                /*
-                itemView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        carlHighlightItemView.saleItemGuid = "NULL";
-                        notifyDataSetChanged();
-                    }
-                }, 150);
-                /**/
+        }else if (carlHighlightItemView != null && carlHighlightItemView.saleItemGuid.equals(item.itemModel.saleItemGuid)) {
+            itemId = item.itemModel.saleItemGuid;
+            itemParent = (View)itemView.priceBlock.getParent();
+            carlHighlightItemView.saleItemGuid = itemId;
+            if (!carlHighlightItemView.saleItemGuid.equals("")) {
+                carlHighlightItemView.CarlHighlightItemViewRun(itemParent);
             }
         }
 

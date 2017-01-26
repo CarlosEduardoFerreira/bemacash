@@ -264,7 +264,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 printerWrapper.drawLine();
                 //if (reprint) {
                 if (!TextUtils.isEmpty(p.cardName)) {
-                    String debitText = p.gateway.isDebit() ? " Debit" : "" ;
+                    String debitText = p.gateway.isDebit() ? " Debit" : p.gateway.isTrueCreditCard() ? " Credit" : "" ;
                     printerWrapper.header("Card Type:", p.cardName + debitText);
                 }
                 if (!TextUtils.isEmpty(p.lastFour)) {

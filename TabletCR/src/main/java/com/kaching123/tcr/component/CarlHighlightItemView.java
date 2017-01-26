@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.saleorder.ItemView;
 import com.kaching123.tcr.fragment.saleorder.ItemsAdapter;
@@ -42,44 +43,49 @@ public class CarlHighlightItemView {
         this.itemsAdapter = itemsAdapter;
         this.saleItemGuid = saleItemGuid;
 
-        this.itemsAdapter.carlHighlightItemView = this;
-
+        /*
         listFragment.postDelayed(new Runnable() {
             @Override
             public void run() {
                 itemsAdapter.notifyDataSetChanged();
             }
         }, DEFAULT_ANIMATION_TIME);
+        /**/
 
     }
 
 
     public void CarlHighlightItemViewRun(View view) {
+        if(!saleItemGuid.equals("")) {
+            Logger.d("BemaCarl.highlight.CarlHighlightItemView.view: " + view);
+            lastView = view;
+            String IdAsString = lastView.getResources().getResourceName(lastView.getId());
+            Log.i("CarlHighlightItemView", "lastView type: " + lastView.getClass().getName());
+            Log.i("CarlHighlightItemView", "lastView IdAsString: " + IdAsString);
 
-        lastView = (View)view.getParent();
-        String IdAsString = lastView.getResources().getResourceName(lastView.getId());
-        Log.i("CarlHighlightItemView", "lastView type: " + lastView.getClass().getName());
-        Log.i("CarlHighlightItemView", "lastView IdAsString: " + IdAsString);
+            ((View) lastView.getParent()).setBackgroundColor(Color.WHITE);
 
-        ((View)lastView.getParent()).setBackgroundColor(Color.WHITE);
+            final ObjectAnimator backgroundColorAnimator = ObjectAnimator.ofObject(
+                    lastView,
+                    "backgroundColor",
+                    new ArgbEvaluator(),
+                    0xff78c5f9, 0xFFFFFFFF);
+            backgroundColorAnimator.setDuration(1000);
+            backgroundColorAnimator.start();
 
-        final ObjectAnimator backgroundColorAnimator = ObjectAnimator.ofObject(
-                lastView,
-                "backgroundColor",
-                new ArgbEvaluator(),
-                0xff78c5f9, 0xFFFFFFFF);
-        backgroundColorAnimator.setDuration(1000);
-        backgroundColorAnimator.start();
+            //itemsAdapter.notifyDataSetChanged();
+            //saleItemGuid = "";
 
-        listFragment.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                itemsAdapter.notifyDataSetChanged();
-                saleItemGuid = "NULL";
-            }
-        }, DEFAULT_ANIMATION_TIME);
-        /**/
 
+            listFragment.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    itemsAdapter.notifyDataSetChanged();
+                    saleItemGuid = "";
+                }
+            }, DEFAULT_ANIMATION_TIME);
+            /**/
+        }
     }
 
 
