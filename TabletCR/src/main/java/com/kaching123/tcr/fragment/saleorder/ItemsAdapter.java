@@ -34,6 +34,8 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
     public CarlHighlightItemView carlHighlightItemView;
     private String itemId;
     private View itemParent;
+    public boolean itemRemoved = false;
+    public boolean payClicked = false;
 
     public ItemsAdapter(Context context) {
         super(context);
@@ -161,6 +163,9 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
             if (!carlHighlightItemView.saleItemGuid.equals("")) {
                 carlHighlightItemView.CarlHighlightItemViewRun(itemParent);
             }
+        }else{
+            itemRemoved = false;
+            payClicked = false;
         }
 
         return convertView;

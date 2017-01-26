@@ -158,6 +158,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         adapter.setItemRemoveListener(new ItemView.OnItemRemoveClick() {
             @Override
             public void onRemoveClicked(View v, final int pos) {
+                adapter.itemRemoved = true;
                 position = pos;
                 isVoidNeedPermission();
 
@@ -678,7 +679,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                         CarlHighlightItemView carlHighlightItemView = new CarlHighlightItemView(getView(), adapter, getLastItem().getSaleItemGuid());
                         adapter.carlHighlightItemView = carlHighlightItemView;
                     }else{
-                        if(adapter.highlightedColumn == null) {
+                        if(adapter.highlightedColumn == null && !adapter.itemRemoved && !adapter.payClicked) {
                             adapter.carlHighlightItemView.saleItemGuid = getLastItem().getSaleItemGuid();
                         }
                     }

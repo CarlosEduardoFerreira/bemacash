@@ -73,6 +73,8 @@ public class TotalCostFragment extends Fragment {
 
     private boolean isCreateReturnOrder;
 
+    OrderItemListFragment orderItemListFragment;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -161,11 +163,11 @@ public class TotalCostFragment extends Fragment {
     }
 
     private int getItemCount(){
-        OrderItemListFragment fr = (OrderItemListFragment) getFragmentManager().findFragmentById(R.id.order_item_list_fragment);
-        if (fr == null){
+        orderItemListFragment = (OrderItemListFragment) getFragmentManager().findFragmentById(R.id.order_item_list_fragment);
+        if (orderItemListFragment == null){
             return 0;
         }else{
-            return fr.getListAdapter().getCount();
+            return orderItemListFragment.getListAdapter().getCount();
         }
     }
 
@@ -241,6 +243,8 @@ public class TotalCostFragment extends Fragment {
 
     @Click
     protected void btnPayClicked() {
+        orderItemListFragment = (OrderItemListFragment) getFragmentManager().findFragmentById(R.id.order_item_list_fragment);
+        orderItemListFragment.adapter.payClicked = true;
         getActionListener().onPay();
     }
 
