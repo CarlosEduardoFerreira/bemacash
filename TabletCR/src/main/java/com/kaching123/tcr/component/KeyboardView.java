@@ -26,7 +26,7 @@ public class KeyboardView extends FrameLayout {
     protected ImageButton numDot;
 
     @ViewById
-    protected ImageButton numMinus;
+    public ImageButton numMinus;
 
     @ViewById
     protected ImageButton num0;

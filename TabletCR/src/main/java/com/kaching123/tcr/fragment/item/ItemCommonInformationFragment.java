@@ -4,14 +4,21 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -19,11 +26,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.adapter.SpinnerAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
+import com.kaching123.tcr.component.KeyboardView;
 import com.kaching123.tcr.countries.ecuador.TaxHelper;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.taxgroup.ChooseTaxGroupsDialog;
@@ -35,6 +44,7 @@ import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.util.BemaKeyboard;
+import com.kaching123.tcr.util.BemaKeyboardDecimalsWithNegative;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Click;
@@ -46,6 +56,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.kaching123.tcr.fragment.UiHelper.getDecimalValue;
 import static com.kaching123.tcr.fragment.UiHelper.parseBigDecimal;
 import static com.kaching123.tcr.fragment.UiHelper.showPrice;
@@ -75,7 +86,8 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     protected CategorySpinnerAdapter categoryAdapter;
     protected TaxGroupSpinnerAdapter taxGroupAdapter;
 
-
+    BemaKeyboard bemaKeyboard = null;
+    View viewAux;
 
     @Override
     protected void setViews() {
@@ -108,20 +120,115 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         activeStatus.setChecked(model.isActiveStatus);
 
 
-
-
+        /*
+        salesPrice.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                Logger.d("BemaCarl.key code: " + i);
+                if (i == KeyEvent.KEYCODE_SHIFT_RIGHT) { // 60
+                    salesPrice.setText(salesPrice.getText().toString().replace("-", ""));
+                    salesPrice.getText().insert(0, String.valueOf('-'));
+                    // User has pressed Back key. So hide the keyboard
+                    //InputMethodManager mgr = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    //mgr.hideSoftInputFromWindow(salesPrice.getApplicationWindowToken(), 0);
+                    // TODO: Hide your view as you do it in your activity
+                }
+                return false;
+            }
+        });
+        /**/
 
 
         salesPrice.setFocusableInTouchMode(false);
         salesPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                salesPrice.setFocusableInTouchMode(true);
-                BemaKeyboard bemaKeyboard = new BemaKeyboard(view, salesPrice);
-                Log.i("BemaKeyboard", "hasFocus: " + view.hasFocus());
-                if(salesPrice.hasFocus()){
+
+                Logger.d("BemaCarl.ItemCommonInformationFragment.hasFocus: " + view.hasFocus());
+                if(bemaKeyboard == null) {
+                    Logger.d("BemaCarl.ItemCommonInformationFragment.bemaKeyboard.if: " + bemaKeyboard);
+                    salesPrice.setFocusableInTouchMode(true);
+                    bemaKeyboard = new BemaKeyboard(getView(), salesPrice);
+                    //bemaKeyboard.closeSoftKeyboard();
+                }else{
+                    Logger.d("BemaCarl.ItemCommonInformationFragment.bemaKeyboard.else: " + bemaKeyboard);
                     bemaKeyboard.closeSoftKeyboard();
                 }
+
+                /*
+                android.inputmethodservice.KeyboardView mInputView = (android.inputmethodservice.KeyboardView) view.getRootView()
+                        .findViewById(R.id.keyboardview);
+
+                Keyboard currentKeyboard = mInputView.getKeyboard();
+
+                mInputView.setKeyboard(currentKeyboard);
+                mInputView.setVisibility(View.VISIBLE);
+                mInputView.setEnabled(true);
+
+                List<Keyboard.Key> keys = currentKeyboard.getKeys();
+                //mInputView.invalidateKey(primaryCode);
+
+                for(int i = 0; i < keys.size() - 1; i++ )
+                {
+                    Keyboard.Key currentKey = keys.get(i);
+
+                    //If your Key contains more than one code, then you will have to check if the codes array contains the primary code
+                    if(currentKey.codes[0] == 60)
+                    {
+                        currentKey.label = "-";
+                        //currentKey.icon = getResources().getDrawable(android.R.drawable.ic_dialog_email);
+                        break; // leave the loop once you find your match
+                    }
+                }
+                /**/
+
+
+                //salesPrice.setFocusableInTouchMode(true);
+
+                //salesPrice.setInputType((InputType.TYPE_CLASS_NUMBER + InputType.TYPE_NUMBER_FLAG_DECIMAL));
+                //salesPrice.setKeyListener(DigitsKeyListener.getInstance("0123456789-."));
+                //viewAux = view;
+
+                //Log.i("BemaKeyboard", "hasFocus: " + view.hasFocus());
+                //if(salesPrice.hasFocus()){
+                    //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    //IMESettings.Secure.getString(getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
+                    //salesPrice.setImeActionLabel("-", EditorInfo.IME_NULL);
+                    //salesPrice.setLongClickable(false);
+                    //((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE))
+                            //.showSoftInput(getView(),InputMethodManager.SHOW_IMPLICIT);
+                            //.hideSoftInputFromWindow(salesPrice.getApplicationWindowToken(), 0);
+                    /*
+                    view.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            bemaKeyboard = new BemaKeyboard(viewAux, salesPrice);
+                            //bemaKeyboard.closeSoftKeyboard();
+                        }
+                    }, 200);
+                    /**/
+                //}
+                /**/
+                //salesPrice.requestFocus();
+                /*
+                view.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputMethodManager kb = (InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE);
+                        //kb.showInputMethodPicker();g
+                        //.hideSoftInputFromWindow(salesPrice.getApplicationWindowToken(), 0);
+                        //KeyboardView kb = new KeyboardView(getApp().getApplicationContext());
+                        //kb.setVisibility(View.VISIBLE);
+                        //kb.setEnabled(true);
+                        //kb.numMinus.setEnabled(true);
+                    }
+                }, 200); //use 300 to make it run when coming back from lock screen
+                /**/
+
+                //salesPrice.setFocusableInTouchMode(true);
+
+
+
             }
         });
         /**/

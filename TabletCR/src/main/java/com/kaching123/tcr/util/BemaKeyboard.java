@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 
@@ -27,6 +28,7 @@ public class BemaKeyboard {
     public KeyboardView mKeyboardView;
     public EditText editTextKeyboard;
 
+    int tx = 0;
 
     public BemaKeyboard(View view, EditText editText) {
 
@@ -56,13 +58,15 @@ public class BemaKeyboard {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
-                Log.i("BemaKeyboard", "editTextKeyboard.hasFocus(): " + editTextKeyboard.hasFocus());
-                Log.i("BemaKeyboard", "v: " + v);
-                Log.i("BemaKeyboard", "v.getRootView: " + v.getRootView());
+                Log.i("BemaCarl", "BemaKeyboard.onFocusChange.editTextKeyboard.hasFocus(): " + editTextKeyboard.hasFocus());
+                Log.i("BemaCarl", "BemaKeyboard.onFocusChange.v: " + v);
+                Log.i("BemaCarl", "BemaKeyboard.onFocusChange.v.getRootView: " + v.getRootView());
                 if(editTextKeyboard.hasFocus()) {
+                    Log.i("BemaCarl", "BemaKeyboard.onFocusChange.if(editTextKeyboard.hasFocus()): true");
                     openBemaKeyboard();
                     closeSoftKeyboard();
                 }else {
+                    Log.i("BemaCarl", "BemaKeyboard.onFocusChange.if(editTextKeyboard.hasFocus()): false");
                     closeBemaKeyboard();
                 }
             }
@@ -77,23 +81,49 @@ public class BemaKeyboard {
 
     public void openBemaKeyboard() {
         mKeyboardView.setVisibility(View.VISIBLE);
-        mKeyboardView.setEnabled(true);
+        //mKeyboardView.setEnabled(true);
     }
 
     public void closeBemaKeyboard() {
         mKeyboardView.setVisibility(View.INVISIBLE);
-        mKeyboardView.setEnabled(false);
+        //mKeyboardView.setEnabled(false);
     }
 
 
     public void closeSoftKeyboard(){
+        tx = 10;
+        forceCloseKeyboard(tx);
+    }
+
+    protected void forceCloseKeyboard(int x){
+        tx += x;
         editTextKeyboard.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(editTextKeyboard.getApplicationWindowToken(), 0);
-                //((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(salesPrice.getRootView().getWindowToken(), 0);
+                try {
+                    Log.i("BemaCarl", "BemaKeyboard.forceCloseKeyboard.catch.tx: " + tx);
+
+                    boolean hid = hideSoftKeyboard();
+                    Log.i("BemaCarl", "BemaKeyboard.forceCloseKeyboard.try.hideSoftKeyboard: " + hid);
+
+                    if(hid) {
+                        //((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE))
+                         //       .hideSoftInputFromWindow(editTextKeyboard.getApplicationWindowToken(), 0);
+                        forceCloseKeyboard(50);
+                    }
+                }catch(Exception e){
+                    Log.i("BemaCarl", "BemaKeyboard.forceCloseKeyboard.catch.tx: " + tx);
+                    e.printStackTrace();
+                    //forceCloseKeyboard(50);
+                }
             }
-        }, 200); //use 300 to make it run when coming back from lock screen
+        }, x);
+    }
+
+
+    protected boolean hideSoftKeyboard(){
+        InputMethodManager imm = (InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE);
+        return imm.hideSoftInputFromWindow(editTextKeyboard.getWindowToken(), 0);
     }
 
 
@@ -106,14 +136,14 @@ public class BemaKeyboard {
             int sales_price_end     = editTextKeyboard.getSelectionEnd();   //this is to get the the edittext end [ -1 array position ]
             int sales_price_length  = editTextKeyboard.length(); // to set the sales_price on last position
 
-            Log.i("BemaKeyboard", "sales_price_start: "     + sales_price_start);
-            Log.i("BemaKeyboard", "sales_price_end: "       + sales_price_end);
-            Log.i("BemaKeyboard", "sales_price_length: "    + sales_price_length);
+            Log.i("BemaCarl", "BemaKeyboard.sales_price_start: "     + sales_price_start);
+            Log.i("BemaCarl", "BemaKeyboard.sales_price_end: "       + sales_price_end);
+            Log.i("BemaCarl", "BemaKeyboard.sales_price_length: "    + sales_price_length);
             //sales_price.setSelection(0);
 
             String str_key = KeyEvent.keyCodeToString(primaryCode);
-            Log.i("BemaKeyboard", "primaryCode: " + String.valueOf(primaryCode));
-            Log.i("BemaKeyboard", "keyCodeToString: " + str_key);
+            Log.i("BemaCarl", "BemaKeyboard.primaryCode: " + String.valueOf(primaryCode));
+            Log.i("BemaCarl", "BemaKeyboard.keyCodeToString: " + str_key);
 
             switch(primaryCode){
                 case KeyEvent.KEYCODE_NUMPAD_1 :
@@ -158,7 +188,7 @@ public class BemaKeyboard {
                     break;
                 case KeyEvent.KEYCODE_DEL :
                     //getting the selected Text
-                    if(sales_price_start>0 && sales_price_start <= sales_price_length) {
+                    if(sales_price_start>0 && sales_price_end>0 && sales_price_start <= sales_price_length) {
                         String part1 = editTextKeyboard.getText().toString().substring(0, sales_price_start-1);
                         String part2 = editTextKeyboard.getText().toString().substring(sales_price_end, sales_price_length);
                         Log.i("BemaKeyboard", "part1: " + part1);
@@ -168,7 +198,9 @@ public class BemaKeyboard {
                         Log.i("BemaKeyboard", "sales_price_start: "     + sales_price_start);
                         Log.i("BemaKeyboard", "sales_price_end: "       + sales_price_end);
                         Log.i("BemaKeyboard", "sales_price_length: "    + sales_price_length);
-                        editTextKeyboard.setSelection(sales_price_end-1);
+                        if(sales_price_end>0) {
+                            editTextKeyboard.setSelection(sales_price_end - 1);
+                        }
                     }
                     break;
                 case 261 :
@@ -176,9 +208,12 @@ public class BemaKeyboard {
                     break;
                 case KeyEvent.KEYCODE_ENTER :
                     closeBemaKeyboard();
+                    editTextKeyboard.setFocusableInTouchMode(false);
                     editTextKeyboard.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            editTextKeyboard.setFocusableInTouchMode(true);
+                            closeSoftKeyboard();
                             openBemaKeyboard();
                         }
                     });

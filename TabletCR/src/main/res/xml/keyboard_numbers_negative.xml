@@ -29,7 +29,7 @@
         <Key
             android:codes="66"
             android:keyLabel="Done"
-            android:keyHeight="170dp" />
+            android:keyHeight="165dp" />
     </Row>
     <Row>
         <Key
