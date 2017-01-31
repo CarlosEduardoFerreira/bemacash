@@ -57,11 +57,11 @@ public class CarlHighlightItemView {
 
     public void CarlHighlightItemViewRun(View view) {
         if(!saleItemGuid.equals("")) {
-            Logger.d("BemaCarl.highlight.CarlHighlightItemView.view: " + view);
+            //Log.i("BemaCarl", "CarlHighlightItemView.view: " + view);
             lastView = view;
             String IdAsString = lastView.getResources().getResourceName(lastView.getId());
-            Log.i("CarlHighlightItemView", "lastView type: " + lastView.getClass().getName());
-            Log.i("CarlHighlightItemView", "lastView IdAsString: " + IdAsString);
+            //Log.i("BemaCarl", "CarlHighlightItemView.lastView type: " + lastView.getClass().getName());
+            //Log.i("BemaCarl", "CarlHighlightItemView.lastView IdAsString: " + IdAsString);
 
             ((View) lastView.getParent()).setBackgroundColor(Color.WHITE);
 
@@ -72,10 +72,6 @@ public class CarlHighlightItemView {
                     0xff78c5f9, 0xFFFFFFFF);
             backgroundColorAnimator.setDuration(1000);
             backgroundColorAnimator.start();
-
-            //itemsAdapter.notifyDataSetChanged();
-            //saleItemGuid = "";
-
 
             listFragment.postDelayed(new Runnable() {
                 @Override

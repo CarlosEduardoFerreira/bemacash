@@ -1,16 +1,14 @@
 package com.kaching123.tcr.fragment.saleorder;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
 import org.androidannotations.annotations.EBean;
-import com.kaching123.tcr.Logger;
+
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.CarlHighlightItemView;
@@ -34,8 +32,9 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
     public CarlHighlightItemView carlHighlightItemView;
     private String itemId;
     private View itemParent;
-    public boolean itemRemoved = false;
-    public boolean payClicked = false;
+
+    public boolean carlHighlightDoIt = false;
+
 
     public ItemsAdapter(Context context) {
         super(context);
@@ -43,6 +42,7 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
         DrawableUtil.boundDrawable(pencilDrawable);
         pencilTransparent = context.getResources().getDrawable(R.drawable.square_opacity);
         DrawableUtil.boundDrawable(pencilTransparent);
+        carlHighlightDoIt = false;
     }
 
     public void setItemRemoveListener(ItemView.OnItemRemoveClick itemRemoveListener) {
@@ -164,8 +164,7 @@ public class ItemsAdapter extends ObjectsCursorAdapter<SaleOrderItemViewModel> {
                 carlHighlightItemView.CarlHighlightItemViewRun(itemParent);
             }
         }else{
-            itemRemoved = false;
-            payClicked = false;
+            carlHighlightDoIt = false;
         }
 
         return convertView;

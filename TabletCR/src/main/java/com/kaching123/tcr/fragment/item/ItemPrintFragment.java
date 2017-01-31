@@ -56,6 +56,9 @@ public class ItemPrintFragment extends ItemBaseFragment {
     private static final Uri KDS_URI = ShopProvider.getContentUri(ShopStore.ItemKDSTable.URI_CONTENT);
 
     @Override
+    protected void newItem(){}
+
+    @Override
     protected void setViews() {
         kitchenAdapter = new PrinterAliasAdapter(getActivity());
         kitchen.setAdapter(kitchenAdapter);

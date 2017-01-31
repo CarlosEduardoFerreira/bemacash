@@ -89,6 +89,10 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
     private boolean duplicateProductCode;
 
     @Override
+    protected void newItem(){}
+
+
+    @Override
     protected void setViews() {
         InputFilter[] productCodeFilter = new InputFilter[]{new InputFilter.LengthFilter(TcrApplication.PRODUCT_CODE_MAX_LEN), alphanumericFilter};
         productCode.setFilters(productCodeFilter);

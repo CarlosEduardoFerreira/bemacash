@@ -111,6 +111,31 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         initLoaders();
     }
 
+    protected void callBemaKeyboard(){
+        salesPrice.setFocusableInTouchMode(false);
+        salesPrice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Logger.d("BemaCarl.ItemCommonInformationFragment.hasFocus: " + view.hasFocus());
+                if (bemaKeyboard == null) {
+                    Logger.d("BemaCarl.ItemCommonInformationFragment.bemaKeyboard.if: " + bemaKeyboard);
+                    salesPrice.setFocusableInTouchMode(true);
+                    bemaKeyboard = new BemaKeyboard(getView(), salesPrice);
+                    //bemaKeyboard.closeSoftKeyboard();
+                } else {
+                    Logger.d("BemaCarl.ItemCommonInformationFragment.bemaKeyboard.else: " + bemaKeyboard);
+                    bemaKeyboard.closeSoftKeyboard();
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void newItem(){
+        callBemaKeyboard();
+    }
+
 
     @Override
     protected void setModel() {
@@ -119,6 +144,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         showPrice(salesPrice, model.price);
         activeStatus.setChecked(model.isActiveStatus);
 
+        callBemaKeyboard();
 
         /*
         salesPrice.setOnKeyListener(new View.OnKeyListener(){
@@ -138,105 +164,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         });
         /**/
 
-
-        salesPrice.setFocusableInTouchMode(false);
-        salesPrice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Logger.d("BemaCarl.ItemCommonInformationFragment.hasFocus: " + view.hasFocus());
-                if(bemaKeyboard == null) {
-                    Logger.d("BemaCarl.ItemCommonInformationFragment.bemaKeyboard.if: " + bemaKeyboard);
-                    salesPrice.setFocusableInTouchMode(true);
-                    bemaKeyboard = new BemaKeyboard(getView(), salesPrice);
-                    //bemaKeyboard.closeSoftKeyboard();
-                }else{
-                    Logger.d("BemaCarl.ItemCommonInformationFragment.bemaKeyboard.else: " + bemaKeyboard);
-                    bemaKeyboard.closeSoftKeyboard();
-                }
-
-                /*
-                android.inputmethodservice.KeyboardView mInputView = (android.inputmethodservice.KeyboardView) view.getRootView()
-                        .findViewById(R.id.keyboardview);
-
-                Keyboard currentKeyboard = mInputView.getKeyboard();
-
-                mInputView.setKeyboard(currentKeyboard);
-                mInputView.setVisibility(View.VISIBLE);
-                mInputView.setEnabled(true);
-
-                List<Keyboard.Key> keys = currentKeyboard.getKeys();
-                //mInputView.invalidateKey(primaryCode);
-
-                for(int i = 0; i < keys.size() - 1; i++ )
-                {
-                    Keyboard.Key currentKey = keys.get(i);
-
-                    //If your Key contains more than one code, then you will have to check if the codes array contains the primary code
-                    if(currentKey.codes[0] == 60)
-                    {
-                        currentKey.label = "-";
-                        //currentKey.icon = getResources().getDrawable(android.R.drawable.ic_dialog_email);
-                        break; // leave the loop once you find your match
-                    }
-                }
-                /**/
-
-
-                //salesPrice.setFocusableInTouchMode(true);
-
-                //salesPrice.setInputType((InputType.TYPE_CLASS_NUMBER + InputType.TYPE_NUMBER_FLAG_DECIMAL));
-                //salesPrice.setKeyListener(DigitsKeyListener.getInstance("0123456789-."));
-                //viewAux = view;
-
-                //Log.i("BemaKeyboard", "hasFocus: " + view.hasFocus());
-                //if(salesPrice.hasFocus()){
-                    //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    //IMESettings.Secure.getString(getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
-                    //salesPrice.setImeActionLabel("-", EditorInfo.IME_NULL);
-                    //salesPrice.setLongClickable(false);
-                    //((InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE))
-                            //.showSoftInput(getView(),InputMethodManager.SHOW_IMPLICIT);
-                            //.hideSoftInputFromWindow(salesPrice.getApplicationWindowToken(), 0);
-                    /*
-                    view.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            bemaKeyboard = new BemaKeyboard(viewAux, salesPrice);
-                            //bemaKeyboard.closeSoftKeyboard();
-                        }
-                    }, 200);
-                    /**/
-                //}
-                /**/
-                //salesPrice.requestFocus();
-                /*
-                view.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        InputMethodManager kb = (InputMethodManager) TcrApplication.get().getSystemService(INPUT_METHOD_SERVICE);
-                        //kb.showInputMethodPicker();g
-                        //.hideSoftInputFromWindow(salesPrice.getApplicationWindowToken(), 0);
-                        //KeyboardView kb = new KeyboardView(getApp().getApplicationContext());
-                        //kb.setVisibility(View.VISIBLE);
-                        //kb.setEnabled(true);
-                        //kb.numMinus.setEnabled(true);
-                    }
-                }, 200); //use 300 to make it run when coming back from lock screen
-                /**/
-
-                //salesPrice.setFocusableInTouchMode(true);
-
-
-
-            }
-        });
-        /**/
-
-
     }
-
-
 
 
     @Override

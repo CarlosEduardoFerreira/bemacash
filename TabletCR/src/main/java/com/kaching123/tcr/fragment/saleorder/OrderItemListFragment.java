@@ -1,9 +1,7 @@
 package com.kaching123.tcr.fragment.saleorder;
 
-import android.app.LauncherActivity;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -16,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
@@ -73,7 +70,6 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -107,6 +103,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private static final Uri ORDER_URI = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
     private int position;
+
+    private boolean isReturn = false;
 
     @AfterTextChange
     protected void usbScannerInputAfterTextChanged(Editable s) {
@@ -154,11 +152,13 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             qtyBefore = app.getQtyBefore();
         }
         adapter = !isCreateReturnOrder ? new ItemsAdapter(getActivity()) : new ReturnItemsAdapter(getActivity());
+        Log.i("BemaCarl", "OrderItemListFragment.onActivityCreated.isReturn: " + isReturn);
+        isReturn = true;
 
         adapter.setItemRemoveListener(new ItemView.OnItemRemoveClick() {
             @Override
             public void onRemoveClicked(View v, final int pos) {
-                adapter.itemRemoved = true;
+                //adapter.itemRemoved = true;
                 position = pos;
                 isVoidNeedPermission();
 
@@ -546,6 +546,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                     }
                 }
             }
+            Log.i("BemaCarl", "OrderItemListFragment.checkIsNewItemComposer.newItem: " + checkIsNewItemComposerInProcess);
+            adapter.carlHighlightDoIt = checkIsNewItemComposerInProcess;
             CheckIsItemComposerCommand.start(getContext(), guidToCheck, new CheckIsItemComposerCommand.IsItemComposerCommandCallback() {
                 @Override
                 protected void onSuccess(boolean isItemComposer) {
@@ -631,6 +633,9 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, final List<SaleOrderItemViewModel> list) {
+
+        adapter.carlHighlightDoIt = false;
+
         if(!list.isEmpty()) {
             if (!ignorReculc) {
                 if ((list.size() - app.getSalesOnScreenTmpSize()) == 1) {
@@ -667,27 +672,25 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                 itemsListHandler.onOrderLoaded(getLastItem());
         }
 
-        /*
+
         // CarlHighlightItemView
-        getListView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-         /**/
-                if (getListView().getCount() > 0){
-                    Logger.d("BemaCarl.highlight.OrderItemListFragment.getSaleItemGuid(): " + getLastItem().getSaleItemGuid());
-                    if(adapter.carlHighlightItemView == null) {
-                        CarlHighlightItemView carlHighlightItemView = new CarlHighlightItemView(getView(), adapter, getLastItem().getSaleItemGuid());
-                        adapter.carlHighlightItemView = carlHighlightItemView;
-                    }else{
-                        if(adapter.highlightedColumn == null && !adapter.itemRemoved && !adapter.payClicked) {
-                            adapter.carlHighlightItemView.saleItemGuid = getLastItem().getSaleItemGuid();
-                        }
+        Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.getCount(): " + getListView().getCount());
+        Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.isReturn: " + isReturn);
+        if (getListView().getCount() > 0 && !isReturn){
+            Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.adapter.carlHighlightItemView: " + adapter.carlHighlightItemView);
+            if(adapter.carlHighlightItemView == null) {
+                CarlHighlightItemView carlHighlightItemView = new CarlHighlightItemView(getView(), adapter, getLastItem().getSaleItemGuid());
+                adapter.carlHighlightItemView = carlHighlightItemView;
+            }else{
+                    Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.checkIsNewItemComposerInProcess: " + checkIsNewItemComposerInProcess);
+                    adapter.carlHighlightDoIt = checkIsNewItemComposerInProcess;
+                    if(adapter.highlightedColumn == null && adapter.carlHighlightDoIt) {
+                        adapter.carlHighlightItemView.saleItemGuid = getLastItem().getSaleItemGuid();
                     }
-                }
-        /*
             }
-        }, 150);
-        /**/
+        }else{
+            isReturn = false;
+        }
 
     }
 
@@ -764,6 +767,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
         public ReturnItemsAdapter(Context context) {
             super(context);
+            carlHighlightDoIt = false;
         }
 
         @Override

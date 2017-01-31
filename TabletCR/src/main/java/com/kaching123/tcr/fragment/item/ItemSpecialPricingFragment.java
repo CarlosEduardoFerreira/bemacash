@@ -52,6 +52,9 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
     private boolean tbpOverlaps;
 
     @Override
+    protected void newItem(){}
+
+    @Override
     protected void setViews() {
         adapter = new TBPAdapter(getActivity());
         list.setAdapter(adapter);

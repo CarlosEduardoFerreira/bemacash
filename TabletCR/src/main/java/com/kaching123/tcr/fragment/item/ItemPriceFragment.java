@@ -60,6 +60,9 @@ public class ItemPriceFragment extends ItemBaseFragment {
     protected TableRow forSaleRow;
 
     @Override
+    protected void newItem(){}
+
+    @Override
     protected void setViews() {
         ArrayAdapter<PriceType> priceTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_light, PriceType.values());
         priceTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);

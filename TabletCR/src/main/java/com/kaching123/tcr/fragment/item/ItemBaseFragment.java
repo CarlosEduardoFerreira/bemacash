@@ -34,9 +34,12 @@ public abstract class ItemBaseFragment extends SuperBaseFragment implements Item
         setViews();
         if (!getItemProvider().isCreate()){
             setModel();
+        }else{
+            newItem();
         }
     }
 
     protected abstract void setViews();
     protected abstract void setModel();
+    protected abstract void newItem();
 }

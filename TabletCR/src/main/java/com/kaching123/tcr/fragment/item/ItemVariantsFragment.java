@@ -42,6 +42,9 @@ public class ItemVariantsFragment extends ItemBaseFragment {
     private VariantsAdapter variantsAdapter;
 
     @Override
+    protected void newItem(){}
+
+    @Override
     protected void setViews() {
         editVariants.setEnabled(!getItemProvider().isCreate());
 

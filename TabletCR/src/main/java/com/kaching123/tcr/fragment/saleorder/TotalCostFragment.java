@@ -83,6 +83,8 @@ public class TotalCostFragment extends Fragment {
         setPayButtonView();
         setZero();
         updateClickable(false);
+
+        orderItemListFragment = (OrderItemListFragment) getFragmentManager().findFragmentById(R.id.order_item_list_fragment);
     }
 
     private void setPayButtonView() {
@@ -243,13 +245,13 @@ public class TotalCostFragment extends Fragment {
 
     @Click
     protected void btnPayClicked() {
-        orderItemListFragment = (OrderItemListFragment) getFragmentManager().findFragmentById(R.id.order_item_list_fragment);
-        orderItemListFragment.adapter.payClicked = true;
+        orderItemListFragment.adapter.carlHighlightDoIt = false;
         getActionListener().onPay();
     }
 
     @Click
     protected void btnHoldClicked() {
+        orderItemListFragment.adapter.carlHighlightDoIt = false;
         getActionListener().onHold();
     }
 
@@ -260,6 +262,7 @@ public class TotalCostFragment extends Fragment {
 
     @Click
     protected void btnCustomerClicked() {
+        orderItemListFragment.adapter.carlHighlightDoIt = false;
         getActionListener().onCustomer();
     }
 

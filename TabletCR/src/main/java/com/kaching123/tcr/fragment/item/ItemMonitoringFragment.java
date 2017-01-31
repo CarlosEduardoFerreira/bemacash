@@ -51,6 +51,9 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
     private OnCheckedChangeListener limitQtyListener;
 
     @Override
+    protected void newItem(){}
+
+    @Override
     protected void setViews() {
 
         qtyViews = new EditText[]{availableQty, minimumQty, recommendedQty};

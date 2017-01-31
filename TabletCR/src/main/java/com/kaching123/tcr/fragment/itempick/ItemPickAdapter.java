@@ -70,6 +70,7 @@ public class ItemPickAdapter extends ObjectsCursorAdapter<ItemExModel> {
         ViewHolder holder = (ViewHolder) convertView.getTag();
         ItemExModel i = getItem(position);
 
+
         if (i == null) {
             return convertView;
         }
