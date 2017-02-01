@@ -261,6 +261,17 @@ public class UpdateBlock {
     public static final String SQL_CREATE_SALE_ADDON_VIEW = "CREATE VIEW sale_addon_view AS SELECT  sale_addon_table.guid as sale_addon_table_guid, sale_addon_table.addon_id as sale_addon_table_addon_id, sale_addon_table.item_guid as sale_addon_table_item_guid, sale_addon_table.extra_cost as sale_addon_table_extra_cost, sale_addon_table.addon_type as sale_addon_table_addon_type, sale_addon_table.child_item_guid as sale_addon_table_child_item_guid, sale_addon_table.child_item_qty as sale_addon_table_child_item_qty, sale_addon_table.is_deleted as sale_addon_table_is_deleted, sale_addon_table.update_time as sale_addon_table_update_time, sale_addon_table.is_draft as sale_addon_table_is_draft, modifier_table.title as modifier_table_title, modifier_table.item_group_guid as modifier_table_item_group_guid FROM sale_order_item_addon AS sale_addon_table JOIN items_modifier AS modifier_table ON modifier_table.modifier_guid = sale_addon_table.addon_id and modifier_table.is_deleted = 0 where sale_addon_table.is_deleted = 0";
     private static final String SQL_DROP_SALE_ADDON_VIEW = "DROP VIEW if exists sale_addon_view";
 
+    public static void update8to9(SQLiteDatabase db){
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT;");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method INTEGER;");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT;");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT;");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT;");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT;");
+        updateViews(db);
+    }
+
+
     public static void update7to8(SQLiteDatabase db){
         db.execSQL("ALTER TABLE register ADD COLUMN description TEXT");
         updateViews(db);
@@ -587,13 +598,6 @@ public class UpdateBlock {
         database.execSQL(SQL_CREATE_15);
         database.execSQL(SQL_CREATE_16);
         database.execSQL(SQL_CREATE_17);
-
-        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT;");
-        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method INTEGER;");
-        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT;");
-        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT;");
-        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT;");
-        database.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT;");
 
         database.execSQL(SQL_CREATE_EMPLOYEE_TIPS_SHIFT);
         database.execSQL(SQL_CREATE_EMPLOYEE_TIPS_CASHIER);
