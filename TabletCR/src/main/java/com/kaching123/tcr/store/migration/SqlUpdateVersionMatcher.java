@@ -441,7 +441,6 @@ public class SqlUpdateVersionMatcher {
         UPDATE6_6TO8(new Update6_6to8()),
         UPDATE6_7TO8(new Update6_7to8()),
         UPDATE7TO8(new Update7to8()),
-
         UPDATE8TO9(new Update8to9());
 
 

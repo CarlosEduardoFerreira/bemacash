@@ -4,7 +4,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.kaching123.tcr.store.migration.IUpdateContainer;
 
-import static com.kaching123.tcr.store.migration.UpdateBlock.update7to8;
 import static com.kaching123.tcr.store.migration.UpdateBlock.update8to9;
 
 /**
@@ -20,11 +19,11 @@ public class Update8to9 implements IUpdateContainer {
 
     @Override
     public int getSqlOldVersion() {
-        return VERSION7;
+        return VERSION8;
     }
 
     @Override
     public int getSqlNewVersion() {
-        return VERSION8;
+        return VERSION9;
     }
 }
