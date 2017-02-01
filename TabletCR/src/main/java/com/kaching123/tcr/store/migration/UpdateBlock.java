@@ -265,7 +265,7 @@ public class UpdateBlock {
 
     public static void update8to9(SQLiteDatabase db){
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT;");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method INTEGER;");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method TEXT;");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT;");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT;");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT;");
