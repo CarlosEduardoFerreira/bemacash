@@ -261,35 +261,35 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
         if(payments != null) {
             for (PaymentTransactionModel p : payments) {
-                printerWrapper.drawLine();
-                //if (reprint) {
-                if (!TextUtils.isEmpty(p.cardName)) {
-                    String debitText = p.gateway.isDebit() ? " Debit" : p.gateway.isTrueCreditCard() ? " Credit" : "" ;
-                    printerWrapper.header("Card Type:", p.cardName + debitText);
-                }
-                if (!TextUtils.isEmpty(p.lastFour)) {
-                    printerWrapper.header("Account Number:", "####-####-####-" + p.lastFour);
-                }
-                if (!TextUtils.isEmpty(p.entryMethod)) {
-                    printerWrapper.header("Entry:", getEntryMethod(p.entryMethod));
-                }
-                if (!TextUtils.isEmpty(p.applicationIdentifier)) {
-                    printerWrapper.header("AID:", p.applicationIdentifier);
-                }
-                if (!TextUtils.isEmpty(p.applicationCryptogramType)) {
-                    printerWrapper.header("ARQC:", p.applicationCryptogramType);
-                }
-                if (!TextUtils.isEmpty(p.authorizationNumber)) {
-                    printerWrapper.header("Approval:", p.authorizationNumber);
-                }
+                if(!p.cardName.equals("Cash")) {
+                    printerWrapper.drawLine();
+                    if (!TextUtils.isEmpty(p.cardName)) {
+                        String debitText = p.gateway.isDebit() ? " Debit" : p.gateway.isTrueCreditCard() ? " Credit" : "";
+                        printerWrapper.header("Card Type:", p.cardName + debitText);
+                    }
+                    if (!TextUtils.isEmpty(p.lastFour)) {
+                        printerWrapper.header("Account Number:", "####-####-####-" + p.lastFour);
+                    }
+                    if (!TextUtils.isEmpty(p.entryMethod)) {
+                        printerWrapper.header("Entry:", getEntryMethod(p.entryMethod));
+                    }
+                    if (!TextUtils.isEmpty(p.applicationIdentifier)) {
+                        printerWrapper.header("AID:", p.applicationIdentifier);
+                    }
+                    if (!TextUtils.isEmpty(p.applicationCryptogramType)) {
+                        printerWrapper.header("ARQC:", p.applicationCryptogramType);
+                    }
+                    if (!TextUtils.isEmpty(p.authorizationNumber)) {
+                        printerWrapper.header("Approval:", p.authorizationNumber);
+                    }
 
-                printerWrapper.orderFooter("Total", p.amount, false);
+                    printerWrapper.orderFooter("Total", p.amount, false);
 
-                if (p.paxDigitalSignature != null) {
-                    PaxSignature pax = new PaxSignature(null);
-                    printerWrapper.printPaxSignature(pax.convertPaxFileStringToPrintedByteArray(p.paxDigitalSignature));
+                    if (p.paxDigitalSignature != null) {
+                        PaxSignature pax = new PaxSignature(null);
+                        printerWrapper.printPaxSignature(pax.convertPaxFileStringToPrintedByteArray(p.paxDigitalSignature));
+                    }
                 }
-                //}
             }
             printerWrapper.drawLine();
         }else{

@@ -183,57 +183,73 @@ public class BemaKeyboard {
                 case KeyEvent.KEYCODE_NUMPAD_DOT :
                     int ja_tem_ponto = editTextKeyboard.getText().toString().indexOf('.');
                     if(ja_tem_ponto == -1) {
-                        editTextKeyboard.getText().insert(sales_price_start, String.valueOf('.'));
+                        if(editTextKeyboard.getText().equals("-")) {
+                            editTextKeyboard.setText("-0.");
+                        }else {
+                            sales_price_start   = editTextKeyboard.getSelectionStart();
+                            sales_price_end     = editTextKeyboard.getSelectionEnd();
+                            sales_price_length  = editTextKeyboard.length();
+                            deleteText(sales_price_start, sales_price_end, sales_price_length, false);
+                            editTextKeyboard.getText().insert(sales_price_end, String.valueOf('.'));
+                        }
+                        editTextKeyboard.setSelection(editTextKeyboard.getText().length());
                     }
                     break;
                 case KeyEvent.KEYCODE_DEL :
-                    //getting the selected Text
                     if(sales_price_start>0 && sales_price_end>0 && sales_price_start <= sales_price_length) {
-                        String part1 = editTextKeyboard.getText().toString().substring(0, sales_price_start-1);
-                        String part2 = editTextKeyboard.getText().toString().substring(sales_price_end, sales_price_length);
-                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.part1: " + part1);
-                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.part2: " + part2);
-
-                        //editTextKeyboard.postDelayed(new Runnable() {
-                            //@Override
-                            //public void run() {
-                        editTextKeyboard.setText(part1 + part2);
-                        int len = editTextKeyboard.getText().length();
-                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.getText: " + editTextKeyboard.getText());
-                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.getText.length: " + len);
-                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.sales_price_start: "     + sales_price_start);
-                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.sales_price_end: "       + sales_price_end);
-                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.sales_price_length: "    + sales_price_length);
-                        int pos = sales_price_end - 1;
-                        if(sales_price_start < sales_price_length) {
-                            editTextKeyboard.setSelection(pos - (sales_price_end - sales_price_start));
-                        }else{
-                            if(pos > len) {
-                                editTextKeyboard.setSelection(len);
-                            }else{
-                                editTextKeyboard.setSelection(pos);
-                            }
-                        }
-
-                            //}
-                        //}, 200);
+                        deleteText(sales_price_start, sales_price_end, sales_price_length, true);
                     }
                     break;
                 case 261 :
-                    editTextKeyboard.setImeOptions(IME_ACTION_NEXT);
+                    enterBind();
                     break;
                 case KeyEvent.KEYCODE_ENTER :
-                    closeBemaKeyboard();
-                    editTextKeyboard.setFocusableInTouchMode(false);
-                    editTextKeyboard.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            editTextKeyboard.setFocusableInTouchMode(true);
-                            closeSoftKeyboard();
-                            openBemaKeyboard();
-                        }
-                    });
+                    enterBind();
                     break;
+            }
+        }
+
+
+        private void enterBind(){
+            closeBemaKeyboard();
+            editTextKeyboard.setFocusableInTouchMode(false);
+            editTextKeyboard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    editTextKeyboard.setFocusableInTouchMode(true);
+                    closeSoftKeyboard();
+                    openBemaKeyboard();
+                }
+            });
+        }
+
+
+        private void deleteText(int sales_price_start, int sales_price_end, int sales_price_length, boolean delOne){
+            int delOne_start = sales_price_start;
+            if(delOne) delOne_start = sales_price_start - 1;
+            String part1 = editTextKeyboard.getText().toString().substring(0, delOne_start);
+            String part2 = editTextKeyboard.getText().toString().substring(sales_price_end, sales_price_length);
+            Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.part1: " + part1);
+            Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.part2: " + part2);
+            editTextKeyboard.setText(part1 + part2);
+            int len = editTextKeyboard.getText().length();
+            Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.getText: " + editTextKeyboard.getText());
+            Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.getText.length: " + len);
+            Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.sales_price_start: "     + sales_price_start);
+            Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.sales_price_end: "       + sales_price_end);
+            Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.sales_price_length: "    + sales_price_length);
+            int pos = sales_price_end;
+            if(sales_price_end > 1) {
+                pos = sales_price_end - 1;
+            }
+            if(sales_price_start < sales_price_length) {
+                editTextKeyboard.setSelection(pos - (sales_price_end - sales_price_start));
+            }else{
+                if(pos > len) {
+                    editTextKeyboard.setSelection(len);
+                }else{
+                    editTextKeyboard.setSelection(pos);
+                }
             }
         }
 

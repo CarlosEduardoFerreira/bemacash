@@ -207,7 +207,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         InputFilter[] currencyFilter = new InputFilter[]{new CurrencyFormatInputFilter()};
         salesPrice.setFilters(currencyFilter);
         //salesPrice.setFilters(new InputFilter[] { new BemaKeyboardDecimalsWithNegative(7, 2) });
-        salesPrice.addTextChangedListener(new CurrencyTextWatcher(salesPrice));
+        //salesPrice.addTextChangedListener(new CurrencyTextWatcher(salesPrice));
     }
 
     @Click
