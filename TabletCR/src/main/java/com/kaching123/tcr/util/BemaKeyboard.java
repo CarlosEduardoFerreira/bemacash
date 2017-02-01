@@ -136,14 +136,14 @@ public class BemaKeyboard {
             int sales_price_end     = editTextKeyboard.getSelectionEnd();   //this is to get the the edittext end [ -1 array position ]
             int sales_price_length  = editTextKeyboard.length(); // to set the sales_price on last position
 
-            Log.i("BemaCarl", "BemaKeyboard.sales_price_start: "     + sales_price_start);
-            Log.i("BemaCarl", "BemaKeyboard.sales_price_end: "       + sales_price_end);
-            Log.i("BemaCarl", "BemaKeyboard.sales_price_length: "    + sales_price_length);
+            //Log.d("BemaCarl", "BemaKeyboard.onKey.sales_price_start: "     + sales_price_start);
+            //Log.d("BemaCarl", "BemaKeyboard.onKey.sales_price_end: "       + sales_price_end);
+            //Log.d("BemaCarl", "BemaKeyboard.onKey.sales_price_length: "    + sales_price_length);
             //sales_price.setSelection(0);
 
             String str_key = KeyEvent.keyCodeToString(primaryCode);
-            Log.i("BemaCarl", "BemaKeyboard.primaryCode: " + String.valueOf(primaryCode));
-            Log.i("BemaCarl", "BemaKeyboard.keyCodeToString: " + str_key);
+            //Log.d("BemaCarl", "BemaKeyboard.onKey.primaryCode: " + String.valueOf(primaryCode));
+            //Log.d("BemaCarl", "BemaKeyboard.onKey.keyCodeToString: " + str_key);
 
             switch(primaryCode){
                 case KeyEvent.KEYCODE_NUMPAD_1 :
@@ -191,16 +191,32 @@ public class BemaKeyboard {
                     if(sales_price_start>0 && sales_price_end>0 && sales_price_start <= sales_price_length) {
                         String part1 = editTextKeyboard.getText().toString().substring(0, sales_price_start-1);
                         String part2 = editTextKeyboard.getText().toString().substring(sales_price_end, sales_price_length);
-                        Log.i("BemaKeyboard", "part1: " + part1);
-                        Log.i("BemaKeyboard", "part2: " + part2);
-                        //replacing the selected text with empty String and setting it to EditText
+                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.part1: " + part1);
+                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.part2: " + part2);
+
+                        //editTextKeyboard.postDelayed(new Runnable() {
+                            //@Override
+                            //public void run() {
                         editTextKeyboard.setText(part1 + part2);
-                        Log.i("BemaKeyboard", "sales_price_start: "     + sales_price_start);
-                        Log.i("BemaKeyboard", "sales_price_end: "       + sales_price_end);
-                        Log.i("BemaKeyboard", "sales_price_length: "    + sales_price_length);
-                        if(sales_price_end>0) {
-                            editTextKeyboard.setSelection(sales_price_end - 1);
+                        int len = editTextKeyboard.getText().length();
+                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.getText: " + editTextKeyboard.getText());
+                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.getText.length: " + len);
+                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.sales_price_start: "     + sales_price_start);
+                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.sales_price_end: "       + sales_price_end);
+                        Log.d("BemaCarl", "BemaKeyboard.onKey.KEYCODE_DEL.sales_price_length: "    + sales_price_length);
+                        int pos = sales_price_end - 1;
+                        if(sales_price_start < sales_price_length) {
+                            editTextKeyboard.setSelection(pos - (sales_price_end - sales_price_start));
+                        }else{
+                            if(pos > len) {
+                                editTextKeyboard.setSelection(len);
+                            }else{
+                                editTextKeyboard.setSelection(pos);
+                            }
                         }
+
+                            //}
+                        //}, 200);
                     }
                     break;
                 case 261 :
