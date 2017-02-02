@@ -1,5 +1,9 @@
 <resources>
-    <string name="api_server_url">https://bematech:1q2w3e@bematech.bemacashus.com</string>
-    <string name="api_basic_cred">bematech:1q2w3e</string>
-    <string name="merchant_register_url">https://bematech.bemacashus.com/#merchant_signup</string>
+    <string name="api_server_url">http://54.202.251.137</string>
+    <string name="api_basic_cred"></string>
+    <string name="merchant_register_url">http://bematech.demo162.dataart.com</string>
+
+    <string name="api_server_url_">https://bematech:1q2w3e@bematech.bemacashus.com</string>
+    <string name="api_basic_cred_">bematech:1q2w3e</string>
+    <string name="merchant_register_url_">https://bematech.bemacashus.com/#merchant_signup</string>
 </resources>
