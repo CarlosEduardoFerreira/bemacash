@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.kaching123.tcr.store.ShopSchemaEx;
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -263,18 +265,33 @@ public class UpdateBlock {
 
 
     public static void update7to8(SQLiteDatabase db){
+
         db.execSQL("ALTER TABLE register ADD COLUMN description TEXT");
 
         // payment transaction
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four VARCHAR(4)");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method VARCHAR(1)");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier VARCHAR(20)");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type VARCHAR(10)");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number VARCHAR(20)");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT");
+        //if(!checkIfColumnDBExist(db, "payment_transaction", "last_four")) {
+            db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four VARCHAR(4)");
+        //}
+        //if(!checkIfColumnDBExist(db, "payment_transaction", "entry_method")) {
+            db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method VARCHAR(1)");
+        //}
+        //if(!checkIfColumnDBExist(db, "payment_transaction", "application_identifier")) {
+            db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier VARCHAR(20)");
+        //}
+        //if(!checkIfColumnDBExist(db, "payment_transaction", "application_cryptogram_type")) {
+            db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type VARCHAR(10)");
+        //}
+        //if(!checkIfColumnDBExist(db, "payment_transaction", "authorization_number")) {
+            db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number VARCHAR(20)");
+        //}
+        //if(!checkIfColumnDBExist(db, "payment_transaction", "signature_bytes")) {
+            db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT");
+        //}
 
         updateViews(db);
     }
+
+
 
 
     public static void update6_7to7(SQLiteDatabase db){
@@ -672,4 +689,20 @@ public class UpdateBlock {
             database.execSQL(query);
         }
     }
+
+
+
+    private static boolean checkIfColumnDBExist(SQLiteDatabase db, String tabela, String coluna){
+        boolean isExist = true;
+        Cursor res = db.rawQuery("PRAGMA table_info("+tabela+")",null);
+        int value = res.getColumnIndex(coluna);
+        if(value == -1)
+        {
+            isExist = false;
+        }
+        return isExist;
+    }
+
+
+
 }
