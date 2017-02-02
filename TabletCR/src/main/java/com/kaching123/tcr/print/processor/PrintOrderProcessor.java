@@ -9,6 +9,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery;
 import com.kaching123.tcr.function.OrderTotalPriceCursorQuery.PrintHandler;
@@ -261,7 +262,8 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
         if(payments != null) {
             for (PaymentTransactionModel p : payments) {
-                if(p.gateway.isDebit() || p.gateway.isTrueCreditCard()) {
+                if( (p.gateway.isDebit() || p.gateway.isTrueCreditCard()) &&
+                        !p.gateway.equals(PaymentGateway.OFFLINE_CREDIT) || !p.gateway.equals(PaymentGateway.CHECK) ) {
                     printerWrapper.drawLine();
                     if (!TextUtils.isEmpty(p.cardName)) {
                         String debitText = p.gateway.isDebit() ? " Debit" : p.gateway.isTrueCreditCard() ? " Credit" : "";

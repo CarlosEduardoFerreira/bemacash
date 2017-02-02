@@ -266,12 +266,12 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE register ADD COLUMN description TEXT");
 
         // payment transaction
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT;");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method TEXT;");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT;");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT;");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT;");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT;");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four VARCHAR(4)");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method VARCHAR(1)");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier VARCHAR(20)");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type VARCHAR(10)");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number VARCHAR(20)");
+        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT");
 
         updateViews(db);
     }
