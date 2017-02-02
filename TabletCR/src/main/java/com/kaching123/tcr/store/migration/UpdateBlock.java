@@ -262,19 +262,17 @@ public class UpdateBlock {
     private static final String SQL_DROP_SALE_ADDON_VIEW = "DROP VIEW if exists sale_addon_view";
 
 
+    public static void update7to8(SQLiteDatabase db){
+        db.execSQL("ALTER TABLE register ADD COLUMN description TEXT");
 
-    public static void update8to9(SQLiteDatabase db){
+        // payment transaction
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT;");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method TEXT;");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT;");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT;");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT;");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT;");
-    }
 
-
-    public static void update7to8(SQLiteDatabase db){
-        db.execSQL("ALTER TABLE register ADD COLUMN description TEXT");
         updateViews(db);
     }
 

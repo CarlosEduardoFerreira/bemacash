@@ -261,7 +261,7 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
         if(payments != null) {
             for (PaymentTransactionModel p : payments) {
-                if(!p.cardName.equals("Cash")) {
+                if(p.gateway.isDebit() || p.gateway.isTrueCreditCard()) {
                     printerWrapper.drawLine();
                     if (!TextUtils.isEmpty(p.cardName)) {
                         String debitText = p.gateway.isDebit() ? " Debit" : p.gateway.isTrueCreditCard() ? " Credit" : "";
