@@ -141,9 +141,11 @@ public class BemaKeyboard {
             //Log.d("BemaCarl", "BemaKeyboard.onKey.sales_price_length: "    + sales_price_length);
             //sales_price.setSelection(0);
 
-            String str_key = KeyEvent.keyCodeToString(primaryCode);
+            //String str_key = KeyEvent.keyCodeToString(primaryCode);
             //Log.d("BemaCarl", "BemaKeyboard.onKey.primaryCode: " + String.valueOf(primaryCode));
             //Log.d("BemaCarl", "BemaKeyboard.onKey.keyCodeToString: " + str_key);
+
+            int ja_tem_ponto = editTextKeyboard.getText().toString().indexOf('.');
 
             switch(primaryCode){
                 case KeyEvent.KEYCODE_NUMPAD_1 :
@@ -181,7 +183,6 @@ public class BemaKeyboard {
                     editTextKeyboard.getText().insert(0, String.valueOf('-'));
                     break;
                 case KeyEvent.KEYCODE_NUMPAD_DOT :
-                    int ja_tem_ponto = editTextKeyboard.getText().toString().indexOf('.');
                     if(ja_tem_ponto == -1) {
                         if(editTextKeyboard.getText().equals("-")) {
                             editTextKeyboard.setText("-0.");
@@ -207,6 +208,20 @@ public class BemaKeyboard {
                     enterBind();
                     break;
             }
+
+            // Two decimals after dot
+            if(ja_tem_ponto != -1) {
+                String[] salePrice = editTextKeyboard.getText().toString().split("\\.");
+                if(salePrice.length > 1) {
+                    if (salePrice[1].length() > 2) {
+                        String newSalePrice = editTextKeyboard.getText().toString().substring(0, sales_price_length);
+                        editTextKeyboard.setText(newSalePrice);
+                        editTextKeyboard.setSelection(sales_price_length);
+                    }
+                }
+            }
+
+
         }
 
 
