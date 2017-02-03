@@ -289,10 +289,7 @@ public class UpdateBlock {
 
 
     public static void update7to8(SQLiteDatabase db){
-
         db.execSQL("ALTER TABLE register ADD COLUMN description TEXT");
-        updateViews(db);
-
     }
 
 
