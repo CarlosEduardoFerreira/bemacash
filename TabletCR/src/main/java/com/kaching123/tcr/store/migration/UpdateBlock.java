@@ -284,6 +284,7 @@ public class UpdateBlock {
         //if(!checkIfColumnDBExist(db, "payment_transaction", "signature_bytes")) {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT");
         //}
+        updateViews(db);
     }
 
 
@@ -291,28 +292,6 @@ public class UpdateBlock {
 
         db.execSQL("ALTER TABLE register ADD COLUMN description TEXT");
         updateViews(db);
-
-        /*
-        // payment transaction
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "last_four")) {
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "entry_method")) {
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "application_identifier")) {
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "application_cryptogram_type")) {
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "authorization_number")) {
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "signature_bytes")) {
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT");
-        //}
-        /**/
 
     }
 
@@ -497,14 +476,6 @@ public class UpdateBlock {
 
     public static void update5_4to5_5(SQLiteDatabase db) {
         db.execSQL(SQL_ALTER_PAYMENT_TRANSACTION_ADD_CASHBACK);
-
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method TEXT");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT");
-        db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT");
-
         db.execSQL(SQL_CREATE_23);
         db.execSQL(SQL_CREATE_5_5_PAYMENT_TRANSACTION_VIEW);
     }
