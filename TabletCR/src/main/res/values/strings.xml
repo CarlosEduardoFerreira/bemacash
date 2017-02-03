@@ -2089,4 +2089,5 @@
     <string name="scale_dlg_warning_message_check_connection">Check connection to the scale or enter the weight manually.</string>
     <string name="scale_dlg_warning_message_place_on_scale">Place %1$s on the Scale or enter the weight manually.</string>
     <string name="scale_dlg_warning_unit_does_not_match">The scale unit does not match the item unit of measurement. Switch scale to %1$s to continue Please check the scale."</string>
+    <string name="sync_defined_on_hold">defined on hold</string>
 </resources>

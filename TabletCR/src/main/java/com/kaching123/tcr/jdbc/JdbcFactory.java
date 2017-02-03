@@ -8,6 +8,7 @@ import com.kaching123.tcr.jdbc.converters.CommissionsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ComposerJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CreditReceiptJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CustomerJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.DefinedOnHoldJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.DepartmentJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeeJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
@@ -48,6 +49,7 @@ import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.model.CommissionsModel;
 import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.CreditReceiptModel;
+import com.kaching123.tcr.model.DefinedOnHoldModel;
 import com.kaching123.tcr.model.ItemKdsModel;
 import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
 import com.kaching123.tcr.model.CustomerModel;
@@ -121,6 +123,7 @@ import com.kaching123.tcr.store.ShopStore.TBPTable;
 import com.kaching123.tcr.store.ShopStore.TBPxRegisterTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
+import com.kaching123.tcr.store.ShopStore.DefinedOnHoldTable;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.util.HashMap;
@@ -172,6 +175,9 @@ public class JdbcFactory {
 
         API_METHOD.put(CategoryTable.TABLE_NAME, "categories");
         API_METHOD2.put(CategoryModel.class, "categories");
+
+        CONVERTERS.put(DefinedOnHoldTable.TABLE_NAME, c = new DefinedOnHoldJdbcConverter());
+        CONVERTERS2.put(DefinedOnHoldModel.class, c);
 
         CONVERTERS.put(DepartmentTable.TABLE_NAME, c = new DepartmentJdbcConverter());
         CONVERTERS2.put(DepartmentModel.class, c);

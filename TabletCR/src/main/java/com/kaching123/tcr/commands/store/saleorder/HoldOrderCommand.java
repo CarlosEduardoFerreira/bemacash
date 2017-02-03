@@ -47,7 +47,9 @@ public class HoldOrderCommand extends UpdateSaleOrderCommand {
             }
             if (order == null)
                 return null;
+
             order.setHoldName(action == HoldOnAction.ADD ? title : "Canceled because of quantity");
+
             return order;
         } finally {
             c.close();
