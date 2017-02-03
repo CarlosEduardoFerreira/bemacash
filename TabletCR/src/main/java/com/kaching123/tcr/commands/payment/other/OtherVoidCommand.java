@@ -62,7 +62,7 @@ public abstract class OtherVoidCommand extends AsyncCommand {
         transactionModel = (PaymentTransactionModel) getArgs().getSerializable(ARG_DATA);
         needToCancel = getBooleanArg(ARG_NEED_TO_CANCEL);
 
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("OtherVoidCommand.doCommand 65: " + transactionModel.toDebugString());
 
         if (!needToCancel) {
             prepaidVoidResult = new VoidOrderCommand().sync(getContext(), transactionModel.orderGuid, getAppCommandContext());

@@ -65,7 +65,7 @@ public class BlackSaleCommand extends RESTWebCommand<SaleResponse, SaleResult> {
         //mockSuccessResponse(result);
 
         transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction = data.getTransaction().updateFromSale(result.getData()));
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("BlackSaleCommand.doCommand " + transactionModel.toDebugString());
 
         return result.isValid();
     }

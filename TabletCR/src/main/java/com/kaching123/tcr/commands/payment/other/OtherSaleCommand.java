@@ -29,7 +29,7 @@ public class OtherSaleCommand extends AsyncCommand {
         Transaction data = getArgs().getParcelable(ARG_DATA);
 
         transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), data);
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("OtherSaleCommand.doCommand 32: " + transactionModel.toDebugString());
 
         return succeeded();
     }

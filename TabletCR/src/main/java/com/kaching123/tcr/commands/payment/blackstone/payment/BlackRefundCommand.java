@@ -82,7 +82,7 @@ public class BlackRefundCommand extends RESTWebCommand<RefundResponse, RefundRes
         if (!success) {
             Logger.e("BlackRefundCommand.doCommand(): error result: " + (result.getData() == null ? null : result.getData().toDebugString()));
         }
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("BlackRefundCommand.doCommand 85: " + transactionModel.toDebugString());
 
         if (success) {
             childTransactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), childTransaction);

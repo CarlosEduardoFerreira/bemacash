@@ -70,7 +70,7 @@ public class CreditSaleCommand extends AsyncCommand {
             return failed();
         }
         transactionModel.paymentId = info.guid;
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("CreditSaleCommand.doCommand 73: " + transactionModel.toDebugString());
         BigDecimal change = info.availableAmount.subtract(transactionModel.amount);
 
         transactionModel.changeAmount = change;

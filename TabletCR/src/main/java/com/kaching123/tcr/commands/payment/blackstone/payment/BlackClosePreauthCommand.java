@@ -59,7 +59,7 @@ public class BlackClosePreauthCommand extends RESTWebCommand<PreauthResponse, Pr
         String tipsComments = getStringArg(ARG_COMMENTS);
         String tippedEmployeeId = getStringArg(ARG_TIPPED_EMPLOYEE);
 
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("BlackClosePreauthCommand.doCommand 62: " + transactionModel.toDebugString());
 
         transaction = transactionModel.toTransaction();
         transaction.userTransactionNumber = UUID.randomUUID().toString();
@@ -80,7 +80,7 @@ public class BlackClosePreauthCommand extends RESTWebCommand<PreauthResponse, Pr
         transaction.setAmount(transactionModel.amount.add(tipsAmount));
 
         transactionModel = new PaymentTransactionModel(transactionModel.guid, transactionModel.shiftGuid, transactionModel.createTime, transaction);
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("BlackClosePreauthCommand.doCommand 83: " + transactionModel.toDebugString());
 
         transaction.userTransactionNumber = transactionModel.guid;
 

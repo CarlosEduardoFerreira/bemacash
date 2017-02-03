@@ -79,7 +79,7 @@ public class CashRefundCommand extends AsyncCommand {
         operations = new ArrayList<ContentProviderOperation>();
         sqlCommand = batchInsert(PaymentTransactionModel.class);
 
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("CashRefundCommand.doCommand 82: " + transactionModel.toDebugString());
 
         if (isManualReturn) {
             addFakePaymentResult = new AddFakePaymentCommand().sync(getContext(), transactionModel, getAppCommandContext());

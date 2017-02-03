@@ -63,7 +63,7 @@ public class BlackProcessPreauthCommand extends RESTWebCommand<PreauthResponse, 
         transaction = data.getTransaction().updateFromProcessPreauth(result.getData());
 
         transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("BlackProcessPreauthCommand.doCommand 66" + transactionModel.toDebugString());
 
         return result.isValid();
     }

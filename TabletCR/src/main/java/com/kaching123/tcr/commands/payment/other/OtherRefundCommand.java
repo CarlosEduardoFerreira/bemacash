@@ -70,7 +70,7 @@ public abstract class OtherRefundCommand extends AsyncCommand {
         operations = new ArrayList<ContentProviderOperation>();
         sqlCommand = batchInsert(PaymentTransactionModel.class);
 
-        Logger.d(transactionModel.toDebugString());
+        Logger.d("OtherRefundCommand.doCommand 73: " + transactionModel.toDebugString());
 
         if (isManualReturn) {
             addFakePaymentResult = new AddFakePaymentCommand().sync(getContext(), transactionModel, getAppCommandContext());

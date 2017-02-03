@@ -59,7 +59,7 @@ public class TransactionHistoryMiniFragment extends ListFragment implements Load
             loader.onLoadComplete(saleOrderModels);
         }
         for (PaymentTransactionModel model : saleOrderModels) {
-            Logger.d(model.toDebugString());
+            Logger.d("TransactionHistoryMiniFragment.onLoadFinished 62: " + model.toDebugString());
         }
     }
 
