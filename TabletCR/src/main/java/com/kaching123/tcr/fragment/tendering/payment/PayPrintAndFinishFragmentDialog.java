@@ -161,6 +161,11 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             signatureBox.setChecked(true);
         }
 
+        if(!getApp().paxSignatureCanceledByCustomer){
+            signatureBox.setEnabled(false);
+            signatureBox.setChecked(false);
+        }
+
         if (changeAmount != null && changeAmount.compareTo(BigDecimal.ZERO) == 1) {
             change.setVisibility(View.VISIBLE);
 
@@ -307,9 +312,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             if (!printBox.isChecked()) {
                 receiptType = ReceiptType.MERCHANT;
             }
-            if(!getApp().paxSignatureCanceledByCustomer) {
-                PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
-            }
+            PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
         }
     }
 
