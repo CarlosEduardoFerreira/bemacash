@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -174,10 +175,6 @@ public class PaxSignature extends PaxProcessorBaseCommand {
 
     public String getStringFromPaxFile(String imageLocation){
 
-        if(imageLocation == null || imageLocation == ""){
-            return null;
-        }
-
         String alldata;
 
         if(TcrApplication.get().paxSignatureEmulator){
@@ -197,9 +194,27 @@ public class PaxSignature extends PaxProcessorBaseCommand {
                     "20^111,22^109,26^108,29^106,32^105,35^104,39^105,42^108,42^112,41^115,39^118,36^" +
                     "121,33^124,30^127,26^130,24^132,27^134,31^135,34^136,37^136,40^136,44^136,47^" +
                     "134,50^132,53^131,57^128,60^125,62^123,65^120,66^~";
+
+            alldata = "0,65535^8,90^12,90^15,88^18,85^21,82^24,79^26,75^28,72^29,68^31,65^32,62^34,57^35," +
+                    "54^36,51^36,48^37,44^37,41^37,38^37,34^37,31^36,26^35,23^33,20^30,17^27,15^24,14^20," +
+                    "15^17,17^14,20^12,23^12,26^11,30^11,33^11,36^11,39^11,43^12,46^12,49^13,53^15,56^16," +
+                    "59^18,62^21,66^24,69^28,71^31,74^34,76^37,79^0,65535^51,85^54,83^57,81^60,79^64,75^62," +
+                    "72^59,73^56,74^52,75^50,79^49,82^51,85^54,88^57,88^60,88^64,87^67,86^70,84^73,83^76," +
+                    "80^80,79^82,75^81,72^78,71^75,71^72,72^68,74^68,77^71,79^74,80^77,80^0,65535^72,77^75," +
+                    "77^78,78^81,79^84,80^0,65535^95,80^98,79^101,77^104,75^108,73^110,70^110,66^107,65^104," +
+                    "66^100,67^97,70^95,74^94,77^96,80^99,81^102,81^105,80^108,79^112,79^115,77^118,75^121," +
+                    "73^124,70^126,67^123,67^120,68^118,71^119,75^122,76^125,77^128,77^132,78^135,77^138," +
+                    "77^141,77^0,65535^20,97^20,94^19,91^~";
+            alldata = alldata.replace("0,65535^","");
         }else {
+
+            if(imageLocation == null || imageLocation == ""){
+                return null;
+            }
+
             alldata = "";
             try {
+                /*
                 File file = new File(imageLocation);
                 BufferedReader sr = null;
                 try {
@@ -214,7 +229,16 @@ public class PaxSignature extends PaxProcessorBaseCommand {
                     var11.printStackTrace();
                 }
                 sr.close();
-                alldata = alldata.equals("")?null:alldata;
+                /**/
+
+                File fl = new File(imageLocation);
+                FileInputStream fin = new FileInputStream(fl);
+                alldata = convertStreamToString(fin);
+                fin.close();
+                /**/
+
+                alldata = alldata.trim().equals("") ? null : alldata;
+
             }catch(Exception e){
                 alldata = null;
                 e.printStackTrace();
@@ -226,13 +250,24 @@ public class PaxSignature extends PaxProcessorBaseCommand {
         return alldata;
     }
 
+    public static String convertStreamToString(InputStream is) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        reader.close();
+        return sb.toString();
+    }
+
 
     protected Bitmap ConvertPaxFileStringToBitmapObject(String alldata) throws IOException {
 
         String div = "\\^";
         String[] signature_divide = alldata.split(div);
-        int margin_x = 180;
-        int margin_y =  20;
+        int margin_x = 170;
+        int margin_y =  10;
         ArrayList xVal = new ArrayList(signature_divide.length);
         ArrayList yVal = new ArrayList(signature_divide.length);
 

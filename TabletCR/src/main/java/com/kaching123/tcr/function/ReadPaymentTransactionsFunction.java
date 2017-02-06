@@ -9,6 +9,7 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
@@ -114,6 +115,9 @@ public final class ReadPaymentTransactionsFunction {
     }
 
     public static ArrayList<PaymentTransactionModel> loadByOrderSingle(Context context, String orderGuid) {
+        if(TcrApplication.get().paxSignatureEmulator){
+            return null;
+        }
         Cursor c = ProviderAction.query(URI_TRANSACTIONS)
                 .where("(" + PaymentTransactionTable.STATUS + " = ? OR " + PaymentTransactionTable.STATUS + " = ?)", PaymentStatus.PRE_AUTHORIZED.ordinal(), PaymentStatus.SUCCESS.ordinal())
                 .where(SaleOrderTable.GUID + " = ?", orderGuid)

@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kaching123.pos.printer.BitmapCarl;
 import com.kaching123.pos.printer.BitmapPrintedCarl;
@@ -184,7 +185,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                             Thread.sleep(400);
                             if (paxSignature != null) {
                                 paxDigitalSign = paxSignature.signaturePaxFileString;
-                                Logger.d("Bemacarl.paxDigitalSign: " + paxDigitalSign);
+                                Log.d("Bemacarl", "PaxProcessorSaleCommand 188: paxDigitalSign: " + paxDigitalSign);
                                 if(paxDigitalSign == null || paxDigitalSign == ""){
                                     getApp().paxSignatureCanceledByCustomer = true;
                                 }

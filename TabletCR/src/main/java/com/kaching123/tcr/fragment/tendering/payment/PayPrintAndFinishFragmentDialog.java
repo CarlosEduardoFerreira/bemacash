@@ -307,7 +307,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             if (!printBox.isChecked()) {
                 receiptType = ReceiptType.MERCHANT;
             }
-            PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
+            if(!getApp().paxSignatureCanceledByCustomer) {
+                PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
+            }
         }
     }
 

@@ -113,7 +113,9 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
     protected void printBody(final Context context, final TcrApplication app, final ITextPrinter printerWrapper) {
         final String changeText = context.getString(R.string.print_order_change_label);
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
+
         final List<PaymentTransactionModel> payments = ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
+
 
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new PrintHandler() {
 
@@ -161,8 +163,10 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
                 BigDecimal totalCashBack = BigDecimal.ZERO;
 
                 printerWrapper.drawLine();
-                for (PaymentTransactionModel p : payments) {
-                    totalCashBack = totalCashBack.add(p.cashBack.negate());
+                if(payments != null) {
+                    for (PaymentTransactionModel p : payments) {
+                        totalCashBack = totalCashBack.add(p.cashBack.negate());
+                    }
                 }
                 if (totalCashBack.compareTo(BigDecimal.ZERO) > 0)
                     printerWrapper.orderFooter(context.getString(R.string.printer_cash_back), totalCashBack);
@@ -203,30 +207,33 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
         BigDecimal totalPax = BigDecimal.ZERO;
 
-        for (PaymentTransactionModel p : payments) {
-            updateHasCreditCardPayment(p.gateway.isCreditCard());
-            boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
-            printerWrapper.payment(p.cardName == null ? p.gateway.name() : p.cardName,
-                    isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
-            if (isChanged) {
-                printerWrapper.change(changeText, p.changeAmount);
-            }
-            if (p.balance != null && p.gateway.isEbt()) {
-                isEbtPaymentExists = true;
-                ebtBalance = p.balance;
-            }
-            if (giftCardResults != null)
-                for (GiftCardBillingResult result : giftCardResults) {
-                    isGiftCardPaymnetExists = true;
-                    giftCardBalance = new BigDecimal(result.balance);
+        if(payments != null) {
+
+            for (PaymentTransactionModel p : payments) {
+                updateHasCreditCardPayment(p.gateway.isCreditCard());
+                boolean isChanged = p.changeAmount != null && BigDecimal.ZERO.compareTo(p.changeAmount) < 0;
+                printerWrapper.payment(p.cardName == null ? p.gateway.name() : p.cardName,
+                        isChanged ? p.amount.add(p.changeAmount).add(p.cashBack.negate()) : p.amount.add(p.cashBack.negate()));
+                if (isChanged) {
+                    printerWrapper.change(changeText, p.changeAmount);
                 }
-            if ((p.balance != null && p.gateway.isGiftCard())) {
-                isGiftCardPaymnetExists = true;
-                giftCardBalance = p.balance;
+                if (p.balance != null && p.gateway.isEbt()) {
+                    isEbtPaymentExists = true;
+                    ebtBalance = p.balance;
+                }
+                if (giftCardResults != null)
+                    for (GiftCardBillingResult result : giftCardResults) {
+                        isGiftCardPaymnetExists = true;
+                        giftCardBalance = new BigDecimal(result.balance);
+                    }
+                if ((p.balance != null && p.gateway.isGiftCard())) {
+                    isGiftCardPaymnetExists = true;
+                    giftCardBalance = p.balance;
+                }
+
+                totalPax = totalPax.add(p.amount);
+
             }
-
-            totalPax = totalPax.add(p.amount);
-
         }
 
         if (isEbtPaymentExists) {
@@ -365,11 +372,10 @@ public class PrintOrderProcessor extends BasePrintProcessor<ITextPrinter> {
 
             PaxSignature paxSignature = new PaxSignature(null);
             try {
-                Thread.sleep(1500);
                 if (paxSignature != null) {
-                    if (app.getDigitalSignature() && app.requireSignatureOnTransactionsHigherThan && paxSignature.signaturePaxFileString != null) {
+                    //if (app.getDigitalSignature() && app.requireSignatureOnTransactionsHigherThan && paxSignature.signaturePaxFileString != null) {
                         printerWrapper.printPaxSignature(paxSignature.convertPaxFileStringToPrintedByteArray(paxSignature.signaturePaxFileString));
-                    }
+                    //}
                 }
             }catch(Exception e){
                 e.printStackTrace();
