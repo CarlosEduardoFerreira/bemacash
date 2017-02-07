@@ -161,7 +161,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             signatureBox.setChecked(true);
         }
 
-        if(getApp().paxSignatureCanceledByCustomer){
+        if(getApp().paxSignatureCanceledByCustomer && !getApp().paxMachineHasTransactionSuccessfull){
             signatureBox.setEnabled(false);
             signatureBox.setChecked(false);
         }

@@ -145,6 +145,7 @@ public class TcrApplication extends MultiDexApplication {
     public boolean forceSignaturePrint = false;
     public boolean requireSignatureOnTransactionsHigherThan = false;
     public boolean paxSignatureCanceledByCustomer = false;
+    public boolean paxMachineHasTransactionSuccessfull = false;
 
 
     @Override

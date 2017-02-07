@@ -176,6 +176,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     String paxDigitalSign = null;
                     getApp().paxSignatureCanceledByCustomer = false;
+                    getApp().paxMachineHasTransactionSuccessfull = true;
 
                     if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature()
                             && getApp().requireSignatureOnTransactionsHigherThan) {
@@ -205,6 +206,8 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                 } else {
                     getApp().paxSignatureCanceledByCustomer = true;
+                    getApp().paxMachineHasTransactionSuccessfull = false;
+
                     transaction.allowReload = true;
                     errorReason = "Result Code: " + response.ResultCode + " (" + response.ResultTxt + ")";
                     Logger.d("Pax Error code: " + response.ResultCode + ", Message: " + response.ResultTxt);
