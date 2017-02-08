@@ -104,13 +104,13 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
                                 Toast.makeText(getContext(), R.string.defined_on_hold_busy, Toast.LENGTH_LONG).show();
                                 return;
                             }
+                            dismiss();
                             break;
                         case GET_ORDER:
                             getOnHoldOrder(parent, position);
                             break;
                     }
                 }
-                dismiss();
             }
         });
     }
@@ -122,6 +122,7 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
             DefinedOnHoldModel definedOnHoldModel = (DefinedOnHoldModel) parent.getItemAtPosition(position);
             saleOrderModel = gridAdapter.getOnHoldOrderByDefinedGuid(definedOnHoldModel.getGuid());
             if(saleOrderModel == null) {
+                Toast.makeText(getContext(), R.string.on_hold_empty_place, Toast.LENGTH_LONG).show();
                 return;
             }
         } else {
@@ -129,6 +130,8 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
         }
 
         listener.onSwap2Order(saleOrderModel.getHoldName(), saleOrderModel.getHoldPhone(), saleOrderModel.getHoldStatus(), saleOrderModel.guid, saleOrderModel.getDefinedOnHoldGuid());
+        dismiss();
+
     }
 
     @Override
