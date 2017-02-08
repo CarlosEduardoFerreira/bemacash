@@ -199,6 +199,12 @@ import com.kaching123.tcr.store.migration.version.to8.Update6_5to8;
 import com.kaching123.tcr.store.migration.version.to8.Update6_6to8;
 import com.kaching123.tcr.store.migration.version.to8.Update6_7to8;
 import com.kaching123.tcr.store.migration.version.to8.Update7to8;
+import com.kaching123.tcr.store.migration.version.to9.Update6_4to9;
+import com.kaching123.tcr.store.migration.version.to9.Update6_5to9;
+import com.kaching123.tcr.store.migration.version.to9.Update6_6to9;
+import com.kaching123.tcr.store.migration.version.to9.Update6_7to9;
+import com.kaching123.tcr.store.migration.version.to9.Update7to9;
+import com.kaching123.tcr.store.migration.version.to9.Update8to9;
 
 public class SqlUpdateVersionMatcher {
 
@@ -439,8 +445,14 @@ public class SqlUpdateVersionMatcher {
         UPDATE6_5TO8(new Update6_5to8()),
         UPDATE6_6TO8(new Update6_6to8()),
         UPDATE6_7TO8(new Update6_7to8()),
-        UPDATE7TO8(new Update7to8());
+        UPDATE7TO8(new Update7to8()),
 
+        UPDATE6_4TO9(new Update6_4to9()),
+        UPDATE6_5TO9(new Update6_5to9()),
+        UPDATE6_6TO9(new Update6_6to9()),
+        UPDATE6_7TO9(new Update6_7to9()),
+        UPDATE7TO9(new Update7to9()),
+        UPDATE8TO9(new Update8to9());
 
         private IUpdateContainer container;
 
