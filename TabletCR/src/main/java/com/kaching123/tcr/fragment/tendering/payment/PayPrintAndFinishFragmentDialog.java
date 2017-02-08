@@ -271,20 +271,18 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         }, releaseResultList);
     }
 
+    boolean printedFinalized = false;
 
     @Override
     protected boolean onConfirm() {
+        printedFinalized = false;
         printReceipts();
         if (!getApp().isBlackstonePax() && getApp().isPaxConfigured())
             PaxProcessorHelloCommand.start(getActivity(), PaxModel.get(), helloCallBack);
         return false;
     }
 
-    boolean printedFinalized = false;
-
     protected void printReceipts() {
-
-        getApp().forceSignaturePrint = signatureBox.isChecked() ? true : false;
 
         if (printBox.isChecked() && !orderPrinted) {
             printOrder(false, false);
@@ -350,20 +348,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
                     waitDialog.hide(activity);
                     showHidePrintingDialog();
                 }
-            }, 500);
-        }else{
-            printBox.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    completeProcess();
-                }
-            }, 500);
-
+            }, 1000);
         }
-
-
-
-
 
         /*
         printBox.postDelayed(new Runnable() {
@@ -375,6 +361,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             }
         }, 3000);
         /**/
+
     }
 
     protected void sendDigitalOrder() {
@@ -412,14 +399,12 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         IPrintCallback callback = new IPrintCallback() {
             @Override
             public void onRetry(boolean searchByMac, boolean ignorePaperEnd) {
-                printedFinalized = true;
                 printOrder(ignorePaperEnd, searchByMac);
             }
 
             @Override
             public void onCancel() {
-                printedFinalized = true;
-                onPrintSuccess();
+                //onPrintSuccess();
             }
         };
 
@@ -428,7 +413,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             orderPrinted = true;
             printedFinalized = true;
             printReceipts();
-
         }
 
         @Override
@@ -451,12 +435,12 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         @Override
         protected void onPrinterIPnotFound() {
-            printedFinalized = true;
             PrintCallbackHelper2.onPrinterIPnotFound(getActivity(), callback);
         }
 
         @Override
         public void onPrinterPaperNearTheEnd() {
+            printedFinalized = true;
             PrintCallbackHelper2.onPrinterPaperNearTheEnd(getActivity(), callback);
         }
 

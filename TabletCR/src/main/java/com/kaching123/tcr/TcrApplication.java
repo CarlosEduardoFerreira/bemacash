@@ -142,7 +142,7 @@ public class TcrApplication extends MultiDexApplication {
     private static CountryFunctionality countryFunctionality;
 
     public boolean paxSignatureEmulator = false;
-    public boolean forceSignaturePrint = false;
+
     public boolean requireSignatureOnTransactionsHigherThan = false;
     public boolean paxSignatureCanceledByCustomer = false;
     public boolean paxMachineHasTransactionSuccessfull = false;
