@@ -310,9 +310,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     private void printSignatureOrder(boolean skipPaperWarning, boolean searchByMac, ReceiptType receiptType, PrintSignatureOrderCallback printSignatureCallback) {
         //WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         if (receiptType != ReceiptType.DEBIT && receiptType != ReceiptType.EBT_CASH && receiptType != ReceiptType.EBT) {
-            if (!printBox.isChecked()) {
-                receiptType = ReceiptType.MERCHANT;
-            }
             PrintSignatureOrderCommand.start(getActivity(), skipPaperWarning || this.ignorePaperEnd, searchByMac, orderGuid, transactions, receiptType, printSignatureCallback);
         }
     }
@@ -372,7 +369,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     private void onSignaturePrintSuccess() {
         signatureOrderPrinted = true;
-        //printReceipts();
+        completeProcess();
     }
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
@@ -404,6 +401,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
             @Override
             public void onCancel() {
+                printedFinalized = true;
                 //onPrintSuccess();
             }
         };
@@ -435,6 +433,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         @Override
         protected void onPrinterIPnotFound() {
+            printedFinalized = true;
             PrintCallbackHelper2.onPrinterIPnotFound(getActivity(), callback);
         }
 
@@ -455,6 +454,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         @Override
         public void onPrintSuccess() {
+            printedFinalized = true;
             debitOrEBTDetailsPrinted = true;
             PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
         }
@@ -470,6 +470,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         @Override
         public void onPrintSuccess() {
+            printedFinalized = true;
             PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
         }
 
@@ -489,6 +490,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
             @Override
             public void onCancel() {
+                printedFinalized = true;
                 onPrintSuccess();
             }
         };
@@ -496,40 +498,42 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         @Override
         protected void onPrintSuccess() {
-            //if (printBox.isChecked()) {
-            //printSignatureOrder(false, false, ReceiptType.MERCHANT, printSignatureCallback2);
-            //} else {
-            PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
-            //}
+            printedFinalized = true;
             WaitDialogFragment.hide(getActivity());
             if(signature_receipt.equals("LONG") && !longSignatureReceiptPrinted) {
                 longSignatureReceiptPrinted = true;
                 printSignatureOrder(false, false, ReceiptType.CUSTOMER, printSignatureCallback);
             }
+            PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
         }
 
         @Override
         protected void onPrintError(PrinterError error) {
+            printedFinalized = true;
             PrintCallbackHelper2.onPrintError(getActivity(), error, retryListener);
         }
 
         @Override
         protected void onPrinterDisconnected() {
+            printedFinalized = true;
             PrintCallbackHelper2.onPrinterDisconnected(getActivity(), retryListener);
         }
 
         @Override
         protected void onPrinterIPnotFound() {
+            printedFinalized = true;
             PrintCallbackHelper2.onPrinterIPnotFound(getActivity(), retryListener);
         }
 
         @Override
         protected void onPrinterNotConfigured() {
+            printedFinalized = true;
             PrintCallbackHelper2.onPrinterNotConfigured(getActivity(), retryListener);
         }
 
         @Override
         protected void onPrinterPaperNearTheEnd() {
+            printedFinalized = true;
             PrintCallbackHelper2.onPrinterPaperNearTheEnd(getActivity(), retryListener);
         }
     }
@@ -551,32 +555,38 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         @Override
         protected void onPrintSuccess() {
+            printedFinalized = true;
             kitchenPrinted = true;
             WaitDialogFragment.hide(getActivity());
         }
 
         @Override
         protected void onPrintError(PrinterError error, String fromPrinter, String aliasTitle) {
+            printedFinalized = true;
             KitchenPrintCallbackHelper.onPrintError(getActivity(), error, fromPrinter, aliasTitle, skipListener);
         }
 
         @Override
         protected void onPrinterNotConfigured(String fromPrinter, String aliasTitle) {
+            printedFinalized = true;
             KitchenPrintCallbackHelper.onPrinterNotConfigured(getActivity(), fromPrinter, aliasTitle, skipListener);
         }
 
         @Override
         protected void onPrinterDisconnected(String fromPrinter, String aliasTitle) {
+            printedFinalized = true;
             KitchenPrintCallbackHelper.onPrinterDisconnected(getActivity(), fromPrinter, aliasTitle, skipListener);
         }
 
         @Override
         protected void onPrinterIPnotFound(String fromPrinter, String aliasTitle) {
+            printedFinalized = true;
             KitchenPrintCallbackHelper.onPrinterIPnotfound(getActivity(), fromPrinter, aliasTitle, skipListener);
         }
 
         @Override
         protected void onPrinterPaperNearTheEnd(String fromPrinter, String aliasTitle) {
+            printedFinalized = true;
             KitchenPrintCallbackHelper.onPrinterPaperNearTheEnd(getActivity(), fromPrinter, aliasTitle, skipListener);
         }
     }
