@@ -190,46 +190,46 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             //print_digital_signature = true;
             Log.i("BemaCarl","doubleCheckBeforePrint Condition 1");
 
-        /** Condition 2
-         *  If “Tips” are “Disabled” and “Digital Signature” is set to “No” and “Signature Receipt” is set to “Short”
-         *  and user only selected "Print Receipt", print only 1 simple value receipt.
-         *
-         *  Condition 3
-         *  If user checks signatureBox, it should print the manual signature receipt too. Only "Merchant Copy".
-         */
+            /** Condition 2
+             *  If “Tips” are “Disabled” and “Digital Signature” is set to “No” and “Signature Receipt” is set to “Short”
+             *  and user only selected "Print Receipt", print only 1 simple value receipt.
+             *
+             *  Condition 3
+             *  If user checks signatureBox, it should print the manual signature receipt too. Only "Merchant Copy".
+             */
         }else if(!tips && !digital_signature && signature_receipt.equals("SHORT")) {   // condition 2
             //signatureBox.setEnabled(true);
             Log.i("BemaCarl","doubleCheckBeforePrint Condition 2 e 3");
 
-        /** Condition 4
-         *  If “Tips” are “Disabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Long”
-         *  and user only selected "Print Receipt", print only 1 simple value receipt.
-         *
-         *  Condition 5
-         *  If user checks signatureBox, it should print the manual signature receipt too. Both "Merchant Copy" and "Customer Copy".
-         */
+            /** Condition 4
+             *  If “Tips” are “Disabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Long”
+             *  and user only selected "Print Receipt", print only 1 simple value receipt.
+             *
+             *  Condition 5
+             *  If user checks signatureBox, it should print the manual signature receipt too. Both "Merchant Copy" and "Customer Copy".
+             */
         }else if(!tips && !digital_signature && signature_receipt.equals("LONG")) {   // condition 4
             //signatureBox.setEnabled(true);
             Log.i("BemaCarl","doubleCheckBeforePrint Condition 4 e 5");
 
-        /** Condition 6
-         *  If “Tips” are “Enabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Short”
-         *  and user only selected "Print Receipt", print only 1 simple value receipt.
-         *
-         *  Condition 7
-         *  If user checks signatureBox, it should print the manual signature receipt too with "TIP". Only "Merchant Copy".
-         */
+            /** Condition 6
+             *  If “Tips” are “Enabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Short”
+             *  and user only selected "Print Receipt", print only 1 simple value receipt.
+             *
+             *  Condition 7
+             *  If user checks signatureBox, it should print the manual signature receipt too with "TIP". Only "Merchant Copy".
+             */
         }else if(tips && !digital_signature && signature_receipt.equals("SHORT")) {   // condition 6
             //signatureBox.setEnabled(true);
             Log.i("BemaCarl","doubleCheckBeforePrint Condition 6 e 7");
 
-        /** Condition 8
-         *  If “Tips” are “Enabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Long”
-         *  and user only selected "Print Receipt", print only 1 simple value receipt.
-         *
-         *  Condition 9
-         *  If user checks signatureBox, it should print the manual signature receipt too with "TIP". Both "Merchant Copy" and "Customer Copy".
-         */
+            /** Condition 8
+             *  If “Tips” are “Enabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Long”
+             *  and user only selected "Print Receipt", print only 1 simple value receipt.
+             *
+             *  Condition 9
+             *  If user checks signatureBox, it should print the manual signature receipt too with "TIP". Both "Merchant Copy" and "Customer Copy".
+             */
         }else if(tips && !digital_signature && signature_receipt.equals("LONG")) {   // condition 8
             //signatureBox.setEnabled(true);
             Log.i("BemaCarl","doubleCheckBeforePrint Condition 8 e 9");
@@ -280,6 +280,8 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         return false;
     }
 
+    boolean printedFinalized = false;
+
     protected void printReceipts() {
 
         getApp().forceSignaturePrint = signatureBox.isChecked() ? true : false;
@@ -317,39 +319,62 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         }
     }
 
-    boolean printed = false;
+
 
     @Override
     protected void completeProcess() {
 
-            if (emailBox.isChecked()) {
-                if (customer == null) {
-                    chooseCustomer();
-                } else {
-                    sendDigitalOrder();
-                }
-            } else if (printed) {
-                //dismiss();
-                super.completeProcess();
+        if (emailBox.isChecked() && !printedFinalized) {
+            if (customer == null) {
+                chooseCustomer();
             } else {
-                if (printBox.isChecked() || signatureBox.isChecked()) {
-                    final WaitDialogFragment waitDialog = (WaitDialogFragment) activity.getSupportFragmentManager().findFragmentByTag("progressDialog");
-                    waitDialog.show(getActivity(), getString(R.string.wait_printing));
-                /* should to fix to get printer status */
-                    printBox.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            waitDialog.hide(activity);
-                            printed = true;
-                            completeProcess();
-                        }
-                    }, 3000);
-                } else {
-                    printed = true;
+                sendDigitalOrder();
+            }
+        }else if( (printBox.isChecked() || signatureBox.isChecked()) && !printedFinalized) {
+            showHidePrintingDialog();
+        }else{
+            super.completeProcess();
+        }
+
+    }
+
+    private void showHidePrintingDialog(){
+        final WaitDialogFragment waitDialog = (WaitDialogFragment) activity.getSupportFragmentManager().findFragmentByTag("progressDialog");
+
+        /* should to fix to get printer status */
+        if(!printedFinalized){
+            waitDialog.show(getActivity(), getString(R.string.wait_printing));
+            printBox.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    waitDialog.hide(activity);
+                    showHidePrintingDialog();
+                }
+            }, 500);
+        }else{
+            printBox.postDelayed(new Runnable() {
+                @Override
+                public void run() {
                     completeProcess();
                 }
-            }
+            }, 500);
 
+        }
+
+
+
+
+
+        /*
+        printBox.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                printed = true;
+
+            }
+        }, 3000);
+        /**/
     }
 
     protected void sendDigitalOrder() {
@@ -387,13 +412,13 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         IPrintCallback callback = new IPrintCallback() {
             @Override
             public void onRetry(boolean searchByMac, boolean ignorePaperEnd) {
-                printed = false;
+                printedFinalized = true;
                 printOrder(ignorePaperEnd, searchByMac);
             }
 
             @Override
             public void onCancel() {
-                printed = false;
+                printedFinalized = true;
                 onPrintSuccess();
             }
         };
@@ -401,30 +426,32 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         @Override
         public void onPrintSuccess() {
             orderPrinted = true;
+            printedFinalized = true;
             printReceipts();
+
         }
 
         @Override
         public void onPrintError(PrinterCommand.PrinterError errorType) {
-            printed = false;
+            printedFinalized = true;
             PrintCallbackHelper2.onPrintError(getActivity(), errorType, callback);
         }
 
         @Override
         public void onPrinterNotConfigured() {
-            printed = false;
+            printedFinalized = true;
             PrintCallbackHelper2.onPrinterNotConfigured(getActivity(), callback);
         }
 
         @Override
         public void onPrinterDisconnected() {
-            printed = false;
+            printedFinalized = true;
             PrintCallbackHelper2.onPrinterDisconnected(getActivity(), callback);
         }
 
         @Override
         protected void onPrinterIPnotFound() {
-            printed = false;
+            printedFinalized = true;
             PrintCallbackHelper2.onPrinterIPnotFound(getActivity(), callback);
         }
 
@@ -486,9 +513,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         @Override
         protected void onPrintSuccess() {
             //if (printBox.isChecked()) {
-                //printSignatureOrder(false, false, ReceiptType.MERCHANT, printSignatureCallback2);
+            //printSignatureOrder(false, false, ReceiptType.MERCHANT, printSignatureCallback2);
             //} else {
-                PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
+            PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
             //}
             WaitDialogFragment.hide(getActivity());
             if(signature_receipt.equals("LONG") && !longSignatureReceiptPrinted) {
