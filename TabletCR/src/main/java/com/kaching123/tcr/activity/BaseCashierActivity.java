@@ -109,8 +109,9 @@ import com.kaching123.tcr.fragment.edit.SaleOrderDiscountEditFragment;
 import com.kaching123.tcr.fragment.edit.TaxEditFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
+import com.kaching123.tcr.fragment.saleorder.AddOnHoldDialogFragment;
 import com.kaching123.tcr.fragment.saleorder.GiftCardFragmentDialog;
-import com.kaching123.tcr.fragment.saleorder.HoldFragmentDialog;
+import com.kaching123.tcr.fragment.saleorder.OnHoldListDialogFragment;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHandlerHandler;
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
@@ -134,6 +135,7 @@ import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.ModifierGroupModel;
+import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
@@ -1364,9 +1366,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void actionHoldCounterSelected() {
         actionBarItemClicked();
-        HoldFragmentDialog.show(this, null, null, false, new HoldFragmentDialog.IHoldListener() {
+        OnHoldListDialogFragment.show(this, OnHoldListDialogFragment.HoldOnAction.GET_ORDER, new IHoldListener() {
             @Override
-            public void onSwap2Order(final String holdName, final String nextOrderGuid) {
+            public void onSwap2Order(final String holdName, final String holdPhone, final OnHoldStatus status, final String nextOrderGuid, final String definedOnHoldGuid) {
                 ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, nextOrderGuid, ItemsNegativeStockTrackingCommand.ItemType.HOLD_ON,
                         new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
                             @Override
@@ -1379,7 +1381,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                             updateHoldButton();
                                             supportInvalidateOptionsMenu();
                                         }
-                                    }, nextOrderGuid, holdName, HoldOrderCommand.HoldOnAction.REMOVE);
+                                    }, nextOrderGuid, holdName, holdPhone, definedOnHoldGuid, status, HoldOrderCommand.HoldOnAction.REMOVE);
                                     return;
                                 }
                                 setOrderGuid(nextOrderGuid, true);
@@ -2243,16 +2245,29 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     @Override
     public void onHold() {
-        HoldFragmentDialog.show(this, this.orderGuid, this.orderTitle, orderItemListFragment.hasKitchenItems(), new HoldFragmentDialog.IHoldListener() {
-
-            @Override
-            public void onSwap2Order(String holdName, String nextOrderGuid) {
-                if (!TextUtils.isEmpty(BaseCashierActivity.this.orderGuid)) {
-                    HoldOrderCommand.start(BaseCashierActivity.this, holdOrderCallback, BaseCashierActivity.this.orderGuid, holdName, HoldOrderCommand.HoldOnAction.ADD);
+        boolean isDefinedOnHold = app.getShopInfo().definedOnHold;
+        if(isDefinedOnHold) {
+            OnHoldListDialogFragment.show(this, OnHoldListDialogFragment.HoldOnAction.ADD_ORDER, new IHoldListener() {
+                @Override
+                public void onSwap2Order(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
+                    onSwap2OrderAction(BaseCashierActivity.this.orderTitle, null, null, null, definedOnHoldGuid);
                 }
-                setOrderGuid(nextOrderGuid, true);
-            }
-        });
+            });
+        } else {
+            AddOnHoldDialogFragment.show(this, this.orderGuid, this.orderTitle, saleOrderModel.holdPhone, saleOrderModel.holdStatus, orderItemListFragment.hasKitchenItems(), new IHoldListener() {
+                @Override
+                public void onSwap2Order(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
+                    onSwap2OrderAction(holdName, holdPhone, status, nextOrderGuid, null);
+                }
+            });
+        }
+    }
+
+    private void onSwap2OrderAction(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
+        if (!TextUtils.isEmpty(BaseCashierActivity.this.orderGuid)) {
+            HoldOrderCommand.start(BaseCashierActivity.this, holdOrderCallback, BaseCashierActivity.this.orderGuid, holdName, holdPhone, definedOnHoldGuid, status, HoldOrderCommand.HoldOnAction.ADD);
+        }
+        setOrderGuid(nextOrderGuid, true);
     }
 
     @Override
@@ -3247,6 +3262,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
 
     };
+
+    public static interface IHoldListener {
+        void onSwap2Order(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid);
+        //void onCancelHold();
+    }
 
     private static class SaleOrderItemModelWrapper {
         private final SaleOrderItemModel model;

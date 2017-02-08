@@ -22,8 +22,10 @@
     <dimen name="prepaid_type_dlg_width">1260dp</dimen>
     <dimen name="prepaid_category_dlg_width">1026dp</dimen>
     <dimen name="swipe_dlg_width">352dp</dimen>
-    <dimen name="holdon_dlg_width">342dp</dimen>
-    <dimen name="holdon_dlg_heigth">279dp</dimen>
+    <dimen name="holdon_dlg_width">610dp</dimen>
+    <dimen name="holdon_dlg_heigth">420dp</dimen>
+    <dimen name="holdon_list_dlg_width">1120dp</dimen>
+    <dimen name="holdon_list_dlg_heigth">620dp</dimen>
     <dimen name="holdon_gift_card_width">650dp</dimen>
     <dimen name="holdon_gift_card_heigth">279dp</dimen>
     <dimen name="holdon_dlg_expanded_heigth">390dp</dimen>
@@ -307,5 +309,12 @@
     <dimen name="payment_tender_dlg_remaining_ebt_value_tw_layout_height">24dp</dimen>
     <dimen name="payment_tender_dlg_remaining_ebt_value_tw_padding_right">4dp</dimen>
     <dimen name="payment_tender_dlg_exact_btn_margin_top">10dp</dimen>
+
+    <dimen name="on_hold_item_width">200dp</dimen>
+    <dimen name="on_hold_item_height">100dp</dimen>
+    <dimen name="on_hold_rows_width">500dp</dimen>
+    <dimen name="on_hold_edit_width">300dp</dimen>
+
+    <!--<dimen name="quick_items_grid_spacing">24dp</dimen-->
 
 </resources>

@@ -370,7 +370,8 @@
     <string name="dlg_sn_remove_descr" formatted="false">These items are serialized. Please use the scanner to remove an item or enter %s formatted code.</string>
     <string name="dlg_edit_tax">Apply tax</string>
     <string name="dlg_edit_order_discount">Order discount</string>
-    <string name="dlg_hold_title">Hold On list</string>
+    <string name="dlg_hold_title">On Hold List</string>
+    <string name="dlg_add_hold_title">On Hold Name</string>
     <string name="dlg_gift_card_title">Please Choose</string>
     <string name="dlg_hold_print_checkbox">Kitchen print</string>
     <string name="btn_new_order">Confirm</string>
@@ -2090,4 +2091,10 @@
     <string name="scale_dlg_warning_message_place_on_scale">Place %1$s on the Scale or enter the weight manually.</string>
     <string name="scale_dlg_warning_unit_does_not_match">The scale unit does not match the item unit of measurement. Switch scale to %1$s to continue Please check the scale."</string>
     <string name="sync_defined_on_hold">defined on hold</string>
+    <string name="to_go">To Go</string>
+    <string name="dine_in">Dine-in</string>
+    <string name="dine_in_g">Dine-In</string>
+    <string name="phone">Phone:</string>
+    <string name="name_table">Name/Table:</string>
+    <string name="defined_on_hold_busy">This place already has on hold order, please choose another place</string>
 </resources>

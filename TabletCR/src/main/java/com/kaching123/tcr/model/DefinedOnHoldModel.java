@@ -1,6 +1,7 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.kaching123.tcr.store.ShopStore;
 
@@ -12,17 +13,26 @@ import java.io.Serializable;
 
 public class DefinedOnHoldModel implements IValueModel, Serializable{
 
-    public final String id;
-    public String name;
+    private final String id;
+    private String name;
 
     public DefinedOnHoldModel(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
+    public DefinedOnHoldModel(Cursor c) {
+        this(c.getString(c.getColumnIndex(ShopStore.DefinedOnHoldTable.ID)),
+             c.getString(c.getColumnIndex(ShopStore.DefinedOnHoldTable.NAME)));
+    }
+
     @Override
     public String getGuid() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

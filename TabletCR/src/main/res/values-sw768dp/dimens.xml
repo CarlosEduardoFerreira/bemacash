@@ -22,8 +22,10 @@
     <dimen name="prepaid_type_dlg_width">960dp</dimen>
     <dimen name="prepaid_category_dlg_width">960dp</dimen>
     <dimen name="swipe_dlg_width">352dp</dimen>
-    <dimen name="holdon_dlg_width">342dp</dimen>
-    <dimen name="holdon_dlg_heigth">279dp</dimen>
+    <dimen name="holdon_dlg_width">610dp</dimen>
+    <dimen name="holdon_dlg_heigth">420dp</dimen>
+    <dimen name="holdon_list_dlg_width">1120dp</dimen>
+    <dimen name="holdon_list_dlg_heigth">620dp</dimen>
     <dimen name="holdon_gift_card_width">650dp</dimen>
     <dimen name="holdon_gift_card_heigth">279dp</dimen>
     <dimen name="holdon_dlg_expanded_heigth">390dp</dimen>

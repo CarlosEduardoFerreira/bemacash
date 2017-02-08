@@ -220,12 +220,40 @@ public class SaleOrderModel implements Serializable, IValueModel {
         return holdName;
     }
 
+    public String getHoldPhone() {
+        return holdPhone;
+    }
+
+    public OnHoldStatus getHoldStatus() {
+        return holdStatus;
+    }
+
     public void setHoldName(String holdName) {
         if (TextUtils.isEmpty(holdName)) {
             this.holdName = getDefaultName(this);
         } else {
             this.holdName = holdName;
         }
+    }
+
+    public String getDefinedOnHoldGuid() {
+        return definedOnHoldGuid;
+    }
+
+    public void setDefinedOnHoldGuid(String definedOnHoldGuid) {
+        this.definedOnHoldGuid = definedOnHoldGuid;
+    }
+
+    public void setHoldPhone(String holdPhone) {
+        this.holdPhone = holdPhone;
+    }
+
+    public void setHoldStatus(OnHoldStatus holdStatus) {
+        if(holdStatus == null){
+            this.holdStatus = OnHoldStatus.NONE;
+            return;
+        }
+        this.holdStatus = holdStatus;
     }
 
     @Override
