@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.BaseCashierActivity.IHoldListener;
 import com.kaching123.tcr.activity.SettingsActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity;

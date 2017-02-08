@@ -121,7 +121,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
                 .commit();
         Window window = getDialog().getWindow();
         window.setLayout(
-                getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width),
+                getResources().getDimensionPixelOffset(R.dimen.base_dlg_width),
                 window.getAttributes().height
         );
         Logger.d("-= Loading initiated =-");
@@ -197,7 +197,7 @@ public abstract class TenderFragmentDialogBase<T extends TenderFragmentDialogBas
         }
         //saleOrderModels != null && saleOrderModels.size() > 0 ? R.dimen.pay_tender_dialog_height_expanded : R.dimen.pay_tender_dialog_height)
         getDialog().getWindow().setLayout(
-                getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width),
+                getResources().getDimensionPixelOffset(R.dimen.base_dlg_width),
                 getResources().getDimensionPixelOffset(height)
         );
     }

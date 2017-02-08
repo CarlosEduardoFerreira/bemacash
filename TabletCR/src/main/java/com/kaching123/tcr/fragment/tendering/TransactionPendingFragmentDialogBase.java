@@ -1,7 +1,6 @@
 package com.kaching123.tcr.fragment.tendering;
 
 import android.os.Bundle;
-import android.widget.ProgressBar;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.payment.WebCommand.ErrorReason;
@@ -10,8 +9,6 @@ import com.kaching123.tcr.model.payment.blackstone.payment.ResponseBase;
 import com.kaching123.tcr.model.payment.blackstone.payment.User;
 import com.kaching123.tcr.model.payment.general.card.CreditCard;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
-
-import org.androidannotations.annotations.ViewById;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -28,7 +25,7 @@ public abstract class TransactionPendingFragmentDialogBase<T extends Transaction
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width), getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
+        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.base_dlg_width), getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
 //        getDialog().getWindow().setWindowAnimations(R.style.DialogAnimation);
         doCommand();
     }
