@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.device.GetPrinterStatusCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
@@ -320,33 +321,35 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     @Override
     protected void completeProcess() {
-        if (emailBox.isChecked()) {
-            if (customer == null) {
-                chooseCustomer();
+
+            if (emailBox.isChecked()) {
+                if (customer == null) {
+                    chooseCustomer();
+                } else {
+                    sendDigitalOrder();
+                }
+            } else if (printed) {
+                //dismiss();
+                super.completeProcess();
             } else {
-                sendDigitalOrder();
-            }
-        } else if(printed) {
-            dismiss();
-            super.completeProcess();
-        } else {
-            if(printBox.isChecked() || signatureBox.isChecked()) {
-                final WaitDialogFragment waitDialog = (WaitDialogFragment) activity.getSupportFragmentManager().findFragmentByTag("progressDialog");
-                waitDialog.show(getActivity(), getString(R.string.wait_printing));
+                if (printBox.isChecked() || signatureBox.isChecked()) {
+                    final WaitDialogFragment waitDialog = (WaitDialogFragment) activity.getSupportFragmentManager().findFragmentByTag("progressDialog");
+                    waitDialog.show(getActivity(), getString(R.string.wait_printing));
                 /* should to fix to get printer status */
-                printBox.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        waitDialog.hide(activity);
-                        printed = true;
-                        completeProcess();
-                    }
-                }, 3000);
-            }else{
-                printed = true;
-                completeProcess();
+                    printBox.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            waitDialog.hide(activity);
+                            printed = true;
+                            completeProcess();
+                        }
+                    }, 3000);
+                } else {
+                    printed = true;
+                    completeProcess();
+                }
             }
-        }
+
     }
 
     protected void sendDigitalOrder() {
@@ -384,11 +387,13 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         IPrintCallback callback = new IPrintCallback() {
             @Override
             public void onRetry(boolean searchByMac, boolean ignorePaperEnd) {
+                printed = false;
                 printOrder(ignorePaperEnd, searchByMac);
             }
 
             @Override
             public void onCancel() {
+                printed = false;
                 onPrintSuccess();
             }
         };
@@ -401,21 +406,25 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         @Override
         public void onPrintError(PrinterCommand.PrinterError errorType) {
+            printed = false;
             PrintCallbackHelper2.onPrintError(getActivity(), errorType, callback);
         }
 
         @Override
         public void onPrinterNotConfigured() {
+            printed = false;
             PrintCallbackHelper2.onPrinterNotConfigured(getActivity(), callback);
         }
 
         @Override
         public void onPrinterDisconnected() {
+            printed = false;
             PrintCallbackHelper2.onPrinterDisconnected(getActivity(), callback);
         }
 
         @Override
         protected void onPrinterIPnotFound() {
+            printed = false;
             PrintCallbackHelper2.onPrinterIPnotFound(getActivity(), callback);
         }
 
