@@ -3,7 +3,10 @@
     android:id="@+id/item_main_container"
     android:layout_width="@dimen/on_hold_item_width"
     android:layout_height="@dimen/on_hold_item_height"
-    android:background="@color/white">
+    android:paddingLeft="3dp"
+    android:paddingRight="3dp"
+    android:paddingBottom="3dp"
+    android:background="@drawable/on_hold_item_bg_frame">
 
     <TextView
         style="@style/OnHoldItem.Name"

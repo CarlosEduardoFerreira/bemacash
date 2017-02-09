@@ -334,7 +334,7 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
                 holder.placeName.setText(model.getName());
 
                 if(lockedDefinedPlaces.contains(model.getGuid())){
-                    holder.itemMainContainer.setBackgroundColor(context.getResources().getColor(R.color.dlg_text_green));
+                    holder.itemMainContainer.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.on_hold_item_bg_frame_busy));
                 }
 
             } else {

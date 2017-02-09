@@ -26,7 +26,7 @@
     <dimen name="base_dlg_heigth">279dp</dimen>
     <dimen name="holdon_dlg_width">610dp</dimen>
     <dimen name="holdon_dlg_heigth">390dp</dimen>
-    <dimen name="holdon_list_dlg_width">1120dp</dimen>
+    <dimen name="holdon_list_dlg_width">1145dp</dimen>
     <dimen name="holdon_list_dlg_heigth">640dp</dimen>
     <dimen name="holdon_gift_card_width">650dp</dimen>
     <dimen name="holdon_gift_card_heigth">279dp</dimen>
