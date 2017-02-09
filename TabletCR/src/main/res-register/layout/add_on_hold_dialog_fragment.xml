@@ -50,16 +50,14 @@
             android:imeOptions="actionDone"
             android:maxLines="1"/>
 
-
         <EditText
             style="@style/Hold.EditText"
             android:id="@+id/order_phone"
             android:layout_height="wrap_content"
             android:layout_width="@dimen/on_hold_edit_width"
-            android:imeOptions="actionDone"
             android:maxLines="1"
-            android:maxLength="11"
             android:inputType="phone"
+            android:maxLength="@integer/phone_max_length"
             android:layout_alignBottom="@+id/phoneName"
             android:layout_alignLeft="@+id/order_title"
             android:layout_alignStart="@+id/order_title"/>

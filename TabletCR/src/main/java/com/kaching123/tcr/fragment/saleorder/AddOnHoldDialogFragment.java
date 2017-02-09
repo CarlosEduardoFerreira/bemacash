@@ -2,10 +2,9 @@ package com.kaching123.tcr.fragment.saleorder;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -31,6 +30,8 @@ import com.kaching123.tcr.model.Permission;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
+
+import static com.kaching123.tcr.util.PhoneUtil.onlyDigits;
 
 /**
  * Created by mboychenko on 2/3/2017.
@@ -102,12 +103,10 @@ public class AddOnHoldDialogFragment extends StyledDialogFragment {
     }
 
     private void initFields() {
-        if (TextUtils.isEmpty(argOrderGuid)) {
-            orderTitle.setVisibility(View.GONE);
-        } else {
-            orderTitle.setText(argOrderTitle);
-        }
+        orderTitle.setText(argOrderTitle);
+        orderTitle.selectAll();
 
+        orderPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         if(!TextUtils.isEmpty(argOrderPhone)) {
             orderPhone.setText(argOrderPhone);
         }
@@ -122,21 +121,6 @@ public class AddOnHoldDialogFragment extends StyledDialogFragment {
                     break;
             }
         }
-        orderTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(EditorInfo.IME_ACTION_DONE == actionId){
-//                    if (printBox.isChecked()) {
-                        printItemsToKitchen(null, false, false, false);
-                        printItemToKds();
-                        return false;
-//                    }
-//                    onPositiveHandler();
-//                    return true;
-                }
-                return false;
-            }
-        });
     }
 
     @Override
@@ -184,7 +168,7 @@ public class AddOnHoldDialogFragment extends StyledDialogFragment {
             } else if(toGo.isActivated()) {
                 status = OnHoldStatus.TO_GO;
             }
-            listener.onSwap2Order(orderTitle.getText().toString(), orderPhone.getText().toString(), status, null, null);
+            listener.onSwap2Order(orderTitle.getText().toString(), onlyDigits(orderPhone.getText().toString()), status, null, null);
         }
     }
 

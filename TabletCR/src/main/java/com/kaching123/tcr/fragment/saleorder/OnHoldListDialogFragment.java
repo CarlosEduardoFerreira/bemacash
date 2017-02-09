@@ -50,6 +50,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.kaching123.tcr.fragment.UiHelper.showPhone;
+
 /**
  * Created by mboychenko on 2/6/2017.
  */
@@ -337,10 +339,8 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
 
             } else {
                 SaleOrderModel model = (SaleOrderModel) getItem(position);
-//                holder.baseContentHolder.setVisibility(View.VISIBLE);
-//                holder.placeName.setVisibility(View.GONE);
                 holder.onHoldName.setText(model.getHoldName());
-                holder.onHoldPhone.setText(model.getHoldPhone());
+                showPhone(holder.onHoldPhone, model.getHoldPhone());
 
                 if(model.getHoldStatus() != OnHoldStatus.NONE) {
                     String text = "";
