@@ -14,17 +14,32 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:orientation="horizontal"
-            android:gravity="end">
+            android:layout_marginBottom="4dp"
+            android:gravity="end"
+            android:paddingRight="4dp">
             <TextView
+                android:textColor="@color/gray_dark"
+                android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Search:"/>
             <EditText
+                style="@style/Hold.EditText"
                 android:id="@+id/search_bar"
-                android:layout_marginLeft="8dp"
+                android:layout_marginLeft="6dp"
+                android:textSize="18dp"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:hint="order name or phone"/>
+                android:imeOptions="actionDone"
+                android:hint="Enter name or phone"/>
+            <View
+                android:id="@+id/focus_grabber"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+                <requestFocus/>
+            </View>
         </LinearLayout>
 
         <GridView

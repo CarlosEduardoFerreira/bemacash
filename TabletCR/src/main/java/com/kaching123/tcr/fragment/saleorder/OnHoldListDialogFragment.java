@@ -10,12 +10,17 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +65,9 @@ import static com.kaching123.tcr.fragment.UiHelper.showPhone;
 public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
 
     private static final String DIALOG_NAME = "onHoldListDialog";
+
+    private static final String DIALOG_ORDER_FILTER = "DIALOG_ORDER_FILTER";
+
     private static final int ON_HOLD_ORDERS_LOADER_ID = 0;
     private static final int DEFINED_ON_HOLD_LOADER_ID = 1;
 
@@ -76,12 +84,16 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
     protected String argOrderTitle;
 
     @ViewById
-    protected RelativeLayout searchBlock;
+    protected LinearLayout searchBlock;
+
     @ViewById
-    protected RelativeLayout searchBar;
+    protected EditText searchBar;
 
     @ViewById
     protected GridView gridView;
+
+    @ViewById
+    protected View focusGrabber;
 
     private IHoldListener listener;
 
@@ -104,11 +116,14 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
 
         getDialog().getWindow().setLayout(
                 getResources().getDimensionPixelOffset(R.dimen.holdon_list_dlg_width),
-                getResources().getDimensionPixelOffset(R.dimen.holdon_list_dlg_heigth));    //more height isOnHoldOrdersDefined == false
-
+                getResources().getDimensionPixelOffset(isOnHoldOrdersDefined ? R.dimen.holdon_list_dlg_heigth : R.dimen.holdon_list_dlg_heigth_bigger));
 
         gridAdapter = new GridAdapter(getContext(), isOnHoldOrdersDefined);
         gridView.setAdapter(gridAdapter);
+        initViews();
+    }
+
+    private void initViews() {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -136,6 +151,29 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                 }
             }
         });
+
+        if(!isOnHoldOrdersDefined) {
+            searchBlock.setVisibility(View.VISIBLE);
+            searchBar.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    Bundle b = new Bundle();
+                    b.putString(DIALOG_ORDER_FILTER, s.toString());
+                    getLoaderManager().restartLoader(ON_HOLD_ORDERS_LOADER_ID, b, onHoldLoaderCallback);
+                }
+            });
+            focusGrabber.requestFocus();
+        }
     }
 
     @Override
@@ -240,6 +278,14 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
                     .where(ShopStore.SaleOrderTable.GUID + " <> ?", argOrderGuid == null ? "" : argOrderGuid)
                     .where(ShopStore.SaleOrderTable.STATUS + " = ? ", OrderStatus.HOLDON.ordinal());
+
+            if(arg1 != null) {
+                String filter = arg1.getString(DIALOG_ORDER_FILTER);
+                if (!TextUtils.isEmpty(filter)) {
+                    filter  = "%" + filter + "%";
+                    builder.where(ShopStore.SaleOrderTable.HOLD_NAME + " LIKE ? OR " + ShopStore.SaleOrderTable.HOLD_TEL + " LIKE ? ", filter, filter);
+                }
+            }
 
             Date minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar);
             if (minCreateTime != null)
