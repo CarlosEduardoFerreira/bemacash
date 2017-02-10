@@ -1366,7 +1366,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void actionHoldCounterSelected() {
         actionBarItemClicked();
-        OnHoldListDialogFragment.show(this, OnHoldListDialogFragment.HoldOnAction.GET_ORDER, new IHoldListener() {
+        OnHoldListDialogFragment.show(this, this.orderGuid, this.orderTitle, OnHoldListDialogFragment.HoldOnAction.GET_ORDER, new IHoldListener() {
             @Override
             public void onSwap2Order(final String holdName, final String holdPhone, final OnHoldStatus status, final String nextOrderGuid, final String definedOnHoldGuid) {
                 ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, nextOrderGuid, ItemsNegativeStockTrackingCommand.ItemType.HOLD_ON,
@@ -2247,7 +2247,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     public void onHold() {
         boolean isDefinedOnHold = app.getShopInfo().definedOnHold;
         if(isDefinedOnHold) {
-            OnHoldListDialogFragment.show(this, OnHoldListDialogFragment.HoldOnAction.ADD_ORDER, new IHoldListener() {
+            OnHoldListDialogFragment.show(this, this.orderGuid, this.orderTitle, OnHoldListDialogFragment.HoldOnAction.ADD_ORDER, new IHoldListener() {
                 @Override
                 public void onSwap2Order(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
                     onSwap2OrderAction(BaseCashierActivity.this.orderTitle, null, null, null, definedOnHoldGuid);

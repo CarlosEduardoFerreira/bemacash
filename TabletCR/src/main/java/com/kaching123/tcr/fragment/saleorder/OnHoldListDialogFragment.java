@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +25,10 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity.IHoldListener;
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
+import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
-import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.DefinedOnHoldModel;
 import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.model.OrderStatus;
@@ -56,7 +57,7 @@ import static com.kaching123.tcr.fragment.UiHelper.showPhone;
  * Created by mboychenko on 2/6/2017.
  */
 @EFragment
-public class OnHoldListDialogFragment extends StyledDialogFragment {
+public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
 
     private static final String DIALOG_NAME = "onHoldListDialog";
     private static final int ON_HOLD_ORDERS_LOADER_ID = 0;
@@ -65,11 +66,22 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
     @App
     protected TcrApplication app;
 
-    @ViewById
-    protected GridView gridView;
-
     @FragmentArg
     protected HoldOnAction argAction;
+
+    @FragmentArg
+    protected String argOrderGuid;
+
+    @FragmentArg
+    protected String argOrderTitle;
+
+    @ViewById
+    protected RelativeLayout searchBlock;
+    @ViewById
+    protected RelativeLayout searchBar;
+
+    @ViewById
+    protected GridView gridView;
 
     private IHoldListener listener;
 
@@ -82,34 +94,43 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
 
     private boolean isOnHoldOrdersDefined;
 
+    private SaleOrderModel clickedOrder;
+    private DefinedOnHoldModel clickedDefinedOnHold;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        isOnHoldOrdersDefined = app.getShopInfo().definedOnHold;
+
         getDialog().getWindow().setLayout(
                 getResources().getDimensionPixelOffset(R.dimen.holdon_list_dlg_width),
-                getResources().getDimensionPixelOffset(R.dimen.holdon_list_dlg_heigth));
+                getResources().getDimensionPixelOffset(R.dimen.holdon_list_dlg_heigth));    //more height isOnHoldOrdersDefined == false
 
-        isOnHoldOrdersDefined = app.getShopInfo().definedOnHold;
 
         gridAdapter = new GridAdapter(getContext(), isOnHoldOrdersDefined);
         gridView.setAdapter(gridAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(isOnHoldOrdersDefined) {
+                    clickedDefinedOnHold = (DefinedOnHoldModel) parent.getItemAtPosition(position);
+                } else {
+                    clickedOrder = (SaleOrderModel) parent.getItemAtPosition(position);
+                }
+
                 if (listener != null) {
                     switch (argAction) {
                         case ADD_ORDER:
-                            DefinedOnHoldModel definedOnHoldModel = (DefinedOnHoldModel) parent.getItemAtPosition(position);
-                            if(gridAdapter.getOnHoldOrderByDefinedGuid(definedOnHoldModel.getGuid()) == null) {
-                                listener.onSwap2Order(null, null, null, null, definedOnHoldModel.getGuid());
+                            if(clickedDefinedOnHold != null && gridAdapter.getOnHoldOrderByDefinedGuid(clickedDefinedOnHold.getGuid()) == null) {
+                                printItemsToKitchen(null, false, false, false);
+                                printItemToKds();
                             } else {
                                 Toast.makeText(getContext(), R.string.defined_on_hold_busy, Toast.LENGTH_LONG).show();
                                 return;
                             }
-                            dismiss();
                             break;
                         case GET_ORDER:
-                            getOnHoldOrder(parent, position);
+                            getOnHoldOrder();
                             break;
                     }
                 }
@@ -117,23 +138,30 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
         });
     }
 
-    private void getOnHoldOrder(AdapterView<?> parent, int position){
-        SaleOrderModel saleOrderModel;
+    @Override
+    protected void onPositiveHandler() {
+        if (listener != null && clickedDefinedOnHold != null) {
+            listener.onSwap2Order(null, null, null, null, clickedDefinedOnHold.getGuid());
+        }
+        dismiss();
+    }
 
+    private void getOnHoldOrder(){
+        SaleOrderModel saleOrderModel;
         if(isOnHoldOrdersDefined) {
-            DefinedOnHoldModel definedOnHoldModel = (DefinedOnHoldModel) parent.getItemAtPosition(position);
-            saleOrderModel = gridAdapter.getOnHoldOrderByDefinedGuid(definedOnHoldModel.getGuid());
+            saleOrderModel = gridAdapter.getOnHoldOrderByDefinedGuid(clickedDefinedOnHold.getGuid());
             if(saleOrderModel == null) {
                 Toast.makeText(getContext(), R.string.on_hold_empty_place, Toast.LENGTH_LONG).show();
                 return;
             }
         } else {
-            saleOrderModel = (SaleOrderModel) parent.getItemAtPosition(position);
+            saleOrderModel = clickedOrder;
         }
 
-        listener.onSwap2Order(saleOrderModel.getHoldName(), saleOrderModel.getHoldPhone(), saleOrderModel.getHoldStatus(), saleOrderModel.guid, saleOrderModel.getDefinedOnHoldGuid());
-        dismiss();
-
+        if(saleOrderModel != null) {
+            listener.onSwap2Order(saleOrderModel.getHoldName(), saleOrderModel.getHoldPhone(), saleOrderModel.getHoldStatus(), saleOrderModel.guid, saleOrderModel.getDefinedOnHoldGuid());
+            dismiss();
+        }
     }
 
     @Override
@@ -177,11 +205,40 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
         return null;
     }
 
+    @Override
+    protected void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
+        printToKitchenFlag = false;
+        Logger.e("CEF.HoldFragmentDialog.printItemsToKitchen:printOnholdOrders " + getApp().getShopInfo().printOnholdOrders);
+        /*
+         *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
+         */
+        if(getApp().getShopInfo().printOnholdOrders) {
+            WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
+        }
+        PrintItemsForKitchenCommand.itComesFromPay = false;
+
+        String title;
+        if(isOnHoldOrdersDefined) {
+            title =  argOrderTitle;
+        } else {
+            title = clickedOrder.getHoldName();
+        }
+        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip,
+                new KitchenKitchenPrintCallback(), false, title);
+    }
+
+    @Override
+    protected void printItemToKds(){
+        printToKdsFlag = false;
+        PrintOrderToKdsCommand.start(getActivity(), argOrderGuid, false, new KDSPrintCallback());
+    }
+
     private class OnHoldOrdersLoader implements LoaderManager.LoaderCallbacks<List<SaleOrderModel>> {
 
         @Override
         public Loader<List<SaleOrderModel>> onCreateLoader(int arg0, Bundle arg1) {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
+                    .where(ShopStore.SaleOrderTable.GUID + " <> ?", argOrderGuid == null ? "" : argOrderGuid)
                     .where(ShopStore.SaleOrderTable.STATUS + " = ? ", OrderStatus.HOLDON.ordinal());
 
             Date minCreateTime = getApp().getMinSalesHistoryLimitDateDayRounded(calendar);
@@ -216,7 +273,7 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.DefinedOnHoldTable.URI_CONTENT));
 
             return builder
-                    .orderBy(ShopStore.DefinedOnHoldTable.NAME + " asc ")
+                    .orderBy(ShopStore.DefinedOnHoldTable.UPDATE_TIME + " desc ")
                     .transformRow(new DefinedOnHoldFunction() {
                         @Override
                         public DefinedOnHoldModel apply(Cursor c) {
@@ -378,8 +435,8 @@ public class OnHoldListDialogFragment extends StyledDialogFragment {
 
     }
 
-    public static void show(FragmentActivity context, HoldOnAction action, IHoldListener listener) {
-        DialogUtil.show(context, DIALOG_NAME, OnHoldListDialogFragment_.builder().argAction(action).build()).setListener(listener);
+    public static void show(FragmentActivity context, String orderGuid, String orderTitle, HoldOnAction action, IHoldListener listener) {
+        DialogUtil.show(context, DIALOG_NAME, OnHoldListDialogFragment_.builder().argAction(action).argOrderGuid(orderGuid).argOrderTitle(orderTitle).build()).setListener(listener);
     }
 
     private BroadcastReceiver syncGapReceiver = new BroadcastReceiver() {
