@@ -319,7 +319,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.DefinedOnHoldTable.URI_CONTENT));
 
             return builder
-                    .orderBy(ShopStore.DefinedOnHoldTable.UPDATE_TIME + " desc ")
+                    .orderBy(ShopStore.DefinedOnHoldTable.UPDATE_TIME + " asc ")
                     .transformRow(new DefinedOnHoldFunction() {
                         @Override
                         public DefinedOnHoldModel apply(Cursor c) {
