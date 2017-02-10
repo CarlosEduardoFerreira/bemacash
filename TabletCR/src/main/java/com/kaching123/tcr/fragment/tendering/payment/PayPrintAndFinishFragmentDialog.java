@@ -345,7 +345,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
                     waitDialog.hide(activity);
                     showHidePrintingDialog();
                 }
-            }, 1000);
+            }, 1500);
         }
 
         /*
@@ -409,7 +409,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         @Override
         public void onPrintSuccess() {
             orderPrinted = true;
-            printedFinalized = true;
+            if(!signatureBox.isChecked()) {
+                printedFinalized = true;
+            }
             printReceipts();
         }
 
@@ -498,12 +500,12 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
         @Override
         protected void onPrintSuccess() {
-            printedFinalized = true;
             //WaitDialogFragment.hide(getActivity());
             if(signature_receipt.equals("LONG") && !longSignatureReceiptPrinted) {
                 longSignatureReceiptPrinted = true;
                 printSignatureOrder(false, false, ReceiptType.CUSTOMER, printSignatureCallback);
             }else {
+                printedFinalized = true;
                 PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
             }
         }
