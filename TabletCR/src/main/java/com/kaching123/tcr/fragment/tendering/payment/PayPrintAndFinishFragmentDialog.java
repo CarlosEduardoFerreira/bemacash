@@ -499,7 +499,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         @Override
         protected void onPrintSuccess() {
             printedFinalized = true;
-            WaitDialogFragment.hide(getActivity());
+            //WaitDialogFragment.hide(getActivity());
             if(signature_receipt.equals("LONG") && !longSignatureReceiptPrinted) {
                 longSignatureReceiptPrinted = true;
                 printSignatureOrder(false, false, ReceiptType.CUSTOMER, printSignatureCallback);
