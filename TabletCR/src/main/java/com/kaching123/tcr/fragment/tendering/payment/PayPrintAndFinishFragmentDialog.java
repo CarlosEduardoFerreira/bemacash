@@ -503,8 +503,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             if(signature_receipt.equals("LONG") && !longSignatureReceiptPrinted) {
                 longSignatureReceiptPrinted = true;
                 printSignatureOrder(false, false, ReceiptType.CUSTOMER, printSignatureCallback);
+            }else {
+                PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
             }
-            PayPrintAndFinishFragmentDialog.this.onSignaturePrintSuccess();
         }
 
         @Override
