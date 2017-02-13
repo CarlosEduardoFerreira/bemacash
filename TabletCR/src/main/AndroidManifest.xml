@@ -5,7 +5,7 @@
     android:versionName="3.4">
 
     <uses-sdk
-        android:minSdkVersion="15"0
+        android:minSdkVersion="15"
         android:targetSdkVersion="23" />
 
     <uses-feature
