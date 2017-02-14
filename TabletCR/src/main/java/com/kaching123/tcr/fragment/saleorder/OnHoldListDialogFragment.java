@@ -388,7 +388,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
             return isOnHoldDefined ? definedOnHoldModels.get(position) : saleOrderModels.get(position);
         }
 
-        SaleOrderModel getOnHoldOrderByDefinedGuid(String definedOnHoldGuid){
+        private SaleOrderModel getOnHoldOrderByDefinedGuid(String definedOnHoldGuid){
             if(!lockedDefinedPlaces.contains(definedOnHoldGuid))
                 return null;
             for (SaleOrderModel saleOrderModel : saleOrderModels) {
