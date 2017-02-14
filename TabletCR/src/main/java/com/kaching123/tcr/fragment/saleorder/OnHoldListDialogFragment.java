@@ -428,7 +428,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
             } else {
                 holder = (ViewHolder) itemView.getTag();
             }
-
+            holder.itemMainContainer.setActivated(false);
 
             if(isOnHoldOrdersDefined) {
                 DefinedOnHoldModel model = (DefinedOnHoldModel) getItem(position);
@@ -437,7 +437,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                 holder.placeName.setText(model.getName());
 
                 if(lockedDefinedPlaces.contains(model.getGuid())){
-                    holder.itemMainContainer.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.on_hold_item_bg_frame_busy));
+                    holder.itemMainContainer.setActivated(true);
                 }
 
             } else {
