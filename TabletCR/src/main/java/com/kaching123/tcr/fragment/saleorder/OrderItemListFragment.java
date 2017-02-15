@@ -517,6 +517,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         });
     }
     private void checkIsNewItemComposer(final List<SaleOrderItemViewModel> list, boolean checkQty){
+        qtyChanged = false;
         String guidToCheck = null;
         if(!checkIsNewItemComposerInProcess) {
             checkIsNewItemComposerInProcess = true;
@@ -631,13 +632,18 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, final List<SaleOrderItemViewModel> list) {
+        boolean dontAnimate = false;
         if(!list.isEmpty()) {
             if (!ignorReculc) {
                 if ((list.size() - app.getSalesOnScreenTmpSize()) == 1) {
                     checkIsNewItemComposer(list, false);
                 } else if (list.size() == app.getSalesOnScreenTmpSize()) {           //chg qty or discount or come back
                     checkIsNewItemComposer(list, true);
+                    if((!qtyChanged && firstLoad) || (!qtyChanged && !need2ScrollList)) {
+                        dontAnimate = true;
+                    }
                 } else {                                                           //new order, hold on
+                    dontAnimate = true;
                     newItem = false;
                     checkAddedItemsOnComposerEnoughQty(list);
                 }
@@ -673,17 +679,20 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             @Override
             public void run() {
          /**/
-                if (getListView().getCount() > 0){
-                    Logger.d("BemaCarl.highlight.OrderItemListFragment.getSaleItemGuid(): " + getLastItem().getSaleItemGuid());
-                    if(adapter.carlHighlightItemView == null) {
-                        CarlHighlightItemView carlHighlightItemView = new CarlHighlightItemView(getView(), adapter, getLastItem().getSaleItemGuid());
-                        adapter.carlHighlightItemView = carlHighlightItemView;
-                    }else{
-                        if(adapter.highlightedColumn == null && !adapter.itemRemoved && !adapter.payClicked) {
-                            adapter.carlHighlightItemView.saleItemGuid = getLastItem().getSaleItemGuid();
-                        }
-                    }
+        if(dontAnimate)
+            return;
+
+        if (getListView().getCount() > 0){
+            Logger.d("BemaCarl.highlight.OrderItemListFragment.getSaleItemGuid(): " + getLastItem().getSaleItemGuid());
+            if(adapter.carlHighlightItemView == null) {
+                CarlHighlightItemView carlHighlightItemView = new CarlHighlightItemView(getView(), adapter, getLastItem().getSaleItemGuid());
+                adapter.carlHighlightItemView = carlHighlightItemView;
+            }else{
+                if(adapter.highlightedColumn == null && !adapter.itemRemoved && !adapter.payClicked) {
+                    adapter.carlHighlightItemView.saleItemGuid = getLastItem().getSaleItemGuid();
                 }
+            }
+        }
         /*
             }
         }, 150);
