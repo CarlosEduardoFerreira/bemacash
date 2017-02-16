@@ -15,6 +15,7 @@
         android:paddingTop="16dp"
         android:paddingBottom="24dp"
         android:inputType="textMultiLine"
+        android:maxLength="20"
         android:hint="@string/notes_edit_fragment_hint"
         android:background="@drawable/dark_rounded_bg"/>
 

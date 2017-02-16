@@ -171,6 +171,19 @@
                 style="@style/EditItem.Table.CheckBox"/>
         </TableRow>
 
+        <TableRow
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_additional_info" />
+
+            <CheckBox
+                android:id="@+id/has_notes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/EditItem.Table.CheckBox"/>
+        </TableRow>
+
     </TableLayout>
 
 </LinearLayout>

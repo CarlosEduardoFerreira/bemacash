@@ -492,6 +492,7 @@
     <string name="item_activity_ebt_eligible">EBT eligible:</string>
     <string name="item_activity_bonus_points">Loyalty points:</string>
     <string name="item_activity_exclude_from_loyalty_plan">Exclude from\nloyalty plan:</string>
+    <string name="item_activity_additional_info">Has notes:</string>
     <string name="item_activity_hide_item_dialog_title">Delete item</string>
     <string name="item_activity_hide_item_dialog_message">Are you sure you want to delete item?</string>
     <string name="item_activity_alert_description_msg">Name is empty</string>
