@@ -61,6 +61,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
 
         if (!removeItems())
             return failed();
+        new PrintItemsForKitchenCommand().sync(getContext(), true, false, orderId, null, true, true, "tableOrName", true, getAppCommandContext());
 
         if (!resetCustomerBirthdayRewardDate())
             return failed();
@@ -86,7 +87,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
             int i = 0;
             while (c.moveToNext()) {
                 String saleItemGuid = c.getString(0);
-                SyncResult subResult = new RemoveSaleOrderItemCommand().sync(getContext(), saleItemGuid, getAppCommandContext());
+                SyncResult subResult = new RemoveSaleOrderItemCommand().sync(getContext(), saleItemGuid, RemoveSaleOrderItemCommand.ActionType.VOID, getAppCommandContext());
                 if (subResult == null)
                     return false;
                 removeSaleOrderItemResults[i++] = subResult;

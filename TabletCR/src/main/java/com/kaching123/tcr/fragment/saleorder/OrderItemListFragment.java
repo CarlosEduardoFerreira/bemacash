@@ -404,7 +404,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             return;
         }
 
-        RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(position), OrderItemListFragment.this);
+        RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(position), RemoveSaleOrderItemCommand.ActionType.REMOVE, OrderItemListFragment.this);
 
     }
 
@@ -438,7 +438,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             return;
         }
 
-        RemoveSaleOrderItemCommand.start(getActivity(), guid, OrderItemListFragment.this);
+        RemoveSaleOrderItemCommand.start(getActivity(), guid, RemoveSaleOrderItemCommand.ActionType.REMOVE, OrderItemListFragment.this);
     }
 
 

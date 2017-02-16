@@ -12,6 +12,7 @@ import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.K
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemAddonJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.UnitsJdbcConverter;
+import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -25,13 +26,17 @@ import com.telly.groundy.TaskResult;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._orderStatus;
+
 public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
+    private static final Uri URI_ORDER = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(SaleItemTable.URI_CONTENT);
     private static final Uri URI_SALE_ADDONS = ShopProvider.getNoNotifyContentUri(SaleAddonTable.URI_CONTENT);
     private static final Uri URI_UNIT = ShopProvider.getContentUri(ShopStore.UnitTable.URI_CONTENT);
 
     private static final String ARG_SALE_ITEM_GUID = "arg_sale_item_guid";
+    private static final String ARG_ACTION_TYPE = "arg_action_type";
 
     private String saleItemId;
     private boolean skipOrderUpdate;
@@ -40,6 +45,10 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
     private String itemGuid;
     private String discountBundleId;
 
+    private OrderStatus orderStatus;
+    private ActionType actionType;
+    private String orderHoldName;
+
     private SyncResult updateOrderResult;
     private List<SyncResult> removeDiscountResults;
 
@@ -47,9 +56,19 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         if (saleItemId == null)
             saleItemId = getStringArg(ARG_SALE_ITEM_GUID);
+        if (actionType == null)
+            actionType = (ActionType)getArgs().getSerializable(ARG_ACTION_TYPE);
 
         if (!loadData())
             return failed();
+
+        if(orderStatus == OrderStatus.HOLDON && actionType != null) {
+            switch (actionType) {
+                case REMOVE:
+                    new PrintItemsForKitchenCommand().sync(getContext(), true, false, orderGuid, null, true, true, orderHoldName, true, saleItemId, getAppCommandContext());
+                    break;
+            }
+        }
 
         if (skipOrderUpdate)
             return succeeded();
@@ -77,21 +96,36 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
     }
 
     private boolean loadData() {
-        Cursor c = ProviderAction.query(URI_ITEMS)
+        Cursor itemCursor = ProviderAction.query(URI_ITEMS)
                 .projection(SaleItemTable.ORDER_GUID, SaleItemTable.ITEM_GUID, SaleItemTable.DISCOUNT_BUNDLE_ID)
                 .where(SaleItemTable.SALE_ITEM_GUID + " = ?", saleItemId)
                 .perform(getContext());
 
-        if (!c.moveToFirst()) {
-            c.close();
+        if (!itemCursor.moveToFirst()) {
+            itemCursor.close();
             return false;
         }
 
-        orderGuid = c.getString(0);
-        itemGuid = c.getString(1);
-        discountBundleId = c.getString(2);
+        orderGuid = itemCursor.getString(0);
+        itemGuid = itemCursor.getString(1);
+        discountBundleId = itemCursor.getString(2);
 
-        c.close();
+        itemCursor.close();
+
+        Cursor orderCursor = ProviderAction.query(URI_ORDER)
+                .projection(ShopStore.SaleOrderTable.STATUS, ShopStore.SaleOrderTable.HOLD_NAME)
+                .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid)
+                .perform(getContext());
+
+        if (!orderCursor.moveToFirst()) {
+            orderCursor.close();
+            return false;
+        }
+
+        orderStatus =  _orderStatus(orderCursor, 0);
+        orderHoldName =  orderCursor.getString(1);
+        orderCursor.close();
+
         return true;
     }
 
@@ -168,16 +202,23 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
         return batch;
     }
 
-    public static void start(Context context, String saleItemGuid, Object callback) {
+    public static void start(Context context, String saleItemGuid, ActionType actionType, Object callback) {
         create(RemoveSaleOrderItemCommand.class)
                 .arg(ARG_SALE_ITEM_GUID, saleItemGuid)
+                .arg(ARG_ACTION_TYPE, actionType)
                 .callback(callback)
                 .queueUsing(context);
     }
 
-    public SyncResult sync(Context context, String saleItemGuid, IAppCommandContext appCommandContext) {
+    public SyncResult sync(Context context, String saleItemGuid, ActionType actionType, IAppCommandContext appCommandContext) {
         this.saleItemId = saleItemGuid;
+        this.actionType = actionType;
         skipOrderUpdate = true;
         return syncDependent(context, appCommandContext);
+    }
+
+    public enum ActionType {
+        REMOVE,
+        VOID
     }
 }
