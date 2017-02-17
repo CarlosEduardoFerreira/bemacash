@@ -345,7 +345,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
                     waitDialog.hide(activity);
                     showHidePrintingDialog();
                 }
-            }, 1000);
+            }, 1500);
         }
 
         /*
