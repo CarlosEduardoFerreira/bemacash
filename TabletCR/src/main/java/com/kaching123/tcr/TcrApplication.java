@@ -190,6 +190,7 @@ public class TcrApplication extends MultiDexApplication {
 
         OkHttpClient client = new OkHttpClient();
         client.setReadTimeout(1, TimeUnit.MINUTES);
+        client.setConnectTimeout(5, TimeUnit.MINUTES);
 
         return adapterBuilder.setConverter(converter)
                 .setClient(new OkClient(client))
