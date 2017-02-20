@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
@@ -31,6 +32,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._orderStatus;
 public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
     private static final Uri URI_ORDER = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
+    private static final Uri URI_DEFINED_ON_HOLD = ShopProvider.getContentUri(ShopStore.DefinedOnHoldTable.URI_CONTENT);
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(SaleItemTable.URI_CONTENT);
     private static final Uri URI_SALE_ADDONS = ShopProvider.getNoNotifyContentUri(SaleAddonTable.URI_CONTENT);
     private static final Uri URI_UNIT = ShopProvider.getContentUri(ShopStore.UnitTable.URI_CONTENT);
@@ -113,7 +115,7 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
         itemCursor.close();
 
         Cursor orderCursor = ProviderAction.query(URI_ORDER)
-                .projection(ShopStore.SaleOrderTable.STATUS, ShopStore.SaleOrderTable.HOLD_NAME)
+                .projection(ShopStore.SaleOrderTable.STATUS, ShopStore.SaleOrderTable.HOLD_NAME, ShopStore.SaleOrderTable.DEFINED_ON_HOLD_ID)
                 .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid)
                 .perform(getContext());
 
@@ -124,7 +126,22 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
         orderStatus =  _orderStatus(orderCursor, 0);
         orderHoldName =  orderCursor.getString(1);
+        String definedTableId =  orderCursor.getString(2);
         orderCursor.close();
+
+        if (!TextUtils.isEmpty(definedTableId)) {
+            Cursor definedOnHoldCursor = ProviderAction.query(URI_DEFINED_ON_HOLD)
+                    .projection(ShopStore.DefinedOnHoldTable.NAME)
+                    .where(ShopStore.DefinedOnHoldTable.ID + " = ?", definedTableId)
+                    .perform(getContext());
+            try {
+                if (definedOnHoldCursor.moveToFirst()) {
+                    orderHoldName = definedOnHoldCursor.getString(0);
+                }
+            } finally {
+                definedOnHoldCursor.close();
+            }
+        }
 
         return true;
     }

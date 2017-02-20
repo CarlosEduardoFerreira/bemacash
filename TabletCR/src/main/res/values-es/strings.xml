@@ -1377,7 +1377,7 @@
   <string name="printer_edit_mac_hint">Dirección  MAC </string>
   <string name="kitchen_receipt_order_label">Orden</string>
   <string name="kitchen_receipt_operator_label">Cajero</string>
-  <string name="kitchen_receipt_station_label">Estaci\u00F3n</string>
+  <string name="kitchen_receipt_station_label">Nome\Tabela:</string>
   <string name="kitchen_receipt_holder_label">Invitado</string>
   <string name="kitchen_receipt_date_label">Tiempo de Orden</string>
   <string name="kitchen_receipt_no_option_prefix">NO</string>

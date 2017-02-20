@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand;
@@ -41,12 +42,14 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(SaleItemTable.URI_CONTENT);
     private static final Uri URI_UNIT = ShopProvider.getContentUri(ShopStore.UnitTable.URI_CONTENT);
     private static final Uri URI_ORDER = ShopProvider.getContentUri(SaleOrderTable.URI_CONTENT);
+    private static final Uri URI_DEFINED_ON_HOLD = ShopProvider.getContentUri(ShopStore.DefinedOnHoldTable.URI_CONTENT);
     private static final Uri URI_BILL_PAYMENT = ShopProvider.getContentUri(BillPaymentDescriptionTable.URI_CONTENT);
 
     private static final String ARG_ORDER_GUID = "arg_order_guid";
     private static final String ARG_ORDER_TYPE = "arg_order_type";
 
     private String orderId;
+    private String orderName;
     private OrderType orderType;
     private String prepaidOrderGuid;
 
@@ -59,9 +62,11 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         orderId = getArgs().getString(ARG_ORDER_GUID);
         orderType = (OrderType) getArgs().getSerializable(ARG_ORDER_TYPE);
 
+        loadOrderInfo();
+
         if (!removeItems())
             return failed();
-        new PrintItemsForKitchenCommand().sync(getContext(), true, false, orderId, null, true, true, "tableOrName", true, getAppCommandContext());
+        new PrintItemsForKitchenCommand().sync(getContext(), true, false, orderId, null, true, true, orderName, true, getAppCommandContext());
 
         if (!resetCustomerBirthdayRewardDate())
             return failed();
@@ -77,6 +82,37 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         return succeeded();
     }
 
+    private void loadOrderInfo(){
+        Cursor orderCursor = ProviderAction.query(URI_ORDER)
+                .projection(SaleOrderTable.DEFINED_ON_HOLD_ID, SaleOrderTable.HOLD_NAME)
+                .where(SaleOrderTable.GUID + " = ?", orderId)
+                .perform(getContext());
+        try {
+            if (orderCursor.moveToFirst()) {
+                String definedOnHoldGuid = orderCursor.getString(0);
+                orderName = orderCursor.getString(1);
+                if (!TextUtils.isEmpty(definedOnHoldGuid)) {
+                    loadDefinedOnHoldName(definedOnHoldGuid);
+                }
+            }
+        } finally {
+            orderCursor.close();
+        }
+    }
+
+    private void loadDefinedOnHoldName(String definedOnHoldGuid) {
+        Cursor definedOnHoldCursor = ProviderAction.query(URI_DEFINED_ON_HOLD)
+                .projection(ShopStore.DefinedOnHoldTable.NAME)
+                .where(ShopStore.DefinedOnHoldTable.ID + " = ?", definedOnHoldGuid)
+                .perform(getContext());
+        try {
+            if (definedOnHoldCursor.moveToFirst()) {
+                orderName = definedOnHoldCursor.getString(0);
+            }
+        } finally {
+            definedOnHoldCursor.close();
+        }
+    }
     private boolean removeItems() {
         Cursor c = ProviderAction.query(URI_SALE_ITEMS)
                 .projection(SaleItemTable.SALE_ITEM_GUID, SaleItemTable.ITEM_GUID)
