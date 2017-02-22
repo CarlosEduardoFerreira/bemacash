@@ -257,7 +257,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
 
         String title;
         if(isOnHoldOrdersDefined) {
-            title =  argOrderTitle;
+            title =  clickedDefinedOnHold.getName();
         } else {
             title = clickedOrder.getHoldName();
         }

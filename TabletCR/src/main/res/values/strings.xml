@@ -1433,7 +1433,7 @@
     <string name="kitchen_receipt_order_label">Order:</string>
     <string name="kitchen_receipt_operator_label">Cashier:</string>
     <string name="kitchen_receipt_station_label">Station:</string>
-    <string name="kitchen_receipt_holder_label">Name\Table:</string>
+    <string name="kitchen_receipt_holder_label">Name/Table:</string>
     <string name="kitchen_receipt_date_label">Order time:</string>
     <string name="kitchen_receipt_no_option_prefix">NO-</string>
     <string name="printer_config_mac_error">Mac address is not configured for the printer.\nPlease edit printer information</string>
