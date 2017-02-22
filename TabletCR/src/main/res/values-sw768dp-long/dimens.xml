@@ -47,7 +47,7 @@
     <dimen name="dashboard_nosale_img_size">88dp</dimen>
     <dimen name="dashboard_customers_img_h">115dp</dimen>
     <dimen name="dashboard_customers_img_w">110dp</dimen>
-    <dimen name="qa_items_list_fragment_w">960dp</dimen>
+    <dimen name="qa_items_list_fragment_w">1042dp</dimen>
     <dimen name="qa_modify_fragment_h">960dp</dimen>
     <dimen name="saleorder_cashier_total_cost_fragment_h">380dp</dimen>
     <dimen name="saleorder_total_cost_frg_btns_h">60dp</dimen>
