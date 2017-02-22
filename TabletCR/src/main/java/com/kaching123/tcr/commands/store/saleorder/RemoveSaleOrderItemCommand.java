@@ -39,9 +39,11 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
 
     private static final String ARG_SALE_ITEM_GUID = "arg_sale_item_guid";
     private static final String ARG_ACTION_TYPE = "arg_action_type";
+    private static final String ARG_ACTION_SKIP_PRINT = "arg_action_skip_print";
 
     private String saleItemId;
     private boolean skipOrderUpdate;
+    private boolean skipPrint;
 
     private String orderGuid;
     private String itemGuid;
@@ -60,14 +62,19 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
             saleItemId = getStringArg(ARG_SALE_ITEM_GUID);
         if (actionType == null)
             actionType = (ActionType)getArgs().getSerializable(ARG_ACTION_TYPE);
+        if (!skipPrint)
+            skipPrint = getArgs().getBoolean(ARG_ACTION_SKIP_PRINT, false);
 
         if (!loadData())
             return failed();
 
-        if(orderStatus == OrderStatus.HOLDON && actionType != null) {
+        if(!skipPrint && orderStatus == OrderStatus.HOLDON && actionType != null) {
             switch (actionType) {
                 case REMOVE:
-                    new PrintItemsForKitchenCommand().sync(getContext(), true, false, orderGuid, null, true, true, orderHoldName, true, saleItemId, getAppCommandContext());
+                    TaskResult printResult = new PrintItemsForKitchenCommand().sync(getContext(), true, false, orderGuid, null, true, true, orderHoldName, true, saleItemId, getAppCommandContext());
+                    if (isFailed(printResult)) {
+                        return printResult;
+                    }
                     break;
             }
         }
@@ -220,9 +227,14 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
     }
 
     public static void start(Context context, String saleItemGuid, ActionType actionType, Object callback) {
+        start(context, saleItemGuid, actionType, callback, false);
+    }
+
+    public static void start(Context context, String saleItemGuid, ActionType actionType, Object callback, boolean skipPrint) {
         create(RemoveSaleOrderItemCommand.class)
                 .arg(ARG_SALE_ITEM_GUID, saleItemGuid)
                 .arg(ARG_ACTION_TYPE, actionType)
+                .arg(ARG_ACTION_SKIP_PRINT, skipPrint)
                 .callback(callback)
                 .queueUsing(context);
     }
@@ -230,6 +242,7 @@ public class RemoveSaleOrderItemCommand extends AsyncCommand {
     public SyncResult sync(Context context, String saleItemGuid, ActionType actionType, IAppCommandContext appCommandContext) {
         this.saleItemId = saleItemGuid;
         this.actionType = actionType;
+        this.skipPrint = false;
         skipOrderUpdate = true;
         return syncDependent(context, appCommandContext);
     }

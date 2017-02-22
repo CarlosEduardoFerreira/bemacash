@@ -67,6 +67,8 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     private static final Uri URI_PRINTER = ShopProvider.getContentUri(PrinterTable.URI_CONTENT);
     private static final Uri URI_ALIAS = ShopProvider.getContentUri(PrinterAliasTable.URI_CONTENT);
 
+    public static final String EXTRA_PRINTER = "EXTRA_PRINTER";
+    public static final String EXTRA_ALIAS_TITLE = "EXTRA_ALIAS_TITLE";
     private static final String ARG_ORDER_GUID = "ARG_ORDER_GUID";
     private static final String ARG_FROM_PRINTER = "ARG_FROM_PRINTER";
     private static final String ARG_SKIP_PRINTER = "ARG_SKIP_PRINTER";
@@ -74,8 +76,6 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     private static final String ARG_PRINT_ALL_ITEMS = "ARG_PRINT_ALL_ITEMS";
     private static final String ARG_SEARCH_BY_MAC = "ARG_SEARCH_BY_MAC";
     private static final String ARG_ORDER_TITLE = "ARG_ORDER_TITLE";
-    private static final String EXTRA_PRINTER = "EXTRA_PRINTER";
-    private static final String EXTRA_ALIAS_TITLE = "EXTRA_ALIAS_TITLE";
     private static final String ARG_VOID_ORDER = "ARG_VOID_ORDER";
 
     private String orderGuid;
@@ -133,10 +133,9 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
             find = true;
             List<PrinterInfo> pp = printers.get(aliasGuid);
             if (pp == null || pp.isEmpty()) {
-                if (skip && fromPrinter.equals(aliasGuid)) {
+                if (skip && fromPrinter != null && fromPrinter.equals(aliasGuid)) {
                     continue;
                 }
-                boolean qtyUpdated = new UpdateSaleItemKitchenQty().syncStandalone(getContext(), e.getValue(), getAppCommandContext());
                 return failed().add(PrintForKitchenCommand.EXTRA_ERROR_PRINTER, PrinterError.NOT_CONFIGURED).add(EXTRA_PRINTER,
                         aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
             }
@@ -144,7 +143,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 TaskResult result = new PrintForKitchenCommand().sync(getContext(), p, e.getValue(), aliasGuid,
                         skipPaperWarning, searchByMac, isUpdated, getAppCommandContext());
                 if (isFailed(result)) {
-                    if (skip && fromPrinter.equals(aliasGuid)) {
+                    if (skip && fromPrinter != null && fromPrinter.equals(aliasGuid)) {
                         continue;
                     }
                     return result.add(EXTRA_PRINTER, aliasGuid).add(EXTRA_ALIAS_TITLE, guid2Title.get(aliasGuid));
@@ -507,13 +506,13 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 .queueUsing(context);
     }
 
-    public void sync(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
+    public TaskResult sync(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
                      boolean skip, boolean printAllItems, String argOrderTitle, boolean isVoidOrder, String saleItemId, IAppCommandContext appCommandContext){
         this.saleItemId = saleItemId;
-        sync(context, skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, printAllItems, argOrderTitle, isVoidOrder, appCommandContext);
+        return sync(context, skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, printAllItems, argOrderTitle, isVoidOrder, appCommandContext);
     }
 
-    public void sync(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
+    public TaskResult sync(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
                      boolean skip, boolean printAllItems, String argOrderTitle, boolean isVoidOrder, IAppCommandContext appCommandContext){
         this.isSyncCall = true;
         this.skipPaperWarning = skipPaperWarning;
@@ -524,7 +523,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         this.printAllItems = printAllItems;
         this.orderTitle = argOrderTitle;
         this.isVoidOrder= isVoidOrder;
-        sync(context, null, appCommandContext);
+        return sync(context, null, appCommandContext);
     }
 
     public enum KitchenPrintStatus {

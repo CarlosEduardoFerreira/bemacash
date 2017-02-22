@@ -35,7 +35,7 @@ public abstract class BaseOnHoldDialogFragment extends StyledDialogFragment {
 
             @Override
             public void onSkip(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-//                printItemsToKitchen(fromPrinter, true, ignorePaperEnd, searchByMac);
+                onPrintSuccess();
             }
         };
 

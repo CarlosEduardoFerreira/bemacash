@@ -51,6 +51,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.GetPrinterStatusCommand;
 import com.kaching123.tcr.commands.device.GetPrinterStatusCommand.BasePrinterStatusCallback;
+import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
@@ -88,6 +89,7 @@ import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusComma
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
+import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.barcode.SearchBarcodeFragment;
@@ -214,6 +216,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.EXTRA_ALIAS_TITLE;
+import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.EXTRA_PRINTER;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
@@ -2398,6 +2402,42 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     public void onVoidApplied() {
         setupNewOrder();
         getApp().clearCurrentOrderItemsQty();
+    }
+
+    @OnFailure(RemoveSaleOrderCommand.class)
+    public void onVoidFailed(@Param(PrinterCommand.EXTRA_ERROR_PRINTER) PrinterError printerError,
+                             @Param(EXTRA_PRINTER) String fromPrinter,
+                             @Param(EXTRA_ALIAS_TITLE) String aliasTitle) {
+
+        KitchenPrintCallbackHelper.IKitchenPrintCallback callback = new KitchenPrintCallbackHelper.IKitchenPrintCallback() {
+            @Override
+            public void onRetry(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
+                RemoveSaleOrderCommand.start(BaseCashierActivity.this, BaseCashierActivity.this, BaseCashierActivity.this.orderGuid);
+            }
+
+            @Override
+            public void onSkip(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
+                RemoveSaleOrderCommand.start(BaseCashierActivity.this, BaseCashierActivity.this, BaseCashierActivity.this.orderGuid, true);
+            }
+        };
+
+        if (printerError != null && printerError == PrinterCommand.PrinterError.DISCONNECTED) {
+            KitchenPrintCallbackHelper.onPrinterDisconnected(this, fromPrinter, aliasTitle, callback);
+            return;
+        }
+        if (printerError != null && printerError == PrinterCommand.PrinterError.IP_NOT_FOUND) {
+            KitchenPrintCallbackHelper.onPrinterIPnotfound(this, fromPrinter, aliasTitle, callback);
+            return;
+        }
+        if (printerError != null && printerError == PrinterCommand.PrinterError.NOT_CONFIGURED) {
+            KitchenPrintCallbackHelper.onPrinterNotConfigured(this, fromPrinter, aliasTitle, callback);
+            return;
+        }
+        if (printerError != null && printerError == PrinterCommand.PrinterError.PAPER_IS_NEAR_END) {
+            KitchenPrintCallbackHelper.onPrinterPaperNearTheEnd(this, fromPrinter, aliasTitle, callback);
+            return;
+        }
+        KitchenPrintCallbackHelper.onPrintError(this, printerError, fromPrinter, aliasTitle, callback);
     }
 
     private void setupNewOrder() {

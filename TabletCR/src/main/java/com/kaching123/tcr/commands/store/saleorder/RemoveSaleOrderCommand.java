@@ -47,11 +47,13 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
 
     private static final String ARG_ORDER_GUID = "arg_order_guid";
     private static final String ARG_ORDER_TYPE = "arg_order_type";
+    private static final String ARG_ORDER_SKIP_PRINT = "arg_order_skip_print";
 
     private String orderId;
     private String orderName;
     private OrderType orderType;
     private String prepaidOrderGuid;
+    private boolean skipPrint;
 
     private SyncResult[] removeSaleOrderItemResults;
     private SyncResult removeSaleIncentivesResult;
@@ -60,13 +62,21 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
     @Override
     protected TaskResult doCommand() {
         orderId = getArgs().getString(ARG_ORDER_GUID);
+        skipPrint = getArgs().getBoolean(ARG_ORDER_SKIP_PRINT, false);
         orderType = (OrderType) getArgs().getSerializable(ARG_ORDER_TYPE);
 
         loadOrderInfo();
 
-        if (!removeItems())
+        if (!skipPrint) {
+            TaskResult taskResult = new PrintItemsForKitchenCommand().sync(getContext(), true, false, orderId, null, true, true, orderName, true, getAppCommandContext());
+            if (isFailed(taskResult)) {
+                return taskResult;
+            }
+        }
+
+        if (!removeItems()) {
             return failed();
-        new PrintItemsForKitchenCommand().sync(getContext(), true, false, orderId, null, true, true, orderName, true, getAppCommandContext());
+        }
 
         if (!resetCustomerBirthdayRewardDate())
             return failed();
@@ -257,14 +267,23 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         return batchSqlCommand;
     }
 
+    public static void start(Context context, Object callback, String orderGuid, OrderType orderType) {
+        start(context, callback, orderGuid, orderType, false);
+    }
+
     public static void start(Context context, Object callback, String orderGuid) {
         start(context, callback, orderGuid, OrderType.SALE);
     }
 
-    public static void start(Context context, Object callback, String orderGuid, OrderType orderType) {
+    public static void start(Context context, Object callback, String orderGuid, boolean skipPrint) {
+        start(context, callback, orderGuid, OrderType.SALE, skipPrint);
+    }
+
+    public static void start(Context context, Object callback, String orderGuid, OrderType orderType, boolean skipPrint) {
         create(RemoveSaleOrderCommand.class)
                 .arg(ARG_ORDER_GUID, orderGuid)
                 .arg(ARG_ORDER_TYPE, orderType)
+                .arg(ARG_ORDER_SKIP_PRINT, skipPrint)
                 .callback(callback)
                 .queueUsing(context);
     }
