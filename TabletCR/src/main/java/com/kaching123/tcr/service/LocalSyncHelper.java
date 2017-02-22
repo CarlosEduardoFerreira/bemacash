@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -68,13 +67,6 @@ import com.kaching123.tcr.jdbc.converters.UnitsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.VariantItemJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.VariantSubItemJdbcConverter;
 import com.kaching123.tcr.model.IValueModel;
-import com.kaching123.tcr.model.converter.CardBrandJdbcConverter;
-import com.kaching123.tcr.model.converter.CustomerOrderJdbcConverter;
-import com.kaching123.tcr.model.converter.PaymentServiceProviderConverter;
-import com.kaching123.tcr.model.converter.SaleComposerJdbcConverter;
-import com.kaching123.tcr.model.converter.ShopModuleJdbcConverter;
-import com.kaching123.tcr.model.converter.TableHistoryJdbcConverter;
-import com.kaching123.tcr.model.converter.TableOrderJdbcConverter;
 import com.kaching123.tcr.service.broadcast.BroadcastInfo;
 import com.kaching123.tcr.service.broadcast.WifiSocketService;
 import com.kaching123.tcr.service.broadcast.messages.NotifyNewCommandMsg;
@@ -135,7 +127,7 @@ public class LocalSyncHelper {
 
     private static Map<String, Integer> retries = new HashMap<>();
 
-    private static SyncOpenHelper sqlHelper;
+    private static SqlHelper sqlHelper;
 
 
     private static final List<String> ignoreTables = Arrays.asList(
@@ -155,7 +147,7 @@ public class LocalSyncHelper {
     public static void setWifiSocketService(WifiSocketService wifiSocketService) {
         LocalSyncHelper.wifiSocketService = wifiSocketService;
 
-        sqlHelper = TcrApplication.get().getSyncOpenHelper();
+        sqlHelper = new SqlHelper(wifiSocketService);
         mItemMovementHelper = new RecalcItemMovementTable(wifiSocketService, sqlHelper);
         mSaleItemHelper = new RecalcSaleItemTable(wifiSocketService, sqlHelper);
         mSaleItemAddonHelper = new RecalcSaleAddonTable(wifiSocketService, sqlHelper);
@@ -480,10 +472,6 @@ public class LocalSyncHelper {
                 operation.table = ShopStore.MunicipalityTable.TABLE_NAME;
                 model = new MunicipalityJdbcConverter().toValues(json);
             }
-            if (JdbcConverter.compareTable(table, ShopStore.PaymentServiceProviderTable.TABLE_NAME, PaymentServiceProviderConverter.TABLE_NAME)) {
-                operation.table = ShopStore.PaymentServiceProviderTable.TABLE_NAME;
-                model = new PaymentServiceProviderConverter().toValues(json);
-            }
             if (JdbcConverter.compareTable(table, ShopStore.PaymentTransactionTable.TABLE_NAME, PaymentTransactionJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.PaymentTransactionTable.TABLE_NAME;
                 model = new PaymentTransactionJdbcConverter().toValues(json);
@@ -499,10 +487,6 @@ public class LocalSyncHelper {
             if (JdbcConverter.compareTable(table, ShopStore.SaleAddonTable.TABLE_NAME, SaleOrderItemAddonJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.SaleAddonTable.TABLE_NAME;
                 model = new SaleOrderItemAddonJdbcConverter().toValues(json);
-            }
-            if (JdbcConverter.compareTable(table, ShopStore.SaleComposerTable.TABLE_NAME, SaleComposerJdbcConverter.TABLE_NAME)) {
-                operation.table = ShopStore.SaleComposerTable.TABLE_NAME;
-                model = new SaleComposerJdbcConverter().toValues(json);
             }
             if (JdbcConverter.compareTable(table, ShopStore.SaleItemTable.TABLE_NAME, SaleOrderItemJdbcConverter.SALE_ORDER_ITEMS_TABLE_NAME)) {
                 operation.table = ShopStore.SaleItemTable.TABLE_NAME;
@@ -541,26 +525,6 @@ public class LocalSyncHelper {
             if (JdbcConverter.compareTable(table, ShopStore.VariantSubItemTable.TABLE_NAME, VariantSubItemJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.VariantSubItemTable.TABLE_NAME;
                 model = new VariantSubItemJdbcConverter().toValues(json);
-            }
-            if (JdbcConverter.compareTable(table, ShopStore.CardBrandTable.TABLE_NAME, CardBrandJdbcConverter.TABLE_NAME)) {
-                operation.table = ShopStore.CardBrandTable.TABLE_NAME;
-                model = new CardBrandJdbcConverter().toValues(json);
-            }
-            if (JdbcConverter.compareTable(table, ShopStore.TableOrderTable.TABLE_NAME, TableOrderJdbcConverter.TABLE_NAME)) {
-                operation.table = ShopStore.TableOrderTable.TABLE_NAME;
-                model = new TableOrderJdbcConverter().toValues(json);
-            }
-            if (JdbcConverter.compareTable(table, ShopStore.TableHistoryTable.TABLE_NAME, TableHistoryJdbcConverter.TABLE_NAME)) {
-                operation.table = ShopStore.TableHistoryTable.TABLE_NAME;
-                model = new TableHistoryJdbcConverter().toValues(json);
-            }
-            if (JdbcConverter.compareTable(table, ShopStore.CustomerOrderTable.TABLE_NAME, CustomerOrderJdbcConverter.TABLE_NAME)) {
-                operation.table = ShopStore.CustomerOrderTable.TABLE_NAME;
-                model = new CustomerOrderJdbcConverter().toValues(json);
-            }
-            if (JdbcConverter.compareTable(table, ShopStore.ShopModuleTable.TABLE_NAME, ShopModuleJdbcConverter.TABLE_NAME)) {
-                operation.table = ShopStore.ShopModuleTable.TABLE_NAME;
-                model = new ShopModuleJdbcConverter().toValues(json);
             }
         } catch (JSONException e) {
             Logger.e(TAG_HEIGHT, e);
@@ -674,7 +638,7 @@ public class LocalSyncHelper {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while (!Thread.currentThread().isInterrupted()) {
+                        while (!Thread.currentThread().isInterrupted()) {
                         try {
                             Thread.sleep(FORCE_SYNC_INTERVAL);
                             notifyChanges();

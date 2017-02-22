@@ -12,6 +12,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.ReleaseNoteActivity;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.model.ApplicationVersion;
+import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.util.Util;
 
 /**
@@ -35,6 +36,7 @@ public class AboutFragment extends SuperBaseFragment{
         releaseNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                OfflineCommandsService.ignoreCommandObserver = true;
                 ReleaseNoteActivity.start(getActivity(), getString(R.string.release_note_link));
             }
         });

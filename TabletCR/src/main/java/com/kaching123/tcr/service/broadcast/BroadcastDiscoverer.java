@@ -184,7 +184,7 @@ public class BroadcastDiscoverer extends Thread {
 
                                 int index = app.getLanDevices().indexOf(info);
                                 if (index >= 0 && !Objects.equals(app.getLanDevices().get(index).getAddress(), info.getAddress())) {
-                                    OfflineCommandsService.startUploadAndDownload(mContext, false, info.getSerial());
+                                    OfflineCommandsService.doDownloadLocal(mContext, info.getSerial());
                                 }
 
                                 app.getLanDevices().remove(info);

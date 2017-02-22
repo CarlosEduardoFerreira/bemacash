@@ -69,7 +69,6 @@ import com.kaching123.tcr.model.LoyaltyIncentiveItemModel;
 import com.kaching123.tcr.model.LoyaltyIncentiveModel;
 import com.kaching123.tcr.model.LoyaltyIncentivePlanModel;
 import com.kaching123.tcr.model.LoyaltyPlanModel;
-import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
 import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierModel;
@@ -86,8 +85,6 @@ import com.kaching123.tcr.model.ShiftModel;
 import com.kaching123.tcr.model.StateModel;
 import com.kaching123.tcr.model.TBPModel;
 import com.kaching123.tcr.model.TBPxRegisterModel;
-import com.kaching123.tcr.model.TableHistoryModel;
-import com.kaching123.tcr.model.TableOrderModel;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.Unit;
@@ -95,8 +92,6 @@ import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.VariantItemModel;
 import com.kaching123.tcr.model.VariantSubItemModel;
 import com.kaching123.tcr.jdbc.converters.MultipleDiscountJdbcConverter;
-import com.kaching123.tcr.model.converter.TableHistoryJdbcConverter;
-import com.kaching123.tcr.model.converter.TableOrderJdbcConverter;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
@@ -432,19 +427,6 @@ public class JdbcFactory {
 
         API_METHOD.put(MultipleDiscountTable.TABLE_NAME, "multiple_discount_item");
         API_METHOD2.put(MultipleDiscountModel.class, "multiple_discount_item");
-
-        CONVERTERS.put(ShopStore.TableOrderTable.TABLE_NAME, c = new TableOrderJdbcConverter());
-        CONVERTERS.put(c.getTableName(), c);
-        CONVERTERS2.put(TableOrderModel.class, c);
-        API_METHOD2.put(TableOrderModel.class, ShopStore.TableOrderTable.TABLE_NAME);
-        API_METHOD.put(ShopStore.TableOrderTable.TABLE_NAME, ShopStore.TableOrderTable.TABLE_NAME);
-
-        CONVERTERS.put(ShopStore.TableHistoryTable.TABLE_NAME, c = new TableHistoryJdbcConverter());
-        CONVERTERS.put(c.getTableName(), c);
-        CONVERTERS2.put(TableHistoryModel.class, c);
-        API_METHOD2.put(TableHistoryModel.class, ShopStore.TableHistoryTable.TABLE_NAME);
-        API_METHOD.put(ShopStore.TableHistoryTable.TABLE_NAME, ShopStore.TableHistoryTable.TABLE_NAME);
-
 
     }
 

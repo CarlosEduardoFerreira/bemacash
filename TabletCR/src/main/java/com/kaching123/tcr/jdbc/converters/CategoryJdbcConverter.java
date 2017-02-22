@@ -105,10 +105,10 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
     @Override
     public SingleSqlCommand updateSQL(CategoryModel model, IAppCommandContext appCommandContext) {
         return _update(CATEGORY_TABLE_NAME, appCommandContext)
+                .add(DEPARTMENT_ID, model.departmentGuid)
                 .add(TITLE, model.title)
                 .add(IMAGE, model.image)
                 .add(ORDER_NUM, model.orderNum)
-                .add(DEPARTMENT_ID, model.departmentGuid)
                 .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
                 .add(COMMISSION, model.commission)
                 .where(ID, model.guid)

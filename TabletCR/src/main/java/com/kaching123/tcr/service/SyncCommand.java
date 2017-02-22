@@ -113,6 +113,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -773,6 +774,10 @@ public class SyncCommand implements Runnable {
             Logger.e("SyncCommand.getServerCurrentTimestamp(): failed, empty response");
             throw new SyncException();
         }
+
+        getApp().getShopPref().serverTimestamp().put(currentServerTimestamp);
+        getApp().getShopPref().localTimestamp().put(new Date().getTime());
+
         return currentServerTimestamp;
     }
 

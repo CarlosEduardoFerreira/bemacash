@@ -4,13 +4,6 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.IValueModel;
-import com.kaching123.tcr.model.converter.CardBrandJdbcConverter;
-import com.kaching123.tcr.model.converter.CustomerOrderJdbcConverter;
-import com.kaching123.tcr.model.converter.PaymentServiceProviderConverter;
-import com.kaching123.tcr.model.converter.SaleComposerJdbcConverter;
-import com.kaching123.tcr.model.converter.ShopModuleJdbcConverter;
-import com.kaching123.tcr.model.converter.TableHistoryJdbcConverter;
-import com.kaching123.tcr.model.converter.TableOrderJdbcConverter;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -99,12 +92,10 @@ public abstract class JdbcConverter<T extends IValueModel> {
         if (compareTable(table, ShopStore.ModifierGroupTable.TABLE_NAME, ItemsModifierGroupsJdbcConverter.TABLE_NAME)) return ShopStore.ModifierGroupTable.URI_CONTENT;
         if (compareTable(table, ShopStore.ModifierTable.TABLE_NAME, ItemsModifiersJdbcConverter.TABLE_NAME)) return ShopStore.ModifierTable.URI_CONTENT;
         if (compareTable(table, ShopStore.MunicipalityTable.TABLE_NAME, MunicipalityJdbcConverter.TABLE_NAME)) return ShopStore.MunicipalityTable.URI_CONTENT;
-        if (compareTable(table, ShopStore.PaymentServiceProviderTable.TABLE_NAME, PaymentServiceProviderConverter.TABLE_NAME)) return ShopStore.PaymentServiceProviderTable.URI_CONTENT;
         if (compareTable(table, ShopStore.PaymentTransactionTable.TABLE_NAME, PaymentTransactionJdbcConverter.TABLE_NAME)) return ShopStore.PaymentTransactionTable.URI_CONTENT;
         if (compareTable(table, ShopStore.PrinterAliasTable.TABLE_NAME, PrinterAliasJdbcConverter.TABLE_NAME)) return ShopStore.PrinterAliasTable.URI_CONTENT;
         if (compareTable(table, ShopStore.RegisterTable.TABLE_NAME, RegisterJdbcConverter.TABLE_NAME)) return ShopStore.RegisterTable.URI_CONTENT;
         if (compareTable(table, ShopStore.SaleAddonTable.TABLE_NAME, SaleOrderItemAddonJdbcConverter.TABLE_NAME)) return ShopStore.SaleAddonTable.URI_CONTENT;
-        if (compareTable(table, ShopStore.SaleComposerTable.TABLE_NAME, SaleComposerJdbcConverter.TABLE_NAME)) return ShopStore.SaleComposerTable.URI_CONTENT;
         if (compareTable(table, ShopStore.SaleItemTable.TABLE_NAME, SaleOrderItemJdbcConverter.SALE_ORDER_ITEMS_TABLE_NAME)) return ShopStore.SaleItemTable.URI_CONTENT;
         if (compareTable(table, ShopStore.SaleOrderTable.TABLE_NAME, SaleOrdersJdbcConverter.SALE_ORDER_TABLE_NAME)) return ShopStore.SaleOrderTable.URI_CONTENT;
         if (compareTable(table, ShopStore.ShiftTable.TABLE_NAME, ShiftJdbcConverter.TABLE_NAME)) return ShopStore.ShiftTable.URI_CONTENT;
@@ -114,11 +105,6 @@ public abstract class JdbcConverter<T extends IValueModel> {
         if (compareTable(table, ShopStore.UnitTable.TABLE_NAME, UnitsJdbcConverter.TABLE_NAME)) return ShopStore.UnitTable.URI_CONTENT;
         if (compareTable(table, ShopStore.VariantItemTable.TABLE_NAME, VariantItemJdbcConverter.TABLE_NAME)) return ShopStore.VariantItemTable.URI_CONTENT;
         if (compareTable(table, ShopStore.VariantSubItemTable.TABLE_NAME, VariantSubItemJdbcConverter.TABLE_NAME)) return ShopStore.VariantSubItemTable.URI_CONTENT;
-        if (compareTable(table, ShopStore.CardBrandTable.TABLE_NAME, CardBrandJdbcConverter.TABLE_NAME)) return ShopStore.CardBrandTable.URI_CONTENT;
-        if (compareTable(table, ShopStore.TableOrderTable.TABLE_NAME, TableOrderJdbcConverter.TABLE_NAME)) return ShopStore.TableOrderTable.URI_CONTENT;
-        if (compareTable(table, ShopStore.TableHistoryTable.TABLE_NAME, TableHistoryJdbcConverter.TABLE_NAME)) return ShopStore.TableHistoryTable.URI_CONTENT;
-        if (compareTable(table, ShopStore.CustomerOrderTable.TABLE_NAME, CustomerOrderJdbcConverter.TABLE_NAME)) return ShopStore.CustomerOrderTable.URI_CONTENT;
-        if (compareTable(table, ShopStore.ShopModuleTable.TABLE_NAME, ShopModuleJdbcConverter.TABLE_NAME)) return ShopStore.ShopModuleTable.URI_CONTENT;
         return null;
     }
 

@@ -9,7 +9,6 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SaleOrderModel;
-import com.kaching123.tcr.model.converter.OrderCheckoutState;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -18,7 +17,6 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     public static final String SALE_ORDER_TABLE_NAME = "SALE_ORDER";
 
     private static final String ID = "ID";
-    private static final String CHECKOUT_STATE = "CHECKOUT_STATE";
     private static final String CREATE_TIME = "CREATE_TIME";
     private static final String OPERATOR_ID = "OPERATOR_ID";
     private static final String SHIFT_ID = "SHIFT_ID";
@@ -200,13 +197,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(DISCOUNT, model.discount)
                 .add(DISCOUNT_TYPE, model.discountType)
-                .where(ID, model.guid)
-                .build(JdbcFactory.getApiMethod(model));
-    }
-
-    public SingleSqlCommand updateDate(SaleOrderModel model, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
-                .add(CREATE_TIME, model.createTime)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

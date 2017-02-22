@@ -44,26 +44,11 @@ public class OfflineCommandsService extends Service {
     protected static final Uri URI_SQL_COMMAND = ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT);
 
     public static final String EXTRA_IS_MANUAL = "OfflineCommandsService.EXTRA_IS_MANUAL";
-    public static final String EXTRA_IS_FROM = "OfflineCommandsService.EXTRA_IS_FROM";
-    public static final String EXTRA_IS_OLD = "OfflineCommandsService.EXTRA_IS_OLD";
-    public static final String EXTRA_ONLY_UPLOAD = "OfflineCommandsService.EXTRA_ONLY_UPLOAD";
-    public static final String EXTRA_UPLOAD_SQL_HOST = "OfflineCommandsService.EXTRA_UPLOAD_SQL_HOST";
-
-    public static final String ACTION_SYNC_PROGRESS = "com.kaching123.tcr.service.ACTION_SYNC_PROGRESS";
-    public static final String ACTION_SYNC_COMPLETED = "com.kaching123.tcr.service.ACTION_SYNC_COMPLETED";
-    public static final String EXTRA_TABLE = "table";
-    public static final String EXTRA_PAGES = "pages";
-    public static final String EXTRA_PROGRESS = "progress";
-    public static final String EXTRA_DATA_LABEL = "data_label";
-    public static final String EXTRA_SUCCESS = "success";
-    public static final String EXTRA_SYNC_LOCKED = "sync_locked";
-    public static final String EXTRA_SYNC_CANCELED = "EXTRA_SYNC_CANCELED";
 
     private static Handler handler = new Handler();
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public static boolean forceCancelDownloadUpload;
     public static boolean ignoreCommandObserver;
 
 
@@ -74,9 +59,21 @@ public class OfflineCommandsService extends Service {
                 Logger.d("ignoreCommandObserver");
                 return;
             }
-            doUploadAndMaybeDownload(true, false, null, false, false);
+            LocalSyncHelper.notifyChanges();
         }
     };
+
+    public void onCreate() {
+        super.onCreate();
+        uploadTaskV2Adapter = new UploadTaskV2();
+        getContentResolver().registerContentObserver(URI_SQL_COMMAND, false, commandObserver);
+    }
+
+    @Override
+    public void onDestroy() {
+        getContentResolver().unregisterContentObserver(commandObserver);
+        super.onDestroy();
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -84,24 +81,10 @@ public class OfflineCommandsService extends Service {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        uploadTaskV2Adapter = new UploadTaskV2();
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null)
             return START_STICKY;
 
-        startService(new Intent(this, WifiSocketService.class));
-        doUploadAndMaybeDownload(
-                intent.getBooleanExtra(EXTRA_ONLY_UPLOAD, false),
-                intent.getBooleanExtra(EXTRA_IS_MANUAL, false),
-                intent.getStringExtra(EXTRA_IS_FROM),
-                intent.getBooleanExtra(EXTRA_UPLOAD_SQL_HOST, false),
-                intent.getBooleanExtra(EXTRA_IS_OLD, false));
-        /*
         if (ACTION_SYNC.equals(intent.getAction())) {
             boolean isManual = intent.getBooleanExtra(EXTRA_IS_MANUAL, false);
             doDownload(isManual);
@@ -114,8 +97,6 @@ public class OfflineCommandsService extends Service {
         } else if (ACTION_EMPLOYEE_UPLOAD.equals(intent.getAction())) {
             doEmployeeUpload();
         }
-        /**/
-
         return START_STICKY;
     }
 
@@ -127,7 +108,6 @@ public class OfflineCommandsService extends Service {
      * - Scheduler
      */
     private void doDownload(boolean isManual) {
-        Logger.d("[OfflineService] doDownload: isManual = " + isManual);
         executor.submit(new SyncCommand(this, isManual));
     }
 
@@ -139,12 +119,10 @@ public class OfflineCommandsService extends Service {
      * - Scheduler
      * - Sale finished
      */
-    /*
     private void doUpload(boolean isManual) {
         Logger.d("[OfflineService] doUpload: isManual = " + isManual);
         executor.submit(new UploadTask(this, isManual));
     }
-    /**/
 
     private void doEmployeeUpload() {
         Logger.d("[OfflineService] doUpload: isManual = false");
@@ -183,50 +161,6 @@ public class OfflineCommandsService extends Service {
             mins = context.getResources().getInteger(R.integer.sync_time_entries_def_val);
         }
         return mins;
-    }
-
-
-    /**
-     * can be executed by
-     * 1. after login
-     * 2. Network state is changed
-     * 3. content observer for SqlCommandTable
-     * 4. Manual from the settings - Sync now
-     */
-    private void doUploadAndMaybeDownload(final boolean onlyUpload, final boolean isManual, final String from, boolean fromSQLHost, final boolean isOldSync) {
-        if (from != null){
-            doDownloadAfterUpload(isManual, from, isOldSync);
-            return;
-        }
-
-        Logger.d("[OfflineService] doUpload");
-
-        LocalSyncHelper.notifyChanges();
-
-        if (isOldSync){
-            executor.submit(new UploadTask(this, isManual));
-
-        } else {
-            executor.submit(new UploadTask(this, isManual));
-        }
-    }
-
-
-    private void doDownloadAfterUpload(final boolean isManual, final String from, final boolean isOldSync) {
-        Logger.d("[OfflineService] doDownload: isManual = " + isManual);
-
-        //LOCAL SYNC
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                doDownloadLocal(OfflineCommandsService.this, from);
-                if (from != null) return;
-
-                executor.submit(
-                        isOldSync ? (Runnable) new SyncCommand(OfflineCommandsService.this, isManual)
-                                : new SyncCommand(OfflineCommandsService.this, isManual));
-            }
-        }).start();
     }
 
     public static void doDownloadLocal(Context context, String from){
@@ -302,62 +236,6 @@ public class OfflineCommandsService extends Service {
         Logger.d("[OfflineService] startUpload");
         Intent intent = getEmployeeUploadIntent(context, false);
         context.startService(intent);
-    }
-
-
-    public static void startUploadAndDownload(Context context, boolean isManual, String from) {
-        Logger.d("[OfflineService] startUploadAndDownload");
-        Intent intent = new Intent(context, OfflineCommandsService.class);
-        intent.putExtra(EXTRA_IS_MANUAL, isManual);
-        intent.putExtra(EXTRA_IS_FROM, from);
-        context.startService(intent);
-    }
-
-    public static void startOldUploadAndOldDownload(Context context, boolean isManual, String from) {
-        Logger.d("[OfflineService] startOldUploadAndOldDownload");
-        Intent intent = new Intent(context, OfflineCommandsService.class);
-        intent.putExtra(EXTRA_IS_MANUAL, isManual);
-        intent.putExtra(EXTRA_IS_FROM, from);
-        intent.putExtra(EXTRA_IS_OLD, true);
-        context.startService(intent);
-    }
-
-    public  static void fireEvent(int message, Context context){
-        fireEvent(context.getString(message), context);
-    }
-
-    public  static  void fireEvent(String message, Context context){
-        fireEvent(context, null, message, 0, 0);
-    }
-
-    public  static  void fireEvent(Context context, String table) {
-        fireEvent(context, table, null, 0, 0);
-    }
-
-    public  static  void fireEvent(Context context, String table, int pages, int progress) {
-        fireEvent(context, table, null, pages, progress);
-    }
-
-    public  static  void fireEvent(Context context, String table, String dataLabel, int pages, int progress) {
-        Intent intent = new Intent(ACTION_SYNC_PROGRESS);
-        intent.putExtra(EXTRA_TABLE, table);
-        intent.putExtra(EXTRA_DATA_LABEL, dataLabel);
-        intent.putExtra(EXTRA_PAGES, pages);
-        intent.putExtra(EXTRA_PROGRESS, progress);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-        NotificationHelper.setMessageNotification(context, SyncWaitDialogFragment.processMessage(context, dataLabel, table, pages, progress));
-    }
-
-    public  static  void fireCompleteEvent(Context context, boolean success, boolean isSyncLocked, boolean isManual, boolean isCanceled) {
-        if (!isManual)
-            return;
-
-        Intent intent = new Intent(ACTION_SYNC_COMPLETED);
-        intent.putExtra(EXTRA_SUCCESS, success);
-        intent.putExtra(EXTRA_SYNC_LOCKED, isSyncLocked);
-        intent.putExtra(EXTRA_SYNC_CANCELED, isCanceled);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
 }
