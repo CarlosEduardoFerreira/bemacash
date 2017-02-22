@@ -19,6 +19,7 @@ import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemAddonJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemJdbcConverter;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.SaleModifierModel;
 import com.kaching123.tcr.model.SaleOrderItemAddonModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
@@ -38,6 +39,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.util.ContentValuesUtilBase._decimalNullable;
 import static com.kaching123.tcr.util.ContentValuesUtilBase._decimalQty;
 import static com.kaching123.tcr.util.CursorUtil._wrapOrNull;
 
@@ -62,9 +64,9 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
 
     private static final String PARAM_SALE_ITEM_GUID = "PARAM_SALE_ITEM_GUID";
 
-    private List<SaleOrderItemAddonModel> modifier;
-    private List<SaleOrderItemAddonModel> addons;
-    private List<SaleOrderItemAddonModel> optionals;
+    private List<SaleModifierModel> modifier;
+    private List<SaleModifierModel> addons;
+    private List<SaleModifierModel> optionals;
     private String saleItemGuid;
     private String itemGuid;
     private boolean skipNotify;
@@ -160,28 +162,28 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
         );
     }
 
-    private List<SaleOrderItemAddonModel> loadAddons(List<String> addonsGuid, final ModifierType type) {
+    private List<SaleModifierModel> loadAddons(List<String> addonsGuid, final ModifierType type) {
         if (addonsGuid == null || addonsGuid.isEmpty())
             return null;
         assert type != null;
 
-        FluentIterable<SaleOrderItemAddonModel> it = ProviderAction
+        FluentIterable<SaleModifierModel> it = ProviderAction
                 .query(URI_ADDONS)
                 .where(ModifierTable.ITEM_GUID + " = ?", itemGuid)
                 .where(ModifierTable.TYPE + " = ?", type.ordinal())
                 .whereIn(ModifierTable.MODIFIER_GUID, addonsGuid)
-                .perform(getContext()).toFluentIterable(new Function<Cursor, SaleOrderItemAddonModel>() {
-                    @Override
-                    public SaleOrderItemAddonModel apply(Cursor c) {
+                .perform(getContext()).toFluentIterable(new Function<Cursor, SaleModifierModel>() {
+                                                            @Override
+                                                            public SaleModifierModel apply(Cursor c) {
                         Logger.d("Addon: %s = %s", type.name(), c.getString(c.getColumnIndex(ModifierTable.MODIFIER_GUID)));
-                        return new SaleOrderItemAddonModel(
+                        return new SaleModifierModel(
                                 UUID.randomUUID().toString(),
                                 c.getString(c.getColumnIndex(ModifierTable.MODIFIER_GUID)),
                                 saleItemGuid,
-                                _decimal(c, c.getColumnIndex(ModifierTable.EXTRA_COST), BigDecimal.ZERO),
+                                _decimalNullable(c, c.getColumnIndex(ModifierTable.EXTRA_COST)),
                                 type,
                                 c.getString(c.getColumnIndex(ModifierTable.ITEM_SUB_GUID)),
-                                _decimalQty(c, c.getColumnIndex(ModifierTable.ITEM_SUB_QTY)));
+                                _decimalQty(c, c.getColumnIndex(ModifierTable.ITEM_SUB_QTY)), null);
                     }
                 }
                 );
@@ -200,21 +202,21 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
         }
 
         if (modifier != null) {
-            for (SaleOrderItemAddonModel addon : modifier) {
+            for (SaleModifierModel addon : modifier) {
                 operations.add(ContentProviderOperation.newInsert(URI_SALE_ADDONS_NO_NOTIFY)
                         .withValues(addon.toValues())
                         .build());
             }
         }
         if (addons != null) {
-            for (SaleOrderItemAddonModel addon : addons) {
+            for (SaleModifierModel addon : addons) {
                 operations.add(ContentProviderOperation.newInsert(URI_SALE_ADDONS_NO_NOTIFY)
                         .withValues(addon.toValues())
                         .build());
             }
         }
         if (optionals != null) {
-            for (SaleOrderItemAddonModel optional : optionals) {
+            for (SaleModifierModel optional : optionals) {
                 operations.add(ContentProviderOperation.newInsert(URI_SALE_ADDONS_NO_NOTIFY)
                         .withValues(optional.toValues())
                         .build());
@@ -249,7 +251,7 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        BatchSqlCommand batch = batchUpdate(SaleOrderItemAddonModel.class);
+        BatchSqlCommand batch = batchUpdate(SaleModifierModel.class);
         SaleOrderItemAddonJdbcConverter converter = (SaleOrderItemAddonJdbcConverter) JdbcFactory.getConverter(SaleAddonTable.TABLE_NAME);
         assert converter != null;
 
@@ -257,17 +259,17 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
             batch.add(converter.deleteItemAddonsSQL(addonGuid, saleItemGuid, getAppCommandContext()));
         }
         if (modifier != null) {
-            for (SaleOrderItemAddonModel a : modifier) {
+            for (SaleModifierModel a : modifier) {
                 batch.add(converter.insertSQL(a, getAppCommandContext()));
             }
         }
         if (addons != null) {
-            for (SaleOrderItemAddonModel a : addons) {
+            for (SaleModifierModel a : addons) {
                 batch.add(converter.insertSQL(a, getAppCommandContext()));
             }
         }
         if (optionals != null) {
-            for (SaleOrderItemAddonModel a : optionals) {
+            for (SaleModifierModel a : optionals) {
                 batch.add(converter.insertSQL(a, getAppCommandContext()));
             }
         }

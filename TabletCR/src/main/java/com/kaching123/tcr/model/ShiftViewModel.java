@@ -18,9 +18,14 @@ public class ShiftViewModel extends ShiftModel {
                           long registerId, BigDecimal openAmount, BigDecimal closeAmount,
                           String openEmployeeFullName, String closeEmployeeFullName,
                           String registerTitle) {
-        super(guid, startTime, endTime, openManagerId, closeManagerId, registerId, openAmount, closeAmount);
+        super(guid, startTime, endTime, openManagerId, closeManagerId, registerId, openAmount, closeAmount, null);
         this.openEmployeeFullName = openEmployeeFullName;
         this.closeEmployeeFullName = closeEmployeeFullName;
         this.registerTitle = registerTitle;
+    }
+
+    @Override
+    public String getIdColumn() {
+        return null;
     }
 }

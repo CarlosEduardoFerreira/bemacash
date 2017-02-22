@@ -4,11 +4,13 @@ import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.IValueModel;
 import com.kaching123.tcr.model.SqlCommandHelper;
@@ -20,6 +22,7 @@ import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class AsyncCommand extends PublicGroundyTask {
 
@@ -65,21 +68,38 @@ public abstract class AsyncCommand extends PublicGroundyTask {
     protected TaskResult doInBackground() {
         if (validateAppCommandContext() && !isAppCommandContextValid(getAppCommandContext()))
             return failed();
-        TaskResult result = doCommand();
 
+        TaskResult result = doCommand();
         if (isFailed(result)) {
             return result;
         }
 
-        ContentProviderResult[] dbOperationResults = null;
-
+        ContentProviderResult[] dbOperationResults;
         try {
             dbOperationResults = handleDbOperations(createDbOperations(), handleSqlCommand(createSqlCommand()));
+
+            if (this instanceof UpdateSaleOrderCommand) {
+                ContentProviderResult[] tempOperations = handleDbOperations(createDbOperations(),
+                        handleSqlCommand(((UpdateSaleOrderCommand) this).createSqlAdditional()));
+
+                if (dbOperationResults != null && tempOperations != null) {
+                    ContentProviderResult[] newOperations = Arrays.copyOf(dbOperationResults, dbOperationResults.length + tempOperations.length);
+                    System.arraycopy(tempOperations, 0, newOperations, dbOperationResults.length, tempOperations.length);
+                    dbOperationResults = newOperations;
+
+                } else if (dbOperationResults == null) {
+                    dbOperationResults = tempOperations;
+                }
+
+            }
+
         } catch (Exception e) {
-            Logger.e("dbOperationResults: " + e);
+            Logger.e("handleDbOperations exception", e);
             return failed();
         }
+
         afterCommand(dbOperationResults);
+
         return result;
     }
 
@@ -109,7 +129,7 @@ public abstract class AsyncCommand extends PublicGroundyTask {
      *
      * @param sqlCmd
      */
-    private ContentProviderOperation handleSqlCommand(ISqlCommand sqlCmd) {
+    private ContentProviderOperation[] handleSqlCommand(ISqlCommand sqlCmd) {
         if (getApp().isTrainingMode())
             return null;
 
@@ -121,14 +141,14 @@ public abstract class AsyncCommand extends PublicGroundyTask {
             return null;
         }
 
-        ContentProviderOperation operation;
+        ContentProviderOperation[] operations;
         if (sqlCmd instanceof SingleSqlCommand) {
-            operation = SqlCommandHelper.addSqlCommand((SingleSqlCommand) sqlCmd);
+            operations = SqlCommandHelper.addSqlCommand((SingleSqlCommand) sqlCmd);
         } else {
-            operation = SqlCommandHelper.addSqlCommands((BatchSqlCommand) sqlCmd);
+            operations = SqlCommandHelper.addSqlCommands((BatchSqlCommand) sqlCmd);
         }
 
-        return operation;
+        return operations;
     }
 
     /**
@@ -136,10 +156,11 @@ public abstract class AsyncCommand extends PublicGroundyTask {
      *
      * @param localDbOperations
      * @param externalDbOperations
-     * @throws RemoteException
-     * @throws OperationApplicationException
+     * @throws android.os.RemoteException
+     * @throws android.content.OperationApplicationException
      */
-    private ContentProviderResult[] handleDbOperations(ArrayList<ContentProviderOperation> localDbOperations, ContentProviderOperation externalDbOperations) throws RemoteException, OperationApplicationException {
+    private ContentProviderResult[] handleDbOperations(ArrayList<ContentProviderOperation> localDbOperations, ContentProviderOperation[] externalDbOperations) throws RemoteException, OperationApplicationException {
+
         if (isSync() && !isStandalone()) {
             syncResult.localDbOperations = localDbOperations;
             return null;
@@ -150,13 +171,21 @@ public abstract class AsyncCommand extends PublicGroundyTask {
         if (localDbOperations != null)
             operations.addAll(localDbOperations);
 
-        if (externalDbOperations != null)
-            operations.add(externalDbOperations);
+        if (externalDbOperations != null) {
+            operations.add(externalDbOperations[0]);
+            operations.add(externalDbOperations[1]);
+        }
 
         if (operations.isEmpty()) {
             return null;
         }
-        return getContext().getContentResolver().applyBatch(ShopProvider.AUTHORITY, operations);
+
+        try {
+            return getContext().getContentResolver().applyBatch(ShopProvider.AUTHORITY, operations);
+        } catch (SQLiteConstraintException e) {
+            Logger.e("AsyncCommand: failed to store the data, operations: " + operations, e);
+            throw e;
+        }
     }
 
     /**

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.UploadTask;
@@ -118,6 +119,30 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
             }
         }
     };
+
+    public static String processMessage(Context context, String dataLabel, String table, int pages, int progress){
+        if (context == null){
+            if (TcrApplication.get().getApplicationContext() == null) {
+                return "";
+            } else {
+                context = TcrApplication.get().getApplicationContext();
+            }
+        }
+
+        if (table != null && TABLE_NAMES.get(table) != null)
+            dataLabel = context.getString(R.string.sync_data, context.getString(TABLE_NAMES.get(table)));
+
+        String msgString = "";
+        if (dataLabel != null) {
+            if (pages == 0 && progress == 0) {
+                msgString = String.format(Locale.US, context.getString(R.string.sync_wait_msg_tmpl2), dataLabel);
+            } else {
+                msgString = String.format(Locale.US, context.getString(R.string.sync_wait_msg_tmpl), dataLabel, progress, pages);
+            }
+        }
+
+        return msgString;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

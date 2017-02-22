@@ -2089,4 +2089,115 @@
     <string name="scale_dlg_warning_message_check_connection">Check connection to the scale or enter the weight manually.</string>
     <string name="scale_dlg_warning_message_place_on_scale">Place %1$s on the Scale or enter the weight manually.</string>
     <string name="scale_dlg_warning_unit_does_not_match">The scale unit does not match the item unit of measurement. Switch scale to %1$s to continue Please check the scale."</string>
+
+
+    <!-- local sync starts -->
+    <string name="shop_host_is_diff">Tablet\' shop %s is different.</string>
+    <string name="host_status_outdated_msg">Tablet %s is outdated</string>
+    <string name="host_status_more_updated_msg">Tablet %s be with incompatible version</string>
+    <string name="local_sync_failed">Occurred an error in local synchronization.</string>
+    <string name="product_type_imported">Imported</string>
+    <string name="product_type_national">National</string>
+    <string name="tables">Tables</string>
+    <string name="table">Table</string>
+    <string name="tables_management">Tables Management</string>
+    <string name="table_num">Nº table</string>
+    <string name="customer_order_num">Nº Customer order</string>
+    <string name="table_not_found">Table not found</string>
+    <string name="table_free_up">FREE</string>
+    <string name="table_ordered_up">ORDERED</string>
+    <string name="table_served_up">SERVED</string>
+    <string name="table_reserved_up">RESERVED</string>
+    <string name="table_seated_up">SEATED</string>
+    <string name="table_billed_up">BILLED</string>
+    <string name="table_free">Free:</string>
+    <string name="table_ordered">Ordered:</string>
+    <string name="table_served">Served:</string>
+    <string name="table_reserved">Reserved:</string>
+    <string name="table_seated">Seated:</string>
+    <string name="table_billed">Billed:</string>
+    <string name="leave_table">LEAVE</string>
+    <string name="reserve_table">RESERVE</string>
+    <string name="open_table">OPEN</string>
+    <string name="open_split_table">OPEN SPLITED</string>
+    <string name="busy_table">BUSY</string>
+    <string name="contact_information">Contact Information</string>
+    <string name="customer_order_description">Description</string>
+    <string name="customer_order_code">Order</string>
+    <string name="customer_order_price">Amount</string>
+    <string name="customer_order_customer">Customer</string>
+    <string name="table_btn_prepare">Prepare</string>
+    <string name="table_btn_serve">Serve</string>
+    <string name="table_btn_close">Close</string>
+    <string name="table_btn_pay">Pay</string>
+    <string name="table_enable_close_receipt">Close receipt</string>
+    <string name="table_form_num">Number</string>
+    <string name="table_form_description">Description</string>
+    <string name="table_form_add_more">Add more</string>
+    <string name="table_form_edit">Edit Table</string>
+    <string name="table_form_add">New Table</string>
+    <string name="occurred_an_error">Wasn\'t possible do it. Please, try again.</string>
+    <string name="nothing_table_registered">Nothing table registered</string>
+    <string name="table_form_invalid_num">Table number is invalid!</string>
+    <string name="table_form_already_used_num">Table number already used!</string>
+    <string name="do_you_have_sure_to_remove_it">Do you have sure to remove it?</string>
+    <string name="do_you_have_sure_to_cancel_sync">Do you have sure to cancel sync?</string>
+    <string name="add_customer_order">Add customer order</string>
+    <string name="add_customer_order_btn">Add</string>
+    <string name="add_customer_order_fill_order">Please, fill order number</string>
+    <string name="add_customer_order_already_used">Order already used on this table!</string>
+    <string name="enabled_pre_order">Pre order</string>
+    <string name="enabled_show_table_time">Show table time</string>
+    <string name="customer_order">Order</string>
+    <string name="customer_order_qty">Qty orders</string>
+    <string name="table_status">Status</string>
+    <string name="table_all_customers_order">ALL ORDERS</string>
+    <string name="customer_order_item_added">Changed</string>
+    <string name="customer_orders">ORDERS</string>
+    <string name="upload_data_percentage" formatted="false">Uploading data %s%%</string>
+    <string name="tickets">Tickets</string>
+    <string name="tickets_valid">Tickets valid</string>
+    <string name="ticket_valid">VALID AT: %s</string>
+    <string name="tickets_valid_day" formatted="false">%s Day</string>
+    <string name="tickets_valid_days" formatted="false">%s Days</string>
+    <string name="open_shift_description">Description</string>
+    <string name="new_bema_found">New Bemacash found: %s</string>
+    <string name="ticket_emission">Emissão: %s</string>
+    <string name="ticket_order">Order n. %s</string>
+    <string name="disable_local_sync">Disable local sync</string>
+    <string name="enable_local_sync">Enable local sync</string>
+    <string name="reprint_pre_order">Print Pre order</string>
+    <string name="table_to_be_use">Table is already in use!</string>
+    <string name="show_only_my_order">Show only my orders</string>
+    <string name="orders_settings">Orders</string>
+    <string name="request_pwd_from_support">For access this feature, inform the countersign to support team, so that they provider the password.</string>
+    <string name="countersign">Countersign:</string>
+    <string name="ask_permission">Ask Permission</string>
+    <string name="btn_to_check">Check</string>
+    <string name="pwd_incorrect">Password incorrect!</string>
+    <string name="you_have_table_max">You have reached the maximum tables number</string>
+    <string name="server_hour">Server hour</string>
+    <string name="bemacashs">Bemacashs</string>
+    <string name="missing_data">Missing data</string>
+    <string name="local_sync_device_status">Status</string>
+    <string name="local_sync_device_status_online">Online</string>
+    <string name="local_sync_device_status_offline">Offline</string>
+    <string name="no_devices">No Bemacash</string>
+    <string name="fiscal_manager_not_found">Fiscal Manager not found</string>
+    <string name="variant_item">items part#3</string>
+    <string name="variant_sub_item">items part#4</string>
+    <string name="variant_matrix">items part#5</string>
+    <string name="sync_data">%s data</string>
+    <string name="sync_locations">Locations data</string>
+    <string name="error_message_sync_forbidden">Sorry, you are forbidden to log in</string>
+    <string name="error_message_shop_deactivated">The shop was deactivated.</string>
+    <string name="error_message_sync_offline">Sorry, there was a connectivity issue, you need to have a stable connection in order to get your shop in the action!</string>
+    <string name="error_message_sync_400">Sorry, but you register is not assigned to any shop. Please configure it on the back office</string>
+    <string name="error_message_sync_500">Sorry, the server is currently under maintenance, please try again later</string>
+    <string name="item_activity_sales_permitted_title">Attention</string>
+    <string name="item_activity_sales_permitted_near_end" formatted = "false">After this sale, you will break %s percent of yearly transction amount. Are you sure you want to proceed?</string>
+    <string name="warning_new_msg">Error TransactionUtil setNewValues</string>
+    <!-- local sync ends -->
+
+
 </resources>

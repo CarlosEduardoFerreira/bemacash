@@ -1,5 +1,6 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
@@ -8,22 +9,29 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.model.converter.OrderCheckoutState;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
-import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
 
-    private static final String SALE_ORDER_TABLE_NAME = "SALE_ORDER";
+    public static final String SALE_ORDER_TABLE_NAME = "SALE_ORDER";
 
     private static final String ID = "ID";
+    private static final String CHECKOUT_STATE = "CHECKOUT_STATE";
     private static final String CREATE_TIME = "CREATE_TIME";
     private static final String OPERATOR_ID = "OPERATOR_ID";
     private static final String SHIFT_ID = "SHIFT_ID";
@@ -45,6 +53,26 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
 
     @Override
     public SaleOrderModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(ID)) ignoreFields.add(ShopStore.SaleOrderTable.GUID);
+        if (!rs.has(CREATE_TIME)) ignoreFields.add(ShopStore.SaleOrderTable.CREATE_TIME);
+        if (!rs.has(OPERATOR_ID)) ignoreFields.add(ShopStore.SaleOrderTable.OPERATOR_GUID);
+        if (!rs.has(SHIFT_ID)) ignoreFields.add(ShopStore.SaleOrderTable.SHIFT_GUID);
+        if (!rs.has(CUSTOMER_ID)) ignoreFields.add(ShopStore.SaleOrderTable.CUSTOMER_GUID);
+        if (!rs.has(DISCOUNT)) ignoreFields.add(ShopStore.SaleOrderTable.DISCOUNT);
+        if (!rs.has(DISCOUNT_TYPE)) ignoreFields.add(ShopStore.SaleOrderTable.DISCOUNT_TYPE);
+        if (!rs.has(ORDER_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.STATUS);
+        if (!rs.has(HOLD_NAME)) ignoreFields.add(ShopStore.SaleOrderTable.HOLD_NAME);
+        if (!rs.has(TAXABLE)) ignoreFields.add(ShopStore.SaleOrderTable.TAXABLE);
+        if (!rs.has(PRINT_SEQ_NUM)) ignoreFields.add(ShopStore.SaleOrderTable.PRINT_SEQ_NUM);
+        if (!rs.has(REGISTER_ID)) ignoreFields.add(ShopStore.SaleOrderTable.REGISTER_ID);
+        if (!rs.has(PARENT_ID)) ignoreFields.add(ShopStore.SaleOrderTable.PARENT_ID);
+        if (!rs.has(ORDER_TYPE)) ignoreFields.add(ShopStore.SaleOrderTable.ORDER_TYPE);
+        if (!rs.has(IS_TIPPED)) ignoreFields.add(ShopStore.SaleOrderTable.IS_TIPPED);
+        if (!rs.has(KITCHEN_PRINT_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS);
+        if (!rs.has(KDS_SEND_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KDS_SEND_STATUS);
+        if (!rs.has(TRANSACTION_FEE)) ignoreFields.add(ShopStore.SaleOrderTable.TRANSACTION_FEE);
+
         return new SaleOrderModel(
                 rs.getString(ID),
                 rs.getDate(CREATE_TIME),
@@ -60,14 +88,14 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 null,
                 null,
                 rs.getInt(PRINT_SEQ_NUM),
-                rs.getLong(REGISTER_ID),
+                rs.isNull(REGISTER_ID) || rs.get(REGISTER_ID).equals("null") ? 0L : rs.getLong(REGISTER_ID),
                 rs.getString(PARENT_ID),
                 _enum(OrderType.class, rs.getString(ORDER_TYPE), OrderType.SALE),
                 rs.getBoolean(IS_TIPPED),
                 _enum(KitchenPrintStatus.class, rs.getString(KITCHEN_PRINT_STATUS), KitchenPrintStatus.PRINT),
                 _enum(PrintOrderToKdsCommand.KDSSendStatus.class, rs.getString(KDS_SEND_STATUS), PrintOrderToKdsCommand.KDSSendStatus.PRINT),
-                rs.getBigDecimal(TRANSACTION_FEE)
-        );
+                rs.getBigDecimal(TRANSACTION_FEE),
+                ignoreFields);
     }
 
     @Override
@@ -81,8 +109,44 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     }
 
     @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.SaleOrderTable.GUID;
+    }
+
+    @Override
     public String getParentGuidColumn() {
         return PARENT_ID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(SaleOrderModel order){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(ID, order.guid)
+                    .put(CREATE_TIME, order.createTime)
+                    .put(OPERATOR_ID, order.operatorGuid)
+                    .put(SHIFT_ID, order.shiftGuid)
+                    .put(CUSTOMER_ID, order.customerGuid)
+                    .put(DISCOUNT, order.discount)
+                    .put(DISCOUNT_TYPE, order.discountType)
+                    .put(ORDER_STATUS, order.orderStatus.name())
+                    .put(HOLD_NAME, order.getHoldName())
+                    .put(TAXABLE, order.taxable)
+                    .put(PRINT_SEQ_NUM, order.printSeqNum)
+                    .put(REGISTER_ID, order.registerId)
+                    .put(PARENT_ID, order.parentGuid)
+                    .put(ORDER_TYPE, order.type.name())
+                    .put(IS_TIPPED, order.isTipped)
+                    .put(KITCHEN_PRINT_STATUS, order.kitchenPrintStatus)
+                    .put(KDS_SEND_STATUS, order.kdsSendStatus)
+                    .put(TRANSACTION_FEE, order.transactionFee);
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -118,14 +182,8 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .add(HOLD_NAME, order.getHoldName())
                 .add(CREATE_TIME, order.createTime)
                 .add(TAXABLE, order.taxable)
+                .add(REGISTER_ID, order.registerId)
                 .add(PARENT_ID, order.parentGuid)
-                .add(TRANSACTION_FEE, order.transactionFee)
-                .where(ID, order.guid)
-                .build(JdbcFactory.getApiMethod(order));
-    }
-
-    public SingleSqlCommand updateTransactionFee(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(TRANSACTION_FEE, order.transactionFee)
                 .where(ID, order.guid)
                 .build(JdbcFactory.getApiMethod(order));
@@ -194,6 +252,20 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .add(JdbcBuilder.FIELD_IS_DELETED, 1)
                 .where(ID, order.guid)
                 .build(JdbcFactory.getApiMethod(order));
+    }
+
+
+    public SingleSqlCommand updateStatusWithWhere(SaleOrderModel order, IAppCommandContext appCommandContext) {
+        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
+                .add(ORDER_STATUS, order.orderStatus)
+                .where(ID, order.guid)
+                .where(ORDER_STATUS, OrderStatus.ACTIVE.toString())
+                .build(JdbcFactory.getApiMethod(order));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 
 }

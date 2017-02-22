@@ -2,6 +2,7 @@ package com.kaching123.tcr.commands.payment.paypal;
 
 import android.content.Context;
 
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.IPaymentGateway;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -45,5 +46,10 @@ public class PayPalGateway implements IPaymentGateway<PaypalTransaction, CreditC
     @Override
     public PaypalTransaction createTransaction(Context context, BigDecimal amount, String orderGuid) {
         return null;
+    }
+
+    @Override
+    public boolean enabled() {
+        return false;
     }
 }

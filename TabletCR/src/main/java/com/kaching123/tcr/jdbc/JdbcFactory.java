@@ -6,6 +6,7 @@ import com.kaching123.tcr.jdbc.converters.CashDrawerMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CategoryJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CommissionsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ComposerJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.CountryJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CreditReceiptJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CustomerJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.DepartmentJdbcConverter;
@@ -25,6 +26,7 @@ import com.kaching123.tcr.jdbc.converters.LoyaltyIncentiveJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.LoyaltyIncentivePlanJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.LoyaltyPlanJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.LoyaltyPointsMovementJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.MunicipalityJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PrinterAliasJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.RegisterJdbcConverter;
@@ -33,6 +35,7 @@ import com.kaching123.tcr.jdbc.converters.SaleOrderItemAddonJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ShiftJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.StateJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.TBPJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.TBPxRegisterJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.TaxGroupJdbcConverter;
@@ -47,6 +50,7 @@ import com.kaching123.tcr.model.CashDrawerMovementModel;
 import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.model.CommissionsModel;
 import com.kaching123.tcr.model.ComposerModel;
+import com.kaching123.tcr.model.CountryModel;
 import com.kaching123.tcr.model.CreditReceiptModel;
 import com.kaching123.tcr.model.ItemKdsModel;
 import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
@@ -70,6 +74,7 @@ import com.kaching123.tcr.model.ModifierExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.MultipleDiscountModel;
+import com.kaching123.tcr.model.MunicipalityModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.model.RegisterModel;
@@ -78,8 +83,11 @@ import com.kaching123.tcr.model.SaleModifierModel;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.ShiftModel;
+import com.kaching123.tcr.model.StateModel;
 import com.kaching123.tcr.model.TBPModel;
 import com.kaching123.tcr.model.TBPxRegisterModel;
+import com.kaching123.tcr.model.TableHistoryModel;
+import com.kaching123.tcr.model.TableOrderModel;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.Unit;
@@ -87,6 +95,8 @@ import com.kaching123.tcr.model.UnitLabelModel;
 import com.kaching123.tcr.model.VariantItemModel;
 import com.kaching123.tcr.model.VariantSubItemModel;
 import com.kaching123.tcr.jdbc.converters.MultipleDiscountJdbcConverter;
+import com.kaching123.tcr.model.converter.TableHistoryJdbcConverter;
+import com.kaching123.tcr.model.converter.TableOrderJdbcConverter;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ActivationCarrierTable;
@@ -131,15 +141,16 @@ public class JdbcFactory {
     public static final String METHOD_UPDATE = "edit_";
     public static final String METHOD_DELETE = "delete_";
 
-    private static final HashMap<String, JdbcConverter> CONVERTERS = new HashMap<String, JdbcConverter>();
-    private static final HashMap<Class, JdbcConverter> CONVERTERS2 = new HashMap<Class, JdbcConverter>();
+    private static final HashMap<String, JdbcConverter> CONVERTERS = new HashMap<>();
+    private static final HashMap<Class, JdbcConverter> CONVERTERS2 = new HashMap<>();
 
-    private static final HashMap<String, String> API_METHOD = new HashMap<String, String>();
-    private static final HashMap<Class, String> API_METHOD2 = new HashMap<Class, String>();
+    private static final HashMap<String, String> API_METHOD = new HashMap<>();
+    private static final HashMap<Class, String> API_METHOD2 = new HashMap<>();
 
     static {
         JdbcConverter c;
         CONVERTERS.put(ItemTable.TABLE_NAME, c = new ItemsJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(ItemModel.class, c);
         CONVERTERS2.put(ItemExModel.class, c);
 
@@ -148,6 +159,7 @@ public class JdbcFactory {
         API_METHOD2.put(ItemExModel.class, "items");
 
         CONVERTERS.put(ModifierTable.TABLE_NAME, c = new ItemsModifiersJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(ModifierModel.class, c);
         CONVERTERS2.put(ModifierExModel.class, c);
 
@@ -156,108 +168,138 @@ public class JdbcFactory {
         API_METHOD2.put(ModifierExModel.class, "modifiers");
 
         CONVERTERS.put(ModifierGroupTable.TABLE_NAME, c = new ItemsModifierGroupsJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(ModifierGroupModel.class, c);
 
         API_METHOD.put(ModifierGroupTable.TABLE_NAME, "modifier_groups");
         API_METHOD2.put(ModifierGroupModel.class, "modifier_groups");
 
         CONVERTERS.put(ItemMovementTable.TABLE_NAME, c = new ItemsMovementJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(ItemMovementModel.class, c);
 
         API_METHOD.put(ItemMovementTable.TABLE_NAME, "item_movements");
         API_METHOD2.put(ItemMovementModel.class, "item_movements");
 
-        CONVERTERS.put(CategoryTable.TABLE_NAME, c = new CategoryJdbcConverter());
+        CONVERTERS.put(CategoryTable.TABLE_NAME, c = new CategoryJdbcConverter()    );
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(CategoryModel.class, c);
 
         API_METHOD.put(CategoryTable.TABLE_NAME, "categories");
         API_METHOD2.put(CategoryModel.class, "categories");
 
         CONVERTERS.put(DepartmentTable.TABLE_NAME, c = new DepartmentJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(DepartmentModel.class, c);
 
         API_METHOD.put(DepartmentTable.TABLE_NAME, "departments");
         API_METHOD2.put(DepartmentModel.class, "departments");
 
         CONVERTERS.put(SaleOrderTable.TABLE_NAME, c = new SaleOrdersJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(SaleOrderModel.class, c);
 
         API_METHOD.put(SaleOrderTable.TABLE_NAME, "sale_orders");
         API_METHOD2.put(SaleOrderModel.class, "sale_orders");
 
         CONVERTERS.put(SaleItemTable.TABLE_NAME, c = new SaleOrderItemJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(SaleOrderItemModel.class, c);
 
         API_METHOD.put(SaleItemTable.TABLE_NAME, "sale_order_items");
         API_METHOD2.put(SaleOrderItemModel.class, "sale_order_items");
 
         CONVERTERS.put(EmployeeTable.TABLE_NAME, c = new EmployeeJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(EmployeeModel.class, c);
 
         API_METHOD.put(EmployeeTable.TABLE_NAME, "employees");
         API_METHOD2.put(EmployeeModel.class, "employees");
 
         CONVERTERS.put(SaleAddonTable.TABLE_NAME, c = new SaleOrderItemAddonJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(SaleModifierModel.class, c);
 
         API_METHOD.put(SaleAddonTable.TABLE_NAME, "sale_order_item_addons");
         API_METHOD2.put(SaleModifierModel.class, "sale_order_item_addons");
 
         CONVERTERS.put(PaymentTransactionTable.TABLE_NAME, c = new PaymentTransactionJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(PaymentTransactionModel.class, c);
 
         API_METHOD.put(PaymentTransactionTable.TABLE_NAME, "payment_transactions");
         API_METHOD2.put(PaymentTransactionModel.class, "payment_transactions");
 
         CONVERTERS.put(UnitTable.TABLE_NAME, c = new UnitsJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(Unit.class, c);
 
         API_METHOD.put(UnitTable.TABLE_NAME, "units");
         API_METHOD2.put(Unit.class, "units");
 
         CONVERTERS.put(ComposerTable.TABLE_NAME, c = new ComposerJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(ComposerModel.class, c);
 
         API_METHOD.put(ComposerTable.TABLE_NAME, "composer");
         API_METHOD2.put(ComposerModel.class, "composer");
 
         CONVERTERS.put(ShiftTable.TABLE_NAME, c = new ShiftJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(ShiftModel.class, c);
 
         API_METHOD.put(ShiftTable.TABLE_NAME, "shifts");
         API_METHOD2.put(ShiftModel.class, "shifts");
 
         CONVERTERS.put(CashDrawerMovementTable.TABLE_NAME, c = new CashDrawerMovementJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(CashDrawerMovementModel.class, c);
 
         API_METHOD.put(CashDrawerMovementTable.TABLE_NAME, "cash_drawer_movements");
         API_METHOD2.put(CashDrawerMovementModel.class, "cash_drawer_movements");
 
         CONVERTERS.put(EmployeePermissionTable.TABLE_NAME, c = new EmployeePermissionJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(EmployeePermissionModel.class, c);
 
         API_METHOD.put(EmployeePermissionTable.TABLE_NAME, "employee_permissions");
         API_METHOD2.put(EmployeePermissionModel.class, "employee_permissions");
 
         CONVERTERS.put(EmployeeTimesheetTable.TABLE_NAME, c = new EmployeeTimesheetJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(EmployeeTimesheetModel.class, c);
 
         API_METHOD.put(EmployeeTimesheetTable.TABLE_NAME, "employee_timesheets");
         API_METHOD2.put(EmployeeTimesheetModel.class, "employee_timesheets");
 
         CONVERTERS.put(EmployeeTipsTable.TABLE_NAME, c = new TipsJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(TipsModel.class, c);
 
         API_METHOD.put(EmployeeTipsTable.TABLE_NAME, "received_tips");
         API_METHOD2.put(TipsModel.class, "received_tips");
 
         CONVERTERS.put(TaxGroupTable.TABLE_NAME, c = new TaxGroupJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(TaxGroupModel.class, c);
 
         API_METHOD.put(TaxGroupTable.TABLE_NAME, "tax_groups");
         API_METHOD2.put(TaxGroupModel.class, "tax_groups");
 
+        CONVERTERS.put(ShopStore.CountryTable.TABLE_NAME, c = new CountryJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
+        CONVERTERS2.put(CountryModel.class, c);
+
+        CONVERTERS.put(ShopStore.StateTable.TABLE_NAME, c = new StateJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
+        CONVERTERS2.put(StateModel.class, c);
+
+        CONVERTERS.put(ShopStore.MunicipalityTable.TABLE_NAME, c = new MunicipalityJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
+        CONVERTERS2.put(MunicipalityModel.class, c);
+
         CONVERTERS.put(RegisterTable.TABLE_NAME, c = new RegisterJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(RegisterModel.class, c);
 
         API_METHOD.put(RegisterTable.TABLE_NAME, "registers");
@@ -270,12 +312,14 @@ public class JdbcFactory {
         API_METHOD2.put(BillPaymentDescriptionModel.class, "bill_payments_descriptions");
 
         CONVERTERS.put(CustomerTable.TABLE_NAME, c = new CustomerJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(CustomerModel.class, c);
 
         API_METHOD.put(CustomerTable.TABLE_NAME, "customers");
         API_METHOD2.put(CustomerModel.class, "customers");
 
         CONVERTERS.put(PrinterAliasTable.TABLE_NAME, c = new PrinterAliasJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(PrinterAliasModel.class, c);
 
         API_METHOD.put(PrinterAliasTable.TABLE_NAME, "printer_aliases");
@@ -291,6 +335,7 @@ public class JdbcFactory {
         API_METHOD2.put(KDSAliasModel.class, "printer_aliases");
 
         CONVERTERS.put(CreditReceiptTable.TABLE_NAME, c = new CreditReceiptJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(CreditReceiptModel.class, c);
 
         API_METHOD.put(CreditReceiptTable.TABLE_NAME, "credit_receipts");
@@ -300,30 +345,35 @@ public class JdbcFactory {
         CONVERTERS2.put(ActivationCarrierModel.class, c);
 
         CONVERTERS.put(EmployeeCommissionsTable.TABLE_NAME, c = new CommissionsJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(CommissionsModel.class, c);
 
         API_METHOD.put(EmployeeCommissionsTable.TABLE_NAME, "commissions");
         API_METHOD2.put(CommissionsModel.class, "commissions");
 
         CONVERTERS.put(ShopStore.UnitLabelTable.TABLE_NAME, c = new UnitLabelJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(UnitLabelModel.class, c);
 
         API_METHOD.put(ShopStore.UnitLabelTable.TABLE_NAME, "unit_label");
         API_METHOD2.put(UnitLabelModel.class, "unit_label");
 
         CONVERTERS.put(ShopStore.VariantItemTable.TABLE_NAME, c = new VariantItemJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(VariantItemModel.class, c);
 
         API_METHOD.put(ShopStore.VariantItemTable.TABLE_NAME, "variants");
         API_METHOD2.put(VariantItemModel.class, "variants");
 
         CONVERTERS.put(ShopStore.VariantSubItemTable.TABLE_NAME, c = new VariantSubItemJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(VariantSubItemModel.class, c);
 
         API_METHOD.put(ShopStore.VariantSubItemTable.TABLE_NAME, "sub_variants");
         API_METHOD2.put(VariantSubItemModel.class, "sub_variants");
 
         CONVERTERS.put(ShopStore.ItemMatrixTable.TABLE_NAME, c = new ItemMatrixJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(ItemMatrixModel.class, c);
 
         API_METHOD.put(ShopStore.ItemMatrixTable.TABLE_NAME, "item_matrixes");
@@ -382,6 +432,20 @@ public class JdbcFactory {
 
         API_METHOD.put(MultipleDiscountTable.TABLE_NAME, "multiple_discount_item");
         API_METHOD2.put(MultipleDiscountModel.class, "multiple_discount_item");
+
+        CONVERTERS.put(ShopStore.TableOrderTable.TABLE_NAME, c = new TableOrderJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
+        CONVERTERS2.put(TableOrderModel.class, c);
+        API_METHOD2.put(TableOrderModel.class, ShopStore.TableOrderTable.TABLE_NAME);
+        API_METHOD.put(ShopStore.TableOrderTable.TABLE_NAME, ShopStore.TableOrderTable.TABLE_NAME);
+
+        CONVERTERS.put(ShopStore.TableHistoryTable.TABLE_NAME, c = new TableHistoryJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
+        CONVERTERS2.put(TableHistoryModel.class, c);
+        API_METHOD2.put(TableHistoryModel.class, ShopStore.TableHistoryTable.TABLE_NAME);
+        API_METHOD.put(ShopStore.TableHistoryTable.TABLE_NAME, ShopStore.TableHistoryTable.TABLE_NAME);
+
+
     }
 
     public static JdbcConverter getConverter(String tableName) {
@@ -396,6 +460,30 @@ public class JdbcFactory {
         return CONVERTERS2.get(clazz);
     }
 
+    /**
+     * Use this method for work with PaymentTransactionModel and childs
+     * @param clazz
+     * @param model
+     * @param appCommandContext
+     * @param <T>
+     * @return
+     */
+    public static <T extends IValueModel> ISqlCommand insert(Class<T> clazz, T model, IAppCommandContext appCommandContext) {
+        String apiMethod = API_METHOD2.get(clazz);
+        if (apiMethod == null) {
+            throw new IllegalArgumentException("no api for class = " + model.getClass());
+        }
+        return getConverter(clazz).insertSQL(model, appCommandContext);
+    }
+
+    /**
+     * Use insert(Class<T> clazz, T model, IAppCommandContext appCommandContext) instead this method if you need perform paymentTransaction,
+     * in other case you can use this method.
+     * @param model
+     * @param appCommandContext
+     * @param <T>
+     * @return
+     */
     public static <T extends IValueModel> ISqlCommand insert(T model, IAppCommandContext appCommandContext) {
         String apiMethod = API_METHOD2.get(model.getClass());
         if(apiMethod == null){

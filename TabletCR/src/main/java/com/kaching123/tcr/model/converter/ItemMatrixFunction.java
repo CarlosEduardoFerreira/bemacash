@@ -22,8 +22,8 @@ public class ItemMatrixFunction extends ListConverterFunction<ItemMatrixModel> {
                 c.getString(indexHolder.get(ShopStore.ItemMatrixTable.GUID)),
                 c.getString(indexHolder.get(ShopStore.ItemMatrixTable.NAME)),
                 c.getString(indexHolder.get(ShopStore.ItemMatrixTable.PARENT_GUID)),
-                c.isNull(indexHolder.get(ShopStore.ItemMatrixTable.CHILD_GUID))
-                        ? null : c.getString(indexHolder.get(ShopStore.ItemMatrixTable.CHILD_GUID))
+                c.isNull(indexHolder.get(ShopStore.ItemMatrixTable.CHILD_GUID)) ? null : c.getString(indexHolder.get(ShopStore.ItemMatrixTable.CHILD_GUID)),
+                null
         );
     }
 

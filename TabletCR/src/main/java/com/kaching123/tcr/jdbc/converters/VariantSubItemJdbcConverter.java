@@ -1,12 +1,18 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.VariantSubItemModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -16,7 +22,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
  */
 public class VariantSubItemJdbcConverter extends JdbcConverter<VariantSubItemModel> {
 
-    private static final String TABLE_NAME = "SUB_VARIANT";
+    public static final String TABLE_NAME = "SUB_VARIANT";
 
     private static final String ID = "ID";
     private static final String VARIANT_ID = "VARIANT_ID";
@@ -25,11 +31,18 @@ public class VariantSubItemJdbcConverter extends JdbcConverter<VariantSubItemMod
 
     @Override
     public VariantSubItemModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(ID)) ignoreFields.add(ShopStore.VariantSubItemTable.GUID);
+        if (!rs.has(VALUE)) ignoreFields.add(ShopStore.VariantSubItemTable.NAME);
+        if (!rs.has(VARIANT_ID)) ignoreFields.add(ShopStore.VariantSubItemTable.VARIANT_ITEM_GUID);
+        if (!rs.has(ITEM_ID)) ignoreFields.add(ShopStore.VariantSubItemTable.ITEM_GUID);
+
         return new VariantSubItemModel(
                 rs.getString(ID),
                 rs.getString(VALUE),
                 rs.getString(VARIANT_ID),
-                rs.getString(ITEM_ID)
+                rs.getString(ITEM_ID),
+                ignoreFields
         );
     }
 
@@ -41,6 +54,29 @@ public class VariantSubItemJdbcConverter extends JdbcConverter<VariantSubItemMod
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.VariantSubItemTable.GUID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(VariantSubItemModel model){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(VALUE, model.name)
+                    .put(VARIANT_ID, model.parentVariantItemGuid)
+                    .put(ITEM_ID, model.itemGuid);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -61,4 +97,8 @@ public class VariantSubItemJdbcConverter extends JdbcConverter<VariantSubItemMod
                 .build(JdbcFactory.getApiMethod(model));
     }
 
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
+    }
 }

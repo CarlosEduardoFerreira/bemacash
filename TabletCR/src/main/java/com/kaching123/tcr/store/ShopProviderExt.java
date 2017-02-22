@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
@@ -218,8 +219,16 @@ public class ShopProviderExt extends ShopProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+
+        Log.d("Bemacarl","ShopProviderExt.query1 " +
+                " uri:"             + uri +
+                " projection:"      + projection +
+                " selection:"       + selection +
+                " selectionArgs:"   + selectionArgs +
+                " sortOrder:"       + sortOrder );
+
         int match = matcher.match(uri);
-        if (match == MATCH_RAW_TABLE_QUERY) {
+        if (match == MATCH_RAW_TABLE_QUERY || (selection != null && selection.contains("(is_deleted = 0 OR is_deleted = 1)"))) {
             final SQLiteQueryBuilder query = new SQLiteQueryBuilder();
             query.setTables(uri.getLastPathSegment());
             return query.query(dbHelper.getReadableDatabase(),
@@ -243,6 +252,14 @@ public class ShopProviderExt extends ShopProvider {
         if (c != null)
             return c;
 
+        Log.d("Bemacarl","ShopProviderExt.query2 " +
+                " uri:"             + uri +
+                " projection:"      + projection +
+                " selection:"       + selection +
+                " selectionArgs:"   + selectionArgs +
+                " sortOrder:"       + sortOrder );
+
+        if(selection != null) selection = selection.equals("()") ? "" : selection;
         return super.query(uri, projection, selection, selectionArgs, sortOrder);
     }
 

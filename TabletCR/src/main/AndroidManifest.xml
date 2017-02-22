@@ -293,6 +293,8 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
+
+
         <service
             android:name="com.telly.groundy.GroundyService"
             android:exported="false" />
@@ -305,6 +307,30 @@
         <service
             android:name=".service.ScannerService"
             android:exported="false" />
+
+        <service
+            android:name=".service.SerialPortScannerService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".AutoUpdateService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".service.ScaleService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".service.USBScannerService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".service.broadcast.WifiSocketService"
+            android:exported="false"
+            android:icon="@mipmap/ic_launcher" />
+
+
 
         <provider
             android:name=".store.ShopProviderExt"
@@ -325,23 +351,6 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
-        <service
-            android:name=".service.SerialPortScannerService"
-            android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".AutoUpdateService"
-            android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".service.ScaleService"
-            android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".service.USBScannerService"
-            android:enabled="true"
-            android:exported="false" />
 
     </application>
 

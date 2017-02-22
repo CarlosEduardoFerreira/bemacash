@@ -53,4 +53,9 @@ public class CreditGateway implements IPaymentGateway<CreditTransaction, CreditR
     public CreditTransaction createTransaction(Context context, BigDecimal amount, String orderGuid) {
         return CreditTransactionFactory.create(TcrApplication.get().getOperatorGuid(), amount, orderGuid, null);
     }
+
+    @Override
+    public boolean enabled() {
+        return TcrApplication.get().isPaxConfigured() || TcrApplication.get().isBlackstonePax();
+    }
 }

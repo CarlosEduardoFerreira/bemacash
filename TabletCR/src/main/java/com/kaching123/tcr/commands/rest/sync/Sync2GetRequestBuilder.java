@@ -2,7 +2,8 @@ package com.kaching123.tcr.commands.rest.sync;
 
 import android.text.TextUtils;
 
-import com.kaching123.tcr.service.SyncCommand.MaxUpdateTime;
+
+import com.kaching123.tcr.service.SyncCommand;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +15,7 @@ import java.util.Date;
  */
 public class Sync2GetRequestBuilder {
 
-    public static JSONObject getRequest(MaxUpdateTime updateTime, int limit) throws JSONException {
+    public static JSONObject getRequest(SyncCommand.MaxUpdateTime updateTime, int limit) throws JSONException {
         JSONObject request = new JSONObject();
         if(updateTime == null || updateTime.time == 0) {
             request.put("date_from", JSONObject.NULL);
@@ -25,7 +26,7 @@ public class Sync2GetRequestBuilder {
         return request;
     }
 
-    public static JSONObject getRequestFull(String table, MaxUpdateTime updateTime, String guidColumn, String parentIdColumn, boolean isChild, int limit) throws JSONException {
+    public static JSONObject getRequestFull(String table, SyncCommand.MaxUpdateTime updateTime, String guidColumn, String parentIdColumn, boolean isChild, int limit) throws JSONException {
 
         JSONObject request = new JSONObject();
         request.put("table", table);
@@ -61,7 +62,7 @@ public class Sync2GetRequestBuilder {
         return request;
     }
 
-    public static JSONObject getHistoryLimitRequest(long limitDate, MaxUpdateTime updateTime, String guidColumn, int limit) throws JSONException {
+    public static JSONObject getHistoryLimitRequest(long limitDate, SyncCommand.MaxUpdateTime updateTime, String guidColumn, int limit) throws JSONException {
         JSONObject request = new JSONObject();
 
         request.put("limit_date", Sync2Util.formatMillisec(new Date(limitDate)));

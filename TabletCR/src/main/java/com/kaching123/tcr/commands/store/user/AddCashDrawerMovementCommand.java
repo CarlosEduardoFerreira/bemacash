@@ -46,7 +46,8 @@ public class AddCashDrawerMovementCommand extends AsyncCommand {
                 type,
                 amount,
                 new Date(),
-                comment);
+                comment,
+                null);
 
         return succeeded();
     }

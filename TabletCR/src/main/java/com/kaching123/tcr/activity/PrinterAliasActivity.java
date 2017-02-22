@@ -79,7 +79,7 @@ public class PrinterAliasActivity extends SuperBaseActivity {
 
     @OptionsItem
     protected void actionAddSelected(){
-        AddEditDialog.show(this, new PrinterAliasModel(), StartMode.ADD);
+        AddEditDialog.show(this, null, StartMode.ADD);
     }
 
     private class Adapter extends ObjectsCursorAdapter<PrinterAliasModel> implements DragSortListView.RemoveListener {
@@ -173,7 +173,8 @@ public class PrinterAliasActivity extends SuperBaseActivity {
             super.apply(c);
             return new PrinterAliasModel(
                     c.getString(indexHolder.get(PrinterAliasTable.GUID)),
-                    c.getString(indexHolder.get(PrinterAliasTable.ALIAS))
+                    c.getString(indexHolder.get(PrinterAliasTable.ALIAS)),
+                    null
             );
         }
     }

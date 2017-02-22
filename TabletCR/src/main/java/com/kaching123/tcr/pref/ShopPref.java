@@ -418,6 +418,7 @@ public interface ShopPref {
 
     boolean autogenerateProductCode();
 
+
     /* Digital signature / Signature receipt ********************** */
 
     boolean digitalSignature();
@@ -425,5 +426,18 @@ public interface ShopPref {
     String signatureReceipt();
 
 /* ********************** Digital signature / Signature receipt */
+
+
+    @DefaultBoolean(true)
+    boolean enabledLocalSync();
+
+    @DefaultBoolean(true)
+    boolean showTableTime();
+
+    long serverTimestamp();
+
+    long localTimestamp();
+
+    boolean showOnlyMyOrder();
 
 }

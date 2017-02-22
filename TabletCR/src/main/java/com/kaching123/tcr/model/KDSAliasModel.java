@@ -24,4 +24,9 @@ public class KDSAliasModel extends AliasModel {
         cv.put(ShopStore.KDSAliasTable.ALIAS, alias);
         return cv;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

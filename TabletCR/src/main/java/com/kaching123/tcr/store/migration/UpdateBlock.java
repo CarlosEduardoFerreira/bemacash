@@ -265,25 +265,13 @@ public class UpdateBlock {
 
 
     public static void update8to9(SQLiteDatabase db){
-        // payment transaction
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "last_four")) {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "entry_method")) {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "application_identifier")) {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "application_cryptogram_type")) {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "authorization_number")) {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT");
-        //}
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "signature_bytes")) {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT");
-        //}
+
         updateViews(db);
     }
 

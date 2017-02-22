@@ -153,7 +153,7 @@ public class VariantItemDialogFragment extends StyledDialogFragment {
                         String guid = UUID.randomUUID().toString();
                         AddVariantItemCommand.start(getActivity(),
                                 new VariantItemModel(guid, nameEdit.getText().toString(),
-                                        itemExModel.guid, TcrApplication.get().getShopId()));
+                                        itemExModel.guid, TcrApplication.get().getShopId(), null));
                         VariantSubItemDialogFragment.showToAdd(getActivity(), itemExModel.guid,
                                 guid, Integer.parseInt(countEdit.getText().toString()));
                     } else {

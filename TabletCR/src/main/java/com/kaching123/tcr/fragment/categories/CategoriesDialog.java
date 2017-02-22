@@ -317,7 +317,7 @@ public class CategoriesDialog extends StyledDialogFragment {
         BigDecimal commission = parseBigDecimal(commissions, BigDecimal.ZERO);
 
         if (model == null) {
-            return new CategoryModel(null, departmentGuid, title, image, 0, isCommissionEligible, commission);
+            return new CategoryModel(null, departmentGuid, title, image, 0, isCommissionEligible, commission, null);
         }
 
         model.title = title;

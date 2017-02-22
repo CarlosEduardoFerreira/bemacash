@@ -57,6 +57,11 @@ public class BillPaymentDescriptionModel implements Serializable, IValueModel{
         return values;
     }
 
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
+
     public enum PrepaidType {
         WIRELESS_TOPUP, WIRELESS_PIN, BILL_PAYMENT, SUNPASS, SUNPASS_TRANSPONDER, SUNPASS_PAY_YOUR_DOCUMENT, GIFT_CARD_RELOAD
     }

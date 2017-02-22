@@ -63,4 +63,9 @@ public class CheckGateway implements IPaymentGateway<CheckTransaction, Void> {
     public CheckTransaction createTransaction(Context context, BigDecimal amount, String orderGuid) {
         return CheckTransactionFactory.create(TcrApplication.get().getOperatorGuid(), amount, orderGuid);
     }
+
+    @Override
+    public boolean enabled() {
+        return TcrApplication.get().isCheckEnabled();
+    }
 }

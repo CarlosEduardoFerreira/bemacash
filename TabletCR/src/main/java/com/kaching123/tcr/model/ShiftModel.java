@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ShiftTable;
@@ -39,6 +40,8 @@ public class ShiftModel implements IValueModel {
     public BigDecimal openAmount;
     public BigDecimal closeAmount;
 
+    private List<String> mIgnoreFields;
+
     public ShiftModel(Cursor cursor) {
         this(cursor.getString(cursor.getColumnIndex(ShiftTable.GUID)),
                 _nullableDate(cursor, cursor.getColumnIndex(ShiftTable.START_TIME)),
@@ -47,7 +50,8 @@ public class ShiftModel implements IValueModel {
                 cursor.getString(cursor.getColumnIndex(ShiftTable.CLOSE_MANAGER_ID)),
                 cursor.getLong(cursor.getColumnIndex(ShiftTable.REGISTER_ID)),
                 _decimal(cursor, cursor.getColumnIndex(ShiftTable.OPEN_AMOUNT), BigDecimal.ZERO),
-                _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO));
+                _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO),
+                null);
     }
 
     public static ShiftModel getInstance(Cursor cursor) {
@@ -58,7 +62,8 @@ public class ShiftModel implements IValueModel {
                 cursor.getString(cursor.getColumnIndex(ShiftTable.CLOSE_MANAGER_ID)),
                 cursor.getLong(cursor.getColumnIndex(ShiftTable.REGISTER_ID)),
                 _decimal(cursor, cursor.getColumnIndex(ShiftTable.OPEN_AMOUNT), BigDecimal.ZERO),
-                _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO));
+                _decimal(cursor, cursor.getColumnIndex(ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO),
+                null);
     }
 
     public static ShiftModel getById(Context context, String guid) {
@@ -91,10 +96,6 @@ public class ShiftModel implements IValueModel {
     }
 
     public static List<String> getDailyGuidList(Context context, long registerID, long fromDate, long toDate) {
-//        final Cursor c = ProviderAction.query(URI_SHIFT)
-//                .where(ShiftTable.START_TIME + " > ? ", fromDate)
-////                .where(ShiftTable.END_TIME + " < ? " , toDate)
-//                .where(ShiftTable.REGISTER_ID + " = ? ", registerID)
         Cursor c = null;
         Query query = ProviderAction.query(URI_SALE_ORDER)
                 .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ? ", fromDate)
@@ -107,10 +108,7 @@ public class ShiftModel implements IValueModel {
 
         }
         final List<String> guidList = new ArrayList<>();
-//        while(c != null && c.moveToNext())
-//        {
-//
-//        }
+
         if (c != null && c.moveToFirst()) {
             do {
                 final String currentGuid = c.getString(c.getColumnIndex(ShopStore.SaleOrderTable.GUID));
@@ -133,13 +131,6 @@ public class ShiftModel implements IValueModel {
             c = query.where(ShiftTable.REGISTER_ID + " = ?", registerId)
                     .orderBy(ShiftTable.START_TIME + " DESC")
                     .perform(context);
-//
-//        Cursor c = ProviderAction.query(URI_SHIFT)
-//                .projection(ShiftTable.GUID)
-//                .where(ShiftTable.REGISTER_ID + " = ?", registerId)
-//                .orderBy(ShiftTable.START_TIME + " DESC")
-//                .perform(context);
-
         if (c.moveToFirst()) {
             lastShiftGuid = c.getString(c.getColumnIndex(ShiftTable.GUID));
         }
@@ -148,7 +139,8 @@ public class ShiftModel implements IValueModel {
     }
 
     public ShiftModel(String guid, Date startTime, Date endTime, String openManagerId,
-                      String closeManagerId, long registerId, BigDecimal openAmount, BigDecimal closeAmount) {
+                      String closeManagerId, long registerId, BigDecimal openAmount,
+                      BigDecimal closeAmount, List<String> ignoreFields) {
         this.guid = guid;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -157,6 +149,8 @@ public class ShiftModel implements IValueModel {
         this.registerId = registerId;
         this.openAmount = openAmount;
         this.closeAmount = closeAmount;
+
+        this.mIgnoreFields = ignoreFields;
     }
 
     @Override
@@ -166,25 +160,32 @@ public class ShiftModel implements IValueModel {
 
     @Override
     public ContentValues toValues() {
-        ContentValues v = new ContentValues(7);
-        v.put(ShiftTable.GUID, guid);
-        _nullableDate(v, ShiftTable.START_TIME, startTime);
-        _nullableDate(v, ShiftTable.END_TIME, endTime);
+        ContentValues v = new ContentValues();
+        v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
 
-        v.put(ShiftTable.OPEN_MANAGER_ID, openManagerId);
-        v.put(ShiftTable.CLOSE_MANAGER_ID, closeManagerId);
-
-        v.put(ShiftTable.REGISTER_ID, registerId);
-        v.put(ShiftTable.OPEN_AMOUNT, _decimal(openAmount));
-        v.put(ShiftTable.CLOSE_AMOUNT, _decimal(closeAmount));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.GUID)) v.put(ShiftTable.GUID, guid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.START_TIME)) _nullableDate(v, ShiftTable.START_TIME, startTime);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.END_TIME)) _nullableDate(v, ShiftTable.END_TIME, endTime);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.OPEN_MANAGER_ID)) v.put(ShiftTable.OPEN_MANAGER_ID, openManagerId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.CLOSE_MANAGER_ID)) v.put(ShiftTable.CLOSE_MANAGER_ID, closeManagerId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.REGISTER_ID)) v.put(ShiftTable.REGISTER_ID, registerId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.OPEN_AMOUNT)) v.put(ShiftTable.OPEN_AMOUNT, _decimal(openAmount));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.CLOSE_AMOUNT)) v.put(ShiftTable.CLOSE_AMOUNT, _decimal(closeAmount));
         return v;
     }
 
+    @Override
+    public String getIdColumn() {
+        return ShiftTable.GUID;
+    }
+
     public ContentValues toUpdateValues() {
-        ContentValues v = new ContentValues(3);
-        _nullableDate(v, ShiftTable.END_TIME, endTime);
-        v.put(ShiftTable.CLOSE_MANAGER_ID, closeManagerId);
-        v.put(ShiftTable.CLOSE_AMOUNT, _decimal(closeAmount));
+        ContentValues v = new ContentValues();
+        v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.END_TIME)) _nullableDate(v, ShiftTable.END_TIME, endTime);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.CLOSE_MANAGER_ID)) v.put(ShiftTable.CLOSE_MANAGER_ID, closeManagerId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShiftTable.CLOSE_AMOUNT)) v.put(ShiftTable.CLOSE_AMOUNT, _decimal(closeAmount));
         return v;
     }
 

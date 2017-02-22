@@ -1,5 +1,6 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
@@ -8,21 +9,27 @@ import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
+import static com.kaching123.tcr.store.ShopStore.ItemTable.GUID;
+import static com.kaching123.tcr.store.ShopStore.ItemTable.UNIT_LABEL_ID;
 
 public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrderNumUpdater{
 
-    private static final String ITEM_TABLE_NAME = "ITEM";
+    public static final String ITEM_TABLE_NAME = "ITEM";
 
     private static final String ID = "ID";
     private static final String CATEGORY_ID = "CATEGORY_ID";
@@ -72,6 +79,51 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
 
     @Override
     public ItemModel toValues(JdbcJSONObject rs) throws JSONException {
+
+        List<String> ignoreFields = new ArrayList<>();
+
+        if (!rs.has(ID)) ignoreFields.add(ID);
+        if (!rs.has(CATEGORY_ID)) ignoreFields.add(ShopStore.ItemTable.CATEGORY_ID);
+        if (!rs.has(DESCRIPTION)) ignoreFields.add(ShopStore.ItemTable.DESCRIPTION);
+        if (!rs.has(CODE)) ignoreFields.add(ShopStore.ItemTable.CODE);
+        if (!rs.has(EAN_CODE)) ignoreFields.add(ShopStore.ItemTable.EAN_CODE);
+        if (!rs.has(PRODUCT_CODE)) ignoreFields.add(ShopStore.ItemTable.PRODUCT_CODE);
+        if (!rs.has(PRICE_TYPE)) ignoreFields.add(ShopStore.ItemTable.PRICE_TYPE);
+        if (!rs.has(SALE_PRICE)) ignoreFields.add(ShopStore.ItemTable.SALE_PRICE);
+        if (!rs.has(PRICE_1)) ignoreFields.add(ShopStore.ItemTable.PRICE_1);
+        if (!rs.has(PRICE_2)) ignoreFields.add(ShopStore.ItemTable.PRICE_2);
+        if (!rs.has(PRICE_3)) ignoreFields.add(ShopStore.ItemTable.PRICE_3);
+        if (!rs.has(PRICE_4)) ignoreFields.add(ShopStore.ItemTable.PRICE_4);
+        if (!rs.has(PRICE_5)) ignoreFields.add(ShopStore.ItemTable.PRICE_5);
+        if (!rs.has(UNIT_LABEL_ID)) ignoreFields.add(UNIT_LABEL_ID);
+        if (!rs.has(STOCK_TRACKING)) ignoreFields.add(ShopStore.ItemTable.STOCK_TRACKING);
+        if (!rs.has(LIMIT_QTY)) ignoreFields.add(ShopStore.ItemTable.LIMIT_QTY);
+        if (!rs.has(ACTIVE_STATUS)) ignoreFields.add(ShopStore.ItemTable.ACTIVE_STATUS);
+        if (!rs.has(DISCOUNTABLE)) ignoreFields.add(ShopStore.ItemTable.DISCOUNTABLE);
+        if (!rs.has(SALABLE)) ignoreFields.add(ShopStore.ItemTable.SALABLE);
+        if (!rs.has(DISCOUNT)) ignoreFields.add(ShopStore.ItemTable.DISCOUNT);
+        if (!rs.has(DISCOUNT_TYPE)) ignoreFields.add(ShopStore.ItemTable.DISCOUNT_TYPE);
+        if (!rs.has(TAXABLE)) ignoreFields.add(ShopStore.ItemTable.TAXABLE);
+        if (!rs.has(COST)) ignoreFields.add(ShopStore.ItemTable.COST);
+        if (!rs.has(MINIMUM_QTY)) ignoreFields.add(ShopStore.ItemTable.MINIMUM_QTY);
+        if (!rs.has(RECOMMENDED_QTY)) ignoreFields.add(ShopStore.ItemTable.RECOMMENDED_QTY);
+        if (!rs.has(UPDATE_QTY_FLAG)) ignoreFields.add(ShopStore.ItemTable.UPDATE_QTY_FLAG);
+        if (!rs.has(TAX_GROUP_ID)) ignoreFields.add(ShopStore.ItemTable.TAX_GROUP_GUID);
+        if (!rs.has(TAX_GROUP_ID2)) ignoreFields.add(ShopStore.ItemTable.TAX_GROUP_GUID2);
+        if (!rs.has(ORDER_NUM)) ignoreFields.add(ShopStore.ItemTable.ORDER_NUM);
+        if (!rs.has(PRINTER_ID)) ignoreFields.add(ShopStore.ItemTable.PRINTER_ALIAS_GUID);
+        if (!rs.has(BUTTON_VIEW)) ignoreFields.add(ShopStore.ItemTable.BUTTON_VIEW);
+        if (!rs.has(HAS_NOTES)) ignoreFields.add(ShopStore.ItemTable.HAS_NOTES);
+        if (!rs.has(SERIALIZABLE)) ignoreFields.add(ShopStore.ItemTable.SERIALIZABLE);
+        if (!rs.has(CODE_TYPE)) ignoreFields.add(ShopStore.ItemTable.CODE_TYPE);
+        if (!rs.has(ELIGIBLE_FOR_COMMISSION)) ignoreFields.add(ShopStore.ItemTable.ELIGIBLE_FOR_COMMISSION);
+        if (!rs.has(COMMISSION)) ignoreFields.add(ShopStore.ItemTable.COMMISSION);
+        if (!rs.has(REFERENCE_ITEM_ID)) ignoreFields.add(ShopStore.ItemTable.REFERENCE_ITEM_ID);
+        if (!rs.has(ITEM_REF_TYPE)) ignoreFields.add(ShopStore.ItemTable.ITEM_REF_TYPE);
+        if (!rs.has(LOYALTY_POINTS)) ignoreFields.add(ShopStore.ItemTable.LOYALTY_POINTS);
+        if (!rs.has(EXCLUDE_FROM_LOYALTY_PLAN)) ignoreFields.add(ShopStore.ItemTable.EXCLUDE_FROM_LOYALTY_PLAN);
+        if (!rs.has(EBT_ELIGIBLE)) ignoreFields.add(ShopStore.ItemTable.EBT_ELIGIBLE);
+
         return new ItemModel(
                 rs.getString(ID),
                 rs.getString(CATEGORY_ID),
@@ -114,7 +166,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                 ItemRefType.valueOf(rs.getInt(ITEM_REF_TYPE)),
                 rs.getBigDecimal(LOYALTY_POINTS),
                 rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN),
-                rs.getBoolean(EBT_ELIGIBLE)
+                rs.getBoolean(EBT_ELIGIBLE),
+                ignoreFields
                 );
     }
 
@@ -126,6 +179,66 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.ItemTable.GUID;
+    }
+
+
+    @Override
+    public JSONObject getJSONObject(ItemModel item){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(ID, item.guid)
+                    .put(CATEGORY_ID, item.categoryId)
+                    .put(DESCRIPTION, item.description)
+                    .put(CODE, item.code)
+                    .put(EAN_CODE, item.eanCode)
+                    .put(PRODUCT_CODE, item.productCode)
+                    .put(PRICE_TYPE, item.priceType)
+                    .put(SALE_PRICE, item.price)
+                    .put(PRICE_1, item.price1)
+                    .put(PRICE_2, item.price2)
+                    .put(PRICE_3, item.price3)
+                    .put(PRICE_4, item.price4)
+                    .put(PRICE_5, item.price5)
+                    .put(UNITS_LABEL_ID, item.unitsLabelId)
+                    .put(STOCK_TRACKING, item.isStockTracking)
+                    .put(LIMIT_QTY, item.limitQty)
+                    .put(ACTIVE_STATUS, item.isActiveStatus)
+                    .put(DISCOUNTABLE, item.isDiscountable)
+                    .put(SALABLE, item.isSalable)
+                    .put(DISCOUNT, item.discount)
+                    .put(DISCOUNT_TYPE, item.discountType)
+                    .put(TAXABLE, item.isTaxable)
+                    .put(COST, item.cost)
+                    .put(MINIMUM_QTY, item.minimumQty)
+                    .put(RECOMMENDED_QTY, item.recommendedQty)
+                    .put(UPDATE_QTY_FLAG, item.updateQtyFlag)
+                    .put(TAX_GROUP_ID, item.taxGroupGuid)
+                    .put(TAX_GROUP_ID2, item.taxGroupGuid2)
+                    .put(ORDER_NUM, item.orderNum)
+                    .put(PRINTER_ID, item.printerAliasGuid)
+                    .put(HAS_NOTES, item.hasNotes)
+                    .put(SERIALIZABLE, item.serializable)
+                    .put(CODE_TYPE, item.codeType)
+                    .put(ELIGIBLE_FOR_COMMISSION, item.commissionEligible)
+                    .put(COMMISSION, item.commission)
+                    .put(REFERENCE_ITEM_ID, item.referenceItemGuid)
+                    .put(ITEM_REF_TYPE, item.refType.ordinal())
+                    .put(LOYALTY_POINTS, item.loyaltyPoints)
+                    .put(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
+                    .put(EBT_ELIGIBLE, item.isEbtEligible);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -228,12 +341,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 
-    public SingleSqlCommand updateDefaultModifierGuid(String itemGuid, String modifierGuid, IAppCommandContext appCommandContext) {
-        return _update(ITEM_TABLE_NAME, appCommandContext)
-                .where(ID, itemGuid)
-                .build(JdbcFactory.getApiMethod(ItemModel.class));
-    }
-
     public SingleSqlCommand updateOrderSQL(String guid, int orderNum, IAppCommandContext appCommandContext) {
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(ORDER_NUM, orderNum)
@@ -307,5 +414,10 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                 .add(ORDER_NUM, orderNum)
                 .where(ID, id)
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 }

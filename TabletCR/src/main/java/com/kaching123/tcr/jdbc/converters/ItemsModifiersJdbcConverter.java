@@ -1,13 +1,19 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -18,7 +24,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
  */
 public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> implements IOrderNumUpdater {
 
-    private static final String TABLE_NAME = "ITEM_MODIFIER";
+    public static final String TABLE_NAME = "ITEM_MODIFIER";
 
     private static final String MODIFIER_GUID = "MODIFIER_GUID";
     private static final String ITEM_GUID = "ITEM_GUID";
@@ -35,6 +41,17 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> im
 
     @Override
     public ModifierModel toValues(JdbcJSONObject rs) throws JSONException {
+
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(MODIFIER_GUID)) ignoreFields.add(ShopStore.ModifierTable.MODIFIER_GUID);
+        if (!rs.has(ITEM_GUID)) ignoreFields.add(ShopStore.ModifierTable.ITEM_GUID);
+        if (!rs.has(TYPE)) ignoreFields.add(ShopStore.ModifierTable.TYPE);
+        if (!rs.has(TITLE)) ignoreFields.add(ShopStore.ModifierTable.TITLE);
+        if (!rs.has(EXTRA_COST)) ignoreFields.add(ShopStore.ModifierTable.EXTRA_COST);
+        if (!rs.has(ITEM_SUB_GUID)) ignoreFields.add(ShopStore.ModifierTable.ITEM_SUB_GUID);
+        if (!rs.has(ITEM_SUB_QUANTITY)) ignoreFields.add(ShopStore.ModifierTable.ITEM_SUB_QTY);
+        if (!rs.has(ITEM_GROUP_GUID)) ignoreFields.add(ShopStore.ModifierTable.ITEM_GROUP_GUID);
+
         return new ModifierModel(
                 rs.getString(MODIFIER_GUID),
                 rs.getString(ITEM_GUID),
@@ -45,7 +62,8 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> im
                 rs.getBigDecimal(ITEM_SUB_QUANTITY),
                 rs.getString(ITEM_GROUP_GUID),
                 rs.getBoolean(AUTO_APPLY),
-                rs.getInt(ORDER_NUM)
+                rs.getInt(ORDER_NUM),
+                ignoreFields
         );
     }
 
@@ -57,6 +75,35 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> im
     @Override
     public String getGuidColumn() {
         return MODIFIER_GUID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.ModifierTable.MODIFIER_GUID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(ModifierModel model){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(MODIFIER_GUID, model.modifierGuid)
+                    .put(ITEM_GUID, model.itemGuid)
+                    .put(TYPE, model.type)
+                    .put(TITLE, model.title)
+                    .put(EXTRA_COST, model.cost)
+                    .put(ITEM_SUB_GUID, model.childItemGuid)
+                    .put(ITEM_SUB_QUANTITY, model.childItemQty)
+                    .put(ITEM_GROUP_GUID, model.modifierGroupGuid)
+                    .put(AUTO_APPLY, model.autoApply)
+                    .put(ORDER_NUM, model.orderNum);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -102,5 +149,10 @@ public class ItemsModifiersJdbcConverter extends JdbcConverter<ModifierModel> im
                 .add(ORDER_NUM, orderNum)
                 .where(MODIFIER_GUID, id)
                 .build(JdbcFactory.getApiMethod(new ModifierModel()));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 }

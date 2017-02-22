@@ -1,8 +1,10 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
 import com.kaching123.tcr.model.payment.ITransaction;
 import com.kaching123.tcr.model.payment.blackstone.pax.PaxTransaction;
@@ -11,6 +13,7 @@ import com.kaching123.tcr.model.payment.blackstone.payment.TransactionStatusCode
 import com.kaching123.tcr.model.payment.cash.CashTransaction;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.model.payment.general.transaction.TransactionType;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 
 import junit.framework.Assert;
@@ -18,9 +21,15 @@ import junit.framework.Assert;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
+import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
+import static com.kaching123.tcr.model.ContentValuesUtil._paymentStatus;
+import static com.kaching123.tcr.model.ContentValuesUtil._paymentType;
+import static com.kaching123.tcr.util.ContentValuesUtilBase._bool;
+import static com.kaching123.tcr.util.ContentValuesUtilBase._date;
 
 /**
  * Created by gdubina on 20/11/13.
@@ -56,11 +65,42 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
     public String customerName;
     public String paxDigitalSignature = null;
 
-
     public boolean allowReload; // tmp var
 
+    private List<String> mIgnoreFields;
 
     public PaymentTransactionModel() {
+    }
+
+
+    public PaymentTransactionModel(Cursor c) {
+        this.guid = c.getString(c.getColumnIndex(PaymentTransactionTable.GUID));
+        this.parentTransactionGuid = c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID));
+        this.orderGuid = c.getString(c.getColumnIndex(PaymentTransactionTable.ORDER_GUID));
+        this.amount = new BigDecimal(c.getColumnIndex(PaymentTransactionTable.AMOUNT));
+        this.paymentType = _paymentType(c, c.getColumnIndex(PaymentTransactionTable.TYPE));
+        this.status = _paymentStatus(c, c.getColumnIndex(PaymentTransactionTable.STATUS));
+        this.operatorId = c.getString(c.getColumnIndex(PaymentTransactionTable.OPERATOR_GUID));
+        this.gateway = _paymentGateway(c, c.getColumnIndex(PaymentTransactionTable.GATEWAY));
+        this.paymentId = c.getString(c.getColumnIndex(PaymentTransactionTable.GATEWAY_PAYMENT_ID));
+        this.preauthPaymentId = c.getString(c.getColumnIndex(PaymentTransactionTable.GATEWAY_PREAUTH_PAYMENT_ID));
+        this.closedPerauthGuid = c.getString(c.getColumnIndex(PaymentTransactionTable.GATEWAY_CLOSED_PERAUTH_GUID));
+        this.declineReason = c.getString(c.getColumnIndex(PaymentTransactionTable.DECLINE_REASON));
+        this.createTime = _date(c.getString(c.getColumnIndex(PaymentTransactionTable.CREATE_TIME)));
+        this.shiftGuid = c.getString(c.getColumnIndex(PaymentTransactionTable.SHIFT_GUID));
+        this.cardName = c.getString(c.getColumnIndex(PaymentTransactionTable.CARD_NAME));
+        this.changeAmount =  new BigDecimal(c.getColumnIndex(PaymentTransactionTable.CHANGE_AMOUNT));
+        this.isPreauth = _bool(c, c.getColumnIndex(PaymentTransactionTable.IS_PREAUTH));
+        this.cashBack =  new BigDecimal(c.getColumnIndex(PaymentTransactionTable.CASH_BACK));
+        this.balance =  new BigDecimal(c.getColumnIndex(PaymentTransactionTable.BALANCE));
+
+        this.lastFour = c.getString(c.getColumnIndex(PaymentTransactionTable.LAST_FOUR));
+        this.entryMethod = c.getString(c.getColumnIndex(PaymentTransactionTable.ENTRY_METHOD));
+        this.applicationIdentifier = c.getString(c.getColumnIndex(PaymentTransactionTable.APPLICATION_IDENTIFIER));
+        this.applicationCryptogramType = c.getString(c.getColumnIndex(PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE));
+        this.authorizationNumber = c.getString(c.getColumnIndex(PaymentTransactionTable.AUTHORIZATION_NUMBER));
+        this.paxDigitalSignature = c.getString(c.getColumnIndex(PaymentTransactionTable.SIGNATURE_BYTES));
+
     }
 
     public PaymentTransactionModel(String guid,
@@ -87,7 +127,8 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
                                    String applicationIdentifier,
                                    String applicationCryptogramType,
                                    String authorizationNumber,
-                                   String paxDigitalSignature) {
+                                   String paxDigitalSignature,
+                                   List<String> ignoreFields) {
         this.guid = guid;
         this.orderGuid = orderGuid;
         this.amount = amount;
@@ -117,6 +158,8 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
         this.applicationCryptogramType = applicationCryptogramType;
         this.authorizationNumber = authorizationNumber;
         this.paxDigitalSignature = paxDigitalSignature;
+
+        this.mIgnoreFields = ignoreFields;
     }
 
     public PaymentTransactionModel(String guid, String shiftGuid, Date createTime, ITransaction transaction) {
@@ -262,38 +305,46 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
     @Override
     public ContentValues toValues() {
         ContentValues v = new ContentValues();
-        v.put(PaymentTransactionTable.GUID, guid);
-        v.put(PaymentTransactionTable.ORDER_GUID, orderGuid);
-        v.put(PaymentTransactionTable.PARENT_GUID, parentTransactionGuid);
-        v.put(PaymentTransactionTable.AMOUNT, _decimal(amount));
-        v.put(PaymentTransactionTable.TYPE, _enum(paymentType));
-        v.put(PaymentTransactionTable.STATUS, _enum(status));
-        v.put(PaymentTransactionTable.GATEWAY, _enum(gateway == null ? PaymentGateway.CASH : gateway));
-        v.put(PaymentTransactionTable.GATEWAY_PAYMENT_ID, paymentId);
-        v.put(PaymentTransactionTable.GATEWAY_PREAUTH_PAYMENT_ID, preauthPaymentId);
-        v.put(PaymentTransactionTable.GATEWAY_CLOSED_PERAUTH_GUID, closedPerauthGuid);
-        v.put(PaymentTransactionTable.DECLINE_REASON, declineReason);
-        v.put(PaymentTransactionTable.OPERATOR_GUID, operatorId);
-        v.put(PaymentTransactionTable.CREATE_TIME, createTime.getTime());
-        v.put(PaymentTransactionTable.SHIFT_GUID, shiftGuid);
-        v.put(PaymentTransactionTable.CARD_NAME, cardName);
-        v.put(PaymentTransactionTable.CHANGE_AMOUNT, _decimal(changeAmount));
-        v.put(PaymentTransactionTable.IS_PREAUTH, isPreauth);
-        v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
-        v.put(PaymentTransactionTable.CASH_BACK, _decimal(cashBack));
-        v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
+        v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
 
-        v.put(PaymentTransactionTable.LAST_FOUR, lastFour);
-        v.put(PaymentTransactionTable.ENTRY_METHOD, entryMethod);
-        v.put(PaymentTransactionTable.APPLICATION_IDENTIFIER, applicationIdentifier);
-        v.put(PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE, applicationCryptogramType);
-        v.put(PaymentTransactionTable.AUTHORIZATION_NUMBER, authorizationNumber);
-        v.put(PaymentTransactionTable.SIGNATURE_BYTES, paxDigitalSignature);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.GUID)) v.put(PaymentTransactionTable.GUID, guid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.ORDER_GUID)) v.put(PaymentTransactionTable.ORDER_GUID, orderGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.PARENT_GUID)) v.put(PaymentTransactionTable.PARENT_GUID, parentTransactionGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.AMOUNT)) v.put(PaymentTransactionTable.AMOUNT, _decimal(amount));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.TYPE)) v.put(PaymentTransactionTable.TYPE, _enum(paymentType));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.STATUS)) v.put(PaymentTransactionTable.STATUS, _enum(status));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.GATEWAY)) v.put(PaymentTransactionTable.GATEWAY, _enum(gateway == null ? PaymentGateway.CASH : gateway));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.GATEWAY_PAYMENT_ID)) v.put(PaymentTransactionTable.GATEWAY_PAYMENT_ID, paymentId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.GATEWAY_PREAUTH_PAYMENT_ID)) v.put(PaymentTransactionTable.GATEWAY_PREAUTH_PAYMENT_ID, preauthPaymentId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.GATEWAY_CLOSED_PERAUTH_GUID)) v.put(PaymentTransactionTable.GATEWAY_CLOSED_PERAUTH_GUID, closedPerauthGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.DECLINE_REASON)) v.put(PaymentTransactionTable.DECLINE_REASON, declineReason);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.OPERATOR_GUID)) v.put(PaymentTransactionTable.OPERATOR_GUID, operatorId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.CREATE_TIME)) v.put(PaymentTransactionTable.CREATE_TIME, createTime.getTime());
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.SHIFT_GUID)) v.put(PaymentTransactionTable.SHIFT_GUID, shiftGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.CARD_NAME)) v.put(PaymentTransactionTable.CARD_NAME, cardName);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.CHANGE_AMOUNT)) v.put(PaymentTransactionTable.CHANGE_AMOUNT, _decimal(changeAmount));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.IS_PREAUTH)) v.put(PaymentTransactionTable.IS_PREAUTH, isPreauth);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.CASH_BACK)) v.put(PaymentTransactionTable.CASH_BACK, _decimal(cashBack));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.BALANCE)) v.put(PaymentTransactionTable.BALANCE, _decimal(balance));
+
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.LAST_FOUR)) v.put(PaymentTransactionTable.LAST_FOUR, lastFour);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.ENTRY_METHOD)) v.put(PaymentTransactionTable.ENTRY_METHOD, entryMethod);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.APPLICATION_IDENTIFIER)) v.put(PaymentTransactionTable.APPLICATION_IDENTIFIER, applicationIdentifier);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE)) v.put(PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE, applicationCryptogramType);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.AUTHORIZATION_NUMBER)) v.put(PaymentTransactionTable.AUTHORIZATION_NUMBER, authorizationNumber);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(PaymentTransactionTable.SIGNATURE_BYTES)) v.put(PaymentTransactionTable.SIGNATURE_BYTES, paxDigitalSignature);
         return v;
+    }
+
+    @Override
+    public String getIdColumn() {
+        return PaymentTransactionTable.GUID;
     }
 
     public ContentValues toUpdateValues() {
         ContentValues v = new ContentValues();
+        v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
         v.put(PaymentTransactionTable.STATUS, _enum(status));
         v.put(PaymentTransactionTable.AMOUNT, _decimal(amount));
         v.put(PaymentTransactionTable.GATEWAY_PAYMENT_ID, paymentId);
@@ -304,6 +355,8 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
 
     public ContentValues getUpdatePaymentStatus() {
         ContentValues v = new ContentValues(1);
+        v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
         v.put(PaymentTransactionTable.STATUS, _enum(status));
         return v;
     }
@@ -327,4 +380,5 @@ public class PaymentTransactionModel implements IValueModel, Serializable {
             return values()[id];
         }
     }
+
 }

@@ -1,13 +1,19 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.payment.ModifierGroupCondition;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -17,7 +23,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
  */
 public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGroupModel> implements IOrderNumUpdater{
 
-    private static final String TABLE_NAME = "ITEM_MODIFIER_GROUP";
+    public static final String TABLE_NAME = "ITEM_MODIFIER_GROUP";
 
     private static final String GUID = "GUID";
     private static final String ITEM_GUID = "ITEM_GUID";
@@ -28,13 +34,22 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
 
     @Override
     public ModifierGroupModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(GUID)) ignoreFields.add(ShopStore.ModifierGroupTable.GUID);
+        if (!rs.has(ITEM_GUID)) ignoreFields.add(ShopStore.ModifierGroupTable.ITEM_GUID);
+        if (!rs.has(GROUP_NAME)) ignoreFields.add(ShopStore.ModifierGroupTable.TITLE);
+        if (!rs.has(ORDER_NUM)) ignoreFields.add(ShopStore.ModifierGroupTable.ORDER_NUM);
+        if (!rs.has(CONDITION)) ignoreFields.add(ShopStore.ModifierGroupTable.CONDITION);
+        if (!rs.has(CONDITION_VALUE)) ignoreFields.add(ShopStore.ModifierGroupTable.CONDITION_VALUE);
+
         return new ModifierGroupModel(
                 rs.getString(GUID),
                 rs.getString(ITEM_GUID),
                 rs.getString(GROUP_NAME),
                 rs.getInt(ORDER_NUM),
                 ModifierGroupCondition.valueOf(rs.getInt(CONDITION)),
-                rs.getInt(CONDITION_VALUE));
+                rs.getInt(CONDITION_VALUE),
+                ignoreFields);
     }
 
     @Override
@@ -45,6 +60,31 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
     @Override
     public String getGuidColumn() {
         return GUID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.ModifierGroupTable.GUID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(ModifierGroupModel model){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(GUID, model.guid)
+                    .put(ITEM_GUID, model.itemGuid)
+                    .put(GROUP_NAME, model.title)
+                    .put(ORDER_NUM, model.orderNum)
+                    .put(CONDITION, model.condition)
+                    .put(CONDITION_VALUE, model.conditionValue);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -77,5 +117,10 @@ public class ItemsModifierGroupsJdbcConverter extends JdbcConverter<ModifierGrou
                 .add(ORDER_NUM, orderNum)
                 .where(GUID, id)
                 .build(JdbcFactory.getApiMethod(ModifierGroupModel.class));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 }

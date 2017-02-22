@@ -45,4 +45,9 @@ public class ActivationCarrierModel implements IValueModel, Serializable {
         values.put(ActivationCarrierTable.IS_ACTIVE, isActive);
         return values;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

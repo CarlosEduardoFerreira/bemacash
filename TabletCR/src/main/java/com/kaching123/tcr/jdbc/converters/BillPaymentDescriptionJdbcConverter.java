@@ -9,6 +9,7 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -19,7 +20,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
  */
 public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPaymentDescriptionModel> {
 
-    private static final String TABLE_NAME = "BILL_PAYMENTS_DESCRIPTION";
+    public static final String TABLE_NAME = "BILL_PAYMENTS_DESCRIPTION";
 
     private static final String ID = "ID";
     private static final String DESCRIPTION = "DESCRIPTION";
@@ -50,6 +51,16 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getJSONObject(BillPaymentDescriptionModel model) {
+        return null;
     }
 
     @Override

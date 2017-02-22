@@ -7,6 +7,7 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -16,7 +17,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
  */
 public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPointsMovementModel> {
 
-    private static final String TABLE_NAME = "LOYALTY_POINTS_MOVEMENT";
+    public static final String TABLE_NAME = "LOYALTY_POINTS_MOVEMENT";
 
     private static final String ID = "ID";
     private static final String CUSTOMER_ID = "CUSTOMER_ID";
@@ -40,6 +41,16 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getJSONObject(LoyaltyPointsMovementModel model) {
+        return null;
     }
 
     @Override

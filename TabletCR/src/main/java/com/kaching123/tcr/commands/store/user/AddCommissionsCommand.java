@@ -57,7 +57,7 @@ public class AddCommissionsCommand extends AsyncCommand {
         for (Map.Entry<String, BigDecimal> entry: employeeCommissionAmounts.entrySet()) {
             String employeeId = entry.getKey();
             BigDecimal commissionsAmount = entry.getValue();
-            CommissionsModel commissionsModel = new CommissionsModel(UUID.randomUUID().toString(), employeeId, getAppCommandContext().getShiftGuid(), orderId, new Date(), commissionsAmount);
+            CommissionsModel commissionsModel = new CommissionsModel(UUID.randomUUID().toString(), employeeId, getAppCommandContext().getShiftGuid(), orderId, new Date(), commissionsAmount, null);
             commissionsModels.add(commissionsModel);
         }
 

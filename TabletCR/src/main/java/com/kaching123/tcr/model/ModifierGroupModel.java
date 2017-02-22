@@ -5,12 +5,15 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.converter.IntegerFunction;
 import com.kaching123.tcr.model.payment.ModifierGroupCondition;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ModifierGroupTable;
 
 import java.io.Serializable;
+import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._max;
 
@@ -26,13 +29,18 @@ public class ModifierGroupModel implements IValueModel, IOrderedModel, Serializa
     public ModifierGroupCondition condition;
     public int conditionValue;
 
-    public ModifierGroupModel(String guid, String itemGuid, String title, int orderNum, ModifierGroupCondition condition, int conditionValue) {
+    private List<String> mIgnoreFields;
+
+    public ModifierGroupModel(String guid, String itemGuid, String title, int orderNum,
+                              ModifierGroupCondition condition, int conditionValue, List<String> ignoreFields) {
         this.guid = guid;
         this.itemGuid = itemGuid;
         this.title = title;
         this.orderNum = orderNum;
         this.condition = condition;
         this.conditionValue = conditionValue;
+
+        this.mIgnoreFields = ignoreFields;
     }
 
     public ModifierGroupModel() {
@@ -45,7 +53,8 @@ public class ModifierGroupModel implements IValueModel, IOrderedModel, Serializa
             c.getString(c.getColumnIndex(ModifierGroupTable.TITLE)),
             c.getInt(c.getColumnIndex(ModifierGroupTable.ORDER_NUM)),
             ModifierGroupCondition.valueOf(c.getInt(c.getColumnIndex(ModifierGroupTable.CONDITION))),
-                c.getInt(c.getColumnIndex(ModifierGroupTable.CONDITION_VALUE)));
+                c.getInt(c.getColumnIndex(ModifierGroupTable.CONDITION_VALUE)),
+                null);
     }
 
     @Override
@@ -56,14 +65,21 @@ public class ModifierGroupModel implements IValueModel, IOrderedModel, Serializa
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
-        values.put(ModifierGroupTable.GUID, guid);
-        values.put(ModifierGroupTable.ITEM_GUID, itemGuid);
-        values.put(ModifierGroupTable.TITLE, title);
-        values.put(ModifierGroupTable.ORDER_NUM, orderNum);
-        values.put(ModifierGroupTable.CONDITION, condition.ordinal());
-        values.put(ModifierGroupTable.CONDITION_VALUE, conditionValue);
+        values.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierGroupTable.GUID)) values.put(ModifierGroupTable.GUID, guid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierGroupTable.ITEM_GUID)) values.put(ModifierGroupTable.ITEM_GUID, itemGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierGroupTable.TITLE)) values.put(ModifierGroupTable.TITLE, title);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierGroupTable.ORDER_NUM)) values.put(ModifierGroupTable.ORDER_NUM, orderNum);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierGroupTable.CONDITION)) values.put(ModifierGroupTable.CONDITION, condition.ordinal());
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierGroupTable.CONDITION_VALUE)) values.put(ModifierGroupTable.CONDITION_VALUE, conditionValue);
 
         return values;
+    }
+
+    @Override
+    public String getIdColumn() {
+        return ModifierGroupTable.GUID;
     }
 
     @Override

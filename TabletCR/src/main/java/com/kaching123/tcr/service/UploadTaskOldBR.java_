@@ -1,0 +1,154 @@
+package com.kaching123.tcr.service;
+
+import android.content.ContentResolver;
+import android.content.Context;
+import android.net.Uri;
+import android.text.TextUtils;
+
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore.SqlCommandTable;
+import com.kaching123.tcr.util.NotificationHelper;
+import com.kaching123.tcr.util.ValueUtil;
+
+public class UploadTaskOldBR implements Runnable {
+
+    public static String ACTION_UPLOAD_STARTED = "com.kaching123.tcr.service.ACTION_UPLOAD_STARTED";
+    public static String ACTION_UPLOAD_COMPLETED = "com.kaching123.tcr.service.ACTION_UPLOAD_COMPLETED";
+
+    public static String EXTRA_SUCCESS = "success";
+    
+    protected static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.contentUriNoNotify(SqlCommandTable.URI_CONTENT);
+
+    private UploadTaskAdapderOldBR uploadTaskAdapter;
+
+    private Context context;
+
+    private Runnable afterUpload;
+
+    private final boolean isManual;
+
+    public UploadTaskOldBR(Context context, boolean isManual, Runnable afterUpload) {
+        this.context = context;
+        this.isManual = isManual;
+        this.uploadTaskAdapter = new UploadTaskAdapderOldBR();
+        this.afterUpload = afterUpload;
+    }
+
+    @Override
+    public void run() {
+        Logger.d("UploadTask STARTED");
+        if (!TcrApplication.get().isUserLogin()) {
+            if (isManual) {
+                Logger.e("UploadTask skip task: NO USER");
+            } else {
+                Logger.w("UploadTask skip task: NO USER");
+            }
+            return;
+        }
+        execute(true, true);
+    }
+
+    private ExecuteResult execute(final boolean fireEvents, final boolean lockOnTrainingMode) {
+        synchronized (UploadTaskOldBR.class) {
+            OfflineCommandsService.forceCancelDownloadUpload = false;
+            Logger.d("UploadTask EXECUTE");
+
+            boolean hadInvalidUploadTransaction = false;
+
+            if (!ValueUtil.isNetworkAvailable(context)) {
+                Logger.e("UploadTask error: NO CONNECTION");
+                onUploadFailure(fireEvents);
+                return new ExecuteResult(false, hadInvalidUploadTransaction);
+            }
+
+            NotificationHelper.addUploadNotification(context);
+
+            boolean errorsOccurred = false;
+            String errorMessage = null;
+            if (lockOnTrainingMode) {
+                TcrApplication.get().lockOnTrainingMode();
+            }
+            try {
+                ContentResolver cr = context.getContentResolver();
+                errorsOccurred = !uploadTaskAdapter.webApiUpload(cr);
+                cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+
+            } catch (SyncLockedException e) {
+                Logger.e("UploadTask: sync is currently locked", e);
+                errorsOccurred = true;
+                errorMessage = context.getString(R.string.error_message_sync_locked);
+
+            } catch (Exception e) {
+                Logger.e("UploadTask error", e);
+                errorsOccurred = true;
+
+            } finally {
+                if (lockOnTrainingMode) {
+                    TcrApplication.get().unlockOnTrainingMode();
+                }
+            }
+
+            if (errorsOccurred) {
+                if (TextUtils.isEmpty(errorMessage)) {
+                    NotificationHelper.showUploadErrorNotification(context);
+                } else {
+                    NotificationHelper.showUploadErrorNotification(context, errorMessage);
+                }
+                onUploadFailure(fireEvents);
+            } else {
+                NotificationHelper.removeUploadNotification(context);
+                onUploadSuccess();
+            }
+
+            Logger.d("UploadTask END");
+            return new ExecuteResult(!errorsOccurred, hadInvalidUploadTransaction);
+        }    
+    }
+
+    private void onUploadSuccess() {
+        setOfflineMode(false);
+        if (afterUpload != null) afterUpload.run();
+    }
+
+    private void onUploadFailure(boolean fireEvents) {
+        setOfflineMode(true);
+        if (fireEvents) {
+            OfflineCommandsService.fireCompleteEvent(context, false, false, true, false);
+        }
+    }
+
+    private void setOfflineMode(boolean isOfflineMode) {
+        if (!TcrApplication.get().isUserLogin()) {
+            return;
+        }
+        if (TcrApplication.get().isTrainingMode()) {
+            return;
+        }
+
+        TcrApplication.get().lockOnOfflineMode();
+        try {
+            if (!isOfflineMode && !ValueUtil.isNetworkAvailable(context)) {
+                return;
+            }
+            if (!isOfflineMode || !TcrApplication.get().isOfflineMode()) {
+                TcrApplication.get().setOfflineMode(isOfflineMode ? System.currentTimeMillis() : null);
+            }
+        } finally {
+            TcrApplication.get().unlockOnOfflineMode();
+        }
+    }
+
+    public static class ExecuteResult {
+
+        public final boolean isSuccessful;
+        public final boolean hadInvalidUploadTransaction;
+
+        public ExecuteResult(boolean isSuccessful, boolean hadInvalidUploadTransaction) {
+            this.isSuccessful = isSuccessful;
+            this.hadInvalidUploadTransaction = hadInvalidUploadTransaction;
+        }
+    }
+}

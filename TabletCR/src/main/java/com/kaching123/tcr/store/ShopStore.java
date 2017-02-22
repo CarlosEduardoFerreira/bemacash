@@ -45,6 +45,7 @@ public abstract class ShopStore {
     public static void init() {
     }
 
+    public static final String DEFAULT_UPDATE_TIME_LOCAL = "update_time_local";
     public static final String DEFAULT_UPDATE_TIME = "update_time";
     public static final String DEFAULT_IS_DELETED = "is_deleted";
     public static final String DEFAULT_IS_DRAFT = "is_draft";
@@ -72,6 +73,93 @@ public abstract class ShopStore {
 
     }
 
+
+    public interface IBemaSyncUpdateTimeLocalTable extends IBemaSyncTable {
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+
+    @Table(CountryTable.TABLE_NAME)
+    public interface CountryTable {
+
+        @URI
+        String URI_CONTENT = "country";
+
+        String TABLE_NAME = "country";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String SID = "sid";
+
+        @Unique
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ID = "_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String NAME = "name";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String UPDATE_IS_DRAFT = DEFAULT_IS_DRAFT;
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+    @Table(StateTable.TABLE_NAME)
+    @Index(name = "country", columns = StateTable.COUNTRY_ID)
+    public interface StateTable {
+
+        @URI
+        String URI_CONTENT = "state";
+
+        String TABLE_NAME = "state";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @Column(type = Type.INTEGER)
+        @NotNull
+        String CODE = "code";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String NAME = "name";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String ABBREVIATION = "abbreviation";
+
+        @Column(type = Type.INTEGER)
+        String FISCAL_TECH = "FISCAL_TECH";
+
+        @Column(type = Type.TEXT)
+        String MAX_SALES_AMOUNT = "MAX_SALES_AMOUNT";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String COUNTRY_ID = "country_id";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String UPDATE_IS_DRAFT = DEFAULT_IS_DRAFT;
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+    static {
+        applyForeignKeys(StateTable.TABLE_NAME,
+                foreignKey(StateTable.COUNTRY_ID, CountryTable.TABLE_NAME, CountryTable.ID)
+        );
+    }
+
+
     @Table(ApkUpdate.TABLE_NAME)
     public static interface ApkUpdate extends IBemaSyncTable {
         @URI
@@ -96,6 +184,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER, defVal = "0")
         String APROVE = "aprove";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(BillPayment.TABLE_NAME)
@@ -119,6 +210,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String MASTERBILLERDESCRIPTION = "masterBillerDescription";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(WirelessTable.TABLE_NAME)
@@ -186,6 +280,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String FEEAMOUNT = "feeAmount";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(ComposerTable.TABLE_NAME)
@@ -224,6 +321,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.INTEGER, defVal = "0")
         String FREE_OF_CHARGE_COMPOSER = "free_of_charge_composer";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -277,6 +377,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String CHILD_ORDER_ID = "child_order_item_id";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -308,6 +411,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.TEXT)
         String TITLE = "title";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(CategoryTable.TABLE_NAME)
@@ -349,6 +455,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String COMMISSION = "commission";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
 
     }
 
@@ -506,6 +615,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String EXCLUDE_FROM_LOYALTY_PLAN = "exclude_from_loyalty_plan";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -572,6 +684,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String TMP_AVAILABLE_QTY = "tmp_available_qty";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -625,6 +740,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER)
         String ORDER_NUM ="order_num";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -655,6 +773,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.TEXT)
         String ITEM_GUID = "item_guid";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -673,7 +794,7 @@ public abstract class ShopStore {
             @Index(name = "status", columns = SaleOrderTable.STATUS),
             @Index(name = "parent", columns = SaleOrderTable.PARENT_ID)
     })
-    public static interface SaleOrderTable extends IBemaSyncTable {
+    public interface SaleOrderTable extends IBemaSyncUpdateTimeLocalTable {
 
         @URI(altNotify = {SaleOrderItemsView.URI_CONTENT, SaleOrderTipsQuery.URI_CONTENT, UnitsView.URI_CONTENT, SaleOrderView.URI_CONTENT})
         String URI_CONTENT = "sale_order";
@@ -699,6 +820,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String CUSTOMER_GUID = "customer_guid";
+
+        @Column(type = Type.INTEGER)
+        String CHECKOUT_STATE = "checkout_state";
 
         @Column(type = Column.Type.TEXT)
         String DISCOUNT = "discount";
@@ -750,6 +874,12 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String TRANSACTION_FEE = "transaction_fee";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String IS_PARTIAL_REFUND = "is_partial_refund";
+
+        @Column(type = Type.INTEGER, defVal = "0")
+        String IS_CUSTOMER_ORDER = "is_customer_order";
 
     }
 
@@ -885,6 +1015,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String DISCOUNT_BUNDLE_ID = "discount_bundle_id";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -936,6 +1069,8 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String CHILD_ITEM_QTY = "child_item_qty";
 
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -1023,6 +1158,62 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String EMAIL = "email";
     }*/
+
+
+    @Table(SaleComposerTable.TABLE_NAME)
+    @Indexes({
+            @Index(name = "sale_item", columns = SaleComposerTable.SALE_ITEM_ID),
+            @Index(name = "sale_modifier", columns = SaleComposerTable.SALE_MODIFIER_ID),
+            @Index(name = "host_item", columns = SaleComposerTable.HOST_ITEM_ID),
+            @Index(name = "child_item", columns = SaleComposerTable.CHILD_ITEM_ID),
+    })
+    public interface SaleComposerTable extends IBemaSyncUpdateTimeLocalTable {
+
+        String TABLE_NAME = "sale_composition";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @Column(type = Type.TEXT)
+        String ID = "_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String SALE_ITEM_ID = "sale_item_id";
+
+        @Column(type = Type.TEXT)
+        String SALE_MODIFIER_ID = "sale_modifier_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String HOST_ITEM_ID = "host_item_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String CHILD_ITEM_ID = "child_item_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String QTY = "qty";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String STOCK_TRACKING_ENABLED = "stock_tracking_enabled";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String RESTRICT_QTY = "RESTRICT_QTY";
+    }
+
+    static {
+        applyForeignKeys(SaleComposerTable.TABLE_NAME,
+                foreignKey(SaleComposerTable.SALE_ITEM_ID, SaleItemTable.TABLE_NAME, SaleItemTable.SALE_ITEM_GUID, true),
+                foreignKey(SaleComposerTable.SALE_MODIFIER_ID, SaleAddonTable.TABLE_NAME, SaleAddonTable.GUID),
+                foreignKey(SaleComposerTable.HOST_ITEM_ID, ItemTable.TABLE_NAME, ItemTable.GUID),
+                foreignKey(SaleComposerTable.CHILD_ITEM_ID, ItemTable.TABLE_NAME, ItemTable.GUID)
+        );
+    }
 
     @Table(EmployeeTable.TABLE_NAME)
     @Indexes({
@@ -1124,6 +1315,8 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER, defVal = "1")
         String IS_SYNC = "is_sync";
 
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(EmployeePermissionTable.TABLE_NAME)
@@ -1153,6 +1346,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER, defVal = "0")
         String UPDATE_IS_DRAFT = DEFAULT_IS_DRAFT;
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -1203,6 +1399,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String CLOSE_AMOUNT = "close_amount";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -1251,6 +1450,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String COMMENT = "comment";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -1287,6 +1489,64 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER)
         String UPDATE_TIME = DEFAULT_UPDATE_TIME;
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+    @Table(SqlCommandHostTable.TABLE_NAME)
+    public interface SqlCommandHostTable {
+
+        @URI
+        String URI_CONTENT = "sql_command_host";
+
+        String TABLE_NAME = "sql_command_host";
+        int MAX_ROWS = 10000;
+
+        @Autoincrement
+        @PrimaryKey
+        @Column(type = Type.INTEGER)
+        String ORDER_COMMAND = "order_command";
+
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String SQL_COMMAND = "sql_command";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String CREATE_TIME = "create_time";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+
+        String DELETE_WHERE = GUID + " in (SELECT " + GUID + " FROM " + TABLE_NAME + " order by " +
+                CREATE_TIME + " LIMIT ?)";
+    }
+
+    @Table(SqlCommandClientTable.TABLE_NAME)
+    public interface SqlCommandClientTable {
+
+        @URI
+        String URI_CONTENT = "sql_command_client";
+
+        String TABLE_NAME = "sql_command_client";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String COMMAND_GUID = "command_guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String CLIENT_SERIAL = "client_serial";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+
+        String DELETE_WHERE = COMMAND_GUID + " in (SELECT " + SqlCommandHostTable.GUID + " FROM " +
+                SqlCommandHostTable.TABLE_NAME + " order by " + SqlCommandHostTable.CREATE_TIME + " LIMIT ?)";
     }
 
     @Table(PaymentTransactionTable.TABLE_NAME)
@@ -1389,6 +1649,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String SIGNATURE_BYTES = "signature_bytes";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -1427,6 +1690,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER)
         String CLOCK_OUT = "clock_out";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -1463,6 +1729,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String IS_DEFAULT = "is_default";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(RegisterTable.TABLE_NAME)
@@ -1496,6 +1765,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER)
         String BLACKSTONE_PAYMENT_CID = "blackstone_payment_cid";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(BillPaymentDescriptionTable.TABLE_NAME)
@@ -1531,6 +1803,54 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String ORDER_ID = "sale_order_id";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+
+    }
+
+
+    @Table(MunicipalityTable.TABLE_NAME)
+    @Indexes({
+            @Index(name = "country", columns = MunicipalityTable.COUNTRY_ID),
+            @Index(name = "state", columns = MunicipalityTable.STATE_ID)
+    })
+    public interface MunicipalityTable extends IBemaSyncTable {
+
+        @URI
+        String URI_CONTENT = "municipality";
+
+        String TABLE_NAME = "municipality";
+
+        @PrimaryKey
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String STATE_ID = "state_id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String COUNTRY_ID = "country_id";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String NAME = "name";
+
+        @Column(type = Type.TEXT)
+        String CODE = "code";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+
+    }
+
+    static {
+        applyForeignKeys(MunicipalityTable.TABLE_NAME,
+                foreignKey(MunicipalityTable.COUNTRY_ID, CountryTable.TABLE_NAME, CountryTable.ID),
+                foreignKey(MunicipalityTable.STATE_ID, StateTable.TABLE_NAME, StateTable.ID)
+        );
     }
 
 
@@ -1614,6 +1934,9 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.TEXT)
         String TMP_LOYALTY_POINTS = "tmp_loyalty_points";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -1638,6 +1961,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String ALIAS = "alias";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(KDSAliasTable.TABLE_NAME)
@@ -1655,6 +1981,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String ALIAS = "alias";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(PaxTable.TABLE_NAME)
@@ -1692,6 +2021,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String SERIAL = "serial";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
 
     }
 
@@ -1734,6 +2066,8 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String DHCP = "dhcp";
 
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(KDSTable.TABLE_NAME)
@@ -1755,6 +2089,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String ALIAS_GUID = "alias_guid";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
 
     }
 
@@ -1803,6 +2140,12 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.INTEGER)
         String EXPIRE_TIME = "expire_time";
+
+        @Column(type = Type.TEXT)
+        String SALE_ORDER_GUID = "sale_order_guid";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -1864,6 +2207,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.INTEGER)
         String PAYMENT_TYPE = "payment_type";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -1899,6 +2245,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.INTEGER, defVal = "0")
         String IS_ACTIVE = "IS_ACTIVE";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(EmployeeCommissionsTable.TABLE_NAME)
@@ -1940,6 +2289,9 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String AMOUNT = "amount";
 
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+
     }
 
     static {
@@ -1969,6 +2321,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.INTEGER)
         String UPDATE_TIME = "update_time";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(VariantItemTable.TABLE_NAME)
@@ -2000,6 +2355,9 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         @NotNull
         String NAME = "name";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
 
@@ -2033,6 +2391,9 @@ public abstract class ShopStore {
         @NotNull
         String NAME = "name";
 
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+
     }
 
     @Table(ItemMatrixTable.TABLE_NAME)
@@ -2063,6 +2424,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String CHILD_GUID = "child_guid";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
 
     }
 
@@ -2109,6 +2473,9 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER)
         //percent, value
         String REWARD_VALUE_TYPE = "reward_value_type";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Indexes({
@@ -2140,6 +2507,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String QTY = "qty";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -2163,6 +2533,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String NAME = "name";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Indexes({
@@ -2188,6 +2561,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String PLAN_GUID = "plan_guid";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -2219,6 +2595,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String LOYALTY_POINTS = "loyalty_points";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
     static {
         applyForeignKeys(LoyaltyPointsMovementTable.TABLE_NAME,
@@ -2271,6 +2650,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String POINT_THRESHOLD = "point_threshold";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
     static {
         applyForeignKeys(SaleIncentiveTable.TABLE_NAME,
@@ -2345,6 +2727,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.TEXT)
         String SUN_END = "sun_end";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @Table(TBPxRegisterTable.TABLE_NAME)
@@ -2366,6 +2751,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.INTEGER)
         String REGISTER_ID = "register_id";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
     static {
         applyForeignKeys(TBPxRegisterTable.TABLE_NAME,
@@ -2407,11 +2795,269 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String IS_ACTIVE = "is_active";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
     static {
         applyForeignKeys(MultipleDiscountTable.TABLE_NAME,
                 foreignKey(MultipleDiscountTable.ITEM_ID, ItemTable.TABLE_NAME, ItemTable.GUID));
     }
+
+
+    @Table(CestTable.TABLE_NAME)
+    @Indexes({
+            @Index(name = "cest", columns = CestTable.CEST),
+            @Index(name = "ncm", columns = CestTable.NCM)
+    })
+    public interface CestTable extends IBemaSyncUpdateTimeLocalTable {
+
+        String TABLE_NAME = "cest";
+
+        @URI
+        String URI_CONTENT = TABLE_NAME;
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String ID = "_id";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String CEST = "cest";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        String NCM = "ncm";
+
+        @Column(type = Type.TEXT)
+        String DESCRIPTION = "description";
+    }
+
+    @Table(PaymentServiceProviderTable.TABLE_NAME)
+    public interface PaymentServiceProviderTable extends IBemaSyncTable {
+        @URI
+        String URI_CONTENT = "payment_service_provider";
+
+        String TABLE_NAME = "payment_service_provider";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String ID = "id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String SERVICE_NAME = "service_name";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String SERVICE_CODE = "service_code";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String SERVICE_CNPJ = "service_cnpj";
+
+        @Column(type = Type.INTEGER)
+        String RESPONSE_FIELD_CODE = "response_field_code";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+    @Table(CfopReturnMappingTable.TABLE_NAME)
+    public interface CfopReturnMappingTable extends IBemaSyncTable {
+        @URI
+        String URI_CONTENT = "cfop_return_mapping";
+
+        String TABLE_NAME = "cfop_return_mapping";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String ID = "id";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String KEY = "key";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String VALUE = "value";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+    @Table(CardBrandTable.TABLE_NAME)
+    public interface CardBrandTable extends IBemaSyncTable {
+        @URI
+        String URI_CONTENT = "card_brand";
+
+        String TABLE_NAME = "card_brand";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ID = "id";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String NAME = "name";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String TYPE = "type";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+    @Table(TableOrderTable.TABLE_NAME)
+    public interface TableOrderTable extends IBemaSyncUpdateTimeLocalTable {
+        @URI
+        String URI_CONTENT = "table_order";
+
+        String TABLE_NAME = "table_order";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        @Unique
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String NAME = "name";
+
+        @Column(type = Type.TEXT)
+        String DESCRIPTION = "description";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String QTY_CUSTOMER_ORDER = "qty_customer_order";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String QTY_CURRENT_CUSTOMER_ORDER = "qty_current_customer_order";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String STATUS = "status";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String STATUS_TIME = "status_time";
+
+        @Column(type = Type.TEXT)
+        String AMOUNT = "amount";
+    }
+
+    @Table(TableHistoryTable.TABLE_NAME)
+    @Indexes({
+            @Index(name = "table_guid", columns = TableHistoryTable.TABLE_GUID)
+    })
+    public interface TableHistoryTable extends IBemaSyncTable {
+        @URI
+        String URI_CONTENT = "table_history";
+
+        String TABLE_NAME = "table_history";
+
+        @Column(type = Type.TEXT)
+        @NotNull
+        @Unique
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String TABLE_GUID = "table_guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String STATUS = "status";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String STATUS_START_TIME = "status_start_time";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String STATUS_END_TIME = "status_end_time";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+    static {
+        applyForeignKeys(TableHistoryTable.TABLE_NAME,
+                foreignKey(TableHistoryTable.TABLE_GUID, TableOrderTable.TABLE_NAME, TableOrderTable.GUID));
+    }
+
+    @Table(CustomerOrderTable.TABLE_NAME)
+    @Indexes({
+            @Index(name = "table_guid", columns = CustomerOrderTable.TABLE_GUID),
+            @Index(name = "order_guid", columns = CustomerOrderTable.ORDER_GUID)
+    })
+    public interface CustomerOrderTable extends IBemaSyncUpdateTimeLocalTable {
+        @URI
+        String URI_CONTENT = "customer_order";
+
+        String TABLE_NAME = "customer_order";
+
+        @Column(type = Type.TEXT)
+        String CODE = "code";
+
+        @NotNull
+        @Unique
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String ORDER_GUID = "order_guid";
+
+        @NotNull
+        @Column(type = Type.TEXT)
+        String TABLE_GUID = "table_guid";
+
+        @Column(type = Type.TEXT)
+        String DESCRIPTION = "description";
+    }
+
+    static {
+        applyForeignKeys(CustomerOrderTable.TABLE_NAME,
+                foreignKey(CustomerOrderTable.TABLE_GUID, TableOrderTable.TABLE_NAME, TableOrderTable.GUID),
+                foreignKey(CustomerOrderTable.ORDER_GUID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID));
+    }
+
+    @Table(ShopModuleTable.TABLE_NAME)
+    public interface ShopModuleTable extends IBemaSyncTable {
+        @URI
+        String URI_CONTENT = "shop_modules";
+
+        String TABLE_NAME = "shop_modules";
+
+        @NotNull
+        @PrimaryKey
+        @Column(type = Type.INTEGER)
+        String ID = "id";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String SHOP_ID = "shop_id";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String MODULE_ID = "module_id";
+
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String ENABLED = "enabled";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+
 
     /**
      * views *
@@ -2431,6 +3077,9 @@ public abstract class ShopStore {
         @Columns(SaleOrderTable.CREATE_TIME)
         @Join(type = Join.Type.LEFT, joinTable = SaleOrderTable.TABLE_NAME, joinColumn = SaleOrderTable.GUID, onTableAlias = TABLE_UNIT, onColumn = UnitTable.SALE_ORDER_ID)
         String TABLE_SALE_ORDER = "sale_order_table";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     public static interface OldSaleOrdersQuery {
@@ -4073,6 +4722,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER, defVal = "0")
         String CONDITION_VALUE = "condition_value";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     static {
@@ -4122,6 +4774,9 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Type.TEXT)
         String SHORTCUT = "shortcut";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     @SimpleView(ModifierGroupView.VIEW_NAME)
@@ -4302,6 +4957,30 @@ public abstract class ShopStore {
                 + " where " + EmployeeTable.TABLE_NAME + "." + DEFAULT_UPDATE_TIME + " is not null "
                 + " ) as t1";
     }*/
+
+
+
+    @RawQuery(SqlCommandHostQuery.VIEW_NAME)
+    public interface SqlCommandHostQuery {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "sql_command_host_query";
+
+        String VIEW_NAME = "sql_command_host_query";
+
+        @SqlQuery
+        String SQL = "SELECT " + SqlCommandHostTable.GUID + "," + SqlCommandHostTable.SQL_COMMAND + "," + SqlCommandHostTable.ORDER_COMMAND +
+                " FROM " + SqlCommandHostTable.TABLE_NAME +
+                " LEFT JOIN " + SqlCommandClientTable.TABLE_NAME +
+                " ON " + SqlCommandHostTable.TABLE_NAME + "." + SqlCommandHostTable.GUID + " = " +
+                SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.COMMAND_GUID +
+                " AND " + SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.CLIENT_SERIAL + " = ?" +
+                " WHERE " + SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.COMMAND_GUID + " is null" +
+                " ORDER BY " + SqlCommandHostTable.ORDER_COMMAND + " LIMIT ?";
+    }
+
+
+
 
     @RawQuery(SaleOrderItemsMappingQuery.VIEW_NAME)
     public interface SaleOrderItemsMappingQuery {

@@ -40,7 +40,8 @@ public class CreateTaxGroup extends AsyncCommand {
                 UUID.randomUUID().toString(),
                 title,
                 tax,
-                isDefault);
+                isDefault,
+                null);
         return succeeded();
     }
 

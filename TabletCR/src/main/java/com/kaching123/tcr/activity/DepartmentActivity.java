@@ -184,7 +184,8 @@ public class DepartmentActivity extends SuperBaseActivity {
             super.apply(c);
             return new DepartmentModel(
                     c.getString(indexHolder.get(DepartmentTable.GUID)),
-                    c.getString(indexHolder.get(DepartmentTable.TITLE))
+                    c.getString(indexHolder.get(DepartmentTable.TITLE)),
+                    null
             );
         }
     }

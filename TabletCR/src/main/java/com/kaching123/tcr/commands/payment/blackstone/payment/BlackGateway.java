@@ -114,6 +114,11 @@ public class BlackGateway implements IPaymentGateway<BlackStoneTransaction, Cred
         return BlackStoneTransactionFactory.create(TcrApplication.get().getOperatorGuid(), amount, orderGuid, false);
     }
 
+    @Override
+    public boolean enabled() {
+        return TcrApplication.get().isBlackstonePax();
+    }
+
 
     public BlackStoneTransaction createPreauthTransaction(Context context, BigDecimal amount, String orderGuid) {
         return BlackStoneTransactionFactory.create(TcrApplication.get().getOperatorGuid(), amount, orderGuid, true);

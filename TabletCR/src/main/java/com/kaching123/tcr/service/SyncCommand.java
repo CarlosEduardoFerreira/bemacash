@@ -750,10 +750,15 @@ public class SyncCommand implements Runnable {
         }
     }
 
+    protected String getShopId() {
+        return String.valueOf(getApp().getShopPref().shopId().get());
+    }
+
     private long getServerCurrentTimestamp(SyncApi api, EmployeeModel employee) throws SyncException, SyncLockedException {
         Long currentServerTimestamp;
         GetCurrentTimestampResponse response;
         try {
+            //response = api.getCurrentTimestamp(getShopId(), getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employee, getApp()));
             response = api.getCurrentTimestamp(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employee, getApp()));
         } catch (Exception e) {
             Logger.e("SyncCommand.getServerCurrentTimestamp(): failed", e);
@@ -774,7 +779,7 @@ public class SyncCommand implements Runnable {
     private Integer getServerSalesHistoryLimit(SyncApi api, EmployeeModel employee) throws SyncException, SyncLockedException {
         IntegerResponse response;
         try {
-            response = api.getMaxHistoryLimit(getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employee, getApp()));
+            response = api.getMaxHistoryLimit(getShopId(), getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employee, getApp()));
         } catch (Exception e) {
             Logger.e("SyncCommand.getServerSalesHistoryLimit(): failed", e);
             throw new SyncException();

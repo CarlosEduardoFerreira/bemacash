@@ -6,6 +6,7 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by vkompaniets on 03.07.2014.
@@ -37,6 +38,16 @@ public class ActivationCarrierJdbcConverter extends JdbcConverter<ActivationCarr
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getJSONObject(ActivationCarrierModel model) {
+        return null;
     }
 
     @Override

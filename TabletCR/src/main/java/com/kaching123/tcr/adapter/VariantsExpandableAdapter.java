@@ -81,7 +81,8 @@ public class VariantsExpandableAdapter extends ResourceCursorTreeAdapter {
                     return new VariantItemModel(c.getString(varItemGuidIdx),
                             c.getString(varItemNameIdx),
                             c.getString(varParentGuidIdx),
-                            TcrApplication.get().getShopId());
+                            TcrApplication.get().getShopId(),
+                            null);
                 }
             } while (c.moveToNext());
         }

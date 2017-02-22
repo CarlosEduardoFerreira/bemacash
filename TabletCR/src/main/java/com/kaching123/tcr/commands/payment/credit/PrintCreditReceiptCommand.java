@@ -87,7 +87,7 @@ public class PrintCreditReceiptCommand extends BasePrintCommand<PosOrderTextPrin
                             new Date(c.getLong(c.getColumnIndex(CreditReceiptTable.CREATE_TIME))),
                             _decimal(c, c.getColumnIndex(CreditReceiptTable.AMOUNT), BigDecimal.ZERO),
                             c.getLong(c.getColumnIndex(CreditReceiptTable.PRINT_NUMBER)),
-                            c.getInt(c.getColumnIndex(CreditReceiptTable.EXPIRE_TIME))),
+                            c.getInt(c.getColumnIndex(CreditReceiptTable.EXPIRE_TIME)), null),
                     c.getString(c.getColumnIndex(CreditReceiptView2.RegisterTable.TITLE))
             );
         }

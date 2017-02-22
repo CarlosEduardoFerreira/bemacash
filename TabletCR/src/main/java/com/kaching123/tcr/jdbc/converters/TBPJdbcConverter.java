@@ -6,13 +6,14 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by vkompaniets on 14.08.2016.
  */
 public class TBPJdbcConverter extends JdbcConverter<TBPModel> {
 
-    private static final String TABLE_NAME = "TIME_BASED_PRICING";
+    public static final String TABLE_NAME = "TIME_BASED_PRICING";
 
     private static final String ID = "ID";
     private static final String DESCRIPTION = "DESCRIPTION";
@@ -68,6 +69,16 @@ public class TBPJdbcConverter extends JdbcConverter<TBPModel> {
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+            return null;
+    }
+
+    @Override
+    public JSONObject getJSONObject(TBPModel model) {
+        return null;
     }
 
     @Override

@@ -325,6 +325,11 @@ public class PaxGateway implements IPaymentGateway<PaxTransaction, Void> {
         return PaxTransactionFactory.create(TcrApplication.get().getOperatorGuid(), orderGuid, gateway, false).setAmount(amount);
     }
 
+    @Override
+    public boolean enabled() {
+        return TcrApplication.get().isPaxConfigured();
+    }
+
     public PaxTransaction createPreauthTransaction(Context context, BigDecimal amount, String orderGuid) {
         boolean isPreauth = false;
         PaymentGateway gateway = PaymentGateway.PAX;

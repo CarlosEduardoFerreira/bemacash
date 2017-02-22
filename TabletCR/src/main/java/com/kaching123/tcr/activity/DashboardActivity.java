@@ -1,7 +1,9 @@
 package com.kaching123.tcr.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -81,6 +84,7 @@ import com.kaching123.tcr.model.ShiftModel;
 import com.kaching123.tcr.model.TipsModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.model.payment.MovementType;
+import com.kaching123.tcr.service.LocalSyncHelper;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -460,6 +464,13 @@ public class DashboardActivity extends SuperBaseActivity {
         getSupportLoaderManager().destroyLoader(LOADER_ACTIVATION_ID);
     }
 
+    private BroadcastReceiver need2CollectDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            need2CollectData();
+        }
+    };
+
     @Override
     public void onResume() {
         super.onResume();
@@ -468,12 +479,16 @@ public class DashboardActivity extends SuperBaseActivity {
         setOperatorName();
         need2CollectData();
         startUpdateShiftTime();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(need2CollectDataReceiver,
+                new IntentFilter(LocalSyncHelper.LOCAL_SYNC_NEED_COLLECT_DATA));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         need2StopCollectData();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(need2CollectDataReceiver);
         stopUpdateShiftTime();
     }
 
@@ -1117,7 +1132,8 @@ public class DashboardActivity extends SuperBaseActivity {
                     c.getString(indexHolder.get(ShiftTable.CLOSE_MANAGER_ID)),
                     c.getLong(indexHolder.get(ShiftTable.REGISTER_ID)),
                     _decimal(c, indexHolder.get(ShopStore.ShiftTable.OPEN_AMOUNT), BigDecimal.ZERO),
-                    _decimal(c, indexHolder.get(ShopStore.ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO));
+                    _decimal(c, indexHolder.get(ShopStore.ShiftTable.CLOSE_AMOUNT), BigDecimal.ZERO),
+                    null);
         }
 
         private Cursor loadSalesStatistics(ShiftModel shiftModel) {

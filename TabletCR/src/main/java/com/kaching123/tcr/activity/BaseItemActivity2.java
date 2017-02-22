@@ -260,7 +260,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
                         UUID.randomUUID().toString(),
                         model.description,
                         parentItem.guid,
-                        model.guid
+                        model.guid, null
                 );
                 ArrayList<ItemMatrixModel> matrix = new ArrayList<>(1);
                 matrix.add(parentItemMatrix);

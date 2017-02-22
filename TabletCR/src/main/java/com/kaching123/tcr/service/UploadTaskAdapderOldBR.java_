@@ -1,0 +1,190 @@
+package com.kaching123.tcr.service;
+
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.OperationApplicationException;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.RemoteException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.rest.sync.SyncApi;
+import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
+import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder.UploadCommand;
+import com.kaching123.tcr.commands.rest.sync.UploadResponse;
+import com.kaching123.tcr.model.EmployeeModel;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore.SqlCommandTable;
+
+import com.kaching123.tcr.service.SyncCommand.SyncLockedException;
+import com.kaching123.tcr.service.SyncCommand.SyncInterruptedException;
+
+public class UploadTaskAdapderOldBR {
+
+    protected static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.contentUriNoNotify(SqlCommandTable.URI_CONTENT);
+    private static final int BATCH_SIZE = 20;
+
+    static ContentValues sentValues = new ContentValues();
+
+    static {
+        sentValues.put(SqlCommandTable.IS_SENT, 1);
+    }
+
+    public boolean webApiUpload(ContentResolver cr) throws SyncLockedException, SyncInterruptedException {
+        if (TcrApplication.get().isTrainingMode()) {
+            return true;
+        }
+
+        boolean errorsOccurred = false;
+
+        try (
+                Cursor c = cr.query(URI_SQL_COMMAND_NO_NOTIFY, new String[]{
+                                SqlCommandTable.ID,
+                                SqlCommandTable.SQL_COMMAND
+                        },
+                        SqlCommandTable.IS_SENT + " = ?", new String[]{"0"},
+                        SqlCommandTable.ID)
+        ) {
+
+            if (c == null) return false;
+
+            double total = c.getCount();
+            double alreadySent = 0;
+            ArrayList<UploadCommand> commands = new ArrayList<>(BATCH_SIZE);
+            while (c.moveToNext()) {
+                final long id = c.getLong(0);
+                String json = c.getString(1);
+                Logger.d("[CMD_TABLE] %d = %s", id, json);
+                commands.add(new UploadCommand(id, json));
+                if (commands.size() == BATCH_SIZE) {
+                    alreadySent += commands.size();
+
+                    boolean uploaded = try2Upload(cr, commands);
+                    commands.clear();
+                    if (!uploaded) {
+                        errorsOccurred = true;
+                        break;
+                    }
+
+                    double percentage = alreadySent * 100.0 / total;
+                    OfflineCommandsService.fireEvent(TcrApplication.get()
+                            .getString(R.string.upload_data_percentage, String.format(Locale.US, "%.2f", percentage)), TcrApplication.get());
+                }
+            }
+            if (!commands.isEmpty()) {
+                errorsOccurred = !try2Upload(cr, commands);
+            }
+            return !errorsOccurred;
+        }
+    }
+
+    protected String getShopId() {
+        return String.valueOf(TcrApplication.get().getShopId());
+    }
+
+    private boolean try2Upload(ContentResolver cr, ArrayList<UploadCommand> commands)
+            throws SyncLockedException, SyncInterruptedException {
+        try {
+            checkForceCancel();
+        } catch (SyncCommand.SyncInterruptedException e) {
+            e.printStackTrace();
+        }
+
+        TcrApplication app = TcrApplication.get();
+        EmployeeModel employeeModel = app.getOperator();
+        if (employeeModel == null) {
+            Logger.e("[UploadWeb] user not logged in!");
+            return false;
+        }
+
+        Logger.d("bunny : we will send : " + commands.size() + " of data");
+        JSONObject req = null;
+        try {
+            req = SyncUploadRequestBuilder.getUploadObject(commands);
+            Logger.d("[UploadWeb] req = %s", req.toString());
+
+            SyncApi api = app.getRestAdapter().create(SyncApi.class);
+            UploadResponse resp = api.upload(getShopId(), app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employeeModel, app), req);
+            if (resp == null) {
+                Logger.e("[UploadWeb] can not get response!");
+                return false;
+            }
+            Logger.d("[UploadWeb] resp: %s", resp);
+            if (resp.isSyncLockedError()) {
+                throw new SyncLockedException();
+            }
+            if (!resp.isSuccess()) {
+                return false;
+            }
+
+            ArrayList<Long> currentTransactionsIds = new ArrayList<>();
+            for (UploadCommand comm : commands) {
+                if (!SyncUploadRequestBuilder.hasHtmlInCommand(comm.json)) {
+                    currentTransactionsIds.add(comm.id);
+                }
+            }
+
+            final List<Long> failedIds = resp.getFailedTransactions(currentTransactionsIds);
+
+            for (UploadCommand c : commands) {
+                if (!failedIds.isEmpty() && failedIds.contains(c.id)) {
+                    continue;
+                }
+
+                cr.update(URI_SQL_COMMAND_NO_NOTIFY, sentValues, SqlCommandTable.ID + " = ?", new String[]{String.valueOf(c.id)});
+            }
+            return true;
+        } catch (SyncLockedException e) {
+            Logger.e("[UploadWeb] error: sync is locked", e);
+            throw e;
+
+        } catch (JSONException bunny) {
+            Logger.d("Bunny fix");
+            ArrayList<ContentProviderOperation> operations = new ArrayList<>(1);
+            for (UploadCommand c : commands) {
+                operations.add(ContentProviderOperation.newUpdate(URI_SQL_COMMAND_NO_NOTIFY)
+                        .withValues(sentValues)
+                        .withSelection(SqlCommandTable.ID + " = ?", new String[]{String.valueOf(c.id)})
+                        .build());
+            }
+            try {
+                cr.applyBatch(ShopProvider.AUTHORITY, operations);
+
+            } catch (RemoteException | OperationApplicationException funny) {
+                Logger.e("[UploadWeb] error", funny);
+            }
+
+            try {
+                checkForceCancel();
+            } catch (SyncCommand.SyncInterruptedException e) {
+                e.printStackTrace();
+            }
+            return true;
+
+        } catch (Exception e) {
+            Logger.e("[UploadWeb] error", e);
+            Logger.e("[UploadWeb] error, request: " + (req == null ? null : req.toString()));
+            return false;
+
+        }
+    }
+
+    private void checkForceCancel() throws SyncCommand.SyncInterruptedException {
+        if (OfflineCommandsService.forceCancelDownloadUpload){
+            Logger.d("Cancelling sync upload");
+            throw new SyncCommand.SyncInterruptedException("forceCancelDownloadUpload");
+        }
+    }
+
+
+}

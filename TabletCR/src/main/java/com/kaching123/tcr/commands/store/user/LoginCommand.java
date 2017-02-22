@@ -125,7 +125,12 @@ public class LoginCommand extends GroundyTask {
                 if (employeeModel.password != null && !isOffline)
                     setLastUserPassword(employeeModel.password);
 
-                Error syncError = syncData(employeeModel);
+                Error syncError = null;
+                try {
+                    syncError = syncData(employeeModel);
+                } catch (OfflineException e) {
+                    e.printStackTrace();
+                }
 
                 if (syncError != null && syncError != Error.OFFLINE) {
                     SendLogCommand.start(getContext());
@@ -244,7 +249,7 @@ public class LoginCommand extends GroundyTask {
         ((TcrApplication) getContext().getApplicationContext()).setLastUserPassword(password);
     }
 
-    private Error syncData(EmployeeModel employeeModel) {
+    private Error syncData(EmployeeModel employeeModel) throws OfflineException {
         try {
             new SyncCommand(getContext(), true).syncNow(employeeModel);
         } catch (SyncException e) {
@@ -253,9 +258,6 @@ public class LoginCommand extends GroundyTask {
         } catch (SyncCommand.DBVersionCheckException e) {
             Logger.e("Login.sync error", e);
             return Error.SYNC_OUTDATED;
-        } catch (OfflineException e) {
-            Logger.e("Login.sync error", e);
-            return Error.OFFLINE;
         } catch (SyncInconsistentException e) {
             Logger.e("Login.sync error", e);
             return Error.SYNC_INCONSISTENT;
@@ -357,14 +359,14 @@ public class LoginCommand extends GroundyTask {
         return permissions;
     }
 
-    private boolean setRegisterId() {
-        TcrApplication app = ((TcrApplication) getContext().getApplicationContext());
+    public static boolean setRegisterId() {
+        TcrApplication app = TcrApplication.get();
 
         Cursor c = ProviderAction.query(ShopProvider.getContentUri(RegisterTable.URI_CONTENT))
                 .projection(RegisterTable.ID, RegisterTable.PREPAID_TID, RegisterTable.BLACKSTONE_PAYMENT_CID)
                 .where(RegisterTable.REGISTER_SERIAL + " = ?", app.getRegisterSerial())
                 .where(RegisterTable.STATUS + " <> ?", RegisterStatus.BLOCKED.ordinal())
-                .perform(getContext());
+                .perform(app.getApplicationContext());
 
         if (!c.moveToFirst()) {
             c.close();

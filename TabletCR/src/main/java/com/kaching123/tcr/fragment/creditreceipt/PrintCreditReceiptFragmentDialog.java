@@ -225,7 +225,8 @@ public class PrintCreditReceiptFragmentDialog extends StyledDialogFragment {
                                 new Date(c.getLong(1)),
                                 _decimal(c, 2, BigDecimal.ZERO),
                                 c.getLong(4),
-                                c.getInt(3));
+                                c.getInt(3),
+                                null);
                     }
                     c.close();
                     return model;

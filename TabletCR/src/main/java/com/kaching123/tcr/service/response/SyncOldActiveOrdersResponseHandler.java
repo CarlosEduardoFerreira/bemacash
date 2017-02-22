@@ -4,6 +4,9 @@ import android.content.ContentValues;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;
+import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.store.ShopOpenHelper;
 import com.kaching123.tcr.store.SyncOpenHelper;
 import com.kaching123.tcr.util.JdbcJSONArray;
 
@@ -45,16 +48,16 @@ public class SyncOldActiveOrdersResponseHandler extends BaseOrdersResponseHandle
 
     @Override
     protected void saveResult(String localTableName, String idColumn, ArrayList<ContentValues> result) {
-        boolean success = syncOpenHelper.insert(localTableName, result.toArray(new ContentValues[result.size()]), false);
-        if (!success) {
+        JdbcConverter converter = JdbcFactory.getConverter(localTableName);
+        if (syncOpenHelper.insert(localTableName, result.toArray(new ContentValues[result.size()]), converter.getLocalGuidColumn(), converter.supportUpdateTimeLocalFlag()) != null) {
             throw new RuntimeException("some data was not saved");
         }
     }
 
     @Override
     protected void saveResult(String localTableName, String idColumn, ContentValues result) {
-        boolean success = syncOpenHelper.insert(localTableName, new ContentValues[]{result}, false);
-        if (!success) {
+        JdbcConverter converter = JdbcFactory.getConverter(localTableName);
+        if (syncOpenHelper.insert(localTableName, new ContentValues[]{result}, converter.getLocalGuidColumn(), converter.supportUpdateTimeLocalFlag()) != null) {
             throw new RuntimeException("some data was not saved");
         }
     }

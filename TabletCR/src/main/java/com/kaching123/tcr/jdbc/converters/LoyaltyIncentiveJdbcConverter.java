@@ -9,6 +9,7 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
@@ -17,7 +18,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
  */
 public class LoyaltyIncentiveJdbcConverter extends JdbcConverter<LoyaltyIncentiveModel> {
 
-    private static final String TABLE_NAME = "LOYALTY_INCENTIVE";
+    public static final String TABLE_NAME = "LOYALTY_INCENTIVE";
 
     private static final String ID = "ID";
     private static final String NAME = "NAME";
@@ -50,6 +51,16 @@ public class LoyaltyIncentiveJdbcConverter extends JdbcConverter<LoyaltyIncentiv
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getJSONObject(LoyaltyIncentiveModel model) {
+        return null;
     }
 
     @Override

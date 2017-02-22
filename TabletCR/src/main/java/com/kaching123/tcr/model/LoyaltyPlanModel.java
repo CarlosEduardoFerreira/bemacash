@@ -31,4 +31,9 @@ public class LoyaltyPlanModel implements IValueModel, Serializable{
         values.put(LoyaltyPlanTable.NAME, name);
         return values;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

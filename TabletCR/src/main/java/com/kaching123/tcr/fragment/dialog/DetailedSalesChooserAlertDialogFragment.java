@@ -270,7 +270,7 @@ public class DetailedSalesChooserAlertDialogFragment extends StyledDialogFragmen
         @Override
         public void onLoadFinished(Loader<List<RegisterModel>> loader, List<RegisterModel> result) {
             ArrayList<RegisterModel> arrayList = new ArrayList<RegisterModel>(result.size() + 1);
-            arrayList.add(new RegisterModel(0, null, null, getString(R.string.register_label_all), null, 0, 0));
+            arrayList.add(new RegisterModel(0, null, null, getString(R.string.register_label_all), null, 0, 0, null));
             arrayList.addAll(result);
             registersAdapter.changeCursor(arrayList);
         }

@@ -337,6 +337,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private List<DiscountBundle> discountBundles = Collections.EMPTY_LIST;
     private boolean hasPrefixes;
 
+
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
         onBarcodeReceived(barcode);
@@ -595,18 +596,12 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        stop = false;
-        LocalBroadcastManager.getInstance(this).registerReceiver(syncGapReceiver, new IntentFilter(SyncCommand.ACTION_SYNC_GAP));
-    }
-
-    @Override
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(syncGapReceiver);
         stop = true;
         super.onPause();
     }
+
 
     protected boolean isSPMSRSet() {
         return (!TextUtils.isEmpty(getApp().getShopPref().usbMSRName().get()));
@@ -906,16 +901,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (isFinishing() || isDestroyed())
             return;
 
-        supportInvalidateOptionsMenu();
-
-        updateHoldButton();
-
         if (this.orderGuid == null) {
             getSupportLoaderManager().destroyLoader(LOADER_ORDER_TITLE);
         } else {
+            getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
             getSupportLoaderManager().restartLoader(LOADER_ORDER_TITLE, null, orderInfoLoader);
+            updateHoldButton();
+            supportInvalidateOptionsMenu();
         }
-        getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
         getSupportLoaderManager().restartLoader(LOADER_SALE_INCENTIVES, null, saleIncentivesLoader);
     }
 
@@ -2196,6 +2189,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        stop = false;
+        LocalBroadcastManager.getInstance(this).registerReceiver(syncGapReceiver, new IntentFilter(SyncCommand.ACTION_SYNC_GAP));
+    }
+
     private void checkOfflineMode() {
         if (getApp().isTrainingMode())
             return;
@@ -2396,7 +2396,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         Bundle bundle = new Bundle(1);
         bundle.putString(CheckOrderTask.ARG_ORDER_GUID, curOrderGuid);
         getSupportLoaderManager().restartLoader(LOADER_CHECK_ORDER, bundle, new CheckOrderTask());
-        //new CheckOrderTask(curOrderGuid).execute();
     }
 
     @Override
@@ -3024,6 +3023,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     null,
                     null,
                     null,
+                    null,
                     null
             );
             model.availableAmount = model.amount;
@@ -3244,6 +3244,14 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         public void onReceive(Context context, Intent intent) {
             Logger.d("[SYNC GAP] Cashier Activity: restart orders on hold count loader");
             getSupportLoaderManager().restartLoader(LOADER_ORDERS_COUNT, null, ordersCountLoader);
+
+            String curOrderGuid = getApp().getCurrentOrderGuid();
+            if (!TextUtils.isEmpty(curOrderGuid)) {
+                try2LoadActiveOrder(curOrderGuid);
+
+            } else {
+                setupNewOrder();
+            }
         }
 
     };
@@ -3360,5 +3368,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             }
         }
     }
+
 
 }

@@ -42,7 +42,8 @@ public class StopShiftCommand extends AsyncCommand {
                 getAppCommandContext().getEmployeeGuid(),
                 getAppCommandContext().getRegisterId(),
                 null,
-                closeAmount
+                closeAmount,
+                null
         );
 
         return succeeded();

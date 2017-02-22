@@ -1,14 +1,19 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -19,7 +24,7 @@ import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
  */
 public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
 
-    private static final String TABLE_NAME = "CUSTOMER";
+    public static final String TABLE_NAME = "CUSTOMER";
 
     private static final String GUID = "ID";
     private static final String FIRST_NAME = "FIRST_NAME";
@@ -40,10 +45,33 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String NOTES = "NOTES";
     private static final String CUSTOMER_IDENTIFICATION = "CUSTOMER_IDENTIFICATION";
     private static final String LOYALTY_PLAN_ID = "LOYALTY_PLAN_ID";
+    private static final String TMP_LOYALTY_POINTS = "TMP_LOYALTY_POINTS";
     private static final String LOYALTY_BARCODE = "LOYALTY_BARCODE";
 
     @Override
     public CustomerModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(GUID)) ignoreFields.add(ShopStore.CustomerTable.GUID);
+        if (!rs.has(FIRST_NAME)) ignoreFields.add(ShopStore.CustomerTable.FISRT_NAME);
+        if (!rs.has(LAST_NAME)) ignoreFields.add(ShopStore.CustomerTable.LAST_NAME);
+        if (!rs.has(STREET)) ignoreFields.add(ShopStore.CustomerTable.STREET);
+        if (!rs.has(COMPLEMENTARY)) ignoreFields.add(ShopStore.CustomerTable.COMPLEMENTARY);
+        if (!rs.has(CITY)) ignoreFields.add(ShopStore.CustomerTable.CITY);
+        if (!rs.has(STATE)) ignoreFields.add(ShopStore.CustomerTable.STATE);
+        if (!rs.has(COUNTRY)) ignoreFields.add(ShopStore.CustomerTable.COUNTRY);
+        if (!rs.has(ZIP)) ignoreFields.add(ShopStore.CustomerTable.ZIP);
+        if (!rs.has(EMAIL)) ignoreFields.add(ShopStore.CustomerTable.EMAIL);
+        if (!rs.has(PHONE)) ignoreFields.add(ShopStore.CustomerTable.PHONE);
+        if (!rs.has(SEX)) ignoreFields.add(ShopStore.CustomerTable.SEX);
+        if (!rs.has(BIRTHDAY)) ignoreFields.add(ShopStore.CustomerTable.BIRTHDAY);
+        if (!rs.has(BIRTHDAY_REWARD_APPLY_DATE)) ignoreFields.add(ShopStore.CustomerTable.BIRTHDAY_REWARD_APPLY_DATE);
+        if (!rs.has(CREATE_DATE)) ignoreFields.add(ShopStore.CustomerTable.CREATE_TIME);
+        if (!rs.has(CONSENT_EMAIL)) ignoreFields.add(ShopStore.CustomerTable.CONSENT_PROMOTIONS);
+        if (!rs.has(NOTES)) ignoreFields.add(ShopStore.CustomerTable.NOTES);
+        if (!rs.has(CUSTOMER_IDENTIFICATION)) ignoreFields.add(ShopStore.CustomerTable.CUSTOMER_IDENTIFICATION);
+        if (!rs.has(LOYALTY_PLAN_ID)) ignoreFields.add(ShopStore.CustomerTable.LOYALTY_PLAN_ID);
+        if (!rs.has(LOYALTY_BARCODE)) ignoreFields.add(ShopStore.CustomerTable.LOYALTY_BARCODE);
+
         return new CustomerModel(
                 rs.getString(GUID),
                 rs.getString(FIRST_NAME),
@@ -64,7 +92,9 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getString(NOTES),
                 rs.getString(CUSTOMER_IDENTIFICATION),
                 rs.getString(LOYALTY_PLAN_ID),
-                BigDecimal.ZERO, rs.getString(LOYALTY_BARCODE));
+                BigDecimal.ZERO,
+                rs.getString(LOYALTY_BARCODE),
+                ignoreFields);
     }
 
     @Override
@@ -75,6 +105,45 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     @Override
     public String getGuidColumn() {
         return GUID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.CustomerTable.GUID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(CustomerModel model){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(GUID, model.guid)
+                    .put(FIRST_NAME, model.firstName)
+                    .put(LAST_NAME, model.lastName)
+                    .put(STREET, model.street)
+                    .put(COMPLEMENTARY, model.complementary)
+                    .put(CITY, model.city)
+                    .put(STATE, model.state)
+                    .put(COUNTRY, model.country)
+                    .put(ZIP, model.zip)
+                    .put(EMAIL, model.email)
+                    .put(PHONE, model.phone)
+                    .put(SEX, model.sex)
+                    .put(BIRTHDAY, model.birthday)
+                    .put(BIRTHDAY_REWARD_APPLY_DATE, model.birthdayRewardApplyDate)
+                    .put(CREATE_DATE, model.createTime)
+                    .put(CONSENT_EMAIL, model.consentPromotions)
+                    .put(NOTES, model.notes)
+                    .put(CUSTOMER_IDENTIFICATION, model.customerIdentification)
+                    .put(LOYALTY_PLAN_ID, model.loyaltyPlanId)
+                    .put(TMP_LOYALTY_POINTS, model.loyaltyPoints)
+                    .put(LOYALTY_BARCODE, model.loyaltyBarcode);
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -126,6 +195,16 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
+    }
+
+    @Override
+    public SingleSqlCommand deleteSQL(CustomerModel model, IAppCommandContext appCommandContext) {
+        return super.deleteSQL(model, appCommandContext);
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 
     public SingleSqlCommand updateBirthdayRewardDate(CustomerModel model, IAppCommandContext appCommandContext) {

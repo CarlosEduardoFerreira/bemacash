@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.rest.sync.SyncUtil;
 import com.kaching123.tcr.service.DecimalQueryParam;
 import com.kaching123.tcr.service.QueryParam;
 import com.kaching123.tcr.service.SingleSqlCommand;
@@ -22,35 +24,41 @@ import java.util.Date;
  */
 public abstract class JdbcBuilder {
 
-
+    public static final String FIELD_UPDATE_TIME_LOCAL = "UPDATE_TIME_LOCAL";
     public static final String FIELD_UPDATE_TIME = "UPDATE_TIME";
     public static final String FIELD_SHOP_ID = "SHOP_ID";
     public static final String FIELD_IS_DELETED = "IS_DELETED";
 
-    private static final String NULL = "NULL";
-
     protected final String methodPrefix;
     protected final String table;
     protected final String action;
-    protected final ArrayList<Pair> columns = new ArrayList<Pair>();
-    protected final ArrayList<Pair> where = new ArrayList<Pair>();
-    //protected ArrayList<String> where = new ArrayList<String>();
+    protected final ArrayList<Pair> columns = new ArrayList<>();
+    protected final ArrayList<Pair> where = new ArrayList<>();
 
     private JdbcBuilder(String table, String action, String methodPrefix) {
         this.table = table;
         this.action = action;
         this.methodPrefix = methodPrefix;
+
+        if (JdbcFactory.getConverter(table).supportUpdateTimeLocalFlag()){
+            add(FIELD_UPDATE_TIME_LOCAL, SyncUtil.formatMillisec(new Date(TcrApplication.get().getCurrentServerTimestamp())));
+        }
     }
 
-    /*public JdbcBuilder addColumn(String column, String value) {
-        columns.add(new Pair(column, Types.VARCHAR, value));
-        return this
-    }*/
+    public JdbcBuilder add(String column, Object value) {
+        if (value instanceof  String) add(column, (String) value);
+        else if (value instanceof  BigDecimal) add(column, (BigDecimal) value);
+        else if (value instanceof  Boolean) add(column, (boolean) value);
+        else if (value instanceof  Date) add(column, (Date) value);
+        else if (value instanceof  Enum) add(column, (Enum) value);
+        else if (value instanceof  Integer) add(column, (int) value);
+        else if (value instanceof  Long) add(column, (long) value);
+        return this;
+    }
 
     public JdbcBuilder add(String column, String value) {
         columns.add(new Pair(column, Types.VARCHAR, value));
         return this;
-        //return addColumn(column, value == null ? NULL : "'" + value + "'");
     }
 
     public JdbcBuilder add(String column, byte[] value) {
@@ -61,7 +69,6 @@ public abstract class JdbcBuilder {
     public JdbcBuilder add(String column, BigDecimal value) {
         columns.add(new Pair(column, Types.DECIMAL, value));
         return this;
-        //return addColumn(column, _jdbcDecimal(value));
     }
 
     public JdbcBuilder add(String column, BigDecimal value, int decimalScale) {
@@ -72,7 +79,6 @@ public abstract class JdbcBuilder {
     public JdbcBuilder add(String column, boolean value) {
         columns.add(new Pair(column, Types.BOOLEAN, value));
         return this;
-//        return addColumn(column, _jdbcBool(value));
     }
 
     public JdbcBuilder add(String column, Date date) {
@@ -83,42 +89,33 @@ public abstract class JdbcBuilder {
     public JdbcBuilder add(String column, Enum value) {
         columns.add(new Pair(column, Types.VARCHAR, value == null ? null : value.name()));
         return this;
-        //return addColumn(column, _jdbcEnum(value));
     }
 
     public JdbcBuilder add(String column, int value) {
         columns.add(new Pair(column, Types.INTEGER, value));
         return this;
-//        return addColumn(column, String.valueOf(value));
     }
 
     public JdbcBuilder add(String column, long value) {
         columns.add(new Pair(column, Types.BIGINT, value));
         return this;
-        //return addColumn(column, String.valueOf(value));
+    }
+
+    public JdbcBuilder add(String column, Long value) {
+        columns.add(new Pair(column, Types.BIGINT, value));
+        return this;
     }
 
     public JdbcBuilder where(String column, String value) {
         where.add(new Pair(column, Types.VARCHAR, value));
         return this;
-        /*this.where.add(column + " = '" + value + "'");
-        return this;*/
     }
 
     public JdbcBuilder where(String column, long value) {
         where.add(new Pair(column, Types.BIGINT, value));
         return this;
-        /*this.where.add(column + " = " + value);
-        return this;*/
     }
 
-    protected String getWhereString() {
-        if (where.isEmpty())
-            return null;
-        return Joiner.on(" AND ").join(
-                FluentIterable.from(where).transform(new WhereTransformation())
-        );
-    }
 
     protected String buildCmd(){
         JSONObject json = new JSONObject();
@@ -145,6 +142,10 @@ public abstract class JdbcBuilder {
         JSONObject args = new JSONObject();
         for (Pair c : where) {
             args.put(c.column, c.value.isNull() ? JSONObject.NULL : c.value.toJson());
+        }
+
+        if (JdbcFactory.getConverter(table).supportUpdateTimeLocalFlag()){
+            args.put(FIELD_UPDATE_TIME_LOCAL, SyncUtil.formatMillisec(new Date(TcrApplication.get().getCurrentServerTimestamp())));
         }
         return args;
     }
@@ -174,7 +175,7 @@ public abstract class JdbcBuilder {
 
     public static JdbcBuilder _insert(String table, IAppCommandContext appCommandContext) {
         return new InsertBuilder(table)
-                .add(FIELD_SHOP_ID, appCommandContext.getShopId());
+                .add(FIELD_SHOP_ID, appCommandContext != null ? appCommandContext.getShopId() : TcrApplication.get().getShopPref().shopId().get());
     }
 
     public static JdbcBuilder _insert(long shopId, String table) {
@@ -188,25 +189,13 @@ public abstract class JdbcBuilder {
         return builder;
     }
 
+    public static JdbcBuilder _update(String table) {
+        return _update(table, null);
+    }
+
     public static JdbcBuilder _update(String table, IAppCommandContext appCommandContext) {
         return new UpdateBuilder(table);
     }
-
-    /*public static JdbcBuilder _delete(String table){
-        return new DeleteBuilder(table);
-    }*/
-
-    /*private static final class DeleteBuilder extends JdbcBuilder {
-
-        protected DeleteBuilder(String table) {
-            super(table, "delete", JdbcFactory.METHOD_DELETE);
-        }
-
-        @Override
-        protected JSONObject getArgsJson() throws JSONException {
-            return super.getWhereJson();
-        }
-    }*/
 
     private static final class UpdateBuilder extends JdbcBuilder {
 
@@ -233,64 +222,9 @@ public abstract class JdbcBuilder {
 
     public static final class InsertOrUpdateBuilder extends JdbcBuilder {
 
-        /*private final InsertBuilder insert;
-        private final JdbcBuilder update;*/
-
         private InsertOrUpdateBuilder(String table) {
             super(table, "replace", "replace");
-            //insert = (InsertBuilder)_insert(shopId, table);
-            //update = new UpdateBuilder(shopId, table);
-        }
-
-        /*@Override
-        protected JSONObject getArgsJson() throws JSONException {
-            JSONObject insertCmd = insert.getArgsJson();
-            JSONObject updateCmd = update.getArgsJson();
-
-            JSONObject args = new JSONObject();
-            args.put("insert", insertCmd);
-            args.put("update", updateCmd);
-            return args;
-        }
-
-        public JdbcBuilder insert() {
-            return insert;
-        }
-
-        public JdbcBuilder update() {
-            return update;
-        }*/
-    }
-
-    private class WhereTransformation implements Function<Pair, String> {
-
-        @Override
-        public String apply(Pair pair) {
-            return pair.column + " = ?";
         }
     }
 
-    private class ColumnNameTransformation implements Function<Pair, String> {
-
-        @Override
-        public String apply(Pair pair) {
-            return pair.column;
-        }
-    }
-
-    private class ValuePlaceTransformation implements Function<Pair, String> {
-
-        @Override
-        public String apply(Pair pair) {
-            return "?";
-        }
-    }
-
-    private class ValueTransformation implements Function<Pair, QueryParam> {
-
-        @Override
-        public QueryParam apply(Pair pair) {
-            return pair.value;
-        }
-    }
 }

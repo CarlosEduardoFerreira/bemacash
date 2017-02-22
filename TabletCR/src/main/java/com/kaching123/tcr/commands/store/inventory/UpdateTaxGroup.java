@@ -41,7 +41,8 @@ public class UpdateTaxGroup extends AsyncCommand {
                 guid,
                 title,
                 tax,
-                isDefault);
+                isDefault,
+                null);
         return succeeded();
     }
 

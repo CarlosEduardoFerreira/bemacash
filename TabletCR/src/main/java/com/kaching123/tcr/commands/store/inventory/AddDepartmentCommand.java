@@ -26,7 +26,8 @@ public class AddDepartmentCommand extends AsyncCommand {
 	protected TaskResult doCommand() {
         model = new DepartmentModel(
                 UUID.randomUUID().toString(),
-                getArgs().getString(ARG_TITLE));
+                getArgs().getString(ARG_TITLE),
+                null);
 
 		return succeeded().add(RESULT_GUID, model.guid);
 	}

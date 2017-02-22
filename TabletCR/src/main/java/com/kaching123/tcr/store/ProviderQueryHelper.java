@@ -39,7 +39,8 @@ public class ProviderQueryHelper {
         return null;
     }
 
-    static Cursor getMaxUpdateTime(final SQLiteOpenHelper dbHelper, String[] selectionArgs) {
+    static Cursor getMaxUpdateTime(SQLiteOpenHelper dbHelper, String[] selectionArgs) {
+        int i = 1;
         return dbHelper.getReadableDatabase().rawQuery(String.format(Locale.US, MaxUpdateTableTimeQuery.QUERY, selectionArgs), null);
     }
 

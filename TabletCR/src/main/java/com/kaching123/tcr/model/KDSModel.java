@@ -44,6 +44,11 @@ public class KDSModel implements IValueModel, Parcelable {
     }
 
     @Override
+    public String getIdColumn() {
+        return null;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

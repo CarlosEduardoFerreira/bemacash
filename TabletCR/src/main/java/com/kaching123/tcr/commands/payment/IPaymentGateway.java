@@ -37,4 +37,6 @@ public interface IPaymentGateway<T extends Transaction<T>, E> {
     public BigDecimal minimalAmount();
 
     public T createTransaction(Context context, BigDecimal amount, String orderGuid);
+
+    public boolean  enabled();
 }

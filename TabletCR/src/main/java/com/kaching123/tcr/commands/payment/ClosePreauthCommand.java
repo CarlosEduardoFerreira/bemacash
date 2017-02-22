@@ -97,7 +97,8 @@ public class ClosePreauthCommand extends AsyncCommand {
                 new Date(),
                 tipsAmount,
                 tipsComments,
-                PaymentType.CREDIT
+                PaymentType.CREDIT,
+                null
         ), getAppCommandContext());
         return addTipsResult != null;
     }

@@ -6,13 +6,14 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by vkompaniets on 23.08.2016.
  */
 public class MultipleDiscountJdbcConverter extends JdbcConverter<MultipleDiscountModel> {
 
-    private static final String TABLE_NAME = "MULTIPLE_DISCOUNT_ITEM_VIEW";
+    public static final String TABLE_NAME = "MULTIPLE_DISCOUNT_ITEM_VIEW";
 
     private static final String ID = "ID";
     private static final String BUNDLE_ID = "MULTIPLE_DISCOUNT_ID";
@@ -41,6 +42,16 @@ public class MultipleDiscountJdbcConverter extends JdbcConverter<MultipleDiscoun
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getJSONObject(MultipleDiscountModel model) {
+        return null;
     }
 
     @Override

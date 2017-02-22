@@ -84,7 +84,7 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
 
         batch.add(permissionJdbcConverter.disableAllSQL(model.guid, getAppCommandContext()));
         for (Permission p : permissions) {
-            batch.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true), getAppCommandContext()));
+            batch.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true, null), getAppCommandContext()));
         }
         return batch;
     }

@@ -27,7 +27,8 @@ public class AddPrinterAliasCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         model = new PrinterAliasModel(
                 UUID.randomUUID().toString(),
-                getArgs().getString(ARG_TITLE)
+                getArgs().getString(ARG_TITLE),
+                null
         );
 
         return succeeded();

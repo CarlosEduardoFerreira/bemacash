@@ -2,6 +2,7 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PrinterTable;
 
 import java.io.Serializable;
@@ -52,5 +53,10 @@ public class PrinterModel implements IValueModel, Serializable{
         values.put(PrinterTable.ALIAS_GUID, aliasGuid);
         values.put(PrinterTable.PRINTER_TYPE, printerType);
         return values;
+    }
+
+    @Override
+    public String getIdColumn() {
+        return ShopStore.RegisterTable.ID;
     }
 }

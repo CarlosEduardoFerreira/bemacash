@@ -248,6 +248,11 @@ public class WirelessItem implements IValueModel, Serializable {
     }
 
     @Override
+    public String getIdColumn() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return name;
     }

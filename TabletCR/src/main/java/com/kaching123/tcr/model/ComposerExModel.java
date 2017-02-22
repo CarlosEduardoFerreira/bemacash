@@ -32,7 +32,7 @@ public class ComposerExModel extends ComposerModel {
                            boolean freeOfChargeComposer,
                            ItemExModel childItem,
                            ItemExModel hostItem) {
-        super(guid, itemHostId, itemChildId, qty, storeTrackingEnabled, freeOfChargeComposer);
+        super(guid, itemHostId, itemChildId, qty, storeTrackingEnabled, freeOfChargeComposer, null);
         this.hostItem = hostItem;
         this.childItem = childItem;
     }

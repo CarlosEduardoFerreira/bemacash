@@ -39,7 +39,12 @@ public class CreateCreditReceiptCommand extends AsyncCommand {
 
     private CreditReceiptModel model;
 
-    public static CreditReceiptModel createCreditReceiptModel(Context context, BigDecimal amount, int creditReceiptExpireTime, String operatorGuid, long registerId, String shiftGuid) {
+    public static CreditReceiptModel createCreditReceiptModel(Context context,
+                                                              BigDecimal amount,
+                                                              int creditReceiptExpireTime,
+                                                              String operatorGuid,
+                                                              long registerId,
+                                                              String shiftGuid) {
         CreditReceiptModel receiptModel = new CreditReceiptModel(
                 UUID.randomUUID().toString(),
                 operatorGuid,
@@ -48,7 +53,8 @@ public class CreateCreditReceiptCommand extends AsyncCommand {
                 new Date(),
                 amount,
                 getNextPrintNumber(context, registerId),
-                creditReceiptExpireTime
+                creditReceiptExpireTime,
+                null
         );
         return receiptModel;
     }

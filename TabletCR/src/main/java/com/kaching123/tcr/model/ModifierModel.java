@@ -2,15 +2,19 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.converter.IntegerFunction;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ModifierTable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
@@ -37,13 +41,15 @@ public class ModifierModel implements IValueModel, IOrderedModel, Serializable {
     // items could be grouped
     public String modifierGroupGuid;
 
+    private List<String> mIgnoreFields;
+
     public ModifierModel(String modifierGuid, String itemGuid,
                          ModifierType type, String title, BigDecimal cost,
                          String childItemGuid,
                          BigDecimal childItemQty,
                          String modifierGroupGuid,
                          boolean autoApply,
-                         int orderNum) {
+                         int orderNum, List<String> ignoreFields) {
         this.modifierGuid = modifierGuid;
         this.itemGuid = itemGuid;
         this.type = type;
@@ -54,6 +60,24 @@ public class ModifierModel implements IValueModel, IOrderedModel, Serializable {
         this.modifierGroupGuid = modifierGroupGuid;
         this.autoApply = autoApply;
         this.orderNum = orderNum;
+
+        this.mIgnoreFields = ignoreFields;
+    }
+
+    public ModifierModel(Cursor c) {
+        this(
+                c.getString(c.getColumnIndex(ModifierTable.MODIFIER_GUID)),
+                c.getString(c.getColumnIndex(ModifierTable.ITEM_GUID)),
+                _enum(ModifierType.class, c.getString(c.getColumnIndex(ModifierTable.TYPE)), ModifierType.ADDON),
+                c.getString(c.getColumnIndex(ModifierTable.TITLE)),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ModifierTable.EXTRA_COST))),
+                c.getString(c.getColumnIndex(ModifierTable.ITEM_SUB_GUID)),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ModifierTable.ITEM_SUB_QTY))),
+                c.getString(c.getColumnIndex(ModifierTable.ITEM_GROUP_GUID)),
+                false,
+                c.getInt(c.getColumnIndex(ShopStore.ItemTable.ORDER_NUM)),
+                null
+        );
     }
 
     public ModifierModel() {
@@ -77,23 +101,24 @@ public class ModifierModel implements IValueModel, IOrderedModel, Serializable {
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
-        values.put(ModifierTable.MODIFIER_GUID, modifierGuid);
-        values.put(ModifierTable.ITEM_GUID, itemGuid);
-        values.put(ModifierTable.ITEM_GROUP_GUID, modifierGroupGuid);
-        values.put(ModifierTable.ITEM_SUB_GUID, childItemGuid);
-        values.put(ModifierTable.ITEM_SUB_QTY, _decimalQty(childItemQty));
-        values.put(ModifierTable.TYPE, _enum(type));
-        values.put(ModifierTable.TITLE, title);
-        values.put(ModifierTable.EXTRA_COST, _decimal(cost));
-        values.put(ModifierTable.AUTO_APPLY, autoApply);
-        values.put(ModifierTable.ORDER_NUM, orderNum);
+        values.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.MODIFIER_GUID)) values.put(ModifierTable.MODIFIER_GUID, modifierGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.ITEM_GUID)) values.put(ModifierTable.ITEM_GUID, itemGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.ITEM_GROUP_GUID)) values.put(ModifierTable.ITEM_GROUP_GUID, modifierGroupGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.ITEM_SUB_GUID)) values.put(ModifierTable.ITEM_SUB_GUID, childItemGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.ITEM_SUB_QTY)) values.put(ModifierTable.ITEM_SUB_QTY, _decimalQty(childItemQty));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.TYPE)) values.put(ModifierTable.TYPE, _enum(type));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.TITLE)) values.put(ModifierTable.TITLE, title);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.EXTRA_COST)) values.put(ModifierTable.EXTRA_COST, _decimal(cost));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.AUTO_APPLY)) values.put(ModifierTable.AUTO_APPLY, autoApply);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ModifierTable.ORDER_NUM)) values.put(ModifierTable.ORDER_NUM, orderNum);
         return values;
     }
 
-    public static ContentValues toClearGroupValue() {
-        ContentValues values = new ContentValues();
-        values.put(ModifierTable.ITEM_GROUP_GUID, (String)null);
-        return values;
+    @Override
+    public String getIdColumn() {
+        return ModifierTable.MODIFIER_GUID;
     }
 
     public static int getMaxOrderNum(Context context, ModifierType type, String itemGuid, String modifierGroupGuid){

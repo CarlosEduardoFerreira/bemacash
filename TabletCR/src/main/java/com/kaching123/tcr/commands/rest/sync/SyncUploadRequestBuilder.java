@@ -55,6 +55,12 @@ public class SyncUploadRequestBuilder {
         return context.getString(R.string.app_version_format, version.name, version.code);
     }
 
+    public static boolean hasHtmlInCommand(String command){
+        return command.toLowerCase().contains("sat_response")
+                && command.toLowerCase().contains("sale_order")
+                && command.toLowerCase().contains("<html>");
+    }
+
     public static JSONObject getUploadObject(List<UploadCommand> commands) throws JSONException {
         //JSONObject request = createHeader(employeeModel, app);
 

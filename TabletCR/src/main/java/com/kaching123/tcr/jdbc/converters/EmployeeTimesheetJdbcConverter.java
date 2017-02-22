@@ -1,12 +1,18 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.EmployeeTimesheetModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -16,7 +22,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
  */
 public class EmployeeTimesheetJdbcConverter extends JdbcConverter<EmployeeTimesheetModel> {
 
-    private static final String TABLE_NAME = "EMPLOYEE_TIMESHEET";
+    public static final String TABLE_NAME = "EMPLOYEE_TIMESHEET";
 
     private static final String ID = "ID";
     private static final String EMPLOYEE_ID = "EMPLOYEE_ID";
@@ -25,11 +31,18 @@ public class EmployeeTimesheetJdbcConverter extends JdbcConverter<EmployeeTimesh
 
     @Override
     public EmployeeTimesheetModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(ID)) ignoreFields.add(ShopStore.EmployeeTimesheetTable.GUID);
+        if (!rs.has(CLOCK_IN)) ignoreFields.add(ShopStore.EmployeeTimesheetTable.CLOCK_IN);
+        if (!rs.has(CLOCK_OUT)) ignoreFields.add(ShopStore.EmployeeTimesheetTable.CLOCK_OUT);
+        if (!rs.has(EMPLOYEE_ID)) ignoreFields.add(ShopStore.EmployeeTimesheetTable.EMPLOYEE_GUID);
+
         return new EmployeeTimesheetModel(
                 rs.getString(ID),
                 rs.getDate(CLOCK_IN),
                 rs.getDate(CLOCK_OUT),
-                rs.getString(EMPLOYEE_ID)
+                rs.getString(EMPLOYEE_ID),
+                ignoreFields
         );
     }
 
@@ -41,6 +54,29 @@ public class EmployeeTimesheetJdbcConverter extends JdbcConverter<EmployeeTimesh
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.EmployeeTimesheetTable.GUID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(EmployeeTimesheetModel model){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(EMPLOYEE_ID, model.employeeGuid)
+                    .put(CLOCK_IN, model.clockIn)
+                    .put(CLOCK_OUT, model.clockOut);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -67,6 +103,11 @@ public class EmployeeTimesheetJdbcConverter extends JdbcConverter<EmployeeTimesh
                 .add(CLOCK_OUT, model.clockOut)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 
 }

@@ -34,4 +34,9 @@ public class TBPxRegisterModel implements IValueModel, Serializable {
         cv.put(TBPxRegisterTable.REGISTER_ID, registerId);
         return cv;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

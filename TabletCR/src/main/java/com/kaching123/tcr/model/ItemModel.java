@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.model.converter.IntegerFunction;
 import com.kaching123.tcr.model.converter.ItemFunction;
@@ -16,6 +17,7 @@ import com.kaching123.tcr.util.UnitUtil;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -24,6 +26,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._max;
 import static com.kaching123.tcr.model.ContentValuesUtil._putDiscount;
 import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
 import static com.kaching123.tcr.model.ContentValuesUtil._putItemRefType;
+import static com.kaching123.tcr.util.ContentValuesUtilBase._enum;
 
 public class ItemModel extends BaseItemModel implements Serializable, IValueModel {
 
@@ -78,6 +81,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public boolean excludeFromLoyaltyPlan;
     public boolean isEbtEligible;
 
+    private List<String> mIgnoreFields;
+
     public ItemModel() {
         this.guid = UUID.randomUUID().toString();
     }
@@ -127,7 +132,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      ItemRefType refType,
                      BigDecimal loyaltyPoints,
                      boolean excludeFromLoyaltyPlan,
-                     boolean isEbtEligible) {
+                     boolean isEbtEligible,
+                     List<String> ignoreFields) {
         super();
         this.guid = guid;
         this.categoryId = categoryId;
@@ -172,6 +178,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.loyaltyPoints = loyaltyPoints;
         this.excludeFromLoyaltyPlan = excludeFromLoyaltyPlan;
         this.isEbtEligible = isEbtEligible;
+
+        this.mIgnoreFields = ignoreFields;
     }
 
     public ItemModel(ItemModel itemModel) {
@@ -221,6 +229,57 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.isEbtEligible = itemModel.isEbtEligible;
     }
 
+
+    public ItemModel(Cursor c) {
+        this(
+                c.getString(c.getColumnIndex(ItemTable.GUID)),
+                c.getString(c.getColumnIndex(ItemTable.CATEGORY_ID)),
+                c.getString(c.getColumnIndex(ItemTable.DESCRIPTION)),
+                c.getString(c.getColumnIndex(ItemTable.CODE)),
+                c.getString(c.getColumnIndex(ItemTable.EAN_CODE)),
+                c.getString(c.getColumnIndex(ItemTable.PRODUCT_CODE)),
+                _enum(PriceType.class, c.getString(c.getColumnIndex(ItemTable.PRICE_TYPE)), PriceType.OPEN),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.SALE_PRICE))),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.SALE_PRICE))),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.SALE_PRICE))),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.SALE_PRICE))),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.SALE_PRICE))),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.SALE_PRICE))),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.TMP_AVAILABLE_QTY))),
+                c.getString(c.getColumnIndex(ItemTable.UNIT_LABEL_ID)),
+                c.getInt(c.getColumnIndex(ItemTable.STOCK_TRACKING)) == 1,
+                c.getInt(c.getColumnIndex(ItemTable.LIMIT_QTY)) == 1,
+                c.getInt(c.getColumnIndex(ItemTable.ACTIVE_STATUS)) == 1,
+                c.getInt(c.getColumnIndex(ItemTable.DISCOUNTABLE)) == 1,
+                c.getInt(c.getColumnIndex(ItemTable.SALABLE)) == 1,
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.DISCOUNT))),
+                _enum(DiscountType.class, c.getString(c.getColumnIndex(ItemTable.DISCOUNT_TYPE)), DiscountType.PERCENT),
+                c.getInt(c.getColumnIndex(ItemTable.TAXABLE)) == 1,
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.COST))),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.MINIMUM_QTY))),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.RECOMMENDED_QTY))),
+                c.getString(c.getColumnIndex(ItemTable.UPDATE_QTY_FLAG)),
+                c.getString(c.getColumnIndex(ItemTable.TAX_GROUP_GUID)),
+                c.getString(c.getColumnIndex(ItemTable.TAX_GROUP_GUID2)),
+                c.getInt(c.getColumnIndex(ItemTable.ORDER_NUM)),
+                c.getString(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
+                c.getInt(c.getColumnIndex(ItemTable.BUTTON_VIEW)),
+                c.getInt(c.getColumnIndex(ItemTable.HAS_NOTES)) == 1,
+                c.getInt(c.getColumnIndex(ItemTable.SERIALIZABLE)) == 1,
+                _enum(CodeType.class, c.getString(c.getColumnIndex(ItemTable.CODE_TYPE)), null),
+                c.getInt(c.getColumnIndex(ItemTable.ELIGIBLE_FOR_COMMISSION)) == 1,
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.COMMISSION))),
+                c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
+                ItemRefType.valueOf(c.getString(c.getColumnIndex(ItemTable.ITEM_REF_TYPE))),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.LOYALTY_POINTS))),
+                c.getInt(c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)) == 1,
+                c.getInt(c.getColumnIndex(ItemTable.EBT_ELIGIBLE)) == 1,
+                null
+        );
+
+    }
+
+
     public static int getMaxOrderNum(Context context, String categoryId){
         Integer i = ProviderAction.query(ShopProvider.contentUri(ItemTable.URI_CONTENT))
                 .projection(_max(ItemTable.ORDER_NUM))
@@ -244,48 +303,55 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
-        values.put(ItemTable.GUID, guid);
-        values.put(ItemTable.CATEGORY_ID, categoryId);
-        values.put(ItemTable.DESCRIPTION, description);
-        values.put(ItemTable.CODE, code);
-        values.put(ItemTable.EAN_CODE, eanCode);
-        values.put(ItemTable.PRODUCT_CODE, productCode);
-        values.put(ItemTable.PRICE_TYPE, priceType.ordinal());
-        values.put(ItemTable.SALE_PRICE, _decimal(price));
-        values.put(ItemTable.PRICE_1, _decimal(price1));
-        values.put(ItemTable.PRICE_2, _decimal(price2));
-        values.put(ItemTable.PRICE_3, _decimal(price3));
-        values.put(ItemTable.PRICE_4, _decimal(price4));
-        values.put(ItemTable.PRICE_5, _decimal(price5));
-        values.put(ItemTable.UNIT_LABEL_ID, unitsLabelId);
-        values.put(ItemTable.STOCK_TRACKING, isStockTracking);
-        values.put(ItemTable.LIMIT_QTY, limitQty);
-        values.put(ItemTable.ACTIVE_STATUS, isActiveStatus);
-        values.put(ItemTable.DISCOUNTABLE, isDiscountable);
-        values.put(ItemTable.SALABLE, isSalable);
-        values.put(ItemTable.DISCOUNT, _decimal(discount));
-        _putDiscount(values, ItemTable.DISCOUNT_TYPE, discountType);
-        values.put(ItemTable.TAXABLE, isTaxable);
-        values.put(ItemTable.COST, _decimal(cost));
-        values.put(ItemTable.MINIMUM_QTY, _decimalQty(minimumQty));
-        values.put(ItemTable.RECOMMENDED_QTY, _decimalQty(recommendedQty));
-        values.put(ItemTable.UPDATE_QTY_FLAG, updateQtyFlag);
-        values.put(ItemTable.TAX_GROUP_GUID, taxGroupGuid);
-        values.put(ItemTable.TAX_GROUP_GUID2, taxGroupGuid2);
-        values.put(ItemTable.ORDER_NUM, orderNum);
-        values.put(ItemTable.PRINTER_ALIAS_GUID, printerAliasGuid);
-        values.put(ItemTable.BUTTON_VIEW, btnView);
-        values.put(ItemTable.HAS_NOTES, hasNotes);
-        values.put(ItemTable.SERIALIZABLE, serializable);
-        _putEnum(values, ItemTable.CODE_TYPE, codeType);
-        values.put(ItemTable.ELIGIBLE_FOR_COMMISSION, commissionEligible);
-        values.put(ItemTable.COMMISSION, _decimal(commission));
-        _putItemRefType(values, ItemTable.ITEM_REF_TYPE, refType);
-        values.put(ItemTable.REFERENCE_ITEM_ID, referenceItemGuid);
-        values.put(ItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
-        values.put(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN, excludeFromLoyaltyPlan);
-        values.put(ItemTable.EBT_ELIGIBLE, isEbtEligible);
+        values.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.GUID)) values.put(ItemTable.GUID, guid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.CATEGORY_ID)) values.put(ItemTable.CATEGORY_ID, categoryId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.DESCRIPTION)) values.put(ItemTable.DESCRIPTION, description);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.CODE)) values.put(ItemTable.CODE, code);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.EAN_CODE)) values.put(ItemTable.EAN_CODE, eanCode);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.PRODUCT_CODE)) values.put(ItemTable.PRODUCT_CODE, productCode);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.PRICE_TYPE)) values.put(ItemTable.PRICE_TYPE, priceType.ordinal());
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.SALE_PRICE)) values.put(ItemTable.SALE_PRICE, _decimal(price));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.PRICE_1)) values.put(ItemTable.PRICE_1, _decimal(price1));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.PRICE_2)) values.put(ItemTable.PRICE_2, _decimal(price2));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.PRICE_3)) values.put(ItemTable.PRICE_3, _decimal(price3));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.PRICE_4)) values.put(ItemTable.PRICE_4, _decimal(price4));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.PRICE_5)) values.put(ItemTable.PRICE_5, _decimal(price5));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.UNIT_LABEL_ID)) values.put(ItemTable.UNIT_LABEL_ID, unitsLabelId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.STOCK_TRACKING)) values.put(ItemTable.STOCK_TRACKING, isStockTracking);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.LIMIT_QTY)) values.put(ItemTable.LIMIT_QTY, limitQty);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.ACTIVE_STATUS)) values.put(ItemTable.ACTIVE_STATUS, isActiveStatus);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.DISCOUNTABLE)) values.put(ItemTable.DISCOUNTABLE, isDiscountable);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.SALABLE)) values.put(ItemTable.SALABLE, isSalable);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.DISCOUNT)) values.put(ItemTable.DISCOUNT, _decimal(discount));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.DISCOUNT_TYPE)) _putDiscount(values, ItemTable.DISCOUNT_TYPE, discountType);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.DISCOUNT_TYPE)) values.put(ItemTable.DISCOUNT_TYPE, isTaxable);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.COST)) values.put(ItemTable.COST, _decimal(cost));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.MINIMUM_QTY)) values.put(ItemTable.MINIMUM_QTY, _decimalQty(minimumQty));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.RECOMMENDED_QTY)) values.put(ItemTable.RECOMMENDED_QTY, _decimalQty(recommendedQty));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.UPDATE_QTY_FLAG)) values.put(ItemTable.UPDATE_QTY_FLAG, updateQtyFlag);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.TAX_GROUP_GUID)) values.put(ItemTable.TAX_GROUP_GUID, taxGroupGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.TAX_GROUP_GUID2)) values.put(ItemTable.TAX_GROUP_GUID2, taxGroupGuid2);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.ORDER_NUM)) values.put(ItemTable.ORDER_NUM, orderNum);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.PRINTER_ALIAS_GUID)) values.put(ItemTable.PRINTER_ALIAS_GUID, printerAliasGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.BUTTON_VIEW)) values.put(ItemTable.BUTTON_VIEW, btnView);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.HAS_NOTES)) values.put(ItemTable.HAS_NOTES, hasNotes);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.SERIALIZABLE)) values.put(ItemTable.SERIALIZABLE, serializable);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.CODE_TYPE)) _putEnum(values, ItemTable.CODE_TYPE, codeType);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.ELIGIBLE_FOR_COMMISSION)) values.put(ItemTable.ELIGIBLE_FOR_COMMISSION, commissionEligible);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.COMMISSION)) values.put(ItemTable.COMMISSION, _decimal(commission));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.ITEM_REF_TYPE)) _putItemRefType(values, ItemTable.ITEM_REF_TYPE, refType);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.REFERENCE_ITEM_ID)) values.put(ItemTable.REFERENCE_ITEM_ID, referenceItemGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.LOYALTY_POINTS)) values.put(ItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)) values.put(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN, excludeFromLoyaltyPlan);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.EBT_ELIGIBLE)) values.put(ItemTable.EBT_ELIGIBLE, isEbtEligible);
         return values;
+    }
+
+    @Override
+    public String getIdColumn() {
+        return ItemTable.GUID;
     }
 
     @Override
@@ -295,6 +361,8 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
 
     public ContentValues toQtyValues() {
         ContentValues values = new ContentValues();
+        values.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
         values.put(ItemTable.TMP_AVAILABLE_QTY, _decimalQty(availableQty));
         values.put(ItemTable.COST, _decimal(cost));
         return values;

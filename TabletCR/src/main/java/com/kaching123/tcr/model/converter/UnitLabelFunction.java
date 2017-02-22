@@ -16,7 +16,8 @@ public class UnitLabelFunction implements Function<Cursor, UnitLabelModel> {
         return new UnitLabelModel(
                 c.getString(c.getColumnIndex(UnitLabelTable.GUID)),
                 c.getString(c.getColumnIndex(UnitLabelTable.DESCRIPTION)),
-                c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT))
+                c.getString(c.getColumnIndex(UnitLabelTable.SHORTCUT)),
+                null
         );
     }
 }

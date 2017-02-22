@@ -30,7 +30,7 @@ public class ModifierExModel extends ModifierModel {
                            ItemExModel childItem,
                            boolean autoApply,
                            int orderNum) {
-        super(modifierGuid, itemGuid, type, title, cost, childItemGuid, childItemQty, modifierGroupGuid, autoApply, orderNum);
+        super(modifierGuid, itemGuid, type, title, cost, childItemGuid, childItemQty, modifierGroupGuid, autoApply, orderNum, null);
         this.group = group;
         this.childItem = childItem;
     }
@@ -71,4 +71,9 @@ public class ModifierExModel extends ModifierModel {
    public boolean isDefaultWithinGroupOrItem(ItemModel hostItem) {
        return false;
    }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

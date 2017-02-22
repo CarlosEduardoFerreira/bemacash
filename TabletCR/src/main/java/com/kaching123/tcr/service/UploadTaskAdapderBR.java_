@@ -1,0 +1,675 @@
+package com.kaching123.tcr.service;
+
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
+
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.rest.sync.DownloadSyncFile;
+import com.kaching123.tcr.commands.rest.sync.GetResponseUploadBatch;
+import com.kaching123.tcr.commands.rest.sync.GetResponseUploadBatchStatus;
+import com.kaching123.tcr.commands.rest.sync.SyncApi;
+import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
+import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.CashDrawerMovementJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.CategoryJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.CestJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.CommissionsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ComposerJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.CountryJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.CreditReceiptJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.CstPisCofinsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.CustomerJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.DanfeJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.DepartmentJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.EmployeeJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.EmployeeTimesheetJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ItemMatrixJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ItemsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ItemsModifierGroupsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ItemsModifiersJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ItemsMovementJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.jdbc.converters.MunicipalityJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.NcmFavoritesJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.NcmJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.PrinterAliasJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.RegisterJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.SaleOrderItemAddonJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.SaleOrderItemJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ShiftJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.StateJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.TaxGroupJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.TipsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.UnitLabelJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.UnitsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.VariantItemJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.VariantSubItemJdbcConverter;
+import com.kaching123.tcr.model.CardBrandModel;
+import com.kaching123.tcr.model.CashDrawerMovementModel;
+import com.kaching123.tcr.model.CategoryModel;
+import com.kaching123.tcr.model.CestModel;
+import com.kaching123.tcr.model.CfopReturnMappingModel;
+import com.kaching123.tcr.model.CommissionsModel;
+import com.kaching123.tcr.model.ComposerModel;
+import com.kaching123.tcr.model.CountryModel;
+import com.kaching123.tcr.model.CreditReceiptModel;
+import com.kaching123.tcr.model.CstPisCofinsModel;
+import com.kaching123.tcr.model.CustomerModel;
+import com.kaching123.tcr.model.CustomerOrderModel;
+import com.kaching123.tcr.model.DepartmentModel;
+import com.kaching123.tcr.model.EmployeeModel;
+import com.kaching123.tcr.model.EmployeePermissionModel;
+import com.kaching123.tcr.model.EmployeeTimesheetModel;
+import com.kaching123.tcr.model.IValueModel;
+import com.kaching123.tcr.model.ItemMatrixModel;
+import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.ItemMovementModel;
+import com.kaching123.tcr.model.ModifierGroupModel;
+import com.kaching123.tcr.model.ModifierModel;
+import com.kaching123.tcr.model.MunicipalityModel;
+import com.kaching123.tcr.model.NCMFavoritesModel;
+import com.kaching123.tcr.model.NCMTaxModel;
+import com.kaching123.tcr.model.PaymentServiceProviderModel;
+import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.PrinterAliasModel;
+import com.kaching123.tcr.model.RegisterModel;
+import com.kaching123.tcr.model.SaleComposerModel;
+import com.kaching123.tcr.model.SaleModifierModel;
+import com.kaching123.tcr.model.SaleOrderItemModel;
+import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.model.ShiftModel;
+import com.kaching123.tcr.model.ShopModuleModel;
+import com.kaching123.tcr.model.StateModel;
+import com.kaching123.tcr.model.TableHistoryModel;
+import com.kaching123.tcr.model.TableOrderModel;
+import com.kaching123.tcr.model.TaxGroupModel;
+import com.kaching123.tcr.model.TipsModel;
+import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.model.UnitLabelModel;
+import com.kaching123.tcr.model.VariantItemModel;
+import com.kaching123.tcr.model.VariantSubItemModel;
+import com.kaching123.tcr.model.converter.CardBrandJdbcConverter;
+import com.kaching123.tcr.model.converter.CfopReturnMappingConverter;
+import com.kaching123.tcr.model.converter.CustomerOrderJdbcConverter;
+import com.kaching123.tcr.model.converter.PaymentServiceProviderConverter;
+import com.kaching123.tcr.model.converter.SaleComposerJdbcConverter;
+import com.kaching123.tcr.model.converter.ShopModuleJdbcConverter;
+import com.kaching123.tcr.model.converter.TableHistoryJdbcConverter;
+import com.kaching123.tcr.model.converter.TableOrderJdbcConverter;
+import com.kaching123.tcr.model.payment.danfe.Danfe;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.SqlCommandTable;
+import com.kaching123.tcr.util.IOUtil;
+import retrofit.mime.TypedFile;
+
+import static com.kaching123.tcr.service.LocalSyncHelper.getContentValuesAndGuidColumn;
+
+class UploadTaskAdapderBR {
+
+    private static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.contentUriNoNotify(SqlCommandTable.URI_CONTENT);
+    private static final Uri URI_SQL_COMMAND_HOST_NO_NOTIFY = ShopProvider.contentUriNoNotify(ShopStore.SqlCommandHostTable.URI_CONTENT);
+
+    private static final int BATCH_SIZE = 100;
+    private static final int MAX_FILE_PER_PACKAGE = 3;
+    private static final int POLLING_UPLOAD_STATUS = 3000;
+    private static final int UPLOAD_TIMEOUT = 5 * 60000; //5 min
+
+    private UploadTask mUploadTask;
+    private String mRequestId;
+    private int mMaxFiles;
+    private int mProcessedFiles;
+
+    UploadTaskAdapderBR(UploadTask uploadTask){
+        this.mUploadTask = uploadTask;
+    }
+
+    protected String getShopId() {
+        return String.valueOf(TcrApplication.get().getShopPref().shopId().get());
+    }
+
+    boolean webApiUpload(ContentResolver cr, boolean fromSQLHost) throws SyncCommand.SyncLockedException,
+            JSONException, IOException, SyncCommand.SyncInterruptedException {
+        Boolean success = null;
+
+        while (success == null){
+            success = webApiUploadBatch(cr, fromSQLHost);
+        }
+
+        return success;
+    }
+
+    private Boolean webApiUploadBatch(ContentResolver cr, boolean fromSQLHost) throws SyncCommand.SyncLockedException,
+            JSONException, IOException, SyncCommand.SyncInterruptedException {
+
+        if (TcrApplication.get().isTrainingMode()) {
+            return true;
+        }
+
+        checkForceCancel();
+
+        String[] selections = fromSQLHost ? new String[]{ShopStore.SqlCommandHostTable.SQL_COMMAND} : new String[]{SqlCommandTable.ID, SqlCommandTable.SQL_COMMAND};
+        try (
+                Cursor c = cr.query(fromSQLHost ? URI_SQL_COMMAND_HOST_NO_NOTIFY : URI_SQL_COMMAND_NO_NOTIFY, selections,
+                        fromSQLHost ? null : SqlCommandTable.IS_SENT + " = 0", null,
+                        fromSQLHost ? null : SqlCommandTable.ID)
+        ) {
+            if (c == null) return true;
+
+            if (mMaxFiles == 0){
+                mMaxFiles = c.getCount() / BATCH_SIZE;
+                if (mMaxFiles == 0) mMaxFiles = 1;
+                Logger.d("UploadTaskAdapderBR: Upload " + mMaxFiles + " files. " + MAX_FILE_PER_PACKAGE + " at time");
+            }
+            String fileId = UUID.randomUUID().toString();
+            String path = TcrApplication.get().getCacheDir().getAbsolutePath() + "/" + fileId;
+            File dir = new File(path);
+            if (!dir.mkdir()){
+                return false;
+            }
+
+            int count = 1;
+            int hostId = 0;
+            JSONArray transactions = new JSONArray();
+            while (c.moveToNext() && (fromSQLHost || count <= MAX_FILE_PER_PACKAGE)) {
+                checkForceCancel();
+
+                String stringCommand = fromSQLHost ? c.getString(0) : c.getString(1);
+                if (!SyncUploadRequestBuilder.hasHtmlInCommand(stringCommand)) {
+                    JSONObject command = new JSONObject(stringCommand);
+
+                    hostId++;
+                    Long id = fromSQLHost ? hostId : c.getLong(0);
+                    command.put("id", id);
+
+                    transactions.put(command);
+                }
+
+                if (c.isLast() || transactions.length() >= BATCH_SIZE -1) {
+                    String filename = String.format(Locale.US, "%010d.json", count);
+                    File file = new File(path, filename);
+                    FileWriter writer = new FileWriter(file);
+                    writer.append(transactions.toString());
+                    writer.flush();
+                    writer.close();
+
+                    count++;
+                    transactions = new JSONArray();
+                }
+            }
+
+            if (count == 1) {
+                IOUtil.deleteRecursive(dir);
+                return true;
+            }
+
+            zipFileAtPath(path, path + ".zip");
+            IOUtil.deleteRecursive(dir);
+
+            File fileToUpload = new File(path + ".zip");
+            Boolean success = null;
+            try {
+                success = try2Upload(cr, fileToUpload, fileId, fromSQLHost) ? null : false;
+
+            }finally {
+                IOUtil.deleteRecursive(fileToUpload);
+            }
+            return success;
+        }
+    }
+
+    private boolean zipFileAtPath(String sourcePath, String toLocation) {
+        final int BUFFER = 2048;
+
+        File sourceFile = new File(sourcePath);
+        try {
+            BufferedInputStream origin;
+            FileOutputStream dest = new FileOutputStream(toLocation);
+            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
+                    dest));
+            if (sourceFile.isDirectory()) {
+                zipSubFolder(out, sourceFile, sourceFile.getParent().length());
+            } else {
+                byte data[] = new byte[BUFFER];
+                FileInputStream fi = new FileInputStream(sourcePath);
+                origin = new BufferedInputStream(fi, BUFFER);
+                ZipEntry entry = new ZipEntry(getLastPathComponent(sourcePath));
+                out.putNextEntry(entry);
+                int count;
+                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+            }
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    private void zipSubFolder(ZipOutputStream out, File folder,
+                              int basePathLength) throws IOException {
+
+        final int BUFFER = 2048;
+
+        File[] fileList = folder.listFiles();
+        BufferedInputStream origin;
+        for (File file : fileList) {
+            if (file.isDirectory()) {
+                zipSubFolder(out, file, basePathLength);
+            } else {
+                byte data[] = new byte[BUFFER];
+                String unmodifiedFilePath = file.getPath();
+                String relativePath = unmodifiedFilePath
+                        .substring(basePathLength);
+                FileInputStream fi = new FileInputStream(unmodifiedFilePath);
+                origin = new BufferedInputStream(fi, BUFFER);
+                ZipEntry entry = new ZipEntry(relativePath);
+                out.putNextEntry(entry);
+                int count;
+                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+                origin.close();
+            }
+        }
+    }
+
+    private String getLastPathComponent(String filePath) {
+        String[] segments = filePath.split("/");
+        if (segments.length == 0)
+            return "";
+        return segments[segments.length - 1];
+    }
+
+    private boolean try2Upload(ContentResolver cr, File file, String fileId, boolean fromSQLHost) throws SyncCommand.SyncLockedException, JSONException, SyncCommand.SyncInterruptedException, IOException {
+        TcrApplication app = TcrApplication.get();
+        EmployeeModel employeeModel = app.getOperator();
+        if (employeeModel == null) {
+            Logger.e("[UploadWeb] user not logged in!");
+            return false;
+        }
+
+        SyncApi api = app.getRestAdapter().create(SyncApi.class);
+        JSONObject credentials = SyncUploadRequestBuilder.getReqCredentials(employeeModel, app);
+
+        TypedFile typedFile = new TypedFile("multipart/form-data", file);
+        String md5 = DownloadSyncFile.calculateMD5(file);
+        int retry = 4;
+
+        GetResponseUploadBatch uploadBatch = null;
+        while (retry > 0) {
+            checkForceCancel();
+
+            try {
+                retry--;
+                uploadBatch = api.uploadBatch(getShopId(), TcrApplication.get().emailApiKey, credentials.toString(), md5, fileId, typedFile);
+                break;
+
+            } catch (Exception e) {
+                Logger.e("try2Upload", e);
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e2) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (retry < 0 || uploadBatch == null) {
+            return false;
+        }
+
+        // Set request id
+        mRequestId = uploadBatch.requestId;
+
+        GetResponseUploadBatchStatus uploadBatchStatus;
+        boolean success = true;
+        long lastCheckTimeout = System.currentTimeMillis();
+        int lastFile = -2;
+
+        while (true) {
+            checkForceCancel();
+
+            uploadBatchStatus = getUploadStatus(api, credentials, uploadBatch.requestId);
+
+            if (uploadBatchStatus == null) {
+                return false;
+
+            } else if (uploadBatchStatus.status == GetResponseUploadBatchStatus.Status.ERROR
+                    || uploadBatchStatus.status == GetResponseUploadBatchStatus.Status.ABORTED
+                    || uploadBatchStatus.status == GetResponseUploadBatchStatus.Status.ERROR_NO_AFFECTED) {
+                success = false;
+                break;
+
+            } else if (uploadBatchStatus.status != GetResponseUploadBatchStatus.Status.DONE) {
+                if (uploadBatchStatus.getCurrentFile() != lastFile) {
+                    lastCheckTimeout = System.currentTimeMillis();
+                    lastFile = uploadBatchStatus.getCurrentFile();
+
+                } else if (uploadBatchStatus.getCurrentFile() >= 0 && (System.currentTimeMillis() - lastCheckTimeout > UPLOAD_TIMEOUT)) {
+                    Logger.w("UploadTaskAdapderBR: TIMEOUT. Restarting upload...");
+                    return true;
+                }
+
+                if (uploadBatchStatus.getCurrentFile() >= 0) {
+                    mUploadTask.fireStatusEvent((mProcessedFiles + uploadBatchStatus.getCurrentFile()) * 100 / mMaxFiles);
+                }
+
+            } else {
+                break;
+            }
+
+            try {
+                Thread.sleep(POLLING_UPLOAD_STATUS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (uploadBatchStatus.response == null) {
+            return false;
+        }
+
+        if (fromSQLHost) return success;
+
+        StringBuilder idsWithSuccess = new StringBuilder();
+        for (int key : uploadBatchStatus.response.keySet()) {
+            if (uploadBatchStatus.response.get(key) == 1) {
+                if (idsWithSuccess.length() > 0) idsWithSuccess.append(", ");
+                idsWithSuccess.append(key);
+            }
+        }
+        checkForceCancel();
+        if (idsWithSuccess.length() > 0) {
+            cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.ID + " in (" + idsWithSuccess.toString() + ")", null);
+        }
+
+        checkForceCancel();
+
+        mProcessedFiles += uploadBatchStatus.getCurrentFile();
+        if (uploadBatchStatus.status == GetResponseUploadBatchStatus.Status.ERROR_NO_AFFECTED
+                || (uploadBatchStatus.errorMessage != null && uploadBatchStatus.errorMessage.contains("0 affected rows in UPDATE COMMAND"))) {
+
+            if (tryFixNoAffected(cr)) {
+                Logger.w("Made and sending an INSERT. Trying again upload");
+                return true;
+            }
+        }
+
+        return success;
+    }
+
+    private GetResponseUploadBatchStatus getUploadStatus(SyncApi api, JSONObject credentials, String requestId) {
+        int retry = 5;
+
+        while (retry >= 0) {
+            try {
+                GetResponseUploadBatchStatus uploadBatchStatus = api.uploadStatus(getShopId(), TcrApplication.get().emailApiKey, credentials, requestId, "gzip");
+                if (uploadBatchStatus != null) return uploadBatchStatus;
+
+            } catch (Exception e) {
+                Logger.e("getUploadStatus", e);
+                retry--;
+            }
+        }
+        return null;
+    }
+
+    private boolean tryFixNoAffected(ContentResolver cr) throws JSONException {
+        int commandId = -1;
+        String commandString = null;
+        try (
+                Cursor commandCursor = cr.query(URI_SQL_COMMAND_NO_NOTIFY, new String[]{SqlCommandTable.ID, SqlCommandTable.SQL_COMMAND}, null, null, SqlCommandTable.ID)
+        ){
+            if (commandCursor != null && commandCursor.moveToFirst()) {
+                commandId = commandCursor.getInt(0);
+                commandString = commandCursor.getString(1);
+            }
+        }
+
+        LocalSyncHelper.SqlCommandObj command = new Gson().fromJson(commandString, LocalSyncHelper.SqlCommandObj.class);
+
+        if (command == null || command.operations == null) return false;
+
+        int newCommandId = commandId;
+        for (LocalSyncHelper.SqlCommandObj.SqlCommandObjOperation operation : command.operations){
+            if ("UPDATE".equals(operation.action.toUpperCase())){
+                LinkedTreeMap<String, Object> where = (LinkedTreeMap<String, Object>) operation.args.get("where");
+
+                Object value = where.get(where.keySet().iterator().next());
+                if (value == null) return false;
+
+                String id = value.toString();
+
+                Object[] model = getContentValuesAndGuidColumn(operation, false);
+                if (model == null || model.length == 0) {
+                    Logger.e("", new Throwable("Table not found: " + commandString));
+                    return false;
+                }
+                Uri uri = ShopProvider.contentUriNoNotify(JdbcConverter.getURIFromTable(operation.table));
+
+                try (
+                        Cursor itemCursor = cr.query(uri, null,
+                                model[1] + " = ? AND " + ShopStore.DEFAULT_UPDATE_TIME + " IS NULL AND " +
+                                        "(" + ShopStore.DEFAULT_IS_DELETED +" = 0 OR "+ShopStore.DEFAULT_IS_DELETED + " = 1)",
+                                new String[]{id}, null)
+                ){
+                    if (itemCursor != null && itemCursor.moveToFirst()){
+                        JdbcConverter converter = JdbcFactory.getConverter(operation.table);
+                        if (converter != null){
+                            newCommandId--;
+
+                            String newCommand = new BatchSqlCommand(converter.insertSQL(fillModel(operation.table, itemCursor), null)).toJson();
+
+                            ContentValues values = new ContentValues();
+                            values.put(SqlCommandTable.ID, newCommandId);
+                            values.put(SqlCommandTable.CREATE_TIME, System.currentTimeMillis());
+                            values.put(SqlCommandTable.SQL_COMMAND, newCommand);
+                            values.put(SqlCommandTable.API_VERSION, "2");
+
+                            cr.insert(URI_SQL_COMMAND_NO_NOTIFY, values);
+                        }
+                    }
+                }
+            }
+        }
+
+        //If fix some command
+        return commandId != newCommandId;
+    }
+
+    private static IValueModel fillModel(String table, Cursor cursor){
+        IValueModel model = null;
+
+        if (JdbcConverter.compareTable(table, ShopStore.CashDrawerMovementTable.TABLE_NAME, CashDrawerMovementJdbcConverter.TABLE_NAME)) {
+            model = new CashDrawerMovementModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.CategoryTable.TABLE_NAME, CategoryJdbcConverter.CATEGORY_TABLE_NAME)) {
+            model = new CategoryModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.CestTable.TABLE_NAME, CestJdbcConverter.TABLE_NAME)) {
+            model = new CestModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.ComposerTable.TABLE_NAME, ComposerJdbcConverter.TABLE_NAME)) {
+            model = new ComposerModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.CountryTable.TABLE_NAME, CountryJdbcConverter.TABLE_NAME)) {
+            model = new CountryModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.CreditReceiptTable.TABLE_NAME, CreditReceiptJdbcConverter.TABLE_NAME)) {
+            model = new CreditReceiptModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.CustomerTable.TABLE_NAME, CustomerJdbcConverter.TABLE_NAME)) {
+            model = new CustomerModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.DanfeTable.TABLE_NAME, DanfeJdbcConverter.TABLE_NAME)) {
+            model = new Danfe(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.DepartmentTable.TABLE_NAME, DepartmentJdbcConverter.DEPARTMENT_TABLE_NAME)) {
+            model = new DepartmentModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.EmployeeCommissionsTable.TABLE_NAME, CommissionsJdbcConverter.TABLE_NAME)) {
+            model = new CommissionsModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.EmployeePermissionTable.TABLE_NAME, EmployeePermissionJdbcConverter.TABLE_NAME)) {
+            model = new EmployeePermissionModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.EmployeeTable.TABLE_NAME, EmployeeJdbcConverter.TABLE_NAME)) {
+            model = new EmployeeModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetJdbcConverter.TABLE_NAME)) {
+            model = new EmployeeTimesheetModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.EmployeeTipsTable.TABLE_NAME, TipsJdbcConverter.TABLE_NAME)) {
+            model = new TipsModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.ItemMatrixTable.TABLE_NAME, ItemMatrixJdbcConverter.TABLE_NAME)) {
+            model = new ItemMatrixModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.ItemMovementTable.TABLE_NAME, ItemsMovementJdbcConverter.TABLE_NAME)) {
+            model = new ItemMovementModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.ItemTable.TABLE_NAME, ItemsJdbcConverter.ITEM_TABLE_NAME)) {
+            model = new ItemModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.ModifierGroupTable.TABLE_NAME, ItemsModifierGroupsJdbcConverter.TABLE_NAME)) {
+            model = new ModifierGroupModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.ModifierTable.TABLE_NAME, ItemsModifiersJdbcConverter.TABLE_NAME)) {
+            model = new ModifierModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.MunicipalityTable.TABLE_NAME, MunicipalityJdbcConverter.TABLE_NAME)) {
+            model = new MunicipalityModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.NCMFavouritesTable.TABLE_NAME, NcmFavoritesJdbcConverter.TABLE_NAME)) {
+            model = new NCMFavoritesModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.NCMItemTable.TABLE_NAME, NcmJdbcConverter.TABLE_NAME)) {
+            model = new NCMTaxModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.PaymentServiceProviderTable.TABLE_NAME, PaymentServiceProviderConverter.TABLE_NAME)) {
+            model = new PaymentServiceProviderModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.PaymentTransactionTable.TABLE_NAME, PaymentTransactionJdbcConverter.TABLE_NAME)) {
+            model = new PaymentTransactionModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.PisCofinsTable.TABLE_NAME, CstPisCofinsJdbcConverter.TABLE_NAME)) {
+            model = new CstPisCofinsModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.PrinterAliasTable.TABLE_NAME, PrinterAliasJdbcConverter.TABLE_NAME)) {
+            model = new PrinterAliasModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.RegisterTable.TABLE_NAME, RegisterJdbcConverter.TABLE_NAME)) {
+            model = new RegisterModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.SaleAddonTable.TABLE_NAME, SaleOrderItemAddonJdbcConverter.TABLE_NAME)) {
+            model = new SaleModifierModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.SaleComposerTable.TABLE_NAME, SaleComposerJdbcConverter.TABLE_NAME)) {
+            model = new SaleComposerModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.SaleItemTable.TABLE_NAME, SaleOrderItemJdbcConverter.SALE_ORDER_ITEMS_TABLE_NAME)) {
+            model = new SaleOrderItemModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.SaleOrderTable.TABLE_NAME, SaleOrdersJdbcConverter.SALE_ORDER_TABLE_NAME)) {
+            model = new SaleOrderModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.ShiftTable.TABLE_NAME, ShiftJdbcConverter.TABLE_NAME)) {
+            model = new ShiftModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.StateTable.TABLE_NAME, StateJdbcConverter.TABLE_NAME)) {
+            model = new StateModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.TaxGroupTable.TABLE_NAME, TaxGroupJdbcConverter.TABLE_NAME)) {
+            model = new TaxGroupModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.UnitLabelTable.TABLE_NAME, UnitLabelJdbcConverter.TABLE_NAME)) {
+            model = new UnitLabelModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.UnitTable.TABLE_NAME, UnitsJdbcConverter.TABLE_NAME)) {
+            model = new Unit(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.VariantItemTable.TABLE_NAME, VariantItemJdbcConverter.TABLE_NAME)) {
+            model = new VariantItemModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.VariantSubItemTable.TABLE_NAME, VariantSubItemJdbcConverter.TABLE_NAME)) {
+            model = new VariantSubItemModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.CfopReturnMappingTable.TABLE_NAME, CfopReturnMappingConverter.TABLE_NAME)) {
+            model = new CfopReturnMappingModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.CardBrandTable.TABLE_NAME, CardBrandJdbcConverter.TABLE_NAME)) {
+            model = new CardBrandModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.TableOrderTable.TABLE_NAME, TableOrderJdbcConverter.TABLE_NAME)) {
+            model = new TableOrderModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.TableHistoryTable.TABLE_NAME, TableHistoryJdbcConverter.TABLE_NAME)) {
+            model = new TableHistoryModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.CustomerOrderTable.TABLE_NAME, CustomerOrderJdbcConverter.TABLE_NAME)) {
+            model = new CustomerOrderModel(cursor);
+        }
+        if (JdbcConverter.compareTable(table, ShopStore.ShopModuleTable.TABLE_NAME, ShopModuleJdbcConverter.TABLE_NAME)) {
+            model = new ShopModuleModel(cursor);
+        }
+
+        return model;
+    }
+
+    private void checkForceCancel() throws SyncCommand.SyncInterruptedException {
+        if (OfflineCommandsService.forceCancelDownloadUpload){
+            Logger.d("Cancelling sync upload");
+
+            if (mRequestId != null) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            TcrApplication app = TcrApplication.get();
+                            SyncApi api = TcrApplication.get().getRestAdapter().create(SyncApi.class);
+
+                            api.downloadCancel(
+                                    getShopId(),
+                                    app.emailApiKey,
+                                    SyncUploadRequestBuilder.getReqCredentials(app.getOperator(), app),
+                                    mRequestId);
+                        } catch (Exception e) {
+                            Logger.e("downloadCancel", e);
+                        }
+                    }
+                }).start();
+            }
+
+            throw new SyncCommand.SyncInterruptedException("forceCancelDownloadUpload");
+        }
+    }
+}

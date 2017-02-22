@@ -35,7 +35,7 @@ public class UpdateCategoryOrderCommand extends AsyncCommand {
                             .withSelection(CategoryTable.GUID + " = ?", new String[]{guid})
                             .withValue(CategoryTable.ORDER_NUM, i)
                             .build());
-            sqlCommand.add(jdbcConverter.updateOrderSQL(new CategoryModel(guid, null, null, null, i, false, null), this.getAppCommandContext()));
+            sqlCommand.add(jdbcConverter.updateOrderSQL(new CategoryModel(guid, null, null, null, i, false, null, null), this.getAppCommandContext()));
         }
 
         return succeeded();

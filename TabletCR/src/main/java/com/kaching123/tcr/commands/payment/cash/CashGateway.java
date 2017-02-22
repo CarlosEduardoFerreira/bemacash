@@ -66,4 +66,9 @@ public class CashGateway implements IPaymentGateway<CashTransaction, Void> {
     public CashTransaction createTransaction(Context context, BigDecimal amount, String orderGuid) {
         return CashTransactionFactory.create(TcrApplication.get().getOperatorGuid(), amount, orderGuid);
     }
+
+    @Override
+    public boolean enabled() {
+        return true;
+    }
 }

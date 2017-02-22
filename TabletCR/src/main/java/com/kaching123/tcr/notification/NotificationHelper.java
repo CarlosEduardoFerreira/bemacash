@@ -14,6 +14,8 @@ public class NotificationHelper {
     private static final int SYNC_NOTIFICATION_ID = 0x1;
     private static final int UPLOAD_NOTIFICATION_ID = 0x2;
 
+    private static int mCurrentNotification;
+
     public static void addSyncNotification(Context context){
         NotificationManager notifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -88,5 +90,34 @@ public class NotificationHelper {
     public static void removeUploadNotification(Context context) {
         NotificationManager notifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notifyManager.cancel(UPLOAD_NOTIFICATION_ID);
+    }
+
+    public static void setMessageNotification(Context context, String message) {
+        if (mCurrentNotification == UPLOAD_NOTIFICATION_ID){
+            setMessageUploadNotification(context, message);
+
+        } else if (mCurrentNotification == SYNC_NOTIFICATION_ID){
+            setMessageDownloadNotification(context, message);
+        }
+    }
+
+    static void setMessageUploadNotification(Context context, String message) {
+        NotificationManager notifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(context.getString(R.string.upload_notify_title))
+                .setContentText(message);
+        notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
+    }
+
+    static void setMessageDownloadNotification(Context context, String message) {
+        NotificationManager notifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(context.getString(R.string.sync_notify_title))
+                .setContentText(message);
+        notifyManager.notify(SYNC_NOTIFICATION_ID, builder.build());
     }
 }

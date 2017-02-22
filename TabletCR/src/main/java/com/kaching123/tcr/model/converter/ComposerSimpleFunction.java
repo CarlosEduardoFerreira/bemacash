@@ -21,6 +21,7 @@ public class ComposerSimpleFunction extends ListConverterFunction<ComposerModel>
                 c.getString(indexHolder.get(ComposerTable.ITEM_CHILD_ID)),
                 ContentValuesUtilBase._decimal(c.getString(indexHolder.get(ComposerTable.QUANTITY))),
                 c.getInt(indexHolder.get(ComposerTable.STORE_TRACKING_ENABLED)) == 1,
-                c.getInt(indexHolder.get(ComposerTable.FREE_OF_CHARGE_COMPOSER)) == 1);
+                c.getInt(indexHolder.get(ComposerTable.FREE_OF_CHARGE_COMPOSER)) == 1,
+                null);
     }
 }

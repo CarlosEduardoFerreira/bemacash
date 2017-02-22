@@ -3,11 +3,16 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.SuperBaseActivity;
+import com.kaching123.tcr.commands.AsyncTaskCommand;
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand.KDSSendStatus;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
+import com.kaching123.tcr.model.converter.OrderCheckoutState;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopStore;
@@ -17,6 +22,7 @@ import com.kaching123.tcr.util.DateUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -29,10 +35,9 @@ import static com.kaching123.tcr.model.ContentValuesUtil._putDiscount;
 
 public class SaleOrderModel implements Serializable, IValueModel {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
+
+    private static final Uri URI_ORDER = ShopProvider.contentUri(SaleOrderTable.URI_CONTENT);
 
     public String guid;
     public Date createTime;
@@ -43,7 +48,6 @@ public class SaleOrderModel implements Serializable, IValueModel {
     public BigDecimal discount;
     public DiscountType discountType;
     public OrderStatus orderStatus = OrderStatus.ACTIVE;
-    private String holdName;
     public boolean taxable;
 
     public int printSeqNum;
@@ -61,6 +65,10 @@ public class SaleOrderModel implements Serializable, IValueModel {
     public KDSSendStatus kdsSendStatus;
 
     public BigDecimal transactionFee;
+
+    private String holdName;
+
+    private List<String> mIgnoreFields;
 
     public SaleOrderModel(String guid) {
         this.guid = guid;
@@ -88,7 +96,8 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 _bool(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.IS_TIPPED)),
                 _kitchenPrintStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.KITCHEN_PRINT_STATUS)),
                 _kdsSendStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.KDS_SEND_STATUS)),
-                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO)
+                _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO),
+                null
         );
     }
 
@@ -113,7 +122,8 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 _bool(c, c.getColumnIndex(SaleOrderTable.IS_TIPPED)),
                 _kitchenPrintStatus(c, c.getColumnIndex(SaleOrderTable.KITCHEN_PRINT_STATUS)),
                 _kdsSendStatus(c, c.getColumnIndex(SaleOrderTable.KDS_SEND_STATUS)),
-                _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO)
+                _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO),
+                null
         );
     }
 
@@ -138,7 +148,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
             KitchenPrintStatus kitchenPrintStatus,
             KDSSendStatus kdsSendStatus,
             BigDecimal transactionFee) {
-        this(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentGuid, type, false, kitchenPrintStatus, kdsSendStatus, transactionFee);
+        this(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentGuid, type, false, kitchenPrintStatus, kdsSendStatus, transactionFee, null);
     }
 
     public SaleOrderModel(
@@ -162,7 +172,8 @@ public class SaleOrderModel implements Serializable, IValueModel {
             boolean isTipped,
             KitchenPrintStatus kitchenPrintStatus,
             KDSSendStatus kdsSendStatus,
-            BigDecimal transactionFee) {
+            BigDecimal transactionFee,
+            List<String> ignoreFields) {
         super();
         this.guid = guid;
         this.createTime = createTime;
@@ -188,6 +199,23 @@ public class SaleOrderModel implements Serializable, IValueModel {
         this.kitchenPrintStatus = kitchenPrintStatus;
         this.kdsSendStatus = kdsSendStatus;
         this.transactionFee = transactionFee;
+        this.mIgnoreFields = ignoreFields;
+    }
+
+
+    public static SaleOrderModel getById(final Context context, final String orderId) {
+        if (orderId == null) return null;
+        try (
+                Cursor orderCursor = ProviderAction.query(URI_ORDER)
+                        .where(SaleOrderTable.GUID + " = ?", orderId)
+                        .perform(context)
+        ) {
+            SaleOrderModel orderModel = null;
+            if (orderCursor != null && orderCursor.moveToFirst()) {
+                orderModel = new SaleOrderModel(orderCursor);
+            }
+            return orderModel;
+        }
     }
 
     public String getHoldName() {
@@ -210,27 +238,33 @@ public class SaleOrderModel implements Serializable, IValueModel {
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
+        values.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
 
-        values.put(SaleOrderTable.GUID, guid);
-        values.put(SaleOrderTable.CREATE_TIME, createTime.getTime());
-        values.put(SaleOrderTable.OPERATOR_GUID, operatorGuid);
-        values.put(SaleOrderTable.SHIFT_GUID, shiftGuid);
-        values.put(SaleOrderTable.CUSTOMER_GUID, customerGuid);
-        values.put(SaleOrderTable.DISCOUNT, _decimal(discount));
-        _putDiscount(values, SaleOrderTable.DISCOUNT_TYPE, discountType);
-        values.put(SaleOrderTable.STATUS, orderStatus.ordinal());
-        values.put(SaleOrderTable.HOLD_NAME, holdName);
-        values.put(SaleOrderTable.TAXABLE, taxable);
-        values.put(SaleOrderTable.PRINT_SEQ_NUM, printSeqNum);
-        values.put(SaleOrderTable.REGISTER_ID, registerId);
-        values.put(SaleOrderTable.PARENT_ID, parentGuid);
-        values.put(SaleOrderTable.ORDER_TYPE, type.ordinal());
-        values.put(SaleOrderTable.IS_TIPPED, isTipped);
-        values.put(SaleOrderTable.KITCHEN_PRINT_STATUS, kitchenPrintStatus.ordinal());
-        values.put(SaleOrderTable.KDS_SEND_STATUS, kdsSendStatus.ordinal());
-        values.put(SaleOrderTable.TRANSACTION_FEE, _decimal(transactionFee));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.GUID)) values.put(SaleOrderTable.GUID, guid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.CREATE_TIME)) values.put(SaleOrderTable.CREATE_TIME, createTime.getTime());
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.OPERATOR_GUID)) values.put(SaleOrderTable.OPERATOR_GUID, operatorGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.SHIFT_GUID)) values.put(SaleOrderTable.SHIFT_GUID, shiftGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.CUSTOMER_GUID)) values.put(SaleOrderTable.CUSTOMER_GUID, customerGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.DISCOUNT)) values.put(SaleOrderTable.DISCOUNT, _decimal(discount));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.DISCOUNT_TYPE)) _putDiscount(values, SaleOrderTable.DISCOUNT_TYPE, discountType);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.STATUS)) values.put(SaleOrderTable.STATUS, orderStatus.ordinal());
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.HOLD_NAME)) values.put(SaleOrderTable.HOLD_NAME, holdName);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.TAXABLE)) values.put(SaleOrderTable.TAXABLE, taxable);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.PRINT_SEQ_NUM)) values.put(SaleOrderTable.PRINT_SEQ_NUM, printSeqNum);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.REGISTER_ID)) values.put(SaleOrderTable.REGISTER_ID, registerId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.PARENT_ID)) values.put(SaleOrderTable.PARENT_ID, parentGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.ORDER_TYPE)) values.put(SaleOrderTable.ORDER_TYPE, type.ordinal());
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.IS_TIPPED)) values.put(SaleOrderTable.IS_TIPPED, isTipped);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.KITCHEN_PRINT_STATUS)) values.put(SaleOrderTable.KITCHEN_PRINT_STATUS, kitchenPrintStatus.ordinal());
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.KDS_SEND_STATUS)) values.put(SaleOrderTable.KDS_SEND_STATUS, kdsSendStatus.ordinal());
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.TRANSACTION_FEE)) values.put(SaleOrderTable.TRANSACTION_FEE, _decimal(transactionFee));
 
         return values;
+    }
+
+    @Override
+    public String getIdColumn() {
+        return SaleOrderTable.GUID;
     }
 
     public ContentValues toSetTippedValues() {

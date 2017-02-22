@@ -60,4 +60,9 @@ public class MultipleDiscountModel implements IValueModel, Serializable{
         cv.put(MultipleDiscountTable.IS_ACTIVE, isActive);
         return cv;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

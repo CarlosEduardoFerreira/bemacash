@@ -63,4 +63,9 @@ public class OfflineCreditGateway implements IPaymentGateway<OfflineCreditTransa
     public OfflineCreditTransaction createTransaction(Context context, BigDecimal amount, String orderGuid) {
         return OfflineCreditTransactionFactory.create(TcrApplication.get().getOperatorGuid(), amount, orderGuid);
     }
+
+    @Override
+    public boolean enabled() {
+        return TcrApplication.get().isOfflineCreditEnabled();
+    }
 }

@@ -80,7 +80,8 @@ public class UpdateClockInOutCommand extends AsyncCommand{
                     c.getString(0),
                     new Date(in),
                     out == 0 ? null : new Date(out),
-                    c.getString(3)
+                    c.getString(3),
+                    null
             );
         }
         c.close();

@@ -45,6 +45,8 @@ import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
 import com.kaching123.tcr.pref.ShopPref_;
 import com.kaching123.tcr.service.OfflineCommandsService;
+import com.kaching123.tcr.service.broadcast.BroadcastInfo;
+import com.kaching123.tcr.store.ShopOpenHelper;
 import com.kaching123.tcr.store.SyncOpenHelper;
 import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -61,10 +63,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -139,6 +143,8 @@ public class TcrApplication extends MultiDexApplication {
     private Boolean isNetworkConnected;
 
     private SyncOpenHelper syncOpenHelper;
+    private ShopOpenHelper shopOpenHelper;
+
     private static CountryFunctionality countryFunctionality;
 
     public boolean paxSignatureEmulator = false;
@@ -146,6 +152,10 @@ public class TcrApplication extends MultiDexApplication {
     public boolean requireSignatureOnTransactionsHigherThan = false;
     public boolean paxSignatureCanceledByCustomer = false;
     public boolean paxMachineHasTransactionSuccessfull = false;
+
+    /** Local Sync *************************** **/
+    private List<BroadcastInfo> mLanDevices;
+    /** *************************** Local Sync **/
 
 
     @Override
@@ -163,6 +173,7 @@ public class TcrApplication extends MultiDexApplication {
         restAdapterJsonOrg = createRestAdapter(res, apiCred, new OrgJsonConverter());
 
         syncOpenHelper = new SyncOpenHelper(this);
+
 
         startService(new Intent(TcrApplication.this, OfflineCommandsService.class));
 
@@ -323,8 +334,6 @@ public class TcrApplication extends MultiDexApplication {
         registerSerial = formatByBlocksString(registerSerial);
 
         //paxSignatureEmulator = true;
-        //registerSerial = "715e09-0018a4-eeea715";
-        //registerSerial = "320089-8e448a-7000c90";
 
         setUsers();
         changeCountryFunctionalityById(shopPref.countryId().get());
@@ -1221,6 +1230,11 @@ public class TcrApplication extends MultiDexApplication {
     }
 
 
+    public long getCurrentServerTimestamp(){
+        return new Date().getTime() - getShopPref().localTimestamp().get() + getShopPref().serverTimestamp().get();
+    }
+
+
     public static TcrApplication get() {
         return self;
     }
@@ -1396,4 +1410,12 @@ public class TcrApplication extends MultiDexApplication {
             return ordinal < values().length ? values()[ordinal] : UNKNOWN;
         }
     }
+
+
+    public List<BroadcastInfo> getLanDevices() {
+        if (mLanDevices == null) mLanDevices = new ArrayList<>();
+        return mLanDevices;
+    }
+
+
 }

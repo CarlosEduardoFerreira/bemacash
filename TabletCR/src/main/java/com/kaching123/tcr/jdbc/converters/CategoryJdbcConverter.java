@@ -1,20 +1,26 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 
 public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
 
-    private static final String CATEGORY_TABLE_NAME = "CATEGORY";
+    public static final String CATEGORY_TABLE_NAME = "CATEGORY";
 
     private static final String ID = "ID";
     private static final String TITLE = "TITLE";
@@ -26,6 +32,15 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
 
     @Override
     public CategoryModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(ID)) ignoreFields.add(ShopStore.CategoryTable.GUID);
+        if (!rs.has(DEPARTMENT_ID)) ignoreFields.add(ShopStore.CategoryTable.DEPARTMENT_GUID);
+        if (!rs.has(TITLE)) ignoreFields.add(ShopStore.CategoryTable.TITLE);
+        if (!rs.has(IMAGE)) ignoreFields.add(ShopStore.CategoryTable.IMAGE);
+        if (!rs.has(ORDER_NUM)) ignoreFields.add(ShopStore.CategoryTable.ORDER_NUM);
+        if (!rs.has(ELIGIBLE_FOR_COMMISSION)) ignoreFields.add(ShopStore.CategoryTable.ELIGIBLE_FOR_COMMISSION);
+        if (!rs.has(COMMISSION)) ignoreFields.add(ShopStore.CategoryTable.COMMISSION);
+
         return new CategoryModel(
                 rs.getString(ID),
                 rs.getString(DEPARTMENT_ID),
@@ -33,7 +48,8 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
                 rs.getString(IMAGE),
                 rs.getInt(ORDER_NUM),
                 rs.getBoolean(ELIGIBLE_FOR_COMMISSION),
-                rs.getBigDecimal(COMMISSION)
+                rs.getBigDecimal(COMMISSION),
+                ignoreFields
         );
     }
 
@@ -45,6 +61,32 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.CategoryTable.GUID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(CategoryModel model){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(DEPARTMENT_ID, model.departmentGuid)
+                    .put(TITLE, model.title)
+                    .put(IMAGE, model.image)
+                    .put(ORDER_NUM, model.orderNum)
+                    .put(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
+                    .put(COMMISSION, model.commission);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -74,10 +116,7 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
     }
 
     public SingleSqlCommand updateOrderSQL(CategoryModel model, IAppCommandContext appCommandContext) {
-        return _update(CATEGORY_TABLE_NAME, appCommandContext)
-                .add(ORDER_NUM, model.orderNum)
-                .where(ID, model.guid)
-                .build(JdbcFactory.getApiMethod(CategoryModel.class));
+        return updateSQL(model, appCommandContext);
     }
 
     public SingleSqlCommand deleteByDepartment(String departmentGuid, IAppCommandContext appCommandContext) {
@@ -85,5 +124,10 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
                 .add(JdbcBuilder.FIELD_IS_DELETED, 1)
                 .where(DEPARTMENT_ID, departmentGuid)
                 .build(JdbcFactory.getApiMethod(CategoryModel.class));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 }

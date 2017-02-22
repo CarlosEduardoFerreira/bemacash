@@ -133,7 +133,8 @@ public class DepartmentDialog extends StyledDialogFragment {
             super.apply(c);
             return new DepartmentModel(
                     c.getString(indexHolder.get(ShopStore.DepartmentTable.GUID)),
-                    c.getString(indexHolder.get(ShopStore.DepartmentTable.TITLE))
+                    c.getString(indexHolder.get(ShopStore.DepartmentTable.TITLE)),
+                    null
             );
         }
     }

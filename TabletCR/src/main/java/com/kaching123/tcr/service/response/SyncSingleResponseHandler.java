@@ -1,6 +1,7 @@
 package com.kaching123.tcr.service.response;
 
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.store.ShopOpenHelper;
 import com.kaching123.tcr.store.SyncOpenHelper;
 
 /**
@@ -8,7 +9,10 @@ import com.kaching123.tcr.store.SyncOpenHelper;
  */
 public class SyncSingleResponseHandler extends SyncResponseHandler{
 
-    public SyncSingleResponseHandler(SyncOpenHelper syncOpenHelper, JdbcConverter converter, String localTableName, long serverLastTimestamp) {
+    public SyncSingleResponseHandler(SyncOpenHelper syncOpenHelper,
+                                     JdbcConverter converter,
+                                     String localTableName,
+                                     long serverLastTimestamp) {
         super(syncOpenHelper, converter, localTableName, serverLastTimestamp);
     }
 }

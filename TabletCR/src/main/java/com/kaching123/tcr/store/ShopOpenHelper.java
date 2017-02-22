@@ -22,6 +22,7 @@ import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.ShopStore.UpdateTimeTable;
 import com.kaching123.tcr.store.migration.IUpdateContainer;
+import com.kaching123.tcr.util.ContentValuesUtilBase;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -337,26 +338,32 @@ public class ShopOpenHelper extends BaseOpenHelper {
         }
     }
 
-    private void saveMaxUpdateTime(SQLiteDatabase db, String tableName, boolean isParent, long updateTime, String guid) {
+    public void saveMaxUpdateTime(SQLiteDatabase db, String tableName, boolean isParent, long updateTime, String guid) {
         Table table = Table.getTable(tableName, isParent);
 
         ContentValues values = new ContentValues();
         values.put(UpdateTimeTable.UPDATE_TIME, updateTime);
         values.put(UpdateTimeTable.GUID, guid);
 
+        String tableId = String.valueOf(ContentValuesUtilBase._enum(table));
         int updated = db.update(UpdateTimeTable.TABLE_NAME, values,
                 UpdateTimeTable.TABLE_ID + " = ?"
                         + " AND (" + UpdateTimeTable.UPDATE_TIME + " < ?"
                         + " OR (" + UpdateTimeTable.UPDATE_TIME + " = ? AND " + UpdateTimeTable.GUID + " < ?))",
-                new String[]{String.valueOf(_enum(table)), String.valueOf(updateTime), String.valueOf(updateTime), guid});
+                new String[]{tableId, String.valueOf(updateTime), String.valueOf(updateTime), guid});
 
         if (updated != 0) {
             return;
         }
 
-        values.put(UpdateTimeTable.TABLE_ID, _enum(table));
-
-        long rowId = db.insertOrThrow(UpdateTimeTable.TABLE_NAME, null, values);
+        Cursor c = db.rawQuery("SELECT " + UpdateTimeTable.UPDATE_TIME + " FROM " + UpdateTimeTable.TABLE_NAME
+                        + " WHERE " + UpdateTimeTable.UPDATE_TIME + " > ? AND " + UpdateTimeTable.TABLE_ID + " = ?",
+                new String[]{String.valueOf(updateTime), tableId});
+        if (c.moveToFirst()) {
+            return;
+        }
+        values.put(UpdateTimeTable.TABLE_ID, ContentValuesUtilBase._enum(table));
+        long rowId = db.insertWithOnConflict(UpdateTimeTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         if (rowId == -1L)
             throw new SQLiteException();
     }
@@ -368,6 +375,103 @@ public class ShopOpenHelper extends BaseOpenHelper {
             insertUpdateValuesFromExtraDatabase(db, tableName, idColumn, values);
         }
 
+    }
+
+    public synchronized Cursor getMaxUpdateTime(String[] selectionArgs) {
+        return ProviderQueryHelper.getMaxUpdateTime(this, selectionArgs);
+    }
+
+    public synchronized Cursor getMaxUpdateParentTime(String[] selectionArgs) {
+        return ProviderQueryHelper.getMaxUpdateParentTime(this, selectionArgs);
+    }
+
+    public synchronized void beginTransaction() {
+        getWritableDatabase().beginTransaction();
+    }
+
+    public synchronized void setTransactionSuccessful() {
+        getWritableDatabase().setTransactionSuccessful();
+    }
+
+    public synchronized void endTransaction() {
+        getWritableDatabase().endTransaction();
+    }
+
+    private String getWhereUpdateTimeLocal(ContentValues values){
+        if (TextUtils.isEmpty(values.getAsString(ShopStore.DEFAULT_UPDATE_TIME_LOCAL))) return "";
+        return String.format(" AND (%s <= %s OR %s IS NULL) ", ShopStore.DEFAULT_UPDATE_TIME_LOCAL, values.get(ShopStore.DEFAULT_UPDATE_TIME_LOCAL), ShopStore.DEFAULT_UPDATE_TIME_LOCAL);
+    }
+
+    public synchronized void insertUpdateValues(SQLiteDatabase db, String tableName, String idColumn, ContentValues values, boolean supportUpdateTimeLocal) {
+        boolean hasData = true;
+        String idValue = values.getAsString(idColumn);
+        try {
+            values.remove(idColumn);
+            int updated;
+
+            if (supportUpdateTimeLocal && !(values.getAsBoolean(ShopStore.DEFAULT_IS_DELETED) != null && values.getAsBoolean(ShopStore.DEFAULT_IS_DELETED))) {
+                if (tableName.equals(ShopStore.EmployeePermissionTable.TABLE_NAME)){
+                    updated = db.update(tableName, values, idColumn + " = ? AND " + ShopStore.EmployeePermissionTable.USER_GUID + " = ?" + getWhereUpdateTimeLocal(values),
+                            new String[]{idValue, values.get(ShopStore.EmployeePermissionTable.USER_GUID).toString()});
+
+                } else {
+                    if (tableName.equals(SaleOrderTable.TABLE_NAME) && values.containsKey(SaleOrderTable.STATUS)) {
+                        try (
+                                Cursor c = db.query(SaleOrderTable.TABLE_NAME, new String[]{SaleOrderTable.STATUS},
+                                        SaleOrderTable.GUID + " = ?", new String[]{idValue}, null, null, null)) {
+                            if (c != null && c.moveToFirst()){
+                                int status = c.getInt(0);
+                                if (status != 0){
+                                    values.put(SaleOrderTable.STATUS, status);
+                                }
+                            }
+                        }
+                    }
+                    updated = db.update(tableName, values, idColumn + " = ? " + getWhereUpdateTimeLocal(values), new String[]{idValue});
+                }
+
+            } else {
+                updated = db.update(tableName, values, idColumn + " = ? ", new String[]{idValue});
+            }
+
+            if (updated == 0 && !areThereItem(db, tableName, idColumn, idValue, values)) {
+                hasData = false;
+                values.put(idColumn, idValue);
+                db.insertOrThrow(tableName, null, values);
+
+            } else {
+                Logger.d("insertUpdateValues: IGNORING VALUES, updated rows " + updated + " - " + values);
+            }
+
+        } catch (SQLiteConstraintException e) {
+            Logger.e("ShopOpenHelper.insertUpdateValuesFromExtraDatabase(): constraint violation, tableName: " + tableName + "; values: " + values);
+
+            if (UnitTable.TABLE_NAME.equals(tableName)) {
+                values.put(idColumn, idValue);
+                if (tryFixUnit(db, values)) {
+                    tryInsertUpdateUnit(db, values, hasData);
+                    return;
+                }
+            }
+            throw e;
+        }
+    }
+
+    private boolean areThereItem(SQLiteDatabase db, String tableName, String idColumn, String idValue, ContentValues values) {
+        if (tableName.equals(ShopStore.EmployeePermissionTable.TABLE_NAME)){
+            try (
+                    Cursor c = db.query(tableName, new String[]{idColumn}, idColumn + " = ? AND " + ShopStore.EmployeePermissionTable.USER_GUID
+                            + " = ?", new String[]{idValue, values.get(ShopStore.EmployeePermissionTable.USER_GUID).toString()}, null, null, null);
+            ) {
+                return c.getCount() > 0;
+            }
+        } else {
+            try (
+                    Cursor c = db.query(tableName, new String[]{idColumn}, idColumn + " = ?", new String[]{idValue}, null, null, null);
+            ) {
+                return c.getCount() > 0;
+            }
+        }
     }
 
     private void insertUpdateValuesFromExtraDatabase(SQLiteDatabase db, String tableName, String idColumn, ContentValues values) {
@@ -521,6 +625,34 @@ public class ShopOpenHelper extends BaseOpenHelper {
     public void clearTableInExtraDatabase(String tableName) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(String.format(SQL_CLEAR_TABLE_IN_DB, tableName));
+    }
+
+    public synchronized ContentValues insert(String tableName, ContentValues[] valuesArray, String idColumn, boolean supportUpdateTimeLocal) {
+
+        ContentValues currentValues = new ContentValues();
+
+        if (TextUtils.isEmpty(tableName) || valuesArray == null || valuesArray.length == 0)
+            return currentValues;
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            for (ContentValues values : valuesArray) {
+                currentValues = values;
+                insertUpdateValues(db, tableName, idColumn, values, supportUpdateTimeLocal);
+            }
+
+            db.setTransactionSuccessful();
+            return null;
+
+        } catch (Exception e) {
+            Logger.e("SyncOpenHelper.insert(): tableName: " + tableName + " error", e);
+
+        } finally {
+            db.endTransaction();
+        }
+        return currentValues;
     }
 
 }

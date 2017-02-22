@@ -93,7 +93,8 @@ public class ItemExModel extends ItemModel {
                 ItemRefType.Simple,
                 null,
                 false,
-                false);
+                false,
+                null);
         this.modifiersCount = 0;
         this.addonsCount = 0;
         this.optionalCount = 0;
@@ -140,7 +141,8 @@ public class ItemExModel extends ItemModel {
                 false,
                 null,
                 true, null, null, ItemRefType.Simple, null, false,
-                false);
+                false,
+                null);
         this.departmentGuid = null;
         if (result.taxAmount != null && result.itemTaxable)
             this.tax = result.taxAmount;
@@ -235,7 +237,8 @@ public class ItemExModel extends ItemModel {
                 codeType,
                 commissionEligible,
                 commission, referenceItemGuid, itemRefType, loyaltyPoints, excludeFromLoyaltyPlan,
-                isEbtEligible);
+                isEbtEligible,
+                null);
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;
         this.optionalCount = optionalCount;

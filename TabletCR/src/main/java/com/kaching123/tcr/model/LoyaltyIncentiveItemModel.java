@@ -44,4 +44,9 @@ public class LoyaltyIncentiveItemModel implements IValueModel, Serializable {
         values.put(LoyaltyIncentiveItemTable.QTY, _decimalQty(qty));
         return values;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

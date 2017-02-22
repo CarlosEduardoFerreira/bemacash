@@ -1,17 +1,22 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -19,7 +24,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel> {
 
-    private static final String SALE_ORDER_ITEMS_TABLE_NAME = "SALE_ORDER_ITEM";
+    public static final String SALE_ORDER_ITEMS_TABLE_NAME = "SALE_ORDER_ITEM";
 
     private static final String SALE_ITEM_ID = "SALE_ITEM_ID";
     private static final String ORDER_ID = "ORDER_ID";
@@ -51,6 +56,36 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
 
     @Override
     public SaleOrderItemModel toValues(JdbcJSONObject rs) throws JSONException {
+
+        List<String> ignoreFields = new ArrayList<>();
+
+        if (!rs.has(SALE_ITEM_ID)) ignoreFields.add(ShopStore.SaleItemTable.SALE_ITEM_GUID);
+        if (!rs.has(ORDER_ID)) ignoreFields.add(ShopStore.SaleItemTable.ORDER_GUID);
+        if (!rs.has(ITEM_ID)) ignoreFields.add(ShopStore.SaleItemTable.ITEM_GUID);
+        if (!rs.has(QUANTITY)) ignoreFields.add(ShopStore.SaleItemTable.QUANTITY);
+        if (!rs.has(KITCHEN_PRINTED_QUANTITY)) ignoreFields.add(ShopStore.SaleItemTable.KITCHEN_PRINTED_QTY);
+        if (!rs.has(PRICE_TYPE)) ignoreFields.add(ShopStore.SaleItemTable.PRICE_TYPE);
+        if (!rs.has(PRICE)) ignoreFields.add(ShopStore.SaleItemTable.PRICE);
+        if (!rs.has(DISCOUNTABLE)) ignoreFields.add(ShopStore.SaleItemTable.DISCOUNTABLE);
+        if (!rs.has(DISCOUNT)) ignoreFields.add(ShopStore.SaleItemTable.DISCOUNT);
+        if (!rs.has(DISCOUNT_TYPE)) ignoreFields.add(ShopStore.SaleItemTable.DISCOUNT_TYPE);
+        if (!rs.has(TAXABLE)) ignoreFields.add(ShopStore.SaleItemTable.TAXABLE);
+        if (!rs.has(TAX)) ignoreFields.add(ShopStore.SaleItemTable.TAX);
+        if (!rs.has(TAX2)) ignoreFields.add(ShopStore.SaleItemTable.TAX2);
+        if (!rs.has(SEQUENCE)) ignoreFields.add(ShopStore.SaleItemTable.SEQUENCE);
+        if (!rs.has(PARENT_ID)) ignoreFields.add(ShopStore.SaleItemTable.PARENT_GUID);
+        if (!rs.has(FINAL_GROSS_PRICE)) ignoreFields.add(ShopStore.SaleItemTable.FINAL_GROSS_PRICE);
+        if (!rs.has(FINAL_TAX)) ignoreFields.add(ShopStore.SaleItemTable.FINAL_TAX);
+        if (!rs.has(FINAL_DISCOUNT)) ignoreFields.add(ShopStore.SaleItemTable.FINAL_DISCOUNT);
+        if (!rs.has(NOTES)) ignoreFields.add(ShopStore.SaleItemTable.NOTES);
+        if (!rs.has(HAS_NOTES)) ignoreFields.add(ShopStore.SaleItemTable.HAS_NOTES);
+        if (!rs.has(IS_PREPAID_ITEM)) ignoreFields.add(ShopStore.SaleItemTable.IS_PREPAID_ITEM);
+        if (!rs.has(IS_GIFT_CARD)) ignoreFields.add(ShopStore.SaleItemTable.IS_GIFT_CARD);
+        if (!rs.has(LOYALTY_POINTS)) ignoreFields.add(ShopStore.SaleItemTable.LOYALTY_POINTS);
+        if (!rs.has(POINTS_FOR_DOLLAR_AMOUNT)) ignoreFields.add(ShopStore.SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT);
+        if (!rs.has(DISCOUNT_BUNDLE_ID)) ignoreFields.add(ShopStore.SaleItemTable.DISCOUNT_BUNDLE_ID);
+        if (!rs.has(EBT_ELIGIBLE)) ignoreFields.add(ShopStore.SaleItemTable.EBT_ELIGIBLE);
+
         return new SaleOrderItemModel(
                 rs.getString(SALE_ITEM_ID),
                 rs.getString(ORDER_ID),
@@ -65,7 +100,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(TAXABLE),
                 rs.getBigDecimal(TAX),
                 rs.getBigDecimal(TAX2),
-                rs.getLong(SEQUENCE),
+                rs.isNull(SEQUENCE) || rs.get(SEQUENCE).equals("null") ? 0L : rs.getLong(SEQUENCE),
                 rs.getString(PARENT_ID),
                 rs.getBigDecimal(FINAL_GROSS_PRICE),
                 rs.getBigDecimal(FINAL_TAX),
@@ -79,7 +114,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 rs.getBoolean(POINTS_FOR_DOLLAR_AMOUNT),
                 rs.getString(DISCOUNT_BUNDLE_ID),
                 rs.getBoolean(EBT_ELIGIBLE),
-                null);
+                null, null);
     }
 
     @Override
@@ -93,8 +128,53 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     }
 
     @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.SaleItemTable.SALE_ITEM_GUID;
+    }
+
+    @Override
     public String getParentGuidColumn() {
         return PARENT_ID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(SaleOrderItemModel model) {
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(SALE_ITEM_ID, model.saleItemGuid)
+                    .put(ORDER_ID, model.orderGuid)
+                    .put(ITEM_ID, model.itemGuid)
+                    .put(QUANTITY, model.qty)
+                    .put(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty)
+                    .put(PRICE, model.price)
+                    .put(PRICE_TYPE, model.priceType)
+                    .put(DISCOUNTABLE, model.discountable)
+                    .put(DISCOUNT, model.discount)
+                    .put(DISCOUNT_TYPE, model.discountType)
+                    .put(TAXABLE, model.isTaxable)
+                    .put(TAX, model.tax)
+                    .put(TAX2, model.tax2)
+                    .put(SEQUENCE, model.sequence)
+                    .put(PARENT_ID, model.parentGuid)
+                    .put(FINAL_GROSS_PRICE, model.finalGrossPrice)
+                    .put(FINAL_TAX, model.finalTax)
+                    .put(FINAL_DISCOUNT, model.finalDiscount)
+                    .put(NOTES, model.notes)
+                    .put(HAS_NOTES, model.hasNotes)
+                    .put(IS_PREPAID_ITEM, model.isPrepaidItem)
+                    .put(IS_GIFT_CARD, model.isGiftCard)
+                    .put(LOYALTY_POINTS, model.loyaltyPoints)
+                    .put(POINTS_FOR_DOLLAR_AMOUNT, model.pointsForDollarAmount)
+                    .put(DISCOUNT_BUNDLE_ID, model.discountBundleId)
+                    .put(EBT_ELIGIBLE, model.isEbtEligible);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -132,25 +212,32 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     @Override
     public SingleSqlCommand updateSQL(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
         return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
+                .add(DISCOUNT, model.discount)
+                .add(DISCOUNT_TYPE, model.discountType)
+                .add(PRICE, model.price)
+                .add(NOTES, model.notes)
+                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty)
                 .add(QUANTITY, model.qty, ContentValuesUtil.QUANTITY_SCALE)
                 .add(SEQUENCE, model.sequence)
-
                 .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
                 .add(FINAL_TAX, model.finalTax)
                 .add(FINAL_DISCOUNT, model.finalDiscount)
-
                 .where(SALE_ITEM_ID, model.saleItemGuid)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
     public SingleSqlCommand updateQty(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
         return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
+                .add(DISCOUNT, model.discount)
+                .add(DISCOUNT_TYPE, model.discountType)
+                .add(PRICE, model.price)
+                .add(NOTES, model.notes)
+                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty)
                 .add(QUANTITY, model.qty, ContentValuesUtil.QUANTITY_SCALE)
-
+                .add(SEQUENCE, model.sequence)
                 .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
                 .add(FINAL_TAX, model.finalTax)
                 .add(FINAL_DISCOUNT, model.finalDiscount)
-
                 .where(SALE_ITEM_ID, model.saleItemGuid)
                 .build(JdbcFactory.getApiMethod(model));
 
@@ -214,6 +301,11 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty, ContentValuesUtil.QUANTITY_SCALE)
                 .where(SALE_ITEM_ID, model.saleItemGuid)
                 .build(JdbcFactory.getApiMethod(model));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 
 }

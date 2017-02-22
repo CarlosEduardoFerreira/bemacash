@@ -43,6 +43,7 @@ public class ClockOutCommand extends BaseClockInOutCommand {
                 lastTimesheet.guid,
                 null,
                 Util.cropSeconds(new Date()),
+                null,
                 null
         );
 
@@ -62,7 +63,8 @@ public class ClockOutCommand extends BaseClockInOutCommand {
                                 cursor.getString(indexHolder.get(ShopStore.EmployeeTimesheetTable.GUID)),
                                 _nullableDate(cursor, indexHolder.get(ShopStore.EmployeeTimesheetTable.CLOCK_IN)),
                                 _nullableDate(cursor, indexHolder.get(ShopStore.EmployeeTimesheetTable.CLOCK_OUT)),
-                                cursor.getString(indexHolder.get(ShopStore.EmployeeTimesheetTable.EMPLOYEE_GUID))
+                                cursor.getString(indexHolder.get(ShopStore.EmployeeTimesheetTable.EMPLOYEE_GUID)),
+                                null
                         );
                         return model;
                     }

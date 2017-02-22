@@ -7,6 +7,7 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -16,7 +17,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
  */
 public class KDSAliasJdbcConverter extends JdbcConverter<KDSAliasModel> {
 
-    private static final String TABLE_NAME = "KDS_ALIAS";
+    public static final String TABLE_NAME = "KDS_ALIAS";
 
     private static final String ID = "ID";
     private static final String ALIAS = "ALIAS";
@@ -37,6 +38,16 @@ public class KDSAliasJdbcConverter extends JdbcConverter<KDSAliasModel> {
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getJSONObject(KDSAliasModel model) {
+        return null;
     }
 
     @Override

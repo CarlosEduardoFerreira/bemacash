@@ -26,7 +26,8 @@ public class ItemMovementModelFactory {
                 qty,
                 manual,
                 operatorGuid,
-                createTime);
+                createTime,
+                null);
     }
 
     public static final ItemMovementModel getNewModel(String guid,
@@ -43,7 +44,8 @@ public class ItemMovementModelFactory {
                 qty,
                 manual,
                 TcrApplication.get().getOperatorGuid(),
-                createTime);
+                createTime,
+                null);
 
     }
 
@@ -60,7 +62,8 @@ public class ItemMovementModelFactory {
                 qty,
                 manual,
                 TcrApplication.get().getOperatorGuid(),
-                createTime);
+                createTime,
+                null);
     }
 
 }

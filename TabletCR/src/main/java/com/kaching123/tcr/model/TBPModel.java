@@ -108,6 +108,11 @@ public class TBPModel implements IValueModel, Serializable {
         return cv;
     }
 
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
+
     public boolean isOverlapping(TBPModel other){
         if (!isActive || !other.isActive)
             return false;

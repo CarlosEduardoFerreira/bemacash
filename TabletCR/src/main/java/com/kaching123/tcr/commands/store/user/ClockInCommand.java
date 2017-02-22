@@ -39,7 +39,8 @@ public class ClockInCommand extends BaseClockInOutCommand {
                 UUID.randomUUID().toString(),
                 Util.cropSeconds(new Date()),
                 null,
-                employee.guid
+                employee.guid,
+                null
         );
 
         return succeeded().add(RESULT_GUID, model.employeeGuid).add(RESULT_TIME, model.clockIn).add(RESULT_NAME, employee.fullName());

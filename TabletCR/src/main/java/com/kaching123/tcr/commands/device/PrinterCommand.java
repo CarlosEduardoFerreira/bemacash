@@ -8,6 +8,7 @@ import android.hardware.usb.UsbManager;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.getbase.android.db.provider.Query;
 import com.kaching123.pos.PosPrinter;
 import com.kaching123.pos.SocketPrinter;
 import com.kaching123.pos.USBPrinter;
@@ -20,10 +21,6 @@ import com.kaching123.pos.printer.GetMP200PrinterStatusExAction;
 import com.kaching123.pos.printer.GetPrinterBasicStatusAction;
 import com.kaching123.pos.printer.GetPrinterStatusExAction;
 import com.kaching123.pos.printer.SelectPOSAction;
-import com.kaching123.tcr.BuildConfig;
-import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopStore.PrinterTable;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
@@ -31,6 +28,12 @@ import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
 import java.io.IOException;
+
+import com.kaching123.tcr.BuildConfig;
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore.PrinterTable;
 
 /**
  * Created by gdubina on 04.12.13.

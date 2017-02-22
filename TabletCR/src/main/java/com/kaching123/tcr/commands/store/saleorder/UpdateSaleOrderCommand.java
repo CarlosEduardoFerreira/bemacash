@@ -6,6 +6,7 @@ import android.net.Uri;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -51,6 +52,11 @@ public abstract class UpdateSaleOrderCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         return JdbcFactory.getConverter(order).updateSQL(order, getAppCommandContext());
+    }
+
+
+    public ISqlCommand createSqlAdditional(){
+        return ((SaleOrdersJdbcConverter)JdbcFactory.getConverter(order)).updateStatusWithWhere(order, getAppCommandContext());
     }
 
 }

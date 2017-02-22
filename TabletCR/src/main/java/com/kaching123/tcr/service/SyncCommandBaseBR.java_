@@ -1,0 +1,1266 @@
+package com.kaching123.tcr.service;
+
+import android.accounts.AccountsException;
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
+
+import com.getbase.android.db.provider.ProviderAction;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.rest.RestCommand;
+import com.kaching123.tcr.commands.rest.sync.GetArrayResponse;
+import com.kaching123.tcr.commands.rest.sync.GetCurrentTimestampResponse;
+import com.kaching123.tcr.commands.rest.sync.GetResponse;
+import com.kaching123.tcr.commands.rest.sync.SyncApi;
+import com.kaching123.tcr.commands.rest.sync.SyncGetRequestBuilder;
+import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
+import com.kaching123.tcr.commands.store.user.LoginCommand;
+import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.BarcodePrefixJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.jdbc.converters.PrepaidTaxJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
+import com.kaching123.tcr.model.EmployeeModel;
+import com.kaching123.tcr.model.EmployeePermissionModel;
+import com.kaching123.tcr.model.IValueModel;
+import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
+import com.kaching123.tcr.service.response.SyncOldActiveOrdersResponseHandler;
+import com.kaching123.tcr.service.response.SyncSingleResponseHandler;
+import com.kaching123.tcr.store.ShopOpenHelper;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopProviderExt;
+import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.SyncOpenHelper;
+import com.kaching123.tcr.util.JdbcJSONArray;
+import com.kaching123.tcr.util.JdbcJSONObject;
+import com.kaching123.tcr.util.NotificationHelper;
+import com.kaching123.tcr.util.Table;
+import com.kaching123.tcr.util.TransactionUtil;
+import com.kaching123.tcr.util.ValueUtil;
+import retrofit.RetrofitError;
+
+import static com.kaching123.tcr.service.OfflineCommandsService.fireEvent;
+import static com.kaching123.tcr.util.ContentValuesUtilBase._enum;
+
+/**
+ * Created by Rodrigo Busata on 15/12/16.
+ */
+public class SyncCommandBaseBR implements Runnable {
+
+    public static final String ACTION_SYNC_GAP = "action_sync_gap";
+
+    protected Context service;
+    protected boolean isManual;
+    protected SyncOpenHelper shopOpenHelper;
+    protected SyncApi api;
+    protected EmployeeModel employeeModel;
+
+    protected static final String[] TABLES_URIS = new String[]{
+            ShopStore.CountryTable.URI_CONTENT,
+            ShopStore.StateTable.URI_CONTENT,
+            ShopStore.PisCofinsTable.URI_CONTENT,
+
+            ShopStore.ComposerTable.URI_CONTENT,
+            ShopStore.UnitLabelTable.URI_CONTENT,
+
+            ShopStore.RegisterTable.URI_CONTENT,
+            ShopStore.PrinterAliasTable.URI_CONTENT,
+            ShopStore.CashDrawerMovementTable.URI_CONTENT,
+            ShopStore.CustomerTable.URI_CONTENT,
+            ShopStore.EmployeeTable.URI_CONTENT,
+            ShopStore.EmployeePermissionTable.URI_CONTENT,
+            ShopStore.EmployeeTimesheetTable.URI_CONTENT,
+            ShopStore.ShiftTable.URI_CONTENT,
+            ShopStore.NCMItemTable.URI_CONTENT,
+            ShopStore.NCMFavouritesTable.URI_CONTENT,
+            ShopStore.TaxGroupTable.URI_CONTENT,
+            ShopStore.DepartmentTable.URI_CONTENT,
+            ShopStore.CategoryTable.URI_CONTENT,
+            ShopStore.ItemTable.URI_CONTENT,
+            ShopStore.ModifierTable.URI_CONTENT,
+            ShopStore.ModifierGroupTable.URI_CONTENT,
+            ShopStore.ItemMovementTable.URI_CONTENT,
+            ShopStore.UnitTable.URI_CONTENT,
+            ShopStore.ComposerTable.URI_CONTENT,
+            ShopStore.UnitLabelTable.URI_CONTENT,
+
+            ShopStore.SaleOrderTable.URI_CONTENT,
+            ShopStore.SaleItemTable.URI_CONTENT,
+            ShopStore.SaleAddonTable.URI_CONTENT,
+            ShopStore.PaymentTransactionTable.URI_CONTENT,
+            ShopStore.CreditReceiptTable.URI_CONTENT,
+            ShopStore.EmployeeTipsTable.URI_CONTENT,
+            ShopStore.EmployeeCommissionsTable.URI_CONTENT,
+            ShopStore.VariantItemTable.URI_CONTENT,
+            ShopStore.VariantSubItemTable.URI_CONTENT,
+            ShopStore.ItemMatrixTable.URI_CONTENT,
+            ShopStore.CestTable.URI_CONTENT,
+            ShopStore.SaleComposerTable.URI_CONTENT,
+            ShopStore.PaymentServiceProviderTable.URI_CONTENT,
+            ShopStore.CfopReturnMappingTable.URI_CONTENT,
+            ShopStore.CardBrandTable.URI_CONTENT,
+            ShopStore.TableOrderTable.URI_CONTENT,
+            ShopStore.CustomerOrderTable.URI_CONTENT,
+            ShopStore.ShopModuleTable.URI_CONTENT
+    };
+
+    @Override
+    public void run() {
+        Logger.d("SyncCommand start");
+
+        if (!getApp().isUserLogin()) {
+            Logger.d("SyncCommand end: no user");
+            return;
+        }
+
+        NotificationHelper.addSyncNotification(service);
+        int count = 0;
+        String error = null;
+        boolean isSyncLocked = false;
+        boolean isCanceled = false;
+
+        getApp().lockOnTrainingMode();
+        try {
+            count = syncNow(getApp().getOperator());
+
+        } catch (SyncException e) {
+            error = getErrorString(e.localTable);
+
+        } catch (DBVersionCheckException e) {
+            error = getErrorString(null);
+
+        } catch (SyncInconsistentException e) {
+            error = service.getString(R.string.error_message_sync_inconsistent);
+
+        } catch (AccountsException e) {
+            error = service.getString(R.string.error_message_sync_forbidden);
+
+        } catch (SyncLockedException e) {
+            error = service.getString(R.string.error_message_sync_locked);
+            isSyncLocked = true;
+
+        } catch (SyncInterruptedException e) {
+            isCanceled = true;
+            error = service.getString(R.string.error_message_sync_interrupted);
+
+        } catch (Exception e) {
+            error = getErrorString(null);
+
+        } finally {
+            getApp().unlockOnTrainingMode();
+        }
+        boolean failure = error != null;
+        if (failure) {
+            NotificationHelper.showSyncErrorNotification(service, error);
+
+        } else if (count > 0) {
+            NotificationHelper.showSyncNewDataNotification(service);
+
+        } else {
+            NotificationHelper.removeSyncNotification(service);
+        }
+        OfflineCommandsService.fireCompleteEvent(service, !failure, isSyncLocked, isManual, isCanceled);
+        LoginCommand.setRegisterId();
+        Logger.d("SyncCommand end");
+    }
+
+    public int syncNow(final EmployeeModel employee) throws SyncException,
+            DBVersionCheckException,
+            OfflineException,
+            SyncInconsistentException,
+            SyncLockedException,
+            SyncInterruptedException,
+            AccountsException,
+            IOException, JSONException, SyncCommand.SyncInterruptedException, SyncCommand.SyncException, SyncCommand.DBVersionCheckException, SyncCommand.SyncLockedException, SyncCommand.SyncInconsistentException {
+
+        this.employeeModel = employee;
+
+        if (!getApp().isTrainingMode() && !ValueUtil.isNetworkAvailable(service)) {
+            Logger.e("SyncCommand: NO CONNECTION");
+            setOfflineMode(true);
+            throw new OfflineException();
+        }
+        try {
+            int result = syncNowInner(employee);
+            onSyncSuccess();
+            return result;
+
+        } catch (JSONException | IOException | SyncException | SyncInterruptedException | RuntimeException | SyncLockedException
+                | DBVersionCheckException | AccountsException e) {
+            Logger.e("SyncCommand failed", e);
+            onSyncFailure();
+            throw e;
+
+        } catch (SyncInconsistentException e) {
+            Logger.e("SyncCommand failed", e);
+            onSyncSuccess();
+            throw e;
+        }
+    }
+
+    protected int syncNowInner(final EmployeeModel employee) throws SyncException,
+            DBVersionCheckException,
+            SyncInconsistentException,
+            SyncLockedException,
+            SyncInterruptedException,
+            AccountsException, JSONException, IOException, SyncCommand.SyncException, SyncCommand.DBVersionCheckException, SyncCommand.SyncInconsistentException, SyncCommand.SyncLockedException, SyncCommand.SyncInterruptedException {
+        return 0;
+    }
+
+    protected TcrApplication getApp() {
+        return (TcrApplication) service.getApplicationContext();
+    }
+
+    protected String getShopId() {
+        return String.valueOf(getApp().getShopPref().shopId().get());
+    }
+
+    protected boolean checkIsSyncGep(ShopOpenHelper syncOpenHelper, long minUpdateTime, String tableName, String guidColumn, String parentIdColumn, boolean isChild) {
+        MaxUpdateTime maxUpdateTime = getMaxTimeSingleTable(service, syncOpenHelper, tableName, guidColumn, parentIdColumn, isChild);
+        return maxUpdateTime == null || (maxUpdateTime.time < minUpdateTime);
+    }
+
+    protected static MaxUpdateTime getMaxTimeSingleTable(Context context, ShopOpenHelper syncOpenHelper, String tableName, String id, String parentIdColumn, boolean isChild) {
+        boolean hasChildren = parentIdColumn != null;
+        String[] args;
+        if (!hasChildren) {
+            args = new String[]{tableName, id};
+        } else {
+            args = new String[]{tableName, id, parentIdColumn, isChild ? "not null" : "null"};
+        }
+        Table table = Table.getTable(tableName, !isChild);
+
+
+        MaxUpdateTime mainMaxUpdateTime = getMaxTimeInner(context, table);
+        MaxUpdateTime syncMaxUpdateTime = getMaxTimeSyncInner(syncOpenHelper, hasChildren, args);
+        MaxUpdateTime maxUpdateTime = mainMaxUpdateTime;
+        if (mainMaxUpdateTime == null)
+            maxUpdateTime = syncMaxUpdateTime;
+        else if (syncMaxUpdateTime != null && syncMaxUpdateTime.time > mainMaxUpdateTime.time)
+            maxUpdateTime = syncMaxUpdateTime;
+        return maxUpdateTime;
+    }
+
+    public static class MaxUpdateTime {
+        public final long time;
+        public final String guid;
+
+        public MaxUpdateTime(long time, String guid) {
+            this.time = time;
+            this.guid = guid;
+        }
+    }
+
+    private static MaxUpdateTime getMaxTimeSyncInner(ShopOpenHelper syncOpenHelper, boolean hasChildren, String[] args) {
+        try (
+                Cursor c = !hasChildren ? syncOpenHelper.getMaxUpdateTime(args) : syncOpenHelper.getMaxUpdateParentTime(args)
+        ) {
+
+            MaxUpdateTime time = null;
+            if (c.moveToFirst()) {
+                time = new MaxUpdateTime(c.getLong(0), c.getString(1));
+            }
+            return time;
+        }
+    }
+
+    private static MaxUpdateTime getMaxTimeInner(Context context, Table table) {
+        try (
+                Cursor c = context.getContentResolver().query(
+                        ShopProvider.contentUri(ShopStore.UpdateTimeTable.URI_CONTENT),
+                        new String[]{ShopStore.UpdateTimeTable.UPDATE_TIME, ShopStore.UpdateTimeTable.GUID},
+                        ShopStore.UpdateTimeTable.TABLE_ID + " = ?", new String[]{String.valueOf(_enum(table))},
+                        null)
+        ) {
+            MaxUpdateTime time = null;
+            if (c != null && c.moveToFirst()) {
+                time = new MaxUpdateTime(c.getLong(0), c.getString(1));
+            }
+            return time;
+        }
+    }
+
+    protected boolean isFirstSync(Context context) {
+        if (!isTableEmpty(context, ShopStore.RegisterTable.URI_CONTENT, ShopStore.RegisterTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.PrinterAliasTable.URI_CONTENT, ShopStore.PrinterAliasTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.CustomerTable.URI_CONTENT, ShopStore.CustomerTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.EmployeeTable.URI_CONTENT, ShopStore.EmployeeTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.EmployeePermissionTable.URI_CONTENT, ShopStore.EmployeePermissionTable.USER_GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.EmployeeTimesheetTable.URI_CONTENT, ShopStore.EmployeeTimesheetTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.ShiftTable.URI_CONTENT, ShopStore.ShiftTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.CashDrawerMovementTable.URI_CONTENT, ShopStore.CashDrawerMovementTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.TaxGroupTable.URI_CONTENT, ShopStore.TaxGroupTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.DepartmentTable.URI_CONTENT, ShopStore.DepartmentTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.CategoryTable.URI_CONTENT, ShopStore.CategoryTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.ItemTable.URI_CONTENT, ShopStore.ItemTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.ModifierTable.URI_CONTENT, ShopStore.ModifierTable.MODIFIER_GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.ModifierGroupTable.URI_CONTENT, ShopStore.ModifierGroupTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.ItemMovementTable.URI_CONTENT, ShopStore.ItemMovementTable.ITEM_GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.SaleOrderTable.TABLE_NAME, ShopStore.SaleOrderTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.SaleItemTable.TABLE_NAME, ShopStore.SaleItemTable.SALE_ITEM_GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.SaleAddonTable.TABLE_NAME, ShopStore.SaleAddonTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.PaymentTransactionTable.TABLE_NAME, ShopStore.PaymentTransactionTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.CreditReceiptTable.TABLE_NAME, ShopStore.CreditReceiptTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.EmployeeTipsTable.TABLE_NAME, ShopStore.EmployeeTipsTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.EmployeeCommissionsTable.TABLE_NAME, ShopStore.EmployeeCommissionsTable.GUID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.UnitTable.TABLE_NAME, ShopStore.UnitTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.VariantItemTable.TABLE_NAME, ShopStore.VariantItemTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.VariantSubItemTable.TABLE_NAME, ShopStore.VariantSubItemTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.ItemMatrixTable.TABLE_NAME, ShopStore.ItemMatrixTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.ComposerTable.TABLE_NAME, ShopStore.ComposerTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.CestTable.TABLE_NAME, ShopStore.CestTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.SaleComposerTable.TABLE_NAME, ShopStore.CestTable.ID))
+            return false;
+        if (!isTableEmpty(context, ShopStore.SaleComposerTable.TABLE_NAME, ShopStore.CestTable.ID))
+            return false;
+        return true;
+    }
+
+    protected boolean isTableEmpty(Context context, String uriPath, String primaryKeyColumn) {
+        try (
+                Cursor c = ProviderAction.query(ShopProviderExt.contentUri(uriPath))
+                        .projection("count(" + primaryKeyColumn + ")")
+                        .perform(context)
+        ) {
+            int count = 0;
+            if (c.moveToFirst())
+                count = c.getInt(0);
+
+            return count == 0;
+        }
+    }
+
+    protected boolean checkIsSalesSyncGep(ShopOpenHelper syncOpenHelper, long minUpdateTime) {
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.SaleOrderTable.TABLE_NAME, ShopStore.SaleOrderTable.GUID, ShopStore.SaleOrderTable.PARENT_ID, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.SaleOrderTable.TABLE_NAME, ShopStore.SaleOrderTable.GUID, ShopStore.SaleOrderTable.PARENT_ID, true))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.SaleItemTable.TABLE_NAME, ShopStore.SaleItemTable.SALE_ITEM_GUID, ShopStore.SaleItemTable.PARENT_GUID, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.SaleItemTable.TABLE_NAME, ShopStore.SaleItemTable.SALE_ITEM_GUID, ShopStore.SaleItemTable.PARENT_GUID, true))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.SaleAddonTable.TABLE_NAME, ShopStore.SaleAddonTable.GUID, null, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.SaleComposerTable.TABLE_NAME, ShopStore.SaleComposerTable.ID, null, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.PaymentTransactionTable.TABLE_NAME, ShopStore.PaymentTransactionTable.GUID, ShopStore.PaymentTransactionTable.PARENT_GUID, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.PaymentTransactionTable.TABLE_NAME, ShopStore.PaymentTransactionTable.GUID, ShopStore.PaymentTransactionTable.PARENT_GUID, true))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.EmployeeTipsTable.TABLE_NAME, ShopStore.EmployeeTipsTable.GUID, ShopStore.EmployeeTipsTable.PARENT_GUID, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.EmployeeTipsTable.TABLE_NAME, ShopStore.EmployeeTipsTable.GUID, ShopStore.EmployeeTipsTable.PARENT_GUID, true))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.EmployeeCommissionsTable.TABLE_NAME, ShopStore.EmployeeCommissionsTable.GUID, null, false))
+            return true;
+        if (checkIsSyncGep(syncOpenHelper, minUpdateTime, ShopStore.UnitTable.TABLE_NAME, ShopStore.UnitTable.ID, null, false))
+            return true;
+        return false;
+    }
+
+
+    protected void onSyncSuccess() {
+        setOfflineMode(false);
+        TransactionUtil.processPayment(BigDecimal.ZERO, getApp().getApplicationContext());
+    }
+
+    protected void onSyncFailure() {
+        setOfflineMode(true);
+    }
+
+    protected void setOfflineMode(boolean isOfflineMode) {
+        if (!isManual && !getApp().isUserLogin()) {
+            return;
+        }
+        if (getApp().isTrainingMode())
+            return;
+
+        getApp().lockOnOfflineMode();
+        try {
+            if (!isOfflineMode && !ValueUtil.isNetworkAvailable(service)) {
+                return;
+            }
+            if (!isOfflineMode || !getApp().isOfflineMode()) {
+                getApp().setOfflineMode(isOfflineMode ? System.currentTimeMillis() : null);
+            }
+        } finally {
+            getApp().unlockOnOfflineMode();
+        }
+    }
+
+    protected void checkServerSalesHistoryLimit(SyncApi api, EmployeeModel employee, int salesHistoryLimit) throws SyncException, SyncLockedException, SyncCommand.SyncException, SyncCommand.SyncLockedException {
+        Integer serverSalesHistoryLimit = getServerSalesHistoryLimit(api, employee);
+        if (serverSalesHistoryLimit == null) {
+            Logger.e("SyncCommand: server sales history limit check failed - value is not set on the server, or empty response");
+            throw new SyncLockedException();
+        }
+        if (salesHistoryLimit != serverSalesHistoryLimit) {
+            Logger.e("SyncCommand: server sales history limit check failed - value had been changed on the server");
+            throw new SyncLockedException();
+        }
+    }
+
+    protected Integer getServerSalesHistoryLimit(SyncApi api, EmployeeModel employee) throws SyncException, SyncLockedException {
+        RestCommand.IntegerResponse response;
+        try {
+            response = api.getMaxHistoryLimit(getShopId(), getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employee, getApp()));
+        } catch (Exception e) {
+            Logger.e("SyncCommand.getServerSalesHistoryLimit(): failed", e);
+            throw new SyncException();
+        }
+        Logger.d("SyncCommand.getServerSalesHistoryLimit(): response: " + response);
+
+        if (response != null && response.isSyncLockedError()) {
+            Logger.e("SyncCommand.getServerSalesHistoryLimit(): failed, response: " + response);
+            throw new SyncLockedException();
+        }
+
+        if (response == null || !response.isSuccess()) {
+            Logger.e("SyncCommand.getServerSalesHistoryLimit(): failed, response: " + response);
+            throw new SyncException();
+        }
+
+        if (response.entity == null) {
+            Logger.w("SyncCommand.getServerSalesHistoryLimit(): empty response");
+        }
+        return response.entity;
+    }
+
+    protected HookListener<EmployeePermissionModel> employeePermissionsHookListener = new HookListener<EmployeePermissionModel>() {
+
+        private Set<Permission> enabledPermissions;
+        private Set<Permission> disabledPermissions;
+
+        @Override
+        public void onHook(EmployeePermissionModel model) {
+            Permission permission = Permission.valueOfOrNull(model.permissionId);
+            if (permission == null)
+                return;
+
+            if (model.enabled) {
+                if (enabledPermissions == null)
+                    enabledPermissions = new HashSet<>();
+                enabledPermissions.add(permission);
+            } else {
+                if (disabledPermissions == null)
+                    disabledPermissions = new HashSet<>();
+                disabledPermissions.add(permission);
+            }
+        }
+
+        @Override
+        protected EmployeePermissionModel getModel(Cursor c) {
+            return new EmployeePermissionModel(c);
+        }
+
+        @Override
+        public void onFinish() {
+            if (enabledPermissions == null && disabledPermissions == null)
+                return;
+
+            getApp().updateOperatorPermissions(enabledPermissions, disabledPermissions);
+        }
+    };
+
+    public static class SyncException extends Exception {
+
+        public String localTable;
+
+        protected SyncException() {
+
+        }
+
+        protected SyncException(String localTable) {
+            this.localTable = localTable;
+        }
+    }
+
+    public static class DBVersionCheckException extends Exception {
+
+    }
+
+    public static class OfflineException extends Exception {
+
+    }
+
+    public static class SyncInconsistentException extends Exception {
+
+    }
+
+    public static class SyncLockedException extends Exception {
+
+    }
+
+    public static class ShopDeactivatedException extends Exception {
+
+    }
+
+    public static class SyncInterruptedException extends Exception {
+
+        public SyncInterruptedException(String message) {
+            super(message);
+        }
+
+    }
+
+    public static abstract class HookListener<T extends IValueModel> {
+
+        void onHook(Cursor c) {
+            while (c.moveToNext()) {
+                onHook(getModel(c));
+            }
+        }
+
+        protected abstract void onHook(T model);
+
+        protected abstract T getModel(Cursor c);
+
+        abstract void onFinish();
+    }
+
+
+    private void addTableAndGuidError(List<String> withErrorTables, List<String> withErrorGuids, String table, String guid){
+        if (this instanceof SyncCommandOldBR){
+            ((SyncCommandOldBR) this).downloadDataTable(table, guid);
+        }
+        else if (!withErrorGuids.contains(guid)) {
+            withErrorTables.add(table);
+            withErrorGuids.add(guid);
+        }
+    }
+
+
+    protected Integer syncShopInfo(EmployeeModel employeeModel) throws SyncCommand.SyncException, SyncCommand.SyncLockedException {
+        TcrApplication app = TcrApplication.get();
+        api = app.getRestAdapter().create(SyncApi.class);
+
+        fireEvent(service, null, service.getString(R.string.sync_shop_info), 0, 0);
+
+        Integer salesHistoryLimit;
+        try {
+            GetResponse resp = makeShopInfoRequest(api, app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employeeModel, app));
+            if (resp != null && resp.isSyncLockedError()) {
+                throw new SyncCommand.SyncLockedException();
+            }
+            if (resp == null || !resp.isSuccess()) {
+                Logger.e("can't parse shop", new RuntimeException());
+                throw new SyncException();
+            }
+            JdbcJSONObject entity = resp.getEntity();
+            syncBarcodePrefix(entity.getJSONArray("BARCODE_PREFIXES"));
+            syncPrepaidTaxes(entity.getJSONArray("PREPAID_ITEM_TAXES"));
+            syncActivationCarriers(entity.getJSONArray("ACTIVATION_CARRIERS"));
+            salesHistoryLimit = syncShop(entity.getJSONObject("SHOP"));
+
+            if (app.isFreemium()) {
+                Logger.d("[Freemium] Getting settings for current plan");
+                //PlanOptionsResponse freemiumOptions = SyncApi2.getFreemiumOptions(app.emailApiKey,
+                //        SyncUploadRequestBuilder.getReqCredentials(employeeModel, app));
+                //freemiumOptions.get().save();
+            }
+        } catch (SyncCommand.SyncException e) {
+            throw e;
+        } catch (SyncCommand.SyncLockedException e) {
+            throw e;
+        } catch (Exception e) {
+            Logger.e("Can't sync shop info", e);
+            throw new SyncCommand.SyncException();
+        }
+        return salesHistoryLimit;
+    }
+
+
+    private void syncPrepaidTaxes(JdbcJSONArray jsonArray) throws SyncCommand.SyncException {
+        if (jsonArray == null) {
+            Logger.e("can't sync prepaid taxes", new RuntimeException());
+            throw new SyncCommand.SyncException();
+        }
+        HashMap<Broker, BigDecimal> taxes = null;
+        try {
+            taxes = PrepaidTaxJdbcConverter.read(jsonArray);
+        } catch (JSONException e) {
+            Logger.e("can't sync prepaid taxes", e);
+            throw new SyncCommand.SyncException();
+        }
+        ((TcrApplication) service.getApplicationContext()).savePrepaidTaxes(taxes);
+    }
+
+    private void syncActivationCarriers(JdbcJSONArray jsonArray) throws SyncCommand.SyncException {
+        if (jsonArray == null) {
+            Logger.e("can't sync activation carriers", new RuntimeException());
+            throw new SyncCommand.SyncException();
+        }
+
+        String localTable = ShopStore.ActivationCarrierTable.TABLE_NAME;
+        SyncSingleResponseHandler handler = new SyncSingleResponseHandler(null,
+                JdbcFactory.getConverter(localTable),
+                null, 0L
+        );
+        ArrayList<ContentValues> values;
+        try {
+            values = handler.parseResponse(new GetArrayResponse(null, null, jsonArray));
+        } catch (JSONException e) {
+            Logger.e("parse ActivationCarriers error", e);
+            throw new SyncCommand.SyncException(localTable);
+        }
+
+        if (values == null) {
+            Logger.e("can't sync activation carriers: empty response");
+            throw new SyncCommand.SyncException(localTable);
+        }
+
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>(values.size() + 1);
+        ops.add(ContentProviderOperation.newDelete(ShopProvider.contentUri(ShopStore.ActivationCarrierTable.URI_CONTENT)).build());
+        for (ContentValues value : values) {
+            ops.add(ContentProviderOperation.newInsert(ShopProvider.contentUri(ShopStore.ActivationCarrierTable.URI_CONTENT))
+                    .withValues(value)
+                    .build());
+        }
+        try {
+            service.getContentResolver().applyBatch(ShopProvider.AUTHORITY, ops);
+        } catch (Exception e) {
+            Logger.e("insert ActivationCarriers error", e);
+            throw new SyncCommand.SyncException(localTable);
+        }
+    }
+
+    public boolean checkForeignKey(Context context, List<String> withErrorTables, List<String> withErrorGuids, String tableName, ContentValues values) {
+        boolean foundProblem = false;
+        switch (tableName) {
+            case ShopStore.SaleOrderTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.OPERATOR_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.OPERATOR_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.SHIFT_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.SHIFT_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.CustomerTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.CUSTOMER_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.CustomerTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.CUSTOMER_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.RegisterTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.REGISTER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.RegisterTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.REGISTER_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.PARENT_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.SaleOrderTable.PARENT_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.SaleItemTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.SaleItemTable.ORDER_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.SaleItemTable.ORDER_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.SaleAddonTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.ModifierTable.TABLE_NAME, values.getAsString(ShopStore.SaleAddonTable.ADDON_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ModifierTable.TABLE_NAME, values.getAsString(ShopStore.SaleAddonTable.ADDON_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.SaleItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleAddonTable.ITEM_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleAddonTable.ITEM_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleAddonTable.CHILD_ITEM_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleAddonTable.CHILD_ITEM_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.SaleComposerTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.SaleItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleComposerTable.SALE_ITEM_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleComposerTable.SALE_ITEM_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.SaleAddonTable.TABLE_NAME, values.getAsString(ShopStore.SaleComposerTable.SALE_MODIFIER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleAddonTable.TABLE_NAME, values.getAsString(ShopStore.SaleComposerTable.SALE_MODIFIER_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleComposerTable.HOST_ITEM_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleComposerTable.HOST_ITEM_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleComposerTable.CHILD_ITEM_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.SaleComposerTable.CHILD_ITEM_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.StateTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.CountryTable.TABLE_NAME, values.getAsString(ShopStore.StateTable.COUNTRY_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.CountryTable.TABLE_NAME, values.getAsString(ShopStore.StateTable.COUNTRY_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.ComposerTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ComposerTable.ITEM_HOST_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ComposerTable.ITEM_HOST_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ComposerTable.ITEM_CHILD_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ComposerTable.ITEM_CHILD_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.UnitTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.UnitTable.ITEM_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.UnitTable.ITEM_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.UnitTable.SALE_ORDER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.UnitTable.SALE_ORDER_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.UnitTable.CHILD_ORDER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.UnitTable.CHILD_ORDER_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.CategoryTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.DepartmentTable.TABLE_NAME, values.getAsString(ShopStore.CategoryTable.DEPARTMENT_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.DepartmentTable.TABLE_NAME, values.getAsString(ShopStore.CategoryTable.DEPARTMENT_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.ItemTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.CategoryTable.TABLE_NAME, values.getAsString(ShopStore.ItemTable.CATEGORY_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.CategoryTable.TABLE_NAME, values.getAsString(ShopStore.ItemTable.CATEGORY_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.TaxGroupTable.TABLE_NAME, values.getAsString(ShopStore.ItemTable.TAX_GROUP_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.TaxGroupTable.TABLE_NAME, values.getAsString(ShopStore.ItemTable.TAX_GROUP_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.PrinterAliasTable.TABLE_NAME, values.getAsString(ShopStore.ItemTable.PRINTER_ALIAS_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.PrinterAliasTable.TABLE_NAME, values.getAsString(ShopStore.ItemTable.PRINTER_ALIAS_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.ItemMovementTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ItemMovementTable.ITEM_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ItemMovementTable.ITEM_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.ItemMovementTable.OPERATOR_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.ItemMovementTable.OPERATOR_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.ModifierTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ModifierTable.ITEM_SUB_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ModifierTable.ITEM_SUB_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ModifierTable.ITEM_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ModifierTable.ITEM_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.ModifierGroupTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.ModifierGroupTable.TABLE_NAME, values.getAsString(ShopStore.ModifierGroupTable.ITEM_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ModifierGroupTable.TABLE_NAME, values.getAsString(ShopStore.ModifierGroupTable.ITEM_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.NCMFavouritesTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.NCMItemTable.TABLE_NAME, values.getAsString(ShopStore.NCMFavouritesTable.NCM_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.NCMItemTable.TABLE_NAME, values.getAsString(ShopStore.NCMFavouritesTable.NCM_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.EmployeePermissionTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.EmployeePermissionTable.USER_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.EmployeePermissionTable.USER_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.ShiftTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.ShiftTable.OPEN_MANAGER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.ShiftTable.OPEN_MANAGER_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.ShiftTable.CLOSE_MANAGER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.ShiftTable.CLOSE_MANAGER_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.RegisterTable.TABLE_NAME, values.getAsString(ShopStore.ShiftTable.REGISTER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.RegisterTable.TABLE_NAME, values.getAsString(ShopStore.ShiftTable.REGISTER_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.CashDrawerMovementTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.CashDrawerMovementTable.SHIFT_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.CashDrawerMovementTable.SHIFT_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.CashDrawerMovementTable.MANAGER_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.CashDrawerMovementTable.MANAGER_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.PaymentTransactionTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.PaymentTransactionTable.SHIFT_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.PaymentTransactionTable.SHIFT_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.PaymentTransactionTable.ORDER_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.PaymentTransactionTable.ORDER_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.PaymentTransactionTable.OPERATOR_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.PaymentTransactionTable.OPERATOR_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.EmployeeTimesheetTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTimesheetTable.EMPLOYEE_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTimesheetTable.EMPLOYEE_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.MunicipalityTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.CountryTable.TABLE_NAME, values.getAsString(ShopStore.MunicipalityTable.COUNTRY_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.CountryTable.TABLE_NAME, values.getAsString(ShopStore.MunicipalityTable.COUNTRY_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.StateTable.TABLE_NAME, values.getAsString(ShopStore.MunicipalityTable.STATE_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.StateTable.TABLE_NAME, values.getAsString(ShopStore.MunicipalityTable.COUNTRY_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.CreditReceiptTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.CreditReceiptTable.CASHIER_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.CreditReceiptTable.CASHIER_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.RegisterTable.TABLE_NAME, values.getAsString(ShopStore.CreditReceiptTable.REGISTER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.RegisterTable.TABLE_NAME, values.getAsString(ShopStore.CreditReceiptTable.REGISTER_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.CreditReceiptTable.SHIFT_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.CreditReceiptTable.SHIFT_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.EmployeeTipsTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTipsTable.EMPLOYEE_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTipsTable.EMPLOYEE_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTipsTable.SHIFT_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTipsTable.SHIFT_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTipsTable.ORDER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTipsTable.ORDER_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.PaymentTransactionTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTipsTable.PAYMENT_TRANSACTION_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.PaymentTransactionTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeTipsTable.PAYMENT_TRANSACTION_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.EmployeeCommissionsTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeCommissionsTable.ORDER_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeCommissionsTable.ORDER_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeCommissionsTable.EMPLOYEE_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.EmployeeTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeCommissionsTable.EMPLOYEE_ID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeCommissionsTable.SHIFT_ID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ShiftTable.TABLE_NAME, values.getAsString(ShopStore.EmployeeCommissionsTable.SHIFT_ID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.ItemMatrixTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ItemMatrixTable.PARENT_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.ItemTable.TABLE_NAME, values.getAsString(ShopStore.ItemMatrixTable.PARENT_GUID));
+                    foundProblem = true;
+                }
+                break;
+            case ShopStore.CustomerOrderTable.TABLE_NAME:
+                if (!isThereEntity(context, ShopStore.TableOrderTable.TABLE_NAME, values.getAsString(ShopStore.CustomerOrderTable.TABLE_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.TableOrderTable.TABLE_NAME, values.getAsString(ShopStore.CustomerOrderTable.TABLE_GUID));
+                    foundProblem = true;
+                }
+                if (!isThereEntity(context, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.CustomerOrderTable.ORDER_GUID))) {
+                    addTableAndGuidError(withErrorTables, withErrorGuids, ShopStore.SaleOrderTable.TABLE_NAME, values.getAsString(ShopStore.CustomerOrderTable.ORDER_GUID));
+                    foundProblem = true;
+                }
+                break;
+        }
+        return foundProblem;
+    }
+
+    private static boolean isThereEntity(Context context, String localTableName, String id) {
+        if (id == null) return true;
+
+        JdbcConverter converter = JdbcFactory.getConverter(localTableName);
+
+        try (
+                Cursor c = ProviderAction.query(ShopProvider.contentUri(JdbcConverter.getURIFromTable(localTableName)))
+                        .projection(converter.getLocalGuidColumn())
+                        .where(converter.getLocalGuidColumn() + " = ?", id)
+                        .perform(context)
+        ) {
+            return c.getCount() > 0;
+        }
+    }
+
+    protected String getErrorString(String localTable) {
+        if (ShopStore.ItemTable.TABLE_NAME.equals(localTable)) {
+            return service.getString(R.string.sync_err_items);
+        } else if (ShopStore.SaleOrderTable.TABLE_NAME.equals(localTable)) {
+            return service.getString(R.string.sync_err_sale_orders);
+        } else if (ShopStore.SaleItemTable.TABLE_NAME.equals(localTable)) {
+            return service.getString(R.string.sync_err_sale_order_items);
+        }
+        return service.getString(R.string.sync_err_unknown);
+    }
+
+    protected void syncFinalTable(JdbcJSONArray jsonArray, String localTableName) throws SyncException {
+        if (jsonArray == null) {
+            Logger.e("can't sync " + localTableName, new RuntimeException());
+            throw new SyncException();
+        }
+
+        SyncSingleResponseHandler handler = new SyncSingleResponseHandler(shopOpenHelper,
+                JdbcFactory.getConverter(localTableName),
+                localTableName, 0L);
+        try {
+            boolean staticTable = isStaticTable(localTableName);
+            String parentIdColumn = staticTable ? null : getIdColumnAndParentId(localTableName)[1];
+            boolean hasChildren = !staticTable && hasChildren(parentIdColumn);
+
+            handler.handleResponse(new GetArrayResponse(null, null, jsonArray), hasChildren, staticTable, parentIdColumn);
+        } catch (JSONException e) {
+            Logger.e("parse " + localTableName + " error", e);
+            throw new SyncException();
+        }
+    }
+
+    protected GetArrayResponse makeOldActiveOrdersRequest(SyncApi api, String apiKey, JSONObject credentials, JSONObject entity) throws JSONException, SyncException {
+        Logger.e("dream makeOldActiveOrdersRequest");
+        int retry = 0;
+        while (retry++ < 5) {
+            try {
+                return api.downloadOldActiveOrders(getShopId(), apiKey, credentials, entity);
+            } catch (RetrofitError e) {
+                Logger.e("attempt: " + retry, e);
+            }
+        }
+        throw new SyncException();
+    }
+
+    protected GetResponse makeShopInfoRequest(SyncApi api, String apiKey, JSONObject credentials) throws JSONException, SyncException {
+        int retry = 0;
+        while (retry++ < 5) {
+            try {
+                return api.downloadShopInfo(getShopId(), apiKey, credentials);
+            } catch (RetrofitError e) {
+                Logger.e("attempt: " + retry, e);
+            }
+        }
+        throw new SyncException();
+    }
+
+    protected GetResponse makeLocationsRequest(SyncApi api, String apiKey, JSONObject credentials) throws JSONException, SyncException {
+        int retry = 0;
+        while (retry++ < 5) {
+            try {
+                return api.downloadLocations(getShopId(), apiKey, credentials);
+            } catch (RetrofitError e) {
+                Logger.e("attempt: " + retry, e);
+            }
+        }
+        throw new SyncException();
+    }
+
+
+    protected void syncLocations(EmployeeModel employeeModel) throws SyncException {
+        TcrApplication app = TcrApplication.get();
+        SyncApi api = app.getRestAdapter().create(SyncApi.class);
+
+        fireEvent(service, null, service.getString(R.string.sync_locations), 0, 0);
+        try {
+            shopOpenHelper.beginTransaction();
+            GetResponse resp = makeLocationsRequest(api, app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employeeModel, app));
+            if (resp == null || !resp.isSuccess()) {
+                Logger.e("can't parse locations", new RuntimeException());
+                throw new SyncException();
+            }
+            JdbcJSONObject entity = resp.getEntity();
+            Logger.d("syncLocations(): response: " + entity);
+
+            syncFinalTable(entity.getJSONArray("COUNTRIES"), ShopStore.CountryTable.TABLE_NAME);
+            syncFinalTable(entity.getJSONArray("STATES"), ShopStore.StateTable.TABLE_NAME);
+
+            shopOpenHelper.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e("Can't sync shop info", e);
+            throw new SyncException();
+
+        } finally {
+            shopOpenHelper.endTransaction();
+        }
+    }
+
+    protected Integer syncShop(JdbcJSONObject shop) throws SyncException, SyncCommand.SyncException {
+        if (shop == null) {
+            Logger.e("can't parse shop", new RuntimeException());
+            throw new SyncException();
+        }
+        ShopInfoViewJdbcConverter.ShopInfo info;
+        Integer salesHistoryLimit;
+        try {
+            info = ShopInfoViewJdbcConverter.read(shop);
+            salesHistoryLimit = ShopInfoViewJdbcConverter.getSalesHistoryLimit(shop);
+        } catch (JSONException e) {
+            Logger.e("can't parse shop", e);
+            throw new SyncException();
+        }
+        getApp().saveShopInfo(info);
+        return salesHistoryLimit;
+    }
+
+    protected void syncBarcodePrefix(JdbcJSONArray jsonArray) throws SyncException, SyncCommand.SyncException {
+        if (jsonArray == null) {
+            Logger.e("can't sync barcodeprefix", new RuntimeException());
+            throw new SyncException();
+        }
+        BarcodePrefixJdbcConverter.BarcodePrefixes barcodePrefixes = null;
+        try {
+            barcodePrefixes = BarcodePrefixJdbcConverter.read(jsonArray);
+        } catch (JSONException e) {
+            Logger.e("can't sync barcodeprefix", e);
+            throw new SyncException();
+        }
+        ((TcrApplication) service.getApplicationContext()).saveBarcodePrefixes(barcodePrefixes);
+    }
+
+    protected void syncOldActiveOrders(Context context, SyncApi api, EmployeeModel employeeModel,
+                                     long minUpdateTime) throws SyncException, SyncLockedException {
+
+        TcrApplication app = TcrApplication.get();
+
+        try {
+            GetArrayResponse resp = makeOldActiveOrdersRequest(api, app.emailApiKey,
+                    SyncUploadRequestBuilder.getReqCredentials(employeeModel, app),
+                    SyncGetRequestBuilder.getOldActiveOrdersRequest(minUpdateTime));
+            Logger.d("Resp = %s", resp);
+            if (resp != null && resp.isSyncLockedError()) {
+                throw new SyncLockedException();
+            }
+            if (resp == null || !resp.isSuccess()) {
+                throw new SyncException(ShopStore.SaleOrderTable.TABLE_NAME);
+            }
+            boolean hasData = new SyncOldActiveOrdersResponseHandler(shopOpenHelper).handleResponse(resp);
+            if (hasData) {
+                fireEvent(context, ShopStore.SaleOrderTable.TABLE_NAME, 1, 1);
+            }
+        } catch (SyncLockedException | SyncException e) {
+            throw e;
+
+        } catch (Exception e) {
+            Logger.e("sync old active orders exception", e);
+            throw new SyncException(ShopStore.SaleOrderTable.TABLE_NAME);
+        }
+    }
+
+    protected static boolean hasChildren(String parentIdColumn){
+        return !TextUtils.isEmpty(parentIdColumn);
+    }
+
+    protected static boolean isStaticTable(String localTable){
+        return Objects.equals(localTable, ShopStore.StateTable.TABLE_NAME) || Objects.equals(localTable, ShopStore.CountryTable.TABLE_NAME);
+    }
+
+    protected long getServerCurrentTimestamp(SyncApi api, EmployeeModel employee) throws SyncException, SyncLockedException, SyncCommand.SyncException, SyncCommand.SyncLockedException {
+        Long currentServerTimestamp;
+        GetCurrentTimestampResponse response;
+
+        try {
+            response = api.getCurrentTimestamp(getShopId(), getApp().emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employee, getApp()));
+        } catch (Exception e) {
+            Logger.e("SyncCommand.getServerCurrentTimestamp(): failed", e);
+            throw new SyncException();
+        }
+        Logger.d("SyncCommand.getServerCurrentTimestamp(): response: " + (response == null ? null : response.entity));
+        if (response != null && response.isSyncLockedError()) {
+            throw new SyncLockedException();
+        }
+        currentServerTimestamp = response == null ? null : response.getCurrentTimestamp();
+        if (currentServerTimestamp == null) {
+            Logger.e("SyncCommand.getServerCurrentTimestamp(): failed, empty response");
+            throw new SyncException();
+        }
+
+        getApp().getShopPref().serverTimestamp().put(currentServerTimestamp);
+        getApp().getShopPref().localTimestamp().put(new Date().getTime());
+
+        return currentServerTimestamp;
+    }
+
+
+    protected void executeHook(String uriPath, String guidColumn, String hookGuid, HookListener hookListener) {
+        if (TextUtils.isEmpty(hookGuid) || hookListener == null)
+            return;
+
+        try (
+                Cursor cursor = service.getContentResolver().query(ShopProvider.contentUri(uriPath), null,
+                        guidColumn + " = ? AND " + ShopStore.DEFAULT_IS_DRAFT + " = ?", new String[]{hookGuid, "1"},
+                        null)
+        ) {
+            if (cursor != null && cursor.getCount() != 0) {
+                hookListener.onHook(cursor);
+            }
+        }
+    }
+
+    protected void markRecordsAsLive(Context context) throws SyncInterruptedException, SyncCommand.SyncInterruptedException {
+        for (String uri : TABLES_URIS) {
+            ProviderAction.update(ShopProvider.contentUri(uri))
+                    .where(ShopStore.IBemaSyncTable.UPDATE_IS_DRAFT + " = ?", "1")
+                    .value(ShopStore.IBemaSyncTable.UPDATE_IS_DRAFT, 0)
+                    .perform(context);
+            checkIsLoadingOldOrders();
+        }
+    }
+
+
+    protected void checkForceCancel(final String requestId) throws SyncInterruptedException {
+        if (OfflineCommandsService.forceCancelDownloadUpload) {
+            Logger.d("Cancelling sync");
+
+            if (requestId != null) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            api.uploadCancel(
+                                    getShopId(),
+                                    getApp().emailApiKey,
+                                    SyncUploadRequestBuilder.getReqCredentials(employeeModel, getApp()),
+                                    requestId);
+                        } catch (Exception e) {
+                            Logger.e("downloadCancel", e);
+                        }
+                    }
+                }).start();
+            }
+
+            throw new SyncInterruptedException("forceCancelDownloadUpload");
+        }
+    }
+
+    protected void checkIsLoadingOldOrders() throws SyncInterruptedException, SyncCommand.SyncInterruptedException {
+        if (!getApp().isLoadingOldOrders())
+            return;
+
+        throw new SyncInterruptedException("download sync interrupted (loading old orders)");
+    }
+
+    protected void notifySyncGep() {
+        Logger.w("[SYNC GAP] notify");
+        Intent intent = new Intent(ACTION_SYNC_GAP);
+        LocalBroadcastManager.getInstance(service).sendBroadcast(intent);
+    }
+
+    protected static String[] getIdColumnAndParentId(String table){
+        switch (table){
+            case ShopStore.MunicipalityTable.TABLE_NAME: return new String[]{ShopStore.MunicipalityTable.ID, null};
+            case ShopStore.PisCofinsTable.TABLE_NAME: return new String[]{ShopStore.PisCofinsTable.ID, null};
+            case ShopStore.UnitLabelTable.TABLE_NAME: return new String[]{ShopStore.UnitLabelTable.GUID, null};
+            case ShopStore.RegisterTable.TABLE_NAME: return new String[]{ShopStore.RegisterTable.ID, null};
+            case ShopStore.PrinterAliasTable.TABLE_NAME: return new String[]{ShopStore.PrinterAliasTable.GUID, null};
+            case ShopStore.CustomerTable.TABLE_NAME: return new String[]{ShopStore.CustomerTable.GUID, null};
+            case ShopStore.EmployeeTable.TABLE_NAME: return new String[]{ShopStore.EmployeeTable.GUID, null};
+            case ShopStore.EmployeePermissionTable.TABLE_NAME: return new String[]{ShopStore.EmployeePermissionTable.PERMISSION_ID, null};
+            case ShopStore.EmployeeTimesheetTable.TABLE_NAME: return new String[]{ShopStore.EmployeeTimesheetTable.GUID, null};
+            case ShopStore.ShiftTable.TABLE_NAME: return new String[]{ShopStore.ShiftTable.GUID, null};
+            case ShopStore.CashDrawerMovementTable.TABLE_NAME: return new String[]{ShopStore.CashDrawerMovementTable.GUID, null};
+            case ShopStore.NCMItemTable.TABLE_NAME: return new String[]{ShopStore.NCMItemTable.ID, null};
+            case ShopStore.CestTable.TABLE_NAME: return new String[]{ShopStore.CestTable.ID, null};
+            case ShopStore.NCMFavouritesTable.TABLE_NAME: return new String[]{ShopStore.NCMFavouritesTable.ID, null};
+            case ShopStore.TaxGroupTable.TABLE_NAME: return new String[]{ShopStore.TaxGroupTable.GUID, null};
+            case ShopStore.DepartmentTable.TABLE_NAME: return new String[]{ShopStore.DepartmentTable.GUID, null};
+            case ShopStore.CategoryTable.TABLE_NAME: return new String[]{ShopStore.CategoryTable.GUID, null};
+            case ShopStore.ItemTable.TABLE_NAME: return new String[]{ShopStore.ItemTable.GUID, null};
+            case ShopStore.ModifierGroupTable.TABLE_NAME: return new String[]{ShopStore.ModifierGroupTable.GUID, null};
+            case ShopStore.ModifierTable.TABLE_NAME: return new String[]{ShopStore.ModifierTable.MODIFIER_GUID, null};
+            case ShopStore.VariantItemTable.TABLE_NAME: return new String[]{ShopStore.VariantItemTable.GUID, null};
+            case ShopStore.VariantSubItemTable.TABLE_NAME: return new String[]{ShopStore.VariantSubItemTable.GUID, null};
+            case ShopStore.ItemMatrixTable.TABLE_NAME: return new String[]{ShopStore.ItemMatrixTable.GUID, null};
+            case ShopStore.ItemMovementTable.TABLE_NAME: return new String[]{ShopStore.ItemMovementTable.GUID, null};
+            case ShopStore.SaleAddonTable.TABLE_NAME: return new String[]{ShopStore.SaleAddonTable.GUID, null};
+            case ShopStore.SaleComposerTable.TABLE_NAME: return new String[]{ShopStore.SaleComposerTable.ID, null};
+            case ShopStore.CreditReceiptTable.TABLE_NAME: return new String[]{ShopStore.CreditReceiptTable.GUID, null};
+            case ShopStore.EmployeeCommissionsTable.TABLE_NAME: return new String[]{ShopStore.EmployeeCommissionsTable.GUID, null};
+            case ShopStore.UnitTable.TABLE_NAME: return new String[]{ShopStore.UnitTable.ID, null};
+            case ShopStore.ComposerTable.TABLE_NAME: return new String[]{ShopStore.ComposerTable.ID, null};
+            case ShopStore.PaymentServiceProviderTable.TABLE_NAME: return new String[]{ShopStore.PaymentServiceProviderTable.ID, null};
+            case ShopStore.CfopReturnMappingTable.TABLE_NAME: return new String[]{ShopStore.CfopReturnMappingTable.ID, null};
+            case ShopStore.CardBrandTable.TABLE_NAME: return new String[]{ShopStore.CardBrandTable.ID, null};
+            case ShopStore.SaleOrderTable.TABLE_NAME: return new String[]{ShopStore.SaleOrderTable.GUID, ShopStore.SaleOrderTable.PARENT_ID};
+            case ShopStore.SaleItemTable.TABLE_NAME: return new String[]{ShopStore.SaleItemTable.SALE_ITEM_GUID, ShopStore.SaleItemTable.PARENT_GUID};
+            case ShopStore.PaymentTransactionTable.TABLE_NAME: return new String[]{ShopStore.PaymentTransactionTable.GUID, ShopStore.PaymentTransactionTable.PARENT_GUID};
+            case ShopStore.EmployeeTipsTable.TABLE_NAME: return new String[]{ShopStore.EmployeeTipsTable.GUID, ShopStore.EmployeeTipsTable.PARENT_GUID};
+            case ShopStore.TableOrderTable.TABLE_NAME: return new String[]{ShopStore.TableOrderTable.GUID, null};
+            case ShopStore.CustomerOrderTable.TABLE_NAME: return new String[]{ShopStore.CustomerOrderTable.GUID, null};
+            case ShopStore.ShopModuleTable.TABLE_NAME: return new String[]{ShopStore.ShopModuleTable.ID, null};
+            default: return new String[]{};
+        }
+    }
+}

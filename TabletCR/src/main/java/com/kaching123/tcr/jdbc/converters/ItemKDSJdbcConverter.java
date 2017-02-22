@@ -11,6 +11,7 @@ import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
  */
 public class ItemKDSJdbcConverter extends JdbcConverter<ItemKdsModel> {
 
-    private static final String TABLE_NAME = "ITEM_KDS";
+    public static final String TABLE_NAME = "ITEM_KDS";
 
     private static final String GUID = "ID";
     private static final String ITEM_ID = "ITEM_ID";
@@ -47,6 +48,16 @@ public class ItemKDSJdbcConverter extends JdbcConverter<ItemKdsModel> {
     @Override
     public String getGuidColumn() {
         return GUID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getJSONObject(ItemKdsModel model) {
+        return null;
     }
 
     @Override

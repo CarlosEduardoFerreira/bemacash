@@ -54,6 +54,11 @@ public class PaxModel implements IValueModel, Parcelable {
     }
 
     @Override
+    public String getIdColumn() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return String.format("http://%s:%s", ip, port);
     }

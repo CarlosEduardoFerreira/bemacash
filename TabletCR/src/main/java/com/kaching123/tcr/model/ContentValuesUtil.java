@@ -72,6 +72,21 @@ public final class ContentValuesUtil {
         return _decimal(c.getString(columnIndex), QUANTITY_SCALE, def);
     }
 
+    public static BigDecimal _decimalQty(Cursor c, int columnIndex) {
+        return _decimal(c.getString(columnIndex), QUANTITY_SCALE);
+    }
+
+    public static BigDecimal _decimal(String decimalValue, int scale) {
+        if (TextUtils.isEmpty(decimalValue))
+            return BigDecimal.ZERO;
+        try {
+            return (BigDecimal) (scale <= DECIMAL_SCALE ? decimalFormat.get().parse(decimalValue) : quantityFormat.get().parse(decimalValue));
+        } catch (ParseException e) {
+            Logger.e("Parse number error", e);
+        }
+        return BigDecimal.ZERO;
+    }
+
     public static ItemRefType _itemRefType(Cursor c, int index) {
         return c.isNull(index) ? null : ItemRefType.values()[(c.getInt(index))];
     }

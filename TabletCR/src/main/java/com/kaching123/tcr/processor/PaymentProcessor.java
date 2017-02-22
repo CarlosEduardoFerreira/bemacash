@@ -280,6 +280,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                             null,
                             amount,
                             notes,
+                            null,
                             null
                     ));
                 }
@@ -1430,6 +1431,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                         null,
                         amount,
                         notes,
+                        null,
                         null
                 ), true, null);
             }

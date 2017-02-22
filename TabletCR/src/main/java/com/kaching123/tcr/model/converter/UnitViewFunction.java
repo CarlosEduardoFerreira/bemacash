@@ -25,7 +25,8 @@ public class UnitViewFunction implements Function<Cursor, Unit> {
                 _statusType(c, c.getColumnIndex(UnitsView2.UnitTable.STATUS)),
                 c.getInt(c.getColumnIndex(UnitsView2.UnitTable.WARRANTY_PERIOD)),
                 c.getString(c.getColumnIndex(UnitsView2.UnitTable.SALE_ORDER_ID)),
-                c.getString(c.getColumnIndex(UnitsView2.UnitTable.CHILD_ORDER_ID))
+                c.getString(c.getColumnIndex(UnitsView2.UnitTable.CHILD_ORDER_ID)),
+                null
         );
     }
 }

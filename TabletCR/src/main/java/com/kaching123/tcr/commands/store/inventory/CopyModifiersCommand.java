@@ -66,7 +66,8 @@ public class CopyModifiersCommand extends AsyncCommand {
                     m.childItemQty,
                     null,
                     m.autoApply,
-                    0
+                    0,
+                    null
             );
             operations.add(ContentProviderOperation.newInsert(URI)
                     .withValues(newModel.toValues())

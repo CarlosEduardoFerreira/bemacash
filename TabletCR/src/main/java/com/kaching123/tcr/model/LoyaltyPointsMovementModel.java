@@ -37,4 +37,9 @@ public class LoyaltyPointsMovementModel implements IValueModel, Serializable{
         values.put(LoyaltyPointsMovementTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
         return values;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

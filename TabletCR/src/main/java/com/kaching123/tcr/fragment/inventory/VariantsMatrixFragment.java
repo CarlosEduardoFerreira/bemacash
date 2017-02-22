@@ -202,7 +202,7 @@ public class VariantsMatrixFragment extends Fragment {
             for (int i = 0; i < variantMatrix.size(); i++) {
                 String itemMatrixName = variantMatrix.get(i);
                 models.add(new ItemMatrixModel(UUID.randomUUID().toString(), itemMatrixName,
-                        model.guid, null));
+                        model.guid, null, null));
             }
             callAddItemMatrixCommand(models);
         }

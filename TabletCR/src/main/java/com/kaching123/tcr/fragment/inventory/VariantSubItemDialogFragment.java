@@ -86,7 +86,7 @@ public class VariantSubItemDialogFragment extends StyledDialogFragment {
                     } else {
                         AddVariantSubItemCommand.start(getActivity(),
                                 new VariantSubItemModel(UUID.randomUUID().toString(),
-                                        nameEdit.getText().toString(), variantItemGuid, itemGuid));
+                                        nameEdit.getText().toString(), variantItemGuid, itemGuid, null));
                         if (requiredCount == 1) {
                             hide(getActivity());
                         } else {

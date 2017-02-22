@@ -67,4 +67,9 @@ public class LoyaltyIncentiveModel implements IValueModel, Serializable {
         values.put(LoyaltyIncentiveTable.REWARD_VALUE_TYPE, rewardValueType == null ? null : rewardValueType.ordinal());
         return values;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

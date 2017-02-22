@@ -202,7 +202,7 @@ public class ZReportChooserAlertDialogFragment extends StyledDialogFragment {
         @Override
         public void onLoadFinished(Loader<List<RegisterModel>> loader, List<RegisterModel> result) {
             ArrayList<RegisterModel> arrayList = new ArrayList<RegisterModel>(result.size() + 1);
-            arrayList.add(new RegisterModel(0, null, null, getString(R.string.register_label_all), null, 0, 0));
+            arrayList.add(new RegisterModel(0, null, null, getString(R.string.register_label_all), null, 0, 0, null));
             long id = ((TcrApplication) getContext().getApplicationContext()).getRegisterId();
             for (int p = 0; p < result.size(); p++) {
                 if (result.get(p).id == id)

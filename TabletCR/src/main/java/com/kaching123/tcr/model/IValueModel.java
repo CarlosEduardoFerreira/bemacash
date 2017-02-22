@@ -6,4 +6,5 @@ public interface IValueModel {
 
     String getGuid();
 	ContentValues toValues();
+    String getIdColumn();
 }

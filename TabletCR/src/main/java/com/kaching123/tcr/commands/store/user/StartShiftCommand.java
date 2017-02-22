@@ -41,6 +41,7 @@ public class StartShiftCommand extends AsyncCommand {
                 null,
                 getAppCommandContext().getRegisterId(),
                 openAmaunt,
+                null,
                 null
         );
 

@@ -22,7 +22,7 @@ public class SaleOrderViewModel extends SaleOrderModel{
                               BigDecimal tmpTotalPrice, BigDecimal tmpTotalTax, BigDecimal tmpTotalDiscount,
                               int printSeqNum, long registerId, String parentId, OrderType type, boolean isTipped, String operatorName, String registerTitle,
                               String customerName, String customerPhone, String customerEmail, BigDecimal tipsAmount, KitchenPrintStatus kitchenPrintStatus, PrintOrderToKdsCommand.KDSSendStatus kdsSendStatus, BigDecimal transactionFee) {
-        super(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentId, type, isTipped, kitchenPrintStatus, kdsSendStatus, transactionFee);
+        super(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentId, type, isTipped, kitchenPrintStatus, kdsSendStatus, transactionFee, null);
         this.operatorName = operatorName;
         this.registerTitle = registerTitle;
         this.customerName = customerName;

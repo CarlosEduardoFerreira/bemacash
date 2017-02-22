@@ -61,4 +61,9 @@ public class SaleIncentiveModel implements IValueModel {
         cv.put(SaleIncentiveTable.POINT_THRESHOLD, _decimal(pointsThreshold));
         return cv;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

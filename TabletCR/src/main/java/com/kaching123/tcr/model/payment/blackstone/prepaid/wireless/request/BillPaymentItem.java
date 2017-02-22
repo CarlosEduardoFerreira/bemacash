@@ -51,6 +51,11 @@ public class BillPaymentItem implements IValueModel, Serializable, Parcelable {
     }
 
     @Override
+    public String getIdColumn() {
+        return null;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

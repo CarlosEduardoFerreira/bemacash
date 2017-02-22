@@ -1,13 +1,19 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcBuilder.InsertOrUpdateBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.EmployeePermissionModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insertOrUpdate;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -17,7 +23,7 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
  */
 public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermissionModel> {
 
-    private static final String TABLE_NAME = "EMPLOYEE_PERMISSION";
+    public static final String TABLE_NAME = "EMPLOYEE_PERMISSION";
 
     private static final String USER_ID = "USER_ID";
     private static final String PERM_ID = "PERM_ID";
@@ -26,10 +32,16 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
 
     @Override
     public EmployeePermissionModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(USER_ID)) ignoreFields.add(ShopStore.EmployeePermissionTable.USER_GUID);
+        if (!rs.has(PERM_ID)) ignoreFields.add(ShopStore.EmployeePermissionTable.PERMISSION_ID);
+        if (!rs.has(ENABLED)) ignoreFields.add(ShopStore.EmployeePermissionTable.ENABLED);
+
         return new EmployeePermissionModel(
                 rs.getString(USER_ID),
                 rs.getLong(PERM_ID),
-                rs.getBoolean(ENABLED)
+                rs.getBoolean(ENABLED),
+                ignoreFields
         );
     }
 
@@ -46,19 +58,38 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
     @Override
     public String getGuidColumn() {
         return PERM_ID;
-        //throw new UnsupportedOperationException("don't support delete functionality");
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.EmployeePermissionTable.PERMISSION_ID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(EmployeePermissionModel model){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(USER_ID, model.userGuid)
+                    .put(PERM_ID, model.permissionId)
+                    .put(ENABLED, model.enabled);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
     public SingleSqlCommand insertSQL(EmployeePermissionModel model, IAppCommandContext appCommandContext) {
         InsertOrUpdateBuilder builder = _insertOrUpdate(TABLE_NAME, appCommandContext);
 
-        builder//.insert()
+        builder
                 .add(USER_ID, model.userGuid)
                 .add(PERM_ID, model.permissionId)
                 .add(ENABLED, model.enabled);
-        /*builder.update()
-                .add(ENABLED, model.enabled);*/
         return builder.build(JdbcFactory.getApiMethod(model));
     }
 
@@ -74,4 +105,8 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
                 .build(JdbcFactory.getApiMethod(EmployeePermissionModel.class));
     }
 
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
+    }
 }

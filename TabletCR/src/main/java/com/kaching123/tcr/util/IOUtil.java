@@ -19,6 +19,7 @@ package com.kaching123.tcr.util;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,6 +64,19 @@ public class IOUtil {
             total.append(line);
         }
         return total.toString();
+    }
+
+
+    public static boolean deleteRecursive(File fileOrDirectory) {
+        boolean success = true;
+        if (fileOrDirectory.isDirectory()) {
+            for (File child : fileOrDirectory.listFiles()) {
+                success &= deleteRecursive(child);
+            }
+        }
+
+        success &= fileOrDirectory.delete();
+        return success;
     }
 }
 // EOF

@@ -2,6 +2,7 @@ package com.kaching123.tcr.activity;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -44,7 +45,10 @@ import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.service.LocalSyncHelper;
+import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.service.SerialPortScannerService;
+import com.kaching123.tcr.service.broadcast.WifiSocketService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.ReceiverWrapper;
@@ -75,6 +79,10 @@ import static com.kaching123.tcr.model.ContentValuesUtil._paymentType;
 @EActivity
 @Fullscreen
 public class SuperBaseActivity extends SerialPortScannerBaseActivity {
+
+    public static final String LOCAL_BROADCAST_WARNING = "com.kaching123.tcr.activity.LOCAL_WARNING";
+    public static final String ACTION_PREFS_SAVED = "com.kaching123.tcr.activity.PREFS_SAVED";
+    private static final int LOOKUP_REQUEST_CODE = 0x228;
 
     @App
     protected TcrApplication app;
@@ -206,7 +214,8 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
                                         c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.APPLICATION_IDENTIFIER)),
                                         c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.APPLICATION_CRYPTOGRAM_TYPE)),
                                         c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.AUTHORIZATION_NUMBER)),
-                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.SIGNATURE_BYTES))
+                                        c.getString(c.getColumnIndex(ShopStore.PaymentTransactionTable.SIGNATURE_BYTES)),
+                                        null
                                 );
 
                                 list.add(model);
@@ -366,6 +375,22 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         return permissions.toArray(new Permission[permissions.size()]);
     }
 
+
+    private BroadcastReceiver warningMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //changeActionBar();
+        }
+    };
+
+    private BroadcastReceiver prefsSavedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //applyTheme(false, false);
+            //changeActionBarColor();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -379,8 +404,17 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
 
         if (shouldSerialPortScanner()) {
             startService(intent);
-        } else
+        }else {
             stopService(intent);
+        }
+
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
+        manager.registerReceiver(warningMessageReceiver, new IntentFilter(LOCAL_BROADCAST_WARNING));
+        manager.registerReceiver(prefsSavedReceiver, new IntentFilter(ACTION_PREFS_SAVED));
+
+        startService(new Intent(this, WifiSocketService.class));
+        OfflineCommandsService.ignoreCommandObserver = false;
+
     }
 
     private boolean shouldSerialPortScanner() {
@@ -398,10 +432,21 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         return isDestroyed;
     }
 
+    private BroadcastReceiver localSyncReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra(LocalSyncHelper.MESSAGE);
+            Toast.makeText(SuperBaseActivity.this, message, Toast.LENGTH_LONG).show();
+            Logger.d(message);
+        }
+    };
+
     @Override
     public void onResume() {
         super.onResume();
-        //ViewServer.get(this).setFocusedWindow(this);
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(localSyncReceiver, new IntentFilter(LocalSyncHelper.LOCAL_SYNC));
         progressReceiver.register(SuperBaseActivity.this);
         invalidateOptionsMenu();
     }

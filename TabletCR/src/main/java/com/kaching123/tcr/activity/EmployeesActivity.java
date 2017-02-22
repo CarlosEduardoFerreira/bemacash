@@ -141,7 +141,7 @@ public class EmployeesActivity extends SuperBaseActivity {
         } else {
             EmployeeModel model = new EmployeeModel(UUID.randomUUID().toString(), null, null, null, null, null, null, null, null, null, null, null, null, true, null, null,
                     EmployeeStatus.ACTIVE,
-                    TcrApplication.get().getShopId(), BigDecimal.ZERO, false, false, null, false, true);//TcrApplication.get().getShopId());
+                    TcrApplication.get().getShopId(), BigDecimal.ZERO, false, false, null, false, true, null);//TcrApplication.get().getShopId());
             AddEmployeeActivity.start(this, model);
         }
     }
@@ -344,7 +344,8 @@ public class EmployeesActivity extends SuperBaseActivity {
                     new Date(),
                     tipsAmount,
                     tipsNotes,
-                    PaymentType.CASH
+                    PaymentType.CASH,
+                    null
             ), addTipsCallback);
         } else {
             SplitTipsCommand.start(EmployeesActivity.this, new ArrayList<String>(tipsEmplGuids), tipsAmount, tipsNotes, splitTipsCallback);

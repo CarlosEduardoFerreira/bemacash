@@ -208,7 +208,8 @@ public class CategoriesActivity extends SuperBaseActivity {
                     c.getString(indexHolder.get(CategorySimpleView2.CategoryTable.IMAGE)),
                     c.getInt(indexHolder.get(CategorySimpleView2.CategoryTable.ORDER_NUM)),
                     _bool(c, c.getColumnIndex(CategorySimpleView2.CategoryTable.ELIGIBLE_FOR_COMMISSION)),
-                    _decimal(c, c.getColumnIndex(CategorySimpleView2.CategoryTable.COMMISSION), BigDecimal.ZERO)
+                    _decimal(c, c.getColumnIndex(CategorySimpleView2.CategoryTable.COMMISSION), BigDecimal.ZERO),
+                    null
             );
         }
 

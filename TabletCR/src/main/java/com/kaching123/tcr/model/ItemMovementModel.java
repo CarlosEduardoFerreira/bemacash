@@ -1,12 +1,14 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 
@@ -21,13 +23,16 @@ public class ItemMovementModel implements Serializable, IValueModel{
     public Date createTime;
     public String operatorGuid;
 
+    private List<String> mIgnoreFields;
+
     public ItemMovementModel(String guid,
                              String itemGuid,
                              String itemUpdateFlag,
                              BigDecimal qty,
                              boolean manual,
                              String operatorGuid,
-                             Date createTime) {
+                             Date createTime,
+                             List<String> ignoreFields) {
         this.guid = guid;
         this.itemGuid = itemGuid;
         this.itemUpdateFlag = itemUpdateFlag;
@@ -35,6 +40,22 @@ public class ItemMovementModel implements Serializable, IValueModel{
         this.manual = manual;
         this.operatorGuid = operatorGuid;
         this.createTime = createTime;
+
+        this.mIgnoreFields = ignoreFields;
+    }
+
+    public ItemMovementModel(Cursor c) {
+        this(
+                c.getString(c.getColumnIndex(ItemMovementTable.GUID)),
+                c.getString(c.getColumnIndex(ItemMovementTable.ITEM_GUID)),
+                c.getString(c.getColumnIndex(ItemMovementTable.ITEM_UPDATE_QTY_FLAG)),
+                new BigDecimal(c.getDouble(c.getColumnIndex(ItemMovementTable.QTY))),
+                c.getInt(c.getColumnIndex(ItemMovementTable.MANUAL)) == 1,
+                c.getString(c.getColumnIndex(ItemMovementTable.OPERATOR_GUID)),
+                new Date(c.getLong(c.getColumnIndex(ItemMovementTable.CREATE_TIME))),
+                null
+        );
+
     }
 
     @Override
@@ -45,18 +66,22 @@ public class ItemMovementModel implements Serializable, IValueModel{
     @Override
 	public ContentValues toValues(){
 		ContentValues values = new ContentValues();
-
-        values.put(ItemMovementTable.GUID, guid);
-        values.put(ItemMovementTable.ITEM_GUID, itemGuid);
-        values.put(ItemMovementTable.ITEM_UPDATE_QTY_FLAG, itemUpdateFlag);
-        values.put(ItemMovementTable.QTY, _decimalQty(qty));
-        values.put(ItemMovementTable.MANUAL, manual);
-        values.put(ItemMovementTable.OPERATOR_GUID, operatorGuid);
-        values.put(ItemMovementTable.CREATE_TIME, createTime.getTime());
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemMovementTable.GUID)) values.put(ItemMovementTable.GUID, guid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemMovementTable.ITEM_GUID)) values.put(ItemMovementTable.ITEM_GUID, itemGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemMovementTable.ITEM_UPDATE_QTY_FLAG)) values.put(ItemMovementTable.ITEM_UPDATE_QTY_FLAG, itemUpdateFlag);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemMovementTable.QTY)) values.put(ItemMovementTable.QTY, _decimalQty(qty));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemMovementTable.MANUAL)) values.put(ItemMovementTable.MANUAL, manual);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemMovementTable.OPERATOR_GUID)) values.put(ItemMovementTable.OPERATOR_GUID, operatorGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemMovementTable.CREATE_TIME)) values.put(ItemMovementTable.CREATE_TIME, createTime.getTime());
 		return values;
 	}
 
-	@Override
+    @Override
+    public String getIdColumn() {
+        return ItemMovementTable.GUID;
+    }
+
+    @Override
 	public String toString() {
 		return guid + "; " + itemGuid + "; " + qty;
 	}

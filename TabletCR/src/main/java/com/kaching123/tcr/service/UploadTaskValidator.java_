@@ -1,0 +1,66 @@
+package com.kaching123.tcr.service;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.util.JdbcJSONObject;
+
+/**
+ * Created by idyuzheva on 06.11.2015.
+ */
+public class UploadTaskValidator {
+    private static final String TAG = "[UploadValidation]";
+
+    private static final int SKIPPED = -1;
+    private static final int FAILED = -2;
+
+    private UploadTaskValidator() {
+    }
+
+    public static List<Long>
+    getFailedTransactions(JdbcJSONObject source, ArrayList<Long> currentTransactionsIds) {
+        final List<Long> failedTransactionIds = new ArrayList<>();
+        if (source == null) {
+            return failedTransactionIds;
+        }
+        try {
+            JSONObject data = source.getJSONObject("data");
+
+            for (Long transactionId : currentTransactionsIds) {
+                JSONArray value = null;
+                try {
+                    value = data.getJSONArray(String.valueOf(transactionId));
+                } catch (JSONException e) {
+                    failedTransactionIds.add(transactionId);
+                    Logger.d("[Dream] this means server has not included this token to the answer. We will send again!");
+                }
+                for (int i = 0; i < value.length(); i++) {
+                    int code = value.getInt(i);
+                    Logger.d("[Dream] transaction " + transactionId + "\'s " + i + " child has been marked as  " + value.get(i));
+                    if (code >= 0) {
+                        Logger.d("[Dream] this means, transaction has updated " + code + " rovs.");
+                    } else if (code == SKIPPED) {
+                        Logger.d("[Dream] this means, transaction has tried to send duplicated id. Server has a workaround");
+                    } else if (code == FAILED) {
+                        failedTransactionIds.add(transactionId);
+                        Logger.d("[Dream] this means, transaction was not updated. We will keep sending it.");
+                        break;
+                    } else {
+                        failedTransactionIds.add(transactionId);
+                        Logger.d("[Dream] this means WTF");
+                        break;
+                    }
+                }
+            }
+
+        } catch (JSONException e) {
+            return currentTransactionsIds;
+        }
+        return failedTransactionIds;
+    }
+}

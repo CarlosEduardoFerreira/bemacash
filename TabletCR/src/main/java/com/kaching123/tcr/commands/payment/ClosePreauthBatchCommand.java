@@ -75,7 +75,7 @@ public class ClosePreauthBatchCommand extends AsyncCommand {
                         new Date(),
                         tipsAmount,
                         tipsComments,
-                        PaymentType.CREDIT
+                        PaymentType.CREDIT, null
                 ), getAppCommandContext()));
             }
         }

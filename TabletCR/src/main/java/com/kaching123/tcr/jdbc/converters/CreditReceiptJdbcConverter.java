@@ -1,12 +1,18 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CreditReceiptModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
@@ -29,6 +35,16 @@ public class CreditReceiptJdbcConverter extends JdbcConverter<CreditReceiptModel
 
     @Override
     public CreditReceiptModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(ID)) ignoreFields.add(ShopStore.CreditReceiptTable.GUID);
+        if (!rs.has(CASHIER_ID)) ignoreFields.add(ShopStore.CreditReceiptTable.CASHIER_GUID);
+        if (!rs.has(REGISTER_ID)) ignoreFields.add(ShopStore.CreditReceiptTable.REGISTER_ID);
+        if (!rs.has(SHIFT_ID)) ignoreFields.add(ShopStore.CreditReceiptTable.SHIFT_ID);
+        if (!rs.has(CREATE_TIME)) ignoreFields.add(ShopStore.CreditReceiptTable.CREATE_TIME);
+        if (!rs.has(AMOUNT)) ignoreFields.add(ShopStore.CreditReceiptTable.AMOUNT);
+        if (!rs.has(PRINT_NUMBER)) ignoreFields.add(ShopStore.CreditReceiptTable.PRINT_NUMBER);
+        if (!rs.has(EXPIRE_TIME)) ignoreFields.add(ShopStore.CreditReceiptTable.EXPIRE_TIME);
+
         return new CreditReceiptModel(
                 rs.getString(ID),
                 rs.getString(CASHIER_ID),
@@ -37,7 +53,8 @@ public class CreditReceiptJdbcConverter extends JdbcConverter<CreditReceiptModel
                 rs.getDate(CREATE_TIME),
                 rs.getBigDecimal(AMOUNT),
                 rs.getLong(PRINT_NUMBER),
-                rs.getInt(EXPIRE_TIME)
+                rs.getInt(EXPIRE_TIME),
+                ignoreFields
         );
     }
 
@@ -49,6 +66,33 @@ public class CreditReceiptJdbcConverter extends JdbcConverter<CreditReceiptModel
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.CreditReceiptTable.GUID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(CreditReceiptModel model){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(CASHIER_ID, model.cashierGuid)
+                    .put(REGISTER_ID, model.registerId)
+                    .put(SHIFT_ID, model.shiftId)
+                    .put(CREATE_TIME, model.createTime)
+                    .put(AMOUNT, model.amount)
+                    .put(PRINT_NUMBER, model.printNumber)
+                    .put(EXPIRE_TIME, model.expireTime);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override

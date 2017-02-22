@@ -16,7 +16,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._enum;
  * Created by teli on 6/2/2015.
  */
 public class APKupdaterJDBCConverter {
-    private static final String TABLE_NAME = "APK_UPDATE";
+    public static final String TABLE_NAME = "APK_UPDATE";
 
     private static final String GUID = "ID";
     private static final String UPDATE_SCHEDULE_TIME = "SCHEDULE_TIME";

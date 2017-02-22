@@ -109,7 +109,8 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
                 _decimal(c.getString(indexHolder.get(ItemTable.LOYALTY_POINTS)), BigDecimal.ZERO),
                 _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)),
-                _bool(c, indexHolder.get(ItemTable.EBT_ELIGIBLE))
+                _bool(c, indexHolder.get(ItemTable.EBT_ELIGIBLE)),
+                null
                 );
     }
 

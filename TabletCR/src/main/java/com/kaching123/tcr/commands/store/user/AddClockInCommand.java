@@ -50,7 +50,8 @@ public class AddClockInCommand extends AsyncCommand{
                 guid,
                 Util.cropSeconds(new Date(in)),
                 out == 0 ? null : Util.cropSeconds(new Date(out)),
-                employeeGuid);
+                employeeGuid,
+                null);
 
         return succeeded();
     }

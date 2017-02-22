@@ -35,7 +35,7 @@ public class AddCategoryCommand extends AsyncCommand {
                 model.image,
                 0,
                 model.commissionEligible,
-                model.commission);
+                model.commission, null);
 
 		return succeeded().add(RESULT_GUID, model.guid);
 	}

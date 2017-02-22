@@ -68,7 +68,8 @@ public class SplitTipsCommand extends AsyncCommand {
                     new Date(),
                     splittedAmount,
                     notes,
-                    PaymentType.CASH
+                    PaymentType.CASH,
+                    null
             );
             models.add(tipsModel);
         }

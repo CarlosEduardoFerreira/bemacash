@@ -104,7 +104,8 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ItemGroupTable.TITLE)),
                     c.getInt(c.getColumnIndex(ItemGroupTable.ORDER_NUM)),
                     ModifierGroupCondition.valueOf(c.getInt(c.getColumnIndex(ItemGroupTable.CONDITION))),
-                    c.getInt(c.getColumnIndex(ItemGroupTable.CONDITION_VALUE)));
+                    c.getInt(c.getColumnIndex(ItemGroupTable.CONDITION_VALUE)),
+                    null);
         }
 
         return new ModifierExModel(

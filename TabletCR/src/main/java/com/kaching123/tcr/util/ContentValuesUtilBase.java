@@ -70,6 +70,28 @@ public class ContentValuesUtilBase {
         return scale <= DECIMAL_SCALE ? decimalFormat.get().format(decimal) : quantityFormat.get().format(decimal);
     }
 
+    public static String _decimalNullable(BigDecimal decimal) {
+        if (decimal == null) {
+            return null;
+        }
+        return decimalFormat.get().format(decimal);
+    }
+
+    public static BigDecimal _decimalNullable(String decimalValue) {
+        if (TextUtils.isEmpty(decimalValue))
+            return null;
+        try {
+            return (BigDecimal) decimalFormat.get().parse(decimalValue);
+        } catch (ParseException e) {
+            Logger.e("Parse number error", e);
+        }
+        return BigDecimal.ZERO;
+    }
+
+    public static BigDecimal _decimalNullable(Cursor c, int columnIndex) {
+        return _decimalNullable(c.getString(columnIndex));
+    }
+
     public static String _decimalQty(BigDecimal decimal) {
         return _decimal(decimal, QUANTITY_SCALE);
     }

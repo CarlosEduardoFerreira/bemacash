@@ -6,13 +6,14 @@ import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by vkompaniets on 29.06.2016.
  */
 public class LoyaltyIncentivePlanJdbcConverter extends JdbcConverter<LoyaltyIncentivePlanModel> {
 
-    private static final String TABLE_NAME = "LOYALTY_PLAN_INCENTIVE";
+    public static final String TABLE_NAME = "LOYALTY_PLAN_INCENTIVE";
 
     private static final String ID = "ID";
     private static final String INCENTIVE_ID = "LOYALTY_INCENTIVE_ID";
@@ -35,6 +36,16 @@ public class LoyaltyIncentivePlanJdbcConverter extends JdbcConverter<LoyaltyInce
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getJSONObject(LoyaltyIncentivePlanModel model) {
+        return null;
     }
 
     @Override

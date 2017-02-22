@@ -73,4 +73,9 @@ public class SaleOrderItemAddonModel implements IValueModel, Serializable{
         values.put(SaleAddonTable.CHILD_ITEM_QTY, _decimalQty(childItemQty));
         return values;
     }
+
+    @Override
+    public String getIdColumn() {
+        return null;
+    }
 }

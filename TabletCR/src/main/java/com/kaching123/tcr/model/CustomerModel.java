@@ -5,14 +5,17 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -45,6 +48,8 @@ public class CustomerModel implements IValueModel, Serializable {
     public BigDecimal loyaltyPoints;
     public String loyaltyBarcode;
 
+    private List<String> mIgnoreFields;
+
     public CustomerModel(String guid, Date createTime) {
         this.guid = guid;
         this.createTime = createTime;
@@ -72,7 +77,8 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.CUSTOMER_IDENTIFICATION)),
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_PLAN_ID)),
                 _decimal(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_BARCODE)));
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_BARCODE)),
+                null);
     }
 
     public CustomerModel(Cursor cursor) {
@@ -95,7 +101,9 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(CustomerTable.NOTES)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.CUSTOMER_IDENTIFICATION)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_PLAN_ID)),
-                _decimal(cursor, cursor.getColumnIndex(CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO), cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)));
+                _decimal(cursor, cursor.getColumnIndex(CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO),
+                cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)),
+                null);
     }
 
     public CustomerModel(String guid, String firstName, String lastName, String street,
@@ -103,7 +111,9 @@ public class CustomerModel implements IValueModel, Serializable {
                          String zip, String email, String phone, boolean sex, Date birthday,
                          Date birthdayRewardApplyDate, Date createTime,
                          boolean consentPromotions, String notes, String customerIdentification,
-                         String loyaltyPlanId, BigDecimal loyaltyPoints, String loyaltyBarcode) {
+                         String loyaltyPlanId, BigDecimal loyaltyPoints, String loyaltyBarcode,
+                         List<String> ignoreFields) {
+
         this.firstName = firstName;
         this.lastName = lastName;
         this.guid = guid;
@@ -125,6 +135,8 @@ public class CustomerModel implements IValueModel, Serializable {
         this.loyaltyPlanId = loyaltyPlanId;
         this.loyaltyPoints = loyaltyPoints;
         this.loyaltyBarcode = loyaltyBarcode;
+
+        this.mIgnoreFields = ignoreFields;
     }
 
     public String getFullName() {
@@ -139,30 +151,39 @@ public class CustomerModel implements IValueModel, Serializable {
     @Override
     public ContentValues toValues() {
         ContentValues v = new ContentValues();
-        v.put(CustomerTable.GUID, guid);
-        v.put(CustomerTable.FISRT_NAME, firstName);
-        v.put(CustomerTable.LAST_NAME, lastName);
-        v.put(CustomerTable.STREET, street);
-        v.put(CustomerTable.COMPLEMENTARY, complementary);
-        v.put(CustomerTable.CITY, city);
-        v.put(CustomerTable.STATE, state);
-        v.put(CustomerTable.COUNTRY, country);
-        v.put(CustomerTable.ZIP, zip);
-        v.put(CustomerTable.EMAIL, email);
-        v.put(CustomerTable.PHONE, phone);
-        v.put(CustomerTable.SEX, sex);
-        _nullableDate(v, CustomerTable.BIRTHDAY, birthday);
-        _nullableDate(v, CustomerTable.CREATE_TIME, createTime);
-        v.put(CustomerTable.CONSENT_PROMOTIONS, consentPromotions);
-        v.put(CustomerTable.NOTES, notes);
-        v.put(CustomerTable.CUSTOMER_IDENTIFICATION, customerIdentification);
-        v.put(CustomerTable.LOYALTY_PLAN_ID, loyaltyPlanId);
-        v.put(CustomerTable.LOYALTY_BARCODE, loyaltyBarcode);
+        v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.GUID)) v.put(CustomerTable.GUID, guid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.FISRT_NAME)) v.put(CustomerTable.FISRT_NAME, firstName);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.LAST_NAME)) v.put(CustomerTable.LAST_NAME, lastName);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.STREET)) v.put(CustomerTable.STREET, street);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.COMPLEMENTARY)) v.put(CustomerTable.COMPLEMENTARY, complementary);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.CITY)) v.put(CustomerTable.CITY, city);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.STATE)) v.put(CustomerTable.STATE, state);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.COUNTRY)) v.put(CustomerTable.COUNTRY, country);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.ZIP)) v.put(CustomerTable.ZIP, zip);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.EMAIL)) v.put(CustomerTable.EMAIL, email);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.PHONE)) v.put(CustomerTable.PHONE, phone);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.SEX)) v.put(CustomerTable.SEX, sex);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.BIRTHDAY)) _nullableDate(v, CustomerTable.BIRTHDAY, birthday);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.CREATE_TIME)) _nullableDate(v, CustomerTable.CREATE_TIME, createTime);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.CONSENT_PROMOTIONS)) v.put(CustomerTable.CONSENT_PROMOTIONS, consentPromotions);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.NOTES)) v.put(CustomerTable.NOTES, notes);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.CUSTOMER_IDENTIFICATION)) v.put(CustomerTable.CUSTOMER_IDENTIFICATION, customerIdentification);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.LOYALTY_PLAN_ID)) v.put(CustomerTable.LOYALTY_PLAN_ID, loyaltyPlanId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.LOYALTY_BARCODE)) v.put(CustomerTable.LOYALTY_BARCODE, loyaltyBarcode);
         return v;
+    }
+
+    @Override
+    public String getIdColumn() {
+        return CustomerTable.GUID;
     }
 
     public ContentValues toUpdateValues() {
         ContentValues v = new ContentValues();
+        v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
         v.put(CustomerTable.FISRT_NAME, firstName);
         v.put(CustomerTable.LAST_NAME, lastName);
         v.put(CustomerTable.STREET, street);

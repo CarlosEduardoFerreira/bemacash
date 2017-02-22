@@ -1,12 +1,18 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -16,16 +22,21 @@ import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
  */
 public class PrinterAliasJdbcConverter extends JdbcConverter<PrinterAliasModel> {
 
-    private static final String TABLE_NAME = "PRINTER_ALIAS";
+    public static final String TABLE_NAME = "PRINTER_ALIAS";
 
     private static final String ID = "ID";
     private static final String ALIAS = "ALIAS";
 
     @Override
     public PrinterAliasModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(ID)) ignoreFields.add(ShopStore.PrinterAliasTable.GUID);
+        if (!rs.has(ALIAS)) ignoreFields.add(ShopStore.PrinterAliasTable.ALIAS);
+
         return new PrinterAliasModel(
                 rs.getString(ID),
-                rs.getString(ALIAS)
+                rs.getString(ALIAS),
+                ignoreFields
         );
     }
 
@@ -37,6 +48,27 @@ public class PrinterAliasJdbcConverter extends JdbcConverter<PrinterAliasModel> 
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.PrinterAliasTable.GUID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(PrinterAliasModel model){
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(ALIAS, model.alias);
+
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -55,4 +87,8 @@ public class PrinterAliasJdbcConverter extends JdbcConverter<PrinterAliasModel> 
                 .build(JdbcFactory.getApiMethod(model));
     }
 
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
+    }
 }
