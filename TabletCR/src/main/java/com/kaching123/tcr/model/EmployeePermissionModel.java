@@ -3,11 +3,11 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import java.util.List;
+
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
-
-import java.util.List;
 
 /**
  * Created by pkabakov on 17.12.13.

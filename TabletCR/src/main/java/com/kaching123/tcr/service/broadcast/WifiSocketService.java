@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -194,6 +195,8 @@ public class WifiSocketService extends Service {
                         @Override
                         public void run() {
                             try {
+                                Log.d("BemaCarl","WifiSocketService.makeMsgAndSend.getAddress:" + deviceInfo.getAddress());
+                                Log.d("BemaCarl","WifiSocketService.makeMsgAndSend.getPort:" + deviceInfo.getPort());
                                 Socket socket = getSocket(deviceInfo.getAddress(), deviceInfo.getPort(), true);
                                 sendMsg(socket, msg);
 

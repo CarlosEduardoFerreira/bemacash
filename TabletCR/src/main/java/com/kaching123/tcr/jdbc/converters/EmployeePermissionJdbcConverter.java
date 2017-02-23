@@ -1,12 +1,6 @@
 package com.kaching123.tcr.jdbc.converters;
 
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.jdbc.JdbcBuilder.InsertOrUpdateBuilder;
-import com.kaching123.tcr.jdbc.JdbcFactory;
-import com.kaching123.tcr.model.EmployeePermissionModel;
-import com.kaching123.tcr.service.SingleSqlCommand;
-import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
@@ -15,6 +9,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kaching123.tcr.jdbc.JdbcBuilder.InsertOrUpdateBuilder;
+import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.model.EmployeePermissionModel;
+import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.util.JdbcJSONObject;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insertOrUpdate;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 
@@ -62,7 +62,7 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
 
     @Override
     public String getLocalGuidColumn() {
-        return ShopStore.EmployeePermissionTable.PERMISSION_ID;
+        return PERM_ID;
     }
 
     @Override

@@ -177,7 +177,6 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(FULLNAME, model.fullName()) //TODO delete when web team makes changes
                 .add(LOGIN, model.login)
                 .add(PASSWORD, model.password)
-
                 .add(STREET, model.street)
                 .add(COMPLEMENTARY, model.complementary)
                 .add(CITY, model.city)
@@ -186,16 +185,16 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(ZIP, model.zip)
                 .add(PHONE, model.phone)
                 .add(EMAIL, model.email)
-
                 .add(SEX, model.sexMale)
-
                 .add(HIRE_DATE, model.hireDate)
                 .add(FIRE_DATE, model.fireDate)
-                .add(HOURLY_RATE, model.hRate)
                 .add(STATUS, model.status)
+                .add(SHOP_ID, model.shopId)
+                .add(HOURLY_RATE, model.hRate)
                 .add(TIPS_ELIGIBLE, model.tipsEligible)
                 .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
                 .add(COMMISSION, model.commission)
+                .add(RESELLER_ID, model.isMerchant)
                 .add(IS_SYNC, model.isSynced)
                 .build(JdbcFactory.getApiMethod(model));
     }
@@ -208,7 +207,6 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(FULLNAME, model.fullName()) //TODO delete when web team makes changes
                 .add(LOGIN, model.login)
                 .add(PASSWORD, model.password)
-
                 .add(STREET, model.street)
                 .add(COMPLEMENTARY, model.complementary)
                 .add(CITY, model.city)
@@ -217,12 +215,11 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(ZIP, model.zip)
                 .add(PHONE, model.phone)
                 .add(EMAIL, model.email)
-
                 .add(SEX, model.sexMale)
-
                 .add(HIRE_DATE, model.hireDate)
                 .add(FIRE_DATE, model.fireDate)
                 .add(STATUS, model.status)
+                .add(SHOP_ID, model.shopId)
                 .add(HOURLY_RATE, model.hRate)
                 .add(TIPS_ELIGIBLE, model.tipsEligible)
                 .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
@@ -237,7 +234,6 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(FIRST_NAME, model.firstName)
                 .add(LAST_NAME, model.lastName)
                 .add(FULLNAME, model.fullName()) //TODO delete when web team makes changes
-
                 .add(STREET, model.street)
                 .add(COMPLEMENTARY, model.complementary)
                 .add(CITY, model.city)
@@ -246,12 +242,11 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(ZIP, model.zip)
                 .add(PHONE, model.phone)
                 .add(EMAIL, model.email)
-
                 .add(SEX, model.sexMale)
-
                 .add(HIRE_DATE, model.hireDate)
                 .add(FIRE_DATE, model.fireDate)
                 .add(STATUS, model.status)
+                .add(SHOP_ID, model.shopId)
                 .add(HOURLY_RATE, model.hRate)
                 .add(TIPS_ELIGIBLE, model.tipsEligible)
                 .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)

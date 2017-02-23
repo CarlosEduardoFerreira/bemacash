@@ -66,7 +66,8 @@ public class EmployeeModel implements IValueModel, Serializable{
         this.login = login;
     }
 
-    public EmployeeModel(String guid, String firstName, String lastName, String login, EmployeeStatus status){
+    public EmployeeModel(String guid, String firstName, String lastName, String login,
+                         EmployeeStatus status){
         this(guid, firstName, lastName, login);
         this.status = status;
     }

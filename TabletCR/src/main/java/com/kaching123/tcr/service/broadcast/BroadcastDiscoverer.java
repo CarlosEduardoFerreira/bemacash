@@ -14,11 +14,15 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
+import java.util.Enumeration;
 import java.util.Objects;
 
 import com.kaching123.tcr.Logger;
@@ -82,7 +86,7 @@ public class BroadcastDiscoverer extends Thread {
                 if (sMySocketPort == 0) continue;
 
                 BroadcastInfo info = new BroadcastInfo();
-                info.setAddress(wifiIpAddress(mContext));
+                info.setAddress(getIpAddress());
                 info.setPort(sMySocketPort);
                 info.setVersionCode(mVersionCode);
                 info.setSerial(app.getRegisterSerial());
@@ -167,11 +171,13 @@ public class BroadcastDiscoverer extends Thread {
                         String s = new String(packet.getData(), 0, packet.getLength());
 
                         BroadcastInfo info = new Gson().fromJson(s, BroadcastInfo.class);
-                        Log.d(TAG, "BroadcastDiscover.listenForResponses.s: " + s);
-                        Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getSerial(): " + info.getSerial() + "=" + app.getRegisterSerial());
-                        Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getVersionCode(): " + info.getVersionCode() + "=" + ValueUtil.getApplicationVersion(mContext).code);
+
                         Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getShopId(): " + info.getShopId() + "=" + app.getShopPref().shopId().get());
-                        if(info.getShopId() != 0) {
+                        Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getVersionCode(): " + info.getVersionCode() + "=" + ValueUtil.getApplicationVersion(mContext).code);
+                        Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getSerial(): " + info.getSerial() + "=" + app.getRegisterSerial());
+                        Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getAddress(): " + info.getAddress());
+
+                        if(info.getShopId() != 0 && info.getAddress() != null) {
                             if (!info.getSerial().equals(app.getRegisterSerial())
                                     && info.getVersionCode() == ValueUtil.getApplicationVersion(mContext).code
                                     && Objects.equals(app.getShopPref().shopId().get(), info.getShopId())) {
@@ -221,15 +227,37 @@ public class BroadcastDiscoverer extends Thread {
         }
 
         byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
-        String ipAddressString;
-        try {
-            ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
+        String ipAddressString = null;
+        //String ipAddressString2 = null;
+       // try {
+            //ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
+            ipAddressString = getIpAddress();
+            //Log.e("BemaCarl", "BroadCastDiscoverer.wifiIpAddress.ipAddressString: " + ipAddressString);
+            Log.e("BemaCarl", "BroadCastDiscoverer.wifiIpAddress.ipAddressString2: " + ipAddressString);
+        //} catch (UnknownHostException ex) {
+            //Logger.d(TAG + ": Unable to get host address. (wifiIpAddress)");
+            //ipAddressString = getIpAddress();
+        //}
 
-        } catch (UnknownHostException ex) {
-            Logger.d(TAG + ": Unable to get host address.");
-            ipAddressString = null;
-        }
 
         return ipAddressString;
+    }
+
+    public static String getIpAddress() {
+        try {
+            for (Enumeration en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = (NetworkInterface) en.nextElement();
+                for (Enumeration enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = (InetAddress) enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()&&inetAddress instanceof Inet4Address) {
+                        String ipAddress=inetAddress.getHostAddress().toString();
+                        return ipAddress;
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            Log.e("BemaCarl", "Socket exception in GetIP Address of Utilities" + ex.toString());
+        }
+        return null;
     }
 }
