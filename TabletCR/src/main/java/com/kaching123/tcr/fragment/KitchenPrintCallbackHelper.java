@@ -3,12 +3,17 @@ package com.kaching123.tcr.fragment;
 import android.support.v4.app.FragmentActivity;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.SettingsActivity;
+import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.user.PermissionFragment;
+import com.kaching123.tcr.model.Permission;
 
 /**
  * Created by vkompaniets on 01.08.2014.
@@ -42,12 +47,31 @@ public class KitchenPrintCallbackHelper {
         );
     }
 
-    public static void onPrinterNotConfigured(FragmentActivity activity, final String fromPrinter, String aliasTitle, final IKitchenPrintCallback callback){
+    public static void onPrinterNotConfigured(final FragmentActivity activity, final String fromPrinter, final String aliasTitle, final IKitchenPrintCallback callback){
         hideWaitDialog(activity);
         AlertDialogFragment.showAlert(
                 activity,
                 R.string.error_dialog_title,
                 activity.getString(R.string.printer_not_configured_with_name, aliasTitle),
+                R.string.btn_configure,
+                new OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        boolean adminPermitted = ((TcrApplication) activity.getApplicationContext()).hasPermission(Permission.ADMIN);
+                        if (!adminPermitted) {
+                            PermissionFragment.showCancelable(activity, new SuperBaseActivity.BaseTempLoginListener(activity) {
+                                @Override
+                                public void onLoginComplete() {
+                                    super.onLoginComplete();
+                                    onPrinterNotConfigured(activity, fromPrinter, aliasTitle, callback);
+                                }
+                            }, Permission.ADMIN);
+                            return true;
+                        }
+                        SettingsActivity.start(activity);
+                        return true;
+                    }
+                },
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {

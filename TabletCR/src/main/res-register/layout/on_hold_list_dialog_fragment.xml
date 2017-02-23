@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/search_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp"
+            android:gravity="end"
+            android:paddingRight="4dp">
+            <TextView
+                android:textColor="@color/gray_dark"
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search:"/>
+            <EditText
+                style="@style/Hold.EditText"
+                android:id="@+id/search_bar"
+                android:layout_marginLeft="6dp"
+                android:textSize="18dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:hint="Enter name or phone"/>
+            <View
+                android:id="@+id/focus_grabber"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+                <requestFocus/>
+            </View>
+        </LinearLayout>
+
+        <GridView
+            android:layout_below="@+id/search_block"
+            android:gravity="center"
+            android:id="@+id/grid_view"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:listSelector="@android:color/transparent"
+            android:numColumns="5"
+            android:padding="4dp"
+            android:stretchMode="spacingWidth"
+            android:verticalSpacing="@dimen/quick_items_grid_spacing"
+            android:horizontalSpacing="@dimen/quick_items_grid_spacing"
+            android:columnWidth="@dimen/on_hold_item_width"
+            android:rowHeight="@dimen/on_hold_item_height" />
+    </RelativeLayout>
+</FrameLayout>

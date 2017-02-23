@@ -231,7 +231,7 @@ public class ItemModifiersFragment extends Fragment{
         }
         int columnCnt = (addonCnt + 2) / context.getResources().getInteger(R.integer.modify_container_row_count);
         int btnWidth = context.getResources().getDimensionPixelOffset(R.dimen.modify_button_width);
-        int padding = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_padding);
+        int padding = columnCnt <= 1 ? 4 : context.getResources().getDimensionPixelOffset(R.dimen.modify_container_padding);
         int margin = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_margin);
         int space = context.getResources().getDimensionPixelOffset(R.dimen.modify_container_space);
         return columnCnt * btnWidth + (columnCnt - 1) * space + 2 * padding + 2 * margin;

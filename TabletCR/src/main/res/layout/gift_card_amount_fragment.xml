@@ -46,7 +46,8 @@
             android:layout_below="@+id/total"
             style="@style/CustomEditBox.PaymentInputField.32"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
+            android:layout_width="wrap_content"
+            android:maxWidth="250dp"/>
 
 
         <ViewFlipper

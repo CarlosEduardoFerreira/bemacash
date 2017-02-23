@@ -9,9 +9,10 @@ import static com.kaching123.tcr.store.migration.UpdateBlock.update7to8;
 import static com.kaching123.tcr.store.migration.UpdateBlock.update8to9;
 
 /**
- * Created by vkompaniets on 08.09.2016.
+ * Created by mboychenko on 2/8/2017.
  */
-public class Update6_7to9 implements IUpdateContainer{
+
+public class Update6_7to9 implements IUpdateContainer {
 
     @Override
     public void onUpdate(SQLiteDatabase db) {

@@ -6,6 +6,7 @@ import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.K
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.DiscountType;
+import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SaleOrderModel;
@@ -35,7 +36,10 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     private static final String DISCOUNT = "DISCOUNT";
     private static final String DISCOUNT_TYPE = "DISCOUNT_TYPE";
     private static final String ORDER_STATUS = "ORDER_STATUS";
+    private static final String HOLD_STATUS = "ON_HOLD_STATUS";
     private static final String HOLD_NAME = "HOLD_NAME";
+    private static final String HOLD_PHONE = "HOLD_PHONE";
+    private static final String DEFINED_ON_HOLD_GUID = "DEFINED_ON_HOLD_GUID";
     private static final String TAXABLE = "TAXABLE";
     private static final String PRINT_SEQ_NUM = "PRINT_SEQ_NUM";
     private static final String REGISTER_ID = "REGISTER_ID";
@@ -80,6 +84,9 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), null),
                 _enum(OrderStatus.class, rs.getString(ORDER_STATUS), OrderStatus.CANCELED),
                 rs.getString(HOLD_NAME),
+                rs.getString(DEFINED_ON_HOLD_GUID),
+                rs.getString(HOLD_PHONE),
+                OnHoldStatus.values()[(rs.getInt(HOLD_STATUS))],
                 rs.getBoolean(TAXABLE),
                 null,
                 null,
@@ -158,6 +165,9 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .add(DISCOUNT_TYPE, order.discountType)
                 .add(ORDER_STATUS, order.orderStatus.name())
                 .add(HOLD_NAME, order.getHoldName())
+                .add(DEFINED_ON_HOLD_GUID, order.definedOnHoldGuid)
+                .add(HOLD_PHONE, order.holdPhone)
+                .add(HOLD_STATUS, order.holdStatus.ordinal())
                 .add(TAXABLE, order.taxable)
                 .add(PRINT_SEQ_NUM, order.printSeqNum)
                 .add(REGISTER_ID, order.registerId)
@@ -177,6 +187,9 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .add(ORDER_STATUS, order.orderStatus.name())
                 .add(SHIFT_ID, order.shiftGuid)
                 .add(HOLD_NAME, order.getHoldName())
+                .add(DEFINED_ON_HOLD_GUID, order.definedOnHoldGuid)
+                .add(HOLD_PHONE, order.holdPhone)
+                .add(HOLD_STATUS, order.holdStatus.ordinal())
                 .add(CREATE_TIME, order.createTime)
                 .add(TAXABLE, order.taxable)
                 .add(REGISTER_ID, order.registerId)
@@ -211,6 +224,13 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     public SingleSqlCommand updateStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(ORDER_STATUS, order.orderStatus)
+                .where(ID, order.guid)
+                .build(JdbcFactory.getApiMethod(order));
+    }
+
+    public SingleSqlCommand updateOnHoldStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
+        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
+                .add(HOLD_STATUS, order.holdStatus.ordinal())
                 .where(ID, order.guid)
                 .build(JdbcFactory.getApiMethod(order));
     }

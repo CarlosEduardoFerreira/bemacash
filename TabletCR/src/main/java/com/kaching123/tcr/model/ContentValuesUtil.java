@@ -235,6 +235,10 @@ public final class ContentValuesUtil {
         return c.isNull(index) ? null : OrderStatus.values()[(c.getInt(index))];
     }
 
+    public static OnHoldStatus _onHoldStatus(Cursor c, int index) {
+        return c.isNull(index) ? null : OnHoldStatus.values()[(c.getInt(index))];
+    }
+
     public static Status _statusType(Cursor c, int index) {
         return c.isNull(index) ? null : Status.values()[(c.getInt(index))];
     }

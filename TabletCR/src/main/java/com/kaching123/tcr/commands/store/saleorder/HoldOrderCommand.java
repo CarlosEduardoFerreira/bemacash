@@ -7,6 +7,7 @@ import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -22,6 +23,9 @@ public class HoldOrderCommand extends UpdateSaleOrderCommand {
 
     private static final String ARG_ORDER_GUID = "ARG_ORDER_GUID";
     private static final String ARG_ACTION = "ARG_ACTION";
+    private static final String ARG_PHONE = "ARG_PHONE";
+    private static final String ARG_STATUS = "ARG_STATUS";
+    private static final String ARG_DEFINED_ON_HOLD_GUID = "ARG_DEFINED_ON_HOLD_GUID";
     private static final String ARG_TITLE = "ARG_ORDER_TITLE";
 
     public enum HoldOnAction{
@@ -35,6 +39,9 @@ public class HoldOrderCommand extends UpdateSaleOrderCommand {
     protected SaleOrderModel readOrder() {
         String guid = getStringArg(ARG_ORDER_GUID);
         String title = getStringArg(ARG_TITLE);
+        String phone = getStringArg(ARG_PHONE);
+        String defOnHoldGuid = getStringArg(ARG_DEFINED_ON_HOLD_GUID);
+        OnHoldStatus status = (OnHoldStatus) getArgs().getSerializable(ARG_STATUS);
         action = (HoldOnAction) getArgs().getSerializable(ARG_ACTION);
 
         Cursor c = ProviderAction.query(URI_ORDER)
@@ -47,18 +54,27 @@ public class HoldOrderCommand extends UpdateSaleOrderCommand {
             }
             if (order == null)
                 return null;
+
             order.setHoldName(action == HoldOnAction.ADD ? title : "Canceled because of quantity");
+            order.setHoldPhone(phone);
+            order.setHoldStatus(status);
+            order.setDefinedOnHoldGuid(defOnHoldGuid);
             return order;
         } finally {
             c.close();
         }
     }
 
-    public static void start(Context context, BaseHoldOrderCallback callback, String orderGuid, String title, HoldOnAction action) {
+    public static void start(Context context, BaseHoldOrderCallback callback, String orderGuid, String title, String phone, String defOnHoldGuid, OnHoldStatus status, HoldOnAction action) {
         create(HoldOrderCommand.class)
                 .arg(ARG_ORDER_GUID, orderGuid)
                 .arg(ARG_ACTION, action)
-                .arg(ARG_TITLE, title).callback(callback).queueUsing(context);
+                .arg(ARG_TITLE, title)
+                .arg(ARG_PHONE, phone)
+                .arg(ARG_STATUS, status)
+                .arg(ARG_DEFINED_ON_HOLD_GUID, defOnHoldGuid)
+                .callback(callback)
+                .queueUsing(context);
     }
 
     @Override

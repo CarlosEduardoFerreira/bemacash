@@ -87,7 +87,7 @@
             <fragment
                 android:id="@+id/modify_fragment"
                 android:name="com.kaching123.tcr.fragment.quickservice.QuickModifyFragment_"
-                android:layout_width="@dimen/qa_modify_fragment_h"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
             <FrameLayout

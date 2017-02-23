@@ -51,6 +51,7 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.GetPrinterStatusCommand;
 import com.kaching123.tcr.commands.device.GetPrinterStatusCommand.BasePrinterStatusCallback;
+import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
@@ -88,6 +89,7 @@ import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusComma
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
+import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.barcode.SearchBarcodeFragment;
@@ -109,8 +111,9 @@ import com.kaching123.tcr.fragment.edit.SaleOrderDiscountEditFragment;
 import com.kaching123.tcr.fragment.edit.TaxEditFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
+import com.kaching123.tcr.fragment.saleorder.AddOnHoldDialogFragment;
 import com.kaching123.tcr.fragment.saleorder.GiftCardFragmentDialog;
-import com.kaching123.tcr.fragment.saleorder.HoldFragmentDialog;
+import com.kaching123.tcr.fragment.saleorder.OnHoldListDialogFragment;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHandlerHandler;
 import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
@@ -134,6 +137,7 @@ import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.ModifierGroupModel;
+import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
@@ -212,6 +216,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.EXTRA_ALIAS_TITLE;
+import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.EXTRA_PRINTER;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
@@ -1357,9 +1363,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void actionHoldCounterSelected() {
         actionBarItemClicked();
-        HoldFragmentDialog.show(this, null, null, false, new HoldFragmentDialog.IHoldListener() {
+        OnHoldListDialogFragment.show(this, this.orderGuid, this.orderTitle, OnHoldListDialogFragment.HoldOnAction.GET_ORDER, new IHoldListener() {
             @Override
-            public void onSwap2Order(final String holdName, final String nextOrderGuid) {
+            public void onSwap2Order(final String holdName, final String holdPhone, final OnHoldStatus status, final String nextOrderGuid, final String definedOnHoldGuid) {
                 ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, nextOrderGuid, ItemsNegativeStockTrackingCommand.ItemType.HOLD_ON,
                         new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
                             @Override
@@ -1372,7 +1378,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                             updateHoldButton();
                                             supportInvalidateOptionsMenu();
                                         }
-                                    }, nextOrderGuid, holdName, HoldOrderCommand.HoldOnAction.REMOVE);
+                                    }, nextOrderGuid, holdName, holdPhone, definedOnHoldGuid, status, HoldOrderCommand.HoldOnAction.REMOVE);
                                     return;
                                 }
                                 setOrderGuid(nextOrderGuid, true);
@@ -2243,16 +2249,29 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     @Override
     public void onHold() {
-        HoldFragmentDialog.show(this, this.orderGuid, this.orderTitle, orderItemListFragment.hasKitchenItems(), new HoldFragmentDialog.IHoldListener() {
-
-            @Override
-            public void onSwap2Order(String holdName, String nextOrderGuid) {
-                if (!TextUtils.isEmpty(BaseCashierActivity.this.orderGuid)) {
-                    HoldOrderCommand.start(BaseCashierActivity.this, holdOrderCallback, BaseCashierActivity.this.orderGuid, holdName, HoldOrderCommand.HoldOnAction.ADD);
+        boolean isDefinedOnHold = app.getShopInfo().definedOnHold;
+        if(isDefinedOnHold) {
+            OnHoldListDialogFragment.show(this, this.orderGuid, this.orderTitle, OnHoldListDialogFragment.HoldOnAction.ADD_ORDER, new IHoldListener() {
+                @Override
+                public void onSwap2Order(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
+                    onSwap2OrderAction(BaseCashierActivity.this.orderTitle, null, null, null, definedOnHoldGuid);
                 }
-                setOrderGuid(nextOrderGuid, true);
-            }
-        });
+            });
+        } else {
+            AddOnHoldDialogFragment.show(this, this.orderGuid, this.orderTitle, saleOrderModel.holdPhone, saleOrderModel.holdStatus, orderItemListFragment.hasKitchenItems(), new IHoldListener() {
+                @Override
+                public void onSwap2Order(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
+                    onSwap2OrderAction(holdName, holdPhone, status, nextOrderGuid, null);
+                }
+            });
+        }
+    }
+
+    private void onSwap2OrderAction(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
+        if (!TextUtils.isEmpty(BaseCashierActivity.this.orderGuid)) {
+            HoldOrderCommand.start(BaseCashierActivity.this, holdOrderCallback, BaseCashierActivity.this.orderGuid, holdName, holdPhone, definedOnHoldGuid, status, HoldOrderCommand.HoldOnAction.ADD);
+        }
+        setOrderGuid(nextOrderGuid, true);
     }
 
     @Override
@@ -2383,6 +2402,42 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     public void onVoidApplied() {
         setupNewOrder();
         getApp().clearCurrentOrderItemsQty();
+    }
+
+    @OnFailure(RemoveSaleOrderCommand.class)
+    public void onVoidFailed(@Param(PrinterCommand.EXTRA_ERROR_PRINTER) PrinterError printerError,
+                             @Param(EXTRA_PRINTER) String fromPrinter,
+                             @Param(EXTRA_ALIAS_TITLE) String aliasTitle) {
+
+        KitchenPrintCallbackHelper.IKitchenPrintCallback callback = new KitchenPrintCallbackHelper.IKitchenPrintCallback() {
+            @Override
+            public void onRetry(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
+                RemoveSaleOrderCommand.start(BaseCashierActivity.this, BaseCashierActivity.this, BaseCashierActivity.this.orderGuid);
+            }
+
+            @Override
+            public void onSkip(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
+                RemoveSaleOrderCommand.start(BaseCashierActivity.this, BaseCashierActivity.this, BaseCashierActivity.this.orderGuid, true);
+            }
+        };
+
+        if (printerError != null && printerError == PrinterCommand.PrinterError.DISCONNECTED) {
+            KitchenPrintCallbackHelper.onPrinterDisconnected(this, fromPrinter, aliasTitle, callback);
+            return;
+        }
+        if (printerError != null && printerError == PrinterCommand.PrinterError.IP_NOT_FOUND) {
+            KitchenPrintCallbackHelper.onPrinterIPnotfound(this, fromPrinter, aliasTitle, callback);
+            return;
+        }
+        if (printerError != null && printerError == PrinterCommand.PrinterError.NOT_CONFIGURED) {
+            KitchenPrintCallbackHelper.onPrinterNotConfigured(this, fromPrinter, aliasTitle, callback);
+            return;
+        }
+        if (printerError != null && printerError == PrinterCommand.PrinterError.PAPER_IS_NEAR_END) {
+            KitchenPrintCallbackHelper.onPrinterPaperNearTheEnd(this, fromPrinter, aliasTitle, callback);
+            return;
+        }
+        KitchenPrintCallbackHelper.onPrintError(this, printerError, fromPrinter, aliasTitle, callback);
     }
 
     private void setupNewOrder() {
@@ -3255,6 +3310,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
 
     };
+
+    public static interface IHoldListener {
+        void onSwap2Order(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid);
+        //void onCancelHold();
+    }
 
     private static class SaleOrderItemModelWrapper {
         private final SaleOrderItemModel model;

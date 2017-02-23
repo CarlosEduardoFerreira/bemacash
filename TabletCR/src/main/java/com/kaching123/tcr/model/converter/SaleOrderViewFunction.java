@@ -19,6 +19,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._kdsSendStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._kitchenPrintStatus;
+import static com.kaching123.tcr.model.ContentValuesUtil._onHoldStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 
@@ -40,6 +41,9 @@ public class SaleOrderViewFunction extends ListConverterFunction<SaleOrderViewMo
                 _discountType(c, indexHolder.get(SaleOrderTable.DISCOUNT_TYPE)),
                 _orderStatus(c, indexHolder.get(SaleOrderTable.STATUS)),
                 c.getString(indexHolder.get(SaleOrderTable.HOLD_NAME)),
+                c.getString(indexHolder.get(SaleOrderTable.DEFINED_ON_HOLD_ID)),
+                c.getString(indexHolder.get(SaleOrderTable.HOLD_TEL)),
+                _onHoldStatus(c, indexHolder.get(SaleOrderTable.HOLD_STATUS)),
                 _bool(c, indexHolder.get(SaleOrderTable.TAXABLE)),
                 _decimal(c, indexHolder.get(SaleOrderTable.TML_TOTAL_PRICE), BigDecimal.ZERO),
                 _decimal(c, indexHolder.get(SaleOrderTable.TML_TOTAL_TAX), BigDecimal.ZERO),

@@ -202,6 +202,7 @@ public class TcrApplication extends MultiDexApplication {
 
         OkHttpClient client = new OkHttpClient();
         client.setReadTimeout(1, TimeUnit.MINUTES);
+        client.setConnectTimeout(5, TimeUnit.MINUTES);
 
         return adapterBuilder.setConverter(converter)
                 .setClient(new OkClient(client))
@@ -305,7 +306,8 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.checkPaymentButtonEnabled().getOr(false),
                     shopPref.autogenerateProductCode().getOr(false),
                     shopPref.digitalSignature().getOr(false),
-                    shopPref.signatureReceipt().get()
+                    shopPref.signatureReceipt().get(),
+                    shopPref.definedOnHold().getOr(false)
             );
         }
         barcodePrefixes = new BarcodePrefixes(
@@ -703,6 +705,7 @@ public class TcrApplication extends MultiDexApplication {
                 .autogenerateProductCode().put(info.autogenerateProductCode)
                 .digitalSignature().put(info.digitalSignature)
                 .signatureReceipt().put(info.signatureReceipt)
+                .definedOnHold().put(info.definedOnHold)
                 .apply();
 
         setUsers();

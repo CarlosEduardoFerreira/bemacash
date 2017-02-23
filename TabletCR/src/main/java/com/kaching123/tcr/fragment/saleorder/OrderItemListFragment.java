@@ -24,6 +24,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
+import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.commands.store.saleorder.ApplyMultipleDiscountCommand;
@@ -39,6 +40,7 @@ import com.kaching123.tcr.commands.store.saleorder.UpdatePriceSaleOrderItemComma
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand.BaseUpdateQtySaleOrderItemCallback;
 import com.kaching123.tcr.component.CarlHighlightItemView;
+import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.ComposerOverrideQtyDialog;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -63,7 +65,9 @@ import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.UnitUtil;
+import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
+import com.telly.groundy.annotations.Param;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.EFragment;
@@ -74,6 +78,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.EXTRA_ALIAS_TITLE;
+import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.EXTRA_PRINTER;
 
 @EFragment
 public class OrderItemListFragment extends ListFragment implements LoaderCallbacks<List<SaleOrderItemViewModel>>, BarcodeListenerHolder.BarcodeListener {
@@ -404,7 +411,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             return;
         }
 
-        RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(position), OrderItemListFragment.this);
+        RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(position), RemoveSaleOrderItemCommand.ActionType.REMOVE, OrderItemListFragment.this);
 
     }
 
@@ -438,7 +445,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             return;
         }
 
-        RemoveSaleOrderItemCommand.start(getActivity(), guid, OrderItemListFragment.this);
+        RemoveSaleOrderItemCommand.start(getActivity(), guid, RemoveSaleOrderItemCommand.ActionType.REMOVE, OrderItemListFragment.this);
     }
 
 
@@ -467,6 +474,42 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         if (getDisplayBinder() != null)
             getDisplayBinder().startCommand(new DisplayWelcomeMessageCommand());
     }
+
+    @OnFailure(RemoveSaleOrderItemCommand.class)
+    public void onItemRemovedFailCallback(@Param(PrinterCommand.EXTRA_ERROR_PRINTER) PrinterCommand.PrinterError printerError,
+                                          @Param(EXTRA_PRINTER) String fromPrinter,
+                                          @Param(EXTRA_ALIAS_TITLE) String aliasTitle) {
+        KitchenPrintCallbackHelper.IKitchenPrintCallback callback = new KitchenPrintCallbackHelper.IKitchenPrintCallback() {
+            @Override
+            public void onRetry(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
+                RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(position), RemoveSaleOrderItemCommand.ActionType.REMOVE, OrderItemListFragment.this);
+            }
+
+            @Override
+            public void onSkip(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
+                RemoveSaleOrderItemCommand.start(getActivity(), adapter.getSaleItemGuid(position), RemoveSaleOrderItemCommand.ActionType.REMOVE, OrderItemListFragment.this, true);
+            }
+        };
+
+        if (printerError != null && printerError == PrinterCommand.PrinterError.DISCONNECTED) {
+            KitchenPrintCallbackHelper.onPrinterDisconnected(getActivity(), fromPrinter, aliasTitle, callback);
+            return;
+        }
+        if (printerError != null && printerError == PrinterCommand.PrinterError.IP_NOT_FOUND) {
+            KitchenPrintCallbackHelper.onPrinterIPnotfound(getActivity(), fromPrinter, aliasTitle, callback);
+            return;
+        }
+        if (printerError != null && printerError == PrinterCommand.PrinterError.NOT_CONFIGURED) {
+            KitchenPrintCallbackHelper.onPrinterNotConfigured(getActivity(), fromPrinter, aliasTitle, callback);
+            return;
+        }
+        if (printerError != null && printerError == PrinterCommand.PrinterError.PAPER_IS_NEAR_END) {
+            KitchenPrintCallbackHelper.onPrinterPaperNearTheEnd(getActivity(), fromPrinter, aliasTitle, callback);
+            return;
+        }
+        KitchenPrintCallbackHelper.onPrintError(getActivity(), printerError, fromPrinter, aliasTitle, callback);
+    }
+
 
     private IDisplayBinder getDisplayBinder() {
         if (getActivity() instanceof IDisplayBinder) {
@@ -517,6 +560,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         });
     }
     private void checkIsNewItemComposer(final List<SaleOrderItemViewModel> list, boolean checkQty){
+        qtyChanged = false;
         String guidToCheck = null;
         if(!checkIsNewItemComposerInProcess) {
             checkIsNewItemComposerInProcess = true;
@@ -636,13 +680,18 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
         adapter.carlHighlightDoIt = false;
 
+        boolean dontAnimate = false;
         if(!list.isEmpty()) {
             if (!ignorReculc) {
                 if ((list.size() - app.getSalesOnScreenTmpSize()) == 1) {
                     checkIsNewItemComposer(list, false);
                 } else if (list.size() == app.getSalesOnScreenTmpSize()) {           //chg qty or discount or come back
                     checkIsNewItemComposer(list, true);
+                    if((!qtyChanged && firstLoad) || (!qtyChanged && !need2ScrollList)) {
+                        dontAnimate = true;
+                    }
                 } else {                                                           //new order, hold on
+                    dontAnimate = true;
                     newItem = false;
                     checkAddedItemsOnComposerEnoughQty(list);
                 }
@@ -676,6 +725,8 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         // CarlHighlightItemView
         Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.getCount(): " + getListView().getCount());
         Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.isReturn: " + isReturn);
+        if(dontAnimate)
+            return;
         if (getListView().getCount() > 0 && !isReturn){
             Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.adapter.carlHighlightItemView: " + adapter.carlHighlightItemView);
             if(adapter.carlHighlightItemView == null) {
@@ -767,7 +818,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
         public ReturnItemsAdapter(Context context) {
             super(context);
-            carlHighlightDoIt = false;
         }
 
         @Override

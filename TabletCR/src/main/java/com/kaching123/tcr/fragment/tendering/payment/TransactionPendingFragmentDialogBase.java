@@ -24,7 +24,7 @@ public abstract class TransactionPendingFragmentDialogBase<T extends Transaction
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width), getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
+        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.base_dlg_width), getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
 //        getDialog().getWindow().setWindowAnimations(R.style.DialogAnimation);
         doCommand();
     }
