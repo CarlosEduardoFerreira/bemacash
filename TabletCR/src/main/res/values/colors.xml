@@ -120,4 +120,7 @@
     <color name = "addon_340">#AC1A4C</color>
     <color name = "addon_355">#AE1C27</color>
 
+    <color name="dine_in">#27CC62</color>
+    <color name="to_go">#341CAE</color>
+
 </resources>

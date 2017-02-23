@@ -138,6 +138,8 @@ public class ShopInfoViewJdbcConverter {
     private static final String DIGITAL_SIGNATURE = "DIGITAL_SIGNATURE";
     private static final String SIGNATURE_RECEIPT = "SIGNATURE_RECEIPT";
 
+    private static final String DEFINED_ON_HOLD = "DEFINED_ON_HOLD";
+
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
@@ -224,8 +226,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(EMAIL_RECEIPT_DEFAULT),
                 rs.getBoolean(AUTOGENERATE_PRODUCT_CODE),
                 rs.getBoolean(DIGITAL_SIGNATURE),
-                rs.getString(SIGNATURE_RECEIPT)
-
+                rs.getString(SIGNATURE_RECEIPT),
+                rs.getBoolean(DEFINED_ON_HOLD)
         );
     }
 
@@ -314,7 +316,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(EMAIL_RECEIPT_DEFAULT),
                 rs.getBoolean(AUTOGENERATE_PRODUCT_CODE),
                 rs.getBoolean(DIGITAL_SIGNATURE),
-                rs.getString(SIGNATURE_RECEIPT)
+                rs.getString(SIGNATURE_RECEIPT),
+                rs.getBoolean(DEFINED_ON_HOLD)
         );
     }
 
@@ -426,6 +429,8 @@ public class ShopInfoViewJdbcConverter {
         public final boolean digitalSignature;
         public final String signatureReceipt;
 
+        public final boolean definedOnHold;
+
 
 
         public ShopInfo(long id, String name, ViewType viewType, BigDecimal taxVat,
@@ -507,7 +512,8 @@ public class ShopInfoViewJdbcConverter {
                         boolean emailReceiptDefault,
                         boolean autogenerateProductCode,
                         boolean digitalSignature,
-                        String signatureReceipt) {
+                        String signatureReceipt,
+                        boolean definedOnHold) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -613,6 +619,8 @@ public class ShopInfoViewJdbcConverter {
 
             this.digitalSignature = digitalSignature;
             this.signatureReceipt = signatureReceipt;
+
+            this.definedOnHold = definedOnHold;
         }
 
     }

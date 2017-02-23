@@ -101,6 +101,7 @@ import com.kaching123.tcr.store.ShopStore.UpdateTimeTable;
 import com.kaching123.tcr.store.ShopStore.VariantItemTable;
 import com.kaching123.tcr.store.ShopStore.VariantSubItemTable;
 import com.kaching123.tcr.store.ShopStore.WirelessTable;
+import com.kaching123.tcr.store.ShopStore.DefinedOnHoldTable;
 import com.kaching123.tcr.store.SyncOpenHelper;
 import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -153,6 +154,7 @@ public class SyncCommand implements Runnable {
             ShiftTable.URI_CONTENT,
             TaxGroupTable.URI_CONTENT,
             DepartmentTable.URI_CONTENT,
+            DefinedOnHoldTable.URI_CONTENT,
             CategoryTable.URI_CONTENT,
             ItemTable.URI_CONTENT,
             ModifierTable.URI_CONTENT,
@@ -378,6 +380,7 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, UnitLabelTable.TABLE_NAME, UnitLabelTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, RegisterTable.TABLE_NAME, RegisterTable.ID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, DefinedOnHoldTable.TABLE_NAME, DefinedOnHoldTable.ID, employee, serverLastTimestamp);
 
                     count += syncSingleTable2(service, api2, CustomerTable.TABLE_NAME, CustomerTable.GUID, employee, serverLastTimestamp);
 
@@ -826,6 +829,7 @@ public class SyncCommand implements Runnable {
 
                 count += syncLocalSingleTable(service, ShopStore.UnitLabelTable.TABLE_NAME, UnitLabelTable.GUID);
                 count += syncLocalSingleTable(service, RegisterTable.TABLE_NAME, RegisterTable.ID);
+                count += syncLocalSingleTable(service, DefinedOnHoldTable.TABLE_NAME, DefinedOnHoldTable.ID);
                 count += syncLocalSingleTable(service, PrinterAliasTable.TABLE_NAME, PrinterAliasTable.GUID);
                 count += syncLocalSingleTable(service, LoyaltyIncentiveTable.TABLE_NAME, LoyaltyIncentiveTable.GUID);
                 count += syncLocalSingleTable(service, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID);
@@ -1811,7 +1815,8 @@ public class SyncCommand implements Runnable {
         SALE_INCENTIVE(SaleIncentiveTable.TABLE_NAME, true),
         TBP(TBPTable.TABLE_NAME, true),
         TBP_X_REGISTER(TBPxRegisterTable.TABLE_NAME, true),
-        MULTIPLE_DISCOUNT(MultipleDiscountTable.TABLE_NAME, true);
+        MULTIPLE_DISCOUNT(MultipleDiscountTable.TABLE_NAME, true),
+        DEFINED_ON_HOLD(DefinedOnHoldTable.TABLE_NAME, true);
 
         public final String tableName;
         public final boolean isParent;

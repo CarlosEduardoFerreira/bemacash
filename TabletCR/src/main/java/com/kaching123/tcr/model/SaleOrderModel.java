@@ -29,6 +29,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 import static com.kaching123.tcr.model.ContentValuesUtil._kdsSendStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._kitchenPrintStatus;
+import static com.kaching123.tcr.model.ContentValuesUtil._onHoldStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
 import static com.kaching123.tcr.model.ContentValuesUtil._putDiscount;
@@ -48,6 +49,12 @@ public class SaleOrderModel implements Serializable, IValueModel {
     public BigDecimal discount;
     public DiscountType discountType;
     public OrderStatus orderStatus = OrderStatus.ACTIVE;
+
+    private String holdName;
+    public String definedOnHoldGuid;
+    public String holdPhone;
+    public OnHoldStatus holdStatus = OnHoldStatus.NONE;
+
     public boolean taxable;
 
     public int printSeqNum;
@@ -66,8 +73,6 @@ public class SaleOrderModel implements Serializable, IValueModel {
 
     public BigDecimal transactionFee;
 
-    private String holdName;
-
     private List<String> mIgnoreFields;
 
     public SaleOrderModel(String guid) {
@@ -85,6 +90,9 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 _discountType(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.DISCOUNT_TYPE)),
                 _orderStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.STATUS)),
                 c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.HOLD_NAME)),
+                c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.DEFINED_ON_HOLD_ID)),
+                c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.HOLD_TEL)),
+                _onHoldStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.HOLD_STATUS)),
                 _bool(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TAXABLE)),
                 _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_PRICE), BigDecimal.ZERO),
                 _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TML_TOTAL_TAX), BigDecimal.ZERO),
@@ -111,6 +119,9 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 _discountType(c, c.getColumnIndex(ShopStore.SaleOrderTable.DISCOUNT_TYPE)),
                 _orderStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.STATUS)),
                 c.getString(c.getColumnIndex(SaleOrderTable.HOLD_NAME)),
+                c.getString(c.getColumnIndex(SaleOrderTable.DEFINED_ON_HOLD_ID)),
+                c.getString(c.getColumnIndex(SaleOrderTable.HOLD_TEL)),
+                _onHoldStatus(c, c.getColumnIndex(SaleOrderTable.HOLD_STATUS)),
                 _bool(c, c.getColumnIndex(SaleOrderTable.TAXABLE)),
                 _decimal(c, c.getColumnIndex(SaleOrderTable.TML_TOTAL_PRICE), BigDecimal.ZERO),
                 _decimal(c, c.getColumnIndex(SaleOrderTable.TML_TOTAL_TAX), BigDecimal.ZERO),
@@ -137,6 +148,9 @@ public class SaleOrderModel implements Serializable, IValueModel {
             DiscountType discountType,
             OrderStatus orderStatus,
             String holdName,
+            String definedOnHoldGuid,
+            String holdPhone,
+            OnHoldStatus holdStatus,
             boolean taxable,
             BigDecimal tmpTotalPrice,
             BigDecimal tmpTotalTax,
@@ -148,7 +162,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
             KitchenPrintStatus kitchenPrintStatus,
             KDSSendStatus kdsSendStatus,
             BigDecimal transactionFee) {
-        this(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentGuid, type, false, kitchenPrintStatus, kdsSendStatus, transactionFee, null);
+        this(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, definedOnHoldGuid, holdPhone, holdStatus, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentGuid, type, false, kitchenPrintStatus, kdsSendStatus, transactionFee, null);
     }
 
     public SaleOrderModel(
@@ -161,6 +175,9 @@ public class SaleOrderModel implements Serializable, IValueModel {
             DiscountType discountType,
             OrderStatus orderStatus,
             String holdName,
+            String definedOnHoldGuid,
+            String holdPhone,
+            OnHoldStatus holdStatus,
             boolean taxable,
             BigDecimal tmpTotalPrice,
             BigDecimal tmpTotalTax,
@@ -184,7 +201,15 @@ public class SaleOrderModel implements Serializable, IValueModel {
         this.discount = discount;
         this.discountType = discountType;
         this.orderStatus = orderStatus;
+
         setHoldName(holdName);
+        this.definedOnHoldGuid = definedOnHoldGuid;
+        this.holdPhone = holdPhone;
+
+        if(holdStatus != null) {
+            this.holdStatus = holdStatus;
+        }
+
         this.taxable = taxable;
 
         this.printSeqNum = printSeqNum;
@@ -222,12 +247,40 @@ public class SaleOrderModel implements Serializable, IValueModel {
         return holdName;
     }
 
+    public String getHoldPhone() {
+        return holdPhone;
+    }
+
+    public OnHoldStatus getHoldStatus() {
+        return holdStatus;
+    }
+
     public void setHoldName(String holdName) {
         if (TextUtils.isEmpty(holdName)) {
             this.holdName = getDefaultName(this);
         } else {
             this.holdName = holdName;
         }
+    }
+
+    public String getDefinedOnHoldGuid() {
+        return definedOnHoldGuid;
+    }
+
+    public void setDefinedOnHoldGuid(String definedOnHoldGuid) {
+        this.definedOnHoldGuid = definedOnHoldGuid;
+    }
+
+    public void setHoldPhone(String holdPhone) {
+        this.holdPhone = holdPhone;
+    }
+
+    public void setHoldStatus(OnHoldStatus holdStatus) {
+        if(holdStatus == null){
+            this.holdStatus = OnHoldStatus.NONE;
+            return;
+        }
+        this.holdStatus = holdStatus;
     }
 
     @Override
@@ -248,7 +301,12 @@ public class SaleOrderModel implements Serializable, IValueModel {
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.DISCOUNT)) values.put(SaleOrderTable.DISCOUNT, _decimal(discount));
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.DISCOUNT_TYPE)) _putDiscount(values, SaleOrderTable.DISCOUNT_TYPE, discountType);
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.STATUS)) values.put(SaleOrderTable.STATUS, orderStatus.ordinal());
+
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.HOLD_NAME)) values.put(SaleOrderTable.HOLD_NAME, holdName);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.DEFINED_ON_HOLD_ID)) values.put(SaleOrderTable.DEFINED_ON_HOLD_ID, definedOnHoldGuid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.HOLD_TEL)) values.put(SaleOrderTable.HOLD_TEL, holdPhone);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.HOLD_STATUS)) values.put(SaleOrderTable.HOLD_STATUS, holdStatus.ordinal());
+
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.TAXABLE)) values.put(SaleOrderTable.TAXABLE, taxable);
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.PRINT_SEQ_NUM)) values.put(SaleOrderTable.PRINT_SEQ_NUM, printSeqNum);
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.REGISTER_ID)) values.put(SaleOrderTable.REGISTER_ID, registerId);

@@ -454,7 +454,6 @@ public class SqlUpdateVersionMatcher {
         UPDATE7TO9(new Update7to9()),
         UPDATE8TO9(new Update8to9());
 
-
         private IUpdateContainer container;
 
         private VERSION(IUpdateContainer container) {

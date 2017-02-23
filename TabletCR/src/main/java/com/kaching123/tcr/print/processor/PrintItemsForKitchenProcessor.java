@@ -38,10 +38,11 @@ public class PrintItemsForKitchenProcessor {
     private String orderNumber;
     private boolean isUpdated;
     private boolean printAllItems;
+    private boolean isVoid;
 
     private final IAppCommandContext appCommandContext;
 
-    public PrintItemsForKitchenProcessor(List<ItemInfo> items, PrinterInfo printer, String aliasGuid, String orderGuid, boolean isUpdated, String orderTitle, boolean printAllItems, IAppCommandContext appCommandContext) {
+    public PrintItemsForKitchenProcessor(List<ItemInfo> items, PrinterInfo printer, String aliasGuid, String orderGuid, boolean isUpdated, String orderTitle, boolean printAllItems, boolean isVoid, IAppCommandContext appCommandContext) {
         this.items = items;
         this.printer = printer;
         this.aliasGuid = aliasGuid;
@@ -50,6 +51,7 @@ public class PrintItemsForKitchenProcessor {
         this.orderTitle = orderTitle;
         this.printAllItems = printAllItems;
         this.appCommandContext = appCommandContext;
+        this.isVoid = isVoid;
     }
 
     public void print(Context context, TcrApplication app, IKitchenPrinter printer){
@@ -114,8 +116,14 @@ public class PrintItemsForKitchenProcessor {
     private void printBody(Context context, TcrApplication app, IKitchenPrinter printer) {
         for (ItemInfo item : items){
             String description = item.description;
+
             BigDecimal printQty = printAllItems ? item.qty : item.qty.subtract(item.printedQty);
+
+            if (isVoid){
+                printQty = item.printedQty;
+            }
             printer.add(printQty, description);
+
             if (!item.modifier.isEmpty()){
                 for (String modifier : item.modifier){
                     printer.addAddsOn(modifier);

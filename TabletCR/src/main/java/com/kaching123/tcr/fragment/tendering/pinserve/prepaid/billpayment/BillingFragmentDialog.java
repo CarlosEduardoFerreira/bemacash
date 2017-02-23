@@ -15,9 +15,6 @@ import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.request.BillPaymentRequest;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.BillPaymentItem;
 import com.kaching123.tcr.websvc.api.prepaid.BillPaymentResponse;
-import com.telly.groundy.annotations.OnFailure;
-import com.telly.groundy.annotations.OnSuccess;
-import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
 
@@ -87,7 +84,7 @@ public class BillingFragmentDialog extends StyledDialogFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width),
+        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.base_dlg_width),
                 getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
     }
 

@@ -784,6 +784,25 @@ public abstract class ShopStore {
                 foreignKey(ItemKDSTable.KDS_ALIAS_GUID, KDSAliasTable.TABLE_NAME, KDSAliasTable.GUID));
     }
 
+    @Table(DefinedOnHoldTable.TABLE_NAME)
+    public static interface DefinedOnHoldTable extends IBemaSyncTable {
+
+        @URI
+        String URI_CONTENT = "defined_on_hold";
+
+        String TABLE_NAME = "defined_on_hold";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Column.Type.TEXT)
+        String ID = "id";
+
+        @NotNull
+        @Column(type = Column.Type.TEXT)
+        String NAME = "name";
+
+    }
+
     @Table(SaleOrderTable.TABLE_NAME)
     @Indexes({
             @Index(name = "create_time", columns = SaleOrderTable.CREATE_TIME),
@@ -835,7 +854,16 @@ public abstract class ShopStore {
         String STATUS = "status";
 
         @Column(type = Column.Type.TEXT)
+        String DEFINED_ON_HOLD_ID = "defined_on_hold_id";
+
+        @Column(type = Column.Type.TEXT)
         String HOLD_NAME = "hold_name";
+
+        @Column(type = Column.Type.TEXT)
+        String HOLD_TEL = "hold_tel";
+
+        @Column(type = Type.INTEGER)
+        String HOLD_STATUS = "hold_status";
 
         @Column(type = Type.INTEGER)
         String TAXABLE = "taxable";
@@ -886,7 +914,8 @@ public abstract class ShopStore {
                 foreignKey(SaleOrderTable.SHIFT_GUID, ShiftTable.TABLE_NAME, ShiftTable.GUID),
                 foreignKey(SaleOrderTable.CUSTOMER_GUID, CustomerTable.TABLE_NAME, CustomerTable.GUID),
                 foreignKey(SaleOrderTable.REGISTER_ID, RegisterTable.TABLE_NAME, RegisterTable.ID),
-                foreignKey(SaleOrderTable.PARENT_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true)
+                foreignKey(SaleOrderTable.PARENT_ID, SaleOrderTable.TABLE_NAME, SaleOrderTable.GUID, true),
+                foreignKey(SaleOrderTable.DEFINED_ON_HOLD_ID, DefinedOnHoldTable.TABLE_NAME, DefinedOnHoldTable.ID)
         );
 
         applyTmpFields(SaleOrderTable.TABLE_NAME,
