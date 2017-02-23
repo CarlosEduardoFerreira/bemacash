@@ -214,6 +214,12 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncGapReceiver);
+    }
+
+    @Override
     protected int getDialogContentLayout() {
         return R.layout.on_hold_list_dialog_fragment;
     }
@@ -450,8 +456,8 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                     int color = 0;
                     switch (model.getHoldStatus()) {
                         case DINE_IN:
-                            text = context.getString(R.string.dine_in);
-                            color = context.getResources().getColor(R.color.dine_in);
+                            text = context.getString(R.string.to_stay);
+                            color = context.getResources().getColor(R.color.to_stay);
                             break;
                         case TO_GO:
                             text = context.getString(R.string.to_go);

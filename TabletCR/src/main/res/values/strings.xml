@@ -2093,8 +2093,7 @@
     <string name="scale_dlg_warning_unit_does_not_match">The scale unit does not match the item unit of measurement. Switch scale to %1$s to continue Please check the scale."</string>
     <string name="sync_defined_on_hold">defined on hold</string>
     <string name="to_go">To Go</string>
-    <string name="dine_in">Dine-in</string>
-    <string name="dine_in_g">Dine-In</string>
+    <string name="to_stay">To Stay</string>
     <string name="phone">Phone:</string>
     <string name="name_table">Name/Table:</string>
     <string name="defined_on_hold_busy">This place already has on hold order, please choose another place</string>
