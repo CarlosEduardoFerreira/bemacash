@@ -214,6 +214,12 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncGapReceiver);
+    }
+
+    @Override
     protected int getDialogContentLayout() {
         return R.layout.on_hold_list_dialog_fragment;
     }
