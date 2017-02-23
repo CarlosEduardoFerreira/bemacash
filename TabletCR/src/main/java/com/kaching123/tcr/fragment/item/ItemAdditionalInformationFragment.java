@@ -76,6 +76,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
     @ViewById protected CheckBox ebtEligible;
     @ViewById protected EditText bonusPoints;
     @ViewById protected CheckBox excludeFromLoyaltyPlan;
+    @ViewById protected CheckBox hasNotes;
 
     private UnitsLabelAdapter unitsLabelAdapter;
 
@@ -143,6 +144,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         showIntegralInteger(bonusPoints, model.loyaltyPoints);
         excludeFromLoyaltyPlan.setChecked(model.excludeFromLoyaltyPlan);
         ebtEligible.setChecked(model.isEbtEligible);
+        hasNotes.setChecked(model.hasNotes);
     }
 
     @Override
@@ -157,6 +159,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         model.loyaltyPoints = getDecimalValue(bonusPoints);
         model.excludeFromLoyaltyPlan = excludeFromLoyaltyPlan.isChecked();
         model.isEbtEligible = ebtEligible.isChecked();
+        model.hasNotes = hasNotes.isChecked();
     }
 
     @Override

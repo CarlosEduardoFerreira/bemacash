@@ -105,7 +105,7 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
     private void setChargeView() {
         charge.setKeyboardSupportConteiner(this);
         charge.setFilters(new InputFilter[]{new CurrencyFormatInputFilter()});
-        charge.addTextChangedListener(new CurrencyTextWatcher(charge));
+        charge.addTextChangedListener(new CurrencyTextWatcher(charge, 2));
 //        charge.setEditListener(new CustomEditBox.IEditListener() {
 //
 //            @Override
@@ -192,7 +192,7 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
         return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
-                listener.onPaymentAmountSelected(new BigDecimal(charge.getText().toString()));
+                listener.onPaymentAmountSelected(new BigDecimal(charge.getText().toString().replaceAll(",", "")));
                 return true;
             }
         };

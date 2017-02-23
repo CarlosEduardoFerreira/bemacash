@@ -7,7 +7,7 @@ import com.kaching123.tcr.store.migration.IUpdateContainer;
 import static com.kaching123.tcr.store.migration.UpdateBlock.update8to9;
 
 /**
- * Created by alboyko on 13.10.2016.
+ * Created by mboychenko on 2/8/2017.
  */
 
 public class Update8to9 implements IUpdateContainer {

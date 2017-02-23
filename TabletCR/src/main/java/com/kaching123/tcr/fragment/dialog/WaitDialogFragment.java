@@ -26,7 +26,7 @@ public class WaitDialogFragment extends StyledDialogFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width),
+        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.base_dlg_width),
                 getDialog().getWindow().getAttributes().height);
         setCancelable(false);
         progressMsg.setText(msg);

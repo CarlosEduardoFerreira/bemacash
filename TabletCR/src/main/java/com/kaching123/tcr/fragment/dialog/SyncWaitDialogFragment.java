@@ -46,6 +46,7 @@ import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.ShopStore.WirelessTable;
+import com.kaching123.tcr.store.ShopStore.DefinedOnHoldTable;
 import com.kaching123.tcr.util.ReceiverWrapper;
 
 import org.androidannotations.annotations.EFragment;
@@ -143,6 +144,7 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
     static {
         TABLE_NAMES.put(CategoryTable.TABLE_NAME, R.string.sync_category);
         TABLE_NAMES.put(DepartmentTable.TABLE_NAME, R.string.sync_department);
+        TABLE_NAMES.put(DefinedOnHoldTable.TABLE_NAME, R.string.sync_defined_on_hold);
 
         TABLE_NAMES.put(ItemTable.TABLE_NAME, R.string.sync_item);
         TABLE_NAMES.put(ModifierTable.TABLE_NAME, R.string.sync_modifier);

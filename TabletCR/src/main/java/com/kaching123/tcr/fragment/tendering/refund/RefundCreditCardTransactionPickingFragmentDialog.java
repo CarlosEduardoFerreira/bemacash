@@ -72,7 +72,7 @@ public class RefundCreditCardTransactionPickingFragmentDialog extends StyledDial
         super.onActivityCreated(savedInstanceState);
 //        getDialog().getWindow().setWindowAnimations(R.style.DialogAnimation);
         getDialog().getWindow().setLayout(
-                getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width),
+                getResources().getDimensionPixelOffset(R.dimen.base_dlg_width),
                 getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
         setCancelable(false);
     }

@@ -102,7 +102,7 @@ public class RefundCashFragmentDialog extends StyledDialogFragment implements ID
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setCancelable(false);
-        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width), getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
+        getDialog().getWindow().setLayout(getResources().getDimensionPixelOffset(R.dimen.base_dlg_width), getResources().getDimensionPixelOffset(R.dimen.default_dlg_heigth));
 //        getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         getNegativeButton().setTextColor(getResources().getColor(R.color.gray_dark));
         getNegativeButton().setEnabled(false);

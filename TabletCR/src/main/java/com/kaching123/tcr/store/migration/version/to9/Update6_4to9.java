@@ -11,6 +11,9 @@ import static com.kaching123.tcr.store.migration.UpdateBlock.update6_7to7;
 import static com.kaching123.tcr.store.migration.UpdateBlock.update7to8;
 import static com.kaching123.tcr.store.migration.UpdateBlock.update8to9;
 
+/**
+ * Created by mboychenko on 2/8/2017.
+ */
 
 public class Update6_4to9 implements IUpdateContainer {
     @Override
