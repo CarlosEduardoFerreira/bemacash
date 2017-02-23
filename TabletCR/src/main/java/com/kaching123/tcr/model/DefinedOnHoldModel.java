@@ -42,4 +42,9 @@ public class DefinedOnHoldModel implements IValueModel, Serializable{
         values.put(ShopStore.DefinedOnHoldTable.NAME, name);
         return values;
     }
+
+    @Override
+    public String getIdColumn() {
+        return ShopStore.DefinedOnHoldTable.ID;
+    }
 }

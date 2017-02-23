@@ -1,11 +1,14 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.model.DefinedOnHoldModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by mboychenko on 2/3/2017.
@@ -31,6 +34,26 @@ public class DefinedOnHoldJdbcConverter extends JdbcConverter<DefinedOnHoldModel
     @Override
     public String getGuidColumn() {
         return ID;
+    }
+
+    @Override
+    public String getLocalGuidColumn() {
+        return ShopStore.DefinedOnHoldTable.ID;
+    }
+
+    @Override
+    public JSONObject getJSONObject(DefinedOnHoldModel model) {
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(ID, model.getGuid())
+                    .put(NAME, model.getName());
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
