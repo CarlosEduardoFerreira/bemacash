@@ -55,32 +55,6 @@ public class CustomerModel implements IValueModel, Serializable {
         this.createTime = createTime;
     }
 
-    public static CustomerModel fromOrderView(Cursor cursor){
-        return new CustomerModel(
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.GUID)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.FISRT_NAME)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LAST_NAME)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.STREET)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.COMPLEMENTARY)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.CITY)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.STATE)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.COUNTRY)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.ZIP)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.EMAIL)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.PHONE)),
-                _bool(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.SEX)),
-                _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.BIRTHDAY)),
-                _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.BIRTHDAY_REWARD_APPLY_DATE)),
-                _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.CREATE_TIME)),
-                _bool(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.CONSENT_PROMOTIONS)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.NOTES)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.CUSTOMER_IDENTIFICATION)),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_PLAN_ID)),
-                _decimal(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO),
-                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_BARCODE)),
-                null);
-    }
-
     public CustomerModel(Cursor cursor) {
         this(cursor.getString(cursor.getColumnIndex(CustomerTable.GUID)),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.FISRT_NAME)),
@@ -139,6 +113,31 @@ public class CustomerModel implements IValueModel, Serializable {
         this.mIgnoreFields = ignoreFields;
     }
 
+    public static CustomerModel fromOrderView(Cursor cursor){
+        return new CustomerModel(
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.GUID)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.FISRT_NAME)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LAST_NAME)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.STREET)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.COMPLEMENTARY)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.CITY)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.STATE)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.COUNTRY)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.ZIP)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.EMAIL)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.PHONE)),
+                _bool(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.SEX)),
+                _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.BIRTHDAY)),
+                _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.BIRTHDAY_REWARD_APPLY_DATE)),
+                _nullableDate(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.CREATE_TIME)),
+                _bool(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.CONSENT_PROMOTIONS)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.NOTES)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.CUSTOMER_IDENTIFICATION)),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_PLAN_ID)),
+                _decimal(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO),
+                cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_BARCODE)),
+                null);
+    }
     public String getFullName() {
         return UiHelper.concatFullname(firstName, lastName);
     }

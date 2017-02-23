@@ -192,6 +192,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                 .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
+                .add(TMP_LOYALTY_POINTS, model.loyaltyPoints)
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));

@@ -25,7 +25,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._putDate;
  */
 public class EmployeeModel implements IValueModel, Serializable{
 
-    public final String guid;
+    public String guid;
     public String firstName;
     public String lastName;
     public String login;

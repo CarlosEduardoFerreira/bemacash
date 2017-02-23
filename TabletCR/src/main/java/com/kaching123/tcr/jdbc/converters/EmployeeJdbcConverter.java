@@ -139,7 +139,6 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                     .put(GUID, model.guid)
                     .put(FIRST_NAME, model.firstName)
                     .put(LAST_NAME, model.lastName)
-                    .put(FULLNAME, model.fullName())
                     .put(LOGIN, model.login)
                     .put(PASSWORD, model.password)
                     .put(STREET, model.street)
