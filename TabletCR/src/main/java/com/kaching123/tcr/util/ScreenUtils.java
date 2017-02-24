@@ -2,11 +2,12 @@ package com.kaching123.tcr.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
+
+import com.kaching123.tcr.fragment.dialog.WriteSettingsPermissionDialogFragment;
 
 import java.util.concurrent.TimeUnit;
 
@@ -39,5 +40,13 @@ public class ScreenUtils {
                 ActivityCompat.requestPermissions((Activity) context, new String[]{Settings.ACTION_MANAGE_WRITE_SETTINGS}, new Integer(0));
             }
         }
+    }
+
+    public static boolean isGrantedWriteSettingsPermission(Context context) {
+        return !((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && (!Settings.System.canWrite(context)));
+    }
+
+    public static void getPermission(FragmentActivity activity) {
+        WriteSettingsPermissionDialogFragment.show(activity);
     }
 }

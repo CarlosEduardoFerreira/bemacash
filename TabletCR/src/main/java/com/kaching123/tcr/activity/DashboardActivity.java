@@ -61,6 +61,7 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
+import com.kaching123.tcr.fragment.dialog.WriteSettingsPermissionDialogFragment;
 import com.kaching123.tcr.fragment.edit.CashDrawerMovementEditFragment;
 import com.kaching123.tcr.fragment.filemanager.FileChooserFragment;
 import com.kaching123.tcr.fragment.filemanager.FileChooserFragment.FileChooseListener;
@@ -142,6 +143,7 @@ public class DashboardActivity extends SuperBaseActivity {
     private static final int LOADER_TIMESHEET_ID = 4;
     private static final int LOADER_ACTIVATION_ID = 5;
     private static final int LOADER_SQL_COMMAND = 6;
+    private static final int PERMISSIONS_REQUEST_WRITE_SETTINGS = 123;
     public static final int EXTRA_CODE = 1;
 
     public static String EXTRA_FORCE_LOGOUT = "EXTRA_FORCE_LOGOUT";
@@ -260,6 +262,12 @@ public class DashboardActivity extends SuperBaseActivity {
         if (getApp().isUserLogin() && !getApp().isTrainingMode() && getApp().isOfflineModeExpired()) {
             logout(false);
             Toast.makeText(this, R.string.offline_mode_error_toast_message_logout, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkPermission() {
+        if (!ScreenUtils.isGrantedWriteSettingsPermission(this)) {
+            ScreenUtils.getPermission(this);
         }
     }
 
@@ -479,9 +487,16 @@ public class DashboardActivity extends SuperBaseActivity {
         setOperatorName();
         need2CollectData();
         startUpdateShiftTime();
+        hideWriteSettingsPermissionDialogFragment();
+        checkPermission();
 
         LocalBroadcastManager.getInstance(this).registerReceiver(need2CollectDataReceiver,
                 new IntentFilter(LocalSyncHelper.LOCAL_SYNC_NEED_COLLECT_DATA));
+    }
+
+    private void hideWriteSettingsPermissionDialogFragment() {
+        WriteSettingsPermissionDialogFragment.hide(this);
+
     }
 
     @Override

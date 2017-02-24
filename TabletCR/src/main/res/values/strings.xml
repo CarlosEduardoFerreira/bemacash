@@ -2099,7 +2099,8 @@
     <string name="name_table">Name/Table:</string>
     <string name="defined_on_hold_busy">This place already has on hold order, please choose another place</string>
     <string name="on_hold_empty_place">Place has no order</string>
-
+    <string name="grand_write_settings_permission_button_text">OK</string>
+    <string name="grand_write_settings_permission_text_view_content">App have no permission to write system settings. \nPlease grand this permission and press back.</string>
 
     <!-- local sync starts -->
     <string name="shop_host_is_diff">Tablet\' shop %s is different.</string>
