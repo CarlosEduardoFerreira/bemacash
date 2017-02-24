@@ -363,7 +363,8 @@ public class LoginCommand extends GroundyTask {
         TcrApplication app = TcrApplication.get();
 
         Cursor c = ProviderAction.query(ShopProvider.getContentUri(RegisterTable.URI_CONTENT))
-                .projection(RegisterTable.ID, RegisterTable.PREPAID_TID, RegisterTable.BLACKSTONE_PAYMENT_CID)
+                .projection(RegisterTable.ID, RegisterTable.PREPAID_TID, RegisterTable.BLACKSTONE_PAYMENT_CID,
+                            RegisterTable.DESCRIPTION, RegisterTable.TITLE)
                 .where(RegisterTable.REGISTER_SERIAL + " = ?", app.getRegisterSerial())
                 .where(RegisterTable.STATUS + " <> ?", RegisterStatus.BLOCKED.ordinal())
                 .perform(app.getApplicationContext());
@@ -373,7 +374,7 @@ public class LoginCommand extends GroundyTask {
             return false;
         }
 
-        app.setRegisterId(c.getLong(0), c.getInt(1), c.getInt(2));
+        app.setRegisterInfo(c.getLong(0), c.getInt(1), c.getInt(2), c.getString(3), c.getString(4));
         c.close();
 
         return true;

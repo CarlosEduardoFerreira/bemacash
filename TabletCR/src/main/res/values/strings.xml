@@ -1430,11 +1430,12 @@
     <string name="printer_config_gateway_hint">Gateway</string>
     <string name="kds_config_station_hint">KDS station ID</string>
     <string name="printer_edit_mac_hint">MAC address</string>
-    <string name="kitchen_receipt_order_label">Order:</string>
+    <string name="kitchen_receipt_order_label">Order#:</string>
     <string name="kitchen_receipt_operator_label">Cashier:</string>
-    <string name="kitchen_receipt_station_label">Station:</string>
+    <string name="kitchen_receipt_station_label">POS station:</string>
     <string name="kitchen_receipt_holder_label">Name/Table:</string>
     <string name="kitchen_receipt_date_label">Order time:</string>
+    <string name="kitchen_receipt_order_type_label">Order type:</string>
     <string name="kitchen_receipt_no_option_prefix">NO-</string>
     <string name="printer_config_mac_error">Mac address is not configured for the printer.\nPlease edit printer information</string>
     <string name="printer_config_update_error">Can\'t send command to printer</string>
@@ -2098,7 +2099,8 @@
     <string name="name_table">Name/Table:</string>
     <string name="defined_on_hold_busy">This place already has on hold order, please choose another place</string>
     <string name="on_hold_empty_place">Place has no order</string>
-
+    <string name="grand_write_settings_permission_button_text">OK</string>
+    <string name="grand_write_settings_permission_text_view_content">App have no permission to write system settings. \nPlease grand this permission and press back.</string>
 
     <!-- local sync starts -->
     <string name="shop_host_is_diff">Tablet\' shop %s is different.</string>

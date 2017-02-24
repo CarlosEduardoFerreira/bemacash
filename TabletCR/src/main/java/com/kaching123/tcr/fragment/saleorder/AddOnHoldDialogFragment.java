@@ -112,7 +112,7 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
 
         if(argOrderHoldStatus != null) {
             switch (argOrderHoldStatus) {
-                case DINE_IN:
+                case TO_STAY:
                     dineIn.setActivated(true);
                     break;
                 case TO_GO:
@@ -160,15 +160,18 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
 
     protected void onPositiveHandler(){
         if (listener != null) {
-
-            OnHoldStatus status = OnHoldStatus.NONE;
-            if(dineIn.isActivated()) {
-                status = OnHoldStatus.DINE_IN;
-            } else if(toGo.isActivated()) {
-                status = OnHoldStatus.TO_GO;
-            }
-            listener.onSwap2Order(orderTitle.getText().toString(), onlyDigits(orderPhone.getText().toString()), status, null, null);
+            listener.onSwap2Order(orderTitle.getText().toString(), onlyDigits(orderPhone.getText().toString()), getOnHoldStatus(), null, null);
         }
+    }
+
+    private OnHoldStatus getOnHoldStatus(){
+        OnHoldStatus status = OnHoldStatus.NONE;
+        if(dineIn.isActivated()) {
+            status = OnHoldStatus.TO_STAY;
+        } else if(toGo.isActivated()) {
+            status = OnHoldStatus.TO_GO;
+        }
+        return status;
     }
 
     protected void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
@@ -182,7 +185,7 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
         }
         PrintItemsForKitchenCommand.itComesFromPay = false;
         PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip,
-                new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString());
+                new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString(), getOnHoldStatus(), orderPhone.getText().toString());
     }
 
     protected void printItemToKds(){

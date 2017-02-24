@@ -23,13 +23,21 @@ public class PosEcuadorKitchenPrinter extends PosEcuadorOrderTextPrinter impleme
     }
 
     @Override
-    public void header(String shopName, String registerTitle, String orderNumLabel, int orderSeqNum, String operatorLabel, String operatorName, String stationLabel, String station, String orderHolder, String orderTitle) {
+    public void header(String shopName, String registerTitle, String orderTypeLabel, String orderType, String orderNumLabel, int orderSeqNum,
+                       String operatorLabel, String operatorName, String stationLabel, String station, String orderHolder, String orderTitle, String phoneLabel, String phone) {
         boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, shopName)));
+        if (orderType != null) {
+            tabbed(orderTypeLabel, orderType);
+        }
         tabbed(orderNumLabel, String.format("%s-%d", registerTitle, orderSeqNum));
         tabbed(stationLabel, station);
         tabbed(operatorLabel, operatorName);
-        if (orderTitle != null)
+        if (orderTitle != null) {
             tabbed(orderHolder, orderTitle);
+        }
+        if (phone != null) {
+            tabbed(phoneLabel, phone);
+        }
     }
 
     @Override
