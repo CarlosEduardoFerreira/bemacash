@@ -39,7 +39,7 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
 
         return new EmployeePermissionModel(
                 rs.getString(USER_ID),
-                rs.getLong(PERM_ID),
+                rs.getInt(PERM_ID),
                 rs.getBoolean(ENABLED),
                 ignoreFields
         );
@@ -62,7 +62,7 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
 
     @Override
     public String getLocalGuidColumn() {
-        return PERM_ID;
+        return ShopStore.EmployeePermissionTable.PERMISSION_ID;
     }
 
     @Override

@@ -180,10 +180,9 @@ public class BroadcastDiscoverer extends Thread {
                         if(info.getShopId() != 0 && info.getAddress() != null) {
                             if (!info.getSerial().equals(app.getRegisterSerial())
                                     && (info.getVersionCode() == ValueUtil.getApplicationVersion(mContext).code)
-                                    && Long.valueOf(app.getShopPref().shopId().get()).compareTo(Long.valueOf(info.getShopId())) != -1)
+                                    && Long.valueOf(app.getShopPref().shopId().get()).compareTo(info.getShopId()) == 0)
                             {
 
-                                Long i = Long.valueOf(app.getShopPref().shopId().get());
                                 if (!app.getLanDevices().contains(info)) {
                                     Intent intent = new Intent(LocalSyncHelper.LOCAL_SYNC);
                                     intent.putExtra(LocalSyncHelper.MESSAGE, mContext.getString(R.string.new_bema_found, info.getSerial()));
