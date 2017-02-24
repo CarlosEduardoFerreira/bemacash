@@ -64,6 +64,9 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
         if (!rs.has(DISCOUNT_TYPE)) ignoreFields.add(ShopStore.SaleOrderTable.DISCOUNT_TYPE);
         if (!rs.has(ORDER_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.STATUS);
         if (!rs.has(HOLD_NAME)) ignoreFields.add(ShopStore.SaleOrderTable.HOLD_NAME);
+        if (!rs.has(HOLD_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.HOLD_STATUS);
+        if (!rs.has(HOLD_PHONE)) ignoreFields.add(ShopStore.SaleOrderTable.HOLD_TEL);
+        if (!rs.has(DEFINED_ON_HOLD_GUID)) ignoreFields.add(ShopStore.SaleOrderTable.DEFINED_ON_HOLD_ID);
         if (!rs.has(TAXABLE)) ignoreFields.add(ShopStore.SaleOrderTable.TAXABLE);
         if (!rs.has(PRINT_SEQ_NUM)) ignoreFields.add(ShopStore.SaleOrderTable.PRINT_SEQ_NUM);
         if (!rs.has(REGISTER_ID)) ignoreFields.add(ShopStore.SaleOrderTable.REGISTER_ID);
@@ -137,6 +140,9 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                     .put(DISCOUNT_TYPE, order.discountType)
                     .put(ORDER_STATUS, order.orderStatus.name())
                     .put(HOLD_NAME, order.getHoldName())
+                    .put(DEFINED_ON_HOLD_GUID, order.definedOnHoldGuid)
+                    .put(HOLD_PHONE, order.holdPhone)
+                    .put(HOLD_STATUS, order.holdStatus.ordinal())
                     .put(TAXABLE, order.taxable)
                     .put(PRINT_SEQ_NUM, order.printSeqNum)
                     .put(REGISTER_ID, order.registerId)
