@@ -179,9 +179,11 @@ public class BroadcastDiscoverer extends Thread {
 
                         if(info.getShopId() != 0 && info.getAddress() != null) {
                             if (!info.getSerial().equals(app.getRegisterSerial())
-                                    && info.getVersionCode() == ValueUtil.getApplicationVersion(mContext).code
-                                    && Objects.equals(app.getShopPref().shopId().get(), info.getShopId())) {
+                                    && (info.getVersionCode() == ValueUtil.getApplicationVersion(mContext).code)
+                                    && Long.valueOf(app.getShopPref().shopId().get()).compareTo(Long.valueOf(info.getShopId())) != -1)
+                            {
 
+                                Long i = Long.valueOf(app.getShopPref().shopId().get());
                                 if (!app.getLanDevices().contains(info)) {
                                     Intent intent = new Intent(LocalSyncHelper.LOCAL_SYNC);
                                     intent.putExtra(LocalSyncHelper.MESSAGE, mContext.getString(R.string.new_bema_found, info.getSerial()));
@@ -189,8 +191,12 @@ public class BroadcastDiscoverer extends Thread {
                                 }
 
                                 int index = app.getLanDevices().indexOf(info);
-                                if (index >= 0 && !Objects.equals(app.getLanDevices().get(index).getAddress(), info.getAddress())) {
-                                    OfflineCommandsService.doDownloadLocal(mContext, info.getSerial());
+                                if (index >= 0){
+                                    if(app.getLanDevices().get(index).getAddress() != null){
+                                        if(!app.getLanDevices().get(index).getAddress().equals(info.getAddress())){
+                                            OfflineCommandsService.doDownloadLocal(mContext, info.getSerial());
+                                        }
+                                    }
                                 }
 
                                 app.getLanDevices().remove(info);
@@ -216,31 +222,6 @@ public class BroadcastDiscoverer extends Thread {
                 }
             }
         }).start();
-    }
-
-    private String wifiIpAddress(Context context) {
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
-
-        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
-            ipAddress = Integer.reverseBytes(ipAddress);
-        }
-
-        byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
-        String ipAddressString = null;
-        //String ipAddressString2 = null;
-       // try {
-            //ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
-            ipAddressString = getIpAddress();
-            //Log.e("BemaCarl", "BroadCastDiscoverer.wifiIpAddress.ipAddressString: " + ipAddressString);
-            Log.e("BemaCarl", "BroadCastDiscoverer.wifiIpAddress.ipAddressString2: " + ipAddressString);
-        //} catch (UnknownHostException ex) {
-            //Logger.d(TAG + ": Unable to get host address. (wifiIpAddress)");
-            //ipAddressString = getIpAddress();
-        //}
-
-
-        return ipAddressString;
     }
 
     public static String getIpAddress() {
