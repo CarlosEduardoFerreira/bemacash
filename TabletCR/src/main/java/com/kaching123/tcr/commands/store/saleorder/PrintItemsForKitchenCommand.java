@@ -19,6 +19,7 @@ import com.kaching123.tcr.commands.device.PrinterInfo;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.print.printer.PosKitchenPrinter;
 import com.kaching123.tcr.print.processor.PrintItemsForKitchenProcessor;
 import com.kaching123.tcr.store.ShopProvider;
@@ -76,12 +77,15 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     private static final String ARG_PRINT_ALL_ITEMS = "ARG_PRINT_ALL_ITEMS";
     private static final String ARG_SEARCH_BY_MAC = "ARG_SEARCH_BY_MAC";
     private static final String ARG_ORDER_TITLE = "ARG_ORDER_TITLE";
-    private static final String ARG_VOID_ORDER = "ARG_VOID_ORDER";
+    private static final String ARG_ON_HOLD_STATUS = "ARG_ON_HOLD_STATUS";
+    private static final String ARG_ON_HOLD_PHONE = "ARG_ON_HOLD_PHONE";
 
     private String orderGuid;
     private String orderTitle;
     private String fromPrinter;
     private String saleItemId;
+    private String onHoldPhone;
+    private OnHoldStatus onHoldStatus;
     private boolean skip;
     private boolean skipPaperWarning;
     private boolean searchByMac;
@@ -103,7 +107,8 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
             searchByMac = getBooleanArg(ARG_SEARCH_BY_MAC);
             orderTitle = getStringArg(ARG_ORDER_TITLE);
             isUpdated = isOrderUpdated();
-            isVoidOrder = getBooleanArg(ARG_VOID_ORDER);
+            onHoldPhone = getStringArg(ARG_ON_HOLD_PHONE);
+            onHoldStatus = (OnHoldStatus) getArgs().getSerializable(ARG_ON_HOLD_STATUS);
         }
 
         List<ItemInfo> items = loadItems();
@@ -350,7 +355,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
             final PosKitchenPrinter kitchenPrinter = new PosKitchenPrinter();
             kitchenPrinter.setVoidOrder(isVoidOrder);
             PrintItemsForKitchenProcessor processor = new PrintItemsForKitchenProcessor(items, this.printer, aliasGuid, orderGuid,
-                    isUpdated, orderTitle, printAllItems, isVoidOrder, this.getAppCommandContext());
+                    isUpdated, orderTitle, printAllItems, isVoidOrder, onHoldPhone, onHoldStatus, this.getAppCommandContext());
 
             processor.print(getContext(), getApp(), kitchenPrinter);
 
@@ -493,7 +498,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     }
 
     public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
-                             boolean skip, boolean printAllItems, String argOrderTitle, boolean isVoidOrder) {
+                             boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle, OnHoldStatus onHoldStatus, String onHoldPhone) {
         create(PrintItemsForKitchenCommand.class)
                 .arg(ARG_ORDER_GUID, orderGuid)
                 .arg(ARG_FROM_PRINTER, fromPrinter)
@@ -502,7 +507,9 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 .arg(ARG_PRINT_ALL_ITEMS, printAllItems)
                 .arg(ARG_SEARCH_BY_MAC, searchByMac)
                 .arg(ARG_ORDER_TITLE, argOrderTitle)
-                .arg(ARG_VOID_ORDER, isVoidOrder)
+                .arg(ARG_ON_HOLD_STATUS, onHoldStatus)
+                .arg(ARG_ON_HOLD_PHONE, onHoldPhone)
+                .callback(callback)
                 .queueUsing(context);
     }
 

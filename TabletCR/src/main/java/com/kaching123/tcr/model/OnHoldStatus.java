@@ -5,5 +5,5 @@ package com.kaching123.tcr.model;
  */
 
 public enum OnHoldStatus {
-    NONE, DINE_IN, TO_GO
+    NONE, TO_STAY, TO_GO
 }

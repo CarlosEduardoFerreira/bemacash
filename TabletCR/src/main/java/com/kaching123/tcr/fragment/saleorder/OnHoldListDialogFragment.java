@@ -455,7 +455,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                     String text = "";
                     int color = 0;
                     switch (model.getHoldStatus()) {
-                        case DINE_IN:
+                        case TO_STAY:
                             text = context.getString(R.string.to_stay);
                             color = context.getResources().getColor(R.color.to_stay);
                             break;

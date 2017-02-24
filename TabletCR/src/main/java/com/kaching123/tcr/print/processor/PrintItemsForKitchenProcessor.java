@@ -13,8 +13,10 @@ import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.I
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.SimpleModifier;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -23,7 +25,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._onHoldStatus;
 import static com.kaching123.tcr.util.DateUtils.dateAndTimeShortFormat;
+import static com.kaching123.tcr.util.PhoneUtil.parseDigitsToFormattedPhone;
 
 /**
  * Created by vkompaniets on 17.02.14.
@@ -32,17 +36,21 @@ public class PrintItemsForKitchenProcessor {
 
     private List<ItemInfo> items;
     private PrinterInfo printer;
+    private OnHoldStatus onHoldStatus;
     private String aliasGuid;
     private String orderGuid;
     private String orderTitle;
     private String orderNumber;
+    private String onHoldPhone;
     private boolean isUpdated;
     private boolean printAllItems;
     private boolean isVoid;
 
     private final IAppCommandContext appCommandContext;
 
-    public PrintItemsForKitchenProcessor(List<ItemInfo> items, PrinterInfo printer, String aliasGuid, String orderGuid, boolean isUpdated, String orderTitle, boolean printAllItems, boolean isVoid, IAppCommandContext appCommandContext) {
+    public PrintItemsForKitchenProcessor(List<ItemInfo> items, PrinterInfo printer, String aliasGuid, String orderGuid,
+                                         boolean isUpdated, String orderTitle, boolean printAllItems, boolean isVoid,
+                                         String onHoldPhone, OnHoldStatus onHoldStatus, IAppCommandContext appCommandContext) {
         this.items = items;
         this.printer = printer;
         this.aliasGuid = aliasGuid;
@@ -52,6 +60,8 @@ public class PrintItemsForKitchenProcessor {
         this.printAllItems = printAllItems;
         this.appCommandContext = appCommandContext;
         this.isVoid = isVoid;
+        this.onHoldPhone = onHoldPhone;
+        this.onHoldStatus = onHoldStatus;
     }
 
     public void print(Context context, TcrApplication app, IKitchenPrinter printer){
@@ -72,13 +82,10 @@ public class PrintItemsForKitchenProcessor {
         }
 
         Cursor c;
-        c = ProviderAction.query(ShopProvider.getContentUri(PrinterAliasTable.URI_CONTENT))
-                .projection(PrinterAliasTable.ALIAS)
-                .where(PrinterAliasTable.GUID + " = ?", aliasGuid)
-                .perform(context);
-
-        String station = c.moveToFirst() ? c.getString(0) : "<Unknown>";
-        c.close();
+        String station = app.getRegisterDescription();
+        if(TextUtils.isEmpty(station)) {
+            station = app.getRegisterTitle();
+        }
 
         c = ProviderAction.query(ShopProvider.getContentUri(SaleOrderView.URI_CONTENT))
                 .projection(
@@ -95,11 +102,40 @@ public class PrintItemsForKitchenProcessor {
         }
         c.close();
 
+        if (onHoldPhone == null && onHoldStatus == null) {
+            c = ProviderAction.query(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
+                    .projection(
+                            ShopStore.SaleOrderTable.HOLD_TEL,
+                            ShopStore.SaleOrderTable.HOLD_STATUS)
+                    .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid)
+                    .perform(context);
+
+            if (c.moveToFirst()) {
+                onHoldPhone = parseDigitsToFormattedPhone(c.getString(0));
+                onHoldStatus = _onHoldStatus(c, 1);
+            }
+            c.close();
+        }
+
+        String holdStatus = null;
+        if(onHoldStatus != null) {
+            switch (onHoldStatus) {
+                case TO_STAY:
+                    holdStatus = context.getString(R.string.to_stay);
+                    break;
+                case TO_GO:
+                    holdStatus = context.getString(R.string.to_go);
+                    break;
+            }
+        }
+
         orderNumber = registerTitle + "-" + seqNum;
         ShopInfo shopInfo = app.getShopInfo();
         printer.header(
                 shopInfo.name,
                 registerTitle,
+                context.getString(R.string.kitchen_receipt_order_type_label),
+                holdStatus,
                 context.getString(R.string.kitchen_receipt_order_label),
                 seqNum,
                 context.getString(R.string.kitchen_receipt_operator_label),
@@ -107,7 +143,9 @@ public class PrintItemsForKitchenProcessor {
                 context.getString(R.string.kitchen_receipt_station_label),
                 station,
                 context.getString(R.string.kitchen_receipt_holder_label),
-                orderTitle
+                orderTitle,
+                context.getString(R.string.phone),
+                onHoldPhone
         );
 
         printer.drawLine();
@@ -158,7 +196,6 @@ public class PrintItemsForKitchenProcessor {
     }
 
     private void printFooter(Context context, TcrApplication app, IKitchenPrinter printer) {
-        printer.tabbed(context.getString(R.string.kitchen_receipt_order_label), orderNumber);
         printer.tabbed(context.getString(R.string.kitchen_receipt_date_label), dateAndTimeShortFormat(new Date()));
     }
 }

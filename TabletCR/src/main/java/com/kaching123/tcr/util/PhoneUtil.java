@@ -45,4 +45,22 @@ public class PhoneUtil {
         return phone.replaceAll("[^\\d]", "");
     }
 
+    public static String parseDigitsToFormattedPhone(String phone){
+        if (phone == null) {
+            return null;
+        }
+
+        if (phone.length() == 11) {
+            phone = String.format("%s %s-%s-%s", phone.substring(0, 1), phone.substring(1, 4),
+                    phone.substring(4, 7), phone.substring(7, 11));
+
+
+        } else if (phone.length() == 10) {
+            phone = String.format("(%s) %s-%s", phone.substring(0, 3), phone.substring(3, 6),
+                    phone.substring(6, 10));
+        }
+
+        return phone;
+    }
+
 }

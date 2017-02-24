@@ -109,6 +109,8 @@ public class TcrApplication extends MultiDexApplication {
 
     private long registerId;
     private String registerSerial;
+    private String registerDescription;
+    private String registerTitle;
     private EmployeeModel operator;
     private Set<Permission> operatorPermissions;
 
@@ -558,8 +560,10 @@ public class TcrApplication extends MultiDexApplication {
         return isOperatorClockedIn;
     }
 
-    public void setRegisterId(long registerId, int prepaidTid, int blackstonePaymentCid) {
+    public void setRegisterInfo(long registerId, int prepaidTid, int blackstonePaymentCid, String description, String title) {
         this.registerId = registerId;
+        this.registerDescription = description;
+        this.registerTitle = title;
         setUsers(prepaidTid, blackstonePaymentCid);
     }
 
@@ -578,6 +582,14 @@ public class TcrApplication extends MultiDexApplication {
 
     public String getRegisterSerial() {
         return registerSerial;
+    }
+
+    public String getRegisterDescription() {
+        return registerDescription;
+    }
+
+    public String getRegisterTitle() {
+        return registerTitle;
     }
 
     public void lockOnSalesHistory() {
