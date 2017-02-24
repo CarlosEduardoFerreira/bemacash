@@ -139,6 +139,7 @@ public class ShopInfoViewJdbcConverter {
     private static final String SIGNATURE_RECEIPT = "SIGNATURE_RECEIPT";
 
     private static final String DEFINED_ON_HOLD = "DEFINED_ON_HOLD";
+    private static final String ON_HOLD_STATUS_MANDATORY = "ON_HOLD_STATUS_MANDATORY";
 
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
@@ -227,7 +228,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(AUTOGENERATE_PRODUCT_CODE),
                 rs.getBoolean(DIGITAL_SIGNATURE),
                 rs.getString(SIGNATURE_RECEIPT),
-                rs.getBoolean(DEFINED_ON_HOLD)
+                rs.getBoolean(DEFINED_ON_HOLD),
+                rs.getBoolean(ON_HOLD_STATUS_MANDATORY)
         );
     }
 
@@ -317,7 +319,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(AUTOGENERATE_PRODUCT_CODE),
                 rs.getBoolean(DIGITAL_SIGNATURE),
                 rs.getString(SIGNATURE_RECEIPT),
-                rs.getBoolean(DEFINED_ON_HOLD)
+                rs.getBoolean(DEFINED_ON_HOLD),
+                rs.getBoolean(ON_HOLD_STATUS_MANDATORY)
         );
     }
 
@@ -430,6 +433,7 @@ public class ShopInfoViewJdbcConverter {
         public final String signatureReceipt;
 
         public final boolean definedOnHold;
+        public final boolean onHoldStatusMandatory;
 
 
 
@@ -513,7 +517,8 @@ public class ShopInfoViewJdbcConverter {
                         boolean autogenerateProductCode,
                         boolean digitalSignature,
                         String signatureReceipt,
-                        boolean definedOnHold) {
+                        boolean definedOnHold,
+                        boolean onHoldStatusMandatory) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -621,6 +626,7 @@ public class ShopInfoViewJdbcConverter {
             this.signatureReceipt = signatureReceipt;
 
             this.definedOnHold = definedOnHold;
+            this.onHoldStatusMandatory = onHoldStatusMandatory;
         }
 
     }
