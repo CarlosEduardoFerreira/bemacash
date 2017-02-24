@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -147,13 +148,13 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
         return new OnDialogClickListener() {
             @Override
             public boolean onClick() {
-//                if (printBox.isChecked()){
+                    if (getApp().getShopInfo().onHoldStatusMandatory && getOnHoldStatus() == OnHoldStatus.NONE) {
+                        Toast.makeText(getContext(), "On Hold status is mandatory, please choose one. To Stay or To Go", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
                     printItemsToKitchen(null, false, false, false);
                     printItemToKds();
                     return false;
-//                }
-//                onPositiveHandler();
-//                return true;
             }
         };
     }

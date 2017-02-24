@@ -309,8 +309,9 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.autogenerateProductCode().getOr(false),
                     shopPref.digitalSignature().getOr(false),
                     shopPref.signatureReceipt().get(),
-                    shopPref.definedOnHold().getOr(false)
-            );
+                    shopPref.definedOnHold().getOr(false),
+                    shopPref.onHoldStatusMandatory().getOr(false)
+                    );
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -718,6 +719,7 @@ public class TcrApplication extends MultiDexApplication {
                 .digitalSignature().put(info.digitalSignature)
                 .signatureReceipt().put(info.signatureReceipt)
                 .definedOnHold().put(info.definedOnHold)
+                .onHoldStatusMandatory().put(info.onHoldStatusMandatory)
                 .apply();
 
         setUsers();

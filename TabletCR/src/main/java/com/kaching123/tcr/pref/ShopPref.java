@@ -419,6 +419,7 @@ public interface ShopPref {
     boolean autogenerateProductCode();
 
     boolean definedOnHold();
+    boolean onHoldStatusMandatory();
 
     /* Digital signature / Signature receipt ********************** */
 
