@@ -29,7 +29,7 @@ public class RegisterJdbcConverter extends JdbcConverter<RegisterModel> {
 
     private static final String ID = "ID";
     public static final String REGISTER_SERIAL = "REGISTER_SERIAL";
-    public static final String DESCRIPTION = "REGISTER_SERIAL";
+    public static final String DESCRIPTION = "DESCRIPTION";
     private static final String TITLE = "TITLE";
     public static final String STATUS = "STATUS";
     public static final String PREPAID_TID = "PREPAID_TID";
@@ -79,7 +79,10 @@ public class RegisterJdbcConverter extends JdbcConverter<RegisterModel> {
 
         try {
             json = new JSONObject()
+                    .put(ID, model.id)
+                    .put(REGISTER_SERIAL, model.registerSerial)
                     .put(TITLE, model.title)
+                    .put(DESCRIPTION, model.description)
                     .put(STATUS, model.status)
                     .put(PREPAID_TID, model.prepaidTid)
                     .put(BLACKSTONE_PAYMENT_CID, model.blackstonePaymentCid);

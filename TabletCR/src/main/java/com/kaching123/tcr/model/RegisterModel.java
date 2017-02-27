@@ -29,7 +29,7 @@ public class RegisterModel implements IValueModel {
     public RegisterModel(Cursor cursor) {
         this(cursor.getLong(cursor.getColumnIndex(RegisterTable.ID)),
             cursor.getString(cursor.getColumnIndex(RegisterTable.REGISTER_SERIAL)),
-                cursor.getString(cursor.getColumnIndex(RegisterTable.DESCRIPTION)),
+            cursor.getString(cursor.getColumnIndex(RegisterTable.DESCRIPTION)),
             cursor.getString(cursor.getColumnIndex(RegisterTable.TITLE)),
             RegisterStatus.values()[cursor.getInt(cursor.getColumnIndex(RegisterTable.STATUS))],
             cursor.getInt(cursor.getColumnIndex(RegisterTable.PREPAID_TID)),
@@ -59,6 +59,7 @@ public class RegisterModel implements IValueModel {
         if (mIgnoreFields == null || !mIgnoreFields.contains(RegisterTable.ID)) v.put(RegisterTable.ID, id);
         if (mIgnoreFields == null || !mIgnoreFields.contains(RegisterTable.ID)) v.put(RegisterTable.REGISTER_SERIAL, registerSerial);
         if (mIgnoreFields == null || !mIgnoreFields.contains(RegisterTable.ID)) v.put(RegisterTable.TITLE, title);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(RegisterTable.ID)) v.put(RegisterTable.DESCRIPTION, description);
         if (mIgnoreFields == null || !mIgnoreFields.contains(RegisterTable.ID)) v.put(RegisterTable.STATUS, _enum(status));
         if (mIgnoreFields == null || !mIgnoreFields.contains(RegisterTable.ID)) v.put(RegisterTable.PREPAID_TID, prepaidTid);
         if (mIgnoreFields == null || !mIgnoreFields.contains(RegisterTable.ID)) v.put(RegisterTable.BLACKSTONE_PAYMENT_CID, blackstonePaymentCid);
