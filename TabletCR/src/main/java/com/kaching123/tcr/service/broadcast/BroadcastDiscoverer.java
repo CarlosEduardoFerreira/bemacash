@@ -33,6 +33,8 @@ import com.kaching123.tcr.service.LocalSyncHelper;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.util.ValueUtil;
 
+import retrofit.Server;
+
 /**
  * Created by Rodrigo Busata on 6/9/2016.
  */
@@ -119,14 +121,57 @@ public class BroadcastDiscoverer extends Thread {
     private String sendDiscoveryRequest(BroadcastInfo broadcastInfo, DatagramSocket socket) throws IOException {
         String data = new Gson().toJson(broadcastInfo);
 
-        InetAddress broadcastAddress = getBroadcastAddress();
+        String  ip   = broadcastInfo.getAddress();
+        Log.d(TAG, "BroadcastDiscover.sendDiscoveryRequest.ip: " + ip);
+        int     lio  = ip.lastIndexOf('.');
+        Log.d(TAG, "BroadcastDiscover.sendDiscoveryRequest.lio: " + lio);
+        String  bc   = ip.substring(0,lio) + ".255";
+        Log.d(TAG, "BroadcastDiscover.sendDiscoveryRequest.bc: " + bc);
+        InetAddress broadcastAddress = InetAddress.getByName(bc);
+        Log.d(TAG, "BroadcastDiscover.sendDiscoveryRequest.broadcastAddress: " + broadcastAddress);
+        /**/
+
+        //InetAddress broadcastAddress = intToInetAddress(ipStringToInt(ip));
+
+        //InetAddress broadcastAddress = socket.getInetAddress();
+        //InetAddress broadcastAddress = getBroadcastAddress();
         if (broadcastAddress == null) return null;
 
-        DatagramPacket packet = new DatagramPacket(data.getBytes(), data.length(),
-                broadcastAddress, DISCOVERY_PORT);
+        DatagramPacket packet = new DatagramPacket(data.getBytes(), data.length(), broadcastAddress, DISCOVERY_PORT);
         socket.send(packet);
 
         return data;
+    }
+
+
+
+    public static int ipStringToInt(String str) {
+        int result = 0;
+        String[] array = str.split("\\.");
+        if (array.length != 4) return 0;
+        try {
+            result = Integer.parseInt(array[3]);
+            result = (result << 8) + Integer.parseInt(array[2]);
+            result = (result << 8) + Integer.parseInt(array[1]);
+            result = (result << 8) + Integer.parseInt(array[0]);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+        return result;
+    }
+
+    public static InetAddress intToInetAddress(int hostAddress) {
+        InetAddress inetAddress;
+        byte[] addressBytes = { (byte)(0xff & hostAddress),
+                (byte)(0xff & (hostAddress >> 8)),
+                (byte)(0xff & (hostAddress >> 16)),
+                (byte)(0xff & (hostAddress >> 24)) };
+        try {
+            inetAddress = InetAddress.getByAddress(addressBytes);
+        } catch(UnknownHostException e) {
+            return null;
+        }
+        return inetAddress;
     }
 
     /**
