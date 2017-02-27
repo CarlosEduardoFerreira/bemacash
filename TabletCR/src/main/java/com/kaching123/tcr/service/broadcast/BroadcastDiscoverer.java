@@ -77,6 +77,7 @@ public class BroadcastDiscoverer extends Thread {
             socket.setReuseAddress(true);
             socket.setBroadcast(true);
             socket.bind(new InetSocketAddress(DISCOVERY_PORT));
+            //socket.joinGroup(group, NetworkInterface.getByName("wlan0"));
 
             listenForResponses(app, socket);
 
@@ -88,7 +89,14 @@ public class BroadcastDiscoverer extends Thread {
                 if (sMySocketPort == 0) continue;
 
                 BroadcastInfo info = new BroadcastInfo();
-                info.setAddress(getIpAddress());
+
+                String ip = getIpAddress();
+                Log.d(TAG, "BroadcastDiscover.run.ip: " + ip);
+                if(ip == null) {
+                    ip = InetAddress.getLocalHost().getHostAddress();
+                    Log.d(TAG, "BroadcastDiscover.run.if.ip: " + ip);
+                }
+                info.setAddress(ip);
                 info.setPort(sMySocketPort);
                 info.setVersionCode(mVersionCode);
                 info.setSerial(app.getRegisterSerial());
