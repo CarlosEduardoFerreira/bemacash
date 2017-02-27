@@ -13,9 +13,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -95,6 +98,8 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
     @ViewById
     protected View focusGrabber;
 
+    private DisplayMetrics metrics;
+
     private IHoldListener listener;
 
     private Calendar calendar = Calendar.getInstance();
@@ -113,14 +118,27 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isOnHoldOrdersDefined = app.getShopInfo().definedOnHold;
-
-        getDialog().getWindow().setLayout(
-                getResources().getDimensionPixelOffset(R.dimen.holdon_list_dlg_width),
-                getResources().getDimensionPixelOffset(isOnHoldOrdersDefined ? R.dimen.holdon_list_dlg_heigth : R.dimen.holdon_list_dlg_heigth_bigger));
+        metrics = new DisplayMetrics();
+        defineDialogAndGridItemsSize(getDialog().getWindow());
 
         gridAdapter = new GridAdapter(getContext(), isOnHoldOrdersDefined);
         gridView.setAdapter(gridAdapter);
         initViews();
+    }
+    private void defineDialogAndGridItemsSize(Window window){                                       //affect other versions if do via res options
+        WindowManager wm = (WindowManager) getDialog().getContext().getSystemService(Context.WINDOW_SERVICE);
+        wm.getDefaultDisplay().getMetrics(metrics);
+        if (checkResolution()) {
+            window.setLayout(1000, isOnHoldOrdersDefined ? 580 : 610);
+            gridView.setColumnWidth(170);
+        } else {
+            window.setLayout(getResources().getDimensionPixelOffset(R.dimen.holdon_list_dlg_width),
+                    getResources().getDimensionPixelOffset(isOnHoldOrdersDefined ? R.dimen.holdon_list_dlg_heigth : R.dimen.holdon_list_dlg_heigth_bigger));
+        }
+    }
+
+    private boolean checkResolution() {
+        return metrics.widthPixels == 1024 && metrics.heightPixels <= 768 && metrics.densityDpi == 160; // -sw768dp-w1024dp-mdpi
     }
 
     private void initViews() {
@@ -435,6 +453,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                 holder = (ViewHolder) itemView.getTag();
             }
             holder.itemMainContainer.setActivated(false);
+            checkContainerSize(holder.itemMainContainer);
 
             if(isOnHoldOrdersDefined) {
                 DefinedOnHoldModel model = (DefinedOnHoldModel) getItem(position);
@@ -485,6 +504,15 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
             TextView onHoldStatus;
         }
 
+    }
+
+    private void checkContainerSize(View view){
+        if (checkResolution()) {
+            ViewGroup.LayoutParams lp = view.getLayoutParams();
+            lp.width = 170;
+            lp.height = 85;
+            view.setLayoutParams(lp);
+        }
     }
 
     public static void show(FragmentActivity context, String orderGuid, String orderTitle, HoldOnAction action, IHoldListener listener) {
