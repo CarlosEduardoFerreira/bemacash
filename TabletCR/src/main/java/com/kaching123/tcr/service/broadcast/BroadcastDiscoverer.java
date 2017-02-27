@@ -22,7 +22,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Objects;
 
 import com.kaching123.tcr.Logger;
@@ -32,6 +34,8 @@ import com.kaching123.tcr.model.ApplicationVersion;
 import com.kaching123.tcr.service.LocalSyncHelper;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.util.ValueUtil;
+
+import org.apache.http.conn.util.InetAddressUtils;
 
 import retrofit.Server;
 
@@ -92,9 +96,13 @@ public class BroadcastDiscoverer extends Thread {
 
                 String ip = getIpAddress();
                 Log.d(TAG, "BroadcastDiscover.run.ip: " + ip);
-                if(ip == null) {
+                if(ip == null || ip.equals("")) {
                     ip = InetAddress.getLocalHost().getHostAddress();
-                    Log.d(TAG, "BroadcastDiscover.run.if.ip: " + ip);
+                    Log.d(TAG, "BroadcastDiscover.run.getHostAddress.ip: " + ip);
+                }
+                if(ip == null || ip.equals("")){
+                    ip = getDeviceIPAddress(true);
+                    Log.d(TAG, "BroadcastDiscover.run.getDeviceIPAddress.ip: " + ip);
                 }
                 info.setAddress(ip);
                 info.setPort(sMySocketPort);
@@ -292,5 +300,33 @@ public class BroadcastDiscoverer extends Thread {
             Log.e("BemaCarl", "Socket exception in GetIP Address of Utilities" + ex.toString());
         }
         return null;
+    }
+
+    public static String getDeviceIPAddress(boolean useIPv4) {
+        try {
+            List<NetworkInterface> networkInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface networkInterface : networkInterfaces) {
+                List<InetAddress> inetAddresses = Collections.list(networkInterface.getInetAddresses());
+                for (InetAddress inetAddress : inetAddresses) {
+                    if (!inetAddress.isLoopbackAddress()) {
+                        String sAddr = inetAddress.getHostAddress().toUpperCase();
+                        boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
+                        if (useIPv4) {
+                            if (isIPv4)
+                                return sAddr;
+                        } else {
+                            if (!isIPv4) {
+                                // drop ip6 port suffix
+                                int delim = sAddr.indexOf('%');
+                                return delim < 0 ? sAddr : sAddr.substring(0, delim);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "";
     }
 }

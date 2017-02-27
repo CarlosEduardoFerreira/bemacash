@@ -166,12 +166,10 @@ public class LocalSyncHelper {
     public static void clearSqlHostTable(ContentResolver cr) {
         Uri uri = ShopProvider.contentUriNoNotify(ShopStore.SqlCommandHostTable.URI_CONTENT);
         int limitRemove = 0;
-        try (
-                Cursor c = cr.query(uri, new String[]{ShopStore.SqlCommandHostTable.GUID}, null, null, null)
-        ) {
-            if (c != null) {
-                limitRemove = c.getCount() - ShopStore.SqlCommandHostTable.MAX_ROWS;
-            }
+        Cursor c = cr.query(uri, new String[]{ShopStore.SqlCommandHostTable.GUID}, null, null, null);
+
+        if (c != null) {
+            limitRemove = c.getCount() - ShopStore.SqlCommandHostTable.MAX_ROWS;
         }
 
         if (limitRemove > 0) {
@@ -387,12 +385,10 @@ public class LocalSyncHelper {
     }
 
     private static boolean areThereRow(SQLiteDatabase db, String table, String idColumn, String idValue) {
-        try (
                 Cursor c = db.query(table, new String[]{idColumn},
-                        String.format("%s = '%s'", idColumn, idValue), null, null, null, null, null)
-        ) {
+                        String.format("%s = '%s'", idColumn, idValue), null, null, null, null, null);
             return c.getCount() > 0;
-        }
+
     }
 
     private static IValueModel getModel(SqlCommandObj.SqlCommandObjOperation operation, JdbcJSONObject json) {
@@ -666,11 +662,11 @@ public class LocalSyncHelper {
 
     public void workRequestCommands(String serial, Socket socket) {
         final Map<String, RunCommandsMsg.SqlCommand> commands = new HashMap<>();
-        try (
-                Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.SqlCommandHostQuery.URI_CONTENT))
-                        .where("", serial, GET_COMMANDS_BATCH_SIZE)
-                        .perform(wifiSocketService)
-        ) {
+        try{
+            Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.SqlCommandHostQuery.URI_CONTENT))
+                    .where("", serial, GET_COMMANDS_BATCH_SIZE)
+                    .perform(wifiSocketService);
+
             while (c != null && c.moveToNext()) {
                 commands.put(c.getString(0), new RunCommandsMsg.SqlCommand(c.getInt(2), c.getString(1)));
             }
