@@ -948,6 +948,7 @@
     <string name="permission_tips">Tip Settlement</string>
     <string name="permission_training_mode">Training Mode</string>
     <string name="permission_warranty_expiration_override">Warranty Expiration Override</string>
+    <string name="permission_on_hold_global">On Hold Global</string>
     <string name="permission_cash_drawer_money">Cash Drawer Money</string>
     <string name="permission_change_quantity">Change Quantity</string>
     <string name="permission_software_update">Software Update</string>

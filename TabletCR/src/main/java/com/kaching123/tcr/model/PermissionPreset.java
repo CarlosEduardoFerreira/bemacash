@@ -33,7 +33,8 @@ public enum PermissionPreset implements LabaledEnum{
             Permission.NO_SALE,
             Permission.DROPS_AND_PAYOUTS,
             Permission.EMPLOYEE_MANAGEMENT,
-            Permission.CUSTOMER_MANAGEMENT/*,
+            Permission.CUSTOMER_MANAGEMENT,
+            Permission.ON_HOLD_GLOBAL/*,
             Permission.BACKUPS*/),
 
     /*HOST(3,

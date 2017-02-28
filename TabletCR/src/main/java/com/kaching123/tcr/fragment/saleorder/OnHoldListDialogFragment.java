@@ -40,6 +40,7 @@ import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.DefinedOnHoldModel;
 import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.model.OrderStatus;
+import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.DefinedOnHoldFunction;
 import com.kaching123.tcr.model.converter.SaleOrderFunction;
@@ -302,6 +303,10 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
                     .where(ShopStore.SaleOrderTable.GUID + " <> ?", argOrderGuid == null ? "" : argOrderGuid)
                     .where(ShopStore.SaleOrderTable.STATUS + " = ? ", OrderStatus.HOLDON.ordinal());
+
+            if(!isOnHoldOrdersDefined && !getApp().hasPermission(Permission.ON_HOLD_GLOBAL)) {                   //trouble with tables without check
+                builder.where(ShopStore.SaleOrderTable.OPERATOR_GUID + " = ?", getApp().getOperatorGuid() == null ? "" : getApp().getOperatorGuid());
+            }
 
             if(arg1 != null) {
                 String filter = arg1.getString(DIALOG_ORDER_FILTER);
