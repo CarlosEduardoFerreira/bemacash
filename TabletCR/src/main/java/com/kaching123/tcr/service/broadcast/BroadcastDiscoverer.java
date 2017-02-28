@@ -104,8 +104,10 @@ public class BroadcastDiscoverer extends Thread {
                     ip = getDeviceIPAddress(true);
                     Log.d(TAG, "BroadcastDiscover.run.getDeviceIPAddress.ip: " + ip);
                 }
+                if(ip.equals("10.0.2.15")) ip = "192.168.15.133";
                 info.setAddress(ip);
                 info.setPort(sMySocketPort);
+                Log.d(TAG, "BroadcastDiscover.run.sMySocketPort: " + sMySocketPort);
                 info.setVersionCode(mVersionCode);
                 info.setSerial(app.getRegisterSerial());
                 info.setShopId(app.getShopPref().shopId().get());

@@ -74,10 +74,10 @@ public abstract class AsyncCommand extends PublicGroundyTask {
             return result;
         }
 
-        ContentProviderResult[] dbOperationResults;
+        ContentProviderResult[] dbOperationResults = null;
         try {
             dbOperationResults = handleDbOperations(createDbOperations(), handleSqlCommand(createSqlCommand()));
-
+            /*
             if (this instanceof UpdateSaleOrderCommand) {
                 ContentProviderResult[] tempOperations = handleDbOperations(createDbOperations(),
                         handleSqlCommand(((UpdateSaleOrderCommand) this).createSqlAdditional()));
@@ -92,6 +92,7 @@ public abstract class AsyncCommand extends PublicGroundyTask {
                 }
 
             }
+            /**/
 
         } catch (Exception e) {
             Logger.e("handleDbOperations exception", e);
