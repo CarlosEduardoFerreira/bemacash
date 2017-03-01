@@ -236,7 +236,11 @@ public class ItemExModel extends ItemModel {
                 serializable,
                 codeType,
                 commissionEligible,
-                commission, referenceItemGuid, itemRefType, loyaltyPoints, excludeFromLoyaltyPlan,
+                commission,
+                referenceItemGuid,
+                itemRefType,
+                loyaltyPoints,
+                excludeFromLoyaltyPlan,
                 isEbtEligible,
                 null);
         this.modifiersCount = modifiersCount;
@@ -341,5 +345,10 @@ public class ItemExModel extends ItemModel {
         c.close();
 
         return result;
+    }
+
+    @Override
+    public String getIdColumn() {
+        return null;
     }
 }

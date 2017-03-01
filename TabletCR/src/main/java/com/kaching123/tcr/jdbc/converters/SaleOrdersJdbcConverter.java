@@ -188,43 +188,46 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     @Override
     public SingleSqlCommand updateSQL(SaleOrderModel order, IAppCommandContext appCommandContext) {
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
+                .add(OPERATOR_ID, order.operatorGuid)
+                .add(SHIFT_ID, order.shiftGuid)
+                .add(CUSTOMER_ID, order.customerGuid)
                 .add(DISCOUNT, order.discount)
                 .add(DISCOUNT_TYPE, order.discountType)
                 .add(ORDER_STATUS, order.orderStatus.name())
-                .add(SHIFT_ID, order.shiftGuid)
                 .add(HOLD_NAME, order.getHoldName())
                 .add(DEFINED_ON_HOLD_GUID, order.definedOnHoldGuid)
                 .add(HOLD_PHONE, order.holdPhone)
                 .add(HOLD_STATUS, order.holdStatus.ordinal())
-                .add(CREATE_TIME, order.createTime)
                 .add(TAXABLE, order.taxable)
+                .add(PRINT_SEQ_NUM, order.printSeqNum)
                 .add(REGISTER_ID, order.registerId)
                 .add(PARENT_ID, order.parentGuid)
+                .add(ORDER_TYPE, order.type.name())
+                .add(IS_TIPPED, order.isTipped)
+                .add(KITCHEN_PRINT_STATUS, order.kitchenPrintStatus)
                 .add(TRANSACTION_FEE, order.transactionFee)
                 .where(ID, order.guid)
                 .build(JdbcFactory.getApiMethod(order));
     }
 
-    public SingleSqlCommand updateTax(SaleOrderModel order, IAppCommandContext appCommandContext) {
+    public SingleSqlCommand updateStatusWithWhere(SaleOrderModel order, IAppCommandContext appCommandContext) {
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
-                .add(TAXABLE, order.taxable)
+                .add(ORDER_STATUS, order.orderStatus)
                 .where(ID, order.guid)
+                .where(ORDER_STATUS, OrderStatus.ACTIVE.toString())
                 .build(JdbcFactory.getApiMethod(order));
+    }
+
+    public SingleSqlCommand updateTax(SaleOrderModel order, IAppCommandContext appCommandContext) {
+        return updateSQL(order, appCommandContext);
     }
 
     public SingleSqlCommand updateDiscount(SaleOrderModel model, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
-                .add(DISCOUNT, model.discount)
-                .add(DISCOUNT_TYPE, model.discountType)
-                .where(ID, model.guid)
-                .build(JdbcFactory.getApiMethod(model));
+        return updateSQL(model, appCommandContext);
     }
 
     public SingleSqlCommand updateCustomer(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
-                .add(CUSTOMER_ID, order.customerGuid)
-                .where(ID, order.guid)
-                .build(JdbcFactory.getApiMethod(order));
+        return updateSQL(order, appCommandContext);
     }
 
     public SingleSqlCommand updateStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
@@ -234,25 +237,12 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .build(JdbcFactory.getApiMethod(order));
     }
 
-    public SingleSqlCommand updateOnHoldStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
-                .add(HOLD_STATUS, order.holdStatus.ordinal())
-                .where(ID, order.guid)
-                .build(JdbcFactory.getApiMethod(order));
-    }
-
     public SingleSqlCommand updateIsTipped(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
-                .add(IS_TIPPED, order.isTipped)
-                .where(ID, order.guid)
-                .build(JdbcFactory.getApiMethod(order));
+        return updateSQL(order, appCommandContext);
     }
 
     public SingleSqlCommand updateKitchenPrintStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
-                .add(KITCHEN_PRINT_STATUS, order.kitchenPrintStatus)
-                .where(ID, order.guid)
-                .build(JdbcFactory.getApiMethod(order));
+        return updateSQL(order, appCommandContext);
     }
 
     public SingleSqlCommand updateKdsPrintStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
@@ -271,13 +261,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     }
 
 
-    public SingleSqlCommand updateStatusWithWhere(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
-                .add(ORDER_STATUS, order.orderStatus)
-                .where(ID, order.guid)
-                .where(ORDER_STATUS, OrderStatus.ACTIVE.toString())
-                .build(JdbcFactory.getApiMethod(order));
-    }
+
 
     @Override
     public boolean supportUpdateTimeLocalFlag() {

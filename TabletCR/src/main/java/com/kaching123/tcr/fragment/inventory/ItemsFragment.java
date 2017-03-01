@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,6 +104,7 @@ public class ItemsFragment extends BaseItemsPickFragment {
                 ItemExFunction func = new ItemExFunction();
                 ItemExModel model = func.apply((Cursor) adapter2.getItem(position));
                 assert model != null;
+                Log.d("BemaCarl","ItemsFragment.setListener.model: " + model);
                 listener.onItemSelected(id, model);
             }
         });

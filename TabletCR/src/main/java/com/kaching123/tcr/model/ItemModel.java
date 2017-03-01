@@ -326,7 +326,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.SALABLE)) values.put(ItemTable.SALABLE, isSalable);
         if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.DISCOUNT)) values.put(ItemTable.DISCOUNT, _decimal(discount));
         if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.DISCOUNT_TYPE)) _putDiscount(values, ItemTable.DISCOUNT_TYPE, discountType);
-        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.DISCOUNT_TYPE)) values.put(ItemTable.DISCOUNT_TYPE, isTaxable);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.TAXABLE)) values.put(ItemTable.TAXABLE, isTaxable);
         if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.COST)) values.put(ItemTable.COST, _decimal(cost));
         if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.MINIMUM_QTY)) values.put(ItemTable.MINIMUM_QTY, _decimalQty(minimumQty));
         if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.RECOMMENDED_QTY)) values.put(ItemTable.RECOMMENDED_QTY, _decimalQty(recommendedQty));

@@ -1,6 +1,9 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
@@ -44,7 +47,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
     private static final String PRICE_3 = "PRICE_LEVEL_3";
     private static final String PRICE_4 = "PRICE_LEVEL_4";
     private static final String PRICE_5 = "PRICE_LEVEL_5";
-    private static final String UNITS_LABEL = "UNITS_LABEL";
     private static final String UNITS_LABEL_ID = "UNIT_LABEL_ID";
     private static final String STOCK_TRACKING = "STOCK_TRACKING";
     private static final String LIMIT_QTY = "LIMIT_QTY";
@@ -64,7 +66,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
     private static final String SERIALIZABLE = "SERIALIZABLE";
     private static final String ORDER_NUM = "ORDER_NUM";
     private static final String PRINTER_ID = "PRINTER_ID";
-    private static final String KDS_ID = "KDS_ID";
     private static final String BUTTON_VIEW = "BUTTON_VIEW";
     private static final String HAS_NOTES = "HAS_NOTES";
     private static final String ELIGIBLE_FOR_COMMISSION = "ELIGIBLE_FOR_COMMISSION";
@@ -72,13 +73,13 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
     private static final String IS_DELETED = "IS_DELETED";
     private static final String ITEM_REF_TYPE = "ITEM_REF_TYPE";
     private static final String REFERENCE_ITEM_ID = "REFERENCE_ITEM_ID";
-    private static final String IS_PREPAID_ITEM = "IS_PREPAID_ITEM";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
     private static final String EXCLUDE_FROM_LOYALTY_PLAN = "EXCLUDE_FROM_LOYALTY_PLAN";
     private static final String EBT_ELIGIBLE = "EBT_ELIGIBLE";
 
     @Override
     public ItemModel toValues(JdbcJSONObject rs) throws JSONException {
+        Log.d("BemaCarl","ItemsJdbcConverter.toValues.rs: " + rs);
 
         List<String> ignoreFields = new ArrayList<>();
 
@@ -123,6 +124,9 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
         if (!rs.has(LOYALTY_POINTS)) ignoreFields.add(ShopStore.ItemTable.LOYALTY_POINTS);
         if (!rs.has(EXCLUDE_FROM_LOYALTY_PLAN)) ignoreFields.add(ShopStore.ItemTable.EXCLUDE_FROM_LOYALTY_PLAN);
         if (!rs.has(EBT_ELIGIBLE)) ignoreFields.add(ShopStore.ItemTable.EBT_ELIGIBLE);
+
+        Log.d("BemaCarl","ItemsJdbcConverter.toValues.rs.getString(DISCOUNT_TYPE): " + rs.getString(DISCOUNT_TYPE));
+        Log.d("BemaCarl","ItemsJdbcConverter.toValues._enum(DiscountType: " + _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT));
 
         return new ItemModel(
                 rs.getString(ID),
@@ -234,6 +238,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                     .put(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
                     .put(EBT_ELIGIBLE, item.isEbtEligible);
 
+            Log.d("BemaCarl","ItemsJdbcConverter.getJSONObject.json: " + json);
+
         } catch (JSONException e) {
             Logger.e("JSONException", e);
         }
@@ -289,6 +295,8 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
 
     @Override
     public SingleSqlCommand updateSQL(ItemModel item, IAppCommandContext appCommandContext) {
+        Log.d("BemaCarl","ItemsJdbcConverter.updateSQL.item.discountType: " + item.discountType);
+        Log.d("BemaCarl","ItemsJdbcConverter.updateSQL.item.discountType.ordinal(): " + item.discountType.ordinal());
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(CATEGORY_ID, item.categoryId)
                 .add(DESCRIPTION, item.description)
@@ -342,32 +350,28 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
     }
 
     public SingleSqlCommand updateOrderSQL(String guid, int orderNum, IAppCommandContext appCommandContext) {
-        return _update(ITEM_TABLE_NAME, appCommandContext)
-                .add(ORDER_NUM, orderNum)
-                .where(ID, guid)
-                .build(JdbcFactory.getApiMethod(ItemModel.class));
+        ItemModel model = ItemModel.getById(TcrApplication.get(), guid, true);
+        model.orderNum = orderNum;
+        return updateSQL(model, appCommandContext);
     }
 
     public SingleSqlCommand updatePriceSQL(String guid, BigDecimal price, IAppCommandContext appCommandContext) {
-        return _update(ITEM_TABLE_NAME, appCommandContext)
-                .add(SALE_PRICE, price)
-                .where(ID, guid)
-                .build(JdbcFactory.getApiMethod(ItemModel.class));
+        ItemModel model = ItemModel.getById(TcrApplication.get(), guid, true);
+        model.price = price;
+        return updateSQL(model, appCommandContext);
     }
 
     public SingleSqlCommand updatePriceSQL(String guid, BigDecimal price, PriceType type, IAppCommandContext appCommandContext) {
-        return _update(ITEM_TABLE_NAME, appCommandContext)
-                .add(SALE_PRICE, price)
-                .add(PRICE_TYPE, type)
-                .where(ID, guid)
-                .build(JdbcFactory.getApiMethod(ItemModel.class));
+        ItemModel model = ItemModel.getById(TcrApplication.get(), guid, true);
+        model.price = price;
+        model.priceType = type;
+        return updateSQL(model, appCommandContext);
     }
 
     public SingleSqlCommand updateQtyFlagSQL(String guid, String updateFlag, IAppCommandContext appCommandContext) {
-        return _update(ITEM_TABLE_NAME, appCommandContext)
-                .add(UPDATE_QTY_FLAG, updateFlag)
-                .where(ID, guid)
-                .build(JdbcFactory.getApiMethod(ItemModel.class));
+        ItemModel model = ItemModel.getById(TcrApplication.get(), guid, true);
+        model.updateQtyFlag = updateFlag;
+        return updateSQL(model, appCommandContext);
     }
 
     public SingleSqlCommand updateIsDeletedSQL(String guid, boolean isDeleted, IAppCommandContext appCommandContext) {
@@ -377,34 +381,10 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 
-    public SingleSqlCommand updateItemInfoSQL(String guid, BigDecimal price, BigDecimal cost, BigDecimal minimumQty, BigDecimal recommendedQty, IAppCommandContext appCommandContext) {
-        return _update(ITEM_TABLE_NAME, appCommandContext)
-                .add(SALE_PRICE, price)
-                .add(COST, cost)
-                .add(MINIMUM_QTY, minimumQty, ContentValuesUtil.QUANTITY_SCALE)
-                .add(RECOMMENDED_QTY, recommendedQty, ContentValuesUtil.QUANTITY_SCALE)
-                .where(ID, guid)
-                .build(JdbcFactory.getApiMethod(ItemModel.class));
-    }
-
-    public SingleSqlCommand updatePrinterAliasSQL(String guid, String aliasGuid, IAppCommandContext appCommandContext) {
-        return _update(ITEM_TABLE_NAME, appCommandContext)
-                .add(PRINTER_ID, aliasGuid)
-                .where(ID, guid)
-                .build(JdbcFactory.getApiMethod(ItemModel.class));
-    }
-
     public SingleSqlCommand removePrinterAlias(String aliasGuid, IAppCommandContext appCommandContext) {
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(PRINTER_ID, (String) null)
                 .where(PRINTER_ID, aliasGuid)
-                .build(JdbcFactory.getApiMethod(ItemModel.class));
-    }
-
-    public SingleSqlCommand updateStockTrackingSQL(String guid, boolean isStockTracking, IAppCommandContext appCommandContext) {
-        return _update(ITEM_TABLE_NAME, appCommandContext)
-                .add(STOCK_TRACKING, isStockTracking)
-                .where(ID, guid)
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 

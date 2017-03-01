@@ -230,17 +230,17 @@ public class SaleOrderModel implements Serializable, IValueModel {
 
     public static SaleOrderModel getById(final Context context, final String orderId) {
         if (orderId == null) return null;
-        try (
-                Cursor orderCursor = ProviderAction.query(URI_ORDER)
-                        .where(SaleOrderTable.GUID + " = ?", orderId)
-                        .perform(context)
-        ) {
-            SaleOrderModel orderModel = null;
-            if (orderCursor != null && orderCursor.moveToFirst()) {
-                orderModel = new SaleOrderModel(orderCursor);
-            }
-            return orderModel;
+
+        Cursor orderCursor = ProviderAction.query(URI_ORDER)
+                    .where(SaleOrderTable.GUID + " = ?", orderId)
+                    .perform(context);
+
+        SaleOrderModel orderModel = null;
+        if (orderCursor != null && orderCursor.moveToFirst()) {
+            orderModel = new SaleOrderModel(orderCursor);
         }
+        return orderModel;
+
     }
 
     public String getHoldName() {

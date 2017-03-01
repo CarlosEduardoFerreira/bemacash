@@ -72,6 +72,7 @@ public class ItemPriceFragment extends ItemBaseFragment {
         ArrayAdapter<DiscountType> discountTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_light, DiscountType.values());
         discountTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         discountType.setAdapter(discountTypeAdapter);
+        discountType.setSelection(getDiscountTypeSelected());
 
         if (getModel().isReferenceItem()) {
             forSale.setChecked(false);
@@ -92,6 +93,17 @@ public class ItemPriceFragment extends ItemBaseFragment {
             default:
                 return 0;
 
+        }
+    }
+
+    private int getDiscountTypeSelected() {
+        switch (getModel().discountType) {
+            case PERCENT:
+                return 0;
+            case VALUE:
+                return 1;
+            default:
+                return 0;
         }
 
     }

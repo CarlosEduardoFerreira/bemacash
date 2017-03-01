@@ -61,7 +61,7 @@ public class JdbcJSONObject extends JSONObject{
 
     @Override
     public boolean getBoolean(String name) throws JSONException {
-        return optInt(name) == 1;
+        return optInt(name) == 1 || optBoolean(name);
     }
 
     public Date getDate(String column) throws JSONException {
