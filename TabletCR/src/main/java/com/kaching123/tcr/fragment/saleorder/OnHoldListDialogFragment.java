@@ -458,7 +458,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                 holder = (ViewHolder) itemView.getTag();
             }
             holder.itemMainContainer.setActivated(false);
-            checkContainerSize(holder.itemMainContainer);
+            checkContainerSize(holder.itemMainContainer, holder.onHoldStatus, holder.onHoldPhone);
 
             if(isOnHoldOrdersDefined) {
                 DefinedOnHoldModel model = (DefinedOnHoldModel) getItem(position);
@@ -511,12 +511,20 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
 
     }
 
-    private void checkContainerSize(View view){
+    private void checkContainerSize(View container, View status, View phone){
         if (checkResolution()) {
-            ViewGroup.LayoutParams lp = view.getLayoutParams();
+            ViewGroup.LayoutParams lp = container.getLayoutParams();
             lp.width = 170;
             lp.height = 85;
-            view.setLayoutParams(lp);
+            container.setLayoutParams(lp);
+
+            ViewGroup.LayoutParams statusParams = status.getLayoutParams();
+            statusParams.height = 26;
+            status.setLayoutParams(statusParams);
+
+            ViewGroup.MarginLayoutParams phoneParams = (ViewGroup.MarginLayoutParams) phone.getLayoutParams();
+            phoneParams.setMargins(0,2,0,4);
+            phone.setLayoutParams(phoneParams);
         }
     }
 
