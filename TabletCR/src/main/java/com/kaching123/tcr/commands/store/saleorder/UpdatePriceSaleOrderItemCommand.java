@@ -56,8 +56,8 @@ public class UpdatePriceSaleOrderItemCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        SaleOrderItemJdbcConverter converter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(model);
-        return converter.updatePrice(model, getAppCommandContext());
+        SaleOrderItemJdbcConverter converter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(SaleOrderItemModel.class);
+        return converter.updatePrice(saleItemId, price);
     }
 
     public static void start(Context context, String saleItemGuid, BigDecimal price, BaseUpdatePriceSaleOrderItemCallback callback) {

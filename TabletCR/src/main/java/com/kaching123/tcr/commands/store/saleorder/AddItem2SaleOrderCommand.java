@@ -7,10 +7,14 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.commands.wireless.EditUnitCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.model.DiscountType;
+import com.kaching123.tcr.model.OnHoldStatus;
+import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemModel;
@@ -33,7 +37,9 @@ import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
@@ -169,6 +175,39 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
 
     private SaleOrderModel createSaleOrder() {
         return AddSaleOrderCommand.createSaleOrder(getContext(), getAppCommandContext().getRegisterId(), getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), null, OrderType.SALE, BigDecimal.ZERO);
+    }
+
+    public static SaleOrderModel createSaleOrder(Context context, long registerId, String operatorGuid, String shiftGuid, OrderType type) {
+
+        SaleOrderModel model = new SaleOrderModel(
+                UUID.randomUUID().toString(),
+                new Date(),
+                operatorGuid,
+                shiftGuid,
+                null,
+                BigDecimal.ZERO,
+                DiscountType.VALUE,
+                OrderStatus.ACTIVE,
+                null,
+                null,
+                null,
+                OnHoldStatus.NONE,
+                true,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                0,
+                registerId,
+                null,
+                type,
+                false,
+                KitchenPrintStatus.PRINT,
+                PrintOrderToKdsCommand.KDSSendStatus.PRINT,
+                BigDecimal.ZERO,
+                null
+                );
+
+        return model;
     }
 
     private boolean hasModifiers() {

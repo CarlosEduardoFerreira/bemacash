@@ -265,7 +265,7 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
         }
 
         for (SaleOrderItemModel item : itemsModels) {
-            batch.add(itemConverter.updateFinalPrices(item, getAppCommandContext()));
+            batch.add(itemConverter.updateFinalPrices(item));
         }
 
         UnitsJdbcConverter unitConverter = (UnitsJdbcConverter)JdbcFactory.getConverter(UnitTable.TABLE_NAME);

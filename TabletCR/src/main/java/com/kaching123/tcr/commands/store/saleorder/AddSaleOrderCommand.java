@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
@@ -48,9 +49,10 @@ public class AddSaleOrderCommand extends AsyncCommand {
         Logger.d("AddSaleOrderCommand doCommand");
         order = (SaleOrderModel) getArgs().getSerializable(ARG_ORDER);
         skipNotify = getBooleanArg(ARG_SKIP_NOTIFY);
-
+        Log.d("BemaCarl2","AddSaleOrderCommand.doCommand.getEmployeeGuid(): " + getAppCommandContext().getEmployeeGuid());
         if (order == null)
-            order = createSaleOrder(getContext(), getAppCommandContext().getRegisterId(), getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), null, OrderType.SALE, BigDecimal.ZERO);
+            order = AddItem2SaleOrderCommand.createSaleOrder(getContext(), getAppCommandContext().getRegisterId(),
+                    getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), OrderType.SALE);
 
         return succeeded().add(EXTRA_GUID, order.guid);
     }

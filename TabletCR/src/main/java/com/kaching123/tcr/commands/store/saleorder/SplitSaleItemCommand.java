@@ -129,7 +129,7 @@ public class SplitSaleItemCommand extends AsyncCommand {
         BatchSqlCommand batch = batchUpdate(SaleOrderItemModel.class);
 
         SaleOrderItemJdbcConverter saleItemConverter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(SaleItemTable.TABLE_NAME);
-        batch.add(saleItemConverter.updateQty(saleItemGuid, oldQty, getAppCommandContext()));
+        batch.add(saleItemConverter.updateQty(saleItemGuid, oldQty));
 
         batch.add(saleItemConverter.insertSQL(newModel, getAppCommandContext()));
 

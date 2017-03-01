@@ -89,9 +89,8 @@ public class UpdateQtySaleOrderItemCommand extends AsyncCommand {
     protected ISqlCommand createSqlCommand() {
         BatchSqlCommand sqlCommand = batchUpdate(SaleOrderItemModel.class);
 
-        SaleOrderItemJdbcConverter converter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(model);
-        sqlCommand.add(converter.updateQty(model, getAppCommandContext()));
-
+        SaleOrderItemJdbcConverter converter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(SaleOrderItemModel.class);
+        sqlCommand.add(converter.updateQty(saleItemId, qty));
         sqlCommand.add(subResult.getSqlCmd());
 
         return sqlCommand;

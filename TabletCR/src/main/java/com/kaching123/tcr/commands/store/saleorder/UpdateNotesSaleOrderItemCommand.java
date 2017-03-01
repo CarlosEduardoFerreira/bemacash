@@ -53,7 +53,7 @@ public class UpdateNotesSaleOrderItemCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         SaleOrderItemJdbcConverter converter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(model);
-        return converter.updateNotes(model, getAppCommandContext());
+        return converter.updateNotes(model.getGuid(), model.notes);
     }
 
     public static void start(Context context, String saleItemGuid, String saleItemNotes) {
