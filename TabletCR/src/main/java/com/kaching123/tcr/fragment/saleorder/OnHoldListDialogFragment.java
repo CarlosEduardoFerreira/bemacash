@@ -475,6 +475,8 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                 holder.onHoldName.setText(model.getHoldName());
                 showPhone(holder.onHoldPhone, model.getHoldPhone());
 
+                holder.onHoldStatus.setBackgroundColor(context.getResources().getColor(R.color.white));
+
                 if(model.getHoldStatus() != OnHoldStatus.NONE) {
                     String text = "";
                     int color = 0;
