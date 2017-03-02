@@ -56,7 +56,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public boolean isActiveStatus;
     public boolean isDiscountable;
     public BigDecimal discount;
-    public DiscountType discountType;
+    public DiscountType discountType  = DiscountType.PERCENT;
     public boolean isTaxable;
     public BigDecimal cost;
     public BigDecimal minimumQty;

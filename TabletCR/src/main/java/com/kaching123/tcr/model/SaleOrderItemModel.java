@@ -1,9 +1,11 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -305,6 +307,28 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
     @Override
     public String getIdColumn() {
         return SaleItemTable.SALE_ITEM_GUID;
+    }
+
+    public static List<SaleOrderItemModel> getByOrderGuid(Context context, String orderGuid) {
+        List<SaleOrderItemModel> items = new ArrayList<>();
+        Cursor c = ProviderAction.query(URI_ORDER_ITEM)
+                        .where(SaleItemTable.ORDER_GUID + " = ?", orderGuid)
+                        .perform(context);
+
+        while (c != null && c.moveToNext()) items.add(new SaleOrderItemModel(c));
+
+        return items;
+    }
+
+    public static SaleOrderItemModel getByGuid(Context context, String guid) {
+
+        Cursor c = ProviderAction.query(URI_ORDER_ITEM)
+                        .where(SaleItemTable.SALE_ITEM_GUID + " = ?", guid)
+                        .perform(context);
+
+        if (c != null && c.moveToFirst()) return new SaleOrderItemModel(c);
+
+        return null;
     }
 
 }

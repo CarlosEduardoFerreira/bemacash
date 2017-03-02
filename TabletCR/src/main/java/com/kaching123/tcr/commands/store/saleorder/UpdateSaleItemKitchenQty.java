@@ -53,9 +53,7 @@ public class UpdateSaleItemKitchenQty  extends AsyncCommand{
         BatchSqlCommand batch = batchUpdate(SaleItemTable.TABLE_NAME);
         SaleOrderItemJdbcConverter jdbcConverter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(SaleItemTable.TABLE_NAME);
         for (ItemInfo item : items){
-            SaleOrderItemModel model = new SaleOrderItemModel(item.guid);
-            model.kitchenPrintedQty = item.qty;
-            batch.add(jdbcConverter.updateKitchenPrintedQty(model, getAppCommandContext()));
+            batch.add(jdbcConverter.updateKitchenPrintedQty(item.guid, item.qty));
         }
         return batch;
     }

@@ -65,12 +65,8 @@ public class DiscountSaleOrderItemCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        SaleOrderItemModel model = new SaleOrderItemModel(saleItemId);
-        model.discount = discount;
-        model.discountType = discountType;
-        model.discountBundleId = discountBundleId;
-        SaleOrderItemJdbcConverter converter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(model);
-        return converter.updateDiscount(model, getAppCommandContext());
+        SaleOrderItemJdbcConverter converter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(SaleOrderItemModel.class);
+        return converter.updateDiscount(saleItemId, discount, discountType);
     }
 
     public static void start(Context context, String saleItemGuid, BigDecimal discount, DiscountType discountType, String discountBundleId, BaseDiscountSaleOrderItemCallback callback) {

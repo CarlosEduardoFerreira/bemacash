@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.TcrApplication;
@@ -80,6 +81,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
     }
 
     public static SaleOrderModel fromView(Cursor c){
+        Log.d("BemaCarl2","SaleOrderModel.fromView.SaleOrderTable.OPERATOR_GUID: " + c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.OPERATOR_GUID)));
         return new SaleOrderModel(
                 c.getString(c.getColumnIndex(SaleOrderView2.SaleOrderTable.GUID)),
                 new Date(c.getLong(c.getColumnIndex(SaleOrderView2.SaleOrderTable.CREATE_TIME))),
@@ -191,6 +193,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
             KDSSendStatus kdsSendStatus,
             BigDecimal transactionFee,
             List<String> ignoreFields) {
+
         super();
         this.guid = guid;
         this.createTime = createTime;
@@ -225,6 +228,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
         this.kdsSendStatus = kdsSendStatus;
         this.transactionFee = transactionFee;
         this.mIgnoreFields = ignoreFields;
+        Log.d("BemaCarl2","SaleOrderModel.operatorGuid: " + operatorGuid);
     }
 
 
@@ -292,6 +296,8 @@ public class SaleOrderModel implements Serializable, IValueModel {
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
         values.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
+        Log.d("BemaCarl2","SaleOrderModel.toValues.operatorGuid: " + operatorGuid);
 
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.GUID)) values.put(SaleOrderTable.GUID, guid);
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.CREATE_TIME)) values.put(SaleOrderTable.CREATE_TIME, createTime.getTime());

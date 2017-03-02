@@ -105,9 +105,20 @@ public final class ContentValuesUtil {
 
     public static String _decimal(BigDecimal decimal) {
         if (decimal == null) {
-            return null;
+            return "";
         }
         return decimalFormat.get().format(decimal);
+    }
+
+    public static BigDecimal _decimal(String decimalValue) {
+        if (TextUtils.isEmpty(decimalValue))
+            return BigDecimal.ZERO;
+        try {
+            return (BigDecimal) decimalFormat.get().parse(decimalValue);
+        } catch (ParseException e) {
+            Logger.e("Parse number error", e);
+        }
+        return BigDecimal.ZERO;
     }
 
     public static String _decimalWithScale(BigDecimal decimal) {

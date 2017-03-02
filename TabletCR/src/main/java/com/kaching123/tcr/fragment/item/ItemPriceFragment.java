@@ -92,7 +92,6 @@ public class ItemPriceFragment extends ItemBaseFragment {
                 return 1;
             default:
                 return 0;
-
         }
     }
 
@@ -105,7 +104,6 @@ public class ItemPriceFragment extends ItemBaseFragment {
             default:
                 return 0;
         }
-
     }
 
     @Override

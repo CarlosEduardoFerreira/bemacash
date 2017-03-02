@@ -1,6 +1,9 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ContentValuesUtil;
 import com.kaching123.tcr.model.DiscountType;
@@ -56,7 +59,7 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
 
     @Override
     public SaleOrderItemModel toValues(JdbcJSONObject rs) throws JSONException {
-
+        Log.d("BemaCarl","SaleOrderItemJdbcConverter.toValues.rs: " + rs);
         List<String> ignoreFields = new ArrayList<>();
 
         if (!rs.has(SALE_ITEM_ID)) ignoreFields.add(ShopStore.SaleItemTable.SALE_ITEM_GUID);
@@ -85,7 +88,8 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
         if (!rs.has(POINTS_FOR_DOLLAR_AMOUNT)) ignoreFields.add(ShopStore.SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT);
         if (!rs.has(DISCOUNT_BUNDLE_ID)) ignoreFields.add(ShopStore.SaleItemTable.DISCOUNT_BUNDLE_ID);
         if (!rs.has(EBT_ELIGIBLE)) ignoreFields.add(ShopStore.SaleItemTable.EBT_ELIGIBLE);
-
+        Log.d("BemaCarl","SaleOrderItemJdbcConverter.toValues.rs.getBigDecimal(PRICE): " + rs.getBigDecimal(PRICE));
+        Log.d("BemaCarl","SaleOrderItemJdbcConverter.toValues.rs.getBigDecimal(QUANTITY: " + rs.getBigDecimal(QUANTITY, ContentValuesUtil.QUANTITY_SCALE));
         return new SaleOrderItemModel(
                 rs.getString(SALE_ITEM_ID),
                 rs.getString(ORDER_ID),
@@ -138,9 +142,10 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     }
 
     @Override
-    public JSONObject getJSONObject(SaleOrderItemModel model) {
+    public JSONObject getJSONObject(SaleOrderItemModel model){
         JSONObject json = null;
-
+        Log.d("BemaCarl","SaleOrderItemJdbcConverter.getJSONObject.model.price: " + model.price);
+        Log.d("BemaCarl","SaleOrderItemJdbcConverter.getJSONObject.model.qty: " + model.qty);
         try {
             json = new JSONObject()
                     .put(SALE_ITEM_ID, model.saleItemGuid)
@@ -211,7 +216,9 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
 
     @Override
     public SingleSqlCommand updateSQL(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
+        Log.d("BemaCarl","SaleOrderItemJdbcConverter.updateSQL.model.price: " + model.price);
+        Log.d("BemaCarl","SaleOrderItemJdbcConverter.updateSQL.model.qty: " + model.qty);
+        return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(DISCOUNT, model.discount)
                 .add(DISCOUNT_TYPE, model.discountType)
                 .add(PRICE, model.price)
@@ -226,81 +233,86 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .build(JdbcFactory.getApiMethod(model));
     }
 
-    public SingleSqlCommand updateQty(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
-                .add(DISCOUNT, model.discount)
-                .add(DISCOUNT_TYPE, model.discountType)
-                .add(PRICE, model.price)
-                .add(NOTES, model.notes)
-                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty)
-                .add(QUANTITY, model.qty, ContentValuesUtil.QUANTITY_SCALE)
-                .add(SEQUENCE, model.sequence)
-                .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
-                .add(FINAL_TAX, model.finalTax)
-                .add(FINAL_DISCOUNT, model.finalDiscount)
-                .where(SALE_ITEM_ID, model.saleItemGuid)
-                .build(JdbcFactory.getApiMethod(model));
-
-    }
-
-    public SingleSqlCommand updateQty(String saleItemGuid, BigDecimal qty, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
+    public SingleSqlCommand updateQty(String saleItemGuid, BigDecimal qty) {
+        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), saleItemGuid);
+        if (model != null) {
+            model.qty = qty;
+            return updateSQL(model, null);
+        }
+        return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(QUANTITY, qty, ContentValuesUtil.QUANTITY_SCALE)
                 .where(SALE_ITEM_ID, saleItemGuid)
                 .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
 
     }
 
-    public SingleSqlCommand updatePrice(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
-                .add(PRICE, model.price)
+    public SingleSqlCommand updatePrice(String guid, BigDecimal price) {
+        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), guid);
+        if (model != null) {
+            model.price = price;
+            return updateSQL(model, null);
+        }
+        return _update(SALE_ORDER_ITEMS_TABLE_NAME)
+                .add(PRICE, price)
+                .where(SALE_ITEM_ID, guid)
+                .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
+    }
 
+    public SingleSqlCommand updateDiscount(String guid, BigDecimal discount, DiscountType discountType) {
+        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), guid);
+        if (model != null) {
+            model.discount = discount;
+            model.discountType = discountType;
+            return updateSQL(model, null);
+        }
+        return _update(SALE_ORDER_ITEMS_TABLE_NAME)
+                .add(DISCOUNT, discount)
+                .add(DISCOUNT_TYPE, discountType)
+                .where(SALE_ITEM_ID, guid)
+                .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
+    }
+
+    public SingleSqlCommand updateFinalPrices(SaleOrderItemModel model) {
+        SaleOrderItemModel saleOrderItemModel = SaleOrderItemModel.getByGuid(TcrApplication.get(), model.saleItemGuid);
+        if (saleOrderItemModel != null) {
+            saleOrderItemModel.finalGrossPrice = model.finalGrossPrice;
+            saleOrderItemModel.finalTax = model.finalTax;
+            saleOrderItemModel.finalDiscount = model.finalDiscount;
+
+            return updateSQL(saleOrderItemModel, null);
+        }
+
+        return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
-                .add(FINAL_TAX, model.finalTax)
                 .add(FINAL_DISCOUNT, model.finalDiscount)
-
-                .where(SALE_ITEM_ID, model.saleItemGuid)
-                .build(JdbcFactory.getApiMethod(model));
-
-    }
-
-    public SingleSqlCommand updateDiscount(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
-                .add(DISCOUNT, model.discount)
-                .add(DISCOUNT_TYPE, model.discountType)
-                .add(DISCOUNT_BUNDLE_ID, model.discountBundleId)
-
-                .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
                 .add(FINAL_TAX, model.finalTax)
-                .add(FINAL_DISCOUNT, model.finalDiscount)
-
-                .where(SALE_ITEM_ID, model.saleItemGuid)
-                .build(JdbcFactory.getApiMethod(model));
+                .where(SALE_ITEM_ID, model.getGuid())
+                .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
     }
 
-    public SingleSqlCommand updateFinalPrices(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
-
-                .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
-                .add(FINAL_TAX, model.finalTax)
-                .add(FINAL_DISCOUNT, model.finalDiscount)
-
-                .where(SALE_ITEM_ID, model.saleItemGuid)
-                .build(JdbcFactory.getApiMethod(model));
+    public SingleSqlCommand updateNotes(String guid, String notes) {
+        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), guid);
+        if (model != null) {
+            model.notes = notes;
+            return updateSQL(model, null);
+        }
+        return _update(SALE_ORDER_ITEMS_TABLE_NAME)
+                .add(NOTES, notes)
+                .where(SALE_ITEM_ID, guid)
+                .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
     }
 
-    public SingleSqlCommand updateNotes(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
-                .add(NOTES, model.notes)
-                .where(SALE_ITEM_ID, model.saleItemGuid)
-                .build(JdbcFactory.getApiMethod(model));
-    }
+    public SingleSqlCommand updateKitchenPrintedQty(String guid, BigDecimal qty) {
+        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), guid);
+        if (model != null) {
+            model.kitchenPrintedQty = qty;
+            return updateSQL(model, null);
+        }
+        return _update(SALE_ORDER_ITEMS_TABLE_NAME)
+                .add(KITCHEN_PRINTED_QUANTITY, qty)
+                .where(SALE_ITEM_ID, guid)
+                .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
 
-    public SingleSqlCommand updateKitchenPrintedQty(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
-        return _update(SALE_ORDER_ITEMS_TABLE_NAME, appCommandContext)
-                .add(KITCHEN_PRINTED_QUANTITY, model.kitchenPrintedQty, ContentValuesUtil.QUANTITY_SCALE)
-                .where(SALE_ITEM_ID, model.saleItemGuid)
-                .build(JdbcFactory.getApiMethod(model));
     }
 
     @Override

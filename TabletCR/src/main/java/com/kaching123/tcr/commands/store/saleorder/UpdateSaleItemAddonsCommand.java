@@ -275,8 +275,8 @@ public class UpdateSaleItemAddonsCommand extends AsyncCommand {
         }
 
         SaleOrderItemModel model = new SaleOrderItemModel(saleItemGuid);
-        SaleOrderItemJdbcConverter saleItemModel = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(model);
-        batch.add(saleItemModel.updateFinalPrices(model, getAppCommandContext()));
+        SaleOrderItemJdbcConverter itemsConverter = (SaleOrderItemJdbcConverter) JdbcFactory.getConverter(model);
+        batch.add(itemsConverter.updateFinalPrices(model));
         return batch;
     }
 
