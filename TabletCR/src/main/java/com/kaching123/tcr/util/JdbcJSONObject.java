@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.sql.Blob;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,7 +32,6 @@ public class JdbcJSONObject extends JSONObject{
     private static ThreadLocal<SimpleDateFormat> dateSimpleFormat = new ThreadLocal<SimpleDateFormat>() {
         protected SimpleDateFormat initialValue() {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            format.setTimeZone(TimeZone.getTimeZone("GMT"));
             return format;
         }
     };
