@@ -2,6 +2,7 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.store.ShopStore;

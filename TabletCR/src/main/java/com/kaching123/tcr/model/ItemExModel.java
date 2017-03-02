@@ -7,6 +7,7 @@ package com.kaching123.tcr.model;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.model.Unit.CodeType;
@@ -250,6 +251,7 @@ public class ItemExModel extends ItemModel {
         this.tax = tax;
         this.tax2 = tax2;
         this.shortCut = shortCut;
+
     }
 
     public ItemExModel setMatrixGuid(String matrixGuid) {

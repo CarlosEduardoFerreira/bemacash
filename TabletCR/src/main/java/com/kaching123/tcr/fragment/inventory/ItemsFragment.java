@@ -104,7 +104,6 @@ public class ItemsFragment extends BaseItemsPickFragment {
                 ItemExFunction func = new ItemExFunction();
                 ItemExModel model = func.apply((Cursor) adapter2.getItem(position));
                 assert model != null;
-                Log.d("BemaCarl","ItemsFragment.setListener.model: " + model);
                 listener.onItemSelected(id, model);
             }
         });

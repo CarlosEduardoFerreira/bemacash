@@ -23,8 +23,6 @@ public class BemaEditText extends EditText {
             // User has pressed Back key. So hide the keyboard
             InputMethodManager mgr = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             mgr.hideSoftInputFromWindow(this.getWindowToken(), 0);
-            // TODO: Hide your view as you do it in your activity
-            Logger.d("BemaCarl.key code: " + keyCode);
         }
         return false;
     }

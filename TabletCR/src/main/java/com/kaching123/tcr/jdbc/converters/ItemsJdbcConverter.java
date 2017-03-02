@@ -79,7 +79,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
 
     @Override
     public ItemModel toValues(JdbcJSONObject rs) throws JSONException {
-        Log.d("BemaCarl","ItemsJdbcConverter.toValues.rs: " + rs);
 
         List<String> ignoreFields = new ArrayList<>();
 
@@ -96,7 +95,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
         if (!rs.has(PRICE_3)) ignoreFields.add(ShopStore.ItemTable.PRICE_3);
         if (!rs.has(PRICE_4)) ignoreFields.add(ShopStore.ItemTable.PRICE_4);
         if (!rs.has(PRICE_5)) ignoreFields.add(ShopStore.ItemTable.PRICE_5);
-        if (!rs.has(UNIT_LABEL_ID)) ignoreFields.add(UNIT_LABEL_ID);
+        //if (!rs.has(UNIT_LABEL_ID)) ignoreFields.add(UNIT_LABEL_ID);
         if (!rs.has(STOCK_TRACKING)) ignoreFields.add(ShopStore.ItemTable.STOCK_TRACKING);
         if (!rs.has(LIMIT_QTY)) ignoreFields.add(ShopStore.ItemTable.LIMIT_QTY);
         if (!rs.has(ACTIVE_STATUS)) ignoreFields.add(ShopStore.ItemTable.ACTIVE_STATUS);
@@ -124,9 +123,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
         if (!rs.has(LOYALTY_POINTS)) ignoreFields.add(ShopStore.ItemTable.LOYALTY_POINTS);
         if (!rs.has(EXCLUDE_FROM_LOYALTY_PLAN)) ignoreFields.add(ShopStore.ItemTable.EXCLUDE_FROM_LOYALTY_PLAN);
         if (!rs.has(EBT_ELIGIBLE)) ignoreFields.add(ShopStore.ItemTable.EBT_ELIGIBLE);
-
-        Log.d("BemaCarl","ItemsJdbcConverter.toValues.rs.getString(DISCOUNT_TYPE): " + rs.getString(DISCOUNT_TYPE));
-        Log.d("BemaCarl","ItemsJdbcConverter.toValues._enum(DiscountType: " + _enum(DiscountType.class, rs.getString(DISCOUNT_TYPE), DiscountType.PERCENT));
 
         return new ItemModel(
                 rs.getString(ID),
@@ -238,8 +234,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                     .put(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
                     .put(EBT_ELIGIBLE, item.isEbtEligible);
 
-            Log.d("BemaCarl","ItemsJdbcConverter.getJSONObject.json: " + json);
-
         } catch (JSONException e) {
             Logger.e("JSONException", e);
         }
@@ -295,8 +289,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
 
     @Override
     public SingleSqlCommand updateSQL(ItemModel item, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl","ItemsJdbcConverter.updateSQL.item.discountType: " + item.discountType);
-        Log.d("BemaCarl","ItemsJdbcConverter.updateSQL.item.discountType.ordinal(): " + item.discountType.ordinal());
+
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(CATEGORY_ID, item.categoryId)
                 .add(DESCRIPTION, item.description)

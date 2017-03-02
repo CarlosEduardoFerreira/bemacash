@@ -97,8 +97,6 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
         //added for Heartland requirements
         resultCode = response.ResultCode;
 
-        Logger.d("bemacarl.updateWith: " + response.ExtData);
-
         String xmlExtData = "<extData>" + response.ExtData + "</extData>";
 
         setExtData(xmlExtData);
@@ -186,7 +184,6 @@ public class PaxTransaction extends Transaction<PaxTransaction> {
                 for (int j = 0; j < datas.getLength(); j++) {
                     System.out.println(datas.item(j).getNodeName()
                             + ":" + datas.item(j).getTextContent());
-                    Logger.d("bemacarl.setExtData: " + datas.item(j).getNodeName() + ": " + datas.item(j).getTextContent());
                     if (datas.item(j).getNodeName().equalsIgnoreCase("PLEntryMode"))
                         entryMethod = datas.item(j).getTextContent();
                     if (datas.item(j).getNodeName().equalsIgnoreCase("ARC"))

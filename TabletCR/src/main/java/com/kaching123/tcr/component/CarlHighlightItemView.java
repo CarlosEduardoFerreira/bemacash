@@ -57,11 +57,8 @@ public class CarlHighlightItemView {
 
     public void CarlHighlightItemViewRun(View view) {
         if(!saleItemGuid.equals("")) {
-            //Log.i("BemaCarl", "CarlHighlightItemView.view: " + view);
             lastView = view;
             String IdAsString = lastView.getResources().getResourceName(lastView.getId());
-            //Log.i("BemaCarl", "CarlHighlightItemView.lastView type: " + lastView.getClass().getName());
-            //Log.i("BemaCarl", "CarlHighlightItemView.lastView IdAsString: " + IdAsString);
 
             ((View) lastView.getParent()).setBackgroundColor(Color.WHITE);
 

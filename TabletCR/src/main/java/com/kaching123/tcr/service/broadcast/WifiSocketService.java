@@ -195,8 +195,6 @@ public class WifiSocketService extends Service {
                         @Override
                         public void run() {
                             try {
-                                Log.d("BemaCarl","WifiSocketService.makeMsgAndSend.getAddress:" + deviceInfo.getAddress());
-                                Log.d("BemaCarl","WifiSocketService.makeMsgAndSend.getPort:" + deviceInfo.getPort());
                                 Socket socket = getSocket(deviceInfo.getAddress(), deviceInfo.getPort(), true);
                                 sendMsg(socket, msg);
 

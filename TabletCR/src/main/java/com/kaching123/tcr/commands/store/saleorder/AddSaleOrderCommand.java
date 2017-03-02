@@ -49,7 +49,6 @@ public class AddSaleOrderCommand extends AsyncCommand {
         Logger.d("AddSaleOrderCommand doCommand");
         order = (SaleOrderModel) getArgs().getSerializable(ARG_ORDER);
         skipNotify = getBooleanArg(ARG_SKIP_NOTIFY);
-        Log.d("BemaCarl2","AddSaleOrderCommand.doCommand.getEmployeeGuid(): " + getAppCommandContext().getEmployeeGuid());
         if (order == null)
             order = AddItem2SaleOrderCommand.createSaleOrder(getContext(), getAppCommandContext().getRegisterId(),
                     getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), OrderType.SALE);

@@ -166,8 +166,6 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
             ProcessTransResult ptr = posLink.ProcessTrans();
 
-            Logger.d("PaxProcessorSaleCommand response:" + ptr.Msg);
-
             if (ptr.Code == ProcessTransResultCode.OK) {
 
                 response = posLink.PaymentResponse;
@@ -186,7 +184,6 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                             Thread.sleep(400);
                             if (paxSignature != null) {
                                 paxDigitalSign = paxSignature.signaturePaxFileString;
-                                Log.d("Bemacarl", "PaxProcessorSaleCommand 188: paxDigitalSign: " + paxDigitalSign);
                                 if(paxDigitalSign == null || paxDigitalSign == ""){
                                     getApp().paxSignatureCanceledByCustomer = true;
                                 }

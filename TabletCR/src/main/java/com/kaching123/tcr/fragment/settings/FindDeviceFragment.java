@@ -382,9 +382,6 @@ public class FindDeviceFragment extends StyledDialogFragment {
             String arch     = System.getProperty("os.arch","unknown");
             String name     = System.getProperty("os.name","unknown");
             String version  = System.getProperty("os.version","unknown");
-            Log.d("bemacarl","arch: " + arch);
-            Log.d("bemacarl","name: " + name);
-            Log.d("bemacarl","version: " + version);
 
             if(version.equals("3.0.36+".toString())) {
                 devices.add( new DeviceModel( "COM1" , "/dev/ttyS0") );
@@ -393,12 +390,6 @@ public class FindDeviceFragment extends StyledDialogFragment {
             } else {
                 devices = getScaleDevice();
             }
-
-            //SerialPortFinder finder = new SerialPortFinder();
-            //devices = finder.getAllDevices();
-            //Set<DeviceModel> mySet = new HashSet<DeviceModel>(Arrays.asList(devs));
-            //devices = Sets.newHashSet(devs);
-            //Collections.addAll(devices, devs);
 
             return devices;
         }

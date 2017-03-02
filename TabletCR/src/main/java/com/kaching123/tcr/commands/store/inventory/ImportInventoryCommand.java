@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.InventoryHelper;

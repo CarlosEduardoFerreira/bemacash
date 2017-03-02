@@ -114,8 +114,6 @@ public abstract class StyledDialogFragment extends SimpleDialogFragment{
     }
 
     protected View createDialogContentView(){
-        Log.e("bemacarl.createDial", "layoutInflater: " + layoutInflater.toString());
-        Log.e("bemacarl.createDial", "getDialogContentLayout(): " + getDialogContentLayout());
         return layoutInflater.inflate(getDialogContentLayout(), null, false);
     }
 

@@ -58,7 +58,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
 
     @Override
     public SaleOrderModel toValues(JdbcJSONObject rs) throws JSONException {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.toValues.rs: " + rs);
         List<String> ignoreFields = new ArrayList<>();
         if (!rs.has(ID)) ignoreFields.add(ShopStore.SaleOrderTable.GUID);
         if (!rs.has(CREATE_TIME)) ignoreFields.add(ShopStore.SaleOrderTable.CREATE_TIME);
@@ -81,7 +80,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
         if (!rs.has(KITCHEN_PRINT_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS);
         if (!rs.has(KDS_SEND_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KDS_SEND_STATUS);
         if (!rs.has(TRANSACTION_FEE)) ignoreFields.add(ShopStore.SaleOrderTable.TRANSACTION_FEE);
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.toValues.rs.getString(OPERATOR_ID): " + rs.getString(OPERATOR_ID));
         return new SaleOrderModel(
                 rs.getString(ID),
                 rs.getDate(CREATE_TIME),
@@ -133,7 +131,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     @Override
     public JSONObject getJSONObject(SaleOrderModel order){
         JSONObject json = null;
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.getJSONObject.order.operatorGuid: " + order.operatorGuid);
         try {
             json = new JSONObject()
                     .put(ID, order.guid)
@@ -166,7 +163,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
 
     @Override
     public SingleSqlCommand insertSQL(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.insertSQL.model.order.operatorGuid: " + order.operatorGuid);
         return _insert(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(ID, order.guid)
                 .add(CREATE_TIME, order.createTime)
@@ -193,7 +189,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
 
     @Override
     public SingleSqlCommand updateSQL(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateSQL.model.order.operatorGuid: " + order.operatorGuid);
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(OPERATOR_ID, order.operatorGuid) //.add(OPERATOR_ID, TcrApplication.get().getOperatorGuid())
                 .add(SHIFT_ID, order.shiftGuid)
@@ -218,7 +213,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     }
 
     public SingleSqlCommand updateStatusWithWhere(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateStatusWithWhere: " + order.operatorGuid);
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(ORDER_STATUS, order.orderStatus)
                 .where(ID, order.guid)
@@ -227,22 +221,18 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     }
 
     public SingleSqlCommand updateTax(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateTax: " + order.operatorGuid);
         return updateSQL(order, appCommandContext);
     }
 
     public SingleSqlCommand updateDiscount(SaleOrderModel model, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateDiscount: " + model.operatorGuid);
         return updateSQL(model, appCommandContext);
     }
 
     public SingleSqlCommand updateCustomer(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateCustomer: " + order.operatorGuid);
         return updateSQL(order, appCommandContext);
     }
 
     public SingleSqlCommand updateStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateStatus: " + order.operatorGuid);
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(ORDER_STATUS, order.orderStatus)
                 .where(ID, order.guid)
@@ -250,17 +240,14 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     }
 
     public SingleSqlCommand updateIsTipped(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateIsTipped: " + order.operatorGuid);
         return updateSQL(order, appCommandContext);
     }
 
     public SingleSqlCommand updateKitchenPrintStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateKitchenPrintStatus: " + order.operatorGuid);
         return updateSQL(order, appCommandContext);
     }
 
     public SingleSqlCommand updateKdsPrintStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateKdsPrintStatus: " + order.operatorGuid);
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(KDS_SEND_STATUS, order.kdsSendStatus)
                 .where(ID, order.guid)
@@ -268,7 +255,6 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     }
 
     public SingleSqlCommand deleteUpdateStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.deleteUpdateStatus: " + order.operatorGuid);
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(ORDER_STATUS, order.orderStatus)
                 .add(JdbcBuilder.FIELD_IS_DELETED, 1)

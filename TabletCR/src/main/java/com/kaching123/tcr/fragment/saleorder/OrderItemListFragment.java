@@ -159,7 +159,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             qtyBefore = app.getQtyBefore();
         }
         adapter = !isCreateReturnOrder ? new ItemsAdapter(getActivity()) : new ReturnItemsAdapter(getActivity());
-        Log.i("BemaCarl", "OrderItemListFragment.onActivityCreated.isReturn: " + isReturn);
         isReturn = true;
 
         adapter.setItemRemoveListener(new ItemView.OnItemRemoveClick() {
@@ -590,7 +589,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                     }
                 }
             }
-            Log.i("BemaCarl", "OrderItemListFragment.checkIsNewItemComposer.newItem: " + checkIsNewItemComposerInProcess);
             adapter.carlHighlightDoIt = checkIsNewItemComposerInProcess;
             CheckIsItemComposerCommand.start(getContext(), guidToCheck, new CheckIsItemComposerCommand.IsItemComposerCommandCallback() {
                 @Override
@@ -723,17 +721,13 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
 
         // CarlHighlightItemView
-        Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.getCount(): " + getListView().getCount());
-        Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.isReturn: " + isReturn);
         if(dontAnimate)
             return;
         if (getListView().getCount() > 0 && !isReturn){
-            Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.adapter.carlHighlightItemView: " + adapter.carlHighlightItemView);
             if(adapter.carlHighlightItemView == null) {
                 CarlHighlightItemView carlHighlightItemView = new CarlHighlightItemView(getView(), adapter, getLastItem().getSaleItemGuid());
                 adapter.carlHighlightItemView = carlHighlightItemView;
             }else{
-                    Log.i("BemaCarl", "OrderItemListFragment.onLoadFinished.checkIsNewItemComposerInProcess: " + checkIsNewItemComposerInProcess);
                     adapter.carlHighlightDoIt = checkIsNewItemComposerInProcess;
                     if(adapter.highlightedColumn == null && adapter.carlHighlightDoIt) {
                         adapter.carlHighlightItemView.saleItemGuid = getLastItem().getSaleItemGuid();

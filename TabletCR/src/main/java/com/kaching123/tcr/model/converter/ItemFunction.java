@@ -1,6 +1,7 @@
 package com.kaching123.tcr.model.converter;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.store.ShopStore.ItemTable;

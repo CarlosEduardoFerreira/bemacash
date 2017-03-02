@@ -59,7 +59,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
 
     @Override
     public SaleOrderItemModel toValues(JdbcJSONObject rs) throws JSONException {
-        Log.d("BemaCarl","SaleOrderItemJdbcConverter.toValues.rs: " + rs);
         List<String> ignoreFields = new ArrayList<>();
 
         if (!rs.has(SALE_ITEM_ID)) ignoreFields.add(ShopStore.SaleItemTable.SALE_ITEM_GUID);
@@ -88,8 +87,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
         if (!rs.has(POINTS_FOR_DOLLAR_AMOUNT)) ignoreFields.add(ShopStore.SaleItemTable.POINTS_FOR_DOLLAR_AMOUNT);
         if (!rs.has(DISCOUNT_BUNDLE_ID)) ignoreFields.add(ShopStore.SaleItemTable.DISCOUNT_BUNDLE_ID);
         if (!rs.has(EBT_ELIGIBLE)) ignoreFields.add(ShopStore.SaleItemTable.EBT_ELIGIBLE);
-        Log.d("BemaCarl","SaleOrderItemJdbcConverter.toValues.rs.getBigDecimal(PRICE): " + rs.getBigDecimal(PRICE));
-        Log.d("BemaCarl","SaleOrderItemJdbcConverter.toValues.rs.getBigDecimal(QUANTITY: " + rs.getBigDecimal(QUANTITY, ContentValuesUtil.QUANTITY_SCALE));
         return new SaleOrderItemModel(
                 rs.getString(SALE_ITEM_ID),
                 rs.getString(ORDER_ID),
@@ -144,8 +141,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     @Override
     public JSONObject getJSONObject(SaleOrderItemModel model){
         JSONObject json = null;
-        Log.d("BemaCarl","SaleOrderItemJdbcConverter.getJSONObject.model.price: " + model.price);
-        Log.d("BemaCarl","SaleOrderItemJdbcConverter.getJSONObject.model.qty: " + model.qty);
         try {
             json = new JSONObject()
                     .put(SALE_ITEM_ID, model.saleItemGuid)
@@ -216,8 +211,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
 
     @Override
     public SingleSqlCommand updateSQL(SaleOrderItemModel model, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl","SaleOrderItemJdbcConverter.updateSQL.model.price: " + model.price);
-        Log.d("BemaCarl","SaleOrderItemJdbcConverter.updateSQL.model.qty: " + model.qty);
         return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(DISCOUNT, model.discount)
                 .add(DISCOUNT_TYPE, model.discountType)

@@ -2,6 +2,7 @@ package com.kaching123.tcr.model.converter;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;

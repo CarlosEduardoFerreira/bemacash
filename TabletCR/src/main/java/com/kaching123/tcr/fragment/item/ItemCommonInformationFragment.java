@@ -116,15 +116,10 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         salesPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Logger.d("BemaCarl.ItemCommonInformationFragment.hasFocus: " + view.hasFocus());
                 if (bemaKeyboard == null) {
-                    Logger.d("BemaCarl.ItemCommonInformationFragment.bemaKeyboard.if: " + bemaKeyboard);
                     salesPrice.setFocusableInTouchMode(true);
                     bemaKeyboard = new BemaKeyboard(getView(), salesPrice);
-                    //bemaKeyboard.closeSoftKeyboard();
                 } else {
-                    Logger.d("BemaCarl.ItemCommonInformationFragment.bemaKeyboard.else: " + bemaKeyboard);
                     bemaKeyboard.closeSoftKeyboard();
                 }
             }
@@ -136,34 +131,13 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         callBemaKeyboard();
     }
 
-
     @Override
     protected void setModel() {
         final ItemModel model = getModel();
         description.setText(model.description);
         showPrice(salesPrice, model.price);
         activeStatus.setChecked(model.isActiveStatus);
-
         callBemaKeyboard();
-
-        /*
-        salesPrice.setOnKeyListener(new View.OnKeyListener(){
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                Logger.d("BemaCarl.key code: " + i);
-                if (i == KeyEvent.KEYCODE_SHIFT_RIGHT) { // 60
-                    salesPrice.setText(salesPrice.getText().toString().replace("-", ""));
-                    salesPrice.getText().insert(0, String.valueOf('-'));
-                    // User has pressed Back key. So hide the keyboard
-                    //InputMethodManager mgr = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    //mgr.hideSoftInputFromWindow(salesPrice.getApplicationWindowToken(), 0);
-                    // TODO: Hide your view as you do it in your activity
-                }
-                return false;
-            }
-        });
-        /**/
-
     }
 
 

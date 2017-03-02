@@ -137,10 +137,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         digital_signature   = getApp().getDigitalSignature();
         signature_receipt   = getApp().getSignatureReceipt();
 
-        Log.i("BemaCarl","doubleCheckBeforePrint tips: " + tips);
-        Log.i("BemaCarl","doubleCheckBeforePrint digital_signature: " + digital_signature);
-        Log.i("BemaCarl","doubleCheckBeforePrint signature_receipt: " + signature_receipt);
-
         signaturePrintLimit = getApp().getShopInfo().signaturePrintLimit != null && getApp().getShopInfo().signaturePrintLimit.compareTo(calcTotal()) <= 0;
 
         signatureBox.setFocusable(false);
@@ -156,7 +152,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             signatureBox.setChecked(true);
         }
 
-        Logger.d("Bemacarl digital_signature paxSignatureCanceledByCustomer: |" + digital_signature + "|" + getApp().paxSignatureCanceledByCustomer + "|");
         if(digital_signature && getApp().paxSignatureCanceledByCustomer){
             signatureBox.setEnabled(false);
             signatureBox.setChecked(true);

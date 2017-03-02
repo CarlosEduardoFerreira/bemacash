@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.TcrApplication;
@@ -276,7 +277,6 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                 c.getInt(c.getColumnIndex(ItemTable.EBT_ELIGIBLE)) == 1,
                 null
         );
-
     }
 
 
