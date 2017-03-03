@@ -45,7 +45,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String NOTES = "NOTES";
     private static final String CUSTOMER_IDENTIFICATION = "CUSTOMER_IDENTIFICATION";
     private static final String LOYALTY_PLAN_ID = "LOYALTY_PLAN_ID";
-    private static final String TMP_LOYALTY_POINTS = "TMP_LOYALTY_POINTS";
     private static final String LOYALTY_BARCODE = "LOYALTY_BARCODE";
 
     @Override
@@ -137,7 +136,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                     .put(NOTES, model.notes)
                     .put(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                     .put(LOYALTY_PLAN_ID, model.loyaltyPlanId)
-                    .put(TMP_LOYALTY_POINTS, model.loyaltyPoints)
                     .put(LOYALTY_BARCODE, model.loyaltyBarcode);
         } catch (JSONException e) {
             Logger.e("JSONException", e);
@@ -192,7 +190,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                 .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
-                .add(TMP_LOYALTY_POINTS, model.loyaltyPoints)
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));

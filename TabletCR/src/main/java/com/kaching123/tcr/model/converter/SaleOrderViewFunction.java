@@ -61,6 +61,7 @@ public class SaleOrderViewFunction extends ListConverterFunction<SaleOrderViewMo
                 _decimal(c, indexHolder.get(TipsTable.AMOUNT), BigDecimal.ZERO),
                 _kitchenPrintStatus(c, indexHolder.get(SaleOrderTable.KITCHEN_PRINT_STATUS)),
                 _kdsSendStatus(c, c.getColumnIndex(ShopStore.SaleOrderTable.KDS_SEND_STATUS)),
+                _bool(c, indexHolder.get(SaleOrderTable.ON_REGISTER)),
                 _decimal(c, indexHolder.get(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO)
         );
     }

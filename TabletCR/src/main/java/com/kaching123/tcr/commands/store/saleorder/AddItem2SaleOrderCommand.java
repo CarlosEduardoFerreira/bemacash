@@ -204,6 +204,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
                 KitchenPrintStatus.PRINT,
                 PrintOrderToKdsCommand.KDSSendStatus.PRINT,
                 BigDecimal.ZERO,
+                false,
                 null
                 );
 

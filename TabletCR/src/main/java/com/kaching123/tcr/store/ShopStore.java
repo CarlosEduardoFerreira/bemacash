@@ -903,6 +903,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String TRANSACTION_FEE = "transaction_fee";
 
+        @Column(type = Column.Type.INTEGER, defVal = "0")
+        String ON_REGISTER = "on_register";
+
     }
 
     public static final String TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS = "trigger_unlink_old_refund_units";

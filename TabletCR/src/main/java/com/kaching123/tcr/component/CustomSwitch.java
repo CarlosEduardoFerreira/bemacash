@@ -184,6 +184,7 @@ public class CustomSwitch extends CompoundButton {
         canvas.restore();
 
         // draw right text
+        canvas.save();
         this.getPaint().setColor(!this.isChecked() ? this.textColorChecked : this.textColorUnChecked);
         canvas.translate(left + (this.width / 2 - this.layoutRight.getWidth()) / 2 + this.width / 2, (this.height - this.layoutRight.getHeight()) / 2);
         this.layoutRight.draw(canvas);

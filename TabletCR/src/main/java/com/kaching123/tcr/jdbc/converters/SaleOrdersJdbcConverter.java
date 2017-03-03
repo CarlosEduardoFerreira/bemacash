@@ -56,6 +56,8 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     private static final String KDS_SEND_STATUS = "KDS_SEND_STATUS";
     private static final String TRANSACTION_FEE = "TRANSACTION_FEE";
 
+    private static final String ON_REGISTER = "ON_REGISTER";
+
     @Override
     public SaleOrderModel toValues(JdbcJSONObject rs) throws JSONException {
         List<String> ignoreFields = new ArrayList<>();
@@ -80,6 +82,11 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
         if (!rs.has(KITCHEN_PRINT_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS);
         if (!rs.has(KDS_SEND_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KDS_SEND_STATUS);
         if (!rs.has(TRANSACTION_FEE)) ignoreFields.add(ShopStore.SaleOrderTable.TRANSACTION_FEE);
+<<<<<<< HEAD
+=======
+        if (!rs.has(ON_REGISTER)) ignoreFields.add(ShopStore.SaleOrderTable.ON_REGISTER);
+        Log.d("BemaCarl2","SaleOrdersJdbcConverter.toValues.rs.getString(OPERATOR_ID): " + rs.getString(OPERATOR_ID));
+>>>>>>> 24b34e99adbf5313169a8933edf57f840b649ea6
         return new SaleOrderModel(
                 rs.getString(ID),
                 rs.getDate(CREATE_TIME),
@@ -105,6 +112,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 _enum(KitchenPrintStatus.class, rs.getString(KITCHEN_PRINT_STATUS), KitchenPrintStatus.PRINT),
                 _enum(PrintOrderToKdsCommand.KDSSendStatus.class, rs.getString(KDS_SEND_STATUS), PrintOrderToKdsCommand.KDSSendStatus.PRINT),
                 rs.getBigDecimal(TRANSACTION_FEE),
+                rs.getBoolean(ON_REGISTER),
                 ignoreFields);
     }
 
@@ -153,6 +161,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                     .put(IS_TIPPED, order.isTipped)
                     .put(KITCHEN_PRINT_STATUS, order.kitchenPrintStatus)
                     .put(KDS_SEND_STATUS, order.kdsSendStatus)
+                    .put(ON_REGISTER, order.orderOnRegister)
                     .put(TRANSACTION_FEE, order.transactionFee);
         } catch (JSONException e) {
             Logger.e("JSONException", e);
@@ -184,6 +193,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .add(IS_TIPPED, order.isTipped)
                 .add(KITCHEN_PRINT_STATUS, order.kitchenPrintStatus)
                 .add(TRANSACTION_FEE, order.transactionFee)
+                .add(ON_REGISTER, order.orderOnRegister)
                 .build(JdbcFactory.getApiMethod(order));
     }
 
@@ -208,6 +218,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .add(IS_TIPPED, order.isTipped)
                 .add(KITCHEN_PRINT_STATUS, order.kitchenPrintStatus)
                 .add(TRANSACTION_FEE, order.transactionFee)
+                .add(ON_REGISTER, order.orderOnRegister)
                 .where(ID, order.guid)
                 .build(JdbcFactory.getApiMethod(order));
     }
@@ -258,6 +269,14 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
                 .add(ORDER_STATUS, order.orderStatus)
                 .add(JdbcBuilder.FIELD_IS_DELETED, 1)
+                .where(ID, order.guid)
+                .build(JdbcFactory.getApiMethod(order));
+    }
+
+    public SingleSqlCommand updateOnRegisterStatus(SaleOrderModel order, IAppCommandContext appCommandContext) {
+        Log.d("BemaCarl2","SaleOrdersJdbcConverter.updateOnRegisterStatus: " + order.operatorGuid);
+        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
+                .add(ON_REGISTER, order.orderOnRegister)
                 .where(ID, order.guid)
                 .build(JdbcFactory.getApiMethod(order));
     }

@@ -170,6 +170,10 @@ public abstract class ScannerBaseActivity extends SuperBaseActivity implements I
                 Logger.d("ScannerBaseActivity: scannerListener: onBarcodeReceived(): ignore and exit - activity is finishing");
                 return;
             }
+            if (ScannerBaseActivity.this instanceof HistoryActivity) {
+                ScannerBaseActivity.this.onBarcodeReceived(barcode);
+                return;
+            }
 
             barcode = barcode.replaceAll("[^A-Za-z0-9]", "");
             ScannerBaseActivity.this.onBarcodeReceived(barcode);
