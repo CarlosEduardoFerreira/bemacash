@@ -216,6 +216,10 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
         }
 
         if(saleOrderModel != null) {
+            if(saleOrderModel.isOrderOnRegister()) {
+                Toast.makeText(getContext(), R.string.on_hold_in_process_msg, Toast.LENGTH_LONG).show();
+                return;
+            }
             listener.onSwap2Order(saleOrderModel.getHoldName(), saleOrderModel.getHoldPhone(), saleOrderModel.getHoldStatus(), saleOrderModel.guid, saleOrderModel.getDefinedOnHoldGuid());
             dismiss();
         }

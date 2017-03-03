@@ -84,6 +84,7 @@ import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand.BaseSuccessOrderCommandCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderOnRegisterCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand.TaxCallback;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
@@ -603,6 +604,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     @Override
     protected void onPause() {
+        UpdateSaleOrderOnRegisterCommand.start(getApplicationContext(), orderGuid, false);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(syncGapReceiver);
         stop = true;
         super.onPause();
@@ -1381,6 +1383,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                     }, nextOrderGuid, holdName, holdPhone, definedOnHoldGuid, status, HoldOrderCommand.HoldOnAction.REMOVE);
                                     return;
                                 }
+                                UpdateSaleOrderOnRegisterCommand.start(getApplicationContext(), nextOrderGuid, true);
                                 setOrderGuid(nextOrderGuid, true);
                             }
                         });

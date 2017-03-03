@@ -109,6 +109,7 @@ public class SaleOrderTipsViewFunction extends ListConverterFunction<SaleOrderTi
                 tenderType,
                 _kitchenPrintStatus(c, indexHolder.get(SaleOrderTable.KITCHEN_PRINT_STATUS)),
                 _kdsSendStatus(c, c.getColumnIndex(ShopSchema2.SaleOrderView2.SaleOrderTable.KDS_SEND_STATUS)),
+                _bool(c, indexHolder.get(SaleOrderTable.ON_REGISTER)),
                 _decimal(c, indexHolder.get(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO)
         );
     }
