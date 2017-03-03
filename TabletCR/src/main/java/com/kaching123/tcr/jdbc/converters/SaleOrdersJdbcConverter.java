@@ -82,11 +82,8 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
         if (!rs.has(KITCHEN_PRINT_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KITCHEN_PRINT_STATUS);
         if (!rs.has(KDS_SEND_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KDS_SEND_STATUS);
         if (!rs.has(TRANSACTION_FEE)) ignoreFields.add(ShopStore.SaleOrderTable.TRANSACTION_FEE);
-<<<<<<< HEAD
-=======
         if (!rs.has(ON_REGISTER)) ignoreFields.add(ShopStore.SaleOrderTable.ON_REGISTER);
         Log.d("BemaCarl2","SaleOrdersJdbcConverter.toValues.rs.getString(OPERATOR_ID): " + rs.getString(OPERATOR_ID));
->>>>>>> 24b34e99adbf5313169a8933edf57f840b649ea6
         return new SaleOrderModel(
                 rs.getString(ID),
                 rs.getDate(CREATE_TIME),
