@@ -42,7 +42,7 @@ public abstract class BaseEmployeeCommand extends AsyncCommand {
     @Override
     protected TaskResult doCommand() {
         model = (EmployeeModel) getArgs().getSerializable(ARG_EMPLOYEE);
-        permissions = (ArrayList<Permission>)getArgs().getSerializable(ARG_PERMISSIONS);
+        permissions = (ArrayList<Permission>) getArgs().getSerializable(ARG_PERMISSIONS);
         if (checkLogin()) {
             return failed().add(EXTRA_EMPLOYEE_ERROR, Error.EMPLOYEE_EXISTS);
         }

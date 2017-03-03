@@ -116,14 +116,12 @@ public class SyncOpenHelper extends BaseOpenHelper {
 
                 } else {
                     if (tableName.equals(ShopStore.SaleOrderTable.TABLE_NAME) && values.containsKey(ShopStore.SaleOrderTable.STATUS)) {
-                        try (
-                                Cursor c = db.query(ShopStore.SaleOrderTable.TABLE_NAME, new String[]{ShopStore.SaleOrderTable.STATUS},
-                                        ShopStore.SaleOrderTable.GUID + " = ?", new String[]{idValue}, null, null, null)) {
-                            if (c != null && c.moveToFirst()){
-                                int status = c.getInt(0);
-                                if (status != 0){
-                                    values.put(ShopStore.SaleOrderTable.STATUS, status);
-                                }
+                        Cursor c = db.query(ShopStore.SaleOrderTable.TABLE_NAME, new String[]{ShopStore.SaleOrderTable.STATUS},
+                                        ShopStore.SaleOrderTable.GUID + " = ?", new String[]{idValue}, null, null, null);
+                        if (c != null && c.moveToFirst()){
+                            int status = c.getInt(0);
+                            if (status != 0){
+                                values.put(ShopStore.SaleOrderTable.STATUS, status);
                             }
                         }
                     }
@@ -246,18 +244,12 @@ public class SyncOpenHelper extends BaseOpenHelper {
 
     private boolean areThereItem(SQLiteDatabase db, String tableName, String idColumn, String idValue, ContentValues values) {
         if (tableName.equals(ShopStore.EmployeePermissionTable.TABLE_NAME)){
-            try (
-                    Cursor c = db.query(tableName, new String[]{idColumn}, idColumn + " = ? AND " + ShopStore.EmployeePermissionTable.USER_GUID
-                            + " = ?", new String[]{idValue, values.get(ShopStore.EmployeePermissionTable.USER_GUID).toString()}, null, null, null);
-            ) {
-                return c.getCount() > 0;
-            }
+            Cursor c = db.query(tableName, new String[]{idColumn}, idColumn + " = ? AND " + ShopStore.EmployeePermissionTable.USER_GUID
+                    + " = ?", new String[]{idValue, values.get(ShopStore.EmployeePermissionTable.USER_GUID).toString()}, null, null, null);
+            return c.getCount() > 0;
         } else {
-            try (
-                    Cursor c = db.query(tableName, new String[]{idColumn}, idColumn + " = ?", new String[]{idValue}, null, null, null);
-            ) {
-                return c.getCount() > 0;
-            }
+            Cursor c = db.query(tableName, new String[]{idColumn}, idColumn + " = ?", new String[]{idValue}, null, null, null);
+            return c.getCount() > 0;
         }
     }
 

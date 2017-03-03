@@ -64,6 +64,10 @@ public abstract class AsyncCommand extends PublicGroundyTask {
         return super.sync(context, args, appCommandContext);
     }
 
+    public void afterDoCommand() {
+
+    }
+
     @Override
     protected TaskResult doInBackground() {
         if (validateAppCommandContext() && !isAppCommandContextValid(getAppCommandContext()))
@@ -261,8 +265,7 @@ public abstract class AsyncCommand extends PublicGroundyTask {
         private ISqlCommand sqlCmd;
         private ArrayList<ContentProviderOperation> localDbOperations;
 
-        public SyncResult() {
-        }
+        public SyncResult() {}
 
         protected SyncResult(ISqlCommand sqlCmd, ArrayList<ContentProviderOperation> localDbOperations) {
             this.sqlCmd = sqlCmd;

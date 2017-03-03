@@ -119,7 +119,7 @@ public class JdbcJSONObject extends JSONObject{
      *
      * @param name - filed name
      * @return 0 if null
-     * @throws JSONException
+     * @throws org.json.JSONException
      */
     @Override
     public int getInt(String name) throws JSONException {
@@ -150,9 +150,13 @@ public class JdbcJSONObject extends JSONObject{
         return dateFormat.get().format(value);
     }
 
-    /*public static String getTimestamp(Timestamp value) {
-        if(value == null)
-            return null;
-        return value.toString();
-    }*/
+    @Override
+    public long getLong(String name) throws JSONException {
+        return has(name) ? super.getLong(name) : 0;
+    }
+
+    @Override
+    public double getDouble(String name) throws JSONException {
+        return has(name) ? super.getDouble(name) : 0;
+    }
 }

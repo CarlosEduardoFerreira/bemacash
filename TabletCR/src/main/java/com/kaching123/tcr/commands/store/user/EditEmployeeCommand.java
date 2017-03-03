@@ -4,7 +4,9 @@ import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.EmployeeJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
@@ -13,6 +15,7 @@ import com.kaching123.tcr.model.EmployeePermissionModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
 
@@ -37,6 +40,8 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
     protected void savePermissions(ArrayList<ContentProviderOperation> operations) {
         /* reset old permissions */
         ContentValues update = new ContentValues();
+        update.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
         update.put(EmployeePermissionTable.ENABLED, false);
         operations.add(ContentProviderOperation.newUpdate(URI_PERMISSIONS)
                 .withValues(update)
@@ -46,6 +51,8 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
         /* enable selected */
         for (Permission p : permissions) {
             ContentValues v = new ContentValues();
+            v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+            Log.d("BemaCarl5","EditEmployeeCommand.savePermissions: " + model.guid+"|"+p.getId());
             v.put(EmployeePermissionTable.USER_GUID, model.guid);
             v.put(EmployeePermissionTable.PERMISSION_ID, p.getId());
             v.put(EmployeePermissionTable.ENABLED, true);
@@ -74,16 +81,12 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
     protected ISqlCommand createSqlCommand() {
         // create sql for uploading.
         EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter) JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
-        BatchSqlCommand batch = batchUpdate(model);
-        if (model.isSynced) {
-            batch.add(EmployeeJdbcConverter.updateEmployeeNoCreSQL(model, getAppCommandContext()));
-        } else {
-            model.isSynced = true;
-            batch.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
-        }
-
-        batch.add(permissionJdbcConverter.disableAllSQL(model.guid, getAppCommandContext()));
+        BatchSqlCommand batch = batchUpdate(model)
+                .add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()))
+                .add(permissionJdbcConverter.disableAllSQL(model.guid, getAppCommandContext()));
+        Log.d("BemaCarl5","EditEmployeeCommand.createSqlCommand1: " + model.guid);
         for (Permission p : permissions) {
+            Log.d("BemaCarl5","EditEmployeeCommand.createSqlCommand2: " + model.guid+"|"+p.getId());
             batch.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true, null), getAppCommandContext()));
         }
         return batch;

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.gson.Gson;
@@ -306,13 +307,13 @@ public class LocalSyncHelper {
 
         Logger.d(TAG + ": Running command: " + sqlCommand.command);
         for (SqlCommandObj.SqlCommandObjOperation operation : sqlCommandObj.operations) {
+            Log.d("BemaCarl4","LocalSyncHelper.runCommand.operation: " + operation);
             if (operation == null || operation.action == null) {
                 Logger.e(TAG_HEIGHT, new Throwable("SQl command incorrect: " + sqlCommand));
                 return false;
             }
 
             try {
-                Logger.d(TAG + "LocalSyncHelper.runCommand.operation.action" + operation.action);
                 if ("INSERT".equals(operation.action.toUpperCase()) || "REPLACE".equals(operation.action.toUpperCase())) {
                     Object[] model = getContentValuesAndGuidColumn(operation, true);
 
@@ -322,48 +323,45 @@ public class LocalSyncHelper {
                     }
                     ContentValues contentValues = (ContentValues) model[0];
                     if (contentValues.size() == 0) return true;
-
-                    db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
+                    Log.d("BemaCarl4","LocalSyncHelper.runCommand.REPLACE.operation.args: " + operation.args);
+                    if("REPLACE".equals(operation.action.toUpperCase())){
+                        db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                    }else{
+                        db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
+                    }
 
                 } else if ("UPDATE".equals(operation.action.toUpperCase())) {
                     LinkedTreeMap<String, Object> where = (LinkedTreeMap<String, Object>) operation.args.get("where");
 
-                    Logger.d(TAG + "LocalSyncHelper.runCommand.where" + where);
                     Object value = where.get(where.keySet().iterator().next());
                     if (value == null) return false;
 
                     String id = value.toString();
 
-                    Logger.d(TAG + "LocalSyncHelper.runCommand.where" + where);
-
                     Object value2 = where.get(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL);
                     Date updateTimeLocal = value2 != null ? SyncUtil.formatMillisec(value2.toString()) : null;
 
+                    Log.d("BemaCarl4","LocalSyncHelper.runCommand.UPDATE.operation.args: " + operation.args);
                     Object[] model = getContentValuesAndGuidColumn(operation, false);
                     if (model == null || model.length == 0) {
+                        Log.d("BemaCarl4","LocalSyncHelper.runCommand.model: " + model);
                         Logger.e(TAG_HEIGHT, new Throwable("Table not found: " + sqlCommand));
                         return false;
                     }
                     ContentValues contentValues = (ContentValues) model[0];
                     if (contentValues.size() == 0) return true;
-                    Logger.d(TAG + "LocalSyncHelper.runCommand.contentValues" + contentValues);
 
                     contentValues.remove((String) model[1]);
                     contentValues.remove("create_time");
 
                     String whereString = String.format("%s = '%s'", model[1], id);
-                    Logger.d(TAG + "LocalSyncHelper.runCommand.whereString" + whereString);
 
                     if (updateTimeLocal != null && JdbcFactory.getConverter(operation.table).supportUpdateTimeLocalFlag()
                             && !(contentValues.getAsBoolean(ShopStore.DEFAULT_IS_DELETED) != null && contentValues.getAsBoolean(ShopStore.DEFAULT_IS_DELETED))) {
                         whereString += String.format(" AND (%s < %s OR %s IS NULL)",
                                 ShopStore.DEFAULT_UPDATE_TIME_LOCAL, updateTimeLocal.getTime(), ShopStore.DEFAULT_UPDATE_TIME_LOCAL);
                     }
-
-                    Logger.d(TAG + "LocalSyncHelper.runCommand.whereString" + whereString);
-                    Logger.d(TAG + ": whereString for table " + operation.table + ": " + whereString);
                     int affectedRows = db.update(operation.table, contentValues, whereString, null);
-                    Logger.d(TAG + "LocalSyncHelper.runCommand.affectedRows: " + affectedRows);
 
                     if (affectedRows == 0 && !ignoreTables.contains(operation.table)) {
                         if (!areThereRow(db, operation.table, model[1].toString(), id)){
@@ -430,11 +428,17 @@ public class LocalSyncHelper {
             }
             if (JdbcConverter.compareTable(table, ShopStore.EmployeePermissionTable.TABLE_NAME, EmployeePermissionJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.EmployeePermissionTable.TABLE_NAME;
+                Log.d("BemaCarl4","LocalSyncHelper.EmployeePermissionJdbcConverter.operation.args: " + operation.args);
+                Log.d("BemaCarl4","LocalSyncHelper.EmployeePermissionJdbcConverter.json: " + json);
                 model = new EmployeePermissionJdbcConverter().toValues(json);
+                Log.d("BemaCarl4","LocalSyncHelper.EmployeePermissionJdbcConverter.model:.toValues(): " + model.toValues());
             }
             if (JdbcConverter.compareTable(table, ShopStore.EmployeeTable.TABLE_NAME, EmployeeJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.EmployeeTable.TABLE_NAME;
+                Log.d("BemaCarl4","LocalSyncHelper.EmployeeJdbcConverter.operation.args: " + operation.args);
+                Log.d("BemaCarl4","LocalSyncHelper.EmployeeJdbcConverter.json: " + json);
                 model = new EmployeeJdbcConverter().toValues(json);
+                Log.d("BemaCarl4","LocalSyncHelper.EmployeeJdbcConverter.model.toValues(): " + model.toValues());
             }
             if (JdbcConverter.compareTable(table, ShopStore.EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.EmployeeTimesheetTable.TABLE_NAME;
@@ -487,12 +491,10 @@ public class LocalSyncHelper {
             if (JdbcConverter.compareTable(table, ShopStore.SaleItemTable.TABLE_NAME, SaleOrderItemJdbcConverter.SALE_ORDER_ITEMS_TABLE_NAME)) {
                 operation.table = ShopStore.SaleItemTable.TABLE_NAME;
                 model = new SaleOrderItemJdbcConverter().toValues(json);
-                Logger.d("bemacarl.LocalSyncHelper." + operation.table + ".json: " + json);
             }
             if (JdbcConverter.compareTable(table, ShopStore.SaleOrderTable.TABLE_NAME, SaleOrdersJdbcConverter.SALE_ORDER_TABLE_NAME)) {
                 operation.table = ShopStore.SaleOrderTable.TABLE_NAME;
                 model = new SaleOrdersJdbcConverter().toValues(json);
-                Logger.d("bemacarl.LocalSyncHelper." + operation.table + ".json: " + json);
             }
             if (JdbcConverter.compareTable(table, ShopStore.ShiftTable.TABLE_NAME, ShiftJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.ShiftTable.TABLE_NAME;
@@ -537,8 +539,9 @@ public class LocalSyncHelper {
         } else {
             json = new JdbcJSONObject(gson.toJson(operation.args.get("update")));
         }
-
+        Log.d("BemaCarl4","LocalSyncHelper.getContentValuesAndGuidColumn.gson.toJson(operation.args): " + gson.toJson(operation.args));
         IValueModel valueModel = getModel(operation, json);
+        Log.d("BemaCarl4","LocalSyncHelper.getContentValuesAndGuidColumn.valueModel: " + valueModel);
         if (valueModel == null) {
             return null;
         }
@@ -562,7 +565,8 @@ public class LocalSyncHelper {
         Object[] returned = new Object[2];
         returned[0] = contentValues;
         returned[1] = valueModel.getIdColumn();
-
+        Log.d("BemaCarl4","LocalSyncHelper.getContentValuesAndGuidColumn.returned[0]: " + returned[0]);
+        Log.d("BemaCarl4","LocalSyncHelper.getContentValuesAndGuidColumn.returned[1]: " + returned[1]);
         return returned;
     }
 

@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
 import com.kaching123.tcr.model.EmployeeModel;
@@ -11,6 +12,7 @@ import com.kaching123.tcr.model.EmployeePermissionModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
 
 import java.util.ArrayList;
@@ -30,6 +32,8 @@ public class AddEmployeeCommand extends BaseEmployeeCommand {
         /* enable selected */
         for(Permission p : permissions){
             ContentValues v = new ContentValues();
+            v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
             v.put(EmployeePermissionTable.USER_GUID, model.guid);
             v.put(EmployeePermissionTable.PERMISSION_ID, p.getId());
             v.put(EmployeePermissionTable.ENABLED, true);

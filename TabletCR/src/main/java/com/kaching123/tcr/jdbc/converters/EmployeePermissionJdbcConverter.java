@@ -1,5 +1,7 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
@@ -32,6 +34,7 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
 
     @Override
     public EmployeePermissionModel toValues(JdbcJSONObject rs) throws JSONException {
+        Log.d("BemaCarl4","EmployeePermissionJdbcConverter.toValues.rs: " + rs);
         List<String> ignoreFields = new ArrayList<>();
         if (!rs.has(USER_ID)) ignoreFields.add(ShopStore.EmployeePermissionTable.USER_GUID);
         if (!rs.has(PERM_ID)) ignoreFields.add(ShopStore.EmployeePermissionTable.PERMISSION_ID);
@@ -39,7 +42,7 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
 
         return new EmployeePermissionModel(
                 rs.getString(USER_ID),
-                rs.getInt(PERM_ID),
+                rs.getLong(PERM_ID),
                 rs.getBoolean(ENABLED),
                 ignoreFields
         );
@@ -85,7 +88,7 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
     @Override
     public SingleSqlCommand insertSQL(EmployeePermissionModel model, IAppCommandContext appCommandContext) {
         InsertOrUpdateBuilder builder = _insertOrUpdate(TABLE_NAME, appCommandContext);
-
+        Log.d("BemaCarl4","EmployeePermissionJdbcConverter.insertSQL.model.toValues(): " + model.toValues());
         builder
                 .add(USER_ID, model.userGuid)
                 .add(PERM_ID, model.permissionId)
@@ -95,12 +98,14 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
 
     @Override
     public SingleSqlCommand updateSQL(EmployeePermissionModel model, IAppCommandContext appCommandContext) {
+        Log.d("BemaCarl4","EmployeePermissionJdbcConverter.updateSQL.model.toValues(): " + model.toValues());
         throw new UnsupportedOperationException();
     }
 
     public SingleSqlCommand disableAllSQL(String userGuid, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
                 .add(ENABLED, false)
+                .add("IS_DRAFT", 0)
                 .where(USER_ID, userGuid)
                 .build(JdbcFactory.getApiMethod(EmployeePermissionModel.class));
     }

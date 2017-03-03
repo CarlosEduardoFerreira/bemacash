@@ -504,6 +504,14 @@ public class JdbcFactory {
         return getConverter(tableName).deleteSQL(apiMethod, guid, appCommandContext);
     }
 
+    public static ISqlCommand deleteReal(String tableName, String guid, IAppCommandContext appCommandContext) {
+        String apiMethod = API_METHOD.get(tableName);
+        if(apiMethod == null){
+            throw new IllegalArgumentException("no api for table = " + tableName);
+        }
+        return getConverter(tableName).deleteSQL(apiMethod, guid, appCommandContext);
+    }
+
     public static <T extends IValueModel> String getApiMethod(T model) {
         return API_METHOD2.get(model.getClass());
     }
