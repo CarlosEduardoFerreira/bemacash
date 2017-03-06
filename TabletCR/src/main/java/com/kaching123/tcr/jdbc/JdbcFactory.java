@@ -405,6 +405,7 @@ public class JdbcFactory {
         API_METHOD2.put(LoyaltyIncentivePlanModel.class, "loyalty_incentive_plan");
 
         CONVERTERS.put(ShopStore.LoyaltyPointsMovementTable.TABLE_NAME, c = new LoyaltyPointsMovementJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(LoyaltyPointsMovementModel.class, c);
 
         API_METHOD.put(LoyaltyPointsMovementTable.TABLE_NAME, "loyalty_points_movement");
