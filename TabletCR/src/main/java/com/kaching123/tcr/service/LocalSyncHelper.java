@@ -324,7 +324,7 @@ public class LocalSyncHelper {
                     ContentValues contentValues = (ContentValues) model[0];
                     if (contentValues.size() == 0) return true;
                     Log.d("BemaCarl4","LocalSyncHelper.runCommand.REPLACE.operation.args: " + operation.args);
-                    if("REPLACE".equals(operation.action.toUpperCase())){
+                    if(ShopStore.EmployeePermissionTable.TABLE_NAME.equals(operation.table)){
                         db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                     }else{
                         db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
