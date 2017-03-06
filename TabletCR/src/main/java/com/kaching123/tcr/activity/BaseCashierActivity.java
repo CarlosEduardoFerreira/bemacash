@@ -2271,8 +2271,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     private void onSwap2OrderAction(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
-        if (!TextUtils.isEmpty(BaseCashierActivity.this.orderGuid)) {
-            HoldOrderCommand.start(BaseCashierActivity.this, holdOrderCallback, BaseCashierActivity.this.orderGuid, holdName, holdPhone, definedOnHoldGuid, status, HoldOrderCommand.HoldOnAction.ADD);
+        if (!TextUtils.isEmpty(orderGuid)) {
+            UpdateSaleOrderOnRegisterCommand.start(getApplicationContext(), orderGuid, false);
+            HoldOrderCommand.start(BaseCashierActivity.this, holdOrderCallback, orderGuid, holdName, holdPhone, definedOnHoldGuid, status, HoldOrderCommand.HoldOnAction.ADD);
         }
         setOrderGuid(nextOrderGuid, true);
     }
