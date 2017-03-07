@@ -231,11 +231,13 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
             case DEPARTMENT_LOADER_ID:
                 return CursorLoaderBuilder.forUri(ShopProvider.contentUri(DepartmentTable.URI_CONTENT))
                         .projection(new String[]{DepartmentTable.ID, DepartmentTable.TITLE, DepartmentTable.GUID})
+                        .orderBy(DepartmentTable.TITLE + " asc")
                         .build(getActivity());
             case CATEGORY_LOADER_ID:
                 return CursorLoaderBuilder.forUri(ShopProvider.contentUri(CategoryTable.URI_CONTENT))
                         .projection(new String[]{CategoryTable.ID, CategoryTable.TITLE, CategoryTable.GUID})
                         .where(CategoryTable.DEPARTMENT_GUID + " = ?", getModel().departmentGuid)
+                        .orderBy(CategoryTable.TITLE + " asc")
                         .build(getActivity());
             case TAX_GROUP_LOADER_ID:
                 return CursorLoaderBuilder.forUri(ShopProvider.contentUri(TaxGroupTable.URI_CONTENT))
