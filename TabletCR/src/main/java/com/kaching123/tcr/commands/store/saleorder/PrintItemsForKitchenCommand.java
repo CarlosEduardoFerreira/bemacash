@@ -359,7 +359,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
 
             processor.print(getContext(), getApp(), kitchenPrinter);
 
-            kitchenPrinter.emptyLine(5);
+            kitchenPrinter.emptyLine(7);
             try {
                 /*
                  *   Added if condition to print only if "Receipt Settings" configuration is seted "Print Kitchen Receipt for On Hold Orders" = enabled
